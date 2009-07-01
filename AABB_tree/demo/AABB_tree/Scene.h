@@ -61,10 +61,6 @@ public:
 	void clear_segments() { m_segments.clear(); }
 	void clear_distance_function() { m_max_distance_function = 0.0; }
 
-	// benchmarks 
-	void benchmark_distances();
-	void benchmark_intersections();
-
 	// algorithms
 	void generate_edge_points(const unsigned int nb_points);
 	void generate_inside_points(const unsigned int nb_trials);
@@ -94,15 +90,34 @@ public:
 	typedef Facet_tree::Object_and_primitive_id Object_and_primitive_id;
 	typedef Facet_tree::Primitive_id Primitive_id;
 
-	// benchmarks
-	void bench_do_intersect(Facet_tree& tree);
-	void bench_closest_point(Facet_tree& tree);
-	void bench_squared_distance(Facet_tree& tree);
-	void bench_nb_intersections(Facet_tree& tree);
-	void bench_any_intersection(Facet_tree& tree);
-	void bench_all_intersections(Facet_tree& tree);
-	void bench_closest_point_and_primitive(Facet_tree& tree);
-	void bench_all_intersected_primitives(Facet_tree& tree);
+	// benchmarks 
+	enum {DO_INTERSECT,
+		  ANY_INTERSECTION,
+		  NB_INTERSECTIONS,
+		  ALL_INTERSECTIONS,
+		  ALL_INTERSECTED_PRIMITIVES};
+	void benchmark_intersections(const int duration);
+	void bench_intersection_rays(Facet_tree& tree,const int function,const int duration);
+	void bench_intersection_lines(Facet_tree& tree,const int function,const int duration);
+	void bench_intersection_planes(Facet_tree& tree,const int function,const int duration);
+	void bench_intersection_segments(Facet_tree& tree,const int function,const int duration);
+
+	// distance benchmarks
+	enum {SQ_DISTANCE,
+	      CLOSEST_POINT,
+	      CLOSEST_POINT_AND_PRIMITIVE_ID};
+	void benchmark_distances(const int duration);
+	void bench_closest_point(Facet_tree& tree,const int duration);
+	void bench_squared_distance(Facet_tree& tree,const int duration);
+	void bench_closest_point_and_primitive(Facet_tree& tree,const int duration);
+	void bench_distance(Facet_tree& tree,const int function,const int duration);
+
+	// intersection benchmarks
+	void bench_do_intersect(Facet_tree& tree,const int duration);
+	void bench_nb_intersections(Facet_tree& tree,const int duration);
+	void bench_any_intersection(Facet_tree& tree,const int duration);
+	void bench_all_intersections(Facet_tree& tree,const int duration);
+	void bench_all_intersected_primitives(Facet_tree& tree,const int duration);
 
 	// drawing
 	void draw_points();

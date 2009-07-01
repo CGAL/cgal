@@ -202,15 +202,29 @@ void MainWindow::on_actionEdge_points_triggered()
 
 void MainWindow::on_actionBench_distances_triggered()
 {
+	bool ok;
+    const int duration = QInputDialog::getInteger(NULL, "Duration",
+		"Duration (ms):",1000,1,1000000,8,&ok);
+    if(!ok)
+		return;
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    m_pScene->benchmark_distances();
+	std::cout << std::endl << "Benchmark distances" << std::endl;
+    m_pScene->benchmark_distances(duration);
     QApplication::restoreOverrideCursor();
 }
 
 void MainWindow::on_actionBench_intersections_triggered()
 {
+	bool ok;
+    const int duration = QInputDialog::getInteger(NULL, "Duration",
+		"Duration (ms):",1000,1,1000000,8,&ok);
+    if(!ok)
+		return;
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    m_pScene->benchmark_intersections();
+	std::cout << std::endl << "Benchmark intersections" << std::endl;
+    m_pScene->benchmark_intersections(duration);
     QApplication::restoreOverrideCursor();
 }
 
