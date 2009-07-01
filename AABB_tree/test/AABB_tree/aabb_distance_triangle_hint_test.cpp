@@ -129,14 +129,14 @@ void test_hint_strategies(Tree& tree,
         std::cout << "with KD-tree:      " << speed << " queries/s" << std::endl << std::endl;
         std::cout << "Consistency:" << std::endl;
         if((counter = check_outputs(outputs1, outputs2, Id())) == 0)
-                std::cout << "         without hint and spatial sort are consistent" << std::endl;
+                std::cout << "without hint and spatial sort are consistent" << std::endl;
         else
-                std::cout << "WARNING, without hint and spatial sort have " << counter << " inconsistencies (closest point on vertex/edge?)" << std::endl;
+                std::cout << "without hint and spatial sort have " << counter << " inconsistencies (closest point on vertex/edge?)" << std::endl;
 
         if((counter = check_outputs(outputs1, outputs3, Id())) == 0)
-                std::cout << "         without hint and with KD-tree are consistent (modulo hint case)" << std::endl;
+                std::cout << "without hint and with KD-tree are consistent (modulo hint case)" << std::endl;
         else
-                std::cout << "WARNING, without hint and with KD-tree have " << counter << " inconsistencies (closest point on vertex/edge? the hint case has been excluded)" << std::endl;
+                std::cout << "without hint and with KD-tree have " << counter << " inconsistencies (closest point on vertex/edge? the hint case has been excluded)" << std::endl;
 
         std::cout << std::endl;
 }

@@ -132,7 +132,7 @@ void test_all_distance_query_types(Tree& tree)
     FT sqd1 = tree.squared_distance(query);
     FT sqd2 = tree.squared_distance(query,hint.first);
     if(sqd1 != sqd2)
-        std::cout << "warning: different distances with and without hint";
+        std::cout << "different distances with and without hint";
 
     Point p1 = tree.closest_point(query);
     Point p2 = tree.closest_point(query,hint.first);
@@ -631,7 +631,7 @@ private:
       tree.all_intersected_primitives(query, std::back_inserter(primitives_tree));
       tree_timer.stop();
 
-      // Check: warning, we don't know elements order...
+      // Check: we don't know elements order...
       for ( typename Id_vector::iterator it = primitives_naive.begin() ;
             it != primitives_naive.end() ;
             ++it )
@@ -684,7 +684,7 @@ private:
       tree.all_intersections(query, std::back_inserter(intersections_tree));
       tree_timer.stop();
 
-      // Check: warning, we don't know elements order...
+      // Check: we don't know elements order...
       // Test equality of vectors on ids only
       typedef std::vector<typename Primitive::Id> Id_vector;
       Id_vector intersections_naive_id;
