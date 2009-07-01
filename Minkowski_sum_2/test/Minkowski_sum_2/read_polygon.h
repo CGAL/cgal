@@ -24,7 +24,7 @@ bool read_polygon (const char *filename, CGAL::Polygon_2<Kernel>& pgn)
   }
 
   // Read the polygon.
-  int                                     n_vertices;
+  int                                     n_vertices = 0;
   typename Kernel::FT                     x, y;
   std::list<typename Kernel::Point_2>     vertices;
   int                                     k;
