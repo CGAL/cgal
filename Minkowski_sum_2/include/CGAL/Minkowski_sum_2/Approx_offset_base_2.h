@@ -87,7 +87,7 @@ public:
     CGAL_precondition (CGAL::sign (eps) == POSITIVE);
 
     _inv_sqrt_eps = static_cast<int> (1.0 / CGAL::sqrt (_eps));
-    if (_inv_sqrt_eps == 0)
+    if (_inv_sqrt_eps <= 0)
       _inv_sqrt_eps = 1;
   }    
 
@@ -295,7 +295,7 @@ protected:
               numer = static_cast<int> (dd * denom + 0.5);
             }
         }
-        else
+        else if (numer == 0)
         {
             while (numer == 0)
             {
@@ -312,6 +312,11 @@ protected:
               } 
             }
         }
+        else {// if numer < 0 (overflow)  
+          numer = max_int;
+          denom = 1;
+        }
+
 
         app_d = NT (numer) / NT (denom);
         app_err = sqr_d - CGAL::square (app_d); 
