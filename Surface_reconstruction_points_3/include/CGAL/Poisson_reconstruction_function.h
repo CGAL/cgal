@@ -64,11 +64,6 @@ public:
 
   typedef Gt Geom_traits; ///< Geometric traits class
 
-  /// Internal 3D triangulation, of type Reconstruction_triangulation_3.
-  // Note: poisson_refine_triangulation() requires a robust circumcenter computation.
-  typedef Reconstruction_triangulation_3<Robust_circumcenter_filtered_traits_3<Gt> > 
-                                                   Triangulation;
-
   // Geometric types
   typedef typename Geom_traits::FT FT; ///< typedef to Geom_traits::FT
   typedef typename Geom_traits::Point_3 Point; ///< typedef to Geom_traits::Point_3
@@ -77,6 +72,11 @@ public:
 
 // Private types
 private:
+
+  /// Internal 3D triangulation, of type Reconstruction_triangulation_3.
+  // Note: poisson_refine_triangulation() requires a robust circumcenter computation.
+  typedef Reconstruction_triangulation_3<Robust_circumcenter_filtered_traits_3<Gt> > 
+                                                   Triangulation;
 
   // Repeat Triangulation types
   typedef typename Triangulation::Triangulation_data_structure Triangulation_data_structure;
@@ -167,18 +167,6 @@ public:
     m_tr->insert(
       first,beyond,
       normal_pmap);
-  }
-  /// @endcond
-
-  /// @cond SKIP_IN_MANUAL
-  /// Gets embedded triangulation.
-  Triangulation& triangulation()
-  {
-    return *m_tr;
-  }
-  const Triangulation& triangulation() const
-  {
-    return *m_tr;
   }
   /// @endcond
 

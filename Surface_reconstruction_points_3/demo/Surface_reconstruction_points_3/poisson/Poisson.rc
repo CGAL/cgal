@@ -156,7 +156,6 @@ BEGIN
         MENUITEM "Points\tShift+P",             ID_RENDER_POINTS
         MENUITEM "Normals\tShift+N",            ID_RENDER_NORMALS
         MENUITEM "Original Normals\tShift+O",   ID_RENDER_ORIGINAL_NORMALS
-        MENUITEM "Delaunay edges\tShift+D",     ID_RENDER_DELAUNAYEDGES
         MENUITEM "Reconstructed Surface\tShift+S", ID_RENDER_SURFACE
         MENUITEM SEPARATOR
         POPUP "Arcball"

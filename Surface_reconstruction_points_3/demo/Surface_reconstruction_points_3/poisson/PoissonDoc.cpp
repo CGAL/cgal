@@ -496,46 +496,22 @@ void CPoissonDoc::update_status()
     (CStatusBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(AFX_IDW_STATUS_BAR);
   ASSERT(pStatus != NULL);
 
-  if (m_edit_mode == POINT_SET || m_edit_mode == APSS)
-  {
-    CString points;
-    points.Format("%d points",m_points.size());
-    CString selected_points;
-    selected_points.Format("%d selected",m_points.nb_selected_points());
+  CString points;
+  points.Format("%d points",m_points.size());
+  CString selected_points;
+  selected_points.Format("%d selected",m_points.nb_selected_points());
 
-    // write message to cerr
-    std::cerr << "=> " << points << " (" << selected_points << "), "
-                       << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
-                       //<< "largest free block=" << (CGAL::Peak_memory_sizer().largest_free_block()>>20) << " Mb, "
-                       //<< "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
-                       << std::endl;
+  // write message to cerr
+  std::cerr << "=> " << points << " (" << selected_points << "), "
+                     << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
+                     //<< "largest free block=" << (CGAL::Peak_memory_sizer().largest_free_block()>>20) << " Mb, "
+                     //<< "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
+                     << std::endl;
 
-    // Update status bar
-    pStatus->SetPaneText(1,points);
-    pStatus->SetPaneText(2,selected_points);
-    pStatus->UpdateWindow();
-  }
-  else if (m_edit_mode == POISSON)
-  {
-    assert(m_poisson_function != NULL);
-
-    CString vertices;
-    vertices.Format("%d vertices",m_poisson_function->triangulation().number_of_vertices());
-    CString tets;
-    tets.Format("%d tets",m_poisson_function->triangulation().number_of_cells());
-
-    // write message to cerr
-    std::cerr << "=> " << vertices << ", " << tets << ", "
-                       << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
-                       //<< "largest free block=" << (CGAL::Peak_memory_sizer().largest_free_block()>>20) << " Mb, "
-                       //<< "#blocks over 100 Mb=" << CGAL::Peak_memory_sizer().count_free_memory_blocks(100*1048576)
-                       << std::endl;
-
-    // Update status bar
-    pStatus->SetPaneText(1,vertices);
-    pStatus->SetPaneText(2,tets);
-    pStatus->UpdateWindow();
-  }
+  // Update status bar
+  pStatus->SetPaneText(1,points);
+  pStatus->SetPaneText(2,selected_points);
+  pStatus->UpdateWindow();
 }
 
 // Write user message in status bar and cerr

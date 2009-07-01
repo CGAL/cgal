@@ -29,12 +29,8 @@ BEGIN_MESSAGE_MAP(CPoissonView, CView)
     ON_WM_MOUSEMOVE()
     ON_WM_MOUSEWHEEL()
     ON_WM_SIZE()
-    ON_COMMAND(ID_RENDER_DELAUNAYEDGES, OnRenderDelaunayedges)
-    ON_COMMAND(ID_RENDER_CONTOUR, OnRenderContour)
     ON_UPDATE_COMMAND_UI(ID_RENDER_POINTS, OnUpdateRenderPoints)
     ON_COMMAND(ID_RENDER_POINTS, OnRenderPoints)
-    ON_UPDATE_COMMAND_UI(ID_RENDER_DELAUNAYEDGES, OnUpdateRenderDelaunayedges)
-    ON_UPDATE_COMMAND_UI(ID_RENDER_CONTOUR, OnUpdateRenderContour)
     ON_COMMAND(ID_RENDER_NORMALS, OnRenderNormals)
     ON_UPDATE_COMMAND_UI(ID_RENDER_NORMALS, OnUpdateRenderNormals)
     ON_COMMAND(ID_RENDER_SURFACE, OnRenderSurface)
@@ -66,7 +62,6 @@ CPoissonView::CPoissonView()
 
   // options
   m_view_points = true;
-  m_view_delaunay_edges = false;
   m_view_contour = true;
   m_view_normals = true; 
   m_view_original_normals = false; 
@@ -297,26 +292,16 @@ void CPoissonView::OnPaint()
 
     // draw points
     if(m_view_points)
-    {
-      if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
         pDoc->points()->gl_draw_vertices(0,0,0 /*black*/, 2.0f /*radius*/);
-      else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        gl_draw_delaunay_vertices(pDoc->poisson_function()->triangulation(), 0,0,0 /*black*/, 2.0f /*radius*/);
-    }
 
-    // draw Delaunay edges
-    if(m_view_delaunay_edges && pDoc->edit_mode() == CPoissonDoc::POISSON)
-        gl_draw_delaunay_edges(pDoc->poisson_function()->triangulation(), 0,0,0 /*black*/, 1.0f /*radius*/);
+    //// draw Delaunay edges
+    //if(m_view_delaunay_edges && pDoc->edit_mode() == CPoissonDoc::POISSON)
+    //    gl_draw_delaunay_edges(pDoc->poisson_function()->triangulation(), 0,0,0 /*black*/, 1.0f /*radius*/);
 
     // draw normals
     float normal_length = (float)std::sqrt(region_of_interest.squared_radius() / 1000.);
     if(m_view_normals && points_have_normals)
-    {
-      if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
-        pDoc->points()->gl_draw_normals(0,255,0 /*green*/, normal_length);
-      else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        gl_draw_delaunay_normals(pDoc->poisson_function()->triangulation(), 0,255,0 /*green*/, normal_length);
-    }
+      pDoc->points()->gl_draw_normals(0,255,0 /*green*/, normal_length);
     if(m_view_original_normals && points_have_original_normals)
       pDoc->points()->gl_draw_original_normals(128,191,255 /*light blue*/, normal_length);
 
@@ -494,26 +479,6 @@ void CPoissonView::OnSize(UINT nType, int cx, int cy)
   m_pArcball->resize(cx,cy);
   glDrawBuffer(GL_BACK);
   ::ReleaseDC(hWnd,hDC);
-}
-
-void CPoissonView::OnRenderDelaunayedges()
-{
-  m_view_delaunay_edges = !m_view_delaunay_edges;
-  InvalidateRect(NULL,FALSE);
-}
-void CPoissonView::OnUpdateRenderDelaunayedges(CCmdUI *pCmdUI)
-{
-  pCmdUI->SetCheck(m_view_delaunay_edges);
-}
-
-void CPoissonView::OnRenderContour()
-{
-  m_view_contour = !m_view_contour;
-  InvalidateRect(NULL,FALSE);
-}
-void CPoissonView::OnUpdateRenderContour(CCmdUI *pCmdUI)
-{
-  pCmdUI->SetCheck(m_view_contour);
 }
 
 void CPoissonView::OnRenderPoints()

@@ -79,12 +79,8 @@ public:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnRenderDelaunayedges();
-	afx_msg void OnRenderContour();
 	afx_msg void OnUpdateRenderPoints(CCmdUI *pCmdUI);
 	afx_msg void OnRenderPoints();
-	afx_msg void OnUpdateRenderDelaunayedges(CCmdUI *pCmdUI);
-	afx_msg void OnUpdateRenderContour(CCmdUI *pCmdUI);
 	afx_msg void OnRenderNormals();
 	afx_msg void OnUpdateRenderNormals(CCmdUI *pCmdUI);
 	afx_msg void OnRenderSurface();
