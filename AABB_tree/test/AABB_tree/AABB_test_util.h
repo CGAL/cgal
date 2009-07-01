@@ -529,8 +529,6 @@ private:
     }
     timer.stop();
 
-//    std::cerr << "\t" << nb_test << " loops in "
-//              << timer.time() << "s" << std::endl;
     m_naive_time += test.naive_timer.time();
     m_tree_time += test.tree_timer.time();
   }
@@ -750,7 +748,6 @@ private:
       FT dist_naive = CGAL::squared_distance(query, point_naive);
       FT dist_tree = CGAL::squared_distance(query, point_tree);
 
-      //assert( dist_tree >= dist_naive );
       const FT epsilon = (FT)1e-6;
       assert( (dist_naive - dist_tree) <= (epsilon * dist_tree) );
       assert( (dist_naive - dist_tree) >= (-1. * epsilon * dist_tree) );
@@ -786,7 +783,6 @@ private:
         FT dist_naive = CGAL::squared_distance(query, point_naive.first);
         FT dist_tree = CGAL::squared_distance(query, point_tree.first);
 
-        //assert( dist_tree >= dist_naive );
         const FT epsilon = (FT)1e-6;
         assert( (dist_naive - dist_tree) <= (epsilon * dist_tree) );
         assert( (dist_naive - dist_tree) >= (-1 * epsilon * dist_tree) );

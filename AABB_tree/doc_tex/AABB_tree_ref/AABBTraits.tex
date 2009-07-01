@@ -41,21 +41,16 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 \ccTypedef{typedef std::pair<Object, Primitive::Id> Object_and_primitive_id;}{}
 
 During the construction of the \ccc{AABB_tree}, the primitives are sorted according to some comparison functions related to the $x$, $y$ or $z$ coordinate axis:
-%\ccMethod{bool less_x(const Primitive & pr1, const Primitive & pr2);}{}
-%\ccGlue
-%\ccMethod{bool less_y(const Primitive & pr1, const Primitive & pr2);}{}
-%\ccGlue
-%\ccMethod{bool less_z(const Primitive & pr1, const Primitive & pr2);}{}
 
 \ccNestedType{Split_primitives_along_x_axis} 
-{A functor object to split a range of primitives into two sub-ranges, along the X-axis. Provides the operator:
+{A functor object to split a range of primitives into two sub-ranges along the X-axis. Provides the operator:
 \ccc{void operator()(InputIterator first, InputIterator beyond);} Iterator \ccc{InputIterator} must be a model of RandomAccessIterator and have \ccc{Primitive} as value type. The operator is used for determining the primitives assigned to the two children nodes of a given node, assuming that the goal is to split the X-dimension of the bounding box of the node. The primitives assigned to this node are passed as argument to the operator. It should modify the iterator range in such a way that its first half and its second half correspond to the two children nodes.}
 
 \ccNestedType{Split_primitives_along_y_axis} 
-{A functor object to split a range of primitives into two sub-ranges, along the Y-axis. See \ccc{Split_primitives_along_x_axis} for the detailed description.}
+{A functor object to split a range of primitives into two sub-ranges along the Y-axis. See \ccc{Split_primitives_along_x_axis} for the detailed description.}
 
 \ccNestedType{Split_primitives_along_z_axis} 
-{A functor object to split a range of primitives into two sub-ranges, along the Z-axis. See \ccc{Split_primitives_along_x_axis} for the detailed description.}
+{A functor object to split a range of primitives into two sub-ranges along the Z-axis. See \ccc{Split_primitives_along_x_axis} for the detailed description.}
 
 \ccNestedType{Compute_bbox} 
 {A functor object to compute the bounding box of a set of primitives. Provides the operator:
@@ -68,22 +63,10 @@ During the construction of the \ccc{AABB_tree}, the primitives are sorted accord
 The following predicates are required for each type \ccc{Query}
 for which the class \ccc{AABB_tree<AT>} may receive an intersection detection or computation query.
 
-%\ccMethod{bool do_intersect(const Query & q, const Bounding_box & box);}
-%{Returns \ccc{true} iff the query intersects the bounding box.}
-%\ccGlue	
-%\ccMethod{bool do_intersect(const Query & q, const Primitive& primitive);}
-%{Returns \ccc{true} iff the query intersects the primitive.}
-%\ccGlue	
 \ccNestedType{Do_intersect} 
 {A functor object to compute intersection predicates between the query and the nodes of the tree. Provides the operators:
 \ccc{bool operator()(const Query & q, const Bounding_box & box);} which returns \ccc{true} iff the query intersects the bounding box, and \ccc{bool operator()(const Query & q, const Primitive & primitive);} which returns \ccc{true} iff the query intersects the primitive.}
 
-% \ccMethod{int do_transversally_intersect(const Query & q, const Primitive& primitive);}
-%{Returns 1 iff the query intersects the primitive transversally, returns 0 iff the query does not intersect the primitive and returns a negative error code in case of a non-transversal intersection.}
-%\ccGlue	
-%\ccMethod{boost::optional<Object_and_primitive_id> intersection(const Query & q, const Primitive& primitive);}
-%{Returns the intersection as a pair composed of an object and a primitive id, iff the query intersects the primitive.}
-%\ccGlue	
 \ccNestedType{Intersect} 
 {A functor object to compute the intersection of a query and a primitive. Provides the operator:
 \ccc{boost::optional<Object_and_primitive_id> operator()(const Query & q, const Primitive& primitive);} which returns the intersection as a pair composed of an object and a primitive id, iff the query intersects the primitive.}
@@ -91,32 +74,19 @@ for which the class \ccc{AABB_tree<AT>} may receive an intersection detection or
 The following predicates are required for each type \ccc{Query}
 for which the class \ccc{AABB_tree<AT>} may receive a distance query.
 
-%\ccMethod{bool is_closer(const Point & p, const Bounding_box& box, const Point & q);}
-%{Returns true, iff the primitive is closer to \ccc{p} than \ccc{q} is.}
-%\ccGlue	
-%\ccMethod{bool is_closer(const Point & p, const Primitive& primitive, const Point & q);}
-%{Returns true, iff the primitive is closer to \ccc{p} than \ccc{q} is.}
-%\ccGlue
 \ccNestedType{Compare_distance} 
 {A functor object to compute distance comparisons between the query and the nodes of the tree. Provides the operators:
 \ccc{bool operator()(const Query & query, const Bounding_box& box, const Point & closest);} which returns \ccc{true} iff the bounding box is closer to \ccc{query} than \ccc{closest} is, and \ccc{bool operator()(const Query & query, const Primitive & primitive, const Point & closest);} which returns \ccc{true} iff \ccc{primitive} is closer to the \ccc{query} than \ccc{closest} is.}
 
-%\ccMethod{Point_3 closest_point(const Point_3 & p, const Primitive& primitive, const Point_3 & q);}
-%{Returns the closest point to \ccc{p}, among \ccc{q} and all points of the primitive.}
-%\ccGlue
 \ccNestedType{Closest_point} 
 {A functor object to compute closest point from the query on a primitive. Provides the operator:
 \ccc{Point_3 operator()(const Query& query, const Primitive& primitive, const Point_3 & closest);} which returns the closest point to \ccc{query}, among \ccc{closest} and all points of the primitive.}
 
-%\ccMethod{FT squared_distance(const Point_3 & p, const Point_3 & q);}
-%{Returns the squared distance between \ccc{p} and \ccc{q}.}
 \ccNestedType{Squared_distance}
 {A functor object to compute the squared distance between the query and a point. Provides the operator:
 \ccc{FT operator()(const Query& query, const Point_3 & p);} which returns the squared distance between \ccc{query} and \ccc{p}.}
 
-%\ccCreation
 \ccCreationVariable{traits}  %% choose variable name
-
 
 \ccOperations
 
@@ -143,8 +113,6 @@ for which the class \ccc{AABB_tree<AT>} may receive a distance query.
 
 \ccMethod{Closest_point closest_point_object();}
 {Returns the closest point constructor.}
-
-
 
 \ccHasModels
 \ccc{AABB_traits<GeomTraits,TrianglePrimitive>}.

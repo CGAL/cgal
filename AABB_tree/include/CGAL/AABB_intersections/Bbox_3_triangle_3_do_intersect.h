@@ -30,11 +30,6 @@
 #include <CGAL/number_utils.h>
 #include "Bbox_3_plane_3_do_intersect.h"
 
-// Turn off Visual C++ warning
-//#ifdef _MSC_VER
-//#pragma warning ( disable : 4003 )
-//#endif
-
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
