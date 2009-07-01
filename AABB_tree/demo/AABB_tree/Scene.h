@@ -63,7 +63,7 @@ public:
 
 	// algorithms
 	void generate_edge_points(const unsigned int nb_points);
-	void generate_inside_points(const unsigned int nb_trials);
+	void generate_inside_points(const unsigned int nb_points);
 	void generate_boundary_points(const unsigned int nb_points);
 	void generate_boundary_segments(const unsigned int nb_slices);
 

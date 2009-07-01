@@ -292,7 +292,7 @@ Plane Scene::random_plane()
 	return Plane(p,vec);
 }
 
-void Scene::generate_inside_points(const unsigned int nb_trials)
+void Scene::generate_inside_points(const unsigned int nb_points)
 {
 	typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
 	typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
@@ -304,19 +304,27 @@ void Scene::generate_inside_points(const unsigned int nb_trials)
 
 	QTime time;
 	time.start();
-	std::cout << "Generate inside points from " << nb_trials << " trials: ";
+	std::cout << "Generate " << nb_points << " inside points";
 
-	unsigned int i;
+	unsigned int nb_trials = 0;
 	Vector vec = random_vector();
-	for(i=0;i<nb_trials;i++)
+	while(m_points.size() < nb_points)
 	{
 		Point p = random_point();
 		Ray ray(p,vec);
-		int nb = (int)tree.number_of_intersected_primitives(ray);
-		if(nb % 2 != 0)
+		int nb_intersections = (int)tree.number_of_intersected_primitives(ray);
+		if(nb_intersections % 2 != 0)
+		{
 			m_points.push_back(p);
+			if(m_points.size()%(nb_points/10) == 0)
+				std::cout << "."; // ASCII progress bar
+		}
+		nb_trials++;
 	}
-	std::cout << m_points.size() << " points, " << time.elapsed() << " ms." << std::endl;
+	double speed = 1000.0 * (double)nb_trials / time.elapsed();
+	std::cout << "done (" << nb_trials << " trials, "
+		      << time.elapsed() << " ms, "
+			  << speed << " queries/s)" << std::endl;
 }
 
 void Scene::generate_boundary_segments(const unsigned int nb_slices)

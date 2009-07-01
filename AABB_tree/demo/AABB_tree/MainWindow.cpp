@@ -147,14 +147,14 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 void MainWindow::on_actionInside_points_triggered()
 {
 	bool ok;
-    const unsigned int nb_trials = (unsigned)
-		QInputDialog::getInteger(NULL, "#Trials",
-		"Trials:",10000,1,100000000,9,&ok);
+    const unsigned int nb_points = (unsigned)
+		QInputDialog::getInteger(NULL, "#Points",
+		"#Points:",10000,1,100000000,9,&ok);
     if(!ok)
 		return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    m_pScene->generate_inside_points(nb_trials);
+    m_pScene->generate_inside_points(nb_points);
     QApplication::restoreOverrideCursor();
 }
 
