@@ -216,7 +216,7 @@ void test_polar_circle_monotonicity(const typename SK::Circle_3& circle,
 template <class SK>
 inline 
 typename SK::Vector_3 get_vector_in_plane(unsigned i){
-  double Pi_16=M_PI / 16.;
+  double Pi_16=CGAL_PI / 16.;
   int s=i>15?-1:1;
   switch (i){
     case  0:
@@ -240,7 +240,7 @@ typename SK::Vector_3 get_vector_in_plane(unsigned i){
 template <class SK>
 inline
 typename SK::Plane_3 get_meridians(unsigned i,const typename SK::Point_3& center){
-  double Pi_16=M_PI / 16.;
+  double Pi_16=CGAL_PI / 16.;
   switch (i){
     case 0:
       return typename SK::Plane_3(0,1,0,-center.y()); //theta=0 and Pi
