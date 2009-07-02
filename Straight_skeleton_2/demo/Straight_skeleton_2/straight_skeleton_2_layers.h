@@ -34,7 +34,8 @@ public:
   Qt_layer_show_skeleton(Layers_toolbar* aParent, char const* aName, SSkelPtr const& aSSkelPtr)
     : CGAL::Qt_widget_layer(aParent,aName)
     , mSSkelPtr(aSSkelPtr)
-  {
+	, null_halfedge()
+	, null_vertex()
   }
 
   void draw()
