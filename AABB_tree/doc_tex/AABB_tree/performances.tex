@@ -72,7 +72,7 @@ The surface triangle mesh chosen for benchmarking distances is again the knot mo
 
 \subsection{Memory}
 
-The following curve plots the AABB tree memory consumption (without constructing the internal KD-tree) against the number of triangles of a polyhedron triangle surface mesh, when using the polyhedron triangle primitive. As expected the memory grows linearly and peaks to 128Mbytes for 2.3M triangles in the example shown. The AABB tree occupies approximately 60 bytes per primitive.
+The following curve plots the AABB tree memory consumption (without constructing the internal KD-tree) against the number of triangles of a polyhedron triangle surface mesh, when using the polyhedron triangle primitive. As expected the memory grows linearly and peaks to 128Mbytes for 2.3M triangles in the example shown. The AABB tree occupies approximately 60 bytes per primitive. 
 
 % memory
 \begin{center}
@@ -89,3 +89,4 @@ The following curve plots the AABB tree memory consumption (without constructing
     \end{figure}
 \end{center}
 
+The memory consumption goes up to almost 100 bytes per primitive when constructing the internal KD-tree with one reference point per primitive (the default mode when calling the function \ccc{tree.accelerate_distance_queries()}). For large models we thus recommend to specify a lower number of reference point to construct the internal KD-tree through the same function which takes an iterator range as input.

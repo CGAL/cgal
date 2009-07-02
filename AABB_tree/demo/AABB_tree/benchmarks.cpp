@@ -65,6 +65,8 @@ void Scene::bench_memory()
 		// constructs tree and measure memory before then after
 		long before = CGAL::Memory_sizer().virtual_size();
 		Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+		// tree.accelerate_distance_queries(); (100 vs 60 bytes per primitive!)
+
 		long after = CGAL::Memory_sizer().virtual_size();
 		long memory = after - before; // in Bytes
 		// double memory = (double)(after - before) / 1048576.0; // in MBytes

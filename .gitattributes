@@ -30,6 +30,7 @@ AABB_tree/doc_tex/AABB_tree/history.tex -text
 AABB_tree/doc_tex/AABB_tree/interface.tex -text
 AABB_tree/doc_tex/AABB_tree/introduction.tex -text
 AABB_tree/doc_tex/AABB_tree/main.tex -text
+AABB_tree/doc_tex/AABB_tree/memory.eps -text svneol=unset#application/postscript
 AABB_tree/doc_tex/AABB_tree/memory.jpg -text svneol=unset#image/jpeg
 AABB_tree/doc_tex/AABB_tree/memory.png -text svneol=unset#image/png
 AABB_tree/doc_tex/AABB_tree/teaser-thumb.png -text svneol=unset#image/png
