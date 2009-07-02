@@ -87,6 +87,7 @@ public:
 		m_colors[3][0] = 1;m_colors[0][0] = 0;m_colors[1][0] = 0;m_colors[2][0] = 0;
 		m_colors[3][70] = 1;m_colors[0][70] = 128;m_colors[1][70] = 0;m_colors[2][70] = 0;
 		m_colors[3][165] = 1;m_colors[0][165] = 255;m_colors[1][165] = 128;m_colors[2][165] = 0;
+		m_colors[3][240] = 1;m_colors[0][240] = 255;m_colors[1][240] = 191;m_colors[2][240] = 128;
 		m_colors[3][255] = 1;m_colors[0][255] = 255;m_colors[1][255] = 255;m_colors[2][255] = 255;
 		rebuild();
 	}
