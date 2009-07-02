@@ -91,7 +91,7 @@ namespace CGAL {
     float hq2=half_quadrant<SK>(pt2,sphere);
     float res=hq1-hq2;
     if (res == 0.){//same quadrant 
-      if (truncf(hq1)!=hq1)//for hquadrant boundary
+      if (floor(hq1)!=hq1)//for hquadrant boundary
         res=0;
       else{
         //compare tan or cot, same expression due to constant sign within a hquadrant
@@ -120,7 +120,7 @@ namespace CGAL {
     float hq2=half_quadrant<SK>(v.x(),v.y());
     float res=hq1-hq2;
     if (res == 0.){//same quadrant 
-      if (truncf(hq1)!=hq1)//for hquadrant boundary
+      if (floor(hq1)!=hq1)//for hquadrant boundary
         res=0;
       else{
         //compare tan or cot, same expression due to constant sign within a hquadrant
@@ -145,7 +145,7 @@ namespace CGAL {
     float hq2=half_quadrant<SK>(m2.x(),m2.y());
     float res=hq1-hq2;
     if (res == 0.){//same quadrant 
-      if (truncf(hq1)!=hq1)//for hquadrant boundary
+      if (floor(hq1)!=hq1)//for hquadrant boundary
         res=0;
       else{
         //compare tan or cot, same expression due to constant sign within a hquadrant
