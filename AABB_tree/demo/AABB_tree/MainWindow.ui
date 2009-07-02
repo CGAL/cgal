@@ -60,6 +60,12 @@
     <property name="title" >
      <string>Algorithms</string>
     </property>
+    <widget class="QMenu" name="menuRefine" >
+     <property name="title" >
+      <string>Refine</string>
+     </property>
+     <addaction name="actionRefine_bisection" />
+    </widget>
     <addaction name="actionEdge_points" />
     <addaction name="actionInside_points" />
     <addaction name="actionBoundary_points" />
@@ -68,11 +74,14 @@
     <addaction name="actionSigned_distance_function_to_facets" />
     <addaction name="actionUnsigned_distance_function_to_facets" />
     <addaction name="actionUnsigned_distance_function_to_edges" />
+    <addaction name="separator" />
+    <addaction name="menuRefine" />
    </widget>
    <widget class="QMenu" name="menuBenchmarks" >
     <property name="title" >
      <string>Benchmark</string>
     </property>
+    <addaction name="actionBench_memory" />
     <addaction name="actionBench_distances" />
     <addaction name="actionBench_intersections" />
    </widget>
@@ -184,6 +193,21 @@
   <action name="actionClear_distance_function" >
    <property name="text" >
     <string>Clear distance function</string>
+   </property>
+  </action>
+  <action name="actionRefine_bisection" >
+   <property name="text" >
+    <string>Longest edge bisection</string>
+   </property>
+  </action>
+  <action name="actionLoop_subdivision" >
+   <property name="text" >
+    <string>Loop subdivision</string>
+   </property>
+  </action>
+  <action name="actionBench_memory" >
+   <property name="text" >
+    <string>Memory</string>
    </property>
   </action>
  </widget>

@@ -283,3 +283,24 @@ void MainWindow::on_actionClear_distance_function_triggered()
 {
 	m_pScene->clear_distance_function();
 }
+
+void MainWindow::on_actionRefine_bisection_triggered()
+{
+	bool ok;
+	const double max_len = 
+		QInputDialog::getDouble(NULL, "Max edge len",
+		"Max edge len:",0.1,0.001,100.0,9,&ok);
+	if(!ok)
+		return;
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	m_pScene->refine_bisection(max_len * max_len);
+	QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionBench_memory_triggered()
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	m_pScene->bench_memory();
+	QApplication::restoreOverrideCursor();
+}

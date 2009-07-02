@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include <QInputDialog>
+#include <CGAL/Memory_sizer.h>
 
 void Scene::benchmark_intersections(const int duration)
 {
@@ -33,6 +34,41 @@ void Scene::benchmark_distances(const int duration)
 	bench_closest_point(tree,duration);
 	bench_squared_distance(tree,duration);
 	bench_closest_point_and_primitive(tree,duration);
+}
+
+unsigned int Scene::nb_digits(unsigned int value)
+{
+	unsigned int nb_digits = 0;
+	while(value > 0)
+	{
+		nb_digits++;
+		value /= 10;
+	}
+	return nb_digits;
+}
+
+// bench memory against number of facets in the tree
+// the tree is reconstructed each time in the mesh 
+// refinement loop
+void Scene::bench_memory()
+{
+	std::cout << std::endl << "Benchmark memory" << std::endl;
+	std::cout << "#Facets MBytes" << std::endl;
+	while(m_pPolyhedron->size_of_facets() < 2000000)
+	{
+		// refine mesh at increasing speed
+		Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
+		unsigned int digits = nb_digits(m_pPolyhedron->size_of_facets());
+		unsigned int nb_splits = 0.2 * std::pow(10.0,(double)digits - 1.0);
+		refiner.run_nb_splits(nb_splits);
+
+		// constructs tree and measure memory before then after
+		long before = CGAL::Memory_sizer().virtual_size();
+		Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+		long after = CGAL::Memory_sizer().virtual_size();
+		double memory = (double)(after - before) / 1048576.0; // in MBytes
+		std::cout << m_pPolyhedron->size_of_facets() << " " << memory << std::endl;
+	}
 }
 
 //////////////////////////////////////////////////////////////

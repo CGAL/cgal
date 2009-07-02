@@ -50,12 +50,14 @@ public:
 			void on_actionEdge_points_triggered();
 			void on_actionInside_points_triggered();
 			void on_actionBoundary_points_triggered();
+			void on_actionRefine_bisection_triggered();
 			void on_actionBoundary_segments_triggered();
 			void on_actionSigned_distance_function_to_facets_triggered();
 			void on_actionUnsigned_distance_function_to_edges_triggered();
 			void on_actionUnsigned_distance_function_to_facets_triggered();
 
 			// benchmark menu
+			void on_actionBench_memory_triggered();
 			void on_actionBench_distances_triggered();
 			void on_actionBench_intersections_triggered();
 

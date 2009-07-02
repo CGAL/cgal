@@ -38,7 +38,6 @@ public:
 
 public:
 	void draw();
-	Polyhedron* polyhedron() const;
 
 	typedef CGAL::Bbox_3 Bbox;
 	Bbox bbox() { return Bbox(); }
@@ -66,6 +65,7 @@ public:
 	void generate_inside_points(const unsigned int nb_points);
 	void generate_boundary_points(const unsigned int nb_points);
 	void generate_boundary_segments(const unsigned int nb_slices);
+	void refine_bisection(const FT max_sqlen);
 
 	// distance functions 
 	void signed_distance_function();
@@ -96,6 +96,8 @@ public:
 		  NB_INTERSECTIONS,
 		  ALL_INTERSECTIONS,
 		  ALL_INTERSECTED_PRIMITIVES};
+	void bench_memory();
+	unsigned int nb_digits(const unsigned int value);
 	void benchmark_intersections(const int duration);
 	void bench_intersection_rays(Facet_tree& tree,const int function,const int duration);
 	void bench_intersection_lines(Facet_tree& tree,const int function,const int duration);

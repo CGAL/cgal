@@ -9,6 +9,7 @@
 #include <QTime>
 #include <QInputDialog>
 
+#include "Refiner.h"
 #include "render_edges.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -556,9 +557,6 @@ unsigned_distance : m_max_distance_function;
 	m_signed_distance_function = true;
 }
 
-
-
-
 void Scene::toggle_view_poyhedron()
 {
 	m_view_polyhedron = !m_view_polyhedron;
@@ -579,4 +577,10 @@ void Scene::toggle_view_distance_function()
 	m_view_distance_function = !m_view_distance_function;
 }
 
-
+void Scene::refine_bisection(const FT max_sqlen)
+{
+	std::cout << "Refine through recursive longest edge bisection...";
+	Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
+	refiner(max_sqlen);
+	std::cout << "done (" << m_pPolyhedron->size_of_facets() << " facets)" << std::endl;
+}
