@@ -15,7 +15,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-#include "ui_Point_set_demo_outlier_removal_plugin.h"
+#include "ui_Point_set_demo_cleaning_plugin.h"
 
 class Point_set_demo_cleaning_plugin :
   public QObject,
@@ -79,8 +79,8 @@ void Point_set_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
     if(!dialog.exec())
       return;
     const double removed_percentage = dialog.percentage(); // percentage of points to remove
-    const int nb_neighbors = dialog.nbNeighbors(); 
-      
+    const int nb_neighbors = dialog.nbNeighbors();
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     CGAL::Timer task_timer; task_timer.start();
@@ -98,7 +98,7 @@ void Point_set_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
                                     << task_timer.time() << " seconds, "
                                     << (memory>>20) << " Mb allocated)"
                                     << std::endl;
-                          
+
     // Selects points to delete
     points->select(points->begin(), points->end(), false);
     points->select(first_point_to_remove, points->end(), true);
