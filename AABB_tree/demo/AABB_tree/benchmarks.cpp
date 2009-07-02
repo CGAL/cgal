@@ -53,7 +53,7 @@ unsigned int Scene::nb_digits(unsigned int value)
 void Scene::bench_memory()
 {
 	std::cout << std::endl << "Benchmark memory" << std::endl;
-	std::cout << "#Facets MBytes" << std::endl;
+	std::cout << "#Facets Bytes" << std::endl;
 	while(m_pPolyhedron->size_of_facets() < 2000000)
 	{
 		// refine mesh at increasing speed
@@ -66,8 +66,9 @@ void Scene::bench_memory()
 		long before = CGAL::Memory_sizer().virtual_size();
 		Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 		long after = CGAL::Memory_sizer().virtual_size();
-		double memory = (double)(after - before) / 1048576.0; // in MBytes
-		std::cout << m_pPolyhedron->size_of_facets() << " " << memory << std::endl;
+		long memory = after - before; // in Bytes
+		// double memory = (double)(after - before) / 1048576.0; // in MBytes
+		std::cout << m_pPolyhedron->size_of_facets() << "\t" << memory << std::endl;
 	}
 }
 
@@ -320,3 +321,5 @@ void Scene::bench_closest_point_and_primitive(Facet_tree& tree,
 	std::cout << "Benchmark closest point and primitive" << std::endl;
 	bench_distance(tree,CLOSEST_POINT_AND_PRIMITIVE_ID,duration);
 }
+
+
