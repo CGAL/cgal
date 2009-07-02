@@ -143,7 +143,13 @@ inline int index_atoms(Range r, int start=0) {
 template <class K>
 struct Weighted_point_from_atom {
   typedef typename K::Weighted_point result_type;
-  result_type operator()(const Atom &b) const {
+  
+
+
+
+
+
+result_type operator()(const Atom &b) const {
     typedef typename K::Bare_point BP;
     return result_type(BP(b.point().x(),
 			  b.point().y(),

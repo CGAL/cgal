@@ -25,7 +25,7 @@
 #include <CGAL/PDB/Atom.h>
 #include <CGAL/PDB/small_map.h>
 #include <CGAL/Tools/Label.h>
-#include <debug/vector>
+#include <vector>
 #include <map>
 
 namespace CGAL { namespace PDB {

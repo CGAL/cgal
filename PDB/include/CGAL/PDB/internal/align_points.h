@@ -9,7 +9,7 @@
 #include <CGAL/PDB/internal/tnt/tnt_array2d_utils.h>
 #include <CGAL/PDB/internal/tnt/jama_svd.h>
 #include <cassert>
-#include <debug/vector>
+#include <vector>
 #include <iterator>
 #include <boost/range.hpp>
 

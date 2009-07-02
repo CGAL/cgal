@@ -27,7 +27,7 @@
 #include <CGAL/PDB/Monomer.h>
 #include <CGAL/PDB/small_map.h>
 #include <iostream>
-#include <debug/vector>
+#include <vector>
 #include <iterator>
 #include <cassert>
 #include <CGAL/PDB/internal/dummies.h>

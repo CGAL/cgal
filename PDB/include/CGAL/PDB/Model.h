@@ -22,7 +22,7 @@
 #define DSR_MODEL_H_
 #include <CGAL/PDB/Chain.h>
 #include <CGAL/PDB/Heterogen.h>
-#include <debug/vector>
+#include <vector>
 #include <string>
 #include <boost/tuple/tuple.hpp>
 

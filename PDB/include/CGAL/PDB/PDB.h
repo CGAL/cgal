@@ -27,7 +27,7 @@
 #include <CGAL/PDB/Model.h>
 #include <CGAL/PDB/small_map.h>
 #include <iostream>
-#include <debug/vector>
+#include <vector>
 #include <CGAL/PDB/internal/Nested_iterator.h>
 
 
