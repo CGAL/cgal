@@ -720,7 +720,7 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
                   eigen_vectors[7],
                   eigen_vectors[8]);
     plane = Plane(c,normal);
-    return (FT)1.0 - eigen_values[2] / eigen_values[0];
+    return (FT)1.0 - eigen_values[2] / eigen_values[1];
   } // end regular case
 }
 
