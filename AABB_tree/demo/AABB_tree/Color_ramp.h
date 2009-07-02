@@ -15,9 +15,9 @@ public :
 	~Color_ramp() {}
 
 public :
-	const unsigned char r(unsigned int index) const { return m_colors[0][index%256]; }
-	const unsigned char g(unsigned int index) const { return m_colors[1][index%256]; }
-	const unsigned char b(unsigned int index) const { return m_colors[2][index%256]; }
+	unsigned char r(unsigned int index) const { return m_colors[0][index%256]; }
+	unsigned char g(unsigned int index) const { return m_colors[1][index%256]; }
+	unsigned char b(unsigned int index) const { return m_colors[2][index%256]; }
 
 private:
 
