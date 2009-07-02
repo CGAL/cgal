@@ -138,8 +138,10 @@ void test_implicit_interoperable_for_algebraic_structure
   typedef CGAL::Coercion_traits<A,B> CT; 
   typedef typename CT::Type C; 
   A a(6); B b(2);
+  C aa = C(6);
+  C bb = C(2);
   assert(a / b == C(3));
-  assert(b / a == C(2)/C(6)); 
+  assert(b / a == bb/aa); 
   C c; 
   c = C(4); assert((c /= A(2)) == C(2));
   c = C(4); assert((c /= B(2)) == C(2));
