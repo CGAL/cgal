@@ -71,7 +71,20 @@
 CGAL_BEGIN_NAMESPACE
 
 // GetCoefficient
+template <typename Polynomial_d> inline  
+typename Polynomial_traits_d<Polynomial_d>::Get_coefficient::result_type
+get_coefficient(const Polynomial_d& p, int i){
+  typename Polynomial_traits_d<Polynomial_d>::Get_coefficient get_coefficient;
+  return get_coefficient(p,i);
+}
 // GetInnermostCoefficient
+template <typename Polynomial_d> inline  
+typename Polynomial_traits_d<Polynomial_d>
+::Get_innermost_coefficient::result_type
+get_innermost_coefficient(const Polynomial_d& p, Exponent_vector ev){
+  typename Polynomial_traits_d<Polynomial_d>::Get_innermost_coefficient gic;
+  return gic(p,ev);
+}
 // ConstructCoefficientConstIteratorRange
 // ConstructInnermostCoefficientConstIteratorRange
 // Swap

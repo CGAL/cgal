@@ -14,6 +14,7 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial_type_generator.h>
+#include <CGAL/Exponent_vector.h>
 
 
 template <typename AK>
@@ -37,8 +38,14 @@ void test_polynomial_utils(){
 
   POLY_INT_3 p = -5*x*x*x*y+7*z*z*y;  
   //std::cout << p << std::endl; 
-  
+
+// GetCoefficient
+  assert(CGAL::get_coefficient(x*x*y+z,1)== 1);
+  assert(CGAL::get_coefficient(x*x*y+z,0)== x*x*y);
 // GetInnermostCoefficient
+  assert(CGAL::get_innermost_coefficient(x*x*y+z,CGAL::Exponent_vector(0,0,1))== 1);
+  assert(CGAL::get_innermost_coefficient(x*x*y+z,CGAL::Exponent_vector(2,1,0))== 1);
+  assert(CGAL::get_innermost_coefficient(x*x*y+z,CGAL::Exponent_vector(2,1,1))== 0);
 // ConstructCoefficientConstIteratorRange
 // ConstructInnermostCoefficientConstIteratorRange
 // Swap
