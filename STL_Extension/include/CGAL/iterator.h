@@ -1308,7 +1308,7 @@ dispatch_or_drop_output(O... o)
   return Dispatch_or_drop_output_iterator<cpp0x::tuple<V...>, cpp0x::tuple<O...> >(o...);
 }
 
-#elif ! defined(__EDG__)
+#else
 
 // Non-variadic version
 
@@ -1380,7 +1380,21 @@ public:
   
   Dispatch_or_drop_output_iterator(O1 out1):Base(out1){}
   
+  #if defined(__EDG__)  
+  typedef cpp0x::tuple<O1> Iterator_tuple;
+    
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
+    return *this;
+  }    
+  #else
   using Base::operator=;
+  #endif //defined(__EDG__)
   
   
   template <class T>
@@ -1462,7 +1476,26 @@ public:
   
   Dispatch_or_drop_output_iterator(O1 out1,O2 out2):Base(out1,out2){}
   
+  #if defined(__EDG__)  
+  typedef cpp0x::tuple<O1,O2> Iterator_tuple;
+    
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
+    return *this;
+  }    
+  #else
   using Base::operator=;
+  #endif //defined(__EDG__)
   
   
   template <class T>
@@ -1552,7 +1585,31 @@ public:
   
   Dispatch_or_drop_output_iterator(O1 out1,O2 out2,O3 out3):Base(out1,out2,out3){}
   
+  #if defined(__EDG__)  
+  typedef cpp0x::tuple<O1,O2,O3> Iterator_tuple;
+    
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V3& obj){
+    *cpp0x::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
+    return *this;
+  }    
+  #else
   using Base::operator=;
+  #endif //defined(__EDG__)
   
   
   template <class T>
@@ -1647,7 +1704,36 @@ public:
   
   Dispatch_or_drop_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4):Base(out1,out2,out3,out4){}
   
+  #if defined(__EDG__)  
+  typedef cpp0x::tuple<O1,O2,O3,O4> Iterator_tuple;
+    
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V3& obj){
+    *cpp0x::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V4& obj){
+    *cpp0x::get<3>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
+    return *this;
+  }    
+  #else
   using Base::operator=;
+  #endif //defined(__EDG__)
   
   
   template <class T>
@@ -1747,7 +1833,41 @@ public:
   
   Dispatch_or_drop_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5):Base(out1,out2,out3,out4,out5){}
   
+  #if defined(__EDG__)  
+  typedef cpp0x::tuple<O1,O2,O3,O4,O5> Iterator_tuple;
+    
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V3& obj){
+    *cpp0x::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V4& obj){
+    *cpp0x::get<3>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V5& obj){
+    *cpp0x::get<4>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
+    return *this;
+  }    
+  #else
   using Base::operator=;
+  #endif //defined(__EDG__)
   
   
   template <class T>
@@ -1852,7 +1972,46 @@ public:
   
   Dispatch_or_drop_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6):Base(out1,out2,out3,out4,out5,out6){}
   
+  #if defined(__EDG__)  
+  typedef cpp0x::tuple<O1,O2,O3,O4,O5,O6> Iterator_tuple;
+    
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V3& obj){
+    *cpp0x::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V4& obj){
+    *cpp0x::get<3>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V5& obj){
+    *cpp0x::get<4>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V6& obj){
+    *cpp0x::get<5>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
+    return *this;
+  }    
+  #else
   using Base::operator=;
+  #endif //defined(__EDG__)
   
   
   template <class T>
@@ -1962,7 +2121,51 @@ public:
   
   Dispatch_or_drop_output_iterator(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6,O7 out7):Base(out1,out2,out3,out4,out5,out6,out7){}
   
+  #if defined(__EDG__)  
+  typedef cpp0x::tuple<O1,O2,O3,O4,O5,O6,O7> Iterator_tuple;
+    
+  Self& operator=(const V1& obj){
+    *cpp0x::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }
+  
+  Self& operator=(const V2& obj){
+    *cpp0x::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V3& obj){
+    *cpp0x::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V4& obj){
+    *cpp0x::get<3>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V5& obj){
+    *cpp0x::get<4>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const V6& obj){
+    *cpp0x::get<5>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+
+  Self& operator=(const V7& obj){
+    *cpp0x::get<6>(static_cast<Iterator_tuple& >(*this))++=obj;
+    return *this;
+  }  
+  
+  Self& operator=(const Self& s){
+    static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
+    return *this;
+  }    
+  #else
   using Base::operator=;
+  #endif //defined(__EDG__)
   
   
   template <class T>
