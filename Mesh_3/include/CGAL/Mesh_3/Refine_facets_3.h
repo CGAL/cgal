@@ -273,16 +273,6 @@ private:
   /// Computes facet properties and add facet to the refinement queue if needed
   void treat_new_facet(Facet& facet);
 
-//  /**
-//   * Returns true if facet is on surface
-//   * @param index the surface index of the facet if it is on surface
-//   */
-//  bool compute_is_facet_on_surface(const Facet& facet,
-//                                   Surface_index& index) const;
-//
-//  /// Returns the center (lying on the surface) of facet
-//  Point compute_facet_surface_center(const Facet& facet) const;
-
   /**
    * Computes at once is_facet_on_surface and facet_surface_center.
    * @param facet The input facet
@@ -543,10 +533,6 @@ typename Refine_facets_3<Tr,Cr,MT,P_,C_>::Vertex_handle
 Refine_facets_3<Tr,Cr,MT,P_,C_>::insert_impl(const Point& point,
                                              const Zone& zone)
 {
-  // We must insert new points onto facets
-  //CGAL_assertion( Tr::FACET == zone.locate_type );
-//  CGAL_assertion( Index(0) != last_vertex_index_ );
-
   if( zone.locate_type == Tr::VERTEX )
   {
     // TODO look at this
@@ -615,27 +601,6 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::treat_new_facet(Facet& facet)
     const Surface_index& surface_index = boost::get<0>(*properties);
     const Index& surface_center_index = boost::get<1>(*properties);
     const Point& surface_center = boost::get<2>(*properties);
-
-    Point center(CGAL::ORIGIN);
-    Index index;
-    if ( is_facet_on_surface(facet) )
-    {
-      center = get_facet_surface_center(facet);
-      index = get_facet_surface_center_index(facet);
-    }
-
-    if ( center != CGAL::ORIGIN && center != surface_center )
-    {
-      std::cerr << "Center moved: new[" << surface_center << "]["
-                << r_oracle_.surface_index(surface_center_index).first << ","
-                << r_oracle_.surface_index(surface_center_index).second
-                << "] old[" << center << "]["
-                <<  r_oracle_.surface_index(index).first << ","
-                << r_oracle_.surface_index(index).second << "]  ";
-      double dist = std::sqrt(
-          CGAL::to_double(Gt().compute_squared_distance_3_object()(surface_center,center)));
-      std::cerr << "distance: " << dist << "\n";
-    }
 
     // Facet is on surface: set facet properties
     set_facet_surface_center(facet, surface_center, surface_center_index);
