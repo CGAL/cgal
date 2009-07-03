@@ -59,7 +59,7 @@ void Scene::bench_memory()
 		// refine mesh at increasing speed
 		Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
 		unsigned int digits = nb_digits(m_pPolyhedron->size_of_facets());
-		unsigned int nb_splits = 0.2 * std::pow(10.0,(double)digits - 1.0);
+		unsigned int nb_splits = (unsigned int)(0.2 * std::pow(10.0,(double)digits - 1.0));
 		refiner.run_nb_splits(nb_splits);
 
 		// constructs tree and measure memory before then after

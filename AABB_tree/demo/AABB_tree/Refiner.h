@@ -63,7 +63,7 @@ class Refiner
 {
 	// types
 	typedef typename Kernel::FT FT;
-	typedef typename CEdge<Kernel,Polyhedron> Edge;
+	typedef CEdge<typename Kernel,typename Polyhedron> Edge;
 	typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
 	typedef typename Polyhedron::Edge_iterator   Edge_iterator;
 	typedef typename std::priority_queue<typename Edge,

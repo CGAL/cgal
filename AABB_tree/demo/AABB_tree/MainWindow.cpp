@@ -304,3 +304,4 @@ void MainWindow::on_actionBench_memory_triggered()
 	m_pScene->bench_memory();
 	QApplication::restoreOverrideCursor();
 }
+
