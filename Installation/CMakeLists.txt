@@ -108,9 +108,6 @@ if( MSVC )
   
   uniquely_add_flags ( CGAL_CXX_FLAGS "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS" )
 
-  # _SECURE_SCL=0 is defined because it has been reported that the Secure SCL has an overhead of near one order of magnitude EVEN IN RELEASE BUILDS    
-  uniquely_add_flags( CGAL_CXX_FLAGS_RELEASE "-D_SECURE_SCL=0" )
-  
   if ( RUNNING_CGAL_AUTO_TEST )
     set(CMAKE_CXX_WARNING_LEVEL 2 CACHE STRING "MSVC C++ compiler warning level" FORCE)
     mark_as_advanced(CMAKE_CXX_WARNING_LEVEL)
