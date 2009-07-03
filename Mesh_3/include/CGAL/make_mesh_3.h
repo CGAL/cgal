@@ -40,13 +40,24 @@ C3T3 make_mesh_3(const MeshDomain&   domain,
   typedef typename MeshDomain::Point_3 Point_3;
   typedef typename MeshDomain::Index Index;
   typedef std::vector<std::pair<Point_3, Index> > Initial_points_vector;
-
+  typedef typename Initial_points_vector::iterator Ipv_iterator;
+  typedef typename C3T3::Vertex_handle Vertex_handle;
+  
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
   domain.construct_initial_points_object()(std::back_inserter(initial_points));
   C3T3 c3t3;
-  c3t3.insert_surface_points(initial_points.begin(), initial_points.end());
-
+  
+  // Insert points and set their index and dimension
+  for ( Ipv_iterator it = initial_points.begin() ;
+        it != initial_points.end() ;
+        ++it )
+  {
+    Vertex_handle v = c3t3.triangulation().insert(it->first);
+    c3t3.set_dimension(v,2); // by construction, points are on surface
+    c3t3.set_index(v,it->second);
+  }
+  
   // Build mesher and launch refinement process
   refine_mesh_3(c3t3, domain, criteria);
   

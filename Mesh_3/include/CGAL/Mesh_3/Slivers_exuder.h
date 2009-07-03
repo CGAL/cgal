@@ -1,5 +1,6 @@
 // Copyright (c) 2004-2007  INRIA Sophia-Antipolis (France).
 // Copyright (c) 2008 GeometryFactory, Sophia Antipolis (France)
+// Copyright (c) 2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -14,83 +15,74 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Laurent Rineau
+//
+// Author(s)     : Laurent Rineau, Stephane Tayeb
 
 #ifndef CGAL_MESH_3_SLIVERS_EXUDER_H
 #define CGAL_MESH_3_SLIVERS_EXUDER_H
 
-#include <CGAL/Vector_3.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Tetrahedron_3.h>
 #include <CGAL/Double_map.h>
 #include <CGAL/iterator.h>
 #include <map>
 #include <vector>
 #include <set>
+#include <algorithm>
 #include <iomanip> // std::setprecision
 #include <iostream> // std::cerr/cout
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 
-#include <CGAL/radius_ratio.h>
+#include <CGAL/Timer.h>
 
-#include <CGAL/Mesh_3/Slivers_exuder_cell_attributes_traits.h>
+#include <CGAL/Mesh_3/sliver_criteria.h>
 
-#include <CGAL/Implicit_surfaces_mesher_3.h> // for Mesh_3::check_c2t3
+
 
 namespace CGAL {
-
+  
 namespace Mesh_3 {
-
-template <typename K>
-typename K::FT
-radius_ratio(const typename K::Tetrahedron_3& t, K k = K())
-{
-  return radius_ratio(t[0], t[1], t[2], t[3], k);
-}
-
+  
   namespace details { // various function objects
-
+    
     // That functor Second_of takes a pair as input (the value type of a
     // map), and returns the ".second" member of that pair. It is used in
     // Sliver_exuder, to constructor a transform iterator.
-
+    
     // It should be doable using STL bind operators, but i am not sure how
     // to use them. -- Laurent Rineau, 2007/07/27
     template <typename Map>
-    struct Second_of : 
-      public std::unary_function<typename Map::value_type,
-                                 const typename Map::mapped_type&>
+    struct Second_of :
+    public std::unary_function<typename Map::value_type,
+    const typename Map::mapped_type&>
     {
       typedef std::unary_function<typename Map::value_type,
-				  const typename Map::mapped_type&> Base;
+        const typename Map::mapped_type&> Base;
       typedef typename Base::result_type result_type;
       typedef typename Base::argument_type argument_type;
       
       const typename Map::mapped_type&
       operator()(const typename Map::value_type& p) const
       {
-	return p.second;
+        return p.second;
       }
     }; // end class Second_of
-
+    
     // That function is constructed with a vertex handle v1.
     // Then, its operator() takes an other vertex handle v2 as input, and
     // returns the distance d(v1, v2).
     // It is used in Sliver_exuder, to constructor a transform iterator.
     template <typename Gt, typename Vertex_handle>
     class Distance_from_v :
-      public std::unary_function<Vertex_handle, typename Gt::RT>
+    public std::unary_function<Vertex_handle, typename Gt::RT>
     {
-      Vertex_handle * v;
+      const Vertex_handle * v;
       Gt gt;
     public:
-      Distance_from_v(Vertex_handle& vh,
-		   Gt geom_traits = Gt()) 
-	: v(&vh), gt(geom_traits)
+      Distance_from_v(const Vertex_handle& vh,
+                      Gt geom_traits = Gt())
+      : v(&vh), gt(geom_traits)
       {
       }
       
@@ -98,58 +90,165 @@ radius_ratio(const typename K::Tetrahedron_3& t, K k = K())
       operator()(const Vertex_handle& vh) const
       {
         typedef typename Gt::Compute_squared_distance_3
-            Compute_squared_distance_3;
+        Compute_squared_distance_3;
         Compute_squared_distance_3 distance =
-            gt.compute_squared_distance_3_object();
-
-	return distance((*v)->point(), vh->point());
+        gt.compute_squared_distance_3_object();
+        
+        return distance((*v)->point(), vh->point());
       }
     }; // end class Distance_from_v
-
+    
   } // end namespace details
-
+  
+  
+  
 template <
-  typename C2T3, 
-  typename FT = typename C2T3::Triangulation::Geom_traits::FT
-  >
+typename C3T3,
+typename SliverCriteria,
+typename FT = typename C3T3::Triangulation::Geom_traits::FT
+>
 class Slivers_exuder
 {
-public: //types
-  typedef typename C2T3::Triangulation Tr;
+  // Types
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
-
-  typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
-  typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
   typedef typename Weighted_point::Weight Weight;
-
+  
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Geom_traits::Tetrahedron_3 Tetrahedron_3;
   
-private: //types
-  /** Umbrella will represent the link of the umbrella of a point in the
-   *  restricted Delaunay. */
-  typedef std::set<std::pair<Vertex_handle, Vertex_handle> > Umbrella;
-
+  typedef typename C3T3::Cell_iterator Cell_iterator;
+  typedef std::vector<Cell_handle> Cell_vector;
+  typedef std::vector<Facet> Facet_vector;
+  
+  typedef typename C3T3::Surface_index Surface_index;
+  typedef typename C3T3::Subdomain_index Subdomain_index;
+  typedef typename C3T3::Index Index;
+  
+  // Umbrella will store the surface_index of internal facets of a new
+  // weighted point conflict zone. Such facets are represented by their edge
+  // which do not contain the pumped vertex
+  typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
+  typedef std::map<Ordered_edge, Surface_index > Umbrella;
+  
+  // Boundary_facets_from_outside represents the facet of the conflict zone
+  // seen from outside of it. It stores Surface_index of the facet, and
+  // Subdomain_index of the cell which is inside the conflict zone. 
+  typedef std::map<Facet, std::pair<Surface_index,Subdomain_index> >
+    Boundary_facets_from_outside;
   
   /** Pre_star will represent the pre-star of a point. It is a (double)-map
    *  of Facet (viewed from cells inside the star), ordered by the
    *  critial_radius of the point with the cell that lies on the facet, at
    *  the exterior of the pre-star. */
   typedef CGAL::Double_map<Facet, double> Pre_star;
+  
+  // Stores the value of facet for the sliver criterion functor
+  typedef std::map<Facet, double> Sliver_values;
+  
+  // A priority queue ordered on Tet quality (SliverCriteria)
+  typedef CGAL::Double_map<Cell_handle, double> Tet_priority_queue;
+  
 
+  
 public: // methods
-  Slivers_exuder(C2T3 c2t3, double d = 0.45)
-    : c2t3(c2t3), tr(c2t3.triangulation()),
-      sq_delta(d*d), num_of_pumped_vertices(0),
-      num_of_ignored_vertices(0), total_pumping(0.0),
-      initialized(false)
+  
+  /**
+   * @brief Constructor
+   * @param c3t3 The mesh to exude
+   * @param criteria The criterion which will be used to evaluate tet quality
+   * @param d defines the maximal weight we will try:
+   * max_weight(v) < d*dist(v,nearest_vertice(v))
+   */
+  Slivers_exuder(C3T3& c3t3,
+                 const SliverCriteria& criteria = SliverCriteria(),
+                 double d = 0.45);
+  
+  /**
+   * @brief pumps vertices
+   * @param criterion_value_limit All vertices of tetrahedra that have a
+   * quality below this bound will be pumped
+   */
+  void pump_vertices(double criterion_value_limit = SliverCriteria::max_value)
   {
+    pump_vertices<true>(criterion_value_limit);
   }
-
+  
+#ifdef CGAL_MESH_3_VERBOSE  
+  void print_stats(const double sliver_bound = 0.25) const;
+#endif // CGAL_MESH_3_VERBOSE  
+  
+private:
+  /**
+   * Pumps vertices
+   */
+  template <bool pump_vertices_on_surfaces>
+  void pump_vertices(double criterion_value_limit = SliverCriteria::max_value);
+  
+  /**
+   * Pump one vertex
+   */
+  bool pump_vertex(const Vertex_handle& v);
+  
+  /**
+   * Returns the best_weight of v
+   */
+  double get_best_weight(const Vertex_handle& v) const;
+  
+  /**
+   * Initializes pre_star and criterion_values
+   */
+  void
+  initialize_prestar_and_criterion_values(const Vertex_handle& v,
+                                          Pre_star& pre_star,
+                                          Sliver_values& criterion_values) const;
+  
+  /**
+   * Expand pre_star with cell_to_add
+   */
+  bool expand_prestar(const Cell_handle& cell_to_add,
+                      const Vertex_handle& pumped_vertex,
+                      Pre_star& pre_star,
+                      Sliver_values& criterion_values) const;
+  
+  /**
+   * Returns Ordered_edge of facet which do not contains vertex
+   */
+  Ordered_edge get_opposite_ordered_edge(const Facet& facet,
+                                         const Vertex_handle& vertex) const;
+  
+  /**
+   * Returns the umbrella of internal_facets vector
+   */
+  Umbrella get_umbrella(const Facet_vector& internal_facets,
+                        const Vertex_handle& v) const;
+  
+  /**
+   * Updates the mesh with new_point
+   */
+  void update_mesh(const Weighted_point& new_point,
+                   const Vertex_handle& old_vertex);
+  
+  /**
+   * Restores cells and boundary facets of conflict zone of new_vertex in c3t3_
+   */
+  void restore_cells_and_boundary_facets(
+    const Boundary_facets_from_outside& boundary_facets_from_outside,
+    const Vertex_handle& new_vertex);
+  
+  /**
+   * Restore internal facets of conflict zone of new_vertex in c3t3_
+   */
+  void restore_internal_facets(const Umbrella& umbrella,
+                               const Vertex_handle& new_vertex);
+  
+  /**
+   * Orders handles \c h1 & \c h2
+   */ 
   template <typename Handle>
   static
   void order_two_handles(Handle& h1, Handle& h2)
@@ -157,883 +256,1022 @@ public: // methods
     if( h2 < h1 )
       std::swap(h1, h2);
   }
-
-//   static 
-//   void find_the_two_other_indices(int i1, int i2,
-// 				  int& i3, int& i4)
-//     // given i1 and i2 (i1<>i2), returns i3 and i4 so that
-//     // i3 < i4 and i1+i2+i3+i4=6
-//   {
-//     CGAL_precondition( 0 <= i1 && i1 <= 3 );
-//     CGAL_precondition( 0 <= i2 && i2 <= 3 );
-//     CGAL_precondition( i1 != i2 );
+  
+  /**
+   * Initialization
+   */
+  void init(double radius_ratio_limit = SliverCriteria::max_value )
+  {
+    stop_limit_on_radius_ratio_ = radius_ratio_limit;
     
-//     for(i3 = 0; i3 < 4; ++i3)
-//       if( i3 != i1 && i3 != i2 )
-// 	break;
-//     i4 = 6 - i1 - i2 - i3;
-
-//     CGAL_postcondition( 0 <= i3 && i3 < i4 && i4 <= 3 );
-//     CGAL_postcondition( i3 != i1 && i3 != i2 );
-//     CGAL_postcondition( i4 != i1 && i4 != i2 );
-//   }
-
-
+    cells_queue_.clear();
+    initialize_cells_priority_queue();
+    initialized_ = true;
+  }
+  
+  /**
+   * Initialize cells_queue w.r.t stop_limit_on_radius_ratio_
+   */
+  void initialize_cells_priority_queue()
+  {
+    for( Cell_iterator cit = c3t3_.cells_begin() ;
+        cit != c3t3_.cells_end() ;
+        ++cit)
+    {
+      const double value = sliver_criteria_(tr_.tetrahedron(cit));
+      
+      if( value < stop_limit_on_radius_ratio_ )
+        cells_queue_.insert(cit, value);
+    }
+  }
+  
+  /**
+   * Returns critical radius of (v,c)
+   */
+  double compute_critical_radius(const Vertex_handle& v,
+                                 const Cell_handle& c) const
+  {
+    typedef typename Geom_traits::Compute_critical_squared_radius_3
+      Critical_radius;
+    
+    Critical_radius critical_radius =
+      tr_.geom_traits().compute_critical_squared_radius_3_object();
+    
+    return CGAL::to_double(critical_radius(c->vertex(0)->point(),
+                                           c->vertex(1)->point(),
+                                           c->vertex(2)->point(),
+                                           c->vertex(3)->point(),
+                                           v->point()));
+  }
+  
+  /**
+   * Returns the squared distance from vh to its closest vertice
+   */
+  double get_closest_vertice_squared_distance(const Vertex_handle& vh) const
+  {
+    using boost::make_transform_iterator;
+    
+    std::vector<Vertex_handle> incident_vertices;
+    incident_vertices.reserve(128);
+    tr_.incident_vertices(vh, std::back_inserter(incident_vertices));
+    
+    details::Distance_from_v<Geom_traits, Vertex_handle>
+      distance_from_v(vh, Geom_traits());
+    
+    return *(std::min_element(make_transform_iterator(incident_vertices.begin(),
+                                                      distance_from_v),
+                              make_transform_iterator(incident_vertices.end(),
+                                                      distance_from_v)));
+    
+  }
+  
+  /** 
+   * Returns the min value of second element of Ratio
+   */
+  double get_min_value(const Sliver_values& criterion_values) const
+  {
+    using boost::make_transform_iterator;
+    typedef details::Second_of<Sliver_values> Second_of;
+    
+    return *(std::min_element(
+      make_transform_iterator(criterion_values.begin(), Second_of()),
+      make_transform_iterator(criterion_values.end(), Second_of())));
+  }
+  
+  /**
+   * Returns the \c Boundary_facets_from_outside object containing mirror facets
+   * of \c facets
+   */
+  Boundary_facets_from_outside
+  get_boundary_facets_from_outside(const Facet_vector& facets) const
+  {
+    Boundary_facets_from_outside boundary_facets_from_outside;
+    
+    for(typename Facet_vector::const_iterator fit = facets.begin();
+        fit != facets.end();
+        ++fit)
+    {
+      boundary_facets_from_outside.insert(std::make_pair(
+        tr_.mirror_facet(*fit),
+        std::make_pair(c3t3_.surface_index(*fit),
+                       c3t3_.subdomain_index(fit->first))));
+    }
+    
+    return boundary_facets_from_outside;
+  }
+  
+  /**
+   * A functor to remove one \c Cell_handle from a priority queue
+   */
+  class Erase_from_queue
+  {
+  public:
+    Erase_from_queue(Tet_priority_queue& queue)
+    : r_queue_(queue) { }
+    
+    void operator()(const Cell_handle& cell)
+    { r_queue_.erase(cell); }
+    
+  private:
+    Tet_priority_queue& r_queue_;
+  };
+  
+  /**
+   * Delete cells of \c cells from \c cells_queue
+   */
+  void delete_cells_from_queue(const Cell_vector& cells)
+  {
+    std::for_each(cells.begin(), cells.end(), Erase_from_queue(cells_queue_));
+  }
+  
+private: // data
+  C3T3& c3t3_;
+  Tr& tr_;
+  double sq_delta_;
+  double stop_limit_on_radius_ratio_;
+  
+  int num_of_pumped_vertices_;
+  int num_of_ignored_vertices_;
+  int num_of_treated_vertices_;
+  
+  bool initialized_;
+  SliverCriteria sliver_criteria_;
+  Tet_priority_queue cells_queue_;
+  
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
+private:
+  /**
+   * Verifies that two doubles are near equal
+   */
+  static bool near_equal(const double& d1, const double& d2)
+  {
+    const double epsilon = 1e-8;
+    return ( ((d1-d2) >= -1*epsilon) && ((d1-d2) <= epsilon) ); 
+  }
+  
+  /**
+   * Prints a double
+   */
+  static void print_double(const double& d)
+  {
+    std::cerr << d << " ; ";
+  }
+  
   /** This function verifies that the pre_star contains exactly the set of
-      facets given by the sequence [begin, end[. 
-
-      If v!=0, it also fills another Pre_star object, from the sequence [begin,
-      end[, and checks that is in the same order as pre_star.
-  */
+   facets given by the sequence [begin, end[.
+   
+   If v!=0, it also fills another Pre_star object, from the sequence [begin,
+   end[, and checks that is in the same order as pre_star.
+   */
   template <class Input_facet_it>
-  bool check_pre_star(const Pre_star& pre_star, 
+  bool check_pre_star(const Pre_star& pre_star,
                       Input_facet_it begin,
                       Input_facet_it end,
-                      const Vertex_handle v = Vertex_handle())
+                      const Vertex_handle v = Vertex_handle()) const;
+  
+  /** This function verifies that the pre_star contains exactly the set of
+   facets on the boundary of the conflict zone of the weighted point wp.
+   The vertex handle vh is an hint for the location of wp.
+   
+   It also fills another Pre_star object, and checks that is in the same
+   order as pre_star.
+   */
+  bool check_pre_star(const Pre_star& pre_star,
+                      const Weighted_point& wp,
+                      const Vertex_handle& vh) const;
+  
+  /**
+   * Checks if the sliver criterion values from \c criterion_values are the same as
+   * those that will be found if wp is inserted in the triangulation
+   */
+  bool check_ratios(const Sliver_values& criterion_values,
+                    const Weighted_point& wp,
+                    const Vertex_handle& vh) const;
+
+#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
+  
+}; // end class Slivers_exuder
+
+  
+  
+template <typename C3T3, typename SC, typename FT>
+Slivers_exuder<C3T3,SC,FT>::
+Slivers_exuder(C3T3& c3t3, const SC& criteria, double d)
+  : c3t3_(c3t3)
+  , tr_(c3t3_.triangulation())
+  , sq_delta_(d*d)
+  , stop_limit_on_radius_ratio_(0.0)
+  , num_of_pumped_vertices_(0)
+  , num_of_ignored_vertices_(0)
+  , num_of_treated_vertices_(0)
+  , initialized_(false)
+  , sliver_criteria_(criteria)
+{
+}  
+  
+
+template <typename C3T3, typename SC, typename FT>  
+template <bool pump_vertices_on_surfaces>
+void
+Slivers_exuder<C3T3,SC,FT>:: 
+pump_vertices(double sliver_criterion_limit)
+{
+  if( ! initialized_ )
+    init(sliver_criterion_limit);
+  
+  // store radius_ratio_limit in the member stop_limit_on_radius_ratio_
+  stop_limit_on_radius_ratio_ = sliver_criterion_limit;
+  
+#ifdef CGAL_MESH_3_VERBOSE
+  CGAL::Timer timer;
+  timer.start();
+  
+  std::cerr << "Exuding...\n";
+  std::cerr << "Legend of the following line: "
+            << "(#cells left,#vertices pumped,#vertices ignored)" << std::endl;
+
+  std::cerr << "(" << cells_queue_.size() << ",0,0)";
+#endif // CGAL_MESH_3_VERBOSE
+  
+  while( !cells_queue_.empty() )
   {
-    Pre_star pre_star_copy = pre_star;
-    if(v != Vertex_handle())
+    typename Tet_priority_queue::Reverse_entry front = *(cells_queue_.front());
+    Cell_handle c = front.second;
+    
+    bool vertex_pumped = false;
+    for( int i = 0; i < 4; ++i )
     {
-      Pre_star pre_star2;
-
-      // fill pre_star2
-      for(Input_facet_it fit = begin;
-          fit != end;
-          ++fit)
+      // pump_vertices_on_surfaces is a boolean template parameter.  The
+      // following condition is pruned at compiled time, if
+      // pump_vertices_on_surfaces==false.
+      if( pump_vertices_on_surfaces || c3t3_.in_dimension(c->vertex(i)) > 2 )
       {
-        const Facet opposite_facet = tr.mirror_facet(*fit);
-        if(! tr.is_infinite(opposite_facet.first) ) 
+        if( pump_vertex(c->vertex(i)) )
         {
-          pre_star2.insert(*fit, compute_critical_radius(v,
-                                                         opposite_facet.first));
+          vertex_pumped = true;
+          ++num_of_pumped_vertices_;
+          break;
         }
+        else
+          ++num_of_ignored_vertices_;
+        
+        ++num_of_treated_vertices_;
       }
+      else
+        std::cerr << "s"; // vertex is on a surface
+    }
+    
+    // if the tet could not be deleted
+    if ( ! vertex_pumped )
+      cells_queue_.pop_front();
+    
+#ifdef CGAL_MESH_3_VERBOSE   
+    std::cerr << boost::format("\r             \r"
+                               "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+      % cells_queue_.size()
+      % num_of_pumped_vertices_
+      % num_of_ignored_vertices_
+      % (num_of_treated_vertices_ / timer.time());
+#endif // CGAL_MESH_3_VERBOSE  
 
-      while(!pre_star_copy.empty() && !pre_star2.empty())
+  }
+  
+#ifdef CGAL_MESH_3_VERBOSE   
+  timer.stop();
+  std::cerr << std::endl;
+  std::cerr << "Total exuding time: " << timer.time() << "s" << std::endl;
+  std::cerr << std::endl;
+#endif // CGAL_MESH_3_VERBOSE  
+
+} // end function pump_vertices
+
+
+template <typename C3T3, typename SC, typename FT>
+bool
+Slivers_exuder<C3T3,SC,FT>::
+pump_vertex(const Vertex_handle& pumped_vertex)
+{
+  // Get best_weight
+  double best_weight = get_best_weight(pumped_vertex);
+  
+  // If best_weight < pumped_vertex weight, nothing to do
+  if ( best_weight > pumped_vertex->point().weight() )
+  {
+    Weighted_point wp(pumped_vertex->point(), best_weight);
+    
+    // Insert weighted point into mesh
+    update_mesh(wp, pumped_vertex);
+    
+    return true;
+  }
+  
+  return false;
+}
+  
+  
+template <typename C3T3, typename SC, typename FT>
+void
+Slivers_exuder<C3T3,SC,FT>::
+initialize_prestar_and_criterion_values(const Vertex_handle& v,
+                                        Pre_star& pre_star,
+                                        Sliver_values& criterion_values) const
+{
+  std::vector<Cell_handle> incident_cells;
+  incident_cells.reserve(64);
+  tr_.incident_cells(v, std::back_inserter(incident_cells));
+
+  for ( typename Cell_vector::const_iterator cit = incident_cells.begin() ;
+       cit != incident_cells.end() ;
+       ++cit )
+  {
+    const int index = (*cit)->index(v);
+    const Facet f = Facet(*cit, index);
+    const Facet opposite_facet = tr_.mirror_facet(f);
+    
+    // Sliver criterion values initialization
+    if( c3t3_.is_in_complex(*cit) )
+    {
+      double r = sliver_criteria_(tr_.tetrahedron(*cit));
+      criterion_values[f] = r;
+    }
+    
+
+    // Pre_star initialization
+    // If facet is adjacent to and infinite cell, no need to put it in prestar
+    // (infinite critical radius)
+    if ( tr_.is_infinite(opposite_facet.first) )
+      continue;
+    
+    // Insert facet in prestar (even if it is not in complex)
+    double critical_radius = compute_critical_radius(v, opposite_facet.first);
+    pre_star.insert(f, critical_radius);          
+  }
+}
+  
+  
+template <typename C3T3, typename SC, typename FT>
+bool
+Slivers_exuder<C3T3,SC,FT>::
+expand_prestar(const Cell_handle& cell_to_add,
+               const Vertex_handle& pumped_vertex,
+               Pre_star& pre_star,
+               Sliver_values& criterion_values) const
+{
+  // Delete first facet of pre_star
+  Facet start_facet = pre_star.front()->second;
+  CGAL_assertion(tr_.mirror_facet(start_facet).first == cell_to_add);
+#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
+  double critical_radius = pre_star.front()->first;
+#endif
+  pre_star.pop_front();
+  if ( c3t3_.is_in_complex(cell_to_add) )
+  {
+    criterion_values.erase(start_facet);    
+  }
+  
+  int start_mirror_facet_index = tr_.mirror_facet(start_facet).second;
+  
+  // For each facet of cell_to_add
+  for(int i = 0; i<4 ; ++i)
+  {
+    // We have already treated start_facet
+    if ( i == start_mirror_facet_index )
+      continue;
+    
+    const Facet current_facet(cell_to_add, i);
+    const Facet current_mirror_facet(tr_.mirror_facet(current_facet));
+    
+    // If current_facet_mirror is in prestar, delete it
+    // (it may happen than pre_star contains two facets of the same cell)
+    if ( pre_star.erase(current_mirror_facet) )
+    {
+      // If it is a boundary facet, stop pre_star expansion
+      if ( c3t3_.is_in_complex(current_mirror_facet) )
       {
-        if(pre_star_copy.front()->first != pre_star2.front()->first) {
-          std::cerr << "bad order\n";
-          std::cerr << boost::format("pre_star.front()->first=%1%, should be %2%\n")
-            % pre_star_copy.front()->first % pre_star2.front()->first;
-          return false;
-        }
-        pre_star2.pop_front();
-        pre_star_copy.pop_front();
-      }
-
-      if(pre_star2.empty() && ! pre_star_copy.empty()) {
-        std::cerr << "pre_star is too big!\n";
-        while(!pre_star_copy.empty())
-        {
-          const Facet f = pre_star_copy.front()->second;
-          const double r = pre_star_copy.front()->first;
-          pre_star_copy.pop_front();
-          std::cerr << boost::format("extra facet (%1%,%2%) (infinite: %3%, opposite infinite: %4%), critical radius: %5%\n")
-            % &*f.first % f.second % tr.is_infinite(f.first) % tr.is_infinite(f.first->neighbor(f.second))
-            % r;
-        }
         return false;
       }
       
-      if( pre_star_copy.empty() && ! pre_star2.empty() ) {
-        std::cerr << "pre_star is too small!\n";
-        while(!pre_star2.empty())
-        {
-          const Facet f = pre_star2.front()->second;
-          pre_star2.pop_front();
-          std::cerr << boost::format("missing facet (%1%,%2%) (infinite: %3%, opposite infinite: %4%)\n")
-            % &*f.first % f.second % tr.is_infinite(f.first) % tr.is_infinite(f.first->neighbor(f.second));
-        }
-        return false;
+      // Update criterion_values
+      if ( c3t3_.is_in_complex(cell_to_add) )
+      { 
+        criterion_values.erase(current_mirror_facet);
       }
     }
+    // If current_mirror_facet is not in prestar:
+    // expand prestar & update criterion_values 
+    else 
+    {
+      const Cell_handle& current_mirror_cell = current_mirror_facet.first;
+      
+      CGAL_assertion(current_mirror_cell != start_facet.first);
+      CGAL_assertion(pumped_vertex != current_mirror_facet.first->vertex(0));
+      CGAL_assertion(pumped_vertex != current_mirror_facet.first->vertex(1));
+      CGAL_assertion(pumped_vertex != current_mirror_facet.first->vertex(2));
+      CGAL_assertion(pumped_vertex != current_mirror_facet.first->vertex(3));
+      
+      // Update pre_star (we do not insert facets with infinite critical radius)
+      // We do insert facet of cells which are outside the complex (we just 
+      // don't use their sliver criterion value to get best weight)
+      if ( ! tr_.is_infinite(current_mirror_cell) )
+      {
+        double new_critical_radius = 
+          compute_critical_radius(pumped_vertex, current_mirror_cell);
 
-    pre_star_copy = pre_star;
+        pre_star.insert(current_facet, new_critical_radius);
 
+#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER     
+        if ( new_critical_radius < critical_radius )
+          std::cerr << "new critical radius:" << new_critical_radius
+                    << " / current critical radius:" << critical_radius
+                    << std::endl; 
+#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
+      }
+      
+      // Update ratio (ratio is needed for cells of complex only)
+      if ( c3t3_.is_in_complex(cell_to_add) )
+      { 
+        Tetrahedron_3 tet(pumped_vertex->point(),
+                          cell_to_add->vertex((i+1)&3)->point(),
+                          cell_to_add->vertex((i+2)&3)->point(),
+                          cell_to_add->vertex((i+3)&3)->point());
+        
+        double new_value = sliver_criteria_(tet);
+        criterion_values.insert(std::make_pair(current_facet,new_value));
+      }
+    }
+  }        
+  
+  return true;
+}
+
+  
+template <typename C3T3, typename SC, typename FT>
+double
+Slivers_exuder<C3T3,SC,FT>::
+get_best_weight(const Vertex_handle& v) const
+{
+  // Get pre_star and criterion_values
+  Pre_star pre_star;
+  Sliver_values criterion_values;
+  initialize_prestar_and_criterion_values(v, pre_star, criterion_values);
+
+#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER        
+  Pre_star pre_star_copy;
+  Sliver_values ratios_copy;
+#endif
+  
+  double worst_criterion_value = get_min_value(criterion_values);
+  double best_weight = 0;
+  double sq_d_v = get_closest_vertice_squared_distance(v);
+  
+  // If that boolean is set to false, it means that a facet in the complex
+  // is about to be flipped. In that case, the pumping is stopped.
+  bool can_flip = true;
+  
+  // Main loop: find the weight which maximizes the minimum value of ratio
+  while(   can_flip
+        && ! pre_star.empty()
+        && pre_star.front()->first < (sq_delta_ * sq_d_v)
+        && ! c3t3_.is_in_complex(pre_star.front()->second) )
+  {
+    // Store critial radius (pre_star will be modified in expand_prestar)
+    double critical_r = pre_star.front()->first;
+    
+    // expand prestar (insert opposite_cell facets in pre_star)    
+    Facet link = pre_star.front()->second;
+    const Cell_handle& opposite_cell = tr_.mirror_facet(link).first;
+    can_flip = expand_prestar(opposite_cell, v, pre_star, criterion_values);
+    
+    // Update best_weight if needed
+    if(can_flip)
+    {
+      double min_of_pre_star = get_min_value(criterion_values);
+      
+      if( min_of_pre_star > worst_criterion_value )
+      {
+        // Update worst_criterion_value
+        worst_criterion_value = min_of_pre_star;
+        
+        // Update best_weight
+        CGAL_assertion(!pre_star.empty());
+        double next_r = pre_star.front()->first;
+        best_weight = (critical_r + next_r) / 2;
+        
+#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER        
+        pre_star_copy = pre_star;
+        ratios_copy = criterion_values;
+#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER  
+      }
+    }
+  } // end while(... can pump...)
+  
+  
+#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER        
+  if ( best_weight > v->point().weight() )
+  {
+    Weighted_point wp(v->point(), best_weight);
+    check_pre_star(pre_star_copy, wp, v);
+    check_ratios(ratios_copy, wp, v);
+  }
+#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER    
+  
+  return best_weight;
+}
+  
+
+template <typename C3T3, typename SC, typename FT>
+typename Slivers_exuder<C3T3,SC,FT>::Umbrella
+Slivers_exuder<C3T3,SC,FT>::
+get_umbrella(const Facet_vector& facets,
+             const Vertex_handle& v) const
+{
+  Umbrella umbrella;
+  
+  // Insert into umbrella surface_index of facets which are on the surface
+  typename Facet_vector::const_iterator fit = facets.begin();
+  for ( ; fit != facets.end() ; ++fit )
+  {
+    Ordered_edge edge = get_opposite_ordered_edge(*fit, v);
+    
+    if ( c3t3_.is_in_complex(*fit) )
+      umbrella.insert(std::make_pair(edge, c3t3_.surface_index(*fit)));
+  }
+  
+  return umbrella;
+}
+
+  
+template <typename C3T3, typename SC, typename FT>
+void
+Slivers_exuder<C3T3,SC,FT>::  
+restore_cells_and_boundary_facets(
+  const Boundary_facets_from_outside& boundary_facets_from_outside,
+  const Vertex_handle& new_vertex)
+{
+  Cell_vector new_cells;
+  new_cells.reserve(64);
+  tr_.incident_cells(new_vertex, std::back_inserter(new_cells));
+  
+  // Each cell must have a facet on the boundary of the conflict zone
+  CGAL_assertion(boundary_facets_from_outside.size() == new_cells.size());
+  
+  // Restore attributes of each cell
+  for(typename Cell_vector::iterator cit = new_cells.begin();
+      cit != new_cells.end();
+      ++cit)
+  {
+    const int index = (*cit)->index(new_vertex);
+    const Facet new_facet = std::make_pair(*cit, index);
+    const Facet new_facet_from_outside = tr_.mirror_facet(new_facet);
+    
+    // Search new_facet_from_outside in boundary_facets_from_outside.
+    // That search cannot fail.
+    typename Boundary_facets_from_outside::const_iterator it =
+      boundary_facets_from_outside.find(new_facet_from_outside);
+    
+    CGAL_assertion(it != boundary_facets_from_outside.end());
+    
+    // Restore facet attributes
+    if ( it->second.first != Surface_index() )
+      c3t3_.add_to_complex(new_facet, it->second.first);
+    
+    // Restore cell attributes
+    if ( it->second.second != Subdomain_index() )
+      c3t3_.add_to_complex(*cit, it->second.second);
+    
+    // if the new cell is in the domain, and it criterion value is less that
+    // the maximum, push it in the cells queue.
+    if( c3t3_.is_in_complex(*cit) )
+    {
+      double criterion_value = sliver_criteria_(tr_.tetrahedron(*cit));
+
+      if( criterion_value < stop_limit_on_radius_ratio_ )
+        cells_queue_.insert(*cit, criterion_value);
+    }
+  }  
+}
+  
+
+  
+template <typename C3T3, typename SC, typename FT>
+typename Slivers_exuder<C3T3,SC,FT>::Ordered_edge
+Slivers_exuder<C3T3,SC,FT>::get_opposite_ordered_edge(
+  const Facet& facet,
+  const Vertex_handle& vertex) const
+{
+  Vertex_handle v1;
+  Vertex_handle v2;
+  
+  // Get the two vertex of *fit which are not new_vertex
+  for ( int i = 0 ; i < 4 ; ++i )
+  {
+    const Vertex_handle current_vertex = facet.first->vertex(i);
+    
+    if ( current_vertex != vertex && tr_.has_vertex(facet, current_vertex) )
+    {
+      if ( v1 == Vertex_handle() )
+        v1 = current_vertex;
+      else
+        v2 = current_vertex;
+    }
+  }
+  
+  CGAL_assertion(v1 != Vertex_handle() && v2 != Vertex_handle());
+  
+  order_two_handles(v1,v2);
+  return Ordered_edge(v1,v2);
+}
+  
+  
+template <typename C3T3, typename SC, typename FT>
+void
+Slivers_exuder<C3T3,SC,FT>::  
+restore_internal_facets(const Umbrella& umbrella,
+                        const Vertex_handle& new_vertex)
+{
+  Facet_vector new_internal_facets;
+  new_internal_facets.reserve(64);
+  tr_.incident_facets(new_vertex, std::back_inserter(new_internal_facets));
+  
+  // Restore attributes of each facet
+  for(typename Facet_vector::iterator fit = new_internal_facets.begin();
+      fit != new_internal_facets.end();
+      ++fit)
+  {
+    Ordered_edge edge = get_opposite_ordered_edge(*fit, new_vertex);
+
+    // Search edge in umbrella.
+    // If it is found, restore facet surface index from umbrella
+    const typename Umbrella::const_iterator um_it = umbrella.find(edge);
+    if( um_it != umbrella.end() )
+    {
+      c3t3_.add_to_complex(*fit, um_it->second);
+    }
+  }
+}
+
+  
+template <typename C3T3, typename SC, typename FT>
+void
+Slivers_exuder<C3T3,SC,FT>::  
+update_mesh(const Weighted_point& new_point,
+            const Vertex_handle& old_vertex)
+{
+  Cell_vector deleted_cells;
+  Facet_vector internal_facets;
+  Facet_vector boundary_facets;
+  
+  deleted_cells.reserve(64);
+  internal_facets.reserve(64);
+  boundary_facets.reserve(64);
+  
+  tr_.find_conflicts(new_point,
+                     old_vertex->cell(),
+                     std::back_inserter(boundary_facets),
+                     std::back_inserter(deleted_cells),
+                     std::back_inserter(internal_facets));
+  
+  // Get some datas to restore mesh
+  Boundary_facets_from_outside boundary_facets_from_outside =
+    get_boundary_facets_from_outside(boundary_facets);
+  
+  Umbrella umbrella = get_umbrella(internal_facets, old_vertex);
+
+  // Delete old cells from queue (they aren't in the triangulation anymore)
+  delete_cells_from_queue(deleted_cells);
+  
+  // Insert new point (v will be updated using a wp)
+  int dimension = c3t3_.in_dimension(old_vertex);
+  Index vertice_index = c3t3_.index(old_vertex);
+  
+  Vertex_handle new_vertex = tr_.insert(new_point);
+  c3t3_.set_dimension(new_vertex,dimension);
+  c3t3_.set_index(new_vertex,vertice_index);
+  
+  // Restore mesh
+  restore_cells_and_boundary_facets(boundary_facets_from_outside, new_vertex);
+  restore_internal_facets(umbrella, new_vertex);
+}
+ 
+  
+#ifdef CGAL_MESH_3_VERBOSE
+template <typename C3T3, typename SC, typename FT>
+void
+Slivers_exuder<C3T3,SC,FT>::
+print_stats(const double sliver_bound) const
+{
+  Cell_vector slivers;
+  double min_angle = 180.;
+  double min_ratio = 1.;
+  Cell_handle min_cell_handle;
+  Cell_handle min_cell_handle_angle;
+  
+  for( Cell_iterator cit = c3t3_.cells_begin() ;
+      cit != c3t3_.cells_end() ;
+      ++cit)
+  {
+    if( CGAL::to_double(sliver_criteria_(tr_.tetrahedron(cit)))
+       < sliver_bound )
+    {
+      slivers.push_back(cit);
+    }
+    
+    double min_angle_before = min_angle;
+    min_angle = (std::min)(minimum_dihedral_angle(tr_.tetrahedron(cit)), min_angle);
+    if ( min_angle < min_angle_before )
+      min_cell_handle_angle = cit;
+    
+    double min_ratio_before = min_ratio;
+    min_ratio = (std::min)(radius_ratio(tr_.tetrahedron(cit)), min_ratio);
+    if ( min_ratio < min_ratio_before )
+      min_cell_handle = cit;
+  }
+ 
+  std::cerr << "Min angle (degree): " << min_angle << std::endl;
+  std::cerr << "Min ratio: " << min_ratio << std::endl;
+  std::cerr << "Nb of slivers (bound:" << sliver_bound 
+            << "): " << slivers.size() << std::endl << std::endl;
+}
+#endif // CGAL_MESH_3_VERBOSE
+
+  
+  
+#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER  
+template <typename C3T3, typename SC, typename FT>
+template <class Input_facet_it>
+bool
+Slivers_exuder<C3T3,SC,FT>::
+check_pre_star(const Pre_star& pre_star,
+               Input_facet_it begin,
+               Input_facet_it end,
+               const Vertex_handle v) const
+{
+  Pre_star pre_star_copy = pre_star;
+  if(v != Vertex_handle())
+  {
+    Pre_star pre_star2;
+    
+    // fill pre_star2
     for(Input_facet_it fit = begin;
         fit != end;
         ++fit)
     {
-      const Facet opposite_facet = tr.mirror_facet(*fit);
-      if(!tr.is_infinite(opposite_facet.first) && !pre_star_copy.erase(*fit))
+      const Facet opposite_facet = tr_.mirror_facet(*fit);
+      if(! tr_.is_infinite(opposite_facet.first) )
+      {
+        pre_star2.insert(*fit, compute_critical_radius(v,
+                                                       opposite_facet.first));
+      }
+    }
+    
+    while(!pre_star_copy.empty() && !pre_star2.empty())
+    {
+      if(pre_star_copy.front()->first != pre_star2.front()->first) {
+        std::cerr << "bad order\n";
+        std::cerr << boost::format("pre_star.front()->first=%1%, should be %2%\n")
+        % pre_star_copy.front()->first % pre_star2.front()->first;
         return false;
-    }
-    if( !pre_star_copy.empty() )
-      return false;
-
-    return true;
-  }
-
-  /** This function verifies that the pre_star contains exactly the set of
-      facets on the boundary of the conflict zone of the weighted point wp.
-      The vertex handle vh is an hint for the location of wp.
-      
-      It also fills another Pre_star object, and checks that is in the same
-      order as pre_star.
-  */
-  template <typename Cell_handle_output_iterator>
-  bool check_pre_star(const Pre_star& pre_star, 
-                      const Weighted_point& wp,
-                      const Vertex_handle& vh,
-                      Cell_handle_output_iterator cells_out = Emptyset_iterator())
-  {
-    std::vector<Facet> boundary_facets;
-    boundary_facets.reserve(64);
-    
-    tr.find_conflicts(wp,
-                      vh->cell(),
-                      std::back_inserter(boundary_facets),
-                      cells_out,
-                      CGAL::Emptyset_iterator());
-
-    const bool result =  check_pre_star(pre_star,
-                                        boundary_facets.begin(),
-                                        boundary_facets.end(),
-                                        vh);
-    if( ! result )
-      std::cerr << "boundary_facets.size()=" << boundary_facets.size()
-                << "\npre_star.size()=" << pre_star.size()
-                << "\ntested wp=" << wp 
-                << "\n";
-    return result;
-  }
-
-  // ad hoc debug function
-  std::string display_point_with_pre_star(Vertex_handle v, 
-                                          const Pre_star& pre_star)
-  {
-    std::stringstream stream;
-    stream <<  &*v << " (" << v->point() << ")";
-    for(typename Pre_star::const_iterator it = pre_star.begin(); 
-        it != pre_star.end();
-        ++it)
-    {
-      const Facet& f = it->first;
-      const Cell_handle& c = f.first;
-      const int& index = f.second;
-
-      for(int i = 0; i < 4 ; ++i)
-        if(i != index && c->vertex(i) == v)
+      }
+      if ( pre_star_copy.front()->second != pre_star2.front()->second ) 
+      {
+        Facet f1 = pre_star_copy.front()->second;
+        Facet f2 = pre_star2.front()->second;
+        pre_star2.pop_front();
+        pre_star_copy.pop_front();
+        if ( pre_star_copy.front()->second == f2 && pre_star2.front()->second == f1 )
         {
-          stream << " on pre_star";
-          return stream.str();
+          // It's ok
+          pre_star2.pop_front();
+          pre_star_copy.pop_front();
         }
-    }
-    return  stream.str();
-  }
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-
-  void init(double radius_ratio_limit = 1.)
-  {
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-    CGAL_assertion(c2t3.is_valid());
- 
-    std::cerr << std::boolalpha;
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-    CGAL_assertion_code(
-                        std::cerr << "checking c2t3 before exudation...\n";
-                        CGAL::Mesh_3::check_c2t3(c2t3);
-                        std::cerr << "done.\n";
-                        )
-      
-    stop_limit_on_radius_ratio = radius_ratio_limit;
-
-    cells_queue.clear();
-    compute_aspect_ratio_priority_map();
-    std::cerr << "slivers: " << cells_queue.size() << "\n";
-    initialized = true;
-  }
-
-  void pump_vertices(double radius_ratio_limit = 1.)
-  {
-    pump_vertices<true>(radius_ratio_limit);
-  }
-
-  template <
-    bool pump_vertices_on_surfaces
-    >
-  void pump_vertices(double radius_ratio_limit = 1.)
-  {
-    if( ! initialized )
-      init();
-
-    // store radius_ratio_limit in the member stop_limit_on_radius_ratio
-    stop_limit_on_radius_ratio = radius_ratio_limit;
-
-    while( !cells_queue.empty() )
-    {
-      typename Radius_radius_priority_queue::Reverse_entry 
-	front = *(cells_queue.front());
-      Cell_handle c = front.second;
-
-      int i;
-      for( i = 0; i < 4; ++i )
-      {
-        // pump_vertices_on_surfaces is a boolean template parameter.  The
-        // following condition is pruned at compiled time, if
-        // pump_vertices_on_surfaces==false.
-        if( pump_vertices_on_surfaces || 
-	    c->vertex(i)->point().surface_index() == 0 )
-          if( pump_vertex(c->vertex(i)) )
-          {
-            std::cout << "P"; // vertex has been pumped
-            break;
-          }
-          else
-            std::cout << "."; // cannot increase the weight of this vertex
         else
-          std::cout << "s"; // vertex is on a surface
-      }
-
-      // if the tet could not be deleted
-      if (i==4)
-        cells_queue.pop_front();
-
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-      std::cerr << "\nchecking c2t3...\n";
-      CGAL::Mesh_3::check_c2t3(c2t3);
-      std::cerr << "done.\n";
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-
-    }
-  } // end function pump_vertices
-
-  bool pump_vertex(Vertex_handle v)
-  {
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-    std::cerr << 
-      boost::format("Pumping vertex %1% (point: %2%, on surface: %3%)\n")
-      % &*v % v->point() % (v->point().surface_index() != 0);
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-    CGAL_expensive_assertion(tr.is_valid());
-    using boost::make_transform_iterator;
-
-    std::vector<Cell_handle> incident_cells;
-    std::vector<Vertex_handle> incident_vertices;
-    
-    incident_cells.reserve(64);
-    incident_vertices.reserve(128);
-    
-    tr.incident_cells(v, std::back_inserter(incident_cells));
-    tr.incident_vertices(v, std::back_inserter(incident_vertices));
-    
-    typedef std::map<Facet, double> Ratios;
-    Ratios ratios;
-    
-    Pre_star pre_star;
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-    std::set<Cell_handle> pre_star_interior;
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-
-    double best_weight = 0;
-    double worst_radius_ratio = 1;
-
-    details::Distance_from_v<Geom_traits, Vertex_handle> 
-      distance_from_v(v, tr.geom_traits());
-
-    const double sq_d_v = 
-      *(std::min_element(make_transform_iterator(incident_vertices.begin(),
-						 distance_from_v),
-			 make_transform_iterator(incident_vertices.end(),
-						 distance_from_v)));
-
-    // This boolean value will be set to true if one of the incident cells
-    // is in the domain.
-    CGAL_assertion_code(bool is_incident_to_a_cell_in_domain = false);
-
-    // That variable is a counter of the facet that have not been added to
-    // the pre_start, because they lie in the convex hull.
-    int number_of_facets_on_convex_hull = 0;
-
-    // filling 'pre_star' and 'ratios' with initial values
-    for(typename std::vector<Cell_handle>::const_iterator cit = 
-          incident_cells.begin();
-        cit != incident_cells.end();
-        ++cit)
-    {
-      CGAL_assertion( v->point().surface_index() > 0 || (*cit)->is_in_domain() );
-
-      const int index = (*cit)->index(v);
-      const Facet f = Facet(*cit, index);
-      if( (*cit)->is_in_domain() )
-      {
-        CGAL_assertion_code(is_incident_to_a_cell_in_domain = true);
-        const double r = CGAL::to_double(radius_ratio(tr.tetrahedron(*cit), 
-                                                      Geom_traits()));
-        ratios[f] = r;
-        if( r < worst_radius_ratio ) worst_radius_ratio = r;
-      }
-      const Facet opposite_facet = tr.mirror_facet(f);
-      if( !tr.is_infinite(opposite_facet.first) )
-      {
-        pre_star.insert(f, compute_critical_radius(v,
-                                                   opposite_facet.first));
-        // if the facet is on the convex hull, do not insert it in pre_star
-        // however, the corresponding cell *cit is inserted in
-        // pre_star_interior
+        {
+          Facet f1 = tr_.mirror_facet(pre_star_copy.front()->second);
+          Facet f2 = tr_.mirror_facet(pre_star2.front()->second);
+          std::cerr << "Bad facet:" << f1.second << "/" << f2.second
+          << " - " << &*f1.first << "/" << &*f2.first << std::endl;
+        }
       }
       else
-        ++ number_of_facets_on_convex_hull;
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-      pre_star_interior.insert(*cit);
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
+      {
+        pre_star2.pop_front();
+        pre_star_copy.pop_front();
+      }
     }
-
-    // every point in the mesh should be incident to a cell in domain:
-    // if it is on a surface, at least one side of the surface should be in
-    // domain.
-    CGAL_assertion(is_incident_to_a_cell_in_domain);
-
-    double first_radius_ratio = worst_radius_ratio;
-
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-    CGAL_assertion_code(typename Tr::size_type size_of_pre_star = 
-                          pre_star.size() + number_of_facets_on_convex_hull);
-
-    CGAL_assertion_code(Pre_star best_pre_star = pre_star);
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-      
-//     pre_star.pop_front();
-
-//     std::cerr << "v=" << &*v << std::endl;
     
-    bool can_flip = true; // If that boolean is set to false, it means that
-                          // a facet in the complex is about to be
-                          // flipped. In that case, the pumping is stopped.
-    while( can_flip &&
-           !pre_star.empty() && 
-           pre_star.front()->first < (sq_delta * sq_d_v) &&
-           // La condition suivante teste que la facet qui va etre flippee
-           // n'est pas contrainte.
-           ! c2t3.is_in_complex(pre_star.front()->second) )
+    if(pre_star2.empty() && ! pre_star_copy.empty()) {
+      std::cerr << "pre_star is too big!\n";
+      while(!pre_star_copy.empty())
+      {
+        const Facet f = pre_star_copy.front()->second;
+        const double r = pre_star_copy.front()->first;
+        pre_star_copy.pop_front();
+        std::cerr << boost::format("extra facet (%1%,%2%) (infinite: %3%, opposite infinite: %4%), critical radius: %5%\n")
+        % &*f.first % f.second % tr_.is_infinite(f.first) % tr_.is_infinite(f.first->neighbor(f.second))
+        % r;
+      }
+      return false;
+    }
+    
+    if( pre_star_copy.empty() && ! pre_star2.empty() ) {
+      std::cerr << "pre_star is too small!\n";
+      while(!pre_star2.empty())
+      {
+        const Facet f = pre_star2.front()->second;
+        pre_star2.pop_front();
+        std::cerr << boost::format("missing facet (%1%,%2%) (infinite: %3%, opposite infinite: %4%)\n")
+        % &*f.first % f.second % tr_.is_infinite(f.first) % tr_.is_infinite(f.first->neighbor(f.second));
+      }
+      return false;
+    }
+  }
+  
+  pre_star_copy = pre_star;
+  
+  for(Input_facet_it fit = begin;
+      fit != end;
+      ++fit)
+  {
+    const Facet opposite_facet = tr_.mirror_facet(*fit);
+    if(!tr_.is_infinite(opposite_facet.first) && !pre_star_copy.erase(*fit))
+      return false;
+  }
+  if( !pre_star_copy.empty() )
+    return false;
+  
+  return true;
+}
+
+  
+
+template <typename C3T3, typename SC, typename FT>
+bool
+Slivers_exuder<C3T3,SC,FT>::
+check_pre_star(const Pre_star& pre_star,
+               const Weighted_point& wp,
+               const Vertex_handle& vh) const
+{
+  std::vector<Facet> boundary_facets;
+  boundary_facets.reserve(64);
+  
+  tr_.find_conflicts(wp,
+                     vh->cell(),
+                     std::back_inserter(boundary_facets),
+                     CGAL::Emptyset_iterator(),
+                     CGAL::Emptyset_iterator());
+  
+  const bool result =  check_pre_star(pre_star,
+                                      boundary_facets.begin(),
+                                      boundary_facets.end(),
+                                      vh);
+  if( ! result )
+    std::cerr << "boundary_facets.size()=" << boundary_facets.size()
+    << "\npre_star.size()=" << pre_star.size()
+    << "\ntested wp=" << wp
+    << "\n";
+  return result;
+}
+
+  
+template <typename C3T3, typename SC, typename FT>
+bool
+Slivers_exuder<C3T3,SC,FT>::
+check_ratios(const Sliver_values& criterion_values,
+                  const Weighted_point& wp,
+                  const Vertex_handle& vh) const
+{
+  Cell_vector deleted_cells;
+  Facet_vector internal_facets;
+  Facet_vector boundary_facets;
+  
+  tr_.find_conflicts(wp,
+                     vh->cell(),
+                     std::back_inserter(boundary_facets),
+                     std::back_inserter(deleted_cells),
+                     std::back_inserter(internal_facets));
+  
+  bool result = true;
+  std::vector<double> expected_ratios;
+  std::vector<double> ratio_vector;
+  
+  for ( typename Sliver_values::const_iterator rit = criterion_values.begin() ;
+       rit != criterion_values.end() ;
+       ++rit )
+  {
+    ratio_vector.push_back(rit->second);
+  }
+  
+  for ( typename Facet_vector::const_iterator it = boundary_facets.begin() ;
+       it != boundary_facets.end() ;
+       ++ it )
+  {
+    if ( !c3t3_.is_in_complex((it->first)) )
+      continue;
+    
+    int k = it->second;
+    Tetrahedron_3 tet(vh->point(),
+                      it->first->vertex((k+1)&3)->point(),
+                      it->first->vertex((k+2)&3)->point(),
+                      it->first->vertex((k+3)&3)->point());
+    
+    double ratio = sliver_criteria_(tet);
+    expected_ratios.push_back(ratio); 
+    
+    bool found = false;
+    for ( typename Sliver_values::const_iterator rit = criterion_values.begin() ;
+         rit != criterion_values.end() ;
+         ++rit )
     {
-      typename Pre_star::reverse_iterator facet_handle = pre_star.front();
-
-      Facet link = facet_handle->second;
-
-      // first critial radius
-      double critical_r = facet_handle->first;
- 
-      Facet opposite_facet = tr.mirror_facet(link);
-      const Cell_handle& opposite_cell = opposite_facet.first;
-        	
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-      int number_of_erased_facets = 0;
-      int number_of_new_facets = 0;
-      Pre_star old_pre_star = pre_star;
-      int index_of_new_facet = -1;
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-
-      can_flip = true;
-      for(int i = 0; i<4 ; ++i)
+      if ( near_equal(rit->second,ratio) )
       {
-        const Facet new_facet = Facet(opposite_cell, i);
-        const Facet temp_facet = tr.mirror_facet(new_facet);
-        if(!pre_star.erase(temp_facet))
-        {
-          if(! tr.is_infinite(temp_facet.first) )
-          {
-            // in this case temp_facet is a new link facet
-            // viewed from outside the prestar
-            CGAL_assertion( opposite_cell->neighbor(i) != link.first);
-            pre_star.insert(new_facet,
-                            compute_critical_radius(v,
-                                                    temp_facet.first));
-            const Cell_handle& c = new_facet.first;
-            const int& k = new_facet.second;
-  
-            CGAL_assertion( c != link.first );
-
-            if(opposite_cell->is_in_domain())
-            {
-              ratios[new_facet] = 
-                CGAL::to_double(radius_ratio(v->point(),
-                                             c->vertex((k+1)&3)->point(),
-                                             c->vertex((k+2)&3)->point(),
-                                             c->vertex((k+3)&3)->point(),
-                                             Geom_traits()));
-            }
-          }
-          else
-            ++number_of_facets_on_convex_hull;
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-          ++ number_of_new_facets;
-          index_of_new_facet = i;
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-        }
-        else
-        {
-          if(c2t3.is_in_complex(temp_facet)) {
-            can_flip = false;
-          }
-          if(temp_facet.first->is_in_domain())
-          {
-                
-            CGAL_assertion_code(typename Ratios::size_type number_of_erased = )
-  
-              ratios.erase(temp_facet);
-
-            CGAL_assertion( number_of_erased == 1);
-          }
-
-          // in this case temp_facet is an old  link facet
-          // viewed from inside the prestar
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-          ++number_of_erased_facets;
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-        }
-      }
-
-      if(can_flip) 
-      {
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-        std::cerr << "\nFlip " << number_of_erased_facets 
-                  << "-" << number_of_new_facets << "\n"
-                  << "wp=" << display_point_with_pre_star(v, old_pre_star) << "\n"
-                  << "critical_r=" << critical_r << "\n"
-                  << "pre_star.front()->first=" << pre_star.front()->first
-                  << "\npower_product=" 
-                  << power_product(
-                                   opposite_cell->vertex(index_of_new_facet)->point(),
-                                   v->point().point()) << "\n";
-        CGAL_assertion((number_of_erased_facets == 1 && 
-                        number_of_new_facets == 3 ) || // flip 2-3
-                       (number_of_erased_facets == 2 && 
-                        number_of_new_facets == 2 ));  // flip 3-2
-
-        CGAL_assertion_code(size_of_pre_star = size_of_pre_star + number_of_new_facets - number_of_erased_facets);
-        CGAL_assertion( pre_star.size() + number_of_facets_on_convex_hull == size_of_pre_star );
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-
-        using details::Second_of;
-
-        double min_of_pre_star = 
-          *(std::min_element(make_transform_iterator(ratios.begin(),
-                                                     Second_of<Ratios>()),
-                             make_transform_iterator(ratios.end(),
-                                                     Second_of<Ratios>())));
-        //         CGAL_assertion( min_of_pre_star > 0 );
-
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-        std::set<Cell_handle> old_pre_star_interior = pre_star_interior;
-
-        pre_star_interior.clear();
-
-        const bool check_star = check_pre_star(pre_star,
-                                               Weighted_point(v->point().point(),
-                                                              (pre_star.empty() ? critical_r : (critical_r + pre_star.front()->first) / 2),
-                                                              v->point().surface_index()),
-                                               v,
-                                               inserter(pre_star_interior));
-        if( ! check_star )
-          std::cerr << "critical_r=" << critical_r 
-                    << "\npre_star.front()->first=" << pre_star.front()->first
-                    << "\n";
-        CGAL_assertion(check_star);
-        // first check that old_pre_star_interior in
-        // included in pre_star_interior
-
-        CGAL_assertion(std::includes(pre_star_interior.begin(), pre_star_interior.end(),
-                                     old_pre_star_interior.begin(), old_pre_star_interior.end()));
-
-        std::vector<Cell_handle> difference;
-        std::set_difference(pre_star_interior.begin(), pre_star_interior.end(),
-                            old_pre_star_interior.begin(), old_pre_star_interior.end(),
-                            std::back_inserter(difference));
-        
-        CGAL_assertion(difference.size() == pre_star_interior.size() - old_pre_star_interior.size() );
-
-        for(typename std::vector<Cell_handle>::const_iterator cit = difference.begin();
-            cit != difference.end();
-            ++cit)
-        {
-          std::cerr << "added cell " << &**cit << " "
-                    << ( (*cit)->is_in_domain() ? "(in domain)" : "" );
-          if( *cit != opposite_cell )
-            std::cerr << " (!)";
-          std::cerr << " : \n"
-                    << "  " << display_point_with_pre_star((*cit)->vertex(0), old_pre_star) << "\n"
-                    << "  " << display_point_with_pre_star((*cit)->vertex(1), old_pre_star) << "\n"
-                    << "  " << display_point_with_pre_star((*cit)->vertex(2), old_pre_star) << "\n"
-                    << "  " << display_point_with_pre_star((*cit)->vertex(3), old_pre_star) << "\n";
-        }
-        std::cerr << "difference=" << pre_star_interior.size() - old_pre_star_interior.size() << "\n";
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-        if( min_of_pre_star > worst_radius_ratio )
-        {
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-          CGAL_assertion_code(best_pre_star = pre_star;)
-#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-
-
-            worst_radius_ratio = min_of_pre_star;
-          if( !pre_star.empty() )
-          {
-            best_weight = (critical_r + pre_star.front()->first) / 2;
-          }
-          else
-          {
-            CGAL_assertion(false);
-            best_weight = critical_r;
-          }
-        }
-
-
-        facet_handle = pre_star.front();
-        link = facet_handle->second;
-        critical_r = facet_handle->first;
-      } // end if(can_flip)
-    } // end while(... can pump...)
-
-    Bare_point p = v->point().point();
-    int index = v->point().surface_index();
-    //    tr.remove(v);
-    if(best_weight > v->point().weight())
-    {
-      ++num_of_pumped_vertices;
-      
-      total_pumping += (worst_radius_ratio - first_radius_ratio);
-      
-      Weighted_point wp = Weighted_point(p, best_weight, index);
-
-      std::vector<Cell_handle> deleted_cells;
-      std::vector<Facet> internal_facets;
-      std::vector<Facet> boundary_facets;
-      deleted_cells.reserve(64);
-      internal_facets.reserve(64);
-      boundary_facets.reserve(64);
-      
-      tr.find_conflicts(wp,
-			v->cell(),
-                        std::back_inserter(boundary_facets),
-			std::back_inserter(deleted_cells),
-			std::back_inserter(internal_facets));
-
-
-      typedef Mesh_3::Slivers_exuder_cell_attributes_traits<typename Tr::Cell>
-        Cell_attributes_traits;
-      typedef typename Cell_attributes_traits::Cell_attributes
-        Cell_attributes;
-      Cell_attributes_traits attributes_traits;
-      // That map boundary_facets_from_outside stores the facets (c, i) on
-      // the boundary of the conflict zone, so that the cell handles c are
-      // at the exterior of the conflict zone.
-      // It also stores if the cell c->neighbor(i) is in the domain.
-      typedef std::map<Facet, Cell_attributes> Boundary_facets_from_outside;
-      Boundary_facets_from_outside boundary_facets_from_outside;
-
-      for(typename std::vector<Facet>::const_iterator fit =
-	    boundary_facets.begin(), end = boundary_facets.end();
-	  fit != end;
-	  ++fit) 
-      {
-	boundary_facets_from_outside.
-	  insert(std::make_pair(tr.mirror_facet(*fit),
-            attributes_traits.get_attributes(&*fit->first)));
-      }
-
-      // delete cells from the list of bad cells
-      for(typename std::vector<Cell_handle>::iterator
-	    cit = deleted_cells.begin(); 
-	  cit != deleted_cells.end();
-	  ++cit)
-      {
-        CGAL_assertion( v->point().surface_index() > 0 || (*cit)->is_in_domain() );
-
-	cells_queue.erase(*cit);
-      }
-
-      const Facet one_boundary_facet_from_outside =
-	tr.mirror_facet(boundary_facets[0]);
-      // Here, one_boundary_facet_from_outside is a facet on the
-      // boundary of the conflicts zone, seen from outside the
-      // conflicts zone.
-
-      Umbrella umbrella;
-
-      {
-	typename std::vector<Facet>::iterator ifit = internal_facets.begin();
-	for ( ; ifit != internal_facets.end() ; ++ifit) {
-          const int index = ifit->second;
-          const Cell_handle& cell = ifit->first;
-	  if ( cell->is_facet_on_surface(index) ) {
-            CGAL_assertion(tr.has_vertex(*ifit, v));
-            // for each edges of all marked internal facets
-            for(int i1 = 0; i1 < 4; ++i1)
-              for(int i2 = i1 + 1; i2 < 4; ++i2)
-                if( i1 != index && i2 != index)
-                {
-                  Vertex_handle v1 = cell->vertex(i1);
-                  Vertex_handle v2 = cell->vertex(i2);
-                  if(v1 == v || v2 == v) continue;
-                  order_two_handles ( v1, v2 );
-                  CGAL_assertion( v1 < v2 );
-                  const std::pair<Vertex_handle, Vertex_handle> edge = 
-                    std::make_pair(v1, v2);
-//                   typename Umbrella::iterator it = umbrella.find(edge);
-//                   if( it != umbrella.end() )
-//                     umbrella.erase(it);
-//                   else
-                    // @TODO: remark: umbrella.find()/umbrella.insert() can
-                    // be improved using lower_bound()!
-                    // See the trick in include/CGAL/Double_map.h
-                    umbrella.insert(edge);
-                }
-            // remove already present edges, so that only external
-            // edges of the umbrella are in umbrella at the end
-	  }
-	}
-      }
-
-      // The next assertion means
-      //    index == 0 ==> umbrella.empty()
-//       CGAL_assertion( index > 0 || umbrella.empty());
-
-      // The following assertion cannot be checked, if the surface coded by
-      // c2t3 is not manifold.
-
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-      CGAL_assertion(c2t3.is_valid());
-
-      int i,j;
-      c2t3.union_find_of_incident_facets(v,i,j);
-
-      std::cerr << boost::format("Vertex (%1%, %2%) is about to be pumped.\n"
-                                 "  status: %3%\n"
-                                 "  number_of_indicent_facets: %4%\n"
-                                 "  number_of_components: %5%\n"
-                                 "  size of umbrella: %6% (should be equal to %4%)\n")
-        % &*v % v->point()
-        % c2t3.face_status(v)
-        % i
-        % j
-        % umbrella.size();
-#endif
-
-      Vertex_handle new_vertex = tr.insert(wp);
-
-      std::vector<Cell_handle> new_cells;
-      new_cells.reserve(64);
-
-      tr.incident_cells(new_vertex, std::back_inserter(new_cells));
-
-      // We walk in the star, to check for facets that are on 
-      // the surface, using "umbrella".
-
-      // Before the walk, reset the in_conflict_flag of cells (to 0),
-      // restore the boolen is_in_domain(), and update the "bad cells"
-      // (badly shaped) priority queue.
-      for(typename std::vector<Cell_handle>::iterator cit = new_cells.begin();
-	  cit != new_cells.end(); ++cit)
-      {
-	(*cit)->set_in_conflict_flag(0);
-	const int index = (*cit)->index(new_vertex);
-	const Facet f = std::make_pair(*cit, index); // the facet opposite to
-						     // new_vertex, in *cit
-
-	// Search the mirror facet of f in boundary_facets_from_outside.
-	// That search cannot fail.
-	const typename Boundary_facets_from_outside::const_iterator it =
-	  boundary_facets_from_outside.find(tr.mirror_facet(f));
-	CGAL_assertion(it != boundary_facets_from_outside.end());
-
-	// And use the map entry to restore (*cit)'s attributes.
-	attributes_traits.restore_attributes(&**cit, it->second);
-
-	if((*cit)->is_in_domain()) {
-	  // if the new cell is in the domain, and it ratio is less that
-	  // the maximum, push it in the cells queue.
-	  const double ratio = CGAL::to_double(radius_ratio(tr.tetrahedron(*cit),
-							    Geom_traits()));
-	  if( ratio < stop_limit_on_radius_ratio )
-	    cells_queue.insert(*cit, ratio);
-	}
-      }
-
-      walk_on_the_boundary_of_the_star(
-        tr.mirror_facet(one_boundary_facet_from_outside),
-	umbrella,
-	new_vertex);
-
-      // after the walk, reset the in_conflict_flag of cells (to 0).
-      for(typename std::vector<Cell_handle>::iterator cit = new_cells.begin();
-	  cit != new_cells.end(); ++cit)
-      {
-        CGAL_assertion((*cit)->get_in_conflict_flag()==1);
-        (*cit)->set_in_conflict_flag(0);
-        CGAL_assertion( new_vertex->point().surface_index() > 0 || (*cit)->is_in_domain() );
-      }
-
-#ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-      c2t3.union_find_of_incident_facets(new_vertex,i,j);
-
-      std::cerr << boost::format("Vertex (%1%, %2%) is has been pumped.\n"
-                                 "  status: %3%\n"
-                                 "  number_of_indicent_facets: %4%\n"
-                                 "  number_of_components: %5%\n")
-        % &*new_vertex % new_vertex->point()
-        % c2t3.face_status(new_vertex)
-        % i
-        % j;
-
-      CGAL_assertion(c2t3.is_valid(true));
-#endif
-
-      //CGAL_assertion (umbrella.empty());
-
-      return true; // The vertex v has been pumped into new_vertex.
-    }
-    else
-      {
-	++num_of_ignored_vertices;
-	return false;
-      }
-  } // end pump_vertex
-
-  void walk_on_the_boundary_of_the_star(Facet f,
-					Umbrella& umbrella,
-					Vertex_handle v)
-  {
-    Cell_handle& c = f.first;
-    const int& index = f.second;
-
-    CGAL_assertion(v == c->vertex(index));
-    
-    if (c->get_in_conflict_flag() != 0) 
-      return;
-
-    c->set_in_conflict_flag(1);
-
-    for (int i=0; i<4; ++i) {
-      if (i == index) {
-	// ** re-marks facets on the boundary of the star **
-	const Facet f = Facet(c, i);
-	const Facet opposite_facet = tr.mirror_facet(f);
-	const bool marker = 
-	  opposite_facet.first->is_facet_on_surface(opposite_facet.second);
-	c->set_facet_on_surface(i, marker);
-      }
-      else {
-	const Cell_handle& next_c = c->neighbor(i);
-
-	const int next_index = next_c->index(v);
-      
-	const int i1 = tr.next_around_edge(i, index);
-	const int i2 = tr.next_around_edge(index, i);
-	Vertex_handle v1 = c->vertex(i1);
-	Vertex_handle v2 = c->vertex(i2);
-	order_two_handles(v1, v2);
-	CGAL_assertion(v1 < v2);
-
-        const typename Umbrella::iterator um_it = 
-          umbrella.find(std::make_pair(v1, v2));
-	if( um_it != umbrella.end() ) // the facet (c, i) is on the surface
-	{
-          c->set_facet_on_surface(i, true);
-//           next_c->set_facet_on_surface(next_c->index(c), true);
-	}
-        else 
-          c->set_facet_on_surface(i, false);
-	walk_on_the_boundary_of_the_star(Facet(next_c, next_index),
-					 umbrella, v);
+        found = true;
+        break;
       }
     }
-  } // end walk_on_the_boundary_of_the_star
-
-private: // data
-  C2T3 c2t3;
-  Tr& tr;
-  double sq_delta;
-  double stop_limit_on_radius_ratio;
-
-  int num_of_pumped_vertices;
-  int num_of_ignored_vertices;
-  double total_pumping;
-
-  bool initialized;
-    
-  typedef CGAL::Double_map<Cell_handle, double> Radius_radius_priority_queue;
+    if ( ! found )
+    { 
+      result = false;
+    }
+  }
   
-  Radius_radius_priority_queue cells_queue;
-
-private: // methods
-  void compute_aspect_ratio_priority_map()
+  if (expected_ratios.size() != criterion_values.size())
+    result = false;
+  
+  if ( !result )
   {
-    for(Finite_cells_iterator cit = tr.finite_cells_begin();
-        cit != tr.finite_cells_end();
-        ++cit)
-      if(cit->is_in_domain())
-      {
-        const double ratio = CGAL::to_double(radius_ratio(tr.tetrahedron(cit),
-                                                          Geom_traits()));
-        if( ratio < stop_limit_on_radius_ratio )
-          cells_queue.insert(cit, ratio);
-      }
-  }
-
-  typename Geom_traits::FT
-  power_product(const Weighted_point& p1, const Weighted_point& p2) const
-  {
-    typedef typename Geom_traits::Compute_power_product_3
-        Compute_power_product_3;
-    Compute_power_product_3 product =
-        tr.geom_traits().compute_power_product_3_object();
-    return product(p1, p2);
-  }
-
-  double compute_critical_radius(const Vertex_handle& v,
-				 const Cell_handle& c) const
-  {
-    typedef typename Geom_traits::Compute_critical_squared_radius_3
-      Critical_radius;
-    Critical_radius critical_radius = 
-      tr.geom_traits().compute_critical_squared_radius_3_object();
+    std::sort(expected_ratios.begin(),expected_ratios.end());
+    std::sort(ratio_vector.begin(),ratio_vector.end());
+    std::vector<double> diff;
+    std::set_difference(expected_ratios.begin(),expected_ratios.end(),
+                        ratio_vector.begin(),ratio_vector.end(),
+                        std::back_inserter(diff));
     
-    const FT result = critical_radius(c->vertex(0)->point(),
-                                      c->vertex(1)->point(),
-                                      c->vertex(2)->point(),
-                                      c->vertex(3)->point(),
-                                      v->point());
-    return CGAL::to_double(result);
+    
+    std::cerr << "\nExpected criterion_values:[";
+    std::for_each(expected_ratios.begin(), expected_ratios.end(), print_double);
+    std::cerr << "]\nRatios:[";
+    std::for_each(ratio_vector.begin(), ratio_vector.end(), print_double);
+    std::cerr << "]\nDiff:[";
+    std::for_each(diff.begin(),diff.end(), print_double);
+    std::cerr << "]\n";
   }
-
-}; // end class Slivers_exuder
+  
+  return result;
+}
+#endif // CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
+  
+  
 
 } // end namespace Mesh_3
 
-template < class Tr>
+template < class C3T3>
 void
-output_slivers_to_off (std::ostream& os, const Tr & tr, 
-		       const double sliver_bound = 0.25) 
+output_slivers_to_off (std::ostream& os, const C3T3& c3t3,
+                       const double sliver_bound = 0.25)
 {
+  typedef typename C3T3::Triangulation Tr;
+  typedef typename C3T3::Cell_iterator Cell_iterator;
   typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Point Point;
+  typedef typename Tr::Geom_traits Geom_traits;
   
   typedef std::set<Cell_handle> Slivers;
   Slivers slivers;
+  Geom_traits gt;
   
-  for( Finite_cells_iterator cit = tr.finite_cells_begin(); 
-       cit != tr.finite_cells_end(); ++cit)
+  const Tr& tr = c3t3.triangulation();
+  
+  double min_angle = 180;
+  double min_ratio = 1.;
+  
+  for( Cell_iterator cit = c3t3.cells_begin() ;
+      cit != c3t3.cells_end() ;
+      ++cit)
   {
-    if( cit->is_in_domain() &&
-	CGAL::to_double(Mesh_3::radius_ratio(tr.tetrahedron(cit),
-                                             typename Tr::Geom_traits()))
-        < sliver_bound )
+    if( CGAL::to_double(Mesh_3::radius_ratio(tr.tetrahedron(cit),gt))
+       < sliver_bound )
+    {
       slivers.insert(cit);
+    }
+    
+    min_angle = (std::min)(minimum_dihedral_angle(tr.tetrahedron(cit)), min_angle);
+    min_ratio = (std::min)(Mesh_3::radius_ratio(tr.tetrahedron(cit),gt), min_ratio);
   }
+  
+  std::cerr << "min angle:" << min_angle << "\n";
+  std::cerr << "min ratio:" << min_ratio << "\n";
   
   // Header.
   os << "OFF \n"
-      << tr.number_of_vertices() << " " <<
-      slivers.size() * 4 << 
-      " " << 0 << "\n";
-
+  << tr.number_of_vertices() << " " <<
+  slivers.size() * 4 <<
+  " " << 0 << "\n";
+  
   os << std::setprecision(20);
- 
+  
   // Finite vertices coordinates.
   std::map<Vertex_handle, int> V;
   
@@ -1052,34 +1290,34 @@ output_slivers_to_off (std::ostream& os, const Tr & tr,
   
   // Finite cells indices.
   for( typename Slivers::iterator cit = slivers.begin();
-       cit != slivers.end(); ++cit)
+      cit != slivers.end(); ++cit)
   {
     const Cell_handle& c = *cit;
     
-    if( c->vertex(0)->point().surface_index() > 0 &&
-        c->vertex(1)->point().surface_index() > 0 &&
-        c->vertex(2)->point().surface_index() > 0 &&
-        c->vertex(3)->point().surface_index() > 0 )
+    if( c->vertex(0)->in_dimension() == 2 &&
+       c->vertex(1)->in_dimension() == 2 &&
+       c->vertex(2)->in_dimension() == 2 &&
+       c->vertex(3)->in_dimension() == 2 )
       ++flat_slivers;
     
-    if( c->vertex(0)->point().surface_index() > 0 ||
-        c->vertex(1)->point().surface_index() > 0 ||
-        c->vertex(2)->point().surface_index() > 0 ||
-        c->vertex(3)->point().surface_index() > 0 )
+    if( c->vertex(0)->in_dimension() == 2 ||
+       c->vertex(1)->in_dimension() == 2 ||
+       c->vertex(2)->in_dimension() == 2 ||
+       c->vertex(3)->in_dimension() == 2 )
       ++surface_slivers;
     
     for(int i = 0; i < 4; ++i)
-      {
-        os << "3 ";
-        for (int k=0; k<3; k++)
-          os << V[c->vertex((i+k)&3)] << " ";
-        
-	os << "\n"; // without color.
-      }
-   }
-   std::cerr << "Number of slivers: " << slivers.size()
-             << "\nNumber of surface slivers: " << surface_slivers
-             << "\nNumber of flat slivers: " << flat_slivers << std::endl;
+    {
+      os << "3 ";
+      for (int k=0; k<3; k++)
+        os << V[c->vertex((i+k)&3)] << " ";
+      
+      os << "\n"; // without color.
+    }
+  }
+  std::cerr << "Number of slivers: " << slivers.size()
+  << "\nNumber of surface slivers: " << surface_slivers
+  << "\nNumber of flat slivers: " << flat_slivers << std::endl;
 }
 } // end namespace CGAL
 

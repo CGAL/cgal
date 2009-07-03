@@ -22,6 +22,8 @@
 
 namespace CGAL {
 
+namespace Mesh_3 {
+  
 template <typename K>
 typename K::FT
 radius_ratio(const typename K::Point_3& p0,
@@ -73,7 +75,24 @@ radius_ratio(const typename K::Point_3& p0,
 
   return result;
 }
+  
+template <typename K>
+typename K::FT
+radius_ratio(const typename K::Tetrahedron_3& t, K k = K())
+{
+  return radius_ratio(t[0], t[1], t[2], t[3], k);
+}
 
+template <typename Tetrahedron_3>
+typename Kernel_traits<Tetrahedron_3>::Kernel::FT
+radius_ratio(const Tetrahedron_3& t)
+{  
+  return radius_ratio(t, typename Kernel_traits<Tetrahedron_3>::Kernel());
+}
+  
+
+
+} // end namespace Mesh_3
 } // end namespace CGAL
 
 #endif // end CGAL_RADIUS_RATIO_H

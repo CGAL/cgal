@@ -18,13 +18,13 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description :
-//
+// File Description : refine_mesh_3 function declaration and implementation.
 //******************************************************************************
 
 #ifndef REFINE_MESH_3_H_
 #define REFINE_MESH_3_H_
 
+#include <CGAL/Mesh_3/Slivers_exuder.h>
 #include <CGAL/Mesh_3/Mesher_3.h>
 
 namespace CGAL {
@@ -37,11 +37,29 @@ void refine_mesh_3(C3T3& c3t3,
                    const MeshDomain&   domain,
                    const MeshCriteria& criteria)
 {
-  typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain>   Mesher;
-
+  typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
+  typedef typename C3T3::Triangulation::Geom_traits Gt;
+  typedef Mesh_3::Min_dihedral_angle_criterion<Gt> Sliver_criterion;
+  //typedef Mesh_3::Radius_radio_criterion<Gt> Sliver_criterion;
+  typedef typename Mesh_3::Slivers_exuder<C3T3, Sliver_criterion> Exuder;
+  
   // Build mesher and launch refinement process
   Mesher mesher (c3t3, domain, criteria);
   mesher.refine_mesh();
+  
+  // Exudation
+  Exuder exuder(c3t3);
+  
+#ifdef CGAL_MESH_3_VERBOSE
+  exuder.print_stats(10);
+#endif // CGAL_MESH_3_VERBOSE
+  
+  exuder.pump_vertices();
+  
+#ifdef CGAL_MESH_3_VERBOSE
+  exuder.print_stats(10);
+#endif // CGAL_MESH_3_VERBOSE
+
 };
 
 }  // end namespace CGAL
