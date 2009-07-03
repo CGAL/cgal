@@ -17,25 +17,25 @@ AABB_tree/demo/AABB_tree/resources/about.html -text
 AABB_tree/demo/AABB_tree/resources/cgal_logo.xpm -text
 AABB_tree/demo/AABB_tree/types.h -text
 AABB_tree/doc_tex/AABB_tree/PkgDescription.tex -text
-AABB_tree/doc_tex/AABB_tree/anchor.eps -text
-AABB_tree/doc_tex/AABB_tree/anchor.jpg -text
-AABB_tree/doc_tex/AABB_tree/anchor.png -text
-AABB_tree/doc_tex/AABB_tree/anchor.ppt -text
-AABB_tree/doc_tex/AABB_tree/bench.eps -text
-AABB_tree/doc_tex/AABB_tree/bench.jpg -text svneol=unset#image/jpeg
-AABB_tree/doc_tex/AABB_tree/bench.png -text svneol=unset#image/png
 AABB_tree/doc_tex/AABB_tree/details.tex -text
 AABB_tree/doc_tex/AABB_tree/examples.tex -text
+AABB_tree/doc_tex/AABB_tree/figs/anchor.eps -text
+AABB_tree/doc_tex/AABB_tree/figs/anchor.jpg -text
+AABB_tree/doc_tex/AABB_tree/figs/anchor.png -text
+AABB_tree/doc_tex/AABB_tree/figs/anchor.ppt -text
+AABB_tree/doc_tex/AABB_tree/figs/bench.eps -text
+AABB_tree/doc_tex/AABB_tree/figs/bench.jpg -text svneol=unset#image/jpeg
+AABB_tree/doc_tex/AABB_tree/figs/bench.png -text svneol=unset#image/png
+AABB_tree/doc_tex/AABB_tree/figs/memory.eps -text svneol=unset#application/postscript
+AABB_tree/doc_tex/AABB_tree/figs/memory.jpg -text svneol=unset#image/jpeg
+AABB_tree/doc_tex/AABB_tree/figs/memory.png -text svneol=unset#image/png
+AABB_tree/doc_tex/AABB_tree/figs/teaser-thumb.png -text svneol=unset#image/png
+AABB_tree/doc_tex/AABB_tree/figs/teaser.png -text svneol=unset#image/png
+AABB_tree/doc_tex/AABB_tree/figs/teaser.ppt -text svneol=unset#application/vnd.ms-powerpoint
 AABB_tree/doc_tex/AABB_tree/history.tex -text
 AABB_tree/doc_tex/AABB_tree/interface.tex -text
 AABB_tree/doc_tex/AABB_tree/introduction.tex -text
 AABB_tree/doc_tex/AABB_tree/main.tex -text
-AABB_tree/doc_tex/AABB_tree/memory.eps -text svneol=unset#application/postscript
-AABB_tree/doc_tex/AABB_tree/memory.jpg -text svneol=unset#image/jpeg
-AABB_tree/doc_tex/AABB_tree/memory.png -text svneol=unset#image/png
-AABB_tree/doc_tex/AABB_tree/teaser-thumb.png -text svneol=unset#image/png
-AABB_tree/doc_tex/AABB_tree/teaser.png -text svneol=unset#image/png
-AABB_tree/doc_tex/AABB_tree/teaser.ppt -text svneol=unset#application/vnd.ms-powerpoint
 AABB_tree/doc_tex/AABB_tree_ref/AABBGeomTraits.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABBPrimitive.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABBTraits.tex -text
