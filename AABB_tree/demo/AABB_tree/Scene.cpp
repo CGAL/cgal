@@ -35,11 +35,10 @@ Scene::~Scene()
 	delete m_pPolyhedron;
 }
 
-int
-Scene::open(QString filename)
+int Scene::open(QString filename)
 {
 	QTextStream cerr(stderr);
-	cerr << QString("Opening file \"%1\"...\n").arg(filename);
+	cerr << QString("Opening file \"%1\"\n").arg(filename);
 	QApplication::setOverrideCursor(QCursor(::Qt::WaitCursor));
 
 	QFileInfo fileinfo(filename);
@@ -47,7 +46,7 @@ Scene::open(QString filename)
 
 	if(!in || !fileinfo.isFile() || ! fileinfo.isReadable())
 	{
-		std::cerr << "cannot open file" << std::endl;
+		std::cerr << "unable to open file" << std::endl;
 		QApplication::restoreOverrideCursor();
 		return -1;
 	}
@@ -60,7 +59,7 @@ Scene::open(QString filename)
 	in >> *m_pPolyhedron;
 	if(!in)
 	{
-		std::cerr << "file is not a valid OFF file" << std::endl;
+		std::cerr << "invalid OFF file" << std::endl;
 		QApplication::restoreOverrideCursor();
 
 		delete m_pPolyhedron;
@@ -70,8 +69,6 @@ Scene::open(QString filename)
 	}
 
 	QApplication::restoreOverrideCursor();
-
-	std::cerr << " Ok.\n";
 	return 0;
 }
 

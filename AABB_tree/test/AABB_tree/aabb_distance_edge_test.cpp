@@ -52,7 +52,7 @@ void test_impl(Tree& tree, Polyhedron& p, const double duration)
 int main(void)
 {
   std::cout << "AABB distance to edge tests" << std::endl;
-  const double duration = 0.2;
+  const double duration = 0.1;
   test_kernels<SEGMENT>("./data/cube.off",duration);
   test_kernels<SEGMENT>("./data/finger.off",duration);
   test_kernels<SEGMENT>("./data/pinion.off",duration);

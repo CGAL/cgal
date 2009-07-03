@@ -9,6 +9,7 @@ AABB_tree/demo/AABB_tree/Scene.cpp -text
 AABB_tree/demo/AABB_tree/Scene.h -text
 AABB_tree/demo/AABB_tree/Viewer.cpp -text
 AABB_tree/demo/AABB_tree/Viewer.h -text
+AABB_tree/demo/AABB_tree/cleanup.bat eol=crlf
 AABB_tree/demo/AABB_tree/data/hand.off -text svneol=unset#application/octet-stream
 AABB_tree/demo/AABB_tree/data/knot.off -text
 AABB_tree/demo/AABB_tree/data/shark.off -text
@@ -43,7 +44,7 @@ AABB_tree/doc_tex/AABB_tree_ref/AABB_polyhedron_segment_primitive.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABB_polyhedron_triangle_primitive.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABB_traits.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/AABB_tree.tex -text
-AABB_tree/doc_tex/AABB_tree_ref/intro.tex -text
+AABB_tree/doc_tex/AABB_tree_ref/introduction.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/main.tex -text
 AABB_tree/dont_submit -text
 AABB_tree/examples/AABB_tree/AABB_polyhedron_edge_example.cpp -text

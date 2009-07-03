@@ -57,7 +57,7 @@ int main(void)
 {
   std::cout << "AABB naive vs tree distance (segment primitive) tests" << std::endl;
 
-  const double duration = 0.2;
+  const double duration = 0.1;
   test_kernels<SEGMENT>("./data/cube.off",duration);
   test_kernels<SEGMENT>("./data/coverrear.off",duration);
   test_kernels<SEGMENT>("./data/nested_spheres.off",duration);

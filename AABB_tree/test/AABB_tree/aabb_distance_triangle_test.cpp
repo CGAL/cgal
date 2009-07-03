@@ -49,7 +49,7 @@ void test_impl(Tree& tree, Polyhedron& p, const double duration)
 int main(void)
 {
   std::cout << "AABB distance to triangle tests" << std::endl;
-  const double duration = 0.2;
+  const double duration = 0.1;
   test_kernels<TRIANGLE>("./data/cube.off",duration);
   test_kernels<TRIANGLE>("./data/pinion.off",duration);
   test_kernels<TRIANGLE>("./data/finger.off",duration);
