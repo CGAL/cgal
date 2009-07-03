@@ -311,7 +311,7 @@ public :
     mBefore = create_edge_link(aProfile);
   }
   
-  virtual void OnCollapsed( Profile const& aProfile, Vertex_handle aV ) const 
+  virtual void OnCollapsed( Profile const& aProfile, Vertex_handle const& aV ) const 
   {
     // Some collapse can result in self-intersections in any case, so we can't mark it as a failure
     if ( false && Is_self_intersecting( aProfile.surface() ) )
