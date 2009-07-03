@@ -64,6 +64,7 @@ public:
       Triangulation,
       typename MeshCriteria::Facet_criteria,
       MeshDomain,
+      C3T3,
       Null_mesher_level>                            Facets_level;
   
   /// Cells mesher level
@@ -71,6 +72,7 @@ public:
       Triangulation,
       typename MeshCriteria::Cell_criteria,
       MeshDomain,
+      C3T3,
       Facets_level>                                 Cells_level;
   
   //-------------------------------------------------------
@@ -193,28 +195,6 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   std::cerr << std::endl;
 #endif
 }
-    
-    
-    //  std::cerr << "Refining Surface...\n";
-    //  std::cerr << "Legende of the following line: "
-    //  << "(#vertices,#steps," << facets_mesher_.debug_info_header()
-    //  << ")\n";
-    //  std::cerr << "(" << r_tr.number_of_vertices() << ","
-    //  << nbsteps << "," << facets_mesher_.debug_info() << ")";
-    //  timer.start();
-    //  while ( !facets_mesher_.is_algorithm_done() )
-    //  {
-    //    facets_mesher_.one_step(cells_visitor_.previous_level());
-    //    std::cerr
-    //    << boost::format("\r             \r"
-    //        "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
-    //    % r_tr.number_of_vertices()
-    //    % nbsteps % facets_mesher_.debug_info()
-    //    % (nbsteps / timer.time());
-    //    ++nbsteps;
-    //  }
-    //  timer.stop();
-    //  std::cerr << "End Surface...\n\n";
     
 }  // end namespace Mesh_3
   

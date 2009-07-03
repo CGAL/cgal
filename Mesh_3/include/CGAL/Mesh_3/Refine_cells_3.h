@@ -39,12 +39,13 @@ namespace Mesh_3 {
 // Template parameters should be models of
 // Tr         : MeshTriangulation_3
 // Criteria   : MeshCellsCriteria_3
-// MeshTraits : MeshTraits_3
+// MeshDomain : MeshTraits_3
 //
 // Implements a Mesher_level for cells
 template<class Tr,
          class Criteria,
-         class MeshTraits,
+         class MeshDomain,
+         class Complex3InTriangulation3,
          class Previous_,
          class Container_ = Meshes::Double_map_container<
                                           typename Tr::Cell_handle,
@@ -53,7 +54,8 @@ class Refine_cells_3
   : public Mesher_level<Tr,
                         Refine_cells_3<Tr,
                                        Criteria,
-                                       MeshTraits,
+                                       MeshDomain,
+                                       Complex3InTriangulation3,
                                        Previous_,
                                        Container_>,
                         typename Tr::Cell_handle,
@@ -67,32 +69,32 @@ class Refine_cells_3
 private:
   // Internal types
   typedef typename Tr::Facet Facet;
-  typedef typename MeshTraits::Subdomain_index  Subdomain_index;
-  typedef typename MeshTraits::Index  Index;
+  typedef typename MeshDomain::Subdomain_index  Subdomain_index;
+  typedef typename MeshDomain::Index  Index;
   typedef typename Criteria::Cell_badness Cell_badness;
   
-public:
   // Self
   typedef Refine_cells_3<Tr,
     Criteria,
-    MeshTraits,
+    MeshDomain,
+    Complex3InTriangulation3,
     Previous_,
     Container_>       Self;
   
-  
+public:  
   typedef typename Tr::Point Point;
   typedef typename Tr::Cell Cell;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Criteria::Cell_quality Cell_quality;
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
-  typedef Mesh_complex_3_in_triangulation_3<Tr> C3T3;
+  typedef Complex3InTriangulation3 C3T3;
   
   
   // Constructor
   Refine_cells_3(Tr& triangulation,
                  const Criteria& criteria,
-                 const MeshTraits& oracle,
+                 const MeshDomain& oracle,
                  Previous_& previous,
                  C3T3& c3t3) ;
   
@@ -186,7 +188,7 @@ private:
   /// The cell criteria
   const Criteria& r_criteria_;
   /// The oracle
-  const MeshTraits& r_oracle_;
+  const MeshDomain& r_oracle_;
   /// The mesh result
   C3T3& r_c3t3_;
   
@@ -209,32 +211,34 @@ private:
 
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
-Refine_cells_3<Tr,Cr,MT,P_,C_>::Refine_cells_3(Tr& triangulation,
-                                               const Cr& criteria,
-                                               const MT& oracle,
-                                               P_& previous,
-                                               C3T3& c3t3)
-: Mesher_level<Tr, Self, Cell_handle, P_,
-Triangulation_mesher_level_traits_3<Tr> >(previous)
-, C_()
-, No_test_point_conflict()
-, No_after_no_insertion()
-, No_before_conflicts()
-, r_tr_(triangulation)
-, r_criteria_(criteria)
-, r_oracle_(oracle)
-, r_c3t3_(c3t3)
-, last_vertex_index_()
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+Refine_cells_3(Tr& triangulation,
+               const Cr& criteria,
+               const MD& oracle,
+               P_& previous,
+               C3T3& c3t3)
+  : Mesher_level<Tr, Self, Cell_handle, P_,
+      Triangulation_mesher_level_traits_3<Tr> >(previous)
+  , C_()
+  , No_test_point_conflict()
+  , No_after_no_insertion()
+  , No_before_conflicts()
+  , r_tr_(triangulation)
+  , r_criteria_(criteria)
+  , r_oracle_(oracle)
+  , r_c3t3_(c3t3)
+  , last_vertex_index_()
 {
 }
 
 
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 void
-Refine_cells_3<Tr,Cr,MT,P_,C_>::scan_triangulation_impl()
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+scan_triangulation_impl()
 {
   typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
   
@@ -247,10 +251,11 @@ Refine_cells_3<Tr,Cr,MT,P_,C_>::scan_triangulation_impl()
 }
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
-typename Refine_cells_3<Tr,Cr,MT,P_,C_>::Zone
-Refine_cells_3<Tr,Cr,MT,P_,C_>::conflicts_zone_impl(const Point& point,
-                                                    const Cell_handle& cell) const
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::Zone
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+conflicts_zone_impl(const Point& point,
+                    const Cell_handle& cell) const
 {
   Zone zone;
   zone.cell = cell;
@@ -265,9 +270,10 @@ Refine_cells_3<Tr,Cr,MT,P_,C_>::conflicts_zone_impl(const Point& point,
 }
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 void
-Refine_cells_3<Tr,Cr,MT,P_,C_>::remove_cells_from_queue(Zone& zone)
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+remove_cells_from_queue(Zone& zone)
 {
   // Remove elts belonging to zone from elts to refine
   typedef typename Zone::Cells_iterator Cells_iterator;
@@ -280,9 +286,10 @@ Refine_cells_3<Tr,Cr,MT,P_,C_>::remove_cells_from_queue(Zone& zone)
 }
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 void
-Refine_cells_3<Tr,Cr,MT,P_,C_>::update_star(const Vertex_handle& vertex)
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+update_star(const Vertex_handle& vertex)
 {
   typedef std::vector<Cell_handle> Cells;
   typedef typename Cells::iterator Cell_iterator;
@@ -305,11 +312,12 @@ Refine_cells_3<Tr,Cr,MT,P_,C_>::update_star(const Vertex_handle& vertex)
 }
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 void
-Refine_cells_3<Tr,Cr,MT,P_,C_>::treat_new_cell(const Cell_handle& cell)
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+treat_new_cell(const Cell_handle& cell)
 {
-  typedef typename MT::Subdomain Subdomain;
+  typedef typename MD::Subdomain Subdomain;
   
   // treat cell
   const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell));
@@ -332,13 +340,12 @@ Refine_cells_3<Tr,Cr,MT,P_,C_>::treat_new_cell(const Cell_handle& cell)
 }
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
-typename Refine_cells_3<Tr,Cr,MT,P_,C_>::Vertex_handle
-Refine_cells_3<Tr,Cr,MT,P_,C_>::insert_impl(const Point& point,
-                                            const Zone& zone)
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::Vertex_handle
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+insert_impl(const Point& point,
+            const Zone& zone)
 {
-  //  CGAL_assertion( last_vertex_index_ != Index(0) );
-  
   // TODO: look at this
   if( zone.locate_type == Tr::VERTEX )
   {

@@ -20,8 +20,6 @@
 //******************************************************************************
 // File Description :
 // Implements a mesher level for facets.
-//
-// @TODO: C3t3 => template parameter
 //******************************************************************************
 
 #ifndef REFINE_FACETS_3_H
@@ -46,14 +44,15 @@ namespace Mesh_3 {
 // Template parameters should be models of
 // Tr         : MeshTriangulation_3
 // Criteria   : SurfaceMeshFacetsCriteria_3
-// MeshTraits : MeshTraits_3
+// MeshDomain : MeshTraits_3
 //
 // Implements a Mesher_level for facets
 
 // TODO document Container_ requirements
 template<class Tr,
          class Criteria,
-         class MeshTraits,
+         class MeshDomain,
+         class Complex3InTriangulation3,
          class Previous_level_,
          class Container_ = Meshes::Double_map_container<
                                             typename Tr::Facet,
@@ -62,7 +61,8 @@ class Refine_facets_3
 : public Mesher_level<Tr,
                       Refine_facets_3<Tr,
                                       Criteria,
-                                      MeshTraits,
+                                      MeshDomain,
+                                      Complex3InTriangulation3,
                                       Previous_level_>,
                       typename Tr::Facet,
                       Previous_level_,
@@ -71,26 +71,26 @@ class Refine_facets_3
 , public No_after_no_insertion
 , public No_before_conflicts
 {
-public:
   // Self
   typedef Refine_facets_3<Tr,
                           Criteria,
-                          MeshTraits,
+                          MeshDomain,
+                          Complex3InTriangulation3,
                           Previous_level_>                  Self;
 
-
+public:
   typedef typename Tr::Point Point;
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
-  typedef Mesh_complex_3_in_triangulation_3<Tr> C3T3;
+  typedef Complex3InTriangulation3 C3T3;
 
   /// Constructor
   Refine_facets_3(Tr& triangulation,
                   const Criteria& criteria,
-                  const MeshTraits& oracle,
+                  const MeshDomain& oracle,
                   Previous_level_& previous,
-                  Mesh_complex_3_in_triangulation_3<Tr>& c3t3);
+                  C3T3& c3t3);
 
   /// Destructor
   virtual ~Refine_facets_3() { };
@@ -173,8 +173,8 @@ private:
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Criteria::Facet_quality Quality;
   typedef typename Criteria::Facet_badness Badness;
-  typedef typename MeshTraits::Surface_index Surface_index;
-  typedef typename MeshTraits::Index Index;
+  typedef typename MeshDomain::Surface_index Surface_index;
+  typedef typename MeshDomain::Index Index;
   typedef typename Gt::Segment_3 Segment_3;
   typedef typename Gt::Ray_3 Ray_3;
   typedef typename Gt::Line_3 Line_3;
@@ -287,10 +287,6 @@ private:
   void insert_encroached_facet(Facet& facet)
   {
     // Get quality and insert facet
-//    if ( const Badness badness = r_criteria_(facet) )
-//      insert_bad_facet(facet, *badness);
-//    else
-      //insert_bad_facet(facet, r_criteria_());
       insert_bad_facet(facet, Quality());
   }
 
@@ -344,7 +340,7 @@ private:
   /// The facet criteria
   const Criteria& r_criteria_;
   /// The oracle
-  const MeshTraits& r_oracle_;
+  const MeshDomain& r_oracle_;
   /// The mesh result
   C3T3& r_c3t3_;
 
@@ -365,29 +361,32 @@ private:
 
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
-Refine_facets_3<Tr,Cr,MT,P_,C_>::Refine_facets_3(Tr& triangulation,
-                                                 const Cr& criteria,
-                                                 const MT& oracle,
-                                                 P_& previous,
-                                                 C3T3& c3t3)
-: Mesher_level<Tr, Self, Facet, P_,
-                             Triangulation_mesher_level_traits_3<Tr> >(previous)
-, C_()
-, No_after_no_insertion()
-, No_before_conflicts()
-, r_tr_(triangulation)
-, r_criteria_(criteria)
-, r_oracle_(oracle)
-, r_c3t3_(c3t3)
-, last_vertex_index_()
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+Refine_facets_3(Tr& triangulation,
+                const Cr& criteria,
+                const MD& oracle,
+                P_& previous,
+                C3T3& c3t3)
+  : Mesher_level<Tr, Self, Facet, P_,
+                               Triangulation_mesher_level_traits_3<Tr> >(previous)
+  , C_()
+  , No_after_no_insertion()
+  , No_before_conflicts()
+  , r_tr_(triangulation)
+  , r_criteria_(criteria)
+  , r_oracle_(oracle)
+  , r_c3t3_(c3t3)
+  , last_vertex_index_()
 {
 
 }
 
-template<class Tr, class Cr, class MT, class P_, class C_>
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 void
-Refine_facets_3<Tr,Cr,MT,P_,C_>::scan_triangulation_impl()
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+scan_triangulation_impl()
 {
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
@@ -404,11 +403,11 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::scan_triangulation_impl()
 
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 Mesher_level_conflict_status
-Refine_facets_3<Tr,Cr,MT,P_,C_>::test_point_conflict_from_superior_impl(
-                                                  const Point& point,
-                                                  Zone& zone)
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+test_point_conflict_from_superior_impl(const Point& point,
+                                       Zone& zone)
 {
   typedef typename Zone::Facets_iterator Facet_iterator;
 
@@ -440,10 +439,11 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::test_point_conflict_from_superior_impl(
 }
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
-typename Refine_facets_3<Tr,Cr,MT,P_,C_>::Zone
-Refine_facets_3<Tr,Cr,MT,P_,C_>::conflicts_zone_impl(const Point& point,
-                                                     const Facet& facet) const
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::Zone
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+conflicts_zone_impl(const Point& point,
+                    const Facet& facet) const
 {
   Zone zone;
 
@@ -469,11 +469,12 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::conflicts_zone_impl(const Point& point,
 
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 void
-Refine_facets_3<Tr,Cr,MT,P_,C_>::before_insertion_impl(const Facet& facet,
-                                                       const Point& point,
-                                                       Zone& zone)
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+before_insertion_impl(const Facet& facet,
+                      const Point& point,
+                      Zone& zone)
 {
   typedef typename Zone::Facets_iterator Facets_iterator;
 
@@ -528,10 +529,11 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::before_insertion_impl(const Facet& facet,
 
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
-typename Refine_facets_3<Tr,Cr,MT,P_,C_>::Vertex_handle
-Refine_facets_3<Tr,Cr,MT,P_,C_>::insert_impl(const Point& point,
-                                             const Zone& zone)
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::Vertex_handle
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+insert_impl(const Point& point,
+            const Zone& zone)
 {
   if( zone.locate_type == Tr::VERTEX )
   {
@@ -556,10 +558,10 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::insert_impl(const Point& point,
 
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 void
-Refine_facets_3<Tr,Cr,MT,P_,C_>::restore_restricted_Delaunay(
-                                                    const Vertex_handle& vertex)
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+restore_restricted_Delaunay(const Vertex_handle& vertex)
 {
   typedef std::vector<Cell_handle> Cell_handle_vector;
   typedef typename Cell_handle_vector::iterator Cell_handle_vector_iterator;
@@ -590,9 +592,10 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::restore_restricted_Delaunay(
 //-------------------------------------------------------
 // Private methods
 //-------------------------------------------------------
-template<class Tr, class Cr, class MT, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 void
-Refine_facets_3<Tr,Cr,MT,P_,C_>::treat_new_facet(Facet& facet)
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+treat_new_facet(Facet& facet)
 {
   // Treat facet
   Facet_properties properties = compute_facet_properties(facet);
@@ -626,10 +629,10 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::treat_new_facet(Facet& facet)
 }
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
-typename Refine_facets_3<Tr,Cr,MT,P_,C_>::Facet_properties
-Refine_facets_3<Tr,Cr,MT,P_,C_>::compute_facet_properties(
-                                                    const Facet& facet) const
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::Facet_properties
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+compute_facet_properties(const Facet& facet) const
 {
   //-------------------------------------------------------
   // Facet must be finite
@@ -637,12 +640,12 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::compute_facet_properties(
   CGAL_assertion( ! r_tr_.is_infinite(facet) );
 
   // types
-  typedef typename MT::Surface_patch Surface_patch;
-  typedef typename MT::Intersection Intersection;
+  typedef typename MD::Surface_patch Surface_patch;
+  typedef typename MD::Intersection Intersection;
 
   // Functor
   typename Gt::Is_degenerate_3 is_degenerate = Gt().is_degenerate_3_object();
-  typename MT::Do_intersect_surface do_intersect_surface =
+  typename MD::Do_intersect_surface do_intersect_surface =
       r_oracle_.do_intersect_surface_object();
 
 
@@ -658,7 +661,7 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::compute_facet_properties(
     Surface_patch surface = do_intersect_surface(*p_segment);
     if ( surface )
     {
-      typename MT::Construct_intersection construct_intersection =
+      typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
 
       // Trick to have canonical vector : thus, we compute alwais the same
@@ -693,7 +696,7 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::compute_facet_properties(
     Surface_patch surface = do_intersect_surface(*p_ray);
     if ( surface )
     {
-      typename MT::Construct_intersection construct_intersection =
+      typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
 
       Intersection intersect = construct_intersection(*p_ray);
@@ -708,7 +711,7 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::compute_facet_properties(
     Surface_patch surface = do_intersect_surface(*p_line);
     if ( surface )
     {
-      typename MT::Construct_intersection construct_intersection =
+      typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
 
       // Trick to have canonical vector : thus, we compute alwais the same
@@ -742,11 +745,11 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::compute_facet_properties(
 }
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 bool
-Refine_facets_3<Tr,Cr,MT,P_,C_>::is_facet_encroached(
-                                              const Facet& facet,
-                                              const Point& point) const
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+is_facet_encroached(const Facet& facet,
+                    const Point& point) const
 {
   if ( r_tr_.is_infinite(facet.first) || ! is_facet_on_surface(facet) )
   {
@@ -766,11 +769,11 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::is_facet_encroached(
 }
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 bool
-Refine_facets_3<Tr,Cr,MT,P_,C_>::before_insertion_handle_facet_in_conflict_zone(
-                                                    Facet& facet,
-                                                    const Facet& source_facet)
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+before_insertion_handle_facet_in_conflict_zone(Facet& facet,
+                                               const Facet& source_facet)
 {
   Facet other_side = mirror_facet(facet);
 
@@ -792,10 +795,10 @@ Refine_facets_3<Tr,Cr,MT,P_,C_>::before_insertion_handle_facet_in_conflict_zone(
 
 
 
-template<class Tr, class Cr, class MT, class P_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 void
-Refine_facets_3<Tr,Cr,MT,P_,C_>::after_insertion_handle_incident_facet(
-                                                                  Facet& facet)
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+after_insertion_handle_incident_facet(Facet& facet)
 {
   // If the facet is infinite or has been already visited,
   // then there is nothing to do as for it or its edges

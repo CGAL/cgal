@@ -41,8 +41,8 @@ int main()
   Cell_criteria cell_criteria(4, 0.2); // radius-edge ratio, size
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
-  // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+  // Mesh generation (without exudation)
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, false);
 
   // Output
   std::ofstream medit_file("out.mesh");
@@ -53,7 +53,7 @@ int main()
   Cell_criteria new_cell_criteria(4, 0.02); // radius-edge ratio, size
   Mesh_criteria new_criteria(facet_criteria, new_cell_criteria);
 
-  // Mesh refinement
+  // Mesh refinement (with exudation)
   CGAL::refine_mesh_3(c3t3, domain, new_criteria);
 
   // Output
