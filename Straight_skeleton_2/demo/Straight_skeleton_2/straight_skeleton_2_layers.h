@@ -36,7 +36,7 @@ public:
     , mSSkelPtr(aSSkelPtr)
 	, null_halfedge()
 	, null_vertex()
-  }
+  {}
 
   void draw()
   {
