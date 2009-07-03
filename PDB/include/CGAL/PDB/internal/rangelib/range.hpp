@@ -36,10 +36,10 @@ namespace CGAL { namespace PDB { namespace internal { namespace rangelib {
 
 // range for containers
 template< class container_type>
-struct crange : public ::CGAL::PDB::internal::rangelib::detail::container_traits< container_type> {
+struct crange : public detail::container_traits< container_type> {
 
 private:
-	typedef ::CGAL::PDB::internal::rangelib::detail::container_traits< container_type>	parent_class_type;
+	typedef detail::container_traits< container_type>	parent_class_type;
 public:
 
 	typedef typename parent_class_type::iterator	iterator;
@@ -219,7 +219,7 @@ struct irange : public crange< detail::iterator_pair< iterator_type> > {
     typedef irange< iterator_type> self_type;
     // end has a default value, for facilitating the 'default iterator is passed-end iterator' idiom
     irange( iterator_type begin, iterator_type end = iterator_type()) 
-        : base( pair_type(begin,end) ) {}
+        : base( begin,end ) {}
 
 #if !defined(BOOST_MSVC) || \
 	_MSC_VER >= 1300
