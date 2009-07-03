@@ -977,12 +977,15 @@ print_stats(const double sliver_bound) const
     }
     
     double min_angle_before = min_angle;
-    min_angle = (std::min)(minimum_dihedral_angle(tr_.tetrahedron(cit)), min_angle);
+    min_angle = (std::min)(CGAL::to_double(minimum_dihedral_angle(tr_.tetrahedron(cit))),
+                           min_angle);
+    
     if ( min_angle < min_angle_before )
       min_cell_handle_angle = cit;
     
     double min_ratio_before = min_ratio;
-    min_ratio = (std::min)(radius_ratio(tr_.tetrahedron(cit)), min_ratio);
+    min_ratio = (std::min)(CGAL::to_double(radius_ratio(tr_.tetrahedron(cit))),
+                           min_ratio);
     if ( min_ratio < min_ratio_before )
       min_cell_handle = cit;
   }

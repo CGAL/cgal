@@ -35,7 +35,7 @@ struct Tester
   typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Mesh_traits;
 
   typedef typename CGAL::Mesh_triangulation_3<Mesh_traits>::type Tr;
-
+  
   typedef typename Tr::Geom_traits Gt;
   typedef typename Gt::FT FT;
   typedef typename Gt::Point_3 Point;
@@ -117,6 +117,10 @@ int main()
   std::cerr << "\nTESTING WITH Exact_predicates_exact_constructions_kernel...\n";
   Tester<K_e_e> test_epec;
   test_epec();
+  
+//  std::cerr << "\nTESTING WITH Filtered_kernel<Simple_cartesian<float> > kernel...\n";
+//  Tester<Filtered_kernel<CGAL::Simple_cartesian<float> > > test_scf;
+//  test_scf();
 
   return EXIT_SUCCESS;
 }

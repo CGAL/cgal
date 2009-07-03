@@ -35,7 +35,8 @@ namespace CGAL {
 template<class C3T3, class MeshDomain, class MeshCriteria>
 void refine_mesh_3(C3T3& c3t3,
                    const MeshDomain&   domain,
-                   const MeshCriteria& criteria)
+                   const MeshCriteria& criteria,
+                   bool exude = true)
 {
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
   typedef typename C3T3::Triangulation::Geom_traits Gt;
@@ -48,18 +49,21 @@ void refine_mesh_3(C3T3& c3t3,
   mesher.refine_mesh();
   
   // Exudation
-  Exuder exuder(c3t3);
+  if ( exude )
+  {
+    Exuder exuder(c3t3);
   
 #ifdef CGAL_MESH_3_VERBOSE
-  exuder.print_stats(10);
+    exuder.print_stats(10);
 #endif // CGAL_MESH_3_VERBOSE
   
-  exuder.pump_vertices();
+    exuder.pump_vertices();
   
 #ifdef CGAL_MESH_3_VERBOSE
-  exuder.print_stats(10);
+    exuder.print_stats(10);
 #endif // CGAL_MESH_3_VERBOSE
-
+  }
+  
 };
 
 }  // end namespace CGAL

@@ -23,7 +23,9 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
 # Test
-  create_single_source_cgal_program("test_meshing.cpp")
+  create_single_source_cgal_program("test_meshing_polyhedron.cpp")
+  create_single_source_cgal_program("test_meshing_3D_image.cpp")
+  create_single_source_cgal_program("test_meshing_implicit_function.cpp")
   create_single_source_cgal_program("test_c3t3.cpp")
   create_single_source_cgal_program("test_criteria.cpp")
   create_single_source_cgal_program("test_robust_weighted_circumcenter.cpp")

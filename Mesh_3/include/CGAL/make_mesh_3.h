@@ -35,7 +35,8 @@ namespace CGAL {
  */
 template<class C3T3, class MeshDomain, class MeshCriteria>
 C3T3 make_mesh_3(const MeshDomain&   domain,
-                 const MeshCriteria& criteria)
+                 const MeshCriteria& criteria,
+                 bool exude = true)
 {
   typedef typename MeshDomain::Point_3 Point_3;
   typedef typename MeshDomain::Index Index;
@@ -59,7 +60,7 @@ C3T3 make_mesh_3(const MeshDomain&   domain,
   }
   
   // Build mesher and launch refinement process
-  refine_mesh_3(c3t3, domain, criteria);
+  refine_mesh_3(c3t3, domain, criteria, exude);
   
   return c3t3;
 };
