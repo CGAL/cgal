@@ -47,6 +47,7 @@ AABB_tree/doc_tex/AABB_tree_ref/AABB_tree.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/introduction.tex -text
 AABB_tree/doc_tex/AABB_tree_ref/main.tex -text
 AABB_tree/dont_submit -text
+AABB_tree/examples/AABB_tree/AABB_flat_triangle_3_index_vector_example.cpp -text
 AABB_tree/examples/AABB_tree/AABB_flat_triangle_3_vector_example.cpp -text
 AABB_tree/examples/AABB_tree/AABB_polyhedron_edge_example.cpp -text
 AABB_tree/examples/AABB_tree/AABB_polyhedron_facet_distance_example.cpp -text
