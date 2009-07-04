@@ -29,7 +29,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program("AABB_polyhedron_facet_distance_example.cpp")
   create_single_source_cgal_program("AABB_polyhedron_facet_intersection_example.cpp")
   create_single_source_cgal_program("AABB_synthetic_triangle_3_example.cpp")
-
+  create_single_source_cgal_program("AABB_flat_triangle_3_vector_example.cpp")
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
