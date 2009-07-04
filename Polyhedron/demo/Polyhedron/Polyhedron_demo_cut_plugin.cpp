@@ -38,9 +38,9 @@ public:
   Scene_aabb_item(const AABB_tree& tree_) : tree(tree_) {}
 
   bool isFinite() const { return true; }
-  bool isEmpty() const { return tree.is_empty(); }
+  bool isEmpty() const { return tree.empty(); }
   Bbox bbox() const {
-    const CGAL::Bbox_3 bbox = tree.root_bbox();
+    const CGAL::Bbox_3 bbox = tree.bbox();
     return Bbox(bbox.xmin(),
                 bbox.ymin(),
                 bbox.zmin(),
@@ -251,7 +251,7 @@ void Polyhedron_demo_cut_plugin::cut() {
 //      scene->addItem(aabb_item);
 //      std::cerr << "size: " << it->second->size() << std::endl;
 //    }
-//    if(!CGAL::do_intersect(plane, it->second->root_bbox()))
+//    if(!CGAL::do_intersect(plane, it->second->bbox()))
 //      std::cerr << "no intersection\n";
 //    std::cerr << "all_intersection\n";
 //    //it->second.all_intersection<Simple_cartesian_kernel::Segment_3>(plane, std::back_inserter(edges_item->edges));
