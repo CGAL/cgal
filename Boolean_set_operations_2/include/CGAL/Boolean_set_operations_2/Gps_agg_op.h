@@ -108,7 +108,7 @@ public:
 
   /*! Constructor. */
   Gps_agg_op (Arrangement_2& arr, std::vector<Vertex_handle>& vert_vec,
-              Traits_2& tr) :
+              const Traits_2 & tr) :
     m_arr (&arr),
     m_traits(new Meta_traits(tr)),
     m_visitor (&arr, &m_edges_hash, &vert_vec),
@@ -118,7 +118,7 @@ public:
   void sweep_arrangements(unsigned int lower,
                           unsigned int upper,
                           unsigned int jump,
-                          std::vector<Arr_entry>&  arr_vec)
+                          std::vector<Arr_entry>& arr_vec)
   {
     std::list<Meta_X_monotone_curve_2> curves_list;
 

@@ -48,7 +48,7 @@ public:
   class Construct_vertex_2 
   {
   public:
-    Point_2 operator()(const X_monotone_curve_2& cv, int i)
+    Point_2 operator()(const X_monotone_curve_2& cv, int i) const
     {
       Base tr;
       Compare_endpoints_xy_2 cmp_endpoints = 

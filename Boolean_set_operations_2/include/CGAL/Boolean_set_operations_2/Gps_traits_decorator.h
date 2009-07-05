@@ -204,23 +204,24 @@ public:
   protected:
 
   //Data members
-  Base*    m_base_tr;
-  bool     m_traits_owner;
+  const Base * m_base_tr;
+  bool m_traits_owner;
 
 public:
   
-  Gps_traits_decorator() : m_base_tr(new Base()),
-			   m_traits_owner(true)
+  Gps_traits_decorator() :
+    m_base_tr(new Base()),
+    m_traits_owner(true)
   {}
 
-  Gps_traits_decorator(Base& base_traits) :
+  Gps_traits_decorator(const Base & base_traits) :
     m_base_tr(&base_traits),
     m_traits_owner(false)
   {}
 
   ~Gps_traits_decorator()
   {
-    if(m_traits_owner)
+    if (m_traits_owner)
       delete m_base_tr;
   }
 
@@ -231,7 +232,7 @@ public:
     Base_Compare_x_2 m_base;
 
   public:
-    Compare_x_2(Base_Compare_x_2& base) :m_base(base)
+    Compare_x_2(Base_Compare_x_2& base) : m_base(base)
     {}
 
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
@@ -254,7 +255,7 @@ public:
     Base_Compare_xy_2 m_base;
 
   public:
-    Compare_xy_2(const Base_Compare_xy_2& base) :m_base(base)
+    Compare_xy_2(const Base_Compare_xy_2& base) : m_base(base)
     {}
 
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
@@ -276,7 +277,8 @@ public:
     Base_Construct_min_vertex_2 m_base;
 
   public:
-    Construct_min_vertex_2(const Base_Construct_min_vertex_2& base) :m_base(base)
+    Construct_min_vertex_2(const Base_Construct_min_vertex_2& base) :
+      m_base(base)
     {}
 
     Point_2 operator() (const X_monotone_curve_2& cv) const
@@ -298,7 +300,8 @@ public:
     Base_Construct_max_vertex_2 m_base;
 
   public:
-    Construct_max_vertex_2(const Base_Construct_max_vertex_2& base) :m_base(base)
+    Construct_max_vertex_2(const Base_Construct_max_vertex_2& base) :
+      m_base(base)
     {}
 
     Point_2 operator() (const X_monotone_curve_2& cv) const
@@ -321,7 +324,7 @@ public:
     Base_Is_vertical_2 m_base;
 
   public:
-    Is_vertical_2(const Base_Is_vertical_2& base) :m_base(base)
+    Is_vertical_2(const Base_Is_vertical_2& base) : m_base(base)
     {}
 
     bool operator() (const X_monotone_curve_2& cv) const
@@ -344,7 +347,7 @@ public:
     Base_Compare_y_at_x_2 m_base;
 
   public:
-    Compare_y_at_x_2(const Base_Compare_y_at_x_2& base) :m_base(base)
+    Compare_y_at_x_2(const Base_Compare_y_at_x_2& base) : m_base(base)
     {}
 
     Comparison_result operator() (const Point_2& p,
@@ -368,7 +371,8 @@ public:
     Base_Compare_y_at_x_right_2 m_base;
 
   public:
-    Compare_y_at_x_right_2(const Base_Compare_y_at_x_right_2& base) :m_base(base)
+    Compare_y_at_x_right_2(const Base_Compare_y_at_x_right_2& base) :
+      m_base(base)
     {}
 
     Comparison_result operator() (const X_monotone_curve_2& cv1,
@@ -393,7 +397,7 @@ public:
     Base_Equal_2 m_base;
 
   public:
-    Equal_2(const Base_Equal_2& base) :m_base(base)
+    Equal_2(const Base_Equal_2& base) : m_base(base)
     {}
 
     bool operator() (const Point_2& p1, const Point_2& p2) const
@@ -416,7 +420,7 @@ public:
     Base_Split_2 m_base;
 
   public:
-    Split_2(const Base_Split_2& base) :m_base(base)
+    Split_2(const Base_Split_2& base) : m_base(base)
     {}
 
     void operator() (const X_monotone_curve_2& cv,
@@ -506,10 +510,11 @@ public:
     Base_Compare_endpoints_xy_2 m_base;
 
   public:
-    Compare_endpoints_xy_2(const Base_Compare_endpoints_xy_2& base) :m_base(base)
+    Compare_endpoints_xy_2(const Base_Compare_endpoints_xy_2& base) :
+      m_base(base)
     {}
 
-    Comparison_result operator()(const X_monotone_curve_2& cv)
+    Comparison_result operator()(const X_monotone_curve_2& cv) const
     {
       return (m_base(cv));
 
@@ -533,7 +538,7 @@ public:
     Construct_opposite_2(Base_Construct_opposite_2& base) :m_base(base)
     {}
 
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv)
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) const
     {
       return (X_monotone_curve_2(m_base(cv)));
     }

@@ -45,20 +45,21 @@ protected:
 
 public:
 
-  Gps_agg_curve_data() : Base(),
-                         m_arr(NULL),
-                         m_bc(0),
-                         m_twin_bc(0)
+  Gps_agg_curve_data() :
+    Base(),
+    m_arr(NULL),
+    m_bc(0),
+    m_twin_bc(0)
   {}
-
 
   Gps_agg_curve_data(const Arrangement* arr,
                      Halfedge_handle he,
                      unsigned int bc,
-                     unsigned int twin_bc): Base(he),
-                                            m_arr(arr),
-                                            m_bc(bc),
-                                            m_twin_bc(twin_bc)
+                     unsigned int twin_bc):
+    Base(he),
+    m_arr(arr),
+    m_bc(bc),
+    m_twin_bc(twin_bc)
   {}
 
   unsigned int bc() const
@@ -181,7 +182,7 @@ class Gps_agg_meta_traits :
   Gps_agg_meta_traits()
   {}
 
-  Gps_agg_meta_traits(Traits& base_tr) : Base(base_tr)
+  Gps_agg_meta_traits(const Traits & base_tr) : Base(base_tr)
   {}
 
  
@@ -210,7 +211,7 @@ class Gps_agg_meta_traits :
     template<class OutputIterator>
     OutputIterator operator() (const X_monotone_curve_2& cv1,
                                const X_monotone_curve_2& cv2,
-                               OutputIterator oi)
+                               OutputIterator oi) const
     {
       if (cv1.data().arr() == cv2.data().arr())
       {
@@ -269,7 +270,7 @@ class Gps_agg_meta_traits :
             Curve_data cv_data(cv1.data().arr(),
                                Halfedge_handle(),
                                ov_bc, ov_twin_bc);
-              *oi = CGAL::make_object (X_monotone_curve_2 (*overlap_cv, cv_data));
+              *oi = CGAL::make_object (X_monotone_curve_2(*overlap_cv, cv_data));
           }
         }
       }
@@ -279,7 +280,7 @@ class Gps_agg_meta_traits :
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () 
+  Intersect_2 intersect_2_object () const
   {
     return Intersect_2(this->m_base_tr->intersect_2_object(),
                        this->m_base_tr->compare_endpoints_xy_2_object(),
@@ -300,7 +301,7 @@ class Gps_agg_meta_traits :
     {}
 
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
-                     X_monotone_curve_2& c1, X_monotone_curve_2& c2)
+                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
       m_base_split(cv.base(),
                    p.base(),
@@ -320,7 +321,7 @@ class Gps_agg_meta_traits :
   };
 
   /*! Get a Split_2 functor object. */
-  Split_2 split_2_object () 
+  Split_2 split_2_object () const
   {
     return Split_2(this->m_base_tr->split_2_object());
   }
@@ -342,12 +343,13 @@ class Gps_agg_meta_traits :
      * \param cv The curve.
      * \return The left endpoint.
      */
-    Point_2 operator() (const X_monotone_curve_2 & cv) 
+    Point_2 operator() (const X_monotone_curve_2 & cv) const
     {
       if(cv.data().halfedge() == Halfedge_handle())
         return (Point_2 (m_base(cv.base())));
 
-      CGAL_assertion((Arr_halfedge_direction)cv.data().halfedge()->direction() == ARR_LEFT_TO_RIGHT);
+      CGAL_assertion((Arr_halfedge_direction)cv.data().halfedge()->direction() ==
+                     ARR_LEFT_TO_RIGHT);
       return Point_2 (m_base(cv.base()), cv.data().halfedge()->source());
     }
   };
@@ -355,7 +357,8 @@ class Gps_agg_meta_traits :
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object () const
   {
-    return Construct_min_vertex_2(this->m_base_tr->construct_min_vertex_2_object());
+    return Construct_min_vertex_2(this->m_base_tr->
+                                  construct_min_vertex_2_object());
   }
 
 
@@ -375,12 +378,13 @@ class Gps_agg_meta_traits :
      * \param cv The curve.
      * \return The right endpoint.
      */
-    Point_2 operator() (const X_monotone_curve_2 & cv) 
+    Point_2 operator() (const X_monotone_curve_2 & cv) const
     {
       if(cv.data().halfedge() == Halfedge_handle())
         return (Point_2 (m_base(cv.base())));
 
-      CGAL_assertion((Arr_halfedge_direction)cv.data().halfedge()->direction() == ARR_LEFT_TO_RIGHT);
+      CGAL_assertion((Arr_halfedge_direction)cv.data().halfedge()->direction() ==
+                     ARR_LEFT_TO_RIGHT);
       return Point_2 (m_base(cv.base()), cv.data().halfedge()->target());
     }
   };
@@ -388,7 +392,8 @@ class Gps_agg_meta_traits :
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object () const
   {
-    return Construct_max_vertex_2(this->m_base_tr->construct_max_vertex_2_object());
+    return Construct_max_vertex_2(this->m_base_tr->
+                                  construct_max_vertex_2_object());
   }
 
 
@@ -428,7 +433,7 @@ class Gps_agg_meta_traits :
 
 
   /*! Get a Construct_min_vertex_2 functor object. */
-  Compare_xy_2 compare_xy_2_object () 
+  Compare_xy_2 compare_xy_2_object () const
   {
     return Compare_xy_2(this->m_base_tr->compare_xy_2_object());
   }
@@ -452,21 +457,21 @@ class Gps_agg_meta_traits :
     /*! Obtains the parameter space at the end of a curve-end along the x-axis.
      */
     Arr_parameter_space operator() (const X_monotone_curve_2 & cv, 
-                                    const Arr_curve_end& end) 
+                                    const Arr_curve_end& end) const
     {
       return m_base(cv.base(), end);
     }
     
     /*! Obtains the parameter space for a curve along the x-axis.
      */
-    Arr_parameter_space operator() (const X_monotone_curve_2 & cv)
+    Arr_parameter_space operator() (const X_monotone_curve_2 & cv) const
     {
       return m_base(cv.base());
     }
 
     /*! Obtains the parameter space for a point along the x-axis.
      */
-    Arr_parameter_space operator() (const Point_2 & pt)
+    Arr_parameter_space operator() (const Point_2 & pt) const
     {
       return m_base(pt.base());
     }
@@ -530,21 +535,21 @@ class Gps_agg_meta_traits :
     /*! Obtains the parameter space at the end of a curve-end along the y-axis.
      */
     Arr_parameter_space operator() (const X_monotone_curve_2 & cv, 
-                                    const Arr_curve_end& end) 
+                                    const Arr_curve_end& end) const
     {
       return m_base(cv.base(), end);
     }
     
     /*! Obtains the parameter space for a curve along the x-axis.
      */
-    Arr_parameter_space operator() (const X_monotone_curve_2 & cv)
+    Arr_parameter_space operator() (const X_monotone_curve_2 & cv) const
     {
       return m_base(cv.base());
     }
 
     /*! Obtains the parameter space for a point along the x-axis.
      */
-    Arr_parameter_space operator() (const Point_2 & pt)
+    Arr_parameter_space operator() (const Point_2 & pt) const
     {
       return m_base(pt.base());
     }

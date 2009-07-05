@@ -196,7 +196,7 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const X_monotone_curve_2& cv1,
                                const X_monotone_curve_2& cv2,
-                               OutputIterator oi)
+                               OutputIterator oi) const
     {
       //// if the two curves are incident, do not intersect them
       //if(m_self_tr->is_valid_index(cv1.data().index()) && 
@@ -272,7 +272,7 @@ public:
   };
 
    /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () 
+  Intersect_2 intersect_2_object () const
   {
     return Intersect_2(this->m_base_tr->intersect_2_object(),
                        this->m_base_tr->compare_endpoints_xy_2_object(),
@@ -295,7 +295,7 @@ public:
     {}
 
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
-                     X_monotone_curve_2& c1, X_monotone_curve_2& c2)
+                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
       m_base_split(cv.base(),
                    p.base(),
@@ -313,10 +313,9 @@ public:
   };
 
   /*! Get a Split_2 functor object. */
-  Split_2 split_2_object () 
+  Split_2 split_2_object () const
   {
-    return Split_2(this->m_base_tr->split_2_object(),
-                   this);
+    return Split_2(this->m_base_tr->split_2_object(), this);
   }
 
   class Construct_min_vertex_2
@@ -341,7 +340,7 @@ public:
       * \param cv The curve.
       * \return The left endpoint.
       */
-    Point_2 operator() (const X_monotone_curve_2 & cv) 
+    Point_2 operator() (const X_monotone_curve_2 & cv) const
     {
       if(!m_self_tr->is_valid_index(cv.data().index()))
       {
@@ -395,7 +394,7 @@ public:
       * \param cv The curve.
       * \return The left endpoint.
       */
-    Point_2 operator() (const X_monotone_curve_2 & cv) 
+    Point_2 operator() (const X_monotone_curve_2 & cv) const
     {
       if(!m_self_tr->is_valid_index(cv.data().index()))
       {
@@ -464,7 +463,7 @@ public:
 
 
   /*! Get a Construct_min_vertex_2 functor object. */
-  Compare_xy_2 compare_xy_2_object () 
+  Compare_xy_2 compare_xy_2_object () const
   {
     return Compare_xy_2(this->m_base_tr->compare_xy_2_object(), this);
   }
