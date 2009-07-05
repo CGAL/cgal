@@ -93,6 +93,9 @@ void MainWindow::open(QString filename)
 			settings.setValue("OFF open directory",
 				fileinfo.absoluteDir().absolutePath());
 			this->addToRecentFiles(filename);
+
+			// update bbox
+			updateViewerBBox();
 		}
 	}
 }

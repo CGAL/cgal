@@ -16,6 +16,22 @@
 
 class Scene
 {
+public:
+	Scene();
+	~Scene();
+public:
+	// types
+	typedef CGAL::Bbox_3 Bbox;
+	typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
+	typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+	typedef CGAL::AABB_tree<Traits> Facet_tree;
+	typedef Facet_tree::Object_and_primitive_id Object_and_primitive_id;
+	typedef Facet_tree::Primitive_id Primitive_id;
+
+public:
+	Bbox bbox(); // computes and return polyhedron bbox
+	void draw();
+
 private:
 	// member data
 	Polyhedron *m_pPolyhedron;
@@ -32,18 +48,7 @@ private:
 	typedef std::pair<Point,FT> Point_distance;
 	Point_distance m_distance_function[100][100];
 
-public:
-	Scene();
-	~Scene();
-
-public:
-	void draw();
-
-	typedef CGAL::Bbox_3 Bbox;
-	Bbox bbox() { return Bbox(); }
-
-public:
-
+private:
 	// utility functions
 	Vector random_vector();
 	Ray random_ray(const Bbox& bbox);
@@ -53,6 +58,7 @@ public:
 	Plane random_plane(const Bbox& bbox);
 	Segment random_segment(const Bbox& bbox);
 
+public:
 	// file menu
 	int open(QString filename);
 
@@ -84,12 +90,6 @@ public:
 	bool m_view_segments;
 	bool m_view_polyhedron;
 
-	// types
-	typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
-	typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
-	typedef CGAL::AABB_tree<Traits> Facet_tree;
-	typedef Facet_tree::Object_and_primitive_id Object_and_primitive_id;
-	typedef Facet_tree::Primitive_id Primitive_id;
 
 	// benchmarks 
 	enum {DO_INTERSECT,

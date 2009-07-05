@@ -72,6 +72,24 @@ int Scene::open(QString filename)
 	return 0;
 }
 
+Scene::Bbox Scene::bbox()
+{
+	if(m_pPolyhedron == NULL)
+		return Bbox();
+
+	if(m_pPolyhedron->empty())
+		return Bbox();
+
+	std::cout << "Compute bbox...";
+	Polyhedron::Point_iterator it = m_pPolyhedron->points_begin();
+	Bbox bbox = (*it).bbox();
+	for(; it != m_pPolyhedron->points_end();it++)
+		bbox = bbox + (*it).bbox();
+	std::cout << "done." << std::endl;
+
+	return bbox;
+}
+
 void Scene::draw()
 {
 	if(m_view_polyhedron)
