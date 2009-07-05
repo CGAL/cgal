@@ -142,12 +142,12 @@ public:
   {
   private:
 
-    const Base_traits_2        *base;
+    const Base_traits_2 * base;
 
   public:
 
     /*! Constructor. */
-    Compare_x_2 (const Base_traits_2 *_base) :
+    Compare_x_2 (const Base_traits_2 * _base) :
       base (_base)
     {}
 
@@ -175,7 +175,7 @@ public:
   {
   private:
 
-    const Base_traits_2        *base;
+    const Base_traits_2 * base;
 
   public:
 
@@ -208,7 +208,7 @@ public:
   {
   private:
 
-    const Base_traits_2        *base;
+    const Base_traits_2 * base;
 
   public:
 
@@ -256,7 +256,7 @@ public:
   {
   private:
 
-    const Base_traits_2        *base;
+    const Base_traits_2 * base;
 
   public:
 
@@ -304,12 +304,12 @@ public:
   {
   private:
 
-    Base_traits_2            *base;
+    const Base_traits_2 * base;
 
   public:
 
     /*! Constructor. */
-    Split_2 (Base_traits_2 *_base) :
+    Split_2 (const Base_traits_2 * _base) :
       base (_base)
     {}
 
@@ -317,7 +317,7 @@ public:
      * Split a given x-monotone curve at a given point into two sub-curves.
      */
     void operator() (const X_monotone_curve_2& cv, const Point_2& p,
-                     X_monotone_curve_2& c1, X_monotone_curve_2& c2)
+                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
       // Split the base curve into two.
       base->split_2_object() (cv, p, c1, c2);
@@ -331,7 +331,7 @@ public:
   };
 
   /*! Get a Split_2 functor object. */
-  Split_2 split_2_object ()
+  Split_2 split_2_object () const
   {
     return (Split_2 (this));
   }
@@ -341,12 +341,12 @@ public:
   {
   private:
 
-    Base_traits_2        *base;
+    const Base_traits_2 * base;
 
   public:
 
     /*! Constructor. */
-    Intersect_2 (Base_traits_2 *_base) :
+    Intersect_2 (const Base_traits_2 * _base) :
       base (_base)
     {}
 
@@ -357,7 +357,7 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const X_monotone_curve_2& cv1,
                                const X_monotone_curve_2& cv2,
-                               OutputIterator oi)
+                               OutputIterator oi) const
     {
       // In case the curves are adjacent in their curve sequence, we do
       // not have to compute their intersection (we already know that they
@@ -408,7 +408,7 @@ public:
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () 
+  Intersect_2 intersect_2_object () const
   {
     return (Intersect_2 (this));
   }
