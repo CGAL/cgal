@@ -145,7 +145,7 @@ public:
   Gps_simplifier_traits()
   {}
 
-  Gps_simplifier_traits(Traits& tr) : Base(tr)
+  Gps_simplifier_traits(const Traits & tr) : Base(tr)
   {}
 
   unsigned int polygon_size() const
@@ -177,7 +177,7 @@ public:
     Base_Compare_endpoints_xy_2  m_base_cmp_endpoints;
     Base_Compare_xy_2            m_base_cmp_xy;
     Base_Construct_min_vertex_2  m_ctr_min_v;
-    const Self*                  m_self_tr;
+    const Self * m_self_tr;
 
   public:
    
@@ -285,13 +285,14 @@ public:
   {
   private:
     Base_Split_2      m_base_split;
-    const Self*       m_self_tr;
+    const Self * m_self_tr;
 
   public:
 
     /*! Constructor. */
-    Split_2 (const Base_Split_2& base, const Self* tr) : m_base_split(base),
-                                                         m_self_tr(tr)
+    Split_2 (const Base_Split_2& base, const Self* tr) :
+      m_base_split(base),
+      m_self_tr(tr)
     {}
 
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
@@ -323,16 +324,16 @@ public:
   private:
     Base_Construct_min_vertex_2 m_base;
     Base_Compare_endpoints_xy_2 m_base_cmp_endpoints;
-    const Self*                 m_self_tr;
+    const Self * m_self_tr;
 
   public:
 
     Construct_min_vertex_2(const Base_Construct_min_vertex_2& base,
                           const Base_Compare_endpoints_xy_2& base_cmp_endpoints,
-                          const Self* tr):
-        m_base(base),
-        m_base_cmp_endpoints(base_cmp_endpoints),
-        m_self_tr(tr)
+                          const Self * tr):
+      m_base(base),
+      m_base_cmp_endpoints(base_cmp_endpoints),
+      m_self_tr(tr)
     {}
 
     /*!
@@ -366,9 +367,10 @@ public:
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object () const
   {
-    return Construct_min_vertex_2(this->m_base_tr->construct_min_vertex_2_object(),
-                                  this->m_base_tr->compare_endpoints_xy_2_object(),
-                                  this);
+    return Construct_min_vertex_2
+      (this->m_base_tr->construct_min_vertex_2_object(),
+       this->m_base_tr->compare_endpoints_xy_2_object(),
+       this);
   }
 
 
@@ -377,16 +379,16 @@ public:
   private:
     Base_Construct_max_vertex_2      m_base;
     Base_Compare_endpoints_xy_2      m_base_cmp_endpoints;
-    const Self*                      m_self_tr;
+    const Self * m_self_tr;
 
   public:
 
     Construct_max_vertex_2(const Base_Construct_max_vertex_2& base,
                           const Base_Compare_endpoints_xy_2& base_cmp_endpoints,
-                          const Self* tr):
-        m_base(base),
-        m_base_cmp_endpoints(base_cmp_endpoints),
-        m_self_tr(tr)
+                          const Self * tr):
+      m_base(base),
+      m_base_cmp_endpoints(base_cmp_endpoints),
+      m_self_tr(tr)
     {}
 
     /*!
@@ -419,23 +421,23 @@ public:
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object () const
   {
-    return Construct_max_vertex_2(this->m_base_tr->construct_max_vertex_2_object(),
-                                  this->m_base_tr->compare_endpoints_xy_2_object(),
-                                  this);
+    return Construct_max_vertex_2
+      (this->m_base_tr->construct_max_vertex_2_object(),
+       this->m_base_tr->compare_endpoints_xy_2_object(),
+       this);
   }
 
   class Compare_xy_2
   {
   private:
     Base_Compare_xy_2       m_base;
-    const Self*             m_self_tr;
+    const Self * m_self_tr;
 
   public:
-
     Compare_xy_2(const Base_Compare_xy_2& base,
-                const Self* tr ):
-        m_base(base),
-        m_self_tr(tr)
+                 const Self * tr):
+      m_base(base),
+      m_self_tr(tr)
     {}
 
 

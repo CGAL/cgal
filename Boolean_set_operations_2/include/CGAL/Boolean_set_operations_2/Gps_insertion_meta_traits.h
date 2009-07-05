@@ -33,17 +33,20 @@ class Gps_insertion_meta_traits :
                               Point_with_vertex<Arrangement_> >
 {
 public:
-  typedef typename Arrangement_::Traits_2                       Base_traits;
+  typedef typename Arrangement_::Traits_2                   Base_traits;
   typedef Gps_traits_decorator<Base_traits,
                                Curve_with_halfedge<Arrangement_>,
-                               Point_with_vertex<Arrangement_> >       Base;
-  typedef typename Base::Point_2                                Point_2; 
-  typedef typename Base::X_monotone_curve_2                     X_monotone_curve_2; 
-  typedef typename Base::Curve_data                             Curve_data;
-  typedef typename Base::Point_data                             Point_data;
-  typedef typename Base_traits::Construct_min_vertex_2          Base_Construct_min_vertex_2;
-  typedef typename Base_traits::Construct_max_vertex_2          Base_Construct_max_vertex_2;
-  typedef typename Base_traits::Compare_xy_2                    Base_Compare_xy_2;
+                               Point_with_vertex<Arrangement_> >
+                                                            Base;
+  typedef typename Base::Point_2                            Point_2; 
+  typedef typename Base::X_monotone_curve_2                 X_monotone_curve_2; 
+  typedef typename Base::Curve_data                         Curve_data;
+  typedef typename Base::Point_data                         Point_data;
+  typedef typename Base_traits::Construct_min_vertex_2
+    Base_Construct_min_vertex_2;
+  typedef typename Base_traits::Construct_max_vertex_2
+    Base_Construct_max_vertex_2;
+  typedef typename Base_traits::Compare_xy_2                Base_Compare_xy_2;
 
 public:
   Gps_insertion_meta_traits() : Base()
@@ -58,11 +61,11 @@ public:
   class Construct_min_vertex_2
   {
   protected:
-
     Base_Construct_min_vertex_2 m_base;
 
   public:
-    Construct_min_vertex_2(const Base_Construct_min_vertex_2& base) :m_base(base)
+    Construct_min_vertex_2(const Base_Construct_min_vertex_2& base) :
+      m_base(base)
     {}
 
     Point_2 operator() (const X_monotone_curve_2& cv) const
@@ -75,18 +78,19 @@ public:
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object () const
   {
-    return Construct_min_vertex_2(this->m_base_tr->construct_min_vertex_2_object());
+    return Construct_min_vertex_2
+      (this->m_base_tr->construct_min_vertex_2_object());
   }
 
 
   class Construct_max_vertex_2
   {
   protected:
-
     Base_Construct_max_vertex_2 m_base;
 
   public:
-    Construct_max_vertex_2(const Base_Construct_max_vertex_2& base) :m_base(base)
+    Construct_max_vertex_2(const Base_Construct_max_vertex_2& base) :
+      m_base(base)
     {}
 
     Point_2 operator() (const X_monotone_curve_2& cv) const
@@ -99,17 +103,17 @@ public:
   /*! Get a Construct_max_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object () const
   {
-    return Construct_max_vertex_2(this->m_base_tr->construct_max_vertex_2_object());
+    return Construct_max_vertex_2
+      (this->m_base_tr->construct_max_vertex_2_object());
   }
 
   class Compare_xy_2
   {
   protected:
-
     Base_Compare_xy_2 m_base;
 
   public:
-    Compare_xy_2(const Base_Compare_xy_2& base) :m_base(base)
+    Compare_xy_2(const Base_Compare_xy_2& base) : m_base(base)
     {}
 
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const

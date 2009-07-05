@@ -56,7 +56,7 @@ public:
       Construct_min_vertex_2 ctr_min_v = tr.construct_min_vertex_2_object();
       Construct_max_vertex_2 ctr_max_v = tr.construct_max_vertex_2_object();
       i %= 2;
-      if(i==0)
+      if (i==0)
       {
         // return the source
         if(cmp_endpoints(cv) == SMALLER)

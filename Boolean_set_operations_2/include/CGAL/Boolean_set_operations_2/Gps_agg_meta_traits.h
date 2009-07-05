@@ -185,18 +185,15 @@ class Gps_agg_meta_traits :
   Gps_agg_meta_traits(const Traits & base_tr) : Base(base_tr)
   {}
 
- 
   class Intersect_2
   {
   private:
-
     Base_Intersect_2             m_base;
     Base_Compare_endpoints_xy_2  m_base_cmp_endpoints;
     Base_Compare_xy_2            m_base_cmp_xy;
     Base_Construct_min_vertex_2  m_base_ctr_min_v;
 
   public:
-   
     /*! Constructor. */
     Intersect_2 (const Base_Intersect_2& base,
                  const Base_Compare_endpoints_xy_2& base_cmp_endpoints,
@@ -248,7 +245,7 @@ class Gps_agg_meta_traits :
           {
             unsigned int ov_bc;
             unsigned int ov_twin_bc;
-            if(m_base_cmp_endpoints(cv1) == m_base_cmp_endpoints(cv2))
+            if (m_base_cmp_endpoints(cv1) == m_base_cmp_endpoints(cv2))
             {
               // cv1 and cv2 have the same directions
               ov_bc = cv1.data().bc() + cv2.data().bc();
@@ -334,7 +331,7 @@ class Gps_agg_meta_traits :
 
   public:
 
-    Construct_min_vertex_2(const Base_Construct_min_vertex_2& base):
+    Construct_min_vertex_2(const Base_Construct_min_vertex_2& base) :
         m_base(base)
     {}
   
@@ -348,8 +345,9 @@ class Gps_agg_meta_traits :
       if(cv.data().halfedge() == Halfedge_handle())
         return (Point_2 (m_base(cv.base())));
 
-      CGAL_assertion((Arr_halfedge_direction)cv.data().halfedge()->direction() ==
-                     ARR_LEFT_TO_RIGHT);
+      CGAL_assertion
+        ((Arr_halfedge_direction)cv.data().halfedge()->direction() ==
+         ARR_LEFT_TO_RIGHT);
       return Point_2 (m_base(cv.base()), cv.data().halfedge()->source());
     }
   };
@@ -559,9 +557,8 @@ class Gps_agg_meta_traits :
   /*! Get a Construct_min_vertex_2 functor object. */
   Parameter_space_in_y_2 parameter_space_in_y_2_object () const
   {
-    return Parameter_space_in_y_2(
-        this->m_base_tr->parameter_space_in_y_2_object()
-    );
+    return Parameter_space_in_y_2
+      (this->m_base_tr->parameter_space_in_y_2_object());
   }
 
   class Compare_x_near_boundary_2
@@ -599,9 +596,8 @@ class Gps_agg_meta_traits :
   /*! Get a Construct_min_vertex_2 functor object. */
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object () const
   {
-    return Compare_x_near_boundary_2(
-        this->m_base_tr->compare_x_near_boundary_2_object()
-    );
+    return Compare_x_near_boundary_2
+      (this->m_base_tr->compare_x_near_boundary_2_object());
   }
 
   // TODO Compare_x_on_boundary_2
