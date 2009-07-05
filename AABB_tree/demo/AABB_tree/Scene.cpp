@@ -245,47 +245,53 @@ void Scene::draw_signed_distance_function()
 		::glEnd();
 }
 
-
-Point Scene::random_point()
+FT Scene::random_in(const double a,
+                    const double b)
 {
-	FT x = (double)rand() / RAND_MAX - 0.5;
-	FT y = (double)rand() / RAND_MAX - 0.5;
-	FT z = (double)rand() / RAND_MAX - 0.5;
-	return Point(x,y,z);
+    double r = rand() / (double)RAND_MAX;
+    return (FT)(a + (b - a) * r);
+}
+
+Point Scene::random_point(const CGAL::Bbox_3& bbox)
+{
+    FT x = random_in(bbox.xmin(),bbox.xmax());
+    FT y = random_in(bbox.ymin(),bbox.ymax());
+    FT z = random_in(bbox.zmin(),bbox.zmax());
+    return Point(x,y,z);
 }
 
 Vector Scene::random_vector()
 {
-	FT x = (double)rand() / RAND_MAX;
-	FT y = (double)rand() / RAND_MAX;
-	FT z = (double)rand() / RAND_MAX;
+	FT x = random_in(0.0,1.0);
+	FT y = random_in(0.0,1.0);
+	FT z = random_in(0.0,1.0);
 	return Vector(x,y,z);
 }
 
-Ray Scene::random_ray()
+Ray Scene::random_ray(const CGAL::Bbox_3& bbox)
 {
-	Point p = random_point();
-	Point q = random_point();
+	Point p = random_point(bbox);
+	Point q = random_point(bbox);
 	return Ray(p,q);
 }
 
-Segment Scene::random_segment()
+Segment Scene::random_segment(const CGAL::Bbox_3& bbox)
 {
-	Point p = random_point();
-	Point q = random_point();
+	Point p = random_point(bbox);
+	Point q = random_point(bbox);
 	return Segment(p,q);
 }
 
-Line Scene::random_line()
+Line Scene::random_line(const CGAL::Bbox_3& bbox)
 {
-	Point p = random_point();
-	Point q = random_point();
+	Point p = random_point(bbox);
+	Point q = random_point(bbox);
 	return Line(p,q);
 }
 
-Plane Scene::random_plane()
+Plane Scene::random_plane(const CGAL::Bbox_3& bbox)
 {
-	Point p = random_point();
+	Point p = random_point(bbox);
 	Vector vec = random_vector();
 	return Plane(p,vec);
 }
@@ -308,7 +314,7 @@ void Scene::generate_inside_points(const unsigned int nb_points)
 	Vector vec = random_vector();
 	while(m_points.size() < nb_points)
 	{
-		Point p = random_point();
+		Point p = random_point(tree.bbox());
 		Ray ray(p,vec);
 		int nb_intersections = (int)tree.number_of_intersected_primitives(ray);
 		if(nb_intersections % 2 != 0)
@@ -385,9 +391,7 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
 	unsigned int nb_lines = 0;
 	while(nb < nb_points)
 	{
-		Point p = random_point();
-		Point q = random_point();
-		Line line(p,q);
+		Line line = random_line(tree.bbox());
 
 		std::list<Object_and_primitive_id> intersections;
 		tree.all_intersections(line,std::back_inserter(intersections));
@@ -430,9 +434,7 @@ void Scene::generate_edge_points(const unsigned int nb_points)
 	unsigned int nb_planes = 0;
 	while(nb < nb_points)
 	{
-		Point p = random_point();
-		Vector vec = random_vector();
-		Plane plane(p,vec);
+		Plane plane = random_plane(tree.bbox());
 
 		std::list<Object_and_primitive_id> intersections;
 		tree.all_intersections(plane,std::back_inserter(intersections));

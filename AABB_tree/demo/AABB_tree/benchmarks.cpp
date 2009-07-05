@@ -89,7 +89,7 @@ void Scene::bench_intersection_rays(Facet_tree& tree,
 	std::list<Object_and_primitive_id> intersections;
 	while(time.elapsed() < duration)
 	{
-		Ray ray = random_ray();
+		Ray ray = random_ray(tree.bbox());
 		switch(function)
 		{
 		case DO_INTERSECT:
@@ -110,7 +110,16 @@ void Scene::bench_intersection_rays(Facet_tree& tree,
 		}
 		nb++;
 	}
-	double speed = 1000.0 * nb / time.elapsed();
+
+	// subtract random generation time to be more accurate
+	double duration_random_and_tests = time.elapsed();
+	time.start();
+	for(unsigned int i=0;i<nb;i++)
+		random_ray(tree.bbox());
+	double duration_random = time.elapsed();
+
+	double elapsed = duration_random_and_tests - duration_random;
+	double speed = 1000.0 * nb / elapsed;
 	std::cout << speed << " queries/s with ray" << std::endl;
 }
 
@@ -125,7 +134,7 @@ void Scene::bench_intersection_lines(Facet_tree& tree,
 	std::list<Object_and_primitive_id> intersections;
 	while(time.elapsed() < duration)
 	{
-		Line line = random_line();
+		Line line = random_line(tree.bbox());
 		switch(function)
 		{
 		case DO_INTERSECT:
@@ -146,7 +155,16 @@ void Scene::bench_intersection_lines(Facet_tree& tree,
 		}
 		nb++;
 	}
-	double speed = 1000.0 * nb / time.elapsed();
+
+	// subtract random generation time to be more accurate
+	double duration_random_and_tests = time.elapsed();
+	time.start();
+	for(unsigned int i=0;i<nb;i++)
+		random_line(tree.bbox());
+	double duration_random = time.elapsed();
+
+	double elapsed = duration_random_and_tests - duration_random;
+	double speed = 1000.0 * nb / elapsed;
 	std::cout << speed << " queries/s with line" << std::endl;
 }
 
@@ -161,7 +179,7 @@ void Scene::bench_intersection_segments(Facet_tree& tree,
 	std::list<Object_and_primitive_id> intersections;
 	while(time.elapsed() < duration)
 	{
-		Segment segment = random_segment();
+		Segment segment = random_segment(tree.bbox());
 		switch(function)
 		{
 		case DO_INTERSECT:
@@ -182,7 +200,16 @@ void Scene::bench_intersection_segments(Facet_tree& tree,
 		}
 		nb++;
 	}
-	double speed = 1000.0 * nb / time.elapsed();
+
+	// subtract random generation time to be more accurate
+	double duration_random_and_tests = time.elapsed();
+	time.start();
+	for(unsigned int i=0;i<nb;i++)
+		random_segment(tree.bbox());
+	double duration_random = time.elapsed();
+
+	double elapsed = duration_random_and_tests - duration_random;
+	double speed = 1000.0 * nb / elapsed;
 	std::cout << speed << " queries/s with segment" << std::endl;
 }
 
@@ -197,7 +224,7 @@ void Scene::bench_intersection_planes(Facet_tree& tree,
 	std::list<Object_and_primitive_id> intersections;
 	while(time.elapsed() < duration)
 	{
-		Plane plane = random_plane();
+		Plane plane = random_plane(tree.bbox());
 		switch(function)
 		{
 		case DO_INTERSECT:
@@ -218,7 +245,16 @@ void Scene::bench_intersection_planes(Facet_tree& tree,
 		}
 		nb++;
 	}
-	double speed = 1000.0 * nb / time.elapsed();
+
+	// subtract random generation time to be more accurate
+	double duration_random_and_tests = time.elapsed();
+	time.start();
+	for(unsigned int i=0;i<nb;i++)
+		random_plane(tree.bbox());
+	double duration_random = time.elapsed();
+
+	double elapsed = duration_random_and_tests - duration_random;
+	double speed = 1000.0 * nb / elapsed;
 	std::cout << speed << " queries/s with plane" << std::endl;
 }
 
@@ -285,7 +321,7 @@ void Scene::bench_distance(Facet_tree& tree,
 	unsigned int nb = 0;
 	while(time.elapsed() < duration)
 	{
-		Point query = random_point();
+		Point query = random_point(tree.bbox());
 		switch(function)
 		{
 		case SQ_DISTANCE:
@@ -299,7 +335,16 @@ void Scene::bench_distance(Facet_tree& tree,
 		}
 		nb++;
 	}
-	double speed = 1000.0 * nb / time.elapsed();
+
+	// subtract random generation time to be more accurate
+	double duration_random_and_tests = time.elapsed();
+	time.start();
+	for(unsigned int i=0;i<nb;i++)
+		random_point(tree.bbox());
+	double duration_random = time.elapsed();
+
+	double elapsed = duration_random_and_tests - duration_random;
+	double speed = 1000.0 * nb / elapsed;
 	std::cout << speed << " queries/s" << std::endl;
 }
 

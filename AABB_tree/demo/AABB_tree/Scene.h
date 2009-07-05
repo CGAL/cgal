@@ -45,12 +45,13 @@ public:
 public:
 
 	// utility functions
-	Ray random_ray();
-	Line random_line();
-	Point random_point();
-	Plane random_plane();
 	Vector random_vector();
-	Segment random_segment();
+	Ray random_ray(const Bbox& bbox);
+	FT random_in(const double a,const double b);
+	Line random_line(const Bbox& bbox);
+	Point random_point(const Bbox& bbox);
+	Plane random_plane(const Bbox& bbox);
+	Segment random_segment(const Bbox& bbox);
 
 	// file menu
 	int open(QString filename);
