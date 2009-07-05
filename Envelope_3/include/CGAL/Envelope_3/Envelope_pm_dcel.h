@@ -590,7 +590,7 @@ protected:
   bool get_bit(unsigned int ind) const
   {
     // (1 << i) is bit i on, other bits off (start counting from 0)
-    bool result = flags & (1 << ind);
+    bool result = static_cast<bool>(flags & (1 << ind));
     return result;
   }
 
