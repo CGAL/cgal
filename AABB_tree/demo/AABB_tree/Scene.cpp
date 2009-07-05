@@ -372,9 +372,11 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
 
 	Vector normal((FT)0.0,(FT)0.0,(FT)1.0);
 	unsigned int i;
+
+	const double dz = m_bbox.zmax() - m_bbox.zmin();
 	for(i=0;i<nb_slices;i++)
 	{
-		FT z = -0.5 + (FT)i / (FT)nb_slices;
+		FT z = m_bbox.zmin() + (FT)i / (FT)nb_slices * dz;
 		Point p((FT)0.0, (FT)0.0, z);
 		Plane plane(p,normal);
 
