@@ -103,7 +103,7 @@ public:
 
 private:
 
-  Traits_2    *m_base_traits;        // The base traits object.
+  const Traits_2 * m_base_traits;        // The base traits object.
 
 public:
 
@@ -112,11 +112,11 @@ public:
   {}
 
   /*! Constructor from a base traits class. */
-  Arr_overlay_traits_2 (Traits_2& base_tr) :
+  Arr_overlay_traits_2 (const Traits_2 & base_tr) :
     m_base_traits (&base_tr)
   {}
 
-  Traits_2* base_traits() const { return m_base_traits; }
+  const Traits_2 * base_traits() const { return m_base_traits; }
 
   /*! \class
    * Nested extension of the x-monotone curve type.
@@ -367,14 +367,14 @@ public:
   class Intersect_2 {
   protected:
     //! The base traits.
-    Arr_overlay_traits_2 * m_traits;
+    const Arr_overlay_traits_2 * m_traits;
 
     /*! Constructor.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Intersect_2(Arr_overlay_traits_2 * traits) : m_traits(traits) {}
+    Intersect_2(const Arr_overlay_traits_2 * traits) : m_traits(traits) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
@@ -435,7 +435,7 @@ public:
       const Arr_parameter_space  bx2 = ps_x_op (xcv2, ARR_MIN_END);
       const Arr_parameter_space  by2 = ps_y_op (xcv2, ARR_MIN_END);
 
-      Traits_2 * m_base_tr = m_traits->base_traits();
+      const Traits_2 * m_base_tr = m_traits->base_traits();
 
       if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR &&
           bx2 == ARR_INTERIOR && by2 == ARR_INTERIOR)
@@ -520,7 +520,7 @@ public:
   };
 
   /*! Obtain an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object ()
+  Intersect_2 intersect_2_object () const
   {
     return Intersect_2(this); 
   }

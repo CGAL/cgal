@@ -161,7 +161,7 @@ protected:
   typedef typename Allocated_events_set::iterator  Allocated_events_iterator;
 
   // Data members:
-  Traits_adaptor_2 *m_traits;       // A traits-class object.
+  const Traits_adaptor_2 * m_traits;// A traits-class object.
   bool              m_traitsOwner;  // Whether this object was allocated by
                                     // this class (and thus should be freed).
 
@@ -218,7 +218,7 @@ public:
    * \param traits A pointer to a sweep-line traits object.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Basic_sweep_line_2 (Traits_2 *traits, Visitor *visitor);
+  Basic_sweep_line_2 (const Traits_2 *traits, Visitor *visitor);
 
   /*! Destrcutor. */
   virtual ~Basic_sweep_line_2 ();
@@ -370,7 +370,7 @@ public:
   }
 
   /*! Get the traits object */
-  Traits_2* traits ()
+  const Traits_2 * traits ()
   {
     return m_traits;
   }

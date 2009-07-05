@@ -139,12 +139,12 @@ public:
   {}
 
   /*! Copy constructor (from a base arrangement). */
-  Arrangement_with_history_2 (const Base& base) :
+  Arrangement_with_history_2 (const Base & base) :
     Base (base)
   {}
 
   /*! Constructor given a traits object. */
-  Arrangement_with_history_2 (Traits_2 *tr) :
+  Arrangement_with_history_2 (const Traits_2 * tr) :
     Base (tr)
   {}
   //@}
@@ -153,14 +153,14 @@ public:
   //@{
 
   /*! Assignment operator (from a base arrangement). */
-  Self& operator= (const Base& base)
+  Self& operator= (const Base & base)
   {
     Base::assign (base);
     return (*this);
   }
 
   /*! Assign an arrangement. */
-  void assign (const Base& base)
+  void assign (const Base & base)
   {
     Base::assign (base);
     return;
@@ -171,12 +171,7 @@ public:
   //@{
 
   /*! Get the geometry-traits class (for backward compatibility). */
-  const Traits_2* traits () const
-  {
-    return (this->geometry_traits());
-  }
-
-  Traits_2* traits ()
+  const Traits_2 * traits () const
   {
     return (this->geometry_traits());
   }

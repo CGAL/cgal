@@ -59,7 +59,7 @@ public:
 private:
 
   // Data members:
-  Traits_2            *m_traits;            // A geometric-traits object.
+  const Traits_2 * m_traits;                // The geometric-traits object.
   
   Arr_parameter_space  m_ps_in_x;           // Storing curve information when
   Arr_parameter_space  m_ps_in_y;           // comparing a curve end with
@@ -68,7 +68,7 @@ private:
 public:
   
   /*! Cosntructor. */
-  Compare_events (Traits_2 *traits) :
+  Compare_events (const Traits_2 * traits) :
     m_traits (traits)
   {}
   
@@ -326,14 +326,14 @@ public:
 
 private:
 
-  Traits_adaptor_2  *m_traits;         // A geometric-traits object.
-  Event            **m_curr_event;     // Points to the current event point.
+  const Traits_adaptor_2 * m_traits;    // A geometric-traits object.
+  Event            **m_curr_event;      // Points to the current event point.
 
 public:
   
   /*! Constructor. */
   template <class Sweep_event>
-  Curve_comparer (Traits_adaptor_2 *t, Sweep_event** e_ptr) :
+  Curve_comparer (const Traits_adaptor_2 * t, Sweep_event** e_ptr) :
     m_traits(t),
     m_curr_event(reinterpret_cast<Event**>(e_ptr))
   {}

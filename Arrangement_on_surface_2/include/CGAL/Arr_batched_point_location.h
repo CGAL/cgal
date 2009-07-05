@@ -116,7 +116,7 @@ OutputIterator locate
    * only an implicit constructor, (which takes *b as a parameter).
    */
   typename boost::mpl::if_<boost::is_same<GeomTraits, Bpl_traits_2>,
-                           Bpl_traits_2&, Bpl_traits_2>::type
+                           const Bpl_traits_2&, Bpl_traits_2>::type
     ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.

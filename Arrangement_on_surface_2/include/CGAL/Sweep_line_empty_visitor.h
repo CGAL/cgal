@@ -80,7 +80,7 @@ public:
     typedef value_type*                                      pointer;
     typedef typename Base_status_line_iter::difference_type  difference_type;
     typedef typename Base_status_line_iter::iterator_category
-                                                           iterator_category;
+                                                             iterator_category;
     /*! Constructor. */
     Status_line_iterator()
     {}
@@ -108,7 +108,7 @@ public:
 
   typedef typename Event::Subcurve_iterator          Event_subcurve_iterator;
   typedef typename Event::Subcurve_reverse_iterator
-                                             Event_subcurve_reverse_iterator;
+    Event_subcurve_reverse_iterator;
 
 protected:
 
@@ -257,7 +257,7 @@ public:
   }
 
   /*! Get the geometry-traits class. */
-  Traits_2* traits ()
+  const Traits_2 * traits ()
   {
     return (_sweep_line()->traits());
   }

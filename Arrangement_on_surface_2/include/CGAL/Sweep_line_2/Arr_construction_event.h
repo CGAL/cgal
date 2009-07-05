@@ -17,6 +17,7 @@
 //
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_CONSTRUCTION_EVENT_H
 #define CGAL_ARR_CONSTRUCTION_EVENT_H
@@ -88,7 +89,7 @@ protected:
                                               // haven't been added to the
                                               // arrangement, when that counter
                                               // is zero, we can deallocate the
-                                              //event.
+                                              // event.
 
 public:
 
@@ -106,7 +107,7 @@ public:
   /*! Add a curve to the right of the event. */
   std::pair<bool, Subcurve_iterator>
   add_curve_to_right (Subcurve *curve,
-                      Traits_2 *tr)
+                      const Traits_2 * tr)
   {
     std::pair<bool,Subcurve_iterator> res = 
       Base::add_curve_to_right(curve, tr);

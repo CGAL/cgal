@@ -498,7 +498,7 @@ public:
 
   public:
     /*! Construct */
-    Make_x_monotone_2(Base * base, bool enabled = true) :
+    Make_x_monotone_2(const Base * base, bool enabled = true) :
       m_object(base->make_x_monotone_2_object()), m_enabled(enabled) {}
 
     /*! Operate
@@ -508,7 +508,7 @@ public:
      * \return the output iterator
      */
     template<typename OutputIterator>
-    OutputIterator operator()(const Curve_2 & cv, OutputIterator oi)
+    OutputIterator operator()(const Curve_2 & cv, OutputIterator oi) const
     {
       if (!m_enabled) return m_object(cv, oi);
       std::cout << "make_x_monotone" << std::endl
@@ -547,7 +547,7 @@ public:
 
   public:
     /*! Construct */
-    Split_2(Base * base, bool enabled = true) :
+    Split_2(const Base * base, bool enabled = true) :
       m_object(base->split_2_object()), m_enabled(enabled) {}
 
     /*! Operate
@@ -557,7 +557,7 @@ public:
      * \param xcv2
      */
     void operator()(const X_monotone_curve_2 & xcv, const Point_2 & p,
-                    X_monotone_curve_2 & xcv1, X_monotone_curve_2 & xcv2)
+                    X_monotone_curve_2 & xcv1, X_monotone_curve_2 & xcv2) const
     {
       if (!m_enabled) {
         m_object(xcv, p, xcv1, xcv2);
@@ -580,7 +580,7 @@ public:
 
   public:
     /*! Construct */
-    Intersect_2(Base * base, bool enabled = true) :
+    Intersect_2(const Base * base, bool enabled = true) :
       m_object(base->intersect_2_object()), m_enabled(enabled) {}
 
     /*! Operate
@@ -595,7 +595,7 @@ public:
     template<typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & xcv1,
                               const X_monotone_curve_2 & xcv2,
-                              OutputIterator oi)
+                              OutputIterator oi) const
     {
       if (!m_enabled) return m_object(xcv1, xcv2, oi);
       std::cout << "intersect" << std::endl
@@ -667,7 +667,7 @@ public:
 
   public:
     /*! Construct */
-    Merge_2(Base * base, bool enabled = true) :
+    Merge_2(const Base * base, bool enabled = true) :
       m_object(base->merge_2_object()), m_enabled(enabled) {}
 
     /*! Operate
@@ -677,7 +677,7 @@ public:
      */
     void operator()(const X_monotone_curve_2 & xcv1,
                     const X_monotone_curve_2 & xcv2,
-                    X_monotone_curve_2 & xcv)
+                    X_monotone_curve_2 & xcv) const
     {
       std::cout << "merge" << std::endl
                 << "  xcv1: " << xcv1 << std::endl
@@ -1072,19 +1072,19 @@ public:
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(this, compare_y_at_x_right_op()); }
   
-  Make_x_monotone_2 make_x_monotone_2_object()
+  Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(this, make_x_monotone_op()); }
 
-  Split_2 split_2_object()
+  Split_2 split_2_object() const
   { return Split_2(this, split_op()); }
 
-  Intersect_2 intersect_2_object()
+  Intersect_2 intersect_2_object() const
   { return Intersect_2(this, intersect_op()); }
 
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(this, are_mergeable_op()); }
 
-  Merge_2 merge_2_object()
+  Merge_2 merge_2_object() const
   { return Merge_2(this, merge_op()); }
 
   Construct_opposite_2 construct_opposite_2_object() const

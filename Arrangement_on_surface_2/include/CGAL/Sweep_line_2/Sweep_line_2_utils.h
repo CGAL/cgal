@@ -17,6 +17,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
+//                 Efi Fogel       <efif@post.tau.ac.il>
 
 #ifndef CGAL_SWEEP_LINE_2_UTILS
 #define CGAL_SWEEP_LINE_2_UTILS
@@ -51,7 +52,7 @@ template <class Traits,
 void make_x_monotone (CurveInputIter begin, CurveInputIter end,
                       XCurveOutIter x_curves,
                       PointOutIter iso_points,
-                      Traits* tr)
+                      const Traits * tr)
 {
   // Split the input curves into x-monotone objects.
   unsigned int         num_of_curves = std::distance(begin, end);
@@ -128,7 +129,7 @@ void prepare_for_sweep (Arrangement& arr,
                         PointInputIter pts_begin, PointInputIter pts_end,
                         XCurveOutIter x_curves,
                         PointOutIter iso_points,
-                        ExTraits* /* ex_tr */)
+                        const ExTraits * /* ex_tr */)
 {
   typedef typename Arrangement::X_monotone_curve_2    X_monotone_curve_2;
   typedef typename Arrangement::Point_2               Point_2;

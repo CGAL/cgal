@@ -15,6 +15,7 @@
 // $Id$
 // 
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
+//                 Eric Berberich    <ericb@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_H
@@ -98,29 +99,29 @@ public:
   typedef typename Traits_adaptor_2::Arr_top_side_tag    Arr_top_side_tag;
   typedef typename Traits_adaptor_2::Arr_right_side_tag  Arr_right_side_tag;
   
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
-       boost::is_same< Arr_left_side_tag, Arr_oblivious_side_tag >,
-       boost::is_same< Arr_left_side_tag, Arr_identified_side_tag > >
-      )
+  BOOST_MPL_ASSERT
+  (
+   (boost::mpl::or_< 
+    boost::is_same< Arr_left_side_tag, Arr_oblivious_side_tag >,
+    boost::is_same< Arr_left_side_tag, Arr_identified_side_tag > >)
   );
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
-       boost::is_same< Arr_bottom_side_tag, Arr_oblivious_side_tag >,
-       boost::is_same< Arr_bottom_side_tag, Arr_contracted_side_tag > >
-      )
+  BOOST_MPL_ASSERT
+  (
+   (boost::mpl::or_< 
+    boost::is_same< Arr_bottom_side_tag, Arr_oblivious_side_tag >,
+    boost::is_same< Arr_bottom_side_tag, Arr_contracted_side_tag > >)
   );
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
-       boost::is_same< Arr_top_side_tag, Arr_oblivious_side_tag >,
-       boost::is_same< Arr_top_side_tag, Arr_contracted_side_tag > >
-      )
+  BOOST_MPL_ASSERT
+  (
+   (boost::mpl::or_< 
+    boost::is_same< Arr_top_side_tag, Arr_oblivious_side_tag >,
+    boost::is_same< Arr_top_side_tag, Arr_contracted_side_tag > >)
   );
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
-       boost::is_same< Arr_right_side_tag, Arr_oblivious_side_tag >,
-       boost::is_same< Arr_right_side_tag, Arr_identified_side_tag > >
-      )
+  BOOST_MPL_ASSERT
+  (
+   (boost::mpl::or_< 
+    boost::is_same< Arr_right_side_tag, Arr_oblivious_side_tag >,
+    boost::is_same< Arr_right_side_tag, Arr_identified_side_tag > >)
   );
   //@}
   
@@ -142,8 +143,8 @@ private:
     Vertex_key_comparer() : m_traits(NULL) {}
     
     /*! Construct */    
-    Vertex_key_comparer(Traits_adaptor_2 * traits) : m_traits(traits) {}
-    Traits_adaptor_2 * m_traits;
+    Vertex_key_comparer(const Traits_adaptor_2 * traits) : m_traits(traits) {}
+    const Traits_adaptor_2 * m_traits;
     bool operator()(const Point_2 & p1, const Point_2 & p2) const
     {
       return (m_traits->compare_y_on_boundary_2_object()(p1, p2) ==
@@ -173,7 +174,7 @@ protected:
   Vertex_map m_boundary_vertices;
 
   //! The geometry-traits adaptor.
-  Traits_adaptor_2 * m_traits;
+  const Traits_adaptor_2 * m_traits;
 
   // Inidicates whether the traits object should evetually be freed.
   bool m_own_traits;
@@ -192,7 +193,7 @@ public:
   /*! Constructor with a geometry-traits class.
    * \param traits the traits.
    */
-  Arr_spherical_topology_traits_2(Geometry_traits_2 * traits);
+  Arr_spherical_topology_traits_2(const Geometry_traits_2 * traits);
 
   /*! Assign the contents of another topology-traits class.
    * \param other the other spherical topology-traits.

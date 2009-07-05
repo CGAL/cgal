@@ -148,7 +148,7 @@ public:
   Arr_unb_planar_topology_traits_2 ();
 
   /*! Constructor with a geometry-traits class. */
-  Arr_unb_planar_topology_traits_2 (Geometry_traits_2 *tr);
+  Arr_unb_planar_topology_traits_2 (const Geometry_traits_2 *tr);
 
   /*! Assign the contents of another topology-traits class. */
   void assign (const Self& other);

@@ -15,9 +15,9 @@
 // $Id$
 // 
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
-//                 Eric Berberich <ericb@post.tau.ac.il>
+// Author(s)     : Baruch Zukerman  <baruchzu@post.tau.ac.il>
+//                 Efi Fogel        <efif@post.tau.ac.il>
+//                 Eric Berberich   <ericb@post.tau.ac.il>
 //                 (based on old version by Tali Zvi)
 
 #ifndef CGAL_BASIC_SWEEP_LINE_2_IMPL_H
@@ -53,8 +53,8 @@ Basic_sweep_line_2 (Visitor* visitor) :
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
-Basic_sweep_line_2 (Traits_2 *traits, Visitor* visitor) :
-  m_traits (static_cast<Traits_adaptor_2*> (traits)),
+Basic_sweep_line_2 (const Traits_2 * traits, Visitor* visitor) :
+  m_traits (static_cast<const Traits_adaptor_2*> (traits)),
   m_traitsOwner(false),
   m_statusLineCurveLess(m_traits, &m_currentEvent),
   m_queueEventLess(m_traits),
@@ -134,8 +134,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::stop_sweep ()
 // Deallocate event object..
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
-void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::deallocate_event
-    (Event* event)
+void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+deallocate_event(Event * event)
 {
   // Remove the event from the set of allocated events.
   m_allocated_events.erase (event);
@@ -159,10 +159,10 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sweep ()
       Event_queue_iterator eventIter1 = m_queue->begin();
       while (eventIter1 != m_queue->end()) {
           
-          CGAL_PRINT("* ");
-          CGAL_SL_DEBUG(PrintEvent(*eventIter1););
-          CGAL_PRINT ( "\n");
-          eventIter1++;
+        CGAL_PRINT("* ");
+        CGAL_SL_DEBUG(PrintEvent(*eventIter1););
+        CGAL_PRINT ( "\n");
+        eventIter1++;
       }
   }
   )

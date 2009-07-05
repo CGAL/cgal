@@ -16,6 +16,7 @@
 // 
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARRANGEMENT_2_H
 #define CGAL_ARRANGEMENT_2_H
@@ -43,8 +44,7 @@ template <class GeomTraits_,
           class Dcel_ = Arr_default_dcel<GeomTraits_> > 
 class Arrangement_2 :
   public Arrangement_on_surface_2
-    <GeomTraits_,
-     typename Default_planar_topology<GeomTraits_, Dcel_>::Traits>
+    <GeomTraits_, typename Default_planar_topology<GeomTraits_, Dcel_>::Traits>
 {
 
 protected:
@@ -85,13 +85,13 @@ public:
   typedef typename Base::Face_const_iterator      Face_const_iterator;
   
   typedef typename Base::Halfedge_around_vertex_circulator 
-                                     Halfedge_around_vertex_circulator;
+    Halfedge_around_vertex_circulator;
   typedef typename Base::Halfedge_around_vertex_const_circulator
-                                     Halfedge_around_vertex_const_circulator;
+    Halfedge_around_vertex_const_circulator;
 
   typedef typename Base::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
   typedef typename Base::Ccb_halfedge_const_circulator
-                                             Ccb_halfedge_const_circulator;
+    Ccb_halfedge_const_circulator;
   
   typedef typename Base::Outer_ccb_iterator        Outer_ccb_iterator;
   typedef typename Base::Outer_ccb_const_iterator  Outer_ccb_const_iterator;
@@ -101,7 +101,7 @@ public:
 
   typedef typename Base::Isolated_vertex_iterator  Isolated_vertex_iterator;
   typedef typename Base::Isolated_vertex_const_iterator
-                                             Isolated_vertex_const_iterator;
+    Isolated_vertex_const_iterator;
 
   typedef typename Base::Vertex_handle             Vertex_handle;
   typedef typename Base::Vertex_const_handle       Vertex_const_handle;
@@ -138,7 +138,7 @@ public:
   {}
 
   /*! Constructor given a traits object. */
-  Arrangement_2 (Traits_2 *tr) :
+  Arrangement_2 (const Traits_2 *tr) :
     Base (tr)
   {}
   //@}

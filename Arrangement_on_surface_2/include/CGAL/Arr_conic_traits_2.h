@@ -91,8 +91,8 @@ private:
                                                           Intersection_point_2;
   typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
 
-  Intersection_map  inter_map;   // Mapping conic pairs to their intersection
-                                 // points.
+  mutable Intersection_map  inter_map;  // Mapping conic pairs to their
+                                        // intersection points.
 
 public:
 
@@ -461,7 +461,7 @@ public:
      * \return The past-the-end iterator.
      */
     template<class OutputIterator>
-    OutputIterator operator() (const Curve_2& cv, OutputIterator oi)
+    OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const
     {
       // Increment the serial number of the curve cv, which will serve as its
       // unique identifier.
@@ -569,7 +569,7 @@ public:
   };
 
   /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object ()
+  Make_x_monotone_2 make_x_monotone_2_object () const
   {
     return Make_x_monotone_2();
   }
@@ -624,14 +624,14 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const X_monotone_curve_2& cv1,
                                const X_monotone_curve_2& cv2,
-                               OutputIterator oi)
+                               OutputIterator oi) const
     {
       return (cv1.intersect (cv2, _inter_map, oi));
     }
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object ()
+  Intersect_2 intersect_2_object () const
   {
     return (Intersect_2 (inter_map));
   }
@@ -762,7 +762,7 @@ public:
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv)
+    Comparison_result operator() (const X_monotone_curve_2& cv) const
     {
       if (cv.is_directed_right())
         return (SMALLER);
@@ -786,7 +786,7 @@ public:
      * \param cv The curve.
      * \return The opposite curve.
      */
-    X_monotone_curve_2 operator() (const X_monotone_curve_2& cv)
+    X_monotone_curve_2 operator() (const X_monotone_curve_2& cv) const
     {
       return (cv.flip());
     }

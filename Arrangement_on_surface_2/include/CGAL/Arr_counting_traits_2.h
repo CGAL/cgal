@@ -382,12 +382,12 @@ public:
 
   public:
     /*! Construct */
-    Make_x_monotone_2(Base * base, unsigned int & counter) :
+    Make_x_monotone_2(const Base * base, unsigned int & counter) :
       m_object(base->make_x_monotone_2_object()), m_counter(counter) {}
 
     /*! Operate */
     template<class OutputIterator>
-    OutputIterator operator()(const Curve_2 & cv, OutputIterator oi)
+    OutputIterator operator()(const Curve_2 & cv, OutputIterator oi) const
     { ++m_counter; return m_object(cv, oi); }
   };
 
@@ -399,12 +399,12 @@ public:
 
   public:
     /*! Construct */
-    Split_2(Base * base, unsigned int & counter) :
+    Split_2(const Base * base, unsigned int & counter) :
       m_object(base->split_2_object()), m_counter(counter) {}
 
     /*! Operate */
     void operator()(const X_monotone_curve_2 & xc, const Point_2 & p,
-                    X_monotone_curve_2 & xc1, X_monotone_curve_2 & xc2)
+                    X_monotone_curve_2 & xc1, X_monotone_curve_2 & xc2) const
     { ++m_counter; m_object(xc, p, xc1, xc2); }
   };
 
@@ -416,14 +416,14 @@ public:
 
   public:
     /*! Construct */
-    Intersect_2(Base * base, unsigned int & counter) :
+    Intersect_2(const Base * base, unsigned int & counter) :
       m_object(base->intersect_2_object()), m_counter(counter) {}
 
     /*! Operate */
     template<class OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & xc1,
                               const X_monotone_curve_2 & xc2,
-                              OutputIterator oi)
+                              OutputIterator oi) const
     { ++m_counter; return m_object(xc1, xc2, oi); }
   };
 
@@ -452,13 +452,13 @@ public:
 
   public:
     /*! Construct */
-    Merge_2(Base * base, unsigned int & counter) :
+    Merge_2(const Base * base, unsigned int & counter) :
       m_object(base->merge_2_object()), m_counter(counter) {}
 
     /*! Operate */
     void operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2,
-                    X_monotone_curve_2 & xc)
+                    X_monotone_curve_2 & xc) const
     { ++m_counter; m_object(xc1, xc2, xc); }
   };
 
@@ -712,19 +712,19 @@ public:
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(this, m_counters[COMPARE_Y_AT_X_RIGHT_OP]); }
   
-  Make_x_monotone_2 make_x_monotone_2_object()
+  Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(this, m_counters[MAKE_X_MONOTONE_OP]); }
 
-  Split_2 split_2_object()
+  Split_2 split_2_object() const
   { return Split_2(this, m_counters[SPLIT_OP]); }
 
-  Intersect_2 intersect_2_object()
+  Intersect_2 intersect_2_object() const
   { return Intersect_2(this, m_counters[INTERSECT_OP]); }
 
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(this, m_counters[ARE_MERGEABLE_OP]); }
 
-  Merge_2 merge_2_object()
+  Merge_2 merge_2_object() const
   { return Merge_2(this, m_counters[MERGE_OP]); }
 
   Construct_opposite_2 construct_opposite_2_object() const

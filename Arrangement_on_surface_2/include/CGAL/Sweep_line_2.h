@@ -34,43 +34,44 @@
 CGAL_BEGIN_NAMESPACE
 
 /*! \class
-  Sweep_line_2 is a class that implements the sweep line algorithm
-  based on the algorithm of Bentley and Ottmann.
-  It extends the algorithm to support not only segments but general x-monotone curves
-  as well and isolated points.
-  The X_monotone_curve_2 type and Point_2 are defined by the traits class that 
-  is one of the template arguments.
+ * Sweep_line_2 is a class that implements the sweep line algorithm based
+ * on the algorithm of Bentley and Ottmann.
+ * It extends the algorithm to support not only segments but general x-monotone
+ * curves as well and isolated points.
+ * The X_monotone_curve_2 type and Point_2 are defined by the traits class that 
+ * is one of the template arguments.
+ *
+ * The algorithm is also extended to support the following degenerate cases:
+ * - vertical segments
+ * - multiple (more then two) curves intersecting at one point
+ * - curves beginning and ending on other curves.
+ * - overlapping curves
+ *
+ * General flow:
+ * After the initialization stage, the events are handled from left to right.
+ * 
+ * For each event
+ *
+ *  First pass - handles special cases in which curves start or end 
+ *               at the interior of another curve
+ *  Handle left curves - iterate over the curves that intersect 
+ *               at the event point and defined lexicographically to the left
+ *               of the event. 
+ *  Handle right curves - iterate over the curves that intersect 
+ *               the event point and defined lexicographically to the right
+ *               of the event point. This is where new intersection points 
+ *               are calculated.
+ * End
+ *
+ * Convensions through out the code:
+ * In order to make the code as readable as possible, some convensions were 
+ * made in regards to variable naming:
+ *
+ * xp - is the intersection point between two curves
+ * slIter - an iterator to the status line, always points to a curve.
+ *
+ */
 
-  The algorithm is also extended to support the following degenerate cases:
-  - vertical segments
-  - multiple (more then two) curves intersecting at one point
-  - curves beginning and ending on other curves.
-  - overlapping curves
-
-  General flow:
-  After the initialization stage, the events are handled from left to right.
-
-  For each event
-
-    First pass - handles special cases in which curves start or end 
-                 at the interior of another curve
-    Handle left curves - iterate over the curves that intersect 
-                 at the event point and defined lexicographically to the left of the 
-                 event. 
-    Handle right curves - iterate over the curves that intersect 
-                 the event point and defined lexicographically to the right of the 
-                 event point. This is where new intersection points 
-                 are calculated.
-  End
-
-  Convensions through out the code:
-  In order to make the code as readable as possible, some convensions were 
-  made in regards to variable naming:
-
-    xp - is the intersection point between two curves
-    slIter - an iterator to the status line, always points to a curve.
-
-*/
 template < class Traits_,
            class Visitor_,
            class Subcurve_ = Sweep_line_subcurve<Traits_>,
@@ -145,7 +146,7 @@ public:
    * Constructor.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Sweep_line_2 (Visitor *visitor) :
+  Sweep_line_2 (Visitor * visitor) :
     Base(visitor),
     m_curves_pair_set(0)
   {}
@@ -156,7 +157,7 @@ public:
    * \param traits A pointer to a sweep-line traits object.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Sweep_line_2 (Traits_2 *traits, Visitor *visitor) :
+  Sweep_line_2 (const Traits_2 * traits, Visitor * visitor) :
     Base(traits, visitor),
     m_curves_pair_set(0)
   {}
@@ -185,8 +186,8 @@ protected:
    * \param curve The subcurve to add.
    * \return (true) if an overlap occured; (false) otherwise.
    */
-  virtual bool _add_curve_to_right (Event* event, Subcurve* curve,
-                            bool overlap_exist = false);
+  virtual bool _add_curve_to_right (Event * event, Subcurve * curve,
+                                    bool overlap_exist = false);
 
   /*! Fix overlapping subcurves before handling the current event. */
   void _fix_overlap_subcurves();
@@ -198,7 +199,7 @@ protected:
    * \param iter An iterator for the curves.
    * \param overlap_exist
    */
-  void _handle_overlap (Event* event, Subcurve* curve,
+  void _handle_overlap (Event * event, Subcurve * curve,
                         Event_subcurve_iterator iter, bool overlap_exist);
   
   /*! 
@@ -209,7 +210,7 @@ protected:
    * \param curve1 The first curve.
    * \param curve2 The second curve.
    */ 
-  void _intersect (Subcurve *c1, Subcurve *c2);
+  void _intersect (Subcurve * c1, Subcurve * c2);
 
   /*!
    * When a curve is removed from the status line for good, its top and
@@ -218,7 +219,7 @@ protected:
    * \param leftCurve A pointer to the curve that is about to be deleted.
    * \param remove_for_good Whether the aubcurve is removed for good.
    */
-  void _remove_curve_from_status_line (Subcurve *leftCurve,
+  void _remove_curve_from_status_line (Subcurve * leftCurve,
                                        bool remove_for_good);
 
   /*!
@@ -229,17 +230,17 @@ protected:
    * \param curve2 The second curve.
    * \param is_overlap Whether the two curves overlap at xp.
    */
-  void _create_intersection_point (const Point_2& xp,
+  void _create_intersection_point (const Point_2 & xp,
                                    unsigned int mult,
-                                   Subcurve* &c1,
-                                   Subcurve* &c2,
+                                   Subcurve *& c1,
+                                   Subcurve *& c2,
                                    bool is_overlap = false);
 
   /*!
    * Fix a subcurve that represents an overlap.
    * \param sc The subcurve.
    */
-  void _fix_finished_overlap_subcurve (Subcurve* sc);
+  void _fix_finished_overlap_subcurve (Subcurve * sc);
 
 };
 

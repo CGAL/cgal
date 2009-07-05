@@ -48,8 +48,8 @@ Arr_unb_planar_topology_traits_2():
 //
 template <class GeomTraits, class Dcel_>
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
-Arr_unb_planar_topology_traits_2 (Geometry_traits_2 *tr) :
-  Base (tr),
+Arr_unb_planar_topology_traits_2 (const Geometry_traits_2 * geom_traits) :
+  Base (geom_traits),
   v_bl (NULL),
   v_tl (NULL),
   v_br (NULL),
@@ -62,8 +62,8 @@ Arr_unb_planar_topology_traits_2 (Geometry_traits_2 *tr) :
 // Assign the contents of another topology-traits class.
 //
 template <class GeomTraits, class Dcel_>
-void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::assign
-    (const Self& other)
+void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+assign(const Self& other)
 {
   // Assign the base class.
   Base::assign (other);
@@ -477,8 +477,8 @@ split_fictitious_edge (Halfedge *e, Vertex *v)
 // Determine whether the given face is unbounded.
 //
 template <class GeomTraits, class Dcel_>
-bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::is_unbounded
-    (const Face *f) const
+bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+is_unbounded(const Face *f) const
 {
   // Go over the outer CBB of the given face and look for fictitious halfedges.
   const Halfedge   *first = *(f->outer_ccbs_begin());
@@ -503,8 +503,8 @@ bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::is_unbounded
 // Determine whether the given boundary vertex is redundant.
 //
 template <class GeomTraits, class Dcel_>
-bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::is_redundant
-    (const Vertex *v) const
+bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+is_redundant(const Vertex *v) const
 {
   CGAL_precondition (v != v_bl && v != v_tl && v != v_br && v != v_tr);
 

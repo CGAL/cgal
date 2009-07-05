@@ -98,7 +98,7 @@ public:
   protected:
     
     Base_x_monotone_curve_2 m_base_xcv;  // The base x-monotone curve.
-    Halfedge_const_handle   m_he;       // The corresponding arrangement edge.
+    Halfedge_const_handle   m_he;        // The corresponding arrangement edge.
 
   public:
 
@@ -276,7 +276,7 @@ public:
      * constructing it.
      */
     Construct_max_vertex_2 (const Base_construct_max_vertex_2& base):
-        m_base_max_v(base)
+      m_base_max_v(base)
     {}
 
     //! Allow its functor obtaining function calling the private constructor.
@@ -342,7 +342,7 @@ public:
   };
 
   /*! Obtain a Construct_min_vertex_2 functor object. */
-  Compare_xy_2 compare_xy_2_object () 
+  Compare_xy_2 compare_xy_2_object () const
   {
     return Compare_xy_2(m_base_traits->compare_xy_2_object());
   }
@@ -361,7 +361,7 @@ public:
      * constructing it.
      */
     Compare_y_at_x_2(const Base_compare_y_at_x_2& base) :
-        m_base_cmp_y_at_x(base)
+      m_base_cmp_y_at_x(base)
     {}
 
     //! Allow its functor obtaining function calling the private constructor.

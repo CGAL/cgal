@@ -15,8 +15,9 @@
 // $Id$
 // 
 //
-// Author(s)     : Ron Wein     <wein@post.tau.ac.il>
-//                 Efi Fogel    <efif@post.tau.ac.il>
+// Author(s) : Ron Wein        <wein@post.tau.ac.il>
+//             Efi Fogel       <efif@post.tau.ac.il>
+//             Eric Berberich  <ericb@post.tau.ac.il>
 
 #ifndef CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_H
@@ -88,18 +89,14 @@ public:
   typedef typename Traits_adaptor_2::Arr_top_side_tag    Arr_top_side_tag;
   typedef typename Traits_adaptor_2::Arr_right_side_tag  Arr_right_side_tag;
   
-  BOOST_MPL_ASSERT(
-      (boost::is_same< Arr_left_side_tag, Arr_oblivious_side_tag >)
-  );
-  BOOST_MPL_ASSERT(
-      (boost::is_same< Arr_bottom_side_tag, Arr_oblivious_side_tag >)
-  );
-  BOOST_MPL_ASSERT(
-      (boost::is_same< Arr_top_side_tag, Arr_oblivious_side_tag >)
-  );
-  BOOST_MPL_ASSERT(
-      (boost::is_same< Arr_right_side_tag, Arr_oblivious_side_tag >)
-  );
+  BOOST_MPL_ASSERT
+  ((boost::is_same< Arr_left_side_tag, Arr_oblivious_side_tag >));
+  BOOST_MPL_ASSERT
+  ((boost::is_same< Arr_bottom_side_tag, Arr_oblivious_side_tag >));
+  BOOST_MPL_ASSERT
+  ((boost::is_same< Arr_top_side_tag, Arr_oblivious_side_tag >));
+  BOOST_MPL_ASSERT
+  ((boost::is_same< Arr_right_side_tag, Arr_oblivious_side_tag >));
   //@}
 
   /*! \struct
@@ -133,7 +130,7 @@ public:
   {}
 
   /*! Constructor with a geometry-traits class. */
-  Arr_bounded_planar_topology_traits_2 (Geometry_traits_2 *tr) :
+  Arr_bounded_planar_topology_traits_2 (const Geometry_traits_2 *tr) :
     Base (tr),
     unb_face (NULL)
   {}

@@ -69,7 +69,7 @@ public:
 public:
 
   /*! Constructor with a traits class. */
-  Arr_insertion_traits_2 (Traits_2& tr) :
+  Arr_insertion_traits_2 (const Traits_2& tr) :
     Base (tr)
   {}
 

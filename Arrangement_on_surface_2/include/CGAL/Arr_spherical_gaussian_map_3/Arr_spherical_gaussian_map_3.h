@@ -28,9 +28,16 @@
  * namely Arr_sgm_initializer, that initializes an object of the main type.
  */
 
+#include <string>
+#include <vector>
+#include <list>
+#include <iostream>
+
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/Arr_default_dcel.h>
+#include <CGAL/Arr_spherical_topology_traits_2.h>
 
 #if defined(CGAL_USE_LEDA)
 #if CGAL_LEDA_VERSION < 500
@@ -39,14 +46,6 @@
 #include <LEDA/numbers/rational.h>
 #endif
 #endif
-
-#include <string>
-#include <vector>
-#include <list>
-#include <iostream>
-
-#include "CGAL/Arr_default_dcel.h"
-#include "CGAL/Arr_spherical_topology_traits_2.h"
 
 CGAL_BEGIN_NAMESPACE
 
@@ -142,7 +141,7 @@ public:
                                  OutputIterator oi)
   {
     Curve_2 cv(normal1.direction(), normal2.direction());
-    Geometry_traits_2 * traits = this->m_sgm.geometry_traits();
+    const Geometry_traits_2 * traits = this->m_sgm.geometry_traits();
     oi = traits->make_x_monotone_2_object()(cv, oi);
     return oi;
   }

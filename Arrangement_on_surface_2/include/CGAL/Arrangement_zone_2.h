@@ -112,61 +112,60 @@ protected:
   typedef typename Curves_set::iterator           Curves_set_iterator;
 
   // Data members:
-  Arrangement_2&          arr;         // The associated arrangement.
-  Traits_adaptor_2       *geom_traits; // Its associated geometry traits.
-  Arr_accessor<Arrangement_2>
-                          arr_access;  // An accessor for the arrangement.
+  Arrangement_2&          arr;          // The associated arrangement.
+  const Traits_adaptor_2 * m_geom_traits; // Its associated geometry traits.
+  Arr_accessor<Arrangement_2> arr_access; // An accessor for the arrangement.
            
-  Visitor                *visitor;     // The zone visitor.
+  Visitor                *visitor;      // The zone visitor.
 
-  Intersect_map           inter_map;   // Stores all computed intersections.
+  Intersect_map           inter_map;    // Stores all computed intersections.
 
-  const Vertex_handle     invalid_v;   // An invalid vertex handle.
-  const Halfedge_handle   invalid_he;  // An invalid halfedge handle.
+  const Vertex_handle     invalid_v;    // An invalid vertex handle.
+  const Halfedge_handle   invalid_he;   // An invalid halfedge handle.
 
-  X_monotone_curve_2  cv;              // The current portion of the
-                                       // inserted curve.
-  CGAL::Object        obj;             // The location of the left endpoint.
-  bool                has_left_pt;     // Is the left end of the curve
-                                       // bounded.
-  bool                left_on_boundary;// Is the left point on the boundary.
-  Point_2             left_pt;         // Its current left endpoint.
-  bool                has_right_pt;    // Is the right end of the curve
-                                       // bounded.
+  X_monotone_curve_2  cv;               // The current portion of the
+                                        // inserted curve.
+  CGAL::Object        obj;              // The location of the left endpoint.
+  bool                has_left_pt;      // Is the left end of the curve
+                                        // bounded.
+  bool                left_on_boundary; // Is the left point on the boundary.
+  Point_2             left_pt;          // Its current left endpoint.
+  bool                has_right_pt;     // Is the right end of the curve
+                                        // bounded.
   bool                right_on_boundary;// Is the right point on the boundary.
-  Point_2             right_pt;        // Its right endpoint (if bounded).
+  Point_2             right_pt;         // Its right endpoint (if bounded).
 
-  Vertex_handle       left_v;          // The arrangement vertex associated
-                                       // with the current left_pt (if any).
-  Halfedge_handle     left_he;         // If left_v is valid, left_he is the
-                                       // predecessor for cv around this
-                                       // vertex. Otherwise, if it is valid,
-                                       // it is the halfedge that contains
-                                       // the left endpoint it its interior.
+  Vertex_handle       left_v;           // The arrangement vertex associated
+                                        // with the current left_pt (if any).
+  Halfedge_handle     left_he;          // If left_v is valid, left_he is the
+                                        // predecessor for cv around this
+                                        // vertex. Otherwise, if it is valid,
+                                        // it is the halfedge that contains
+                                        // the left endpoint it its interior.
 
-  Vertex_handle       right_v;         // The arrangement vertex associated
-                                       // with the current right_pt (if any).
-  Halfedge_handle     right_he;        // If right_v is valid, left_he is the
-                                       // predecessor for cv around this
-                                       // vertex. Otherwise, if it is valid,
-                                       // it is the halfedge that contains
-                                       // the right endpoint it its interior.
+  Vertex_handle       right_v;          // The arrangement vertex associated
+                                        // with the current right_pt (if any).
+  Halfedge_handle     right_he;         // If right_v is valid, left_he is the
+                                        // predecessor for cv around this
+                                        // vertex. Otherwise, if it is valid,
+                                        // it is the halfedge that contains
+                                        // the right endpoint it its interior.
 
-  Point_2             intersect_p;     // The next intersection point.
-  unsigned int        ip_mult;         // Its multiplicity
-                                       // (0 in case of an overlap).
-  bool                found_intersect; // Have we found an intersection
-                                       // (or an overlap).
-  X_monotone_curve_2  overlap_cv;      // The currently discovered overlap.
-  bool                found_overlap;   // Have we found an overlap.
-  bool                found_iso_vert;  // Check if an isolated vertex induces
-                                       // the next intersection.
-  Vertex_handle       intersect_v;     // The vertex that intersects cv.
-  Halfedge_handle     intersect_he;    // The halfedge that intersects cv
-                                       // (or overlaps it).
+  Point_2             intersect_p;      // The next intersection point.
+  unsigned int        ip_mult;          // Its multiplicity
+                                        // (0 in case of an overlap).
+  bool                found_intersect;  // Have we found an intersection
+                                        // (or an overlap).
+  X_monotone_curve_2  overlap_cv;       // The currently discovered overlap.
+  bool                found_overlap;    // Have we found an overlap.
+  bool                found_iso_vert;   // Check if an isolated vertex induces
+                                        // the next intersection.
+  Vertex_handle       intersect_v;      // The vertex that intersects cv.
+  Halfedge_handle     intersect_he;     // The halfedge that intersects cv
+                                        // (or overlaps it).
 
-  X_monotone_curve_2  sub_cv1;         // Auxiliary variable (for curve split).
-  X_monotone_curve_2  sub_cv2;         // Auxiliary variable (for curve split).
+  X_monotone_curve_2  sub_cv1;          // Auxiliary variable (for curve split).
+  X_monotone_curve_2  sub_cv2;          // Auxiliary variable (for curve split).
 
 public:
 
@@ -182,7 +181,7 @@ public:
     invalid_v (),
     invalid_he ()
   {
-    geom_traits = static_cast<Traits_adaptor_2*> (arr.geometry_traits());
+    m_geom_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
 
     CGAL_assertion (visitor != NULL);
 
@@ -202,16 +201,16 @@ public:
     cv = _cv;
 
     const Arr_parameter_space  bx1 =
-      geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
+      m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
     const Arr_parameter_space  by1 =
-      geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
+      m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
 
     if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR) {
       // The curve has a finite left endpoint with no boundary conditions:
       // locate it in the arrangement.
       has_left_pt = true;
       left_on_boundary = (bx1 != ARR_INTERIOR || by1 != ARR_INTERIOR);
-      left_pt = geom_traits->construct_min_vertex_2_object() (cv);
+      left_pt = m_geom_traits->construct_min_vertex_2_object() (cv);
 
       obj = pl.locate (left_pt);
     }
@@ -220,23 +219,23 @@ public:
       // traits use the arrangement accessor to locate it.
       // Note that if the curve-end is unbounded, left_pt does not exist.
       // Note that if the curve-end is unbounded, left_pt does not exist.
-      has_left_pt = geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
+      has_left_pt = m_geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
       left_on_boundary = true;
       if (has_left_pt)
-        left_pt = geom_traits->construct_min_vertex_2_object() (cv);
+        left_pt = m_geom_traits->construct_min_vertex_2_object() (cv);
       obj = arr_access.locate_curve_end (cv, ARR_MIN_END, bx1, by1);
     }
 
     // Check the boundary conditions of th right curve end.
-    if (geom_traits->is_closed_2_object()(cv, ARR_MAX_END)) {
+    if (m_geom_traits->is_closed_2_object()(cv, ARR_MAX_END)) {
       const Arr_parameter_space  bx2 =
-        geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
+        m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
       const Arr_parameter_space  by2 =
-        geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
+        m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
 
       // The right endpoint is valid.
       has_right_pt = true;
-      right_pt = geom_traits->construct_max_vertex_2_object() (cv);
+      right_pt = m_geom_traits->construct_max_vertex_2_object() (cv);
       right_on_boundary = (bx2 != ARR_INTERIOR) || (by2 != ARR_INTERIOR);
     }
     else {
@@ -352,10 +351,10 @@ private:
                         Arr_all_sides_oblivious_tag) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
-             geom_traits->compare_xy_2_object() 
+             m_geom_traits->compare_xy_2_object() 
              (p, he->source()->point()) == SMALLER) ||
             (he->direction() == ARR_RIGHT_TO_LEFT &&
-             geom_traits->compare_xy_2_object() 
+             m_geom_traits->compare_xy_2_object() 
              (p, he->target()->point()) == SMALLER));
   }
 
@@ -378,10 +377,10 @@ private:
                          Arr_all_sides_oblivious_tag) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
-             geom_traits->compare_xy_2_object() 
+             m_geom_traits->compare_xy_2_object() 
              (p, he->target()->point()) == LARGER) ||
             (he->direction() == ARR_RIGHT_TO_LEFT &&
-             geom_traits->compare_xy_2_object() 
+             m_geom_traits->compare_xy_2_object() 
              (p, he->source()->point()) == LARGER));
   }
 

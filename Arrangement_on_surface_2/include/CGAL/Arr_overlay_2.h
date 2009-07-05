@@ -131,7 +131,7 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   }
 
   // Obtain a extended traits-class object and define the sweep-line visitor.
-  typename ArrRes::Traits_adaptor_2   *traits_adaptor = 
+  const typename ArrRes::Traits_adaptor_2 * traits_adaptor =
     arr_res.traits_adaptor();
   
   /* We would like to avoid copy construction of the geometry traits class.
@@ -149,7 +149,7 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   typedef Arr_traits_basic_adaptor_2< GeomTraitsRes > Geom_traits_adaptor_2;
   typename boost::mpl::if_< 
      boost::is_same< Geom_traits_adaptor_2, Ovl_traits_2>,
-       Ovl_traits_2&, Ovl_traits_2 >:: type
+       const Ovl_traits_2&, Ovl_traits_2 >:: type
        ex_traits(*traits_adaptor);
 
   Ovl_visitor               visitor (&arr1, &arr2, &arr_res, &ovl_tr);

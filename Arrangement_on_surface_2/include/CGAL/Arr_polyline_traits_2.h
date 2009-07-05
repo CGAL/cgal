@@ -47,7 +47,7 @@ public:
   typedef Arr_oblivious_side_tag                     Arr_top_side_tag;
   typedef Arr_oblivious_side_tag                     Arr_right_side_tag;
 
-  private:
+private:
   typedef Arr_polyline_traits_2<Segment_traits_2>    Self;
 
   // Data members:
@@ -271,7 +271,8 @@ public:
 
   public:
     /*! Constructor. */
-    Compare_y_at_x_right_2(const Segment_traits_2 * traits) : m_seg_traits(traits)
+    Compare_y_at_x_right_2(const Segment_traits_2 * traits) :
+      m_seg_traits(traits)
     {}
 
     /*!
@@ -311,13 +312,12 @@ public:
 
   class Equal_2 {
   private: 
-    const Self  * m_poly_traits;
+    const Self * m_poly_traits;
 
   public:
 
     /*! Constructor. */
-    Equal_2(const Self * poly_tr)
-      :  m_poly_traits(poly_tr) {}
+    Equal_2(const Self * poly_tr) : m_poly_traits(poly_tr) {}
 
     /*!
      * Check if the two points are the same.
@@ -343,11 +343,16 @@ public:
       unsigned int n2 = cv2.size();
 
       // Check the pairwise equality of the contained segments.    
-      typename Segment_traits_2::Equal_2 equal = m_poly_traits->m_seg_traits.equal_2_object();
-      typename Segment_traits_2::Compare_x_2 compare_x = m_poly_traits->m_seg_traits.compare_x_2_object(); 
-      typename Segment_traits_2::Compare_y_at_x_2 compare_y_at_x = m_poly_traits->m_seg_traits.compare_y_at_x_2_object();
-      typename Segment_traits_2::Construct_min_vertex_2 min_vertex = m_poly_traits->m_seg_traits.construct_min_vertex_2_object();
-      typename Segment_traits_2::Construct_max_vertex_2 max_vertex = m_poly_traits->m_seg_traits.construct_max_vertex_2_object();
+      typename Segment_traits_2::Equal_2 equal =
+        m_poly_traits->m_seg_traits.equal_2_object();
+      typename Segment_traits_2::Compare_x_2 compare_x =
+        m_poly_traits->m_seg_traits.compare_x_2_object(); 
+      typename Segment_traits_2::Compare_y_at_x_2 compare_y_at_x =
+        m_poly_traits->m_seg_traits.compare_y_at_x_2_object();
+      typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
+        m_poly_traits->m_seg_traits.construct_min_vertex_2_object();
+      typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
+        m_poly_traits->m_seg_traits.construct_max_vertex_2_object();
       Is_vertical_2 is_vertical = m_poly_traits->is_vertical_2_object();
       Point_2 point1,point2;
       Comparison_result res_x;
@@ -362,7 +367,8 @@ public:
       if (!res)
         return false;
 
-      // If the first and last points are equal and the curves are vertical, it means that it is equal.
+      // If the first and last points are equal and the curves are vertical,
+      // it means that it is equal.
       bool ver1 = is_vertical(cv1);
       bool ver2 = is_vertical(cv2);
       // both curves are vertical and therefore equal. 
@@ -372,39 +378,41 @@ public:
       if ((ver1 && !ver2) || (ver2 && !ver1))
         return false;
       
-        // If we arrived here it means that the first and last point of the curve are equal.
-        while ((i < n1-1) || (j < n2-1)) {
-          point1 = max_vertex(cv1[i]);
-          point2 = max_vertex(cv2[j]);
+      // If we arrived here it means that the first and last point of the
+      // curve are equal.
+      while ((i < n1-1) || (j < n2-1)) {
+        point1 = max_vertex(cv1[i]);
+        point2 = max_vertex(cv2[j]);
 
-          res = equal(point1, point2);
-          // Easy case - the two points are equal
-          if (res) {
-            ++i;
-            ++j;
+        res = equal(point1, point2);
+        // Easy case - the two points are equal
+        if (res) {
+          ++i;
+          ++j;
+        }
+        else {
+          res_x = compare_x(point1,point2);
+          // Check if the different point is a collinear point situated on
+          // the line between its two neighbors.
+          if (res_x == SMALLER) { 
+            res_y_at_x = compare_y_at_x(point1,cv2[j]);
+            if (res_y_at_x == EQUAL)
+              ++i;
+            else
+              return false;
+          }
+          else if(res_x == LARGER) {
+            res_y_at_x = compare_y_at_x(point2,cv1[i]);
+            if (res_y_at_x == EQUAL)
+              ++j;
+            else
+              return false;
           }
           else {
-            res_x = compare_x(point1,point2);
-            // Check if the different point is a collinear point situated on the line between its two neighbors.
-            if (res_x == SMALLER) { 
-              res_y_at_x = compare_y_at_x(point1,cv2[j]);
-              if (res_y_at_x == EQUAL)
-                ++i;
-              else
-                return false;
-            }
-            else if(res_x == LARGER) {
-              res_y_at_x = compare_y_at_x(point2,cv1[i]);
-              if (res_y_at_x == EQUAL)
-              ++j;
-              else
-              return false;
-            }
-            else {
-              return false;
-            }
+            return false;
           }
         }
+      }
       return true;
     }
   };
@@ -514,11 +522,11 @@ public:
   private:
     typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
 
-    Segment_traits_2        * m_seg_traits;
+    const Segment_traits_2 * m_seg_traits;
 
   public:
     /*! Constructor. */
-    Split_2(Segment_traits_2 * traits) : m_seg_traits(traits) {}
+    Split_2(const Segment_traits_2 * traits) : m_seg_traits(traits) {}
 
   public:
     /*!
@@ -582,7 +590,7 @@ public:
   friend class Split_2;
 
   /*! Get a Split_2 functor object. */
-  Split_2 split_2_object()
+  Split_2 split_2_object() const
   {
     return Split_2(&m_seg_traits);
   }
@@ -590,11 +598,11 @@ public:
   class Intersect_2 {
   private:
     typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
-    Segment_traits_2        * m_seg_traits;
+    const Segment_traits_2 * m_seg_traits;
 
   public:
     /*! Constructor. */
-    Intersect_2(Segment_traits_2 * traits) : m_seg_traits(traits) {}
+    Intersect_2(const Segment_traits_2 * traits) : m_seg_traits(traits) {}
 
     /*!
      * Find the intersections of the two given curves and insert them into the
@@ -704,10 +712,10 @@ public:
               ocv.push_back(seg);
             }
           } else {
-           if (right_res == SMALLER) {
+            if (right_res == SMALLER) {
               Segment_2 seg(min_vertex(cv1[i1]), max_vertex(cv1[i1]));
               ocv.push_back(seg);
-           } else {
+            } else {
               Segment_2 seg(min_vertex(cv1[i1]), max_vertex(cv2[i2]));
               ocv.push_back(seg);
             }
@@ -783,14 +791,14 @@ public:
   friend class Intersect_2;
   
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object()
+  Intersect_2 intersect_2_object() const
   {
     return Intersect_2(&m_seg_traits);
   }
 
   class Are_mergeable_2 {
   private:
-    const Segment_traits_2  * m_seg_traits;
+    const Segment_traits_2 * m_seg_traits;
 
   public:
     /*! Constructor. */
@@ -822,23 +830,24 @@ public:
       bool ver2 = is_vertical(cv2[0]);
 
       return ((equal(max_vertex(cv1[n1 - 1]), min_vertex(cv2[0])) ||
-              equal(max_vertex(cv2[n2 - 1]), min_vertex(cv1[0]))) &&
+               equal(max_vertex(cv2[n2 - 1]), min_vertex(cv1[0]))) &&
               ((ver1 && ver2) || (!ver1 && !ver2)));
     }
   };
   
   /*! Get an Are_mergeable_2 functor object. */
-  Are_mergeable_2 are_mergeable_2_object() const {
+  Are_mergeable_2 are_mergeable_2_object() const
+  {
     return Are_mergeable_2(&m_seg_traits);
   }
 
   class Merge_2 {
   private:
-    Segment_traits_2        * m_seg_traits;
+    const Segment_traits_2 * m_seg_traits;
 
   public:
     /*! Constructor. */
-    Merge_2(Segment_traits_2 * traits) : m_seg_traits(traits) {}
+    Merge_2(const Segment_traits_2 * traits) : m_seg_traits(traits) {}
 
   public:
     /*!
@@ -867,37 +876,37 @@ public:
       if (equal(max_vertex(cv1[n1 - 1]), min_vertex(cv2[0]))) {
         // cv2 extends cv1 to the right:
         for (i = 0; i < n1 - 1; ++i)
-      c.push_back(cv1[i]);
+          c.push_back(cv1[i]);
 
-    // Try to merge tthe to contiguous line segments:
-    if (m_seg_traits->are_mergeable_2_object()(cv1[n1 - 1], cv2[0])) {
-      Segment_2       seg;
-      m_seg_traits->merge_2_object()(cv1[n1 - 1], cv2[0], seg);
-      c.push_back(seg);
-    } else {
-      c.push_back(cv1[n1 - 1]);
-      c.push_back(cv2[0]);
-    }
+        // Try to merge tthe to contiguous line segments:
+        if (m_seg_traits->are_mergeable_2_object()(cv1[n1 - 1], cv2[0])) {
+          Segment_2       seg;
+          m_seg_traits->merge_2_object()(cv1[n1 - 1], cv2[0], seg);
+          c.push_back(seg);
+        } else {
+          c.push_back(cv1[n1 - 1]);
+          c.push_back(cv2[0]);
+        }
 
-    for (i = 1; i < n2; ++i)
-      c.push_back(cv2[i]);
+        for (i = 1; i < n2; ++i)
+          c.push_back(cv2[i]);
       } else if (equal(max_vertex(cv2[n2 - 1]), min_vertex(cv1[0]))) {
-    // cv1 extends cv2 to the right:
-    for (i = 0; i < n2 - 1; ++i)
-      c.push_back(cv2[i]);
+        // cv1 extends cv2 to the right:
+        for (i = 0; i < n2 - 1; ++i)
+          c.push_back(cv2[i]);
 
-    // Try to merge tthe to contiguous line segments:
-    if (m_seg_traits->are_mergeable_2_object()(cv2[n2 - 1], cv1[0])) {
-      Segment_2       seg;
-      m_seg_traits->merge_2_object()(cv2[n2 - 1], cv1[0], seg);
-      c.push_back(seg);
-    } else {
-      c.push_back(cv2[n2 - 1]);
-      c.push_back(cv1[0]);
-    }
+        // Try to merge tthe to contiguous line segments:
+        if (m_seg_traits->are_mergeable_2_object()(cv2[n2 - 1], cv1[0])) {
+          Segment_2       seg;
+          m_seg_traits->merge_2_object()(cv2[n2 - 1], cv1[0], seg);
+          c.push_back(seg);
+        } else {
+          c.push_back(cv2[n2 - 1]);
+          c.push_back(cv1[0]);
+        }
 
-    for (i = 1; i < n1; ++i)
-      c.push_back(cv1[i]);
+        for (i = 1; i < n1; ++i)
+          c.push_back(cv1[i]);
       } else {
         CGAL_precondition_msg(false, "The curves are not mergeable.");
       }
@@ -905,7 +914,7 @@ public:
   };
   
   /*! Get a Merge_2 functor object. */
-  Merge_2 merge_2_object() 
+  Merge_2 merge_2_object() const
   {
     return Merge_2(&m_seg_traits);
   }
@@ -914,7 +923,7 @@ public:
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
   typedef typename Segment_traits_2::Approximate_number_type  
-                                                      Approximate_number_type;
+  Approximate_number_type;
   typedef typename Segment_traits_2::Approximate_2    Approximate_2;
 
 

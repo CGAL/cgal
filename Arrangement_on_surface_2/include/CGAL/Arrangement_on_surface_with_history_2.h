@@ -427,7 +427,7 @@ public:
   Arrangement_on_surface_with_history_2 (const Self& arr);
 
   /*! Constructor given a traits object. */
-  Arrangement_on_surface_with_history_2 (Geometry_traits_2 *tr);
+  Arrangement_on_surface_with_history_2 (const Geometry_traits_2 *tr);
   //@}
 
   /// \name Assignment functions.
@@ -450,28 +450,22 @@ public:
   virtual void clear ();
   //@}
 
-  /*! Access the geometry-traits object (non-const version). */
-  inline Geometry_traits_2* geometry_traits ()
-  {
-    return (this->geom_traits);
-  }
-  
   /*! Access the geometry-traits object (const version). */
-  inline const Geometry_traits_2* geometry_traits () const
+  inline const Geometry_traits_2 * geometry_traits () const
   {
-    return (this->geom_traits);
+    return (this->m_geom_traits);
   }
 
   /*! Access the topology-traits object (non-const version). */
-  inline Topology_traits* topology_traits ()
+  inline Topology_traits * topology_traits ()
   {
-    return (&(this->top_traits));
+    return (&(this->m_topol_traits));
   }
   
   /*! Access the topology-traits object (const version). */
   inline const Topology_traits* topology_traits () const
   {
-    return (&(this->top_traits));
+    return (&(this->m_topol_traits));
   }
 
   /// \name Traversal of the arrangement curves.
@@ -783,12 +777,11 @@ public:
    * \param overlay_tr An overlay-traits class.
    */
   template <class TopTraits1, class TopTraits2, class OverlayTraits>
-  void _overlay
-      (const Arrangement_on_surface_with_history_2<Geometry_traits_2,
-                                                   TopTraits1>& arr1,
-       const Arrangement_on_surface_with_history_2<Geometry_traits_2,
-                                                   TopTraits2>& arr2,
-       OverlayTraits& overlay_tr)
+  void _overlay(const Arrangement_on_surface_with_history_2
+                <Geometry_traits_2, TopTraits1>& arr1,
+                const Arrangement_on_surface_with_history_2
+                <Geometry_traits_2, TopTraits2>& arr2,
+                OverlayTraits& overlay_tr)
   {
     // Clear the current contents of the arrangement.
     clear();
@@ -911,8 +904,8 @@ template <class GeomTraits, class TopTraits, class PointLocation>
 typename Arrangement_on_surface_with_history_2<GeomTraits,
                                                TopTraits>::Curve_handle
 insert (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
-              const typename GeomTraits::Curve_2& c,
-              const PointLocation& pl)
+        const typename GeomTraits::Curve_2& c,
+        const PointLocation& pl)
 {
   // Obtain an arrangement accessor and perform the insertion.
   typedef Arrangement_on_surface_with_history_2<GeomTraits,
@@ -934,7 +927,7 @@ template <class GeomTraits, class TopTraits>
 typename Arrangement_on_surface_with_history_2<GeomTraits,
                                                TopTraits>::Curve_handle
 insert (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
-              const typename GeomTraits::Curve_2& c)
+        const typename GeomTraits::Curve_2& c)
 {
   // Obtain an arrangement accessor and perform the insertion.
   typedef Arrangement_on_surface_with_history_2<GeomTraits,
@@ -955,9 +948,8 @@ insert (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
  * \pre The value type of the iterators must be Curve_2.
  */
 template <class GeomTraits, class TopTraits, class InputIterator>
-void insert (Arrangement_on_surface_with_history_2<GeomTraits,
-                                                          TopTraits>& arr,
-                    InputIterator begin, InputIterator end)
+void insert (Arrangement_on_surface_with_history_2<GeomTraits, TopTraits>& arr,
+             InputIterator begin, InputIterator end)
 {
   // Obtain an arrangement accessor and perform the insertion.
   typedef Arrangement_on_surface_with_history_2<GeomTraits,
@@ -976,10 +968,9 @@ void insert (Arrangement_on_surface_with_history_2<GeomTraits,
 template <class GeomTraits, class TopTraits>
 typename Arrangement_on_surface_with_history_2<GeomTraits,
                                                TopTraits>::Size
-remove_curve
-  (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
-   typename Arrangement_on_surface_with_history_2<GeomTraits,
-                                                  TopTraits>::Curve_handle ch)
+remove_curve(Arrangement_on_surface_with_history_2<GeomTraits, TopTraits>& arr,
+             typename Arrangement_on_surface_with_history_2
+               <GeomTraits, TopTraits>::Curve_handle ch)
 {
   // Obtain an arrangement accessor and perform the removal.
   typedef Arrangement_on_surface_with_history_2<GeomTraits,

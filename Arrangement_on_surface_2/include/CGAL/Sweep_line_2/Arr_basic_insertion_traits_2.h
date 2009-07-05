@@ -17,6 +17,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_BASIC_INSERTION_TRAITS_2_H
 #define CGAL_ARR_BASIC_INSERTION_TRAITS_2_H
@@ -77,12 +78,12 @@ public:
 protected:
 
   //! The base traits.
-  Traits_2*    m_base_traits;
+  const Traits_2 * m_base_traits;
 
 public:
 
   /*! Constructor. */
-  Arr_basic_insertion_traits_2 (Traits_2& tr):
+  Arr_basic_insertion_traits_2 (const Traits_2 & tr):
     m_base_traits (&tr)
   {}
 

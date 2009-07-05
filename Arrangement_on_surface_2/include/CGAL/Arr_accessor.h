@@ -171,7 +171,7 @@ public:
       Traits_adaptor_2;
 
     const Traits_adaptor_2  *m_traits = 
-      static_cast<Traits_adaptor_2*> (p_arr->geometry_traits());
+      static_cast<const Traits_adaptor_2*> (p_arr->geometry_traits());
 
     Arr_curve_end                ind = ARR_MIN_END;
 

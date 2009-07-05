@@ -346,7 +346,7 @@ public:
   };
 
   /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object ()
+  Make_x_monotone_2 make_x_monotone_2_object () const
   {
     return Make_x_monotone_2();
   }
@@ -375,7 +375,7 @@ public:
   };
 
   /*! Get a Split_2 functor object. */
-  Split_2 split_2_object ()
+  Split_2 split_2_object () const
   {
     return Split_2();
   }
@@ -401,7 +401,7 @@ public:
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object ()
+  Intersect_2 intersect_2_object () const
   {
     return Intersect_2();
   }

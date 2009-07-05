@@ -107,13 +107,16 @@ private:
   typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
 
   // Data members:
-  Bezier_cache      *p_cache;     /*!< Caches vertical tangency points and
-                                       intersection points that have been
-                                       computed in an exact manner. */
-  Intersection_map  *p_inter_map; /*!< Maps curve pairs to their intersection
-                                       points. */
-  bool               m_owner;     /*!< Does this instance own its cache amd
-                                       map structures. */
+  mutable Bezier_cache * p_cache;         /*!< Caches vertical tangency points
+                                           * and intersection points that have
+                                           * been computed in an exact manner.
+                                           */
+  mutable Intersection_map * p_inter_map; /*!< Maps curve pairs to their
+                                           * intersection points.
+                                           */
+  bool m_owner;                           /*!< Does this instance own its cache
+                                           * and map structures.
+                                           */
 
 public:
 
@@ -615,7 +618,7 @@ public:
   };
 
   /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object ()
+  Make_x_monotone_2 make_x_monotone_2_object () const
   {
     return (Make_x_monotone_2 (p_cache));
   }
@@ -683,7 +686,7 @@ public:
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object ()
+  Intersect_2 intersect_2_object () const
   {
     return (Intersect_2 (p_cache, p_inter_map));
   }

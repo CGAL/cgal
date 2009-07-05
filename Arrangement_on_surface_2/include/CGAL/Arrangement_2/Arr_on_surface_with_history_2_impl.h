@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 // Default constructor.
 //
 template<class GeomTr, class TopTr>
-Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
+Arrangement_on_surface_with_history_2<GeomTr, TopTr>::
 Arrangement_on_surface_with_history_2 () :
   Base_arr_2 ()
 {
@@ -57,7 +57,7 @@ Arrangement_on_surface_with_history_2 (const Self& arr) :
 //
 template<class GeomTr, class TopTr>
 Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
-Arrangement_on_surface_with_history_2 (Geometry_traits_2 *tr) :
+Arrangement_on_surface_with_history_2 (const Geometry_traits_2 * tr) :
   Base_arr_2 (static_cast<Data_traits_2*> (tr))
 {
   m_observer.attach (*this);
@@ -68,8 +68,8 @@ Arrangement_on_surface_with_history_2 (Geometry_traits_2 *tr) :
 //
 template<class GeomTr, class TopTr>
 Arrangement_on_surface_with_history_2<GeomTr,TopTr>&
-Arrangement_on_surface_with_history_2<GeomTr,TopTr>::operator=
-    (const Self& arr)
+Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
+operator=(const Self& arr)
 {
   // Check for self-assignment.
   if (this == &arr)
@@ -83,8 +83,8 @@ Arrangement_on_surface_with_history_2<GeomTr,TopTr>::operator=
 // Assign an arrangement with history.
 //
 template<class GeomTr, class TopTr>
-void Arrangement_on_surface_with_history_2<GeomTr,TopTr>::assign 
-    (const Self& arr)
+void Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
+assign(const Self& arr)
 {
   // Clear the current contents of the arrangement.
   clear();
@@ -192,14 +192,13 @@ void Arrangement_on_surface_with_history_2<GeomTr,TopTr>::clear ()
 //
 template<class GeomTr, class TopTr>
 typename Arrangement_on_surface_with_history_2<GeomTr,TopTr>::Halfedge_handle
-Arrangement_on_surface_with_history_2<GeomTr,TopTr>::split_edge 
-    (Halfedge_handle e,
-     const Point_2& p)
+Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
+split_edge(Halfedge_handle e, const Point_2& p)
 {
   // Split the curve associated with the halfedge e at the given point p.
   Data_x_curve_2       cv1, cv2;
   
-  this->geom_traits->split_2_object() (e->curve(), p,
+  this->m_geom_traits->split_2_object() (e->curve(), p,
                                        cv1, cv2);
 
   // cv1 always lies to the left of cv2. If e is directed from left to right,
@@ -221,9 +220,8 @@ Arrangement_on_surface_with_history_2<GeomTr,TopTr>::split_edge
 //
 template<class GeomTr, class TopTr>
 typename Arrangement_on_surface_with_history_2<GeomTr,TopTr>::Halfedge_handle
-Arrangement_on_surface_with_history_2<GeomTr,TopTr>::merge_edge
-    (Halfedge_handle e1, 
-     Halfedge_handle e2)
+Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
+merge_edge(Halfedge_handle e1, Halfedge_handle e2)
 {
   CGAL_precondition_msg (are_mergeable(e1, e2), 
                          "Edges are not mergeable.");
@@ -231,7 +229,7 @@ Arrangement_on_surface_with_history_2<GeomTr,TopTr>::merge_edge
   // Merge the two curves.
   Data_x_curve_2       cv;
   
-  this->geom_traits->merge_2_object()(e1->curve(), e2->curve(), cv);
+  this->m_geom_traits->merge_2_object()(e1->curve(), e2->curve(), cv);
   
   return (Base_arr_2::merge_edge (e1, e2, cv));
 }
@@ -275,16 +273,16 @@ bool Arrangement_on_surface_with_history_2<GeomTr,TopTr>::are_mergeable
     return (false);
   
   // Check whether the curves associated with the two edges are mergeable.
-  return (this->geom_traits->are_mergeable_2_object()(e1->curve(),
-                                                      e2->curve()));
+  return (this->m_geom_traits->are_mergeable_2_object()(e1->curve(),
+                                                        e2->curve()));
 }
 
 //-----------------------------------------------------------------------------
 // Register a new observer (so it starts receiving notifications).
 //
 template<class GeomTr, class TopTr>
-void Arrangement_on_surface_with_history_2<GeomTr,TopTr>::_register_observer
-    (Arr_observer<Self> *p_obs)
+void Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
+_register_observer(Arr_observer<Self> *p_obs)
 {
   Base_arr_2::_register_observer
     (reinterpret_cast<Arr_observer<Base_arr_2>*>(p_obs));
@@ -295,8 +293,8 @@ void Arrangement_on_surface_with_history_2<GeomTr,TopTr>::_register_observer
 // Unregister an observer (so it stops receiving notifications).
 //
 template<class GeomTr, class TopTr>
-bool Arrangement_on_surface_with_history_2<GeomTr,TopTr>::_unregister_observer
-    (Arr_observer<Self> *p_obs)
+bool Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
+_unregister_observer(Arr_observer<Self> *p_obs)
 {
   return (Base_arr_2::_unregister_observer 
           (reinterpret_cast<Arr_observer<Base_arr_2>*>(p_obs)));

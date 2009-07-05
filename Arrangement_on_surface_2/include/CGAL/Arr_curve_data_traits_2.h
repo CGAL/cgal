@@ -17,6 +17,7 @@
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
+
 #ifndef CGAL_ARR_CURVE_DATA_TRAITS_2_H
 #define CGAL_ARR_CURVE_DATA_TRAITS_2_H
 
@@ -93,7 +94,7 @@ public:
   {}
   
   /*! Constructor from a base-traits class. */
-  Arr_curve_data_traits_2 (const Base_traits_2& traits) :
+  Arr_curve_data_traits_2 (const Base_traits_2 & traits) :
     Base_traits_2 (traits)
   {}
   //@}
@@ -104,12 +105,12 @@ public:
   class Make_x_monotone_2
   {
   private:
-    Base_traits_2    *base;
+    const Base_traits_2 * base;
 
   public:
 
     /*! Constructor. */
-    Make_x_monotone_2 (Base_traits_2 *_base) :
+    Make_x_monotone_2 (const Base_traits_2 * _base) :
       base (_base)
     {}
     
@@ -158,7 +159,7 @@ public:
   };
 
   /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object ()
+  Make_x_monotone_2 make_x_monotone_2_object () const
   {
     return Make_x_monotone_2 (this);
   }
@@ -166,12 +167,12 @@ public:
   class Split_2
   {
   private:
-    Base_traits_2    *base;
+    const Base_traits_2 * base;
 
   public:
 
     /*! Constructor. */
-    Split_2 (Base_traits_2 *_base) :
+    Split_2 (const Base_traits_2 * _base) :
       base (_base)
     {}
 
@@ -187,8 +188,7 @@ public:
                      X_monotone_curve_2& c1, X_monotone_curve_2& c2)
     {
       // Split the original curve.
-      base->split_2_object() (cv, p,
-                              c1, c2);
+      base->split_2_object() (cv, p, c1, c2);
 
       // Attach data to the split curves.
       c1.set_data (cv.data());
@@ -199,7 +199,7 @@ public:
   };
 
   /*! Get a Split_2 functor object. */
-  Split_2 split_2_object ()
+  Split_2 split_2_object () const
   {
     return Split_2 (this);
   }
@@ -207,12 +207,12 @@ public:
   class Intersect_2
   {
   private:
-    Base_traits_2    *base;
+    const Base_traits_2 * base;
 
   public:
 
     /*! Constructor. */
-    Intersect_2 (Base_traits_2 *_base) :
+    Intersect_2 (const Base_traits_2 * _base) :
       base (_base)
     {}
 
@@ -270,7 +270,7 @@ public:
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object ()
+  Intersect_2 intersect_2_object () const
   {
     return Intersect_2 (this);
   }
@@ -278,12 +278,12 @@ public:
   class Are_mergeable_2
   {
   private:
-    const Base_traits_2    *base;
+    const Base_traits_2 * base;
 
   public:
 
     /*! Constructor. */
-    Are_mergeable_2 (const Base_traits_2 *_base) :
+    Are_mergeable_2 (const Base_traits_2 * _base) :
       base (_base)
     {}
 
@@ -339,12 +339,12 @@ public:
   class Merge_2
   {
   private:
-    Base_traits_2    *base;
+    const Base_traits_2 * base;
 
   public:
 
     /*! Constructor. */
-    Merge_2 (Base_traits_2 *_base) :
+    Merge_2 (const Base_traits_2 * _base) :
       base (_base)
     {}
 
@@ -376,8 +376,7 @@ public:
       // Merge the two base curve.
       Base_x_monotone_curve_2  base_cv;
 
-      base->merge_2_object() (cv1, cv2,
-                              base_cv);
+      base->merge_2_object() (cv1, cv2, base_cv);
 
       // Attach data from one of the curves.
       CGAL_precondition (cv1.data() == cv2.data());
@@ -400,7 +399,7 @@ public:
   };
 
   /*! Get a Merge_2 functor object. */
-  Merge_2 merge_2_object ()
+  Merge_2 merge_2_object () const
   {
     return Merge_2 (this);
   }
@@ -408,12 +407,12 @@ public:
   class Construct_x_monotone_curve_2
   {
   private:
-    const Base_traits_2    *base;
+    const Base_traits_2 * base;
 
   public:
 
     /*! Constructor. */
-    Construct_x_monotone_curve_2 (const Base_traits_2 *_base) :
+    Construct_x_monotone_curve_2 (const Base_traits_2 * _base) :
       base (_base)
     {}
 
@@ -424,8 +423,7 @@ public:
      * \pre p and q must not be the same.
      * \return An x-monotone curve connecting p and q.
      */
-    X_monotone_curve_2 operator() (const Point_2& p,
-                                   const Point_2& q) const
+    X_monotone_curve_2 operator() (const Point_2& p, const Point_2& q) const
     {
       Base_x_monotone_curve_2  base_cv =
         base->construct_x_monotone_curve_2_object() (p, q);

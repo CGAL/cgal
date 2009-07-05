@@ -43,13 +43,13 @@ Arr_spherical_topology_traits_2() :
 /*! \brief constructs with a geometry-traits class */
 template <class GeomTraits, class Dcel>
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
-Arr_spherical_topology_traits_2(Geometry_traits_2 * traits) :
+Arr_spherical_topology_traits_2(const Geometry_traits_2 * traits) :
   m_spherical_face(NULL),
   m_north_pole(NULL),
   m_south_pole(NULL),
   m_own_traits(false)
 {
-  m_traits = static_cast<Traits_adaptor_2*>(traits);
+  m_traits = static_cast<const Traits_adaptor_2*>(traits);
   m_boundary_vertices = Vertex_map(Vertex_key_comparer(m_traits));
 }
 

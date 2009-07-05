@@ -172,7 +172,7 @@ public:
 
   /*! Add a subcurve to the container of right curves. */
   std::pair<bool, Subcurve_iterator>
-  add_curve_to_right (Subcurve *curve, Traits_2 *tr) 
+  add_curve_to_right (Subcurve *curve, const Traits_2 *tr) 
   {
     if (m_rightCurves.empty())
     {
