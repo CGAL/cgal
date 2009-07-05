@@ -20,3 +20,8 @@ In the following example the segments are stored into a list, and the AABB primi
 \subsection{Tree of Polyhedron Edge Segments for Intersection and Distance Queries}
 In the following example the AABB primitive wraps a halfedge handle as \ccc{id} and generates a 3D segment on the fly, each time its method \ccc{datum} is called. We compute the number of intersections with a triangle query and the closest point from a point query. 
 \ccIncludeExampleCode{AABB_tree/AABB_polyhedron_edge_example.cpp}
+
+\subsection{Trees of Custom Primitives}
+
+The AABB tree example folder contains three examples of trees constructed with customize primitives. In \ccc{AABB_custom_example.cpp} the primitive contains triangles which are defined by three pointers to custom points. In \ccc{AABB_custom_triangle_soup_example.cpp} all input triangles are stored into a single array so as to form a triangle soup. The primitive internally uses a \ccc{boost::iterator_adaptor} so as to provide the three functions (\ccc{id()}, \ccc{datum()}, \ccc{reference_point()}) required by the primitive concept. In \ccc{AABB_custom_indexed_triangle_set_example.cpp} the input is an indexed triangle set stored through two arrays: one array of points and one array of indices which refer to the point array. Here also the primitive internally uses a \ccc{boost::iterator_adaptor}.
+

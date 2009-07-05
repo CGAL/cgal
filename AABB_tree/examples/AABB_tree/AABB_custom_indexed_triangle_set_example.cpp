@@ -15,10 +15,10 @@
 // $Id:  $
 //
 //
-// Author(s)     : Camille Wormser
+// Author(s)     : Camille Wormser, Pierre Alliez
 //
 //******************************************************************************
-// File Description :
+// File Description : Example of AABB tree used with indexed triangle set
 //
 //******************************************************************************
 
@@ -34,24 +34,26 @@
 typedef CGAL::Simple_cartesian<double> K;
 
 
-// My own types:
+// My own point type:
 struct My_point {
   double x;
   double y;
   double z;
   
-  My_point (double _x, double _y, double _z) : x(_x), y(_y), z(_z) {}
+  My_point (double _x, double _y, double _z)
+		: x(_x), y(_y), z(_z) {}
 };
 
-// The triangles will be stored in a flat vector of points: 
-// three consecutive points represent a triangle
-typedef std::vector<My_point>::const_iterator Point_iterator;
+// The triangles are stored in a flat array of indices 
+// referring to an array of points: three consecutive
+// indices represent a triangle.
+typedef std::vector<size_t>::const_iterator Point_index_iterator;
 
 // Let us now define the iterator on triangles that the tree needs:
 class Triangle_iterator
   : public boost::iterator_adaptor<
         Triangle_iterator               // Derived
-      , Point_iterator                  // Base
+      , Point_index_iterator            // Base
       , boost::use_default              // Value
       , boost::forward_traversal_tag    // CategoryOrTraversal
     >
@@ -60,7 +62,7 @@ class Triangle_iterator
     Triangle_iterator()
       : Triangle_iterator::iterator_adaptor_() {}
 
-    explicit Triangle_iterator(Point_iterator p)
+    explicit Triangle_iterator(Point_index_iterator p)
       : Triangle_iterator::iterator_adaptor_(p) {}
 
  private:
@@ -75,67 +77,90 @@ struct My_triangle_primitive {
 public:
   typedef Triangle_iterator    Id;
   
-// the CGAL types that are returned
-  typedef K::Point_3      Point;
-  typedef K::Triangle_3   Datum;
+	// the CGAL types returned
+  typedef K::Point_3    Point;
+  typedef K::Triangle_3 Datum;
+
+	// a static pointer to the vector containing the points
+	// is needed to build the triangles on the fly:
+  static const std::vector<My_point>* point_container;
+
 private:
-  Id m_it;  // this is what the AABB tree will store internally
+  Id m_it; // this is what the AABB tree stores internally
 
 public:
-  My_triangle_primitive() {} // default constructor is needed
+  My_triangle_primitive() {} // default constructor needed
   
   // the following constructor is the one that receives the iterators from the 
   // iterator range given as input to the AABB_tree
-  My_triangle_primitive(Triangle_iterator a) : m_it(a) {}
+  My_triangle_primitive(Triangle_iterator a)
+		: m_it(a) {}
   
   Id id() const { return m_it; }
+
   // on the fly conversion from the internal data to the CGAL types
-  Datum datum() const { 
-    Point_iterator p_it = m_it.base();
-    Point p(p_it->x, p_it->y, p_it->z);
+  Datum datum() const
+	{ 
+    Point_index_iterator p_it = m_it.base();
+    const My_point& mp = (*point_container)[*p_it];
+    Point p(mp.x, mp.y, mp.z);
     ++p_it;
-    Point q(p_it->x, p_it->y, p_it->z);
+    const My_point& mq = (*point_container)[*p_it];
+    Point q(mq.x, mq.y, mq.z);
     ++p_it;
-    Point r(p_it->x, p_it->y, p_it->z);
-  
-    return Datum(p, q, r); 
+    const My_point& mr = (*point_container)[*p_it];
+    Point r(mr.x, mr.y, mr.z);
+
+    return Datum(p, q, r); // assembles triangle from three points
   }
-  
-  Point reference_point() const { 
-    return Point(m_it->x, m_it->y, m_it->z); }
+
+	// one point which must be on the primitive
+  Point reference_point() const
+	{ 
+    const My_point& mp = (*point_container)[*m_it];
+    return Point(mp.x, mp.y, mp.z);
+	}
 };
 
 
-
+// types
 typedef CGAL::AABB_traits<K, My_triangle_primitive> My_AABB_traits;
 typedef CGAL::AABB_tree<My_AABB_traits> Tree;
+const std::vector<My_point>* My_triangle_primitive::point_container = 0;
 
 int main()
 {
+	// generates point set
 	My_point a(1.0, 0.0, 0.0);
 	My_point b(0.0, 1.0, 0.0);
 	My_point c(0.0, 0.0, 1.0);
 	My_point d(0.0, 0.0, 0.0);
 
-	std::vector<My_point> triangles;
-	triangles.push_back(a); triangles.push_back(b); triangles.push_back(c);  
-	triangles.push_back(a); triangles.push_back(b); triangles.push_back(d);  
-	triangles.push_back(a); triangles.push_back(d); triangles.push_back(c);  
+	std::vector<My_point> points;
+	My_triangle_primitive::point_container = &points;
+	points.push_back(a);
+	points.push_back(b);
+	points.push_back(c);
+	points.push_back(d); 
+
+	// generates indexed triangle set
+  std::vector<size_t> triangles;
+	triangles.push_back(0); triangles.push_back(1); triangles.push_back(2);  
+	triangles.push_back(0); triangles.push_back(1); triangles.push_back(3);  
+	triangles.push_back(0); triangles.push_back(3); triangles.push_back(2);  
 
 	// constructs AABB tree
 	Tree tree(Triangle_iterator(triangles.begin()), 
 	          Triangle_iterator(triangles.end()));
 
 	// counts #intersections
-	K::Ray_3 ray_query(K::Point_3(1.0, 0.0, 0.0), K::Point_3(0.0, 1.0, 0.0));
+	K::Ray_3 ray_query(K::Point_3(0.2, 0.2, 0.2), K::Point_3(0.0, 1.0, 0.0));
 	std::cout << tree.number_of_intersected_primitives(ray_query)
 		<< " intersections(s) with ray query" << std::endl;
 
-	// compute closest point and squared distance
+	// computes closest point
 	K::Point_3 point_query(2.0, 2.0, 2.0);
 	K::Point_3 closest_point = tree.closest_point(point_query);
-	double sqd = tree.squared_distance(point_query);
-	std::cout << "squared distance: " << sqd << std::endl;
 
 	return EXIT_SUCCESS;
 }
