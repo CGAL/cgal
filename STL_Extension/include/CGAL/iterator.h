@@ -32,6 +32,10 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/tuple.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:547)
+#endif
 CGAL_BEGIN_NAMESPACE
 
 // +----------------------------------------------------------------+
@@ -2184,5 +2188,9 @@ dispatch_or_drop_output(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6,O7 out7)
 #endif
 
 CGAL_END_NAMESPACE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_ITERATOR_H
