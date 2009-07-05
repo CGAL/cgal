@@ -17,6 +17,7 @@
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
+
 #ifndef CGAL_ARR_SEGMENT_TRAITS_2_H
 #define CGAL_ARR_SEGMENT_TRAITS_2_H
 
@@ -864,8 +865,7 @@ public:
       typename Kernel::Equal_2  equal = kernel.equal_2_object();
 
       // Check if the two curves have the same supporting line.
-      if (! equal (cv1.line(),
-                   cv2.line()) && 
+      if (! equal (cv1.line(), cv2.line()) && 
           ! equal (cv1.line(), 
                    kernel.construct_opposite_line_2_object() (cv2.line())))
         return (false);
@@ -902,8 +902,7 @@ public:
       typename Kernel::Equal_2  equal = kernel.equal_2_object();
 
       CGAL_precondition
-        (equal (cv1.line(),
-                cv2.line()) ||
+        (equal (cv1.line(), cv2.line()) ||
          equal (cv1.line(),
                 kernel.construct_opposite_line_2_object() (cv2.line())));
 
@@ -954,11 +953,7 @@ public:
                                         int i) const
     {
       CGAL_precondition (i == 0 || i == 1);
-
-      if (i == 0)
-	return (CGAL::to_double(p.x()));
-      else
-	return (CGAL::to_double(p.y()));
+      return (i == 0) ? (CGAL::to_double(p.x())) : (CGAL::to_double(p.y()));
     }
   };
 
@@ -1008,12 +1003,9 @@ public:
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv)
+    Comparison_result operator() (const X_monotone_curve_2& cv) const
     {
-      if (cv.is_directed_right())
-        return (SMALLER);
-      else
-	return (LARGER);
+      return (cv.is_directed_right()) ? (SMALLER) : (LARGER);
     }
   };
 
@@ -1032,7 +1024,7 @@ public:
      * \param cv The curve.
      * \return The opposite curve.
      */
-    X_monotone_curve_2 operator() (const X_monotone_curve_2& cv)
+    X_monotone_curve_2 operator() (const X_monotone_curve_2& cv) const
     {
       return (cv.flip());
     }

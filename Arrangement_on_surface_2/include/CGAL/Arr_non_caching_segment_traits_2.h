@@ -386,7 +386,7 @@ public:
      * \return SMALLER if cv is directed from left to right and LARGER
      * otherwise.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv)
+    Comparison_result operator()(const X_monotone_curve_2& cv) const
     {
       typedef typename Kernel::Construct_vertex_2     Construct_vertex_2;
 
