@@ -69,7 +69,7 @@ public:
   {}
   
   /*! Constructor from a base-traits class. */
-  Env_surface_data_traits_3 (const Base_traits_3& traits) :
+  Env_surface_data_traits_3 (const Base_traits_3 & traits) :
     Base_traits_3 (traits)
   {}
   //@}
@@ -80,13 +80,12 @@ public:
   class Make_xy_monotone_3
   {
   private:
-    Base_traits_3    *base;
+    const Base_traits_3 * base;
 
   public:
 
     /*! Constructor. */
-    Make_xy_monotone_3 (Base_traits_3 *_base) :
-      base (_base)
+    Make_xy_monotone_3 (const Base_traits_3 * _base) : base (_base)
     {}
     
     /*!
@@ -98,7 +97,8 @@ public:
      * \return The past-the-end iterator.
      */
     template<class OutputIterator>
-    OutputIterator operator() (const Surface_3& S, bool is_lower, OutputIterator oi)
+    OutputIterator operator() (const Surface_3& S, bool is_lower,
+                               OutputIterator oi) const
     {
       // Make the original surface xy-monotone.
       std::list<Base_xy_monotone_surface_3>                     xy_surfaces;
@@ -120,8 +120,7 @@ public:
   };
 
   /*! Get a Make_xy_monotone_3 functor object. */
-  Make_xy_monotone_3
-  make_xy_monotone_3_object()
+  Make_xy_monotone_3 make_xy_monotone_3_object() const
   {
     return Make_xy_monotone_3 (this);
   }

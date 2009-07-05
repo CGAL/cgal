@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 template <class Kernel_>
 class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
 {
-  public:
+public:
   typedef Kernel_                              Kernel;
   typedef typename Kernel::FT                  FT;
   typedef Arr_linear_traits_2<Kernel>          Base;
@@ -62,13 +62,13 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   class Is_vertical_3
   {
   public:
-    bool operator()(const Plane_3& h)
+    bool operator()(const Plane_3& h) const
     {
       return CGAL::is_zero(h.c());
     }
   };
 
-  Is_vertical_3 is_vertical_3_object() 
+  Is_vertical_3 is_vertical_3_object() const
   {
     return Is_vertical_3();
   }
@@ -82,51 +82,51 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
     bool                 m_is_vert;
   
   public:
-     _Env_plane()
-     {}
+    _Env_plane()
+    {}
 
-     _Env_plane(const Plane_3& h) : m_plane(h),
-                                    m_is_all_plane(true)
-     {
-       Self s;
-       m_is_vert = s.is_vertical_3_object()(h);
-     }
+    _Env_plane(const Plane_3& h) : m_plane(h),
+                                   m_is_all_plane(true)
+    {
+      Self s;
+      m_is_vert = s.is_vertical_3_object()(h);
+    }
 
-     _Env_plane(const Plane_3& h, const Line_2& l) : m_plane(h),
-                                                     m_line(l),
-                                                     m_is_all_plane(false),
-                                                     m_is_vert(false)
-     {
-       CGAL_precondition_code(Self s);
-       CGAL_precondition(!s.is_vertical_3_object()(h));
-     }
+    _Env_plane(const Plane_3& h, const Line_2& l) : m_plane(h),
+                                                    m_line(l),
+                                                    m_is_all_plane(false),
+                                                    m_is_vert(false)
+    {
+      CGAL_precondition_code(Self s);
+      CGAL_precondition(!s.is_vertical_3_object()(h));
+    }
 
-     bool is_vertical() const
-     {
-       return m_is_vert;
-     }
+    bool is_vertical() const
+    {
+      return m_is_vert;
+    }
 
-     const Plane_3& plane() const
-     {
-       return m_plane;
-     }
+    const Plane_3& plane() const
+    {
+      return m_plane;
+    }
 
    
-     operator Plane_3 () const
-     {
-       return (m_plane);
-     }
+    operator Plane_3 () const
+    {
+      return (m_plane);
+    }
 
-     const Line_2& line() const
-     {
-       CGAL_assertion(!m_is_all_plane);
-       return m_line;
-     }
+    const Line_2& line() const
+    {
+      CGAL_assertion(!m_is_all_plane);
+      return m_line;
+    }
 
-     bool is_all_plane() const
-     {
-       return m_is_all_plane;
-     }
+    bool is_all_plane() const
+    {
+      return m_is_all_plane;
+    }
   };
 
   typedef _Env_plane               Xy_monotone_surface_3;
@@ -139,14 +139,14 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
     template <class OutputIterator>
     OutputIterator operator()(const Surface_3& s,
                               bool /* is_lower */,
-                              OutputIterator o) 
+                              OutputIterator o) const
     {
       *o++ = s;
       return o;
     }
   };
 
-  Make_xy_monotone_3 make_xy_monotone_3_object()
+  Make_xy_monotone_3 make_xy_monotone_3_object() const
   {
     return Make_xy_monotone_3();
   }
@@ -157,21 +157,24 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   
     Comparison_result operator()(const Point_2& p,
                                  const Xy_monotone_surface_3& h1,
-                                 const Xy_monotone_surface_3& h2)
+                                 const Xy_monotone_surface_3& h2) const
     {
       const Plane_3& plane1 = h1.plane();
       const Plane_3& plane2 = h2.plane();
       Sign sign_of_c1c2 = CGAL::sign(plane1.c() * plane2.c());
       Sign sign_of_expr = 
-        CGAL::sign ((p.x()*plane1.a() + p.y()*plane1.b() + plane1.d())*plane2.c() - 
-                    (p.x()*plane2.a() + p.y()*plane2.b() + plane2.d())*plane1.c());
-      int i = -1 * static_cast<int>(sign_of_c1c2) * static_cast<int>(sign_of_expr);
+        CGAL::sign ((p.x()*plane1.a() + p.y()*plane1.b() +
+                     plane1.d())*plane2.c() - 
+                    (p.x()*plane2.a() + p.y()*plane2.b() +
+                     plane2.d())*plane1.c());
+      int i = -1 * static_cast<int>(sign_of_c1c2) *
+        static_cast<int>(sign_of_expr);
       return static_cast<Comparison_result>(i);
     }
 
     Comparison_result operator()(const X_monotone_curve_2& cv,
                                  const Xy_monotone_surface_3& h1,
-                                 const Xy_monotone_surface_3& h2)
+                                 const Xy_monotone_surface_3& h2) const
     {
       Kernel k;
       Point_2 p;
@@ -190,7 +193,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
     }
 
     Comparison_result operator()(const Xy_monotone_surface_3& h1,
-                                 const Xy_monotone_surface_3& h2)
+                                 const Xy_monotone_surface_3& h2) const
     {
       CGAL_assertion(h1.is_all_plane() && h2.is_all_plane());
      
@@ -198,12 +201,12 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
       const Plane_3& p2 = h2.plane();
       const FT& res = p2.d()*p1.c() - p1.d()*p2.c();
       int i = static_cast<int>(CGAL::sign(p1.c()*p2.c())) * 
-              static_cast<int>(CGAL::sign (res));
+        static_cast<int>(CGAL::sign (res));
       return static_cast<Comparison_result>(i);
     }
   };
 
-  Compare_z_at_xy_3 compare_z_at_xy_3_object()
+  Compare_z_at_xy_3 compare_z_at_xy_3_object() const
   {
     return Compare_z_at_xy_3();
   }
@@ -213,25 +216,25 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   public:
     Comparison_result operator()(const X_monotone_curve_2& cv,
                                  const Xy_monotone_surface_3& h1,
-                                 const Xy_monotone_surface_3& h2)
+                                 const Xy_monotone_surface_3& h2) const
     {
       const Plane_3& plane1 = h1.plane();
       const Plane_3& plane2 = h2.plane();
 
       const FT& a1 = plane1.a(),
-                b1 = plane1.b(),
-                c1 = plane1.c();
+        b1 = plane1.b(),
+        c1 = plane1.c();
       
       const FT& a2 = plane2.a(),
-                b2 = plane2.b(),
-                c2 = plane2.c();
+        b2 = plane2.b(),
+        c2 = plane2.c();
 
- 	    // our line is a3*x + b3*y + c3 = 0
- 	    // it is assumed that the planes intersect over this line
+      // our line is a3*x + b3*y + c3 = 0
+      // it is assumed that the planes intersect over this line
       const Line_2& line = cv.supp_line(); 
       const FT& a3 = line.a(),
-                b3 = line.b(),
-                c3 = line.c();
+        b3 = line.b(),
+        c3 = line.c();
 
       // if the line was parallel to the y-axis (i.e x = const),
       // then it was enough to compare dz/dx of both planes
@@ -278,9 +281,9 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
       CGAL_assertion(k.compare_xy_2_object()(p1, p2) == SMALLER);
       
       const FT& x1 = p1.x(),
-                y1 = p1.y(),
-                x2 = p2.x(),
-                y2 = p2.y();
+        y1 = p1.y(),
+        x2 = p2.x(),
+        y2 = p2.y();
 
       Sign s2 = CGAL_NTS sign(-b3*x1+a3*y1-(-b3*x2+a3*y2));
       return s1 * s2;
@@ -288,7 +291,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
 
   };
 
-  Compare_z_at_xy_above_3 compare_z_at_xy_above_3_object()
+  Compare_z_at_xy_above_3 compare_z_at_xy_above_3_object() const
   {
     return Compare_z_at_xy_above_3();
   }
@@ -298,7 +301,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   public:
     Comparison_result operator()(const X_monotone_curve_2& cv,
                                  const Xy_monotone_surface_3& h1,
-                                 const Xy_monotone_surface_3& h2)
+                                 const Xy_monotone_surface_3& h2) const
     {
       Compare_z_at_xy_above_3 cmp_above;
       return CGAL::opposite(cmp_above(cv, h1, h2));
@@ -306,7 +309,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
 
   };
 
-  Compare_z_at_xy_below_3 compare_z_at_xy_below_3_object()
+  Compare_z_at_xy_below_3 compare_z_at_xy_below_3_object() const
   {
     return Compare_z_at_xy_below_3();
   }
@@ -317,8 +320,8 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   public:
 
     template <class OutputIterator>
-      OutputIterator operator()(const Xy_monotone_surface_3& s,
-                                OutputIterator o) const
+    OutputIterator operator()(const Xy_monotone_surface_3& s,
+                              OutputIterator o) const
     {
       if(s.is_all_plane())
       {
@@ -338,14 +341,15 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
       const Point_2& p2 = k.construct_point_on_2_object()(s.line(), 1);
       Comparison_result res = k.compare_xy_2_object()(p1, p2);
 
-      Oriented_side side = (res == SMALLER) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
+      Oriented_side side =
+        (res == SMALLER) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
       *o++ = make_object(std::make_pair(X_monotone_curve_2(s.line()), side));
       return o;
     }
   };
 
   Construct_projected_boundary_2 
-    construct_projected_boundary_2_object()
+  construct_projected_boundary_2_object() const
   {
     return Construct_projected_boundary_2();
   }
@@ -441,38 +445,39 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
         half_plane_half_plane_proj_intersection(h1, s1.line(), h2, s2.line(), k);
 
       if(obj.is_empty())
-          return o;
-        Line_2 line;
-        if(assign(line, obj))
-        {
-          *o++ = make_object(Intersection_curve(line, 1));
-          return o;
-        }
-        Ray_2 ray;
-        if(assign(ray, obj))
-        {
-          *o++ = make_object(Intersection_curve(ray, 1));
-          return o;
-        }
-
-        Segment_2 seg;
-        if(assign(seg, obj))
-        {
-          *o++ = make_object(Intersection_curve(seg, 1));
-          return o;
-        }
-
-        Point_2 p;
-        if(assign(p, obj))
-        {
-          *o++ = make_object(p);
-          return o;
-        }
         return o;
+      Line_2 line;
+      if(assign(line, obj))
+      {
+        *o++ = make_object(Intersection_curve(line, 1));
+        return o;
+      }
+      Ray_2 ray;
+      if(assign(ray, obj))
+      {
+        *o++ = make_object(Intersection_curve(ray, 1));
+        return o;
+      }
+
+      Segment_2 seg;
+      if(assign(seg, obj))
+      {
+        *o++ = make_object(Intersection_curve(seg, 1));
+        return o;
+      }
+
+      Point_2 p;
+      if(assign(p, obj))
+      {
+        *o++ = make_object(p);
+        return o;
+      }
+      return o;
     }
   };
 
-  Construct_projected_intersections_2 construct_projected_intersections_2_object()
+  Construct_projected_intersections_2
+  construct_projected_intersections_2_object() const
   {
     return Construct_projected_intersections_2();
   }

@@ -162,7 +162,8 @@ public:
     m_is_lower = ((type == ENVELOPE_LOWER) ? true : false);
   }
 
-  Envelope_divide_and_conquer_3(Traits* tr, Envelope_type type = ENVELOPE_LOWER)
+  Envelope_divide_and_conquer_3(const Traits * tr,
+                                Envelope_type type = ENVELOPE_LOWER)
   {
     // Set the traits.
     traits = tr;
@@ -248,13 +249,7 @@ public:
   }
 
   /*! Access the traits object (const version). */
-  const Traits* get_traits() const
-  {
-    return traits;
-  }
-
-  /*! Access the traits object (non-const version). */
-  Traits* get_traits() 
+  const Traits * get_traits() const
   {
     return traits;
   }
@@ -1020,7 +1015,7 @@ protected:
 
     typename Traits::Merge_2 curves_merge = traits->merge_2_object();
     typename Traits::Are_mergeable_2 curves_can_merge = 
-                                              traits->are_mergeable_2_object();
+      traits->are_mergeable_2_object();
 
     // check the candidates and remove if necessary
     typename std::list<Vertex_handle>::iterator ci;
@@ -1769,8 +1764,7 @@ protected:
   
 protected:
   Envelope_resolver         *resolver;
-  Traits                    *traits;
-  // Should we evetually free the traits object
+  const Traits * traits;
   bool                      own_traits; 
   bool                      m_is_lower;
 };

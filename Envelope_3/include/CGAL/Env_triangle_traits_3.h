@@ -340,18 +340,17 @@ public:
   class Make_xy_monotone_3
   {
   protected:
-    const Self *parent;
-  public:
+    const Self * parent;
 
-    Make_xy_monotone_3(const Self* p)
-      : parent(p)
+  public:
+    Make_xy_monotone_3(const Self * p) : parent(p)
     {}
     // create xy-monotone surfaces from a general surface
     // return a past-the-end iterator
     template <class OutputIterator>
     OutputIterator operator()(const Surface_3& s,
                               bool is_lower,
-                              OutputIterator o) 
+                              OutputIterator o) const
     {
       m_is_lower = is_lower;
 
@@ -397,6 +396,7 @@ public:
       }
       return o;
     }
+
   protected:
     // find the envelope point among the two points with same xy coordinates
     const Point_3& find_envelope_point (const Point_3& p1,
@@ -483,7 +483,7 @@ public:
       return o;
     }
 
-    bool m_is_lower;
+    mutable bool m_is_lower;
   };
 
   /*! Get a Make_xy_monotone_3 functor object. */

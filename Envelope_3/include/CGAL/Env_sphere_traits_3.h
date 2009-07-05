@@ -66,14 +66,12 @@ protected:
                     Multiplicity>                   Intersection_curve;
 
 public:
-  class Make_xy_monotone_3
-
-  {
+  class Make_xy_monotone_3 {
   protected:
-    Self& parent;
+    const Self & parent;
+
   public:
-    Make_xy_monotone_3(Self* p)
-      : parent(*p)
+    Make_xy_monotone_3(const Self * p) : parent(*p)
     {}
 
     // create xy-monotone surfaces from a general surface
@@ -81,7 +79,7 @@ public:
     template <class OutputIterator>
     OutputIterator operator()(const Surface_3& s,
                               bool is_lower,
-                              OutputIterator o) 
+                              OutputIterator o) const
     {
       // our half sphere is of same type as our full sphere since we always
       // need only the lower/upper part of each sphere
@@ -93,7 +91,7 @@ public:
 
   /*! Get a Make_xy_monotone_3 functor object. */
   Make_xy_monotone_3
-  make_xy_monotone_3_object() 
+  make_xy_monotone_3_object() const
   {
     return Make_xy_monotone_3(this);
   }
@@ -101,11 +99,10 @@ public:
   class Construct_projected_boundary_2
   {
   protected:
-    Self& parent;
+    const Self & parent;
 
   public:
-    Construct_projected_boundary_2(Self* p)
-      : parent(*p)
+    Construct_projected_boundary_2(const Self * p) : parent(*p)
     {}
 
     // insert into the OutputIterator all the (2d) curves of the boundary of
@@ -113,7 +110,7 @@ public:
     // the OutputIterator value type is X_monotone_curve_2
     template <class OutputIterator>
     OutputIterator
-    operator()(const Xy_monotone_surface_3& s, OutputIterator o)
+    operator()(const Xy_monotone_surface_3& s, OutputIterator o) const
     {
       // the projected boundary in a circle, with a projected center,
       // and same radius
@@ -152,7 +149,7 @@ public:
   
   /*! Get a Construct_projected_boundary_2 functor object. */
   Construct_projected_boundary_2
-  construct_projected_boundary_2_object()
+  construct_projected_boundary_2_object() const
   {
     return Construct_projected_boundary_2(this);
   }
@@ -160,12 +157,10 @@ public:
   class Construct_projected_intersections_2
   {
   protected:
-    Self& parent;
-
+    const Self & parent;
 
   public:
-    Construct_projected_intersections_2(Self* p)
-      : parent(*p)
+    Construct_projected_intersections_2(const Self * p) : parent(*p)
     {}
     
     // insert into OutputIterator all the (2d) projections on the xy plane of
@@ -712,7 +707,7 @@ public:
 
   /*! Get a Construct_projected_intersections_2 functor object. */
   Construct_projected_intersections_2
-  construct_projected_intersections_2_object()
+  construct_projected_intersections_2_object() const
   {                                                                
     return Construct_projected_intersections_2(this);
   }
@@ -720,10 +715,10 @@ public:
   class Compare_z_at_xy_3
   {
   protected:
-    const Self& parent;
+    const Self & parent;
+
   public:
-    Compare_z_at_xy_3(const Self* p)
-      : parent(*p)
+    Compare_z_at_xy_3(const Self * p) : parent(*p)
     {}
 
     // check which of the surfaces is closer to the envelope at the xy
@@ -841,10 +836,10 @@ public:
   class Compare_z_at_xy_above_3
   {
   protected:
-    const Self& parent;
+    const Self & parent;
+
   public:
-    Compare_z_at_xy_above_3(const Self* p)
-      : parent(*p)
+    Compare_z_at_xy_above_3(const Self * p) : parent(*p)
     {}
 
     // check which of the surfaces is closer to the envelope on the points above
@@ -874,10 +869,10 @@ public:
   class Compare_z_at_xy_below_3
   {
   protected:
-    const Self& parent;
+    const Self & parent;
+
   public:
-    Compare_z_at_xy_below_3(const Self* p)
-      : parent(*p)
+    Compare_z_at_xy_below_3(const Self * p) : parent(*p)
     {}
 
     Comparison_result
@@ -905,10 +900,10 @@ public:
   class Is_defined_over
   {
   protected:
-    const Self& parent;
+    const Self & parent;
+
   public:
-    Is_defined_over(const Self* p)
-      : parent(*p)
+    Is_defined_over(const Self * p) : parent(*p)
     {}
     
     // checks if point is in the xy-range of surf
@@ -1224,7 +1219,7 @@ public:
   }
 
   template <class OutputIterator>
-  OutputIterator add_curve_to_output(const Curve_2& c, OutputIterator oi)
+  OutputIterator add_curve_to_output(const Curve_2& c, OutputIterator oi) const
   {
     Object objs[2];
     Object* p_obj = this->make_x_monotone_2_object()(c, objs);
@@ -1251,7 +1246,7 @@ public:
   {}
 
 protected:
-  bool m_is_lower;
+  mutable bool m_is_lower;
 };
 
 /*!

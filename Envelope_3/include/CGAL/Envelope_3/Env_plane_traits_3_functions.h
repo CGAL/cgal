@@ -26,9 +26,9 @@ CGAL_BEGIN_NAMESPACE
 
 template <class K>
 Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1, 
-	                                        const typename K::Plane_3 &h2,
+                                          const typename K::Plane_3 &h2,
                                           const typename K::Line_2  &l,
-	                                        const K& k)
+                                          const K& k)
 {
   typedef typename K::Vector_2   Vector_2;
   typedef typename K::Point_2    Point_2;
@@ -49,7 +49,7 @@ Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
   // if two planes are not parallel they must intersect at a 3D line
   Line_3 l3;
   CGAL_assertion_code(bool b =)
-  assign(l3, h_obj);
+    assign(l3, h_obj);
   CGAL_assertion(b);
 
   const Line_2& proj_inter_line = project_xy(l3, k);
@@ -59,10 +59,10 @@ Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
 
 template <class K>
 Object half_plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
-                                          const typename K::Line_2  &l1,
-	                                        const typename K::Plane_3 &h2,
-                                          const typename K::Line_2  &l2,
-	                                        const K& k)
+                                               const typename K::Line_2  &l1,
+                                               const typename K::Plane_3 &h2,
+                                               const typename K::Line_2  &l2,
+                                               const K& k)
 {
   typedef typename K::Ray_2      Ray_2;
   typedef typename K::Line_2     Line_2;
@@ -85,7 +85,7 @@ Object half_plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
 
 template <class K>
 typename K::Line_2 project_xy(const typename K::Line_3& l,
-                                         const K& k)
+                              const K& k)
 {
   typedef typename K::Vector_3   Vector_3;
   typedef typename K::Vector_2   Vector_2;
@@ -138,8 +138,8 @@ Object line_under_linear_constraint(const typename K::Line_2& l1,
     if(side == ON_NEGATIVE_SIDE)
       return Object();
 
-   CGAL_assertion(side == ON_POSITIVE_SIDE); // the two lines are parallel
-   return make_object(l1);   
+    CGAL_assertion(side == ON_POSITIVE_SIDE); // the two lines are parallel
+    return make_object(l1);   
   }
  
   // the two lines overlap
@@ -152,8 +152,8 @@ Object line_under_linear_constraint(const typename K::Line_2& l1,
 
 template <class K>
 Object ray_under_linear_constraint(const typename K::Ray_2&  ray,
-                                    const typename K::Line_2& l,
-                                    const K& k)
+                                   const typename K::Line_2& l,
+                                   const K& k)
 {
   typedef typename K::Ray_2         Ray_2;
   typedef typename K::Line_2        Line_2;
