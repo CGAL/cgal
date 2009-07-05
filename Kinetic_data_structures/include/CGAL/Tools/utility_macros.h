@@ -83,7 +83,7 @@
   bool contains(ucname##_key k) const {                            \
     return fexpr != eexpr;                                         \
   }                                                                \
-  ucname##s::iterator::value_type get(ucname##_key k) const {      \
+  std::iterator_traits<ucname##s::iterator>::value_type get(ucname##_key k) const {      \
     CGAL_assertion(contains(k));                                   \
     return *fexpr;                                                 \
   }                                                                \
@@ -95,14 +95,14 @@
   bool contains(ucname##_key k) const {                         \
     return fexpr != eexpr;                                      \
   }                                                             \
-  ucname##s::iterator::reference get(ucname##_key k) {          \
+  std::iterator_traits<ucname##s::iterator>::reference get(ucname##_key k) { \
     CGAL_assertion(contains(k));                                \
     return *fexpr;                                              \
   }                                                             \
   ucname##s::iterator find(ucname##_key k) {                    \
     return fexpr;                                               \
   }                                                             \
-  ucname##_consts::const_iterator::value_type get(ucname##_key k) const {      \
+  std::iterator_traits<ucname##s::const_iterator>::value_type get(ucname##_key k) const {      \
     CGAL_assertion(contains(k));                                   \
     return *fexpr;                                                 \
   }                                                                \
