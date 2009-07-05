@@ -63,16 +63,15 @@ class Refiner
 {
 	// types
 	typedef typename Kernel::FT FT;
-	typedef CEdge<typename Kernel,typename Polyhedron> Edge;
+	typedef CEdge<Kernel, Polyhedron> Edge;
 	typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
 	typedef typename Polyhedron::Edge_iterator   Edge_iterator;
-	typedef typename std::priority_queue<typename Edge,
-		std::vector<typename Edge>,
-		less<typename Edge> > PQueue;
+	typedef std::priority_queue<Edge,
+		std::vector<Edge>,
+		less<Edge> > PQueue;
 	// data
 	PQueue m_queue;
 	Polyhedron* m_pMesh;
-
 public :
 	// life cycle
 	Refiner(Polyhedron* pMesh) 
