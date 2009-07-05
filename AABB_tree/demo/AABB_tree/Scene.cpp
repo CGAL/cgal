@@ -93,7 +93,8 @@ void Scene::update_bbox()
 	m_bbox = (*it).bbox();
 	for(; it != m_pPolyhedron->points_end();it++)
 		m_bbox = m_bbox + (*it).bbox();
-	std::cout << "done." << std::endl;
+	std::cout << "done (" << m_pPolyhedron->size_of_facets()
+		        << " facets)" << std::endl;
 }
 
 void Scene::draw()
