@@ -29,11 +29,13 @@ public:
 	typedef Facet_tree::Primitive_id Primitive_id;
 
 public:
-	Bbox bbox(); // computes and return polyhedron bbox
-	void draw();
+	void draw(); 
+	void update_bbox();
+	Bbox bbox() { return m_bbox; }
 
 private:
 	// member data
+	Bbox m_bbox;
 	Polyhedron *m_pPolyhedron;
 	std::list<Point> m_points;
 	std::list<Segment> m_segments;

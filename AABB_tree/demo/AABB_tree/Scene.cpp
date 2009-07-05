@@ -72,22 +72,28 @@ int Scene::open(QString filename)
 	return 0;
 }
 
-Scene::Bbox Scene::bbox()
+void Scene::update_bbox()
 {
+	std::cout << "Compute bbox...";
+	m_bbox = Bbox();
+
 	if(m_pPolyhedron == NULL)
-		return Bbox();
+	{
+		std::cout << "failed (no polyhedron)." << std::endl;
+		return;
+	}
 
 	if(m_pPolyhedron->empty())
-		return Bbox();
+	{
+		std::cout << "failed (empty polyhedron)." << std::endl;
+		return;
+	}
 
-	std::cout << "Compute bbox...";
 	Polyhedron::Point_iterator it = m_pPolyhedron->points_begin();
-	Bbox bbox = (*it).bbox();
+	m_bbox = (*it).bbox();
 	for(; it != m_pPolyhedron->points_end();it++)
-		bbox = bbox + (*it).bbox();
+		m_bbox = m_bbox + (*it).bbox();
 	std::cout << "done." << std::endl;
-
-	return bbox;
 }
 
 void Scene::draw()
@@ -476,7 +482,6 @@ void Scene::generate_edge_points(const unsigned int nb_points)
 	std::cout << nb_planes << " plane queries, " << time.elapsed() << " ms." << std::endl;
 }
 
-
 void Scene::unsigned_distance_function()
 {
 	QTime time;
@@ -488,13 +493,16 @@ void Scene::unsigned_distance_function()
 
 	m_max_distance_function = (FT)0.0;
 	int i,j;
+	const double dx = m_bbox.xmax() - m_bbox.xmin();
+	const double dy = m_bbox.ymax() - m_bbox.ymin();
+	const double z = 0.5 * (m_bbox.zmax() + m_bbox.zmin());
 	for(i=0;i<100;i++)
 	{
-		FT x = -0.5 + (FT)i/100.0;
+		FT x = m_bbox.xmin() + (FT)((double)i/100.0 * dx);
 		for(j=0;j<100;j++)
 		{
-			FT y = -0.5 + (FT)j/100.0;
-			Point query(x,y,0.0);
+			FT y = m_bbox.ymin() + (FT)((double)j/100.0 * dy);
+			Point query(x,y,z);
 			FT sq_distance = tree.squared_distance(query);
 			FT distance = std::sqrt(sq_distance);
 			m_distance_function[i][j] = Point_distance(query,distance);
@@ -519,14 +527,17 @@ void Scene::unsigned_distance_function_to_edges()
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
 	m_max_distance_function = (FT)0.0;
+	const double dx = m_bbox.xmax() - m_bbox.xmin();
+	const double dy = m_bbox.ymax() - m_bbox.ymin();
+	const double z = 0.5 * (m_bbox.zmax() + m_bbox.zmin());
 	int i,j;
 	for(i=0;i<100;i++)
 	{
-		FT x = -0.5 + (FT)i/100.0;
+		FT x = m_bbox.xmin() + (FT)((double)i/100.0 * dx);
 		for(j=0;j<100;j++)
 		{
-			FT y = -0.5 + (FT)j/100.0;
-			Point query(x,y,0.0);
+			FT y = m_bbox.ymin() + (FT)((double)j/100.0 * dy);
+			Point query(x,y,z);
 			FT sq_distance = tree.squared_distance(query);
 			FT distance = std::sqrt(sq_distance);
 			m_distance_function[i][j] = Point_distance(query,distance);
@@ -548,15 +559,18 @@ void Scene::signed_distance_function()
 
 	m_max_distance_function = (FT)0.0;
 	Vector vec = random_vector();
+
+	const double dx = m_bbox.xmax() - m_bbox.xmin();
+	const double dy = m_bbox.ymax() - m_bbox.ymin();
+	const double z = 0.5 * (m_bbox.zmax() + m_bbox.zmin());
 	int i,j;
 	for(i=0;i<100;i++)
 	{
-		FT x = -0.5 + (FT)i/100.0;
+		FT x = m_bbox.xmin() + (FT)((double)i/100.0 * dx);
 		for(j=0;j<100;j++)
 		{
-			// compute distance
-			FT y = -0.5 + (FT)j/100.0;
-			Point query(x,y,0.0);
+			FT y = m_bbox.ymin() + (FT)((double)j/100.0 * dy);
+			Point query(x,y,z);
 			FT sq_distance = tree.squared_distance(query);
 			FT unsigned_distance = std::sqrt(sq_distance);
 

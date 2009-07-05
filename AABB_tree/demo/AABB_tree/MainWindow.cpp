@@ -67,6 +67,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::updateViewerBBox()
 {
+	m_pScene->update_bbox();
 	const Scene::Bbox bbox = m_pScene->bbox();
 	const double xmin = bbox.xmin();
 	const double ymin = bbox.ymin();
