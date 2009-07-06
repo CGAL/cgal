@@ -41,7 +41,7 @@ intersection_triangle_segment_aux(const typename K::Segment_3 &s1,
 
   typename K::Construct_object_3 make_object = k.construct_object_3_object();
   typename K::Construct_segment_3 make_segment = k.construct_segment_3_object();
-  typename K::Compute_squared_distance_3 distance = k.compute_squared_distance_3_object();
+  typename K::Compute_squared_distance_3 sq_distance = k.compute_squared_distance_3_object();
 
   const Point_3& p1 = s1.source();
   const Point_3& p2 = s1.target();
@@ -49,13 +49,13 @@ intersection_triangle_segment_aux(const typename K::Segment_3 &s1,
   const Point_3& q2 = s2.target();
 
   // distance test are better than coordinates comparisons
-  // (i had problems with has_on and are_colinear_ordered_along_line_3,
+  // (I had problems with has_on and are_colinear_ordered_along_line_3,
   // because some points are constructed by intersection)
-  const FT p1p2 = distance(p1,p2);
-  const FT p1q1 = distance(p1,q1);
-  const FT p2q1 = distance(p2,q1);
-  const FT p1q2 = distance(p1,q2);
-  const FT p2q2 = distance(p2,q2);
+  const FT p1p2 = sq_distance(p1,p2);
+  const FT p1q1 = sq_distance(p1,q1);
+  const FT p2q1 = sq_distance(p2,q1);
+  const FT p1q2 = sq_distance(p1,q2);
+  const FT p2q2 = sq_distance(p2,q2);
 
   if ( p1p2<p1q1 || p1p2<p2q1 ) // q1 is outside [p1,p2]
   {
@@ -89,7 +89,7 @@ intersection_triangle_segment_aux(const typename K::Segment_3 &s1,
       return make_object(make_segment(q1,q2));
   }
 
-  // return Object(); // unreachable
+  return Object(); // unreachable code
 }
 
 
