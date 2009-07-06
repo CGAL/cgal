@@ -78,11 +78,11 @@ Curve \ref{fig:AABB-tree-bench} plots the number of queries per second (here the
     \end{figure}
 \end{center}
 
-The following table measures the number of \ccc{all_intersections() queries per second on the 14,400 triangle version of the knot mesh model for random segment queries. The \ccc{Simple_cartesian} kernel is substantially faster than the \ccc{Cartesian} kernel.
+The following table measures the number of \ccc{all_intersections()} queries per second on the 14,400 triangle version of the knot mesh model for random segment queries. The \ccc{Simple_cartesian} kernel is substantially faster than the \ccc{Cartesian} kernel.
 
 \begin{tabular}{|l|c|}
   \hline
-  Kernel & #queries/s (all\_intersections() with segment queries)\\
+  Kernel & queries/s (all\_intersections() with segment queries)\\
   \hline
 \ccc{Simple_cartesian<double>}               & 46,507 \\
 \ccc{Simple_cartesian<float>}                & 43,187 \\
