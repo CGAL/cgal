@@ -94,14 +94,12 @@ public:
   void set_out (std::ostream& os)
   {
     m_out = &os;
-    return;
   }
 
   /*! Set the input stream. */
   void set_in (std::istream& is)
   {
     m_in = &is;
-    return;
   }
 
   /*! Get the output stream. */
@@ -128,8 +126,6 @@ public:
     m_old_out_mode = get_mode(*m_out);
     set_ascii_mode (*m_out);
     _write_comment ("BEGIN ARRANGEMENT");
-
-    return;
   }
 
   /*! Write an end-arrangement comment. */
@@ -137,8 +133,6 @@ public:
   {
     _write_comment ("END ARRANGEMENT");
     set_mode (*m_out, m_old_out_mode);
-
-    return;
   }
 
   /*! Write a labeled size value. */
@@ -146,49 +140,42 @@ public:
   { 
     _write_comment (label);
     out() << size << '\n';
-    return;
   }
 
   /*! Write a begin-vertices comment. */
   void write_vertices_begin ()
   {
     _write_comment ("BEGIN VERTICES");
-    return;
   }
 
   /*! Write an end-vertices comment. */
   void write_vertices_end ()
   {
     _write_comment ("END VERTICES");
-    return;
   }
 
   /*! Write a begin-edges comment. */
   void write_edges_begin ()
   {
     _write_comment ("BEGIN EDGES");
-    return;
   }
 
   /*! Write an end-edges comment. */
   void write_edges_end ()
   {
     _write_comment ("END EDGES");
-    return;
   }
 
   /*! Write a begin-faces comment. */
   void write_faces_begin ()
   {
     _write_comment ("BEGIN FACES");
-    return;
   }
 
   /*! Write an end-faces comment. */
   void write_faces_end ()
   {
     _write_comment ("END FACES");
-    return;
   }
   //@}
 
@@ -200,13 +187,11 @@ public:
   void write_vertex_end ()
   {
     out() << std::endl;
-    return;
   }
   
   virtual void write_point (const Point_2& p)
   {
     out() << p;
-    return;
   }
 
   virtual void write_vertex_data (Vertex_const_handle )
@@ -221,19 +206,16 @@ public:
   void write_edge_end ()
   {
     out() << std::endl;
-    return;
   }
 
   void write_vertex_index (int idx)
   {
     out() << idx << ' ';
-    return;
   }
 
   virtual void write_x_monotone_curve (const X_monotone_curve_2& cv)
   {
     out() << cv;
-    return;
   }
 
   virtual void write_halfedge_data (Halfedge_const_handle )
@@ -245,7 +227,6 @@ public:
   void write_face_begin ()
   {
     _write_comment ("BEGIN FACE");
-    return;
   }
 
   void write_face_end ()
@@ -256,7 +237,6 @@ public:
   void write_outer_ccbs_begin ()
   {
     out() << std::endl;
-    return;
   }
 
   void write_outer_ccbs_end ()
@@ -282,7 +262,6 @@ public:
   void write_halfedge_index (int idx)
   {
     out() << idx << ' ';
-    return;
   }
 
   void write_isolated_vertices_begin ()
@@ -371,8 +350,6 @@ public:
   {
     in() >> p;
     _skip_until_EOL();
-
-    return;
   }
 
   virtual void read_vertex_data (Vertex_handle )
@@ -389,8 +366,7 @@ public:
   
   int read_vertex_index () 
   {
-    int  val;
-
+    int  val = 0;
     in() >> val;
     return (val);
   }
@@ -399,8 +375,6 @@ public:
   {
     in() >> cv;
     _skip_until_EOL();
-
-    return;
   }
 
   virtual void read_halfedge_data (Halfedge_handle )
@@ -426,8 +400,7 @@ public:
 
   int read_halfedge_index ()
   { 
-    int  val;
-
+    int  val = 0;
     in() >> val;
     return (val);
   }
@@ -464,7 +437,6 @@ protected:
   void _write_comment (const char *str)
   {
     out() << "# " << str << std::endl;
-    return;
   }
 
   /*! Skip until end of line. */
@@ -474,7 +446,6 @@ protected:
 
     int     c;
     while ((c = m_in->get()) != EOF && c != '\n') {};
-    return;
   }
   
   /*! Skip comment lines. */
@@ -482,9 +453,7 @@ protected:
   {
     CGAL_assertion (m_in != NULL);
 
-    int     c;
-
-    c = m_in->get();
+    int     c = m_in->get();
     if (c == ' ')
     {
       // Skip blanks until EOL.
@@ -507,10 +476,7 @@ protected:
       c = m_in->get();
     }
     m_in->putback (c);
-
-    return;
   }
-
 };
 
 /*! \class
