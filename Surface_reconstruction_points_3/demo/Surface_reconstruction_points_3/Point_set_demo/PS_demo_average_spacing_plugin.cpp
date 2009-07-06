@@ -15,7 +15,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-class Point_set_demo_average_spacing_plugin :
+class PS_demo_average_spacing_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -43,9 +43,9 @@ public:
 public slots:
   void on_actionAverageSpacing_triggered();
 
-}; // end Point_set_demo_average_spacing_plugin
+}; // end PS_demo_average_spacing_plugin
 
-void Point_set_demo_average_spacing_plugin::on_actionAverageSpacing_triggered()
+void PS_demo_average_spacing_plugin::on_actionAverageSpacing_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -103,6 +103,6 @@ void Point_set_demo_average_spacing_plugin::on_actionAverageSpacing_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(Point_set_demo_average_spacing_plugin, Point_set_demo_average_spacing_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_average_spacing_plugin, PS_demo_average_spacing_plugin);
 
-#include "Point_set_demo_average_spacing_plugin.moc"
+#include "PS_demo_average_spacing_plugin.moc"

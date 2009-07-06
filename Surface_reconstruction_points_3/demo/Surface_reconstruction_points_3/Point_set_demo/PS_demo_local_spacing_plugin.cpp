@@ -13,7 +13,7 @@
 #include <CGAL/Fast_orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 
-class Point_set_demo_local_spacing_plugin :
+class PS_demo_local_spacing_plugin :
   public QObject,
   protected Polyhedron_demo_plugin_helper
 {
@@ -40,9 +40,9 @@ public slots:
 
 private:
   QAction* actionRadiusFromDensity;
-}; // end Point_set_demo_local_spacing_plugin
+}; // end PS_demo_local_spacing_plugin
 
-void Point_set_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
+void PS_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
 {
   typedef Kernel Geom_traits;
   typedef Geom_traits::FT FT;
@@ -96,6 +96,6 @@ void Point_set_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(Point_set_demo_local_spacing_plugin, Point_set_demo_local_spacing_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_local_spacing_plugin, PS_demo_local_spacing_plugin);
 
-#include "Point_set_demo_local_spacing_plugin.moc"
+#include "PS_demo_local_spacing_plugin.moc"

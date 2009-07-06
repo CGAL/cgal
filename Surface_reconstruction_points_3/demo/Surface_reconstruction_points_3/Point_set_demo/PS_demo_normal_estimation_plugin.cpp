@@ -17,9 +17,9 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-#include "ui_Point_set_demo_normal_estimation_plugin.h"
+#include "ui_PS_demo_normal_estimation_plugin.h"
 
-class Point_set_demo_normal_estimation_plugin :
+class PS_demo_normal_estimation_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -45,7 +45,7 @@ public:
 public slots:
   void on_actionNormalEstimation_triggered();
 
-}; // end Point_set_demo_smoothing_plugin
+}; // end PS_demo_smoothing_plugin
 
 class Point_set_demo_normal_estimation_dialog : public QDialog, private Ui::NormalEstimationDialog
 {
@@ -63,7 +63,7 @@ class Point_set_demo_normal_estimation_dialog : public QDialog, private Ui::Norm
     int orientationNbNeighbors() const { return m_inputNbNeighborsOrientation->value(); }
 };
 
-void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggered()
+void PS_demo_normal_estimation_plugin::on_actionNormalEstimation_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -143,7 +143,7 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
 
     int nb_unoriented_normals = std::distance(first_unoriented_point, points->end());
     long memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Orient normals: " << nb_unoriented_normals << "point(s) with an unoriented normal are selected ("
+    std::cerr << "Orient normals: " << nb_unoriented_normals << " point(s) with an unoriented normal are selected ("
                                     << task_timer.time() << " seconds, "
                                     << (memory>>20) << " Mb allocated)"
                                     << std::endl;
@@ -168,6 +168,6 @@ void Point_set_demo_normal_estimation_plugin::on_actionNormalEstimation_triggere
   }
 }
 
-Q_EXPORT_PLUGIN2(Point_set_demo_normal_estimation_plugin, Point_set_demo_normal_estimation_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_normal_estimation_plugin, PS_demo_normal_estimation_plugin);
 
-#include "Point_set_demo_normal_estimation_plugin.moc"
+#include "PS_demo_normal_estimation_plugin.moc"

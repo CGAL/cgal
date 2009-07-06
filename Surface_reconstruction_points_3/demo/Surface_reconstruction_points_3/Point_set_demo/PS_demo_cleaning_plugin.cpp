@@ -15,9 +15,9 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-#include "ui_Point_set_demo_cleaning_plugin.h"
+#include "ui_PS_demo_cleaning_plugin.h"
 
-class Point_set_demo_cleaning_plugin :
+class PS_demo_cleaning_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -45,7 +45,7 @@ public:
 public slots:
   void on_actionOutlierRemoval_triggered();
 
-}; // end Point_set_demo_cleaning_plugin
+}; // end PS_demo_cleaning_plugin
 
 class Point_set_demo_outlier_removal_dialog : public QDialog, private Ui::OutlierRemovalDialog
 {
@@ -60,7 +60,7 @@ class Point_set_demo_outlier_removal_dialog : public QDialog, private Ui::Outlie
     int nbNeighbors() const { return m_inputNbNeighbors->value(); }
 };
 
-void Point_set_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
+void PS_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -119,6 +119,6 @@ void Point_set_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(Point_set_demo_cleaning_plugin, Point_set_demo_cleaning_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_cleaning_plugin, PS_demo_cleaning_plugin);
 
-#include "Point_set_demo_cleaning_plugin.moc"
+#include "PS_demo_cleaning_plugin.moc"

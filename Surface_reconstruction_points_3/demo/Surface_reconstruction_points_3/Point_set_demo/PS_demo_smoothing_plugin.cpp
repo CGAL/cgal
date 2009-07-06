@@ -12,7 +12,7 @@
 
 #include <CGAL/jet_smooth_point_set.h>
 
-class Point_set_demo_smoothing_plugin :
+class PS_demo_smoothing_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -38,9 +38,9 @@ public:
 public slots:
   void on_actionJetSmoothing_triggered();
 
-}; // end Point_set_demo_smoothing_plugin
+}; // end PS_demo_smoothing_plugin
 
-void Point_set_demo_smoothing_plugin::on_actionJetSmoothing_triggered()
+void PS_demo_smoothing_plugin::on_actionJetSmoothing_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -78,6 +78,6 @@ void Point_set_demo_smoothing_plugin::on_actionJetSmoothing_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(Point_set_demo_smoothing_plugin, Point_set_demo_smoothing_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_smoothing_plugin, PS_demo_smoothing_plugin);
 
-#include "Point_set_demo_smoothing_plugin.moc"
+#include "PS_demo_smoothing_plugin.moc"

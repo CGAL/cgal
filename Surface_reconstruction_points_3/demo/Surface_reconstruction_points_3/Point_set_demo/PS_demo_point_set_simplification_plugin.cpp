@@ -16,9 +16,9 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-#include "ui_Point_set_demo_point_set_simplification_plugin.h"
+#include "ui_PS_demo_point_set_simplification_plugin.h"
 
-class Point_set_demo_point_set_simplification_plugin :
+class PS_demo_point_set_simplification_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -44,7 +44,7 @@ public:
 public slots:
   void on_actionSimplify_triggered();
 
-}; // end Point_set_demo_point_set_simplification_plugin
+}; // end PS_demo_point_set_simplification_plugin
 
 class Point_set_demo_point_set_simplification_dialog : public QDialog, private Ui::PointSetSimplificationDialog
 {
@@ -60,7 +60,7 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
     float gridCellSize() const { return m_gridCellSize->value(); }
 };
 
-void Point_set_demo_point_set_simplification_plugin::on_actionSimplify_triggered()
+void PS_demo_point_set_simplification_plugin::on_actionSimplify_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -136,6 +136,6 @@ void Point_set_demo_point_set_simplification_plugin::on_actionSimplify_triggered
   }
 }
 
-Q_EXPORT_PLUGIN2(Point_set_demo_point_set_simplification_plugin, Point_set_demo_point_set_simplification_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_point_set_simplification_plugin, PS_demo_point_set_simplification_plugin);
 
-#include "Point_set_demo_point_set_simplification_plugin.moc"
+#include "PS_demo_point_set_simplification_plugin.moc"
