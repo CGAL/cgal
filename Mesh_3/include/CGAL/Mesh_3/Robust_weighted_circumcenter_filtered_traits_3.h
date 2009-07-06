@@ -65,8 +65,9 @@ public:
         K_().has_on_bounded_side_3_object();
 
     // Compute denominator to swith to exact if it is 0
+    // TODO: replace hard coded comparison with 1E-14 by static filter.
     const FT denom = compute_denom(p,q,r,s);
-    if ( ! CGAL_NTS is_zero(denom) )
+    if (denom < -1E-14 || denom > 1E-14)
     {
       result_type point = weighted_circumcenter(p,q,r,s);
 
@@ -97,8 +98,9 @@ public:
       K_().has_on_bounded_side_3_object();
 
     // Compute denominator to swith to exact if it is 0
+    // TODO: replace hard coded comparison with 1E-14 by static filter.
     const FT denom = compute_denom(p,q,r);
-    if ( ! CGAL_NTS is_zero(denom) )
+    if (denom < -1E-14 || denom > 1E-14)
     {
       result_type point = weighted_circumcenter(p,q,r);
 

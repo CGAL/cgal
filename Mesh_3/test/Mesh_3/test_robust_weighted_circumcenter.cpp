@@ -49,15 +49,18 @@ struct Tester
     // Data generation : get 4 nearly coplanar points
     //-------------------------------------------------------
     Point_creator creator;
-    FT little(1e-150);
-    Point p1 = creator(0,little,little);
-    Point p2 = creator(0,-1*little,0);
-    Point p3 = creator(little,0,0);
-    Point p4 = creator(-1*little,0,0);
-    Point p5 = creator(1,0,0);
+    FT little(1e-15);
+    
+    Point p1 = creator(1,little,0);
+    Point p2 = creator(0,1,0);
+    Point p3 = creator(-1,0,little);
+    Point p4 = creator(little,-1,0);
+    Point p5 = creator(0,0,1);
+    Point p6 = creator(0,0,0);
 
     std::cerr << "Using points: p1[" << p1 << "]\tp2[" << p2
-              << "]\tp3[" << p3 << "]\tp4[" << p4 << "]\tp5[" << p5 << "]\n";
+              << "]\tp3[" << p3 << "]\tp4[" << p4 << "]\tp5[" << p5
+              << "]\tp6[" << p6 << "]\n";
 
     //-------------------------------------------------------
     // Test correctness
@@ -68,11 +71,11 @@ struct Tester
     Point center = circumcenter(p1,p2);
     std::cerr << "\tcircumcenter(p1,p2)=[" << center << "]\n";
 
-    center = circumcenter(p1,p2,p3);
-    std::cerr << "\tcircumcenter(p1,p2,p3)=[" << center << "]\n";
+    center = circumcenter(p1,p3,p6);
+    std::cerr << "\tcircumcenter(p1,p3,p6)=[" << center << "]\n";
 
     center = circumcenter(p1,p2,p5);
-    std::cerr << "\tcircumcenter(p1,p2,p5)=[" << center << "]\n";
+    std::cerr << "\tcircumcenter(p1,p3,p5)=[" << center << "]\n";
 
     center = circumcenter(p1,p2,p3,p4);
     std::cerr << "\tcircumcenter(p1,p2,p3,p4)=[" << center << "]\n";
