@@ -1329,6 +1329,10 @@ namespace HomogeneousKernelFunctors {
     { return c.rep().squared_radius(); }
 
     FT
+    operator()( const Point_2& p) const
+    { return FT(0); }
+
+    FT
     operator()( const Point_2& p, const Point_2& q) const
     {
       typedef typename K::FT FT;
@@ -1354,6 +1358,10 @@ namespace HomogeneousKernelFunctors {
     operator()( const Sphere_3& s) const
     { return s.rep().squared_radius(); }
 
+    FT
+    operator()( const Point_3& p) const
+    { return FT(0); }
+      
     FT
     operator()( const Point_3& p, const Point_3& q) const
     {
