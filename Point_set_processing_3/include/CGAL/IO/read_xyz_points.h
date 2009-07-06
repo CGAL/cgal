@@ -86,11 +86,11 @@ read_xyz_points_and_normals(
     double nx,ny,nz;
 
     lineNumber++;
-    
+
     // Trims line buffer
     line.erase(line.find_last_not_of (" ")+1);
     line.erase(0, line.find_first_not_of (" "));
-    
+
     // Skips comment or empty line...
     if (line.length() == 0 || line[0] == '#')
     {
@@ -179,6 +179,8 @@ read_xyz_points_and_normals(
 /// Reads points (positions only) from a .xyz ASCII stream.
 /// The function expects for each point a line with the x y z position.
 /// If the position is followed by the nx ny nz normal, then the normal will be ignored.
+/// The first line may contain the number of points in the file.
+/// Empty lines and comments starting by # character are allowed.
 ///
 /// @commentheading Template Parameters:
 /// @param OutputIterator iterator over output points.

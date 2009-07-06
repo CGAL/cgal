@@ -32,7 +32,7 @@
 
 \ccFunction{template<typename OutputIterator, typename PointPMap, typename Kernel> bool read_xyz_points(std::istream& stream, OutputIterator output, PointPMap point_pmap, const Kernel& kernel);}
 {
-Reads points (positions only) from a .xyz ASCII stream. The function expects for each point a line with the x y z position. If the position is followed by the nx ny nz normal, then the normal will be ignored.
+Reads points (positions only) from a .xyz ASCII stream. The function expects for each point a line with the x y z position. If the position is followed by the nx ny nz normal, then the normal will be ignored. The first line may contain the number of points in the file. Empty lines and comments starting by \# character are allowed.
 \ccCommentHeading{Template Parameters}  \\
 \ccc{OutputIterator}: iterator over output points. \ccc{PointPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{OutputIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
 \ccCommentHeading{Returns} true on success.
@@ -43,8 +43,9 @@ Reads points (positions only) from a .xyz ASCII stream. The function expects for
 
 %END-AUTO(\ccDefinition)
 
+% UGLY HACK to have both functions documented on the same page:
+% uncomment 2 lines below to run generate_reference_manual, comment them out to run cgal_manual.
 % \end{ccRefFunction}
-%
 % \begin{ccRefFunction}{read_xyz_points_and_normals}  %% add template arg's if necessary
 
 % The section below is automatically generated. Do not edit!
@@ -55,7 +56,7 @@ Reads points (positions only) from a .xyz ASCII stream. The function expects for
 
 \ccFunction{template<typename OutputIterator, typename PointPMap, typename NormalPMap, typename Kernel> bool read_xyz_points_and_normals(std::istream& stream, OutputIterator output, PointPMap point_pmap, NormalPMap normal_pmap, const Kernel& kernel);}
 {
-Reads points (positions + normals, if available) from a .xyz ASCII stream. The function expects for each point a line with the x y z position, optionally followed by the nx ny nz normal.
+Reads points (positions + normals, if available) from a .xyz ASCII stream. The function expects for each point a line with the x y z position, optionally followed by the nx ny nz normal. The first line may contain the number of points in the file. Empty lines and comments starting by \# character are allowed.
 \ccCommentHeading{Template Parameters}  \\
 \ccc{OutputIterator}: iterator over output points. \ccc{PointPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{OutputIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{NormalPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Vector_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
 \ccCommentHeading{Returns} true on success.
