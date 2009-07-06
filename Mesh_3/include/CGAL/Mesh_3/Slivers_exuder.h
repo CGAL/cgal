@@ -179,7 +179,7 @@ public: // methods
   }
   
 #ifdef CGAL_MESH_3_VERBOSE  
-  void print_stats(const double sliver_bound = 0.25) const;
+  void print_stats(const double sliver_bound = SliverCriteria::default_value) const;
 #endif // CGAL_MESH_3_VERBOSE  
   
 private:
@@ -517,8 +517,10 @@ pump_vertices(double sliver_criterion_limit)
         
         ++num_of_treated_vertices_;
       }
+#ifdef CGAL_MESH_3_VERBOSE
       else
         std::cerr << "s"; // vertex is on a surface
+#endif // CGAL_MESH_3_VERBOSE 
     }
     
     // if the tet could not be deleted

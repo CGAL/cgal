@@ -47,7 +47,7 @@ public:
   
 };
 
-template<typename K> double Min_dihedral_angle_criterion<K>::default_value = 20.; 
+template<typename K> double Min_dihedral_angle_criterion<K>::default_value = 25.; 
 
   
 template <typename K>
@@ -65,7 +65,7 @@ public:
   
 };
 
-template<typename K> double Radius_radio_criterion<K>::default_value = 0.2; 
+template<typename K> double Radius_radio_criterion<K>::default_value = 0.25; 
   
   
   

@@ -40,9 +40,6 @@ void refine_mesh_3(C3T3& c3t3,
 {
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
   typedef typename C3T3::Triangulation::Geom_traits Gt;
-  typedef Mesh_3::Min_dihedral_angle_criterion<Gt> Sliver_criterion;
-  //typedef Mesh_3::Radius_radio_criterion<Gt> Sliver_criterion;
-  typedef typename Mesh_3::Slivers_exuder<C3T3, Sliver_criterion> Exuder;
   
   // Build mesher and launch refinement process
   Mesher mesher (c3t3, domain, criteria);
@@ -51,16 +48,20 @@ void refine_mesh_3(C3T3& c3t3,
   // Exudation
   if ( exude )
   {
+    typedef Mesh_3::Min_dihedral_angle_criterion<Gt> Sliver_criterion;
+    //typedef Mesh_3::Radius_radio_criterion<Gt> Sliver_criterion;
+    typedef typename Mesh_3::Slivers_exuder<C3T3, Sliver_criterion> Exuder;
+    
     Exuder exuder(c3t3);
   
 #ifdef CGAL_MESH_3_VERBOSE
-    exuder.print_stats(10);
+    exuder.print_stats();
 #endif // CGAL_MESH_3_VERBOSE
   
     exuder.pump_vertices();
   
 #ifdef CGAL_MESH_3_VERBOSE
-    exuder.print_stats(10);
+    exuder.print_stats();
 #endif // CGAL_MESH_3_VERBOSE
   }
   
