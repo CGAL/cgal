@@ -105,6 +105,7 @@
     <addaction name="actionApproximateConvexPartition" />
     <addaction name="actionOptimalConvexPartition" />
     <addaction name="actionInnerSkeleton" />
+    <addaction name="actionOuterOffset" />
     <addaction name="actionLinearLeastSquaresFitting" />
     <addaction name="actionLinearLeastSquaresFittingOfSegments" />
    </widget>
@@ -193,6 +194,11 @@
   <action name="actionInnerSkeleton" >
    <property name="text" >
     <string>Inner Skeleton</string>
+   </property>
+  </action>
+  <action name="actionOuterOffset" >
+   <property name="text" >
+    <string>Outer Offset</string>
    </property>
   </action>
   <action name="actionOptimalConvexPartition" >

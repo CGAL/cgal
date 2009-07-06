@@ -7,6 +7,7 @@
 #include <CGAL/partition_2.h>
 #include <CGAL/Partition_traits_2.h>
 #include<CGAL/create_straight_skeleton_2.h>
+#include<CGAL/create_offset_polygons_2.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 
 // Qt headers
@@ -35,6 +36,9 @@ typedef CGAL::Straight_skeleton_2<K> Ss ;
 
 typedef boost::shared_ptr<Ss> SsPtr ;
 
+typedef boost::shared_ptr<Polygon> PolygonPtr ;
+
+typedef std::vector<PolygonPtr> PolygonPtr_vector ;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -58,6 +62,7 @@ private:
   std::list<Polygon> partitionPolygons;
   std::list<CGAL::Qt::PolygonGraphicsItem<Polygon>* >  partitionGraphicsItems;
   std::list<QGraphicsLineItem* >  skeletonGraphicsItems;
+  std::list<QGraphicsLineItem* >  offsetGraphicsItems;
   CGAL::Qt::LineGraphicsItem<K>* lgi;
 
 public:
@@ -74,6 +79,7 @@ public slots:
 
   void on_actionRecenter_triggered();
   void on_actionInnerSkeleton_triggered();
+  void on_actionOuterOffset_triggered();
   void on_actionLinearLeastSquaresFitting_triggered();
   void on_actionLinearLeastSquaresFittingOfSegments_triggered();
   void on_actionCreateInputPolygon_toggled(bool);
@@ -85,6 +91,7 @@ public slots:
 
   void clearPartition();
   void clearSkeleton();
+  void clearOffset();
   void clear();
 
   void open(const QString&);
@@ -289,6 +296,68 @@ MainWindow::on_actionInnerSkeleton_triggered()
 }
 
 void
+MainWindow::on_actionOuterOffset_triggered()
+{
+  if(poly.size()>0 && poly.is_simple())
+  {
+    clear();
+    
+    if(! poly.is_counterclockwise_oriented())
+      poly.reverse_orientation();
+    
+    double w = poly.bbox().xmax() - poly.bbox().xmin() ;
+    double h = poly.bbox().ymax() - poly.bbox().ymin() ;
+    double s = (std::max)(w,h);
+    double def_offset = s * 0.05 ;
+    
+    bool ok;
+    const double off = QInputDialog::getDouble( this
+                                              , tr("Offset distance")
+                                              , tr("Offset distance:")
+                                              , def_offset
+                                              , 0.0
+                                              , s
+                                              , def_offset
+                                              , &ok
+                                              );  
+    if ( ok )
+    {
+      PolygonPtr_vector lContours = create_exterior_skeleton_and_offset_polygons_2(off,poly) ;
+      
+      PolygonPtr_vector::const_iterator frame ;
+      
+      double max_area = 0.0 ;
+      
+      for( PolygonPtr_vector::const_iterator cit = lContours.begin(); cit != lContours.end(); ++ cit )
+      {
+        double area = (*cit)->area();
+        if ( area > max_area )
+        {
+          max_area = area ;
+          frame = cit ;
+        }
+      }
+      
+      for( PolygonPtr_vector::const_iterator cit = lContours.begin(); cit != lContours.end(); ++ cit )
+      {
+        if ( cit != frame )
+        {
+          Polygon const& lContour = **cit ;
+          lContour.area();
+          for ( Polygon::Edge_const_iterator eit = lContour.edges_begin(); eit != lContour.edges_end(); ++ eit )
+          {
+            Segment_2 s(eit->source(), eit->target());
+            offsetGraphicsItems.push_back(new QGraphicsLineItem(convert(s)));
+            scene.addItem(offsetGraphicsItems.back());
+            offsetGraphicsItems.back()->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+          } 
+        }
+      }
+    }
+  }  
+}
+
+void
 MainWindow::on_actionLinearLeastSquaresFitting_triggered()
 {
   if(poly.size()>2){
@@ -395,12 +464,22 @@ MainWindow::clearSkeleton()
   skeletonGraphicsItems.clear();
 }
 
+void
+MainWindow::clearOffset()
+{ for(std::list<QGraphicsLineItem* >::iterator it = offsetGraphicsItems.begin();
+      it != offsetGraphicsItems.end();
+      ++it){
+    scene.removeItem(*it);
+  }
+  offsetGraphicsItems.clear();
+}
 
 void
 MainWindow::clear()
 {
   clearPartition();
   clearSkeleton();
+  clearOffset();
   lgi->hide();
 }
 
