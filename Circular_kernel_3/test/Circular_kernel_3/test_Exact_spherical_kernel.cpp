@@ -28,11 +28,12 @@
 
 int main()
 { 
-  CGAL::Exact_spherical_kernel_3  sk1;
+  typedef CGAL::Exact_spherical_kernel_3  SK;
+  SK  sk1;
   _test_spherical_kernel_predicates(sk1);
   _test_spherical_kernel_construct(sk1); 
   _test_spherical_kernel_compute(sk1);
-  test_functionalities_on_a_reference_sphere<CGAL::Exact_spherical_kernel_3>();
+  test_functionalities_on_a_reference_sphere<CGAL::Exact_spherical_kernel_3>(SK::Point_3(4.5,1.2,0.7));
   return 0;
 }
 

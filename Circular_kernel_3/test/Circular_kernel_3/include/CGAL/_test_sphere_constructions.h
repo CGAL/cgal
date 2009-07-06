@@ -2144,7 +2144,15 @@ void _test_bbox(const typename SK::Circular_arc_point_3 &p)
   Bbox_3 b = theConstruct_bbox_3(p);
   assert(FT(b.xmin()) <= p.x());
   assert(p.x() <= FT(b.xmax()));
+  
+  if ( FT(b.ymin()) > p.y() ){
+    std::cout << "hello" << std::endl;
+    assert( typename CGAL::Real_embeddable_traits< typename SK::Root_of_2 >::To_interval()(p.y()).first==b.ymin() );
+  }
+  
   assert(FT(b.ymin()) <= p.y());
+  
+  
   assert(p.y() <= FT(b.ymax()));
   assert(FT(b.zmin()) <= p.z());
   assert(p.z() <= FT(b.zmax()));

@@ -339,7 +339,7 @@ void test_extremal_points(const typename SK::Circle_3& circle,
 
 template <class SK>
 void
-test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_sphere_center=typename SK::Point_3(4.5,1.2,0.7)){
+test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_sphere_center){
   std::cout << "test functionalities on a sphere" << std::endl;
   //=============DATA=========================================================================
   typename SK::Sphere_3 ref_sphere(ref_sphere_center,1);
