@@ -50,14 +50,14 @@ int main() {
 	      << std::endl;
   
     std::vector<Atom> atoms;
-	fill(atoms, make_atom_range(p.atoms()));
+    fill(atoms, make_atom_range(p.atoms()));
     assert(na==atoms.size());
     std::vector<Point> points;
-	fill(points,make_point_range(make_atom_range(p.atoms())));
+    fill(points,make_point_range(make_atom_range(p.atoms())));
  
     index_atoms(make_backbone_range(p.atoms()));
     std::vector<Index> bbi;
-	fill(bbi, make_index_range(make_atom_range(make_backbone_range(p.atoms()))));
+    fill(bbi, make_index_range(make_atom_range(make_backbone_range(p.atoms()))));
     assert(bbi.size() < atoms.size());
     std::cout << bbi.size() << std::endl;
     std::vector<Bond> bbs;

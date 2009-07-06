@@ -91,7 +91,7 @@ int main(int argc, char *argv[]){
         outm.insert(CGAL::PDB::Model::Chain_key(next_chain), c);
         ++next_chain;
       }
-      CGAL_PDB_FOREACH(const CGAL::PDB::Model::Heterogen_consts::iterator::reference h, m.heterogens()) {
+      CGAL_PDB_FOREACH(const std::iterator_traits<CGAL::PDB::Model::Heterogen_consts::iterator>::reference h, m.heterogens()) {
         outm.insert(h.key(), h.heterogen());
       }
       

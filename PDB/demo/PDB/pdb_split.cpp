@@ -170,14 +170,14 @@ int main(int argc, char *argv[]){
   std::map<std::string, PDB > outputs;
 
   if (split_chains || split_models) {
-    CGAL_PDB_FOREACH(PDB::Models::iterator::reference m, pdb.models()) {
+    CGAL_PDB_FOREACH(std::iterator_traits<PDB::Models::iterator>::reference m, pdb.models()) {
       if (split_models && !split_chains){
 	PDB out;
 	out.insert(PDB::Model_key(0), m.model());
 	outputs[make_fname(output_template, m.key().index(),
 			   '-', std::string(), skip_empty_fields)]= out;
       } else {
-        CGAL_PDB_FOREACH(Model::Chains::iterator::reference c, m.model().chains()) {
+        CGAL_PDB_FOREACH(std::iterator_traits<Model::Chains::iterator>::reference c, m.model().chains()) {
 	  std::string name;
 	  if (split_models) {
 	    name= make_fname(output_template, m.key().index(), c.key().index(),
@@ -191,7 +191,7 @@ int main(int argc, char *argv[]){
 	  outputs[name].insert(m.key(), model);
 	}
 
-        CGAL_PDB_FOREACH(Model::Heterogens::iterator::reference h,
+        CGAL_PDB_FOREACH(std::iterator_traits<Model::Heterogens::iterator>::reference h,
                       m.model().heterogens()) {
           std::string fname;
           std::string name;
