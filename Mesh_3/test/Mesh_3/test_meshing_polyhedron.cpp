@@ -21,13 +21,10 @@
 // File Description : 
 //******************************************************************************
 
-#define CGAL_MESH_3_VERBOSE
-
 #include <CGAL/AABB_intersections.h>
 #include "test_meshing_utilities.h"
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-
 
 template <typename K>
 struct Polyhedron_tester : public Tester<K>

@@ -21,9 +21,6 @@
 // File Description : 
 //******************************************************************************
 
-#define CGAL_MESH_3_VERBOSE
-
-
 #include "test_meshing_utilities.h"
 #include <CGAL/Image_3.h>
 #include <CGAL/Labeled_image_mesh_domain_3.h>

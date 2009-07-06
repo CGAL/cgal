@@ -96,7 +96,7 @@ template <typename K>
 typename K::FT
 minimum_dihedral_angle(const typename K::Tetrahedron_3& t, K k = K() )
 {
-  return minimum_dihedral_angle(t[0],t[1],t[2],t[3],K());
+  return minimum_dihedral_angle(t[0],t[1],t[2],t[3],k);
 }
 
 template <typename Tetrahedron_3>

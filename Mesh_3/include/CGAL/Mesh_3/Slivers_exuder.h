@@ -311,16 +311,16 @@ private:
   {
     using boost::make_transform_iterator;
     
-    std::vector<Vertex_handle> incident_vertices;
-    incident_vertices.reserve(128);
-    tr_.incident_vertices(vh, std::back_inserter(incident_vertices));
+    std::vector<Vertex_handle> adjacent_vertices;
+    adjacent_vertices.reserve(128);
+    tr_.adjacent_vertices(vh, std::back_inserter(adjacent_vertices));
     
     details::Distance_from_v<Geom_traits, Vertex_handle>
       distance_from_v(vh, Geom_traits());
     
-    return *(std::min_element(make_transform_iterator(incident_vertices.begin(),
+    return *(std::min_element(make_transform_iterator(adjacent_vertices.begin(),
                                                       distance_from_v),
-                              make_transform_iterator(incident_vertices.end(),
+                              make_transform_iterator(adjacent_vertices.end(),
                                                       distance_from_v)));
     
   }
