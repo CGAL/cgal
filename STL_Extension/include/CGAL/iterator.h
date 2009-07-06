@@ -34,7 +34,7 @@
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:547)
+#  pragma warning(disable:4396)
 #endif
 CGAL_BEGIN_NAMESPACE
 
