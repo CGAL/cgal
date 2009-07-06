@@ -19,20 +19,14 @@
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
-#include <CGAL/Alpha_shape_euclidean_traits_3.h>
 #include <CGAL/_test_cls_alpha_shape_3.h>
 
 
-typedef double coord_type;
-typedef CGAL::Simple_cartesian<coord_type>  SC;
-struct K : public  CGAL::Filtered_kernel<SC> {};
-
-typedef CGAL::Alpha_shape_euclidean_traits_3<K> Gt;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Gt;
 typedef CGAL::Alpha_shape_vertex_base_3<Gt> Vb;
 typedef CGAL::Alpha_shape_cell_base_3<Gt>   Fb;
 typedef CGAL::Triangulation_data_structure_3<Vb,Fb> Tds;
