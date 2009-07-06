@@ -173,7 +173,7 @@ public: // methods
    * @param criterion_value_limit All vertices of tetrahedra that have a
    * quality below this bound will be pumped
    */
-  void pump_vertices(double criterion_value_limit = SliverCriteria::max_value)
+  void pump_vertices(double criterion_value_limit = SliverCriteria::default_value)
   {
     pump_vertices<true>(criterion_value_limit);
   }
@@ -187,7 +187,7 @@ private:
    * Pumps vertices
    */
   template <bool pump_vertices_on_surfaces>
-  void pump_vertices(double criterion_value_limit = SliverCriteria::max_value);
+  void pump_vertices(double criterion_value_limit = SliverCriteria::default_value);
   
   /**
    * Pump one vertex
@@ -260,7 +260,7 @@ private:
   /**
    * Initialization
    */
-  void init(double radius_ratio_limit = SliverCriteria::max_value )
+  void init(double radius_ratio_limit = SliverCriteria::default_value )
   {
     stop_limit_on_radius_ratio_ = radius_ratio_limit;
     

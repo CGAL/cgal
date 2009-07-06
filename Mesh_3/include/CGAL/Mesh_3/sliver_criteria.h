@@ -38,7 +38,7 @@ class Min_dihedral_angle_criterion
   typedef typename K::Tetrahedron_3 Tetrahedron_3;
   
 public:
-  static double max_value;
+  static double default_value;
   
   double operator()(const Tetrahedron_3& t) const
   {
@@ -47,7 +47,7 @@ public:
   
 };
 
-template<typename K> double Min_dihedral_angle_criterion<K>::max_value = 180.; 
+template<typename K> double Min_dihedral_angle_criterion<K>::default_value = 20.; 
 
   
 template <typename K>
@@ -56,7 +56,7 @@ class Radius_radio_criterion
   typedef typename K::Tetrahedron_3 Tetrahedron_3;
   
 public:
-  static double max_value;
+  static double default_value;
   
   double operator()(const Tetrahedron_3& t) const
   {
@@ -65,7 +65,7 @@ public:
   
 };
 
-template<typename K> double Radius_radio_criterion<K>::max_value = 1.; 
+template<typename K> double Radius_radio_criterion<K>::default_value = 0.2; 
   
   
   
