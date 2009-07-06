@@ -1,7 +1,7 @@
 \section{Performances}
 \label{AABB_tree_section_performances}
 
-We provide some performance numbers for the case where the AABB tree contains a set of polyhedron triangle facets. We measure the tree construction time, the memory occupancy, and the number of queries per second for a variety of intersection and distance queries. The machine used is a PC running Windows XP64 with an Intel CPU Core2 Extreme clocked at 3.06 GHz with 4GB of RAM. BY default the kernel used is \ccc{Simple_cartesian<double>} (the fastest in our experiments). The program has been compiled with Visual C++ 2005 compiler with the O2 option (maximize speed).
+We provide some performance numbers for the case where the AABB tree contains a set of polyhedron triangle facets. We measure the tree construction time, the memory occupancy, and the number of queries per second for a variety of intersection and distance queries. The machine used is a PC running Windows XP64 with an Intel CPU Core2 Extreme clocked at 3.06 GHz with 4GB of RAM. By default the kernel used is \ccc{Simple_cartesian<double>} (the fastest in our experiments). The program has been compiled with Visual C++ 2005 compiler with the O2 option (maximize speed).
 
 \subsection{Tree Construction}
 
@@ -77,17 +77,17 @@ Curve \ref{fig:AABB-tree-bench} plots the number of queries per second (here the
     \end{figure}
 \end{center}
 
-The following table measures the number of \ccc{all_intersections()} queries per second on the 14,400 triangle version of the knot mesh model for random segment queries. The \ccc{Simple_cartesian} kernel is substantially faster than the \ccc{Cartesian} kernel.
+The following table measures the number of \ccc{all_intersections()} queries per second against several kernels. we use the 14,400 triangle version of the knot mesh model for random segment queries. Note how the \ccc{Simple_cartesian} kernel is substantially faster than the \ccc{Cartesian} kernel.
 
 \begin{tabular}{|l|c|}
   \hline
-  Kernel & queries/s (all\_intersections() with segment queries)\\
+  Kernel & Queries/s (all\_intersections() with segment queries)\\
   \hline
 \ccc{Simple_cartesian<double>}               & 46,507 \\
 \ccc{Simple_cartesian<float>}                & 43,187 \\
 \ccc{Cartesian<double>}                      &  5,335 \\
 \ccc{Cartesian<float>}                       &  5,522 \\
-\ccc{Exact_predicates_inexact_constructions} &   xxxx \\
+\ccc{Exact_predicates_inexact_constructions} & 18,411 \\
   \hline
 \end{tabular}
 
@@ -112,21 +112,18 @@ The surface triangle mesh chosen for benchmarking distances is again the knot mo
 
 % TODO: against kernels
 
-
 \subsection{Summary}
 
-The experiments described above are neither exhaustive nor conclusive as we have chosen one specific case where the input primitive is a triangle facet of a surface polyhedron. Nevertheless we provide the reader with some general observations and advices about how to put the AABB tree to use with satisfactory performances.
+The experiments described above are neither exhaustive nor conclusive as we have chosen one specific case where the input primitives are the facets of a triangle surface polyhedron. Nevertheless we provide the reader with some general observations and advices about how to put the AABB tree to use with satisfactory performances.
 
 While the tree construction times and memory occupancy do not fluctuate much in our experiments depending on the input surface triangle mesh, the performance expressed in number of queries varies greatly depending on a complex combination of criteria: type of kernel, number of input primitives, distribution of primitives in space, type of function queried, type of query, and location of query in space. 
 
-The type of CGAL kernel turns out to dominate the final execution times, the maximum performances being obtained with the simple Cartesian kernel templated with the double precision number type. In applications where the intersection and distance execution times are crucial it is possible to use this kernel for the AABB tree in combination with a more robust kernel for the main data structure.
+\paragraph{Kernel.} The type of CGAL kernel turns out to dominate the final execution times, the maximum performances being obtained with the simple Cartesian kernel templated with the double precision number type. In applications where the intersection and distance execution times are crucial it is possible to use this kernel for the AABB tree in combination with a more robust kernel for the main data structure.
 
-Although the number of input primitives plays an obvious role in the final performance, their distribution in space is also very important in order to obtain a well-balanced AABB tree. Ideally the primitives must be evenly distributed in space and the long primitives spanning the bounding box of the tree root node must be avoided as much as possible. In the latter cases it is often beneficial to split these long primitives into smaller ones before constructing the tree, e.g., through recursive longest edge bisection for triangle surface meshes.
+\paragraph{Primitives.} Although the number of input primitives plays an obvious role in the final performance, their distribution in space is at least equally important in order to obtain a well-balanced AABB tree. Ideally the primitives must be evenly distributed in space and the long primitives spanning the bounding box of the tree root node must be avoided as much as possible. It is often beneficial to split these long primitives into smaller ones before constructing the tree, e.g., through recursive longest edge bisection for triangle surface meshes.
 
-As the table above depicts the type of function queried plays another important role. Obviously the ``exhaustive'' functions, which list all intersections, are slower than the ones stopping after the first intersection. Within each of these functions the ones which call only intersection tests (do\_intersect(), number\_of\_intersected\_primitives(), all\_intersected\_primitives()) are faster than the ones which explicitly construct the intersections (any\_intersection() and all\_intersections()).
+\paragraph{Function.} The type of function queried plays another important role. Obviously the ``exhaustive'' functions, which list all intersections, are slower than the ones stopping after the first intersection. Within each of these functions the ones which call only intersection tests (do\_intersect(), number\_of\_intersected\_primitives(), all\_intersected\_primitives()) are faster than the ones which explicitly construct the intersections (any\_intersection() and all\_intersections()).
 
-The type of query (e.g., line, ray, segment or plane used above) plays another role, strongly correlated with the type of function (exhaustive or not, and whether or not it constructs the intersections). When all intersection constructions are needed, the final execution times highly depend on the complexity of the general intersection object (e.g., a plane query generally intersects a surface triangle mesh into many segments while a segment query generally intersects a surface triangle mesh into few points).
-
-Finally, the location of the query in space also plays an obvious role in the performances, especially for the distance queries. Assuming the internal KD-tree constructed through the function \ccc{tree.accelerate_distance_queries()}, it is preferable to specify a query point already close to the surface triangle mesh so that the query traverses only few AABBs of the tree. For a large number of primitive data (greater than 2M faces in our experiments) however we noticed that it is not necessary (and sometimes even slower) to use all reference points when constructing the KD-tree. In these cases we recommend to specify trough the function \ccc{tree.accelerate_distance_queries(begin,end)} only 100K reference points evenly distributed over the input primitives.
+\paragraph{Query.} The type of query (e.g., line, ray, segment or plane used above) plays another role, strongly correlated with the type of function (exhaustive or not, and whether or not it constructs the intersections). When all intersection constructions are needed, the final execution times highly depend on the complexity of the general intersection object. For example a plane query generally intersects a surface triangle mesh into many segments while a segment query generally intersects a surface triangle mesh into few points. Finally, the location of the query in space also plays an obvious role in the performances, especially for the distance queries. Assuming the internal KD-tree constructed through the function \ccc{tree.accelerate_distance_queries()}, it is preferable to specify a query point already close to the surface triangle mesh so that the query traverses only few AABBs of the tree. For a large number of primitive data (greater than 2M faces in our experiments) however we noticed that it is not necessary (and sometimes even slower) to use all reference points when constructing the KD-tree. In these cases we recommend to specify trough the function \ccc{tree.accelerate_distance_queries(begin,end)} fewer reference points (typically not more than 100K) evenly distributed over the input primitives.
 
 
