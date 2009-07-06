@@ -5,7 +5,7 @@
 #include "Polyhedron_demo_io_plugin_interface.h"
 #include <fstream>
 
-class Point_set_demo_off_plugin :
+class PS_demo_off_plugin :
   public QObject,
   public Polyhedron_demo_io_plugin_interface
 {
@@ -21,18 +21,23 @@ public:
   bool save(const Scene_item*, QFileInfo fileinfo);
 };
 
-QStringList Point_set_demo_off_plugin::nameFilters() const {
+QStringList PS_demo_off_plugin::nameFilters() const {
   return QStringList() << "OFF files (*.off)";
 };
 
-bool Point_set_demo_off_plugin::canLoad() const {
+bool PS_demo_off_plugin::canLoad() const {
   return true;
 }
 
 
 Scene_item*
-Point_set_demo_off_plugin::load(QFileInfo fileinfo) {
+PS_demo_off_plugin::load(QFileInfo fileinfo) {
 
+  // Check extension (quietly)
+  std::string extension = fileinfo.suffix().toUtf8();
+  if (extension != "off" && extension != "OFF")
+    return false;
+  
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
@@ -62,15 +67,20 @@ Point_set_demo_off_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Point_set_demo_off_plugin::canSave(const Scene_item* item)
+bool PS_demo_off_plugin::canSave(const Scene_item* item)
 {
   // This plugin supports polyhedrons and point sets
   return qobject_cast<const Scene_polyhedron_item*>(item) ||
          qobject_cast<const Point_set_scene_item*>(item);
 }
 
-bool Point_set_demo_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
+bool PS_demo_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
 {
+  // Check extension (quietly)
+  std::string extension = fileinfo.suffix().toUtf8();
+  if (extension != "off" && extension != "OFF")
+    return false;
+  
   // This plugin supports polyhedrons and point sets
   const Scene_polyhedron_item* poly_item =
     qobject_cast<const Scene_polyhedron_item*>(item);
@@ -79,12 +89,12 @@ bool Point_set_demo_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
   if(!poly_item && !point_set_item)
     return false;
 
+  // Save polyhedron/point set as .off
   std::ofstream out(fileinfo.filePath().toUtf8());
-
   return (poly_item && poly_item->save(out)) ||
          (point_set_item && point_set_item->write_off_point_set(out));
 }
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Point_set_demo_off_plugin, Point_set_demo_off_plugin);
-#include "Point_set_demo_off_plugin.moc"
+Q_EXPORT_PLUGIN2(PS_demo_off_plugin, PS_demo_off_plugin);
+#include "PS_demo_off_plugin.moc"

@@ -453,25 +453,18 @@ void MainWindow::on_actionSaveAs_triggered()
     return;
   }
 
+  QSettings settings;
+  QString directory = settings.value("OFF save directory",
+                                     QDir::current().dirName()).toString();
   QString filename =
     QFileDialog::getSaveFileName(this,
-                                 tr("Saves to File..."),
-                                 QString(),
-                                 tr("OFF files (*.off)\n"
-                                    "All files (*)"));
+                                 tr("Save As..."),
+                                 directory,
+                                 filters.join(";;"));
   QFileInfo fileinfo(filename);
-  if(!fileinfo.isFile() ||
-     QMessageBox::warning(this,
-                          tr("File exists"),
-                          tr("The file %1 already exists! Continue?")
-                          .arg(filename),
-                          QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
-  {
-
-    Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, canSavePlugins) {
-      if(plugin->save(item, fileinfo))
-        break;
-    }
+  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, canSavePlugins) {
+    if(plugin->save(item, fileinfo))
+      break;
   }
 }
 

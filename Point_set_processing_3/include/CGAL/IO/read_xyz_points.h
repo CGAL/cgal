@@ -36,6 +36,8 @@ CGAL_BEGIN_NAMESPACE
 /// Reads points (positions + normals, if available) from a .xyz ASCII stream.
 /// The function expects for each point a line with the x y z position,
 /// optionally followed by the nx ny nz normal.
+/// The first line may contain the number of points in the file.
+/// Empty lines and comments starting by # character are allowed.
 ///
 /// @commentheading Template Parameters:
 /// @param OutputIterator iterator over output points.
@@ -75,16 +77,27 @@ read_xyz_points_and_normals(
 
   // scan points
   long pointsCount; // number of points in file
-  int lineNumber = 0;
-  std::string line;
+  int lineNumber = 0; // line counter
+  std::string line; // line buffer
   while(getline(stream,line))
   {
-    lineNumber++;
-
-    // Reads position + normal...
+    // position + normal
     double x,y,z;
     double nx,ny,nz;
-    if (std::istringstream(line) >> x >> y >> z >> nx >> ny >> nz)
+
+    lineNumber++;
+    
+    // Trims line buffer
+    line.erase(line.find_last_not_of (" ")+1);
+    line.erase(0, line.find_first_not_of (" "));
+    
+    // Skips comment or empty line...
+    if (line.length() == 0 || line[0] == '#')
+    {
+      continue;
+    }
+    // ...or reads position + normal...
+    else if (std::istringstream(line) >> x >> y >> z >> nx >> ny >> nz)
     {
       Point point(x,y,z);
       Vector normal(nx,ny,nz);
@@ -93,7 +106,7 @@ read_xyz_points_and_normals(
       put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
       *output++ = pwn;
     }
-    // ...or read only position...
+    // ...or reads only position...
     else if (std::istringstream(line) >> x >> y >> z)
     {
       Point point(x,y,z);
@@ -103,15 +116,14 @@ read_xyz_points_and_normals(
       put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
       *output++ = pwn;
     }
-    // ...or skip number of points on first line (optional)
+    // ...or skips number of points on first line (optional)
     else if (lineNumber == 1 && std::istringstream(line) >> pointsCount)
     {
       continue;
     }
-    else
+    else // if wrong file format
     {
-      // if wrong file format
-      //std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+      std::cerr << "Error line " << lineNumber << " of file" << std::endl;
       return false;
     }
   }

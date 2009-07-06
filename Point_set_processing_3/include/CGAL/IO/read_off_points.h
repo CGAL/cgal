@@ -92,7 +92,7 @@ read_off_points_and_normals(
         || (signature != "OFF" && signature != "NOFF") )
       {
         // if wrong file format
-        //std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
+        std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
         return false;
       }
     }
