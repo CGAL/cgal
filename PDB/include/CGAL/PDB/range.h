@@ -94,9 +94,9 @@ struct Get_key {
 
 #define CGAL_PDB_MAKE_RANGE(ucname, lcname)             \
     template <class Range>                                              \
-    internal::rangelib::transformed_range<Range, Get_##lcname<typename Range::iterator::reference> > \
+    internal::rangelib::transformed_range<Range, Get_##lcname<typename std::iterator_traits<typename Range::iterator>::reference> > \
     make_##lcname##_range( Range r){                                   \
-      return internal::rangelib::transformed(r, Get_##lcname<typename Range::iterator::reference>()); \
+      return internal::rangelib::transformed(r, Get_##lcname<typename std::iterator_traits<typename Range::iterator>::reference>()); \
     }                                                                   \
 
     
@@ -178,10 +178,10 @@ make_ca_range(Range r){
 }
 
 
-template <class Atom_filter>
-struct Filtered_atom_bond_filter {
+template <class OK_atom>
+struct Is_ok_bond {
   typedef bool result_type;
-  Filtered_atom_bond_filter(Atom_filter ao): ao_(ao){}
+  Is_ok_bond(OK_atom ao): ao_(ao){}
 
   struct Atom_pair{
     Monomer::Atom_key k_;
@@ -205,14 +205,14 @@ struct Filtered_atom_bond_filter {
       return false;
     }
   }
-  Atom_filter ao_;
+  OK_atom ao_;
 };
 
 //! Return an iterator range which returns skips non-backbone atoms
-    template <class Range, class AtomFilter>
-internal::rangelib::filtered_range<Range, Filtered_atom_bond_filter<AtomFilter> >
-make_filtered_bond_range(AtomFilter oka, Range r){
-  return internal::rangelib::filtered(r, Filtered_atom_bond_filter<AtomFilter>(oka));
+    template <class Range, class OKA>
+internal::rangelib::filtered_range<Range, Is_ok_bond<OKA> >
+make_backbone_range(OKA oka, Range r){
+  return internal::rangelib::filtered(r, Is_ok_bond<OKA>(oka));
 }
 
 

@@ -317,7 +317,7 @@ CGAL_OUTPUT(Model);
   This returns the next unused index. 
 */
 inline int index_atoms(const Model &c, int start=0) {
-  CGAL_PDB_FOREACH(Model::Chain_consts::iterator::reference cc, c.chains()) {
+  CGAL_PDB_FOREACH(std::iterator_traits<Model::Chain_consts::iterator>::reference cc, c.chains()) {
     start= index_atoms(cc.chain(), start);
   }
   return start;

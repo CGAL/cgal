@@ -368,7 +368,7 @@ CGAL_OUTPUT(Chain);
   This returns the next unused index. 
 */
 inline int index_atoms(const Chain &c, int start=0) {
-  CGAL_PDB_FOREACH(Chain::Monomer_consts::iterator::reference m, c.monomers()) {
+  CGAL_PDB_FOREACH(std::iterator_traits<Chain::Monomer_consts::iterator>::reference m, c.monomers()) {
     start= index_atoms(m.monomer(), start);
   }
   return start;

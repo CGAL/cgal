@@ -181,7 +181,7 @@ private:
   This returns the next unused index. 
 */
 inline int index_atoms(const PDB &c, int start=0) {
-  CGAL_PDB_FOREACH(PDB::Model_consts::iterator::reference m, c.models()) {
+  CGAL_PDB_FOREACH(std::iterator_traits<PDB::Model_consts::iterator>::reference m, c.models()) {
     start= index_atoms(m.model(), start);
   }
   return start;

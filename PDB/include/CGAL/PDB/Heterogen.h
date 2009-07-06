@@ -154,7 +154,7 @@ private:
   This returns the next unused index. 
 */
 inline int index_atoms(const Heterogen &m, int start=0) {
-  CGAL_PDB_FOREACH(Heterogen::Atom_consts::iterator::reference a, m.atoms()) {
+  CGAL_PDB_FOREACH(std::iterator_traits<Heterogen::Atom_consts::iterator>::reference a, m.atoms()) {
     a.atom().set_index(Atom::Index(start++));
   }
   return start;
