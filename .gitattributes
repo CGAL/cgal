@@ -21,14 +21,11 @@ AABB_tree/doc_tex/AABB_tree/PkgDescription.tex -text
 AABB_tree/doc_tex/AABB_tree/details.tex -text
 AABB_tree/doc_tex/AABB_tree/examples.tex -text
 AABB_tree/doc_tex/AABB_tree/figs/anchor.eps -text
-AABB_tree/doc_tex/AABB_tree/figs/anchor.jpg -text
 AABB_tree/doc_tex/AABB_tree/figs/anchor.png -text
 AABB_tree/doc_tex/AABB_tree/figs/anchor.ppt -text
 AABB_tree/doc_tex/AABB_tree/figs/bench.eps -text
-AABB_tree/doc_tex/AABB_tree/figs/bench.jpg -text svneol=unset#image/jpeg
 AABB_tree/doc_tex/AABB_tree/figs/bench.png -text svneol=unset#image/png
 AABB_tree/doc_tex/AABB_tree/figs/memory.eps -text svneol=unset#application/postscript
-AABB_tree/doc_tex/AABB_tree/figs/memory.jpg -text svneol=unset#image/jpeg
 AABB_tree/doc_tex/AABB_tree/figs/memory.png -text svneol=unset#image/png
 AABB_tree/doc_tex/AABB_tree/figs/teaser-thumb.png -text svneol=unset#image/png
 AABB_tree/doc_tex/AABB_tree/figs/teaser.png -text svneol=unset#image/png
