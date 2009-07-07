@@ -81,9 +81,18 @@
     <property name="title" >
      <string>Benchmark</string>
     </property>
-    <addaction name="actionBench_memory" />
+    <widget class="QMenu" name="menuAgainst_triangles" >
+     <property name="title" >
+      <string>Against #triangles</string>
+     </property>
+     <addaction name="actionBench_memory" />
+     <addaction name="actionBench_construction" />
+     <addaction name="actionBench_intersections_vs_nbt" />
+     <addaction name="actionBench_distances_vs_nbt" />
+    </widget>
     <addaction name="actionBench_distances" />
     <addaction name="actionBench_intersections" />
+    <addaction name="menuAgainst_triangles" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
@@ -140,9 +149,6 @@
   <action name="actionView_polyhedron" >
    <property name="text" >
     <string>Polyhedron</string>
-   </property>
-   <property name="shortcut" >
-    <string>P</string>
    </property>
   </action>
   <action name="actionView_points" >
@@ -208,6 +214,21 @@
   <action name="actionBench_memory" >
    <property name="text" >
     <string>Memory</string>
+   </property>
+  </action>
+  <action name="actionBench_construction" >
+   <property name="text" >
+    <string>Construction</string>
+   </property>
+  </action>
+  <action name="actionBench_intersections_vs_nbt" >
+   <property name="text" >
+    <string>Intersections</string>
+   </property>
+  </action>
+  <action name="actionBench_distances_vs_nbt" >
+   <property name="text" >
+    <string>Distances</string>
    </property>
   </action>
  </widget>

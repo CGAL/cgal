@@ -57,7 +57,7 @@ void Scene::bench_memory()
 	std::cout << "#Facets Bytes" << std::endl;
 	while(m_pPolyhedron->size_of_facets() < 2000000)
 	{
-		// refine mesh at increasing speed
+		// refines mesh at increasing speed
 		Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
 		unsigned int digits = nb_digits(m_pPolyhedron->size_of_facets());
 		unsigned int nb_splits = (unsigned int)(0.2 * std::pow(10.0,(double)digits - 1.0));
@@ -74,6 +74,107 @@ void Scene::bench_memory()
 		std::cout << m_pPolyhedron->size_of_facets() << "\t" << memory << std::endl;
 	}
 }
+
+void Scene::bench_construction()
+{
+	std::cout << std::endl << "Benchmark construction" << std::endl;
+	std::cout << "#Facets    alone (ms)   with KD-tree (ms)" << std::endl;
+
+	while(m_pPolyhedron->size_of_facets() < 1000000)
+	{
+		// refines mesh at increasing speed
+		Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
+		unsigned int digits = nb_digits(m_pPolyhedron->size_of_facets());
+		unsigned int nb_splits = (unsigned int)(0.2 * std::pow(10.0,(double)digits - 1.0));
+		refiner.run_nb_splits(nb_splits);
+
+		// constructs tree
+		QTime time;
+		time.start();
+		Facet_tree tree1(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+		double duration_construction_alone = time.elapsed();
+
+		time.start();
+		Facet_tree tree2(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+		tree2.accelerate_distance_queries();
+		double duration_construction_and_kdtree = time.elapsed();
+
+		std::cout << m_pPolyhedron->size_of_facets() << "\t" 
+			        << duration_construction_alone     << "\t" 
+							<< duration_construction_and_kdtree << std::endl;
+	}
+}
+
+void Scene::bench_intersections_vs_nbt()
+{
+	std::cout << std::endl << "Benchmark intersections against #triangles" << std::endl;
+	std::cout << std::endl << "for random ray queries and all_intersections()" << std::endl;
+	std::cout << "#Facets    #queries/s" << std::endl;
+
+	while(m_pPolyhedron->size_of_facets() < 1000000)
+	{
+		// refines mesh at increasing speed
+		Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
+		unsigned int digits = nb_digits(m_pPolyhedron->size_of_facets());
+		unsigned int nb_splits = (unsigned int)(0.2 * std::pow(10.0,(double)digits - 1.0));
+		refiner.run_nb_splits(nb_splits);
+
+		// constructs tree
+		Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+
+		// calls 10K random ray queries (neglects random generation of ray query)
+		std::list<Object_and_primitive_id> intersections;
+		QTime time;
+		time.start();
+		const int nb_queries = 10000;
+		for(int i=0;i<nb_queries;i++)
+		{
+			Ray ray = random_ray(tree.bbox());
+			tree.all_intersections(ray,std::back_inserter(intersections));
+		}
+		double duration = time.elapsed();
+		int speed = (int)(1000 * nb_queries / duration);
+
+		std::cout << m_pPolyhedron->size_of_facets() << "\t" << speed << std::endl;
+	}
+}
+
+void Scene::bench_distances_vs_nbt()
+{
+	std::cout << std::endl << "Benchmark distances against #triangles" << std::endl;
+	std::cout << std::endl << "for random point queries and closest_point()" << std::endl;
+	std::cout << "#Facets    #queries/s" << std::endl;
+
+	while(m_pPolyhedron->size_of_facets() < 1000000)
+	{
+		// refines mesh at increasing speed
+		Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
+		unsigned int digits = nb_digits(m_pPolyhedron->size_of_facets());
+		unsigned int nb_splits = (unsigned int)(0.2 * std::pow(10.0,(double)digits - 1.0));
+		refiner.run_nb_splits(nb_splits);
+
+		// constructs tree
+		Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+		tree.accelerate_distance_queries();
+
+		// calls 100K random point queries (neglects random generation of ray query)
+		std::list<Object_and_primitive_id> intersections;
+		QTime time;
+		time.start();
+		const int nb_queries = 10000;
+		for(int i=0;i<nb_queries;i++)
+		{
+			Point query = random_point(tree.bbox());
+			tree.closest_point(query);
+		}
+		double duration = time.elapsed();
+		int speed = (int)(1000 * nb_queries / duration);
+
+		std::cout << m_pPolyhedron->size_of_facets() << "\t" << speed << std::endl;
+	}
+}
+
+
 
 //////////////////////////////////////////////////////////////
 // BENCH INTERSECTIONS

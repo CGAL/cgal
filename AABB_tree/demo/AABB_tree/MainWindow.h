@@ -61,6 +61,11 @@ public:
 			void on_actionBench_distances_triggered();
 			void on_actionBench_intersections_triggered();
 
+			// benchmark against #triangles
+			void on_actionBench_construction_triggered();
+			void on_actionBench_distances_vs_nbt_triggered();
+			void on_actionBench_intersections_vs_nbt_triggered();
+
 			// view menu
 			void on_actionView_points_triggered();
 			void on_actionView_segments_triggered();

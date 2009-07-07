@@ -101,8 +101,11 @@ public:
 			ANY_INTERSECTED_PRIMITIVE,
 		  ALL_INTERSECTED_PRIMITIVES};
 	void bench_memory();
-	unsigned int nb_digits(const unsigned int value);
+	void bench_construction();
+	void bench_distances_vs_nbt();
+	void bench_intersections_vs_nbt();
 	void benchmark_intersections(const int duration);
+	unsigned int nb_digits(const unsigned int value);
 	void bench_intersection_rays(Facet_tree& tree,const int function,const int duration);
 	void bench_intersection_lines(Facet_tree& tree,const int function,const int duration);
 	void bench_intersection_planes(Facet_tree& tree,const int function,const int duration);

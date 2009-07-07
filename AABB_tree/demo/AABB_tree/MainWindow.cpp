@@ -309,3 +309,24 @@ void MainWindow::on_actionBench_memory_triggered()
 	QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::on_actionBench_construction_triggered()
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	m_pScene->bench_construction();
+	QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionBench_intersections_vs_nbt_triggered()
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	m_pScene->bench_intersections_vs_nbt();
+	QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionBench_distances_vs_nbt_triggered()
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	m_pScene->bench_distances_vs_nbt();
+	QApplication::restoreOverrideCursor();
+}
+
