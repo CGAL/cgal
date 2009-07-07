@@ -1,5 +1,4 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Alpha_shape_euclidean_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
 #include <CGAL/Alpha_shape_3.h>
@@ -8,9 +7,8 @@
 #include <list>
 #include <cassert>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Gt;
 
-typedef CGAL::Alpha_shape_euclidean_traits_3<K>          Gt;
 typedef CGAL::Alpha_shape_vertex_base_3<Gt>               Vb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vb>  Vbh;
 typedef CGAL::Alpha_shape_cell_base_3<Gt>                 Fb;
