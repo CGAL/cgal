@@ -101,7 +101,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const FT dist = inner_product_n<D>(ss.begin(),
-        t.center_cartesian_begin(*l[k]),0.0,std::plus<FT>(),
+        t.center_cartesian_begin(*l[k]),0,std::plus<FT>(),
         Subtract_and_square<FT>());
   
       // compute excess:
@@ -137,7 +137,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const double dist = inner_product_n<D>(center,
-         t.center_cartesian_begin(*l[k]),0.0,std::plus<double>(),
+         t.center_cartesian_begin(*l[k]),0,std::plus<double>(),
          Subtract_and_square_to_double<FT>());
   
       // compute excess:
@@ -174,7 +174,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const FT dist = inner_product_n<D>(ss.begin(),
-        t.center_cartesian_begin(*l[k]),0.0,std::plus<FT>(),
+        t.center_cartesian_begin(*l[k]),0,std::plus<FT>(),
         Subtract_and_square<FT>());
   
       if (compare(max,maxp,t.radius(*l[k]),dist)) {
@@ -208,7 +208,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const double dist = inner_product_n<D>(center,
-         t.center_cartesian_begin(*l[k]),0.0,std::plus<double>(),
+         t.center_cartesian_begin(*l[k]),0,std::plus<double>(),
          Subtract_and_square_to_double<FT>());
   
       const double r = CGAL_MINIBALL_NTS to_double(t.radius(*l[k]));
