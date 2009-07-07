@@ -29,6 +29,10 @@
 #include <iterator>
 
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4396)
+#endif
 CGAL_BEGIN_NAMESPACE
 
 template <class It1, class It2> class Concatenate_iterator;
@@ -143,6 +147,9 @@ bool operator!=(const Concatenate_iterator<It1, It2>& it1,
 
 CGAL_END_NAMESPACE
 
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 
 

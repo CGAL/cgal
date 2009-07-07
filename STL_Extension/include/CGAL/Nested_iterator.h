@@ -28,6 +28,11 @@
 #include <CGAL/iterator.h>
 #include <iterator>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4396)
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 template<class It>
@@ -240,5 +245,9 @@ bool operator!=(const Nested_iterator<Base_it,Traits>& it1,
 
 
 CGAL_END_NAMESPACE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_NESTED_ITERATOR_H
