@@ -73,6 +73,7 @@ enum ErrorNumber {
     FileReadOpenError,
     RomansOutOfBoundsError,
     AlphaOutOfBoundsError,
+    RefPageNotClosedError,
     UserDefinedError
 };
 

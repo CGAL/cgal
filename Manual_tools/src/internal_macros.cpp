@@ -506,6 +506,10 @@ void handleClassFile( string filename) {
         anchor_stream = open_file_for_append_with_path(
             tmp_path + current_filepath + macroX( "\\lciAnchorFilename"));
     }
+    if(class_stream != 0) {
+        printErrorMessage( RefPageNotClosedError);
+        exit(1);
+    }
     class_stream = open_file_for_write_with_path( tmp_path + class_filename);
     current_ostream  = class_stream;
 

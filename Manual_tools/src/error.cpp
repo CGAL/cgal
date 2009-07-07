@@ -133,6 +133,8 @@ const char* errorMessage( ErrorNumber n) {
 	return "Conversion-to-Roman-digits parameter out of bounds";
     case AlphaOutOfBoundsError:
 	return "Conversion-to-Alpha-digit parameter out of bounds";
+    case RefPageNotClosedError:
+	return "Previous reference page is not closed";
     case UserDefinedError:
 	return "User defined error message";
     }
