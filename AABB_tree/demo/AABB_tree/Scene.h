@@ -98,6 +98,7 @@ public:
 		  ANY_INTERSECTION,
 		  NB_INTERSECTIONS,
 		  ALL_INTERSECTIONS,
+			ANY_INTERSECTED_PRIMITIVE,
 		  ALL_INTERSECTED_PRIMITIVES};
 	void bench_memory();
 	unsigned int nb_digits(const unsigned int value);
@@ -123,6 +124,7 @@ public:
 	void bench_any_intersection(Facet_tree& tree,const int duration);
 	void bench_all_intersections(Facet_tree& tree,const int duration);
 	void bench_all_intersected_primitives(Facet_tree& tree,const int duration);
+	void bench_any_intersected_primitive(Facet_tree& tree,const int duration);
 
 	// drawing
 	void draw_points();

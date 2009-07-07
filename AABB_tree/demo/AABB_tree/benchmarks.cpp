@@ -14,6 +14,7 @@ void Scene::benchmark_intersections(const int duration)
 	bench_nb_intersections(tree,duration);
 	bench_any_intersection(tree,duration);
 	bench_all_intersections(tree,duration);
+	bench_any_intersected_primitive(tree,duration);
 	bench_all_intersected_primitives(tree,duration);
 }
 
@@ -104,6 +105,9 @@ void Scene::bench_intersection_rays(Facet_tree& tree,
 		case ALL_INTERSECTIONS:
 			tree.all_intersections(ray,std::back_inserter(intersections));
 			break;
+		case ANY_INTERSECTED_PRIMITIVE:
+			tree.any_intersected_primitive(ray);
+			break;
 		case ALL_INTERSECTED_PRIMITIVES:
 			tree.all_intersected_primitives(ray,std::back_inserter(primitive_ids));
 			break;
@@ -148,6 +152,9 @@ void Scene::bench_intersection_lines(Facet_tree& tree,
 			break;
 		case ALL_INTERSECTIONS:
 			tree.all_intersections(line,std::back_inserter(intersections));
+			break;
+		case ANY_INTERSECTED_PRIMITIVE:
+			tree.any_intersected_primitive(line);
 			break;
 		case ALL_INTERSECTED_PRIMITIVES:
 			tree.all_intersected_primitives(line,std::back_inserter(primitive_ids));
@@ -194,6 +201,9 @@ void Scene::bench_intersection_segments(Facet_tree& tree,
 		case ALL_INTERSECTIONS:
 			tree.all_intersections(segment,std::back_inserter(intersections));
 			break;
+		case ANY_INTERSECTED_PRIMITIVE:
+			tree.any_intersected_primitive(segment);
+			break;
 		case ALL_INTERSECTED_PRIMITIVES:
 			tree.all_intersected_primitives(segment,std::back_inserter(primitive_ids));
 			break;
@@ -238,6 +248,9 @@ void Scene::bench_intersection_planes(Facet_tree& tree,
 			break;
 		case ALL_INTERSECTIONS:
 			tree.all_intersections(plane,std::back_inserter(intersections));
+			break;
+		case ANY_INTERSECTED_PRIMITIVE:
+			tree.any_intersected_primitive(plane);
 			break;
 		case ALL_INTERSECTED_PRIMITIVES:
 			tree.all_intersected_primitives(plane,std::back_inserter(primitive_ids));
@@ -286,6 +299,16 @@ void Scene::bench_nb_intersections(Facet_tree& tree,
 	bench_intersection_rays(tree,DO_INTERSECT,duration);
 	bench_intersection_lines(tree,DO_INTERSECT,duration);
 	bench_intersection_planes(tree,DO_INTERSECT,duration);
+}
+
+void Scene::bench_any_intersected_primitive(Facet_tree& tree,
+											 const int duration)
+{
+	std::cout << "Benchmark any_intersected_primitive" << std::endl;
+	bench_intersection_segments(tree,ANY_INTERSECTED_PRIMITIVE,duration);
+	bench_intersection_rays(tree,ANY_INTERSECTED_PRIMITIVE,duration);
+	bench_intersection_lines(tree,ANY_INTERSECTED_PRIMITIVE,duration);
+	bench_intersection_planes(tree,ANY_INTERSECTED_PRIMITIVE,duration);
 }
 
 void Scene::bench_all_intersected_primitives(Facet_tree& tree,
