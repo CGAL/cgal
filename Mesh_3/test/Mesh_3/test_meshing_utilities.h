@@ -45,11 +45,11 @@ struct Tester
               const Domain& domain,
               const Criteria& criteria,
               const unsigned int min_vertices_expected = 0,
-              const unsigned int max_vertices_expected = -1,
+              const unsigned int max_vertices_expected = (unsigned int)(-1),
               const unsigned int min_facets_expected = 0,
-              const unsigned int max_facets_expected = -1,
+              const unsigned int max_facets_expected = (unsigned int)(-1),
               const unsigned int min_cells_expected = 0,
-              const unsigned int max_cells_expected = -1) const
+              const unsigned int max_cells_expected = (unsigned int)(-1) ) const
   {
     typedef typename C3t3::size_type size_type;
 
@@ -76,11 +76,11 @@ struct Tester
   template<typename C3t3>
   void verify_c3t3(const C3t3& c3t3,
                    const unsigned int min_vertices_expected = 0,
-                   const unsigned int max_vertices_expected = -1,
+                   const unsigned int max_vertices_expected = (unsigned int)(-1),
                    const unsigned int min_facets_expected = 0,
-                   const unsigned int max_facets_expected = -1,
+                   const unsigned int max_facets_expected = (unsigned int)(-1),
                    const unsigned int min_cells_expected = 0,
-                   const unsigned int max_cells_expected = -1) const
+                   const unsigned int max_cells_expected = (unsigned int)(-1)) const
   {
     //-------------------------------------------------------
     // Verifications
