@@ -211,7 +211,7 @@ struct Is_ok_bond {
 //! Return an iterator range which returns skips non-backbone atoms
     template <class Range, class OKA>
 internal::rangelib::filtered_range<Range, Is_ok_bond<OKA> >
-make_backbone_range(OKA oka, Range r){
+make_filtered_bond_range(OKA oka, Range r){
   return internal::rangelib::filtered(r, Is_ok_bond<OKA>(oka));
 }
 
