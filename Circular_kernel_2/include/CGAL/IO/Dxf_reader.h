@@ -165,10 +165,7 @@ private:
 void
 read_polygon(std::istream& is, Polygon& poly)
 {
-  int n;
-  double x, y, len;
-  std::string str;
-
+  int n = 0;
   do {
     is >> n;
     if(n != 0){
@@ -177,7 +174,10 @@ read_polygon(std::istream& is, Polygon& poly)
     }
   } while(n != 0);
 
+  std::string str;
   do {
+    double len;
+    double x, y;
     is >> str;
     if(str == "VERTEX"){
       is >> n;
