@@ -782,6 +782,14 @@ squared_radius(const typename K::Point_3 &p,
 template < class K >
 inline
 typename K::FT
+squared_radius(const typename K::Point_3 &p, const K &k)
+{
+  return k.compute_squared_radius_3_object()(p);
+}
+
+template < class K >
+inline
+typename K::FT
 volume(const typename K::Point_3 &p,
        const typename K::Point_3 &q,
        const typename K::Point_3 &r,

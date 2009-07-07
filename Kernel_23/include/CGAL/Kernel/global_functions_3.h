@@ -993,6 +993,14 @@ squared_radius(const Point_3<K> &p, const Point_3<K> &q)
 
 template < class K >
 inline
+typename K::FT
+squared_radius(const Point_3<K> &p)
+{
+  return CGALi::squared_radius(p, K());
+}
+
+template < class K >
+inline
 typename K::Vector_3
 unit_normal(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {

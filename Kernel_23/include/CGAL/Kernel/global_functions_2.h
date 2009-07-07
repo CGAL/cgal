@@ -955,6 +955,14 @@ side_of_oriented_circle(const Point_2<K> &p,
 template < class K >
 inline
 typename K::FT
+squared_radius(const Point_2<K> &p)
+{
+  return CGALi::squared_radius(p, K());
+}
+
+template < class K >
+inline
+typename K::FT
 squared_radius(const Point_2<K> &p, const Point_2<K> &q)
 {
   return CGALi::squared_radius(p, q, K());
