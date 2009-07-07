@@ -32,6 +32,13 @@ namespace CGAL {
 /**
  * @brief This function meshes the domain defined by mesh_traits
  * (respecting criteria), and outputs the mesh to c3t3
+ *
+ * @param domain the domain to be discretized
+ * @param criteria the criteria
+ * @param exude if it is set to \c true, an exudation step will be done at
+ *   the end of the Delaunay refinment process
+ *
+ * @return The mesh as a C3T3 object
  */
 template<class C3T3, class MeshDomain, class MeshCriteria>
 C3T3 make_mesh_3(const MeshDomain&   domain,
@@ -60,7 +67,8 @@ C3T3 make_mesh_3(const MeshDomain&   domain,
   }
   
   // Build mesher and launch refinement process
-  refine_mesh_3(c3t3, domain, criteria, exude);
+  // Don't reset c3t3 as we just created it
+  refine_mesh_3(c3t3, domain, criteria, exude, false);
   
   return c3t3;
 };

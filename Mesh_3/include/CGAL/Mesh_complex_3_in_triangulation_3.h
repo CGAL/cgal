@@ -40,14 +40,12 @@ namespace CGAL {
 template<typename Tr>
 class Mesh_complex_3_in_triangulation_3
 {
-public:
   typedef Mesh_complex_3_in_triangulation_3<Tr> Self;
 
-
+public:
   //-------------------------------------------------------
   // MeshComplex_2InTriangulation3 types
   //-------------------------------------------------------
-
   // Triangulation types
   typedef Tr                            Triangulation;
   typedef typename Tr::Vertex_handle    Vertex_handle;
@@ -59,24 +57,10 @@ public:
   //-------------------------------------------------------
   // MeshComplex_3InTriangulation3 types
   //-------------------------------------------------------
-  /// The type of the embedding 3D triangulation.
-  //typedef Tr Triangulation;
-
   // Indices types
   typedef typename Tr::Cell::Subdomain_index  Subdomain_index;
   typedef typename Tr::Cell::Surface_index    Surface_index;
   typedef typename Tr::Vertex::Index          Index;
-
-  /// Types
-  //typedef typename Tr::Cell_handle Cell_handle;
-  //typedef typename Tr::Vertex_handle Vertex_handle;
-
-  /// The type of cells
-  //typedef typename Tr::Cell Cell;
-  //typedef typename Tr::Point Point;
-  //typedef typename Tr::Facet Facet;
-
-  //typedef std::size_t size_type;
 
 
   //-------------------------------------------------------
@@ -90,11 +74,22 @@ public:
     : number_of_facets_(0)
     , tr_()
     , number_of_cells_(0)    { };
+  
+  /// Copy constructor
+  Mesh_complex_3_in_triangulation_3(const Self& rhs)
+    : number_of_facets_(rhs.number_of_facets_)
+    , tr_(rhs.tr_)
+    , number_of_cells_(rhs.number_of_cells_)    { };
 
   /// Destructor
   ~Mesh_complex_3_in_triangulation_3() { };
-
-  // default copy constructor and assignment operator are ok
+  
+  /// Assignment operator
+  Self& operator=(Self rhs)
+  {
+    swap(rhs);
+    return *this;
+  }
 
   //-------------------------------------------------------
   // MeshComplex_2InTriangulation3 interface
@@ -168,9 +163,6 @@ private:
   // MeshComplex_3InTriangulation3 interface
   //-------------------------------------------------------
 public:
-//  using Base::add_to_complex;
-//  using Base::remove_from_complex;
-
   /// Adds cell \c cell to the 3D complex, with subdomain index \c index
   void add_to_complex(const Cell_handle& cell, const Subdomain_index& index)
   {
@@ -298,18 +290,14 @@ public:
       ++first;
     }
   }
-
-//  template<typename Criteria>
-//  int check_facets(Criteria criteria) const
-//  {
-//    int result = 0;
-//    for ( Facet_iterator fit = facets_begin() ; fit != facets_end() ; ++fit )
-//    {
-//      if ( criteria(*fit) )
-//        ++result;
-//    }
-//    return result;
-//  }
+  
+  /// Swaps this & rhs
+  void swap(Self& rhs)
+  {
+    std::swap(rhs.number_of_facets_, number_of_facets_);
+    tr_.swap(rhs.tr_);
+    std::swap(rhs.number_of_cells_, number_of_cells_);
+  }
 
   //-------------------------------------------------------
   // MeshComplex_2InTriangulation3 traversal

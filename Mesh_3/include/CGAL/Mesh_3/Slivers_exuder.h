@@ -178,11 +178,15 @@ public: // methods
     pump_vertices<true>(criterion_value_limit);
   }
   
-#ifdef CGAL_MESH_3_VERBOSE  
+#ifdef CGAL_MESH_3_VERBOSE
+  /// Print some stats about Mesh embedded in c3t3
   void print_stats(const double sliver_bound = SliverCriteria::default_value) const;
 #endif // CGAL_MESH_3_VERBOSE  
   
 private:
+  // -----------------------------------
+  // Private Methods
+  // -----------------------------------
   /**
    * Pumps vertices
    */
@@ -384,7 +388,10 @@ private:
     std::for_each(cells.begin(), cells.end(), Erase_from_queue(cells_queue_));
   }
   
-private: // data
+private:
+  // -----------------------------------
+  // Private data
+  // -----------------------------------
   C3T3& c3t3_;
   Tr& tr_;
   double sq_delta_;
@@ -399,6 +406,9 @@ private: // data
   Tet_priority_queue cells_queue_;
   
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
+  // -----------------------------------
+  // Debug Helpers
+  // -----------------------------------
 private:
   /**
    * Verifies that two doubles are near equal
@@ -476,7 +486,7 @@ void
 Slivers_exuder<C3T3,SC,FT>:: 
 pump_vertices(double sliver_criterion_limit)
 {
-  if( ! initialized_ )
+  //if( ! initialized_ ) 
     init(sliver_criterion_limit);
   
   // store radius_ratio_limit in the member stop_limit_on_radius_ratio_
