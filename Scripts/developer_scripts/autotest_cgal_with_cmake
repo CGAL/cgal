@@ -458,6 +458,9 @@ copy_old_stuff()
         if [ -f "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
           log "${ACTUAL_LOGFILE}" "Copying reference platform setup script [${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup] in [${CGAL_BINARY_DIR_BASE}/${PLATFORM}]"
           cp "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" "${CGAL_BINARY_DIR_BASE}/${PLATFORM}"
+
+          # hack on Windows, where 'cp' does not copy the Windows ACLs
+          chmod a+r "${CGAL_BINARY_DIR_BASE}/${PLATFORM}/setup"
         fi
       fi
     done
