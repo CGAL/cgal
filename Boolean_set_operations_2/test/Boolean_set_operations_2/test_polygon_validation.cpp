@@ -52,7 +52,9 @@ results in an edge).
 
 
 /*test an input file. isValid indicates the input polygon is valid. ErrorMsg is displayed if the validation result does't equal isValid */
-bool testValidationForFile(const char* infilename, std::ofstream& outfile , bool isValid) {
+bool testValidationForFile(const char * infilename, std::ofstream & outfile ,
+                           bool isValid)
+{
    std::ifstream input_file (infilename);
 
   if (! input_file.is_open()) {
@@ -86,11 +88,8 @@ bool testValidationForFile(const char* infilename, std::ofstream& outfile , bool
   return res;
 }
 
-int main (int argc, char **argv) {
-  std::cout << "Note for readers:\n"
-            << "This test checks that the various validation functions do detect\n"
-            << "invalide polygons. It runs the validation functions on invalid\n"
-            << "polygons. For that reason, the following warnings must be ignored.\n\n";
+int main (int argc, char * argv[])
+{
   std::string testfilePrefix = "data/validation/val_test";
   std::string testfileSuffix = ".dat";   
   const char* outputfilename = "data/validation/validation_test_output.txt"; 
