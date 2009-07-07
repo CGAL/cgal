@@ -202,7 +202,7 @@ public:
   bool operator()(const Delaunay_graph& dual, const Edge& e) const {
     if ( dual.dimension() < 2 ) { return false; }
     if ( emap.is_defined(e) && emap[e] != UNDEFINED ) {
-      return emap[e];
+      return (emap[e] == True);
     }
 
     bool b = e_rejector(dual, e);
@@ -385,7 +385,7 @@ public:
 
   bool operator()(const Delaunay_graph& dual, const Vertex_handle& v) const {
     if ( dual.dimension() < 2 ) { return false; }
-    if ( vmap.is_defined(v) && vmap[v] != UNDEFINED ) { return vmap[v]; }
+    if ( vmap.is_defined(v) && vmap[v] != UNDEFINED ) { return (vmap[v] == True); }
 
     bool b = f_rejector(dual, v);
     Three_valued b3 = (b ? True : False);
