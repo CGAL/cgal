@@ -14,6 +14,11 @@ squared_radius( const Point_2<Kernel>& p,
 and $q$, i.e. one fourth of the squared distance between $p$ and $q$.}
 
 \ccFunction{FT
+squared_radius( const Point_2<Kernel>& p);}
+{compute the squared radius of the smallest circle passing through $p$, 
+i.e. $0$.}
+
+\ccFunction{FT
 squared_radius( const Point_3<Kernel>& p,
                 const Point_3<Kernel>& q,
                 const Point_3<Kernel>& r,
@@ -33,6 +38,11 @@ squared_radius( const Point_3<Kernel>& p,
                 const Point_3<Kernel>& q);}
 {compute the squared radius of the smallest circle passing through $p$,
 and $q$, i.e. one fourth of the squared distance between $p$ and $q$.}
+
+\ccFunction{FT
+squared_radius( const Point_3<Kernel>& p);}
+{compute the squared radius of the smallest circle passing through $p$, 
+i.e. $0$.}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Circle_2<Kernel>} \\
