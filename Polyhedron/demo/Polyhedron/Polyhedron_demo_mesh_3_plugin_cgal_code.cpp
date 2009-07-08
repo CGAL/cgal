@@ -184,7 +184,12 @@ public:
     ::glDisable(GL_CLIP_PLANE0);
 
     ::glBegin(GL_TRIANGLES);
+// workaround for Qt-4.2.
+#if QT_VERSION < 0x040300
+#  define darker dark
+#endif
     CGALglcolor(this->color().darker(150));
+#undef darker
     for(Tr::Finite_cells_iterator
           cit = c3t3().triangulation().finite_cells_begin(),
           end = c3t3().triangulation().finite_cells_end();
