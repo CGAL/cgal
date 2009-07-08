@@ -221,6 +221,9 @@ Image_3::trilinear_interpolation(const Coord_type& x,
 				 const Image_word_type& value_outside,
 				 Image_transform transform) const 
 {
+  // Check on double/float coordinates, because (int)-0.1 gives 0
+  if ( x < 0 || y < 0 || z < 0 ) return value_outside;
+  
   const Coord_type lx = x / image()->vx;
   const Coord_type ly = y / image()->vy;
   const Coord_type lz = z / image()->vz;
@@ -406,6 +409,9 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
 					    const Coord_type& z,
 					    const Image_word_type& value_outside) const 
 {
+  // Check on double/float coordinates, because (int)-0.1 gives 0
+  if ( x < 0 || y < 0 || z < 0 ) return value_outside;
+  
   const int dimx = xdim();
   const int dimy = ydim();
   const int dimz = zdim();
