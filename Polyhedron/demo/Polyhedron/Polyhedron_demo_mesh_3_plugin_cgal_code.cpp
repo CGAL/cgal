@@ -1,4 +1,4 @@
-#include <CGAL/AABB_polyhedral_oracle.h>
+#include <CGAL/AABB_intersections.h>
 #include <CGAL/AABB_tree.h>
 
 #include "Polyhedron_type.h"
