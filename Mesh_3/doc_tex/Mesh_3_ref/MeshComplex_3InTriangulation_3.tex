@@ -119,6 +119,18 @@ of the 2D boundary complex.}
 
 \ccConstructor{MeshComplex_3InTriangulation_3();}
 {Builds an empty 3D complex.}
+\ccGlue
+\ccConstructor{MeshComplex_3InTriangulation_3(const MeshComplex_3InTriangulation_3 & rhs);}
+{Copy constructor. Embedded triangulation is duplicated.}
+
+\ccMethod{MeshComplex_3InTriangulation_3& operator= (const MeshComplex_3InTriangulation_3 & rhs);}
+{Assignment operator. Embedded triangulation is duplicated, and the former triangulation of \ccc{rhs} is deleted.}
+
+\ccMethod{void swap(MeshComplex_3InTriangulation_3 & rhs);} 
+{Swaps \ccVar\ and \ccc{rhs}. There is no copy of embedded triangulation,
+thus this method runs in constant time. This method should be preferred to
+\ccVar=\ccc{rhs} or \ccVar(\ccc{rhs}) when \ccc{rhs} is deleted after
+that.}
 
 
 \ccAccessFunctions
