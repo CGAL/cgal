@@ -50,7 +50,8 @@ bool are_polygons_valid(const std::vector<Polygon_with_holes_2>& vec)
 }
 
 template <class T_P1, class T_P2>
-std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1, const T_P2& p2)
+std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1,
+                                   const T_P2& p2)
 {
   Traits_2 tr;
   std::vector<Polygon_with_holes_2> res;
@@ -63,7 +64,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1, const T_P2
     out << 1 << std::endl;
     out << res_pgn <<std::endl;
     if(!is_valid_polygon_with_holes(res_pgn,tr))
-      std::cout<<"warning: invalid polygon was generated\n";
+      std::cout << "warning: invalid polygon was generated" << std::endl;
   }
   else
   {
@@ -77,7 +78,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1, const T_P2
             res.end(),
             std::ostream_iterator<Polygon_with_holes_2>(out, "\n"));
   if(!are_polygons_valid(res))
-    std::cout<<"warning: invalid polygon was generated\n";
+    std::cout << "warning: invalid polygon was generated" << std::endl;
   res.clear();
 
   out<<std::endl;
@@ -87,7 +88,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1, const T_P2
             res.end(),
             std::ostream_iterator<Polygon_with_holes_2>(out, "\n"));
   if(!are_polygons_valid(res))
-    std::cout<<"warning: invalid polygon was generated\n";
+    std::cout << "warning: invalid polygon was generated" << std::endl;
   res.clear();
 
   out<<std::endl;
@@ -97,7 +98,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1, const T_P2
             res.end(),
             std::ostream_iterator<Polygon_with_holes_2>(out, "\n"));
   if(!are_polygons_valid(res))
-    std::cout<<"warning: invalid polygon was generated\n";
+    std::cout << "warning: invalid polygon was generated" << std::endl;
   res.clear();
 
   out<<std::endl;
@@ -107,7 +108,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1, const T_P2
             res.end(),
             std::ostream_iterator<Polygon_with_holes_2>(out, "\n"));
   if(!are_polygons_valid(res))
-    std::cout<<"warning: invalid polygon was generated\n";
+    std::cout << "warning: invalid polygon was generated" << std::endl;
   res.clear();
   
   return out;
@@ -124,7 +125,7 @@ std::ostream& write_complement_to_file(std::ostream& out, const Polygon_2& pgn)
 
   Traits_2 tr;
   if(!is_valid_polygon_with_holes(res_pgn,tr))
-    std::cout<<"warning: invalid polygon was generated\n";
+    std::cout << "warning: invalid polygon was generated" << std::endl;
 
   return out;
 }
@@ -142,7 +143,7 @@ std::ostream& write_complement_to_file(std::ostream& out,
             res.end(),
             std::ostream_iterator<Polygon_with_holes_2>(out, "\n"));
   if(!are_polygons_valid(res))
-    std::cout<<"warning: invalid polygon was generated\n";
+    std::cout << "warning: invalid polygon was generated" << std::endl;
   res.clear();
 
   return out;
@@ -152,7 +153,9 @@ int main(int argc, char *argv[])
 {
   if(argc<4)
   {
-    std::cerr<<"Missing input files"<<std::endl;
+    std::cerr << "Missing input files!"
+              << "When performed as part of the test suite no input file is expected."
+              << std::endl;
     return 0;
   }
 
@@ -160,14 +163,14 @@ int main(int argc, char *argv[])
   std::ifstream inp2 (argv[2]);
   if(!inp1.is_open() || !inp2.is_open())
   {
-    std::cerr<<"Failed to open file"<<std::endl;
+    std::cerr << "Failed to open file" << std::endl;
     std::exit(-1);
   }
 
   std::ifstream test (argv[3]);
   if(test.is_open())
   {
-      std::cout<<argv[3]<<" already exist, overwrite? (y/n)"<<std::endl;
+      std::cout<<argv[3] << " already exist, overwrite? (y/n)"<<std::endl;
       char c = std::cin.get();
       if(c != 'y')
         return 0;
@@ -193,7 +196,7 @@ int main(int argc, char *argv[])
     out  << p1;
     if(! is_valid_polygon(p1,tr))
     {
-      std::cout<<"warning: first input polygon is invalid!!!\n";
+      std::cout << "warning: first input polygon is invalid!!!" << std::endl;
     }
   }
   else 
@@ -202,7 +205,7 @@ int main(int argc, char *argv[])
     out  << pwh1;
     if(! is_valid_polygon_with_holes(pwh1,tr))
     {
-      std::cout<<"warning: first input polygon is invalid!!!\n";
+      std::cout << "warning: first input polygon is invalid!!!" << std::endl;
     }
   }
 
@@ -218,7 +221,7 @@ int main(int argc, char *argv[])
     out  << p2;
     if(!is_valid_polygon(p2,tr))
     {
-      std::cout<<"warning: second input polygon is invalid!!!\n";
+      std::cout << "warning: second input polygon is invalid!!!" << std::endl;
     }
   }
   else
@@ -227,7 +230,7 @@ int main(int argc, char *argv[])
     out << pwh2;
     if(! is_valid_polygon_with_holes(pwh2,tr))
     {
-      std::cout<<"warning: second input polygon is invalid!!!\n";
+      std::cout << "warning: second input polygon is invalid!!!" << std::endl;
     }
   }
   out <<std::endl;
@@ -239,7 +242,8 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, p1);
     write_complement_to_file(out, p2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd\n";
+      " was generated successfully, dont forget to add it to test_bop.cmd"
+             << std::endl;
 
     return (0);
   }
@@ -250,7 +254,8 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, p1);
     write_complement_to_file(out, pwh2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd\n";
+      " was generated successfully, dont forget to add it to test_bop.cmd"
+             << std::endl;
 
     return (0);
   }
@@ -261,7 +266,8 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, pwh1);
     write_complement_to_file(out, p2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd\n";
+      " was generated successfully, dont forget to add it to test_bop.cmd"
+             << std::endl;
 
     return (0);
   }
@@ -272,12 +278,13 @@ int main(int argc, char *argv[])
     write_complement_to_file(out, pwh1);
     write_complement_to_file(out, pwh2);
     std::cout<<argv[3] <<
-      " was generated successfully, dont forget to add it to test_bop.cmd\n";
+      " was generated successfully, dont forget to add it to test_bop.cmd"
+             << std::endl;
 
     return (0);
   }
 
-  std::cout<<"unkown polygon type\n";
+  std::cout << "unkown polygon type" << std::endl;
 
   return (0);
 }

@@ -69,21 +69,23 @@ int main(int argc, char *argv[])
 {
   if(argc<3)
   {
-    std::cerr<<"Missing input file"<<std::endl;
+    std::cerr << "Missing input file!" << std::endl
+              << "When performed as part of the test suite no input file is expected."
+              << std::endl;
     return 0;
   }
 
   std::ifstream inp (argv[1]);
   if(!inp.is_open())
   {
-    std::cerr<<"Failed to open file"<<std::endl;
+    std::cerr << "Failed to open file!" << std::endl;
     std::exit(-1);
   }
 
   std::ifstream test (argv[2]);
   if(test.is_open())
   {
-      std::cout<<argv[2]<<" already exist, overwrite? (y/n)"<<std::endl;
+      std::cout<<argv[2] << " already exist, overwrite? (y/n)" << std::endl;
       char c = std::cin.get();
       if(c != 'y')
         return 0;
@@ -92,7 +94,7 @@ int main(int argc, char *argv[])
   std::ofstream out (argv[2]);
   if(!out.is_open())
   {
-    std::cerr<<"Failed to create output file"<<std::endl;
+    std::cerr << "Failed to create output file" << std::endl;
     std::exit(-1);
   }
 
@@ -117,7 +119,7 @@ int main(int argc, char *argv[])
 
   if(!are_polygons_valid(polygons))
   {
-    std::cout<<"invalid input polygons !!!\n";
+    std::cout << "invalid input polygons !!!" << std::endl;;
   }
 
   //read polygons with holes
@@ -131,20 +133,20 @@ int main(int argc, char *argv[])
   }
   if(!are_polygons_valid(polygons_with_holes))
   {
-    std::cout<<"invalid input polygon with hole !!!\n";
+    std::cout<<"invalid input polygon with hole !!!" << std::endl;;
   }
 
   CGAL::join(polygons.begin(), polygons.end(), oi);
   if(!are_polygons_valid(result))
   {
-    std::cout<<"invalid polygon was created !!!\n";
+    std::cout<<"invalid polygon was created !!!" << std::endl;;
   }
   write_result_to_file(result, out);
 
   CGAL::join(polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
-    std::cout<<"invalid polygon was created !!!\n";
+    std::cout<<"invalid polygon was created !!!" << std::endl;;
   }
   write_result_to_file(result, out);
 
@@ -152,7 +154,7 @@ int main(int argc, char *argv[])
              polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
-    std::cout<<"invalid polygon was created !!!\n";
+    std::cout<<"invalid polygon was created !!!" << std::endl;;
   }
   write_result_to_file(result, out);
 
@@ -160,7 +162,7 @@ int main(int argc, char *argv[])
   CGAL::intersection(polygons.begin(), polygons.end(), oi);
   if(!are_polygons_valid(result))
   {
-    std::cout<<"invalid polygon was created !!!\n";
+    std::cout<<"invalid polygon was created !!!" << std::endl;;
   }
   write_result_to_file(result, out);
 
@@ -168,7 +170,7 @@ int main(int argc, char *argv[])
                      polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
-    std::cout<<"invalid polygon was created !!!\n";
+    std::cout<<"invalid polygon was created !!!" << std::endl;;
   }
   write_result_to_file(result, out);
 
@@ -176,7 +178,7 @@ int main(int argc, char *argv[])
              polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
-    std::cout<<"invalid polygon was created !!!\n";
+    std::cout<<"invalid polygon was created !!!" << std::endl;;
   }
   write_result_to_file(result, out);
 
@@ -184,7 +186,7 @@ int main(int argc, char *argv[])
   CGAL::symmetric_difference(polygons.begin(), polygons.end(), oi);
   if(!are_polygons_valid(result))
   {
-    std::cout<<"invalid polygon was created !!!\n";
+    std::cout<<"invalid polygon was created !!!" << std::endl;
   }
   write_result_to_file(result, out);
 
@@ -192,7 +194,7 @@ int main(int argc, char *argv[])
                              polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
-    std::cout<<"invalid polygon was created !!!\n";
+    std::cout<<"invalid polygon was created !!!" << std::endl;
   }
   write_result_to_file(result, out);
 
@@ -200,7 +202,7 @@ int main(int argc, char *argv[])
              polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
-    std::cout<<"invalid polygon was created !!!\n";
+    std::cout << "invalid polygon was created !!!" << std::endl;
   }
   write_result_to_file(result, out);
 
