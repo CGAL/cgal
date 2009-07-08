@@ -60,75 +60,93 @@ public:
   typedef typename Traits::Point_2                     Point_2;
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
   typedef typename Minimization_diagram_2::Are_all_sides_oblivious_tag
-  Are_all_sides_oblivious_tag;
-  
+    Are_all_sides_oblivious_tag;
 
 protected:
   class Copied_face_zone_visitor;
 
   typedef Envelope_element_visitor_3<Traits, Minimization_diagram_2> Self;
-  typedef typename Minimization_diagram_2::Halfedge_const_handle    Halfedge_const_handle;
-  typedef typename Minimization_diagram_2::Halfedge_const_iterator  Halfedge_const_iterator;
-  typedef typename Minimization_diagram_2::Halfedge_handle          Halfedge_handle;
-  typedef typename Minimization_diagram_2::Halfedge_iterator        Halfedge_iterator;
-  typedef typename Minimization_diagram_2::Face_const_handle        Face_const_handle;
-  typedef typename Minimization_diagram_2::Face_handle              Face_handle;
-  typedef typename Minimization_diagram_2::Face_iterator            Face_iterator;
-  typedef typename Minimization_diagram_2::Vertex_const_handle      Vertex_const_handle;
-  typedef typename Minimization_diagram_2::Vertex_handle            Vertex_handle;
-  typedef typename Minimization_diagram_2::Vertex_iterator          Vertex_iterator;
-  typedef typename Minimization_diagram_2::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
-  typedef typename Minimization_diagram_2::Inner_ccb_iterator       Inner_ccb_iterator;
-  typedef typename Minimization_diagram_2::Outer_ccb_iterator       Outer_ccb_iterator;
-  typedef typename Minimization_diagram_2::Isolated_vertex_iterator Isolated_vertex_iterator;
-  typedef typename Minimization_diagram_2::Topology_traits          Topology_traits;
-  typedef typename Minimization_diagram_2::Dcel                     Dcel;
-  typedef typename Minimization_diagram_2::Dcel::Dcel_data_iterator Envelope_data_iterator;
+  typedef typename Minimization_diagram_2::Halfedge_const_handle
+                                                        Halfedge_const_handle;
+  typedef typename Minimization_diagram_2::Halfedge_const_iterator
+                                                        Halfedge_const_iterator;
+  typedef typename Minimization_diagram_2::Halfedge_handle
+                                                        Halfedge_handle;
+  typedef typename Minimization_diagram_2::Halfedge_iterator
+                                                        Halfedge_iterator;
+  typedef typename Minimization_diagram_2::Face_const_handle
+                                                        Face_const_handle;
+  typedef typename Minimization_diagram_2::Face_handle
+                                                        Face_handle;
+  typedef typename Minimization_diagram_2::Face_iterator
+                                                        Face_iterator;
+  typedef typename Minimization_diagram_2::Vertex_const_handle
+                                                        Vertex_const_handle;
+  typedef typename Minimization_diagram_2::Vertex_handle
+                                                        Vertex_handle;
+  typedef typename Minimization_diagram_2::Vertex_iterator
+                                                        Vertex_iterator;
+  typedef typename Minimization_diagram_2::Ccb_halfedge_circulator
+    Ccb_halfedge_circulator;
+  typedef typename Minimization_diagram_2::Inner_ccb_iterator
+                                                        Inner_ccb_iterator;
+  typedef typename Minimization_diagram_2::Outer_ccb_iterator
+                                                        Outer_ccb_iterator;
+  typedef typename Minimization_diagram_2::Isolated_vertex_iterator
+    Isolated_vertex_iterator;
+  typedef typename Minimization_diagram_2::Topology_traits
+                                                        Topology_traits;
+  typedef typename Minimization_diagram_2::Dcel         Dcel;
+  typedef typename Minimization_diagram_2::Dcel::Dcel_data_iterator
+                                                        Envelope_data_iterator;
 
-  typedef Arr_observer<Minimization_diagram_2>                      Md_observer;
-  typedef Arr_accessor<Minimization_diagram_2>                      Md_accessor;
+  typedef Arr_observer<Minimization_diagram_2>          Md_observer;
+  typedef Arr_accessor<Minimization_diagram_2>          Md_accessor;
   
   typedef typename Topology_traits::Default_point_location_strategy 
-  Md_point_location;
+    Md_point_location;
   typedef typename Topology_traits::Zone_insertion_visitor
-  Md_insert_zone_visitor;
+    Md_insert_zone_visitor;
   
-  typedef std::list<Halfedge_handle>                                Halfedges_list;
-  typedef typename std::list<Halfedge_handle>::iterator             Halfedges_list_iterator;
+  typedef std::list<Halfedge_handle>                    Halfedges_list;
+  typedef typename std::list<Halfedge_handle>::iterator Halfedges_list_iterator;
 
-  typedef std::pair<Halfedge_handle, Multiplicity>                  Halfedge_w_type;
-  typedef std::list<Halfedge_w_type>                                Halfedges_w_type_list;
+  typedef std::pair<Halfedge_handle, Multiplicity>      Halfedge_w_type;
+  typedef std::list<Halfedge_w_type>                    Halfedges_w_type_list;
 
-  typedef std::list<Vertex_handle>                                  Vertices_list;
-  typedef typename std::list<Vertex_handle>::iterator               Vertices_list_iterator;
+  typedef std::list<Vertex_handle>                      Vertices_list;
+  typedef typename std::list<Vertex_handle>::iterator   Vertices_list_iterator;
 
-  typedef std::list<Face_handle>                                    Faces_list;
-  typedef typename std::list<Face_handle>::iterator                 Faces_list_iterator;
+  typedef std::list<Face_handle>                        Faces_list;
+  typedef typename std::list<Face_handle>::iterator     Faces_list_iterator;
 
-  typedef Unique_hash_map<Vertex_handle, bool>                      Vertices_hash;
-  typedef Unique_hash_map<Halfedge_handle, bool>                    Halfedges_hash;
-  typedef Unique_hash_map<Halfedge_handle, Multiplicity>            Halfedges_hash_w_type;
-  typedef Unique_hash_map<Face_handle, bool>                        Faces_hash;
+  typedef Unique_hash_map<Vertex_handle, bool>          Vertices_hash;
+  typedef Unique_hash_map<Halfedge_handle, bool>        Halfedges_hash;
+  typedef Unique_hash_map<Halfedge_handle, Multiplicity>
+                                                        Halfedges_hash_w_type;
+  typedef Unique_hash_map<Face_handle, bool>            Faces_hash;
 
-  typedef Unique_hash_map<Vertex_handle, Vertex_handle>             Vertices_map;
-  typedef Unique_hash_map<Halfedge_handle, Halfedge_handle>         Halfedges_map;
-  typedef Unique_hash_map<Face_handle, Face_handle>                 Faces_map;
+  typedef Unique_hash_map<Vertex_handle, Vertex_handle> Vertices_map;
+  typedef Unique_hash_map<Halfedge_handle, Halfedge_handle>
+                                                        Halfedges_map;
+  typedef Unique_hash_map<Face_handle, Face_handle>     Faces_map;
 
-  typedef Unique_hash_map<Vertex_handle, Halfedge_handle>           Vertices_to_edges_map;
+  typedef Unique_hash_map<Vertex_handle, Halfedge_handle>
+                                                        Vertices_to_edges_map;
   
-  typedef std::pair<X_monotone_curve_2, Multiplicity>          Intersection_curve;
-  typedef std::list<Object>                                         Intersections_list;
+  typedef std::pair<X_monotone_curve_2, Multiplicity>   Intersection_curve;
+  typedef std::list<Object>                             Intersections_list;
 
   // this is used in the resolve edge process
-  typedef Triple<Point_2, bool, bool>                               Point_2_with_info;
+  typedef Triple<Point_2, bool, bool>                   Point_2_with_info;
   struct Points_compare
   {
   protected:
     const Traits * p_traits;
 
   public:
-    Points_compare(const Traits & tr) : p_traits(&tr)
-    {}
+    // Constructor
+    Points_compare(const Traits & geom_traits) : p_traits(&geom_traits) {}
 
     bool operator() (const Point_2_with_info& p1,
                      const Point_2_with_info& p2) const
@@ -139,7 +157,7 @@ protected:
         return true;
       if (res == LARGER)
         return false;
-      CGAL_assertion(false);
+      CGAL_error();
       return (p1.second == true || p2.third == true);
     }
   };
@@ -154,7 +172,8 @@ public:
     type  = t;
   }
 
-  Envelope_element_visitor_3(const Traits * tr, Envelope_type t = ENVELOPE_LOWER)
+  Envelope_element_visitor_3(const Traits * tr,
+                             Envelope_type t = ENVELOPE_LOWER)
   {
     // Set the traits.
     m_traits = tr;
@@ -170,8 +189,8 @@ public:
       delete m_traits;
   }
 
-  // get a face with 2 surfaces defined over it, and compute the arrangement of the
-  // envelope of these surfaces over the face
+  // get a face with 2 surfaces defined over it, and compute the arrangement
+  // of the/ envelope of these surfaces over the face
   void resolve(Face_handle face, Minimization_diagram_2& result)
   {
     CGAL_assertion(face->get_aux_is_set(0));
@@ -183,14 +202,16 @@ public:
     const Xy_monotone_surface_3& surf1 = get_aux_surface(face, 0);
     const Xy_monotone_surface_3& surf2 = get_aux_surface(face, 1);
 
-    // find the projected intersections of the surfaces. if none - we have a simple case:
+    // find the projected intersections of the surfaces. if none - we have
+    // a simple case:
     // need only resolve non-intersecting and return
     std::list<Object> inter_objs;
     get_projected_intersections(surf1, surf2, std::back_inserter(inter_objs));
 
     if (inter_objs.size() == 0)
     {
-      // here for resolve we can compare the surfaces over the edges only (no need for left/right versions)
+      // here for resolve we can compare the surfaces over the edges only
+      // (no need for left/right versions)
       Comparison_result cur_res = resolve_minimal_face(face);
       copy_data_by_comparison_result(face, face, cur_res);
       // check face boundary for "data from face" features
@@ -201,15 +222,15 @@ public:
     }
     
     // we insert all projected intersections into a temporary arrangement,
-    // with only the current face's curves, to find the arrangement of the lower envelope
-    // of the 2 surfaces over the current face
+    // with only the current face's curves, to find the arrangement of the
+    // lower envelope of the 2 surfaces over the current face
     Minimization_diagram_2 copied_face_arr(m_traits);
 
     // here we maintain a mapping between edges in the copied arrangement and
     // their original generating edge from result
     Halfedges_map map_copied_to_orig_halfedges;
-    // here we maintain a mapping between vertices in the copied arrangement and
-    // their original generating vertex from result
+    // here we maintain a mapping between vertices in the copied arrangement
+    // and their original generating vertex from result
     Vertices_map  map_copied_to_orig_vertices;
     // here we maintain a mapping between faces in the copied arrangement and
     // their corresponding face from result
@@ -219,7 +240,8 @@ public:
     // the face is assumed to have outer boundary, and may also have holes,
     // and isolated vertices
     // we need to keep track of the original halfedges in the inserted halfedges
-    // we also need to have the face handle of the copied face in copied_face_arr
+    // we also need to have the face handle of the copied face in
+    // copied_face_arr
     Face_handle copied_face = copy_face(face, result, copied_face_arr,
                                         map_copied_to_orig_halfedges,
                                         map_copied_to_orig_vertices);
@@ -279,10 +301,10 @@ public:
       if (assign(point, cur_obj))
       {
         // intersection can be a point when the surfaces only touch each other.
-        // we are only interested in the points that are inside the face or on its
-        // boundary.
-        // we insert the point into the planar map as a vertex, with both surfaces
-        // over it.
+        // we are only interested in the points that are inside the face or
+        // on its boundary.
+        // we insert the point into the planar map as a vertex, with both
+        // surfaces over it.
         // should use observer for split_edge
         // if not in a sub-face of "face", shouldn't insert it
         // the above information is available in zone_visitor
@@ -303,8 +325,8 @@ public:
 
     // now determine the envelope data in result over the new faces
     
-    // in order to use resolve_minimal_face with intersection halfedge, we go over
-    // the new edges, and set data over their faces
+    // in order to use resolve_minimal_face with intersection halfedge, we
+    // go over the new edges, and set data over their faces
     typename Halfedges_w_type_list::iterator new_edge_it;
     for(new_edge_it = result_new_edges.begin();
         new_edge_it != result_new_edges.end(); ++new_edge_it)
@@ -346,9 +368,9 @@ public:
         {
           res = convert_decision_to_comparison_result(f1->get_decision());
           res = resolve_by_intersection_type(res, itype);
-          CGAL_expensive_assertion_code(
-                                        Comparison_result tmp_res = resolve_minimal_face(f2, &new_he_twin);
-                                        );
+          CGAL_expensive_assertion_code
+            (Comparison_result tmp_res =
+             resolve_minimal_face(f2, &new_he_twin););
           CGAL_expensive_assertion(tmp_res == res);
         }
         else
@@ -365,9 +387,8 @@ public:
         {
           res = convert_decision_to_comparison_result(f2->get_decision());
           res = resolve_by_intersection_type(res, itype);
-          CGAL_expensive_assertion_code(
-                                        Comparison_result tmp_res = resolve_minimal_face(f1, &new_he);
-                                        );
+          CGAL_expensive_assertion_code
+            (Comparison_result tmp_res = resolve_minimal_face(f1, &new_he););
           CGAL_expensive_assertion(tmp_res == res);
         }
         else
@@ -380,8 +401,9 @@ public:
 
     }
     
-    // we also need to check the faces incident to the halfedges in special_edges
-    // since the envelope data over them should be computed using compare_left/right versions
+    // we also need to check the faces incident to the halfedges in
+    // special_edges since the envelope data over them should be computed
+    // using compare_left/right versions
     Halfedges_list_iterator special_edge_it;
     for(special_edge_it = result_special_edges.begin();
         special_edge_it != result_special_edges.end(); ++special_edge_it)
@@ -400,9 +422,9 @@ public:
       if (!special_he->is_decision_set() &&
           can_copy_decision_from_face_to_edge(special_he))
       {
-        //    if (!special_he->get_aux_is_set(0) || !special_he->get_aux_is_set(1))
-        //    {
-        //      // this can only happen when the edge is fake, since the edge is on 
+        // if (!special_he->get_aux_is_set(0) || !special_he->get_aux_is_set(1))
+        // {
+        // // this can only happen when the edge is fake, since the edge is on 
         //// the face's boundary
         //      CGAL_assertion(special_he->get_is_fake());
         //      special_he->set_aux_source(0, face->get_aux_source(0));
@@ -442,8 +464,8 @@ public:
                        special_v->get_aux_is_set(1));
     }
     
-    // assert all new faces got data set, if not, then maybe no curve cuts the face,
-    // and should use regular resolve_minimal_face
+    // assert all new faces got data set, if not, then maybe no curve cuts
+    // the face, and should use regular resolve_minimal_face
     typename std::list<Face_handle>::iterator new_face_it;
     for(new_face_it = result_face_parts.begin();
         new_face_it != result_face_parts.end(); ++new_face_it)
@@ -555,22 +577,24 @@ public:
             // we will add the *icv end points to the split_points, unless
             // but we should be carefull with infinite curves.
             Arr_traits_adaptor_2<Traits> tr_adaptor(*m_traits);
-            if (tr_adaptor.parameter_space_in_y_2_object()(*icv, ARR_MIN_END) ==
-                ARR_INTERIOR &&
-                tr_adaptor.parameter_space_in_x_2_object()(*icv, ARR_MIN_END) ==
-                ARR_INTERIOR)
+            if (tr_adaptor.parameter_space_in_y_2_object()
+                (*icv, ARR_MIN_END) == ARR_INTERIOR &&
+                tr_adaptor.parameter_space_in_x_2_object()
+                (*icv, ARR_MIN_END) == ARR_INTERIOR)
               split_points.push_back
-                (Point_2_with_info(m_traits->construct_min_vertex_2_object()(*icv),
-                                   true, false));
+                (Point_2_with_info
+                 (m_traits->construct_min_vertex_2_object()(*icv),
+                  true, false));
             else
               is_min_end_at_inf = true;
 
-            if (tr_adaptor.parameter_space_in_y_2_object()(*icv, ARR_MAX_END) ==
-                ARR_INTERIOR &&
-                tr_adaptor.parameter_space_in_x_2_object()(*icv, ARR_MAX_END) ==
-                ARR_INTERIOR)
+            if (tr_adaptor.parameter_space_in_y_2_object()
+                (*icv, ARR_MAX_END) == ARR_INTERIOR &&
+                tr_adaptor.parameter_space_in_x_2_object()
+                (*icv, ARR_MAX_END) == ARR_INTERIOR)
               split_points.push_back
-                (Point_2_with_info(m_traits->construct_max_vertex_2_object()(*icv),
+                (Point_2_with_info(m_traits->construct_max_vertex_2_object()
+                                   (*icv),
                                    false, true));
             else
               is_max_end_at_inf = true;
@@ -614,7 +638,8 @@ public:
       source_is_special = true;
     }
     
-    // check if target is a special vertex, by checking the last point in the list
+    // check if target is a special vertex, by checking the last point in
+    // the list
     bool target_is_special = false;
     if ((!original_trg->is_at_open_boundary() && 
          m_traits->equal_2_object()(split_points[split_points.size()-1].first, 
@@ -672,9 +697,9 @@ public:
         cur_part = split_he->next();
 
         // set the envelope data over the finished part
-        // if the finished part is a special edge, and no verticals are involved
-        // we can set both aux data on it. otherwise we should use the traits
-        // compare method.
+        // if the finished part is a special edge, and no verticals are
+        // involved we can set both aux data on it. otherwise we should use
+        // the traits compare method.
         Comparison_result finished_part_res;
         if (overlaps > 0)
           finished_part_res = EQUAL;
@@ -884,26 +909,22 @@ protected:
       
       //assertion code begin
       // check that result is equal on all edges
-      CGAL_assertion_code(                              \
-                          Ccb_halfedge_circulator hec_begin = hec;        \
+      CGAL_assertion_code(Ccb_halfedge_circulator hec_begin = hec;        \
                           ++hec;                                          \
-                          while (hec != hec_begin)                        \
-                          {                                               \
-                            if(hec->is_fictitious())                      \
-                            {                                             \
+                          while (hec != hec_begin) {                      \
+                            if(hec->is_fictitious()) {                    \
                               ++hec;                                      \
                               continue;                                   \
                             }                                             \
-                            Comparison_result                                             \
-                              tmp = compare_distance_to_envelope(hec->curve(), surf1, surf2); \
+                            Comparison_result tmp =                       \
+                              compare_distance_to_envelope(hec->curve(),  \
+                                                           surf1, surf2); \
                             );
-                          CGAL_assertion_msg(tmp == res, 
-                                             "compare over curve returns non-consistent results");
-                          CGAL_assertion_code(
-                                              ++hec;
-
-                                              }
-                                                        );
+      CGAL_assertion_msg(tmp == res, 
+                         "compare over curve returns non-consistent results");
+      CGAL_assertion_code(   ++hec;
+                          }
+                          );
       //assertion code end
       return res;
     }
@@ -989,8 +1010,7 @@ protected:
   }
 
   // compare two infinite surfaces with no boundary or holes
-  Comparison_result compare_distance_to_envelope(
-                                                 const Xy_monotone_surface_3&,
+  Comparison_result compare_distance_to_envelope(const Xy_monotone_surface_3&,
                                                  const Xy_monotone_surface_3&,
                                                  Arr_all_sides_oblivious_tag)
   {
@@ -1000,7 +1020,8 @@ protected:
 
   // helper method to get the surfaces we need to work on
   template <typename FeatureHandle>
-  const Xy_monotone_surface_3& get_aux_surface(FeatureHandle fh, unsigned int id)
+  const Xy_monotone_surface_3& get_aux_surface(FeatureHandle fh,
+                                               unsigned int id)
   {
     const Object& o = fh->get_aux_source(id);
     CGAL_assertion(!o.is_empty());
@@ -1045,7 +1066,7 @@ protected:
 
 
   // check the aux data on the edges & vertices of the boundary of the face,
-  // and if it equals the aux data on the face, copy it, to save calculations for
+  // and if it equals the aux data on the face, copy it, to save calculations
   // these features later
   // also consider isolated vertices
   // "res" is the decision made on the face
@@ -1177,8 +1198,8 @@ protected:
       vh->set_decision(DAC_DECISION_FIRST);
     }
     // check if we can copy from the face
-    // todo: what if has_equal has 3 possible values? (and projected intersection
-    // vertices have unknown flags)
+    // todo: what if has_equal has 3 possible values? (and projected
+    // ersection vertices have unknown flags)
     else if (try_vertex_face)
     {
       /*CGAL_assertion(has_equal_aux_data_in_target_and_face(hh) == 
@@ -1294,9 +1315,9 @@ protected:
           res = convert_decision_to_comparison_result(hh->get_decision());
           result = true;
         }
-        // if the first map is continous, but the second isn't (i.e. when we move
-        // from the edge to the face, the envelope goes farther), then if the
-        // first map wins on the edge, it wins on the face also
+        // if the first map is continous, but the second isn't (i.e. when we
+        // move from the edge to the face, the envelope goes farther), then
+        // if the first map wins on the edge, it wins on the face also
         else if (hh->is_decision_set() &&
                  hh->get_decision() == DAC_DECISION_FIRST &&
                  hh->get_has_equal_aux_data_in_face(0) &&
@@ -1337,9 +1358,9 @@ protected:
           res = convert_decision_to_comparison_result(hh->get_decision());
           result = true;
         }
-        // if the first map is continous, but the second isn't (i.e. when we move
-        // from the edge to the face, the envelope goes farther), then if the
-        // first map wins on the edge, it wins on the face also
+        // if the first map is continous, but the second isn't (i.e. when we
+        // move from the edge to the face, the envelope goes farther), then
+        // if the first map wins on the edge, it wins on the face also
         else if (hh->is_decision_set() &&
                  hh->get_decision() == DAC_DECISION_FIRST &&
                  hh->get_has_equal_aux_data_in_face(0) &&
@@ -1393,8 +1414,8 @@ protected:
   }
 
   // check the aux data on the endpoint vertices of the edge
-  // and if it equals the aux data on the edge, copy it, to save calculations for
-  // these features later
+  // and if it equals the aux data on the edge, copy it, to save calculations
+  // for these features later
   void copy_data_to_edge_endpoints(Halfedge_handle edge)
   {
     // take care for source
@@ -1513,11 +1534,12 @@ protected:
       
   }
   
-  // copy the halfedges of a ccb (in from) to the md "to" inside the face inside_face
+  // copy the halfedges of a ccb (in from) to the md "to" inside the face
+  // inside_face
   void copy_ccb(Ccb_halfedge_circulator hec, // the circulator to insert
-                Minimization_diagram_2 &    ,// the original arrangement
+                Minimization_diagram_2 &,    // the original arrangement
                 Face_handle inside_face,     // the face in which we insert it
-                Minimization_diagram_2 &to,  // the arrangement to which we insert
+                Minimization_diagram_2 &to,  // the target arrangement
 
                 Halfedges_map& map_copied_to_orig_halfedges,
                 Vertices_map&  map_copied_to_orig_vertices,
@@ -1554,7 +1576,8 @@ protected:
           first_he = false;
 
           // create the 2 vertices and connect them with the edge
-          // copied_prev_he should be directed from copied_source to copied_target
+          // copied_prev_he should be directed from copied_source to
+          // copied_target
           Vertex_handle copied_source = 
             create_copied_vertex(hh, to_accessor, true, 
                                  Are_all_sides_oblivious_tag());
@@ -1563,11 +1586,12 @@ protected:
             create_copied_vertex(hh, to_accessor, false, 
                                  Are_all_sides_oblivious_tag());
           //to_accessor.create_vertex(hh->target()->point());
-          copied_prev_he = to_accessor.insert_in_face_interior_ex(current_cv,
-                                                                  inside_face,
-                                                                  copied_source,
-                                                                  copied_target,
-                                                                  HE_COMP_RES(hh));
+          copied_prev_he =
+            to_accessor.insert_in_face_interior_ex(current_cv,
+                                                   inside_face,
+                                                   copied_source,
+                                                   copied_target,
+                                                   HE_COMP_RES(hh));
 
           map_copied_to_orig_halfedges[copied_prev_he] = hh;
           map_orig_to_copied_halfedges[hh] = copied_prev_he;
@@ -1581,7 +1605,8 @@ protected:
         }          
         else
         {
-          CGAL_assertion(map_copied_to_orig_halfedges[copied_prev_he]->target() == hh->source());
+          CGAL_assertion(map_copied_to_orig_halfedges[copied_prev_he]->target()
+                         == hh->source());
 
           // insert from vertex: prev_he->target()
           // should check if hh->target is already a vertex in the copied face
@@ -1630,9 +1655,9 @@ protected:
               copied_prev_v2 = copied_prev_v2->prev();
             copied_prev_v2 = copied_prev_v2->twin();
 
-            CGAL_assertion_code(
-                                Halfedge_handle tmp =
-                                to_accessor.locate_around_vertex(copied_v2, current_cv);
+            CGAL_assertion_code(Halfedge_handle tmp =
+                                to_accessor.locate_around_vertex(copied_v2,
+                                                                 current_cv);
                                 );
             CGAL_assertion(tmp == copied_prev_v2);
 
@@ -1657,7 +1682,9 @@ protected:
               else
               {
                 // TODO:can we use accessor method?
-                copied_new_he = to.insert_at_vertices(current_cv, copied_prev_he, copied_prev_v2);
+                copied_new_he = to.insert_at_vertices(current_cv,
+                                                      copied_prev_he,
+                                                      copied_prev_v2);
               }
               // in order to use the accessor version, we need to identify
               // the order in which to pass the halfedges
@@ -1675,11 +1702,12 @@ protected:
               //     ---            |/  \|
               //
               //
-              copied_new_he = to_accessor.insert_at_vertices_ex(current_cv,
-                                                                copied_prev_v2,
-                                                                copied_prev_he,
-                                                                HE_COMP_RES(hh->twin()),
-                                                                new_face);
+              copied_new_he =
+                to_accessor.insert_at_vertices_ex(current_cv,
+                                                  copied_prev_v2,
+                                                  copied_prev_he,
+                                                  HE_COMP_RES(hh->twin()),
+                                                  new_face);
               CGAL_assertion(new_face);
               copied_new_he = copied_new_he->twin();
             }
@@ -1738,7 +1766,9 @@ protected:
       // over the outer CCB of the single unbounded face in the target
       // arrangement (which is currently empty, thus contain a single
       // unbounded face), and find a halfedge that matches hec.
-      CGAL_assertion_msg (to.number_of_faces(), "if all halfedges are fictitious then there should be only one face");
+      CGAL_assertion_msg
+        (to.number_of_faces(),
+         "if all halfedges are fictitious then there should be only one face");
       Face_handle              to_uf = to.faces_begin();
       Ccb_halfedge_circulator  to_uf_hec = to_uf->outer_ccb();
 
@@ -1813,7 +1843,8 @@ protected:
   {
     CGAL_precondition (from.is_valid());
     CGAL_precondition (to.is_empty());
-    CGAL_assertion_msg (to.number_of_faces() == 1, "There should be one face in an empty arrangement");
+    CGAL_assertion_msg (to.number_of_faces() == 1,
+                        "There should be one face in an empty arrangement");
 
     // Initialize a mapping from the original vertices and halfedges to the
     // ones in the copied arrangement. Also keep track of the unbounded face
@@ -1896,7 +1927,8 @@ protected:
     
   // set envelope data in face "to" according to the comparison result of the
   // aux data of face "from"
-  void copy_data_by_comparison_result(Face_handle from, Face_handle to, Comparison_result res)
+  void copy_data_by_comparison_result(Face_handle from, Face_handle to,
+                                      Comparison_result res)
   {
     CGAL_assertion_msg(from->get_aux_is_set(0), "aux_data(0) is not set");
     CGAL_assertion_msg(from->get_aux_is_set(1), "aux_data(1) is not set");
@@ -1914,8 +1946,8 @@ protected:
     v->set_decision(res);
   }
 
-  // set envelope data in halfedge "h" according to the comparison result of the
-  // aux data of "h"
+  // set envelope data in halfedge "h" according to the comparison result of
+  // the aux data of "h"
   void set_data_by_comparison_result(Halfedge_handle h, Comparison_result res)
   {
     CGAL_assertion_msg(h->get_aux_is_set(0), "aux_data(0) is not set");
@@ -1982,16 +2014,16 @@ protected:
   // this observer is used in the process of resolving a face
   // this observer should copy the faces' indication when a face is split
   // so we can later identify all the faces that form the original given face
-  // it also should remember the edges of the face, that are also projected intersections
+  // it also should remember the edges of the face, that are also projected
+  // intersections
   class Copied_face_observer : public Md_observer
 
   {
   public:
-    typedef typename Minimization_diagram_2::Face_handle         Face_handle;
-
-    typedef typename Minimization_diagram_2::Halfedge_handle     Halfedge_handle;
-
-    typedef typename Minimization_diagram_2::X_monotone_curve_2  X_monotone_curve_2;
+    typedef typename Minimization_diagram_2::Face_handle     Face_handle;
+    typedef typename Minimization_diagram_2::Halfedge_handle Halfedge_handle;
+    typedef typename Minimization_diagram_2::X_monotone_curve_2
+      X_monotone_curve_2;
 
     Copied_face_observer(Halfedges_map  &map_h)
       : map_halfedges(map_h)
@@ -2051,9 +2083,10 @@ protected:
         (*boundary_halfedges)[new_he->twin()] =
           boundary_halfedges->default_value();
 
-        // the new created vertex is a special vertex since it lies on the boundary
-        // of the face, and it is of a projected intersection
-        // we are interested in it only if the split halfedge is "data from face"
+        // the new created vertex is a special vertex since it lies on the
+        // boundary of the face, and it is of a projected intersection
+        // we are interested in it only if the split halfedge is "data from
+        // face"
         CGAL_assertion(map_halfedges.is_defined(org_he));
         CGAL_assertion(org_he->target() == new_he->source());
 
@@ -2091,8 +2124,6 @@ protected:
         if (correct_side_he == org_he && 
             face_parts->is_defined(org_he->twin()->face()))
           (*vertices_to_halfedges)[org_he->source()] = org_he->twin();
-        
-
       }
     }
 
@@ -2115,18 +2146,19 @@ protected:
   class Copy_observer : public Md_observer
   {
   public:
-    typedef typename Minimization_diagram_2::Face_handle         Face_handle;
-    typedef typename Minimization_diagram_2::Halfedge_handle     Halfedge_handle;
-    typedef typename Minimization_diagram_2::Vertex_handle       Vertex_handle;
-    typedef typename Minimization_diagram_2::Point_2             Point_2;
-    typedef typename Minimization_diagram_2::X_monotone_curve_2  X_monotone_curve_2;
+    typedef typename Minimization_diagram_2::Face_handle       Face_handle;
+    typedef typename Minimization_diagram_2::Halfedge_handle   Halfedge_handle;
+    typedef typename Minimization_diagram_2::Vertex_handle     Vertex_handle;
+    typedef typename Minimization_diagram_2::Point_2           Point_2;
+    typedef typename Minimization_diagram_2::X_monotone_curve_2
+      X_monotone_curve_2;
     typedef typename Minimization_diagram_2::Ccb_halfedge_circulator
-    Ccb_halfedge_circulator;
+     Ccb_halfedge_circulator;
 
-    typedef typename Traits::Arr_left_side_tag              Arr_left_side_tag;
-    typedef typename Traits::Arr_right_side_tag             Arr_right_side_tag;
-    typedef typename Traits::Arr_top_side_tag               Arr_top_side_tag;
-    typedef typename Traits::Arr_bottom_side_tag            Arr_bottom_side_tag;
+    typedef typename Traits::Arr_left_side_tag             Arr_left_side_tag;
+    typedef typename Traits::Arr_right_side_tag            Arr_right_side_tag;
+    typedef typename Traits::Arr_top_side_tag              Arr_top_side_tag;
+    typedef typename Traits::Arr_bottom_side_tag           Arr_bottom_side_tag;
     
     Copy_observer(Minimization_diagram_2& small_,
                   Minimization_diagram_2& big,
@@ -2401,9 +2433,10 @@ protected:
         }
         else
         {
-          new_he = big_arr_accessor.insert_from_vertex_ex(he->curve(),
-                                                          big_prev, big_v1,
-                                                          HE_COMP_RES(he->twin()));
+          new_he =
+            big_arr_accessor.insert_from_vertex_ex(he->curve(),
+                                                   big_prev, big_v1,
+                                                   HE_COMP_RES(he->twin()));
 
           // update mapping of new edge
           // new_he is directed from big_v2 to big_v1 opposite of he
@@ -2561,19 +2594,20 @@ protected:
 
   // A zone visitor for the Minimization Diagram which only inserts
   // parts of the curve which are inside a given face
-  // it also remembers those parts which overlap the boundary of the original face
+  // it also remembers those parts which overlap the boundary of the original
+  // face
   class Copied_face_zone_visitor
   {
   public:
-    typedef typename Minimization_diagram_2::Vertex_handle       Vertex_handle;
-    typedef typename Minimization_diagram_2::Halfedge_handle     Halfedge_handle;
-    typedef typename Minimization_diagram_2::Face_handle         Face_handle;
+    typedef typename Minimization_diagram_2::Vertex_handle     Vertex_handle;
+    typedef typename Minimization_diagram_2::Halfedge_handle   Halfedge_handle;
+    typedef typename Minimization_diagram_2::Face_handle       Face_handle;
 
+    typedef typename Minimization_diagram_2::Point_2           Point_2;
+    typedef typename Minimization_diagram_2::X_monotone_curve_2
+      X_monotone_curve_2;
 
-    typedef typename Minimization_diagram_2::Point_2             Point_2;
-    typedef typename Minimization_diagram_2::X_monotone_curve_2  X_monotone_curve_2;
-
-    typedef std::pair<Halfedge_handle, bool>                     Result;
+    typedef std::pair<Halfedge_handle, bool>                   Result;
 
     Copied_face_zone_visitor(Minimization_diagram_2& result,
                              Minimization_diagram_2& copied,
@@ -2659,11 +2693,13 @@ protected:
      * \param cv The subcurve.
      * \param face The face containing cv's interior.
      * \param left_v The vertex that corresponds to the left endpoint of cv
-     *               (or an invalid handle if no such arrangement vertex exists).
+     *               (or an invalid handle if no such arrangement vertex
+     *               exists).
      * \param left_he The halfedge that contains the left endpoint of cv
      *               (or an invalid handle if no such halfedge exists).
      * \param right_v The vertex that corresponds to the right endpoint of cv
-     *               (or an invalid handle if no such arrangement vertex exists).
+     *               (or an invalid handle if no such arrangement vertex
+     *               exists).
      * \param right_he The halfedge that contains the right endpoint of cv
      *                 (or an invalid handle if no such halfedge exists).
      * \return A handle to the halfedge obtained from the insertion of the
@@ -2686,11 +2722,11 @@ protected:
         copied_arr_new_edges[new_he] = itype;
         copied_arr_new_edges[new_he->twin()] = itype;
         
-        // take care for special vertices. the split vertices are always special,
-        // and this is taken care of in the after_split event.
+        // take care for special vertices. the split vertices are always
+        // special, and this is taken care of in the after_split event.
 
-        // here we should update the original vertices that consolidate with the
-        // new subcurve
+        // here we should update the original vertices that consolidate with
+        // the new subcurve
         if (copied_arr_orig_vertices.is_defined(new_he->source()))
           copied_arr_special_vertices[new_he->source()] =
             copied_arr_special_vertices.default_value();
@@ -2864,9 +2900,11 @@ protected:
      * \param cv The overlapping subcurve.
      * \param he The overlapped halfedge (directed from left to right).
      * \param left_v The vertex that corresponds to the left endpoint of cv
-     *               (or an invalid handle if no such arrangement vertex exists).
+     *               (or an invalid handle if no such arrangement vertex
+     *               exists).
      * \param right_v The vertex that corresponds to the right endpoint of cv
-     *               (or an invalid handle if no such arrangement vertex exists).
+     *               (or an invalid handle if no such arrangement vertex
+     *               exists).
      * \return A handle to the halfedge obtained from the insertion of the
      *         overlapping subcurve into the arrangement.
      */
@@ -2921,8 +2959,8 @@ protected:
      */
     Vertex_handle found_point_in_face(const Point_2& p, Face_handle face)
     {
-      // p lies inside a face: Insert it as an isolated vertex it the interior of
-      // this face.
+      // p lies inside a face: Insert it as an isolated vertex it the interior
+      // of this face.
       Vertex_handle vh_for_p;
       if (is_face_ok(face))
       {
@@ -2965,8 +3003,8 @@ protected:
       split_he = copied_arr.split_edge (he, sub_cv1, sub_cv2);
       arr_access.notify_after_global_change();
 
-      // if the edge is a boundary edge, then the new vertex is a special vertex
-      // and this is taken care of in the after_split event
+      // if the edge is a boundary edge, then the new vertex is a special
+      // vertex and this is taken care of in the after_split event
 
       // TODO: should we update some is_equal / has_equal flags? 
       // I think that no, because it is handled in the after_split event
@@ -3160,7 +3198,7 @@ protected:
     Copied_face_observer md_observer;
     
     // for using its methods
-    Self* parent;
+    Self * parent;
 
     // current type of interection curve that is inserted
     Multiplicity itype;
@@ -3191,9 +3229,14 @@ protected:
 
   };
 
+  //! The geometry traits object.
   const Traits * m_traits;
-  bool           own_traits; // Should we eventually free the traits object.
-  Envelope_type  type; // the type of envelope (ENVELOPE_LOWER or ENVELOPE_UPPER)
+
+  //! Indicates whether the geometry traits object should be freed up.
+  bool own_traits;
+
+  //! The type of envelope (ENVELOPE_LOWER or ENVELOPE_UPPER).
+  Envelope_type  type; 
 };
 
 #undef HE_COMP_RES

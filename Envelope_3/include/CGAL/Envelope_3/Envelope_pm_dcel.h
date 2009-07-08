@@ -409,8 +409,8 @@ protected:
   bool get_bit(unsigned int ind) const
   {
     // (1 << i) is bit i on, other bits off (start counting from 0)
-    bool result = flags & (1 << ind);
-    return result;
+    unsigned int mask = 1 << ind;
+    return ((flags & mask) == mask);
   }
 };
 
@@ -591,8 +591,8 @@ protected:
   bool get_bit(unsigned int ind) const
   {
     // (1 << i) is bit i on, other bits off (start counting from 0)
-    unsigned int mask = 1 << ind
-    return (flags & mask) == mask;
+    unsigned int mask = 1 << ind;
+    return ((flags & mask) == mask);
   }
 };
 
