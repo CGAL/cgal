@@ -227,7 +227,8 @@ public:
    * set of data objects
    */
   template <class InputIterator>
-  bool is_equal_data(const InputIterator & begin, const InputIterator & end) const
+  bool is_equal_data(const InputIterator & begin, const InputIterator & end)
+    const
   {
     if (!get_is_set())
       return false;
@@ -241,7 +242,8 @@ public:
   }
 
   template <class InputIterator>
-  bool has_equal_data(const InputIterator & begin, const InputIterator & end) const
+  bool has_equal_data(const InputIterator & begin, const InputIterator & end)
+    const
   {
     if (!get_is_set())
       return false;
@@ -394,7 +396,6 @@ public:
   }
   
 protected:
-
   void set_bit(unsigned int ind, bool b)
   {
     if (b)
@@ -590,10 +591,9 @@ protected:
   bool get_bit(unsigned int ind) const
   {
     // (1 << i) is bit i on, other bits off (start counting from 0)
-    bool result = static_cast<bool>(flags & (1 << ind));
-    return result;
+    unsigned int mask = 1 << ind
+    return (flags & mask) == mask;
   }
-
 };
 
 /*! Extend the planar-map face */
@@ -664,7 +664,6 @@ public:
   {
     typedef Envelope_pm_dcel<T, Face_data> other;
   };
-
 
   /*! Constructor */
   Envelope_pm_dcel() {}
