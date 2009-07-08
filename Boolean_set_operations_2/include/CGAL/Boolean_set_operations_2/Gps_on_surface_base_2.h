@@ -58,11 +58,11 @@ namespace Boolean_set_operation_2_internal
   struct NoValidationPolicy
   {
    /*! is_valid - Checks if a Traits::Polygon_2 OR 
-       Traits::Polygon_with_holes_2 are valid.
-       In this validation policy we do NOT do anything.
-   */ 
+    * Traits::Polygon_with_holes_2 are valid.
+    * In this validation policy we do NOT do anything.
+    */ 
     template <class Polygon, class Traits>
-    inline static void is_valid(const Polygon&, Traits&) {};
+    inline static void is_valid(const Polygon&, Traits&) {}
   };
 }
 
@@ -1101,14 +1101,15 @@ protected:
   }
   
   bool _is_plane(const Polygon_with_holes_2& pgn) const
-  {  		
+  {
     //typedef typename  Traits_2::Is_unbounded  Is_unbounded;
-    bool unbounded = m_traits->construct_is_unbounded_object()(pgn); 		
+    bool unbounded = m_traits->construct_is_unbounded_object()(pgn);
     std::pair<GP_Holes_const_iterator, 
       GP_Holes_const_iterator> pair = 
-      m_traits->construct_holes_object()(pgn);  		  		
+      m_traits->construct_holes_object()(pgn);
     return (unbounded && (pair.first == pair.second));
-    //used to return (pgn.is_unbounded() && (pgn.holes_begin() == pgn.holes_end()))
+    //used to return
+    //  (pgn.is_unbounded() && (pgn.holes_begin() == pgn.holes_end()))
   }
   
   void _intersection(const Aos_2& arr)
