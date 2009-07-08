@@ -46,7 +46,6 @@ public:
 
   typedef AABB_primitive Primitive;
   typedef typename AABB_primitive::Datum Datum;
-  typedef unsigned int size_type;
 
   typedef typename GeomTraits::Point_3 Point;
 

@@ -1,3 +1,7 @@
+AABB_tree/demo/AABB_tree/*.exe
+AABB_tree/demo/AABB_tree/*.sln
+AABB_tree/demo/AABB_tree/*.vcproj
+AABB_tree/demo/AABB_tree/AABB_demo
 AABB_tree/demo/AABB_tree/CMakeLists.txt
 AABB_tree/demo/AABB_tree/Makefile
 AABB_tree/examples/AABB_tree/*.kdev*

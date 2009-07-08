@@ -40,7 +40,6 @@ namespace CGAL {
 		/// types
 		typedef typename AABBTraits::FT FT;
 		typedef typename AABBTraits::Point Point;
-		typedef typename AABBTraits::size_type size_type;
 		typedef typename AABBTraits::Primitive Primitive;
 		typedef typename AABBTraits::Bounding_box Bounding_box;
 		typedef typename AABBTraits::Primitive::Id Primitive_id;
@@ -50,6 +49,13 @@ namespace CGAL {
 	private:
 		// internal KD-tree used to accelerate the distance queries
 		typedef AABB_search_tree<AABBTraits> Search_tree;
+
+		// type of the primitives container
+		typedef std::vector<Primitive> Primitives;
+
+	public:
+		// size type is the size_type of the primitive container
+		typedef typename Primitives::size_type size_type; 
 
 	public:
 		/**
@@ -416,7 +422,7 @@ namespace CGAL {
 
 	private:
 		// set of input primitives
-		std::vector<Primitive> m_primitives;
+		Primitives m_primitives;
 		// single root node
 		Node* m_p_root_node;
 		// search KD-tree
@@ -517,7 +523,7 @@ namespace CGAL {
 
 		// iterate over primitives to get reference points on them
 		std::vector<Point_and_primitive_id> points;
-		typename std::vector<Primitive>::const_iterator it;
+		typename Primitives::const_iterator it;
 		for(it = m_primitives.begin(); it != m_primitives.end(); ++it)
 			points.push_back(Point_and_primitive_id(it->reference_point(), it->id()));
 

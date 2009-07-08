@@ -304,7 +304,7 @@ class Naive_implementations
   typedef typename Pr_generator::Primitive Pr;
   typedef CGAL::AABB_traits<K, Pr> Traits;
   typedef typename Pr_generator::iterator Polyhedron_primitive_iterator;
-  typedef typename Traits::size_type size_type;
+  typedef unsigned int size_type;
   typedef typename Traits::Object_and_primitive_id Object_and_primitive_id;
   typedef typename Pr::Id Primitive_id;
   typedef typename Traits::FT FT;
