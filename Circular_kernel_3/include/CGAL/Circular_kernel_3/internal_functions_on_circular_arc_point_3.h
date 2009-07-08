@@ -41,17 +41,17 @@ namespace CGAL {
   float half_quadrant(const typename SK::Root_of_2& Rx,
                       const typename SK::Root_of_2& Ry)
   {
-    int x=CGAL::sign(Rx);
-    int y=CGAL::sign(Ry);
+    int x=CGAL_NTS sign(Rx);
+    int y=CGAL_NTS sign(Ry);
     if (y>0){
-      if (x>0)  switch (CGAL::sign(Rx-Ry)){case -1: return 2; break;  case 0: return 1.5; break; case 1: return 1; break; }; 
-      if (x<0) switch (CGAL::opposite(CGAL::sign(Rx+Ry))){case -1: return 3; break;  case 0: return 3.5; break; case 1: return 4; break; };
+      if (x>0)  switch (CGAL_NTS sign(Rx-Ry)){case -1: return 2; break;  case 0: return 1.5; break; case 1: return 1; break; }; 
+      if (x<0) switch (CGAL::opposite(CGAL_NTS sign(Rx+Ry))){case -1: return 3; break;  case 0: return 3.5; break; case 1: return 4; break; };
       return 2.5;//OPTI : we have more information here by x_y
     }
     else{
       if (y<0){
-        if (x>0) switch (CGAL::sign(Rx+Ry)){case -1: return 7; break;  case 0: return 7.5; break; case 1: return 8; break; };
-        if (x<0) switch (CGAL::opposite(CGAL::sign(Rx-Ry))){case -1: return 6; break; case 0: return 5.5; break; case 1: return 5; break; };
+        if (x>0) switch (CGAL_NTS sign(Rx+Ry)){case -1: return 7; break;  case 0: return 7.5; break; case 1: return 8; break; };
+        if (x<0) switch (CGAL::opposite(CGAL_NTS sign(Rx-Ry))){case -1: return 6; break; case 0: return 5.5; break; case 1: return 5; break; };
         return 6.5;//OPTI : we have more information here by x_y
       }
       else{

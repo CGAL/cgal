@@ -149,19 +149,19 @@ namespace CGAL {
                                            const typename SK::Root_of_2 &z1,
                                            const typename SK::Root_of_2 &y2)
     {
-      int s1=sign(z1);
-      int s2=sign(z2);
+      int s1=CGAL_NTS sign(z1);
+      int s2=CGAL_NTS sign(z2);
       if (s1==0){
         if (s2==0)
-          return sign(0);
+          return CGAL_NTS sign(0);
         else
-          return sign(y1) * sign(z2);
+          return CGAL_NTS sign(y1) * CGAL_NTS sign(z2);
       }
       else{
         if (s2==0)
-          return sign(- z1) * sign(y2);
+          return CGAL_NTS sign(- z1) * CGAL_NTS sign(y2);
         else
-          return sign((s1*s2)*compare(y1/z1,y2/z2));
+          return CGAL_NTS sign((s1*s2)*compare(y1/z1,y2/z2));
       }    
     }
 

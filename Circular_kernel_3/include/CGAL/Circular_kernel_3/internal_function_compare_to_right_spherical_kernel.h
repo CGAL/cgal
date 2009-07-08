@@ -46,7 +46,7 @@ struct Trait_for_cmp_tgt{
                             const typename SK::FT& gamma_k
                           ) const
   {
-    return CGAL::sign(gamma_k)*(C.x()*Pt_.y()-C.y()*Pt_.x());
+    return CGAL_NTS sign(gamma_k)*(C.x()*Pt_.y()-C.y()*Pt_.x());
   }
 
   Tk_type 
@@ -73,7 +73,7 @@ struct Trait_for_cmp_tgt_theta_0{
                              const typename SK::FT& gamma_k
                            ) const
   {
-    return -CGAL::sign(gamma_k)*C.y();
+    return - CGAL_NTS sign(gamma_k)*C.y();
   }
 
   Tk_type
@@ -216,13 +216,13 @@ Compare_to_right_of_arcs<SK,Traits>::sign_of_delta(
   if (tz1==0 && tz2==0)
     return 0;
   if (tz1==0)
-    return CGAL::sign(tz2);
+    return CGAL_NTS sign(tz2);
   if (tz2==0)
-    return -CGAL::sign(tz1);
+    return -CGAL_NTS sign(tz1);
   
-  if (CGAL::sign(tz1)!=CGAL::sign(tz2))
-    return CGAL::sign(tz2);
-  return CGAL::sign(tz2)*CGAL::sign(n1*CGAL::square(tz2)-n2*CGAL::square(tz1));
+  if (CGAL_NTS sign(tz1)!=CGAL_NTS sign(tz2))
+    return CGAL_NTS sign(tz2);
+  return CGAL_NTS sign(tz2)*CGAL_NTS sign(n1*CGAL::square(tz2)-n2*CGAL::square(tz1));
 };
 
 
@@ -243,7 +243,7 @@ Compare_to_right_of_arcs<SK,Traits>::compare_for_delta_eq_0_threaded(
 {
   if (!is_supporting_circle_threaded)
     return ( is_upper_arc<SK>(arc,sphere_) )?(-1):(1); //IN THAT CASE WE CAN OPTIMIZE AND USE THE Z-COORDINATES OF THE POINT AND CIRCLE THETA-EXTREMAL PT
-  return (-CGAL::sign(arc_threaded.supporting_circle().center().z()-arc.supporting_circle().center().z()));
+  return (-CGAL_NTS sign(arc_threaded.supporting_circle().center().z()-arc.supporting_circle().center().z()));
 };
   
 template<class SK,class Traits>
@@ -261,8 +261,8 @@ Compare_to_right_of_arcs<SK,Traits>::compare_for_delta_eq_0(
   typename SK::FT rc1=give_rk(arc1);
   typename SK::FT rc2=give_rk(arc2);
   CGAL_precondition(rc1!=0 && rc2!=0);
-  if(CGAL::sign(rc1)*CGAL::sign(rc2)<0)
-    return (CGAL::sign(rc1)>0)?(1):(-1);
+  if(CGAL_NTS sign(rc1)*CGAL_NTS sign(rc2)<0)
+    return (CGAL_NTS sign(rc1)>0)?(1):(-1);
   return (rc1<rc2)?(1):(-1);
 };
 
