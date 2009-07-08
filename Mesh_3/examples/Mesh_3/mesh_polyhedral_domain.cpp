@@ -37,7 +37,7 @@ int main()
   Mesh_domain domain(polyhedron);
 
   // Set mesh criteria
-  Facet_criteria facet_criteria(25, 0.15, 0.003); // angle, size, approximation
+  Facet_criteria facet_criteria(25, 0.15, 0.008); // angle, size, approximation
   Cell_criteria cell_criteria(4, 0.2); // radius-edge ratio, size
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
@@ -50,7 +50,7 @@ int main()
   medit_file.close();
 
   // Change tetrahedron size
-  Cell_criteria new_cell_criteria(4, 0.02); // radius-edge ratio, size
+  Cell_criteria new_cell_criteria(4, 0.03); // radius-edge ratio, size
   Mesh_criteria new_criteria(facet_criteria, new_cell_criteria);
 
   // Mesh refinement

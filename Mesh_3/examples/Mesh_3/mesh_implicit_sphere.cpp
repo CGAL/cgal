@@ -40,7 +40,7 @@ int main()
 
   // Criteria
   Facet_criteria facet_criteria(30, 0.1, 0.025); // angle, size, approximation
-  Cell_criteria cell_criteria(2.5, 0.05); // radius-edge ratio, size
+  Cell_criteria cell_criteria(3, 0.1); // radius-edge ratio, size
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
   // Mesh generation

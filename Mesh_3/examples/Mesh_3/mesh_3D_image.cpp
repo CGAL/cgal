@@ -26,14 +26,14 @@ int main()
 {
   // Loads image
   Image image;
-  image.read("data/liver_kidney_gallbladder.inr");
+  image.read("data/liver.inr.gz");
 
   // Domain
   Mesh_domain domain(image);
 
   // Mesh criteria
-  Facet_criteria facet_criteria(25, 6, 2); // angle, size, approximation
-  Cell_criteria cell_criteria(4, 6); // radius-edge ratio, size
+  Facet_criteria facet_criteria(30, 6, 4); // angle, size, approximation
+  Cell_criteria cell_criteria(3, 8); // radius-edge ratio, size
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
   // Meshing
