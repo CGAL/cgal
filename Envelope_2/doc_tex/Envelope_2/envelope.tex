@@ -98,7 +98,7 @@ diagram these functions output.
   </center>
 \end{ccHtmlOnly}
 \caption{The lower envelope of eight line segments, labeled
-$A, \ldots, H$\,, as constructed in \ccc{ex_envelope_segments.cpp}.
+$A, \ldots, H$\,, as constructed in \ccc{envelope_segments.cpp}.
 The minimization diagram is shown at the bottom, where
 each diagram vertex points to the point associated with it, and the
 labels of the segment that induce a diagram edge are displayed below
@@ -169,7 +169,7 @@ instantiated by the \ccc{Arr_segment_traits_2} class, in order to
 attach a label (a \ccc{char} in this case) to each input segment.
 We use these labels when we print the minimization diagram:
 
-\ccIncludeExampleCode{Envelope_2/ex_envelope_segments.cpp}
+\ccIncludeExampleCode{Envelope_2/envelope_segments.cpp}
 
 \subsection{Example for Computing the Convex Hull with Envelopes}
 
@@ -192,7 +192,7 @@ with the same line as the rightmost edge of the maximization diagram,
 and vice-verse. We can therefore skip the rightmost edges of both
 diagrams:
 
-\ccIncludeExampleCode{Envelope_2/ex_convex_hull.cpp}
+\ccIncludeExampleCode{Envelope_2/convex_hull.cpp}
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -220,4 +220,4 @@ in Figure~\ref{env2_fig:ex_circ}. Note that unlike the two previous
 examples, here our curves are not $x$-monotone, so we use the functions
 that compute envelopes of arbitrary curves:
 
-\ccIncludeExampleCode{Envelope_2/ex_envelope_circles.cpp}
+\ccIncludeExampleCode{Envelope_2/envelope_circles.cpp}
