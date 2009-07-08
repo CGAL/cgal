@@ -1,14 +1,9 @@
 #ifndef AABB_DEMO_TYPES_H
 #define AABB_DEMO_TYPES_H
 
-#include <CGAL/basic.h>
-//#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-//#include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel; // fastest in experiments
-//typedef CGAL::Cartesian<double> Kernel;
-//typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef Kernel::FT FT;
 typedef Kernel::Ray_3 Ray;
