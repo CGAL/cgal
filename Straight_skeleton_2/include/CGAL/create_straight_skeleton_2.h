@@ -35,12 +35,12 @@ template<class Poly>
 inline typename Poly::const_iterator vertices_end ( Poly const& aPoly ) { return aPoly.end() ; }
 
 
-template<class K>
-inline typename Polygon_2<K>::Vertex_const_iterator vertices_begin ( Polygon_2<K> const& aPoly ) 
+template<class K, class C>
+inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_begin ( Polygon_2<K,C> const& aPoly ) 
 { return aPoly.vertices_begin() ; }
 
-template<class K>
-inline typename Polygon_2<K>::Vertex_const_iterator vertices_end( Polygon_2<K> const& aPoly ) 
+template<class K, class C>
+inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_end( Polygon_2<K,C> const& aPoly ) 
 { return aPoly.vertices_end() ; }
 
 template<class Poly>
