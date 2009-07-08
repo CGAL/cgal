@@ -65,7 +65,7 @@ void write_result_to_file(Polygons_with_holes_vec& result,
   result.clear();
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
   if(argc<3)
   {
@@ -164,7 +164,8 @@ int main(int argc, char **argv)
   }
   write_result_to_file(result, out);
 
-  CGAL::intersection(polygons_with_holes.begin(), polygons_with_holes.end(), oi);
+  CGAL::intersection(polygons_with_holes.begin(),
+                     polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
     std::cout<<"invalid polygon was created !!!\n";
@@ -180,7 +181,6 @@ int main(int argc, char **argv)
   write_result_to_file(result, out);
 
 
-
   CGAL::symmetric_difference(polygons.begin(), polygons.end(), oi);
   if(!are_polygons_valid(result))
   {
@@ -188,7 +188,8 @@ int main(int argc, char **argv)
   }
   write_result_to_file(result, out);
 
-  CGAL::symmetric_difference(polygons_with_holes.begin(), polygons_with_holes.end(), oi);
+  CGAL::symmetric_difference(polygons_with_holes.begin(),
+                             polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
     std::cout<<"invalid polygon was created !!!\n";
@@ -203,4 +204,5 @@ int main(int argc, char **argv)
   }
   write_result_to_file(result, out);
 
+  return 0;
 }

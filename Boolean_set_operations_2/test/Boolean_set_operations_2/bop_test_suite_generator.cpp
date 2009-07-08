@@ -118,7 +118,8 @@ std::ostream& write_complement_to_file(std::ostream& out, const Polygon_2& pgn)
   out<<std::endl;
   Polygon_with_holes_2 res_pgn;
   CGAL::complement(pgn, res_pgn);
-  out << 1 << std::endl;  //result of a complement of Polygon_2 is one  Polygon_with_holes_2
+  //result of a complement of Polygon_2 is one Polygon_with_holes_2
+  out << 1 << std::endl;
   out << res_pgn << std::endl;
 
   Traits_2 tr;
@@ -128,7 +129,8 @@ std::ostream& write_complement_to_file(std::ostream& out, const Polygon_2& pgn)
   return out;
 }
 
-std::ostream& write_complement_to_file(std::ostream& out, const Polygon_with_holes_2& pgn)
+std::ostream& write_complement_to_file(std::ostream& out,
+                                       const Polygon_with_holes_2& pgn)
 {
   out<<std::endl;
   std::vector<Polygon_with_holes_2> res;
@@ -146,7 +148,7 @@ std::ostream& write_complement_to_file(std::ostream& out, const Polygon_with_hol
   return out;
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
   if(argc<4)
   {
@@ -236,7 +238,8 @@ int main(int argc, char **argv)
     write_result_to_file(out, p1, p2);
     write_complement_to_file(out, p1);
     write_complement_to_file(out, p2);
-    std::cout<<argv[3] << " was generated successfully, dont forget to add it to test_bop.cmd\n";
+    std::cout<<argv[3] <<
+      " was generated successfully, dont forget to add it to test_bop.cmd\n";
 
     return (0);
   }
@@ -246,7 +249,8 @@ int main(int argc, char **argv)
     write_result_to_file(out, p1, pwh2);
     write_complement_to_file(out, p1);
     write_complement_to_file(out, pwh2);
-    std::cout<<argv[3] << " was generated successfully, dont forget to add it to test_bop.cmd\n";
+    std::cout<<argv[3] <<
+      " was generated successfully, dont forget to add it to test_bop.cmd\n";
 
     return (0);
   }
@@ -256,7 +260,8 @@ int main(int argc, char **argv)
     write_result_to_file(out, pwh1, p2);
     write_complement_to_file(out, pwh1);
     write_complement_to_file(out, p2);
-    std::cout<<argv[3] << " was generated successfully, dont forget to add it to test_bop.cmd\n";
+    std::cout<<argv[3] <<
+      " was generated successfully, dont forget to add it to test_bop.cmd\n";
 
     return (0);
   }
@@ -266,7 +271,8 @@ int main(int argc, char **argv)
     write_result_to_file(out, pwh1, pwh2);
     write_complement_to_file(out, pwh1);
     write_complement_to_file(out, pwh2);
-    std::cout<<argv[3] << " was generated successfully, dont forget to add it to test_bop.cmd\n";
+    std::cout<<argv[3] <<
+      " was generated successfully, dont forget to add it to test_bop.cmd\n";
 
     return (0);
   }
