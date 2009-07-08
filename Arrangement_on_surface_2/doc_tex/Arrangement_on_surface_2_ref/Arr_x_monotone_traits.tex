@@ -55,17 +55,17 @@ supported, the \ccc{Has_merge_category} tag should be defined as
 
 \ccHeading{Accessing Functor Objects}
 % ===================================
-\ccMethod{Intersect_2 intersect_2_object();} {}
+\ccMethod{Intersect_2 intersect_2_object() const;} {}
 \ccGlue
-\ccMethod{Split_2 split_2_object();} {}
+\ccMethod{Split_2 split_2_object() const;} {}
 
 The two following methods are optional. If they are supported, 
 the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 \ccc{Tag_false} otherwise.
 
-\ccMethod{Are_mergeable_2 are_mergeable_2_object();} {}
+\ccMethod{Are_mergeable_2 are_mergeable_2_object() const;} {}
 \ccGlue
-\ccMethod{Merge_2 merge_2_object();} {}
+\ccMethod{Merge_2 merge_2_object() const;} {}
 
 \ccHasModels
 % ==========
