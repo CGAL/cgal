@@ -34,12 +34,12 @@ Scene_item*
 PS_demo_off_plugin::load(QFileInfo fileinfo) {
 
   // Check extension (quietly)
-  std::string extension = fileinfo.suffix().toUtf8();
+  std::string extension = fileinfo.suffix().toUtf8().data();
   if (extension != "off" && extension != "OFF")
     return false;
-  
+
   // Open file
-  std::ifstream in(fileinfo.filePath().toUtf8());
+  std::ifstream in(fileinfo.filePath().toUtf8().data());
   if(!in) {
     std::cerr << "Error! Cannot open file " << fileinfo.filePath().toStdString() << std::endl;
     return NULL;
@@ -56,7 +56,7 @@ PS_demo_off_plugin::load(QFileInfo fileinfo) {
     Point_set_scene_item* point_set_item = new Point_set_scene_item;
     point_set_item->setName(fileinfo.baseName());
     in.close();
-    std::ifstream in2(fileinfo.filePath().toUtf8());
+    std::ifstream in2(fileinfo.filePath().toUtf8().data());
     if(!point_set_item->read_off_point_set(in2)) {
       delete point_set_item;
       return 0;
@@ -77,10 +77,10 @@ bool PS_demo_off_plugin::canSave(const Scene_item* item)
 bool PS_demo_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
 {
   // Check extension (quietly)
-  std::string extension = fileinfo.suffix().toUtf8();
+  std::string extension = fileinfo.suffix().toUtf8().data();
   if (extension != "off" && extension != "OFF")
     return false;
-  
+
   // This plugin supports polyhedrons and point sets
   const Scene_polyhedron_item* poly_item =
     qobject_cast<const Scene_polyhedron_item*>(item);
@@ -90,7 +90,7 @@ bool PS_demo_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
     return false;
 
   // Save polyhedron/point set as .off
-  std::ofstream out(fileinfo.filePath().toUtf8());
+  std::ofstream out(fileinfo.filePath().toUtf8().data());
   return (poly_item && poly_item->save(out)) ||
          (point_set_item && point_set_item->write_off_point_set(out));
 }

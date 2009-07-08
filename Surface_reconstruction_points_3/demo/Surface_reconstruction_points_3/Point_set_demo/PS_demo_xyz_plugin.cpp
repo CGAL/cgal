@@ -30,17 +30,17 @@ bool PS_demo_xyz_plugin::canLoad() const {
 }
 
 
-Scene_item* 
-PS_demo_xyz_plugin::load(QFileInfo fileinfo) 
+Scene_item*
+PS_demo_xyz_plugin::load(QFileInfo fileinfo)
 {
   // Check extension (quietly)
-  std::string extension = fileinfo.suffix().toUtf8();
+  std::string extension = fileinfo.suffix().toUtf8().data();
   if (extension != "xyz" && extension != "XYZ" &&
       extension != "pwn" && extension != "PWN")
     return false;
-  
+
   // Open file
-  std::ifstream in(fileinfo.filePath().toUtf8());
+  std::ifstream in(fileinfo.filePath().toUtf8().data());
   if(!in) {
     std::cerr << "Error! Cannot open file " << fileinfo.filePath().toStdString() << std::endl;
     return NULL;
@@ -65,19 +65,19 @@ bool PS_demo_xyz_plugin::canSave(const Scene_item* item)
 bool PS_demo_xyz_plugin::save(const Scene_item* item, QFileInfo fileinfo)
 {
   // Check extension (quietly)
-  std::string extension = fileinfo.suffix().toUtf8();
+  std::string extension = fileinfo.suffix().toUtf8().data();
   if (extension != "xyz" && extension != "XYZ" &&
       extension != "pwn" && extension != "PWN")
     return false;
-  
+
   // This plugin supports point sets
-  const Point_set_scene_item* point_set_item = 
+  const Point_set_scene_item* point_set_item =
     qobject_cast<const Point_set_scene_item*>(item);
   if(!point_set_item)
     return false;
 
   // Save point set as .xyz
-  std::ofstream out(fileinfo.filePath().toUtf8());
+  std::ofstream out(fileinfo.filePath().toUtf8().data());
   return point_set_item->write_xyz_point_set(out);
 }
 
