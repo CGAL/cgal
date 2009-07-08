@@ -3,6 +3,7 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 
+#include <utility> // defines std::pair
 #include <vector>
 #include <fstream>
 
@@ -12,7 +13,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
 // Point with normal vector stored as a std::pair.
-typedef std::pair<Point, Vector> Pwn; 
+typedef std::pair<Point, Vector> Pwn;
 
 int main(void)
 {
@@ -28,6 +29,7 @@ int main(void)
             CGAL::First_of_pair_property_map<Pwn>(),
             CGAL::Second_of_pair_property_map<Pwn>()))
     {
+      std::cerr << "Error: cannot read file data/oni.xyz" << std::endl;
       return EXIT_FAILURE;
     }
 

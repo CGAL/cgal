@@ -20,6 +20,7 @@ int main(void)
       !CGAL::read_xyz_points(stream, std::back_inserter(points),
                              CGAL::Dereference_property_map<Point>()))
   {
+    std::cerr << "Error: cannot read file data/oni.xyz" << std::endl;
     return EXIT_FAILURE;
   }
 

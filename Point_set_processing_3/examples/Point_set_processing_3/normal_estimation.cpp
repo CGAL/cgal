@@ -23,6 +23,7 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 
+#include <utility> // defines std::pair
 #include <vector>
 #include <cstdlib>
 #include <fstream>
@@ -41,7 +42,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
 // Point with normal vector stored in a std::pair.
-typedef std::pair<Point, Vector> PointVectorPair; 
+typedef std::pair<Point, Vector> PointVectorPair;
 typedef std::vector<PointVectorPair> PointList;
 
 
@@ -67,7 +68,7 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
 
   // Estimates normals direction.
   // Note: pca_estimate_normals() requires an iterator over points
-  // + property maps to access each point's position and normal.
+  // as well as property maps to access each point's position and normal.
   CGAL::pca_estimate_normals(points.begin(), points.end(),
                              CGAL::First_of_pair_property_map<PointVectorPair>(),
                              CGAL::Second_of_pair_property_map<PointVectorPair>(),
@@ -116,9 +117,9 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
   std::cerr << "Orients Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
-  // Orient normals.
+  // Orients normals.
   // Note: mst_orient_normals() requires an iterator over points
-  // + property maps to access each point's position and normal.
+  // as well as property maps to access each point's position and normal.
   PointList::iterator unoriented_points_begin =
     CGAL::mst_orient_normals(points.begin(), points.end(),
                              CGAL::First_of_pair_property_map<PointVectorPair>(),
@@ -220,7 +221,7 @@ int main(int argc, char * argv[])
     // Loads point set
     //***************************************
 
-    // Reads the point set file in points[].
+    // Reads a .off or .xyz point set file in points[].
     PointList points;
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
@@ -241,7 +242,7 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream &&
-                CGAL::read_xyz_points(stream, 
+                CGAL::read_xyz_points(stream,
                                       std::back_inserter(points),
                                       CGAL::First_of_pair_property_map<PointVectorPair>());
     }

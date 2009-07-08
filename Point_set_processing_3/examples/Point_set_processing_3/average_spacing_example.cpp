@@ -24,9 +24,10 @@ int main(void)
     std::ifstream stream("data/sphere_20k.xyz");
     if (!stream ||
         !CGAL::read_xyz_points(
-               stream, std::back_inserter(points),
-               CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>()))
+            stream, std::back_inserter(points),
+            CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>()))
     {
+      std::cerr << "Error: cannot read file data/sphere_20k.xyz" << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -34,7 +35,7 @@ int main(void)
     // As the index and RGB color are respectively the first and third-fifth elements
     // of the tuple we use a get function from the property map that accesses the 0
     // and 2-4th elements of the tuple.
-    for(int i = 0; i < points.size(); i++)
+    for(unsigned int i = 0; i < points.size(); i++)
     {
       points[i].get<0>() = i;   // set index value of tuple to i
 
@@ -46,9 +47,9 @@ int main(void)
     // Computes average spacing.
     const unsigned int nb_neighbors = 7;
     FT average_spacing = CGAL::compute_average_spacing(
-                                points.begin(), points.end(),
-                                CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>(),
-                                nb_neighbors);
+                          points.begin(), points.end(),
+                          CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>(),
+                          nb_neighbors);
     std::cout << "Average spacing: " << average_spacing << std::endl;
 
     return EXIT_SUCCESS;

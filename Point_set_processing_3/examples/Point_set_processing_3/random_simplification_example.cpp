@@ -17,6 +17,7 @@ int main(void)
   if (!stream ||
       !CGAL::read_xyz_points(stream, std::back_inserter(points)))
   {
+    std::cerr << "Error: cannot read file data/oni.xyz" << std::endl;
     return EXIT_FAILURE;
   }
 
