@@ -67,7 +67,7 @@ struct Polyhedron_tester : public Tester<K>
     CGAL::refine_mesh_3(c3t3, domain, criteria, false);
     
     // Verify
-    verify(c3t3,domain,criteria,26,26,48,48);
+    verify(c3t3,domain,criteria,24,26,42,48);
   }
 };
 

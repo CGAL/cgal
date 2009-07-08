@@ -64,7 +64,7 @@ namespace CGAL {
         r_c3t3_.set_index(new_vertex, index);
         r_c3t3_.set_dimension(new_vertex, dimension);
       }
-      
+
     private:
       C3T3& r_c3t3_;
     };
@@ -97,9 +97,9 @@ void refine_mesh_3(C3T3& c3t3,
   // Reset c3t3 (i.e. remove weights) if needed
   if ( reset_c3t3 )
   {
-    C3T3 tmp_c3t3;    
-    std::for_each(c3t3.triangulation().vertices_begin(),
-                  c3t3.triangulation().vertices_end(),
+    C3T3 tmp_c3t3;
+    std::for_each(c3t3.triangulation().finite_vertices_begin(),
+                  c3t3.triangulation().finite_vertices_end(),
                   details::Insert_vertex_in_c3t3<C3T3>(tmp_c3t3));
     c3t3.swap(tmp_c3t3);
   }
@@ -107,7 +107,7 @@ void refine_mesh_3(C3T3& c3t3,
   // Build mesher and launch refinement process
   Mesher mesher (c3t3, domain, criteria);
   mesher.refine_mesh();
-  
+
   // Exudation
   if ( exude )
   {

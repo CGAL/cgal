@@ -88,15 +88,22 @@ struct Tester
     std::cerr << "\t\tNumber of cells: " << c3t3.number_of_cells() << "\n";
     std::cerr << "\t\tNumber of facets: " << c3t3.number_of_facets() << "\n";
     std::cerr << "\t\tNumber of vertices: " << c3t3.number_of_vertices() << "\n";
+        
+    std::size_t dist_facets ( std::distance(c3t3.facets_begin(), 
+                                            c3t3.facets_end()) );
+    std::size_t dist_cells ( std::distance(c3t3.cells_begin(), 
+                                            c3t3.cells_end()) );
 
     assert(min_vertices_expected <= c3t3.number_of_vertices());
     assert(max_vertices_expected >= c3t3.number_of_vertices());
 
     assert(min_facets_expected <= c3t3.number_of_facets());
     assert(max_facets_expected >= c3t3.number_of_facets());
-
+    assert(dist_facets == c3t3.number_of_facets());
+    
     assert(min_cells_expected <= c3t3.number_of_cells());
     assert(max_cells_expected >= c3t3.number_of_cells());
+    assert(dist_cells == c3t3.number_of_cells());
   }
 };
 

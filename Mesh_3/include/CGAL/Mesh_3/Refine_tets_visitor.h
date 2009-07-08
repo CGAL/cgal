@@ -58,7 +58,7 @@ namespace Mesh_3 {
                             const P&,
                             Zone& zone) 
       {
-        refine_tets->remove_star_from_cells_queue(zone);
+        refine_tets->before_insertion_handle_cells_in_conflict_zone(zone);
       }
 
       void after_insertion(const Vertex_handle& v)

@@ -124,18 +124,20 @@ public:
   // Job to do before insertion
   void before_insertion_impl(const Cell_handle&, const Point&, Zone& zone)
   {
-    remove_cells_from_queue(zone);
+    before_insertion_handle_cells_in_conflict_zone(zone);
   };
   
   // Job to do after insertion
   void after_insertion_impl(const Vertex_handle& v) { update_star(v); };
   
+  // Insertion implementation ; returns the inserted vertex
   Vertex_handle insert_impl(const Point& p, const Zone& zone);
-  
-  void remove_star_from_cells_queue(Zone& zone) {remove_cells_from_queue(zone);};
   
   // Updates cells incident to vertex, and add them to queue if needed
   void update_star(const Vertex_handle& vertex);
+  
+  /// Handle cells contained in \c zone (before their destruction by insertion)
+  void before_insertion_handle_cells_in_conflict_zone(Zone& zone);
   
 #ifdef CGAL_MESH_3_VERBOSE
   std::string debug_info() const
@@ -155,9 +157,6 @@ public:
   
   
 private:
-  /// Removes cells contained in \c zone from refinement queue
-  void remove_cells_from_queue(Zone& zone);
-  
   /// Adds \c cell to the refinement queue if needed
   void treat_new_cell(const Cell_handle& cell);
   
@@ -273,15 +272,16 @@ conflicts_zone_impl(const Point& point,
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
-remove_cells_from_queue(Zone& zone)
+before_insertion_handle_cells_in_conflict_zone(Zone& zone)
 {
-  // Remove elts belonging to zone from elts to refine
-  typedef typename Zone::Cells_iterator Cells_iterator;
-  for ( Cells_iterator cit = zone.cells.begin();
-       cit != zone.cells.end();
-       ++cit)
+  typename Zone::Cells_iterator cit = zone.cells.begin();
+  for ( ; cit != zone.cells.end() ; ++cit )
   {
+    // Remove cell from refinment queue
     remove_element(*cit);
+    
+    // Remove cell from complex
+    remove_cell_from_domain(*cit);
   }
 }
 
