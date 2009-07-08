@@ -74,7 +74,7 @@ public:
   ~AABB_traits() { };
 
 
-  /// TODO: see what to do
+  /// 
   /**
    * @brief Sorts [first,beyond[
    * @param first iterator on first element

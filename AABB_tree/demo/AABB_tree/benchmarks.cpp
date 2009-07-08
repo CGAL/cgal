@@ -4,19 +4,58 @@
 
 void Scene::benchmark_intersections(const int duration)
 {
+	// constructs tree
+	std::cout << "Construct AABB tree...";
 	QTime time;
 	time.start();
-	std::cout << "Construct AABB tree...";
 	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
-	bench_all_intersections(tree,duration);
-	bench_all_intersected_primitives(tree,duration);
-	bench_nb_intersections(tree,duration);
-	bench_any_intersection(tree,duration);
-	bench_any_intersected_primitive(tree,duration);
-	bench_do_intersect(tree,duration);
+	// generates random queries
+	const int nb_queries = 1000000;
+	std::cout << "Generates random queries...";
+	std::vector<Ray> rays;
+	std::vector<Line> lines;
+	std::vector<Plane> planes;
+	std::vector<Segment> segments;
+	time.start();
+	srand(0);
+	int i = 0;
+	for(i=0; i<nb_queries; i++)
+	{
+		rays.push_back(random_ray(tree.bbox()));
+		lines.push_back(random_line(tree.bbox()));
+		planes.push_back(random_plane(tree.bbox()));
+		segments.push_back(random_segment(tree.bbox()));
+	}
+	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+
+	// bench for all functions and query types
+	bench_intersections(tree,duration,DO_INTERSECT,"do_intersect()",rays,lines,planes,segments,nb_queries);
+	bench_intersections(tree,duration,ANY_INTERSECTED_PRIMITIVE,"any_intersected_primitive()",rays,lines,planes,segments,nb_queries);
+	bench_intersections(tree,duration,ANY_INTERSECTION,"any_intersection()",rays,lines,planes,segments,nb_queries);
+	bench_intersections(tree,duration,NB_INTERSECTIONS,"number_of_intersected_primitives()",rays,lines,planes,segments,nb_queries);
+	bench_intersections(tree,duration,ALL_INTERSECTED_PRIMITIVES,"all_intersected_primitives()",rays,lines,planes,segments,nb_queries);
+	bench_intersections(tree,duration,ALL_INTERSECTIONS,"all_intersections()",rays,lines,planes,segments,nb_queries);
 }
+
+void Scene::bench_intersections(Facet_tree& tree,
+									              const int duration,
+													      const int function,
+													      char *function_name,
+																const std::vector<Ray>& rays,
+																const std::vector<Line>& lines,
+																const std::vector<Plane>& planes,
+																const std::vector<Segment>& segments,
+																const int nb_queries)
+{
+	std::cout << "Benchmark " << function_name << std::endl;
+	bench_intersection<Segment>(tree,function,duration,"segment",segments,nb_queries);
+	bench_intersection<Ray>(tree,function,duration,"ray",rays,nb_queries);
+	bench_intersection<Line>(tree,function,duration,"line",lines,nb_queries);
+	bench_intersection<Plane>(tree,function,duration,"plane",planes,nb_queries);
+}
+
 
 void Scene::benchmark_distances(const int duration)
 {
@@ -27,7 +66,6 @@ void Scene::benchmark_distances(const int duration)
 	tree.accelerate_distance_queries();
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
-	// TODO: check what the KD-tree is doing in there for large models.
 	std::cout << "One single call to initialize KD-tree" << std::endl;
 	tree.closest_point(CGAL::ORIGIN);
 
@@ -70,7 +108,6 @@ void Scene::bench_memory()
 
 		long after = CGAL::Memory_sizer().virtual_size();
 		long memory = after - before; // in Bytes
-		// double memory = (double)(after - before) / 1048576.0; // in MBytes
 		std::cout << m_pPolyhedron->size_of_facets() << "\t" << memory << std::endl;
 	}
 }
@@ -174,15 +211,13 @@ void Scene::bench_distances_vs_nbt()
 	}
 }
 
-
-
-//////////////////////////////////////////////////////////////
-// BENCH INTERSECTIONS
-//////////////////////////////////////////////////////////////
-
-void Scene::bench_intersection_rays(Facet_tree& tree,
+template <class Query>
+void Scene::bench_intersection(Facet_tree& tree,
 									const int function,
-									const int duration)
+									const int duration,
+									const char *query_name,
+									const std::vector<Query>& queries,
+									const int nb_queries)
 {
 	QTime time;
 	time.start();
@@ -191,246 +226,35 @@ void Scene::bench_intersection_rays(Facet_tree& tree,
 	std::list<Object_and_primitive_id> intersections;
 	while(time.elapsed() < duration)
 	{
-		Ray ray = random_ray(tree.bbox());
+		const Query& query = queries[nb % nb_queries]; // loop over vector
 		switch(function)
 		{
 		case DO_INTERSECT:
-			tree.do_intersect(ray);
+			tree.do_intersect(query);
 			break;
 		case ANY_INTERSECTION:
-			tree.any_intersection(ray);
+			tree.any_intersection(query);
 			break;
 		case NB_INTERSECTIONS:
-			tree.number_of_intersected_primitives(ray);
+			tree.number_of_intersected_primitives(query);
 			break;
 		case ALL_INTERSECTIONS:
-			tree.all_intersections(ray,std::back_inserter(intersections));
+			tree.all_intersections(query,std::back_inserter(intersections));
 			break;
 		case ANY_INTERSECTED_PRIMITIVE:
-			tree.any_intersected_primitive(ray);
+			tree.any_intersected_primitive(query);
 			break;
 		case ALL_INTERSECTED_PRIMITIVES:
-			tree.all_intersected_primitives(ray,std::back_inserter(primitive_ids));
-			break;
+			tree.all_intersected_primitives(query,std::back_inserter(primitive_ids));
 		}
 		nb++;
 	}
 
-	// subtract random generation time to be more accurate
-	double duration_random_and_tests = time.elapsed();
-	time.start();
-	for(unsigned int i=0;i<nb;i++)
-		random_ray(tree.bbox());
-	double duration_random = time.elapsed();
-
-	double elapsed = duration_random_and_tests - duration_random;
-	double speed = 1000.0 * nb / elapsed;
-	std::cout << speed << " queries/s with ray" << std::endl;
+	double speed = 1000.0 * nb / time.elapsed();
+	std::cout << speed << " queries/s with " << query_name << std::endl;
 }
 
-void Scene::bench_intersection_lines(Facet_tree& tree,
-									const int function,
-									const int duration)
-{
-	QTime time;
-	time.start();
-	unsigned int nb = 0;
-	std::list<Primitive_id> primitive_ids;
-	std::list<Object_and_primitive_id> intersections;
-	while(time.elapsed() < duration)
-	{
-		Line line = random_line(tree.bbox());
-		switch(function)
-		{
-		case DO_INTERSECT:
-			tree.do_intersect(line);
-			break;
-		case ANY_INTERSECTION:
-			tree.any_intersection(line);
-			break;
-		case NB_INTERSECTIONS:
-			tree.number_of_intersected_primitives(line);
-			break;
-		case ALL_INTERSECTIONS:
-			tree.all_intersections(line,std::back_inserter(intersections));
-			break;
-		case ANY_INTERSECTED_PRIMITIVE:
-			tree.any_intersected_primitive(line);
-			break;
-		case ALL_INTERSECTED_PRIMITIVES:
-			tree.all_intersected_primitives(line,std::back_inserter(primitive_ids));
-			break;
-		}
-		nb++;
-	}
 
-	// subtract random generation time to be more accurate
-	double duration_random_and_tests = time.elapsed();
-	time.start();
-	for(unsigned int i=0;i<nb;i++)
-		random_line(tree.bbox());
-	double duration_random = time.elapsed();
-
-	double elapsed = duration_random_and_tests - duration_random;
-	double speed = 1000.0 * nb / elapsed;
-	std::cout << speed << " queries/s with line" << std::endl;
-}
-
-void Scene::bench_intersection_segments(Facet_tree& tree,
-									const int function,
-									const int duration)
-{
-	QTime time;
-	time.start();
-	unsigned int nb = 0;
-	std::list<Primitive_id> primitive_ids;
-	std::list<Object_and_primitive_id> intersections;
-	while(time.elapsed() < duration)
-	{
-		Segment segment = random_segment(tree.bbox());
-		switch(function)
-		{
-		case DO_INTERSECT:
-			tree.do_intersect(segment);
-			break;
-		case ANY_INTERSECTION:
-			tree.any_intersection(segment);
-			break;
-		case NB_INTERSECTIONS:
-			tree.number_of_intersected_primitives(segment);
-			break;
-		case ALL_INTERSECTIONS:
-			tree.all_intersections(segment,std::back_inserter(intersections));
-			break;
-		case ANY_INTERSECTED_PRIMITIVE:
-			tree.any_intersected_primitive(segment);
-			break;
-		case ALL_INTERSECTED_PRIMITIVES:
-			tree.all_intersected_primitives(segment,std::back_inserter(primitive_ids));
-			break;
-		}
-		nb++;
-	}
-
-	// subtract random generation time to be more accurate
-	double duration_random_and_tests = time.elapsed();
-	time.start();
-	for(unsigned int i=0;i<nb;i++)
-		random_segment(tree.bbox());
-	double duration_random = time.elapsed();
-
-	double elapsed = duration_random_and_tests - duration_random;
-	double speed = 1000.0 * nb / elapsed;
-	std::cout << speed << " queries/s with segment" << std::endl;
-}
-
-void Scene::bench_intersection_planes(Facet_tree& tree,
-									const int function,
-									const int duration)
-{
-	QTime time;
-	time.start();
-	unsigned int nb = 0;
-	std::list<Primitive_id> primitive_ids;
-	std::list<Object_and_primitive_id> intersections;
-	while(time.elapsed() < duration)
-	{
-		Plane plane = random_plane(tree.bbox());
-		switch(function)
-		{
-		case DO_INTERSECT:
-			tree.do_intersect(plane);
-			break;
-		case ANY_INTERSECTION:
-			tree.any_intersection(plane);
-			break;
-		case NB_INTERSECTIONS:
-			tree.number_of_intersected_primitives(plane);
-			break;
-		case ALL_INTERSECTIONS:
-			tree.all_intersections(plane,std::back_inserter(intersections));
-			break;
-		case ANY_INTERSECTED_PRIMITIVE:
-			tree.any_intersected_primitive(plane);
-			break;
-		case ALL_INTERSECTED_PRIMITIVES:
-			tree.all_intersected_primitives(plane,std::back_inserter(primitive_ids));
-			break;
-		}
-		nb++;
-	}
-
-	// subtract random generation time to be more accurate
-	double duration_random_and_tests = time.elapsed();
-	time.start();
-	for(unsigned int i=0;i<nb;i++)
-		random_plane(tree.bbox());
-	double duration_random = time.elapsed();
-
-	double elapsed = duration_random_and_tests - duration_random;
-	double speed = 1000.0 * nb / elapsed;
-	std::cout << speed << " queries/s with plane" << std::endl;
-}
-
-void Scene::bench_do_intersect(Facet_tree& tree,
-							   const int duration)
-{
-	std::cout << "Benchmark do_intersect" << std::endl;
-	bench_intersection_segments(tree,DO_INTERSECT,duration);
-	bench_intersection_rays(tree,DO_INTERSECT,duration);
-	bench_intersection_lines(tree,DO_INTERSECT,duration);
-	bench_intersection_planes(tree,DO_INTERSECT,duration);
-}
-
-void Scene::bench_any_intersection(Facet_tree& tree,
-								   const int duration)
-{
-	std::cout << "Benchmark any_intersection" << std::endl;
-	bench_intersection_segments(tree,ANY_INTERSECTION,duration);
-	bench_intersection_rays(tree,ANY_INTERSECTION,duration);
-	bench_intersection_lines(tree,ANY_INTERSECTION,duration);
-	bench_intersection_planes(tree,ANY_INTERSECTION,duration);
-}
-
-void Scene::bench_nb_intersections(Facet_tree& tree,
-								   const int duration)
-{
-	std::cout << "Benchmark nb_intersections" << std::endl;
-	bench_intersection_segments(tree,NB_INTERSECTIONS,duration);
-	bench_intersection_rays(tree,NB_INTERSECTIONS,duration);
-	bench_intersection_lines(tree,NB_INTERSECTIONS,duration);
-	bench_intersection_planes(tree,NB_INTERSECTIONS,duration);
-}
-
-void Scene::bench_any_intersected_primitive(Facet_tree& tree,
-											 const int duration)
-{
-	std::cout << "Benchmark any_intersected_primitive" << std::endl;
-	bench_intersection_segments(tree,ANY_INTERSECTED_PRIMITIVE,duration);
-	bench_intersection_rays(tree,ANY_INTERSECTED_PRIMITIVE,duration);
-	bench_intersection_lines(tree,ANY_INTERSECTED_PRIMITIVE,duration);
-	bench_intersection_planes(tree,ANY_INTERSECTED_PRIMITIVE,duration);
-}
-
-void Scene::bench_all_intersected_primitives(Facet_tree& tree,
-											 const int duration)
-{
-	std::cout << "Benchmark all_intersected_primitives" << std::endl;
-	bench_intersection_segments(tree,ALL_INTERSECTED_PRIMITIVES,duration);
-	bench_intersection_rays(tree,ALL_INTERSECTED_PRIMITIVES,duration);
-	bench_intersection_lines(tree,ALL_INTERSECTED_PRIMITIVES,duration);
-	bench_intersection_planes(tree,ALL_INTERSECTED_PRIMITIVES,duration);
-}
-
-void Scene::bench_all_intersections(Facet_tree& tree,
-									const int duration)
-{
-	std::cout << "Benchmark all_intersections" << std::endl;
-	bench_intersection_segments(tree,ALL_INTERSECTIONS,duration);
-	bench_intersection_rays(tree,ALL_INTERSECTIONS,duration);
-	bench_intersection_lines(tree,ALL_INTERSECTIONS,duration);
-	bench_intersection_planes(tree,ALL_INTERSECTIONS,duration);
-}
 
 //////////////////////////////////////////////////////////////
 // BENCH DISTANCES
