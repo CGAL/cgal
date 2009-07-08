@@ -66,7 +66,7 @@
     <addaction name="actionClose" />
     <addaction name="actionQuit" />
    </widget>
-   <widget class="QMenu" name="menuTools" >
+   <widget class="QMenu" name="menuHelp" >
     <property name="title" >
      <string>&amp;Help</string>
     </property>
@@ -75,6 +75,8 @@
     <addaction name="actionAbout" />
     <addaction name="actionAboutCGAL" />
    </widget>
+   <addaction name="menuFile" />
+   <addaction name="menuHelp" />
   </widget>
 
   <widget class="QToolBar" name="viewToolBar" >

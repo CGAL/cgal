@@ -163,6 +163,12 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Boolean_operations_2 demo");
 
+  // Import resources from libCGALQt4.
+  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
+  Q_INIT_RESOURCE(File);
+  Q_INIT_RESOURCE(Input);
+  Q_INIT_RESOURCE(CGAL);
+  
   MainWindow mainWindow;
   mainWindow.show();
   return app.exec();
