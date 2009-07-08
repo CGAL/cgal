@@ -754,7 +754,7 @@ void snap_rounding_2(InputIterator begin,
   typedef std::list<Segment_data>                     Segment_data_list;
   
   Segment_data_list seg_list;
-  Multiple_kd_tree * mul_kd_tree;
+  Multiple_kd_tree * mul_kd_tree = NULL;
 
   output_container.clear();
   // copy segments list
