@@ -2119,7 +2119,6 @@ Mesh_3/include/CGAL/Mesh_facet_criteria_3.h -text
 Mesh_3/include/CGAL/Mesh_vertex_base_3.h -text
 Mesh_3/include/CGAL/make_mesh_3.h -text
 Mesh_3/stylesheet.css svneol=native#text/css
-Mesh_3/test/Mesh_3/cgal_test eol=lf
 Mesh_3/test/Mesh_3/data/cube.off -text svneol=unset#application/octet-stream
 Mesh_3/test/Mesh_3/data/liver_kidney_gallbladder.inr -text
 Min_circle_2/demo/Min_circle_2/help/index.html svneol=native#text/html
