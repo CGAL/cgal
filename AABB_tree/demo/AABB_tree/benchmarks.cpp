@@ -10,12 +10,12 @@ void Scene::benchmark_intersections(const int duration)
 	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
-	bench_do_intersect(tree,duration);
+	bench_all_intersections(tree,duration);
+	bench_all_intersected_primitives(tree,duration);
 	bench_nb_intersections(tree,duration);
 	bench_any_intersection(tree,duration);
-	bench_all_intersections(tree,duration);
 	bench_any_intersected_primitive(tree,duration);
-	bench_all_intersected_primitives(tree,duration);
+	bench_do_intersect(tree,duration);
 }
 
 void Scene::benchmark_distances(const int duration)
@@ -396,10 +396,10 @@ void Scene::bench_nb_intersections(Facet_tree& tree,
 								   const int duration)
 {
 	std::cout << "Benchmark nb_intersections" << std::endl;
-	bench_intersection_segments(tree,DO_INTERSECT,duration);
-	bench_intersection_rays(tree,DO_INTERSECT,duration);
-	bench_intersection_lines(tree,DO_INTERSECT,duration);
-	bench_intersection_planes(tree,DO_INTERSECT,duration);
+	bench_intersection_segments(tree,NB_INTERSECTIONS,duration);
+	bench_intersection_rays(tree,NB_INTERSECTIONS,duration);
+	bench_intersection_lines(tree,NB_INTERSECTIONS,duration);
+	bench_intersection_planes(tree,NB_INTERSECTIONS,duration);
 }
 
 void Scene::bench_any_intersected_primitive(Facet_tree& tree,

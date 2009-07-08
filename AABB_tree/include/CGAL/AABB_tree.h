@@ -325,6 +325,37 @@ namespace CGAL {
 		};
 
 		/**
+		* @class Do_intersect_traits
+		*/
+		template<typename Query>
+		class Do_intersect_traits
+		{
+		public:
+			Do_intersect_traits()
+				: m_is_found(false)
+			{}
+
+			bool go_further() const { return !m_is_found; }
+
+			void intersection(const Query& query, const Primitive& primitive)
+			{
+				if( AABBTraits().do_intersect_object()(query, primitive) )
+					m_is_found = true;
+			}
+
+			bool do_intersect(const Query& query, const Node& node) const
+			{
+				return AABBTraits().do_intersect_object()(query, node.bbox());
+			}
+
+			bool is_intersection_found() const { return m_is_found; }
+
+		private:
+			bool m_is_found;
+		};
+
+
+		/**
 		* @class Distance_traits
 		*/
 		class Distance_traits
@@ -498,7 +529,7 @@ namespace CGAL {
 	bool
 		AABB_tree<Tr>::do_intersect(const Query& query) const
 	{
-		First_primitive_traits<Query> traversal_traits;
+		Do_intersect_traits<Query> traversal_traits;
 		this->traversal(query, traversal_traits);
 		return traversal_traits.is_intersection_found();
 	}
