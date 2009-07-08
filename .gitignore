@@ -1,3 +1,5 @@
+AABB_tree/demo/AABB_tree/CMakeLists.txt
+AABB_tree/demo/AABB_tree/Makefile
 AABB_tree/examples/AABB_tree/*.kdev*
 AABB_tree/examples/AABB_tree/*_example
 AABB_tree/examples/AABB_tree/AABB_examples.sln
