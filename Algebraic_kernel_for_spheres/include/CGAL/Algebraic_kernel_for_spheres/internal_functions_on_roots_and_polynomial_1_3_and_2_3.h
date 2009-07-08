@@ -36,14 +36,14 @@ namespace CGAL {
   inline 
   Sign sign_at( const typename AK::Polynomial_for_spheres_2_3 & equation,
 		  const typename AK::Root_for_spheres_2_3 &r){
-    return sign(r.evaluate(equation));
+    return CGAL_NTS sign(r.evaluate(equation));
   }
 
   template < class AK >
   inline 
   Sign sign_at(const typename AK::Polynomial_1_3 & equation,
 		const typename AK::Root_for_spheres_2_3 &r){
-    return sign(r.evaluate(equation));
+    return CGAL_NTS sign(r.evaluate(equation));
   }
 
   template < class AK >
@@ -247,9 +247,9 @@ namespace CGAL {
     const Root_of_2 t2 = make_root_of_2(alpha,FT(1),gama);
 
     bool first_t1 = true;
-    Sign sign_a1 = static_cast<Sign> (sign(p.a1()));
-    Sign sign_a2 = static_cast<Sign> (sign(p.a2()));
-    Sign sign_a3 = static_cast<Sign> (sign(p.a3()));
+    Sign sign_a1 = CGAL_NTS sign(p.a1());
+    Sign sign_a2 = CGAL_NTS sign(p.a2());
+    Sign sign_a3 = CGAL_NTS sign(p.a3());
     if(sign_a1 == ZERO) {
       if(sign_a2 == ZERO) {
         first_t1 = (sign_a3 == POSITIVE);

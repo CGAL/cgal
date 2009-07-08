@@ -182,8 +182,8 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
-                                  p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+                                      p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.b()) && is_zero(p.c())));
 
     const FT sqbc = CGAL::square(p.b()) + CGAL::square(p.c());
@@ -217,8 +217,8 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
-                                  p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+                                           p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.b()) && is_zero(p.c())));
 
     const FT sqbc = CGAL::square(p.b()) + CGAL::square(p.c());
@@ -256,8 +256,8 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
-                                  p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+                                           p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.c())));
 
     const FT sqac = CGAL::square(p.a()) + CGAL::square(p.c());
@@ -297,8 +297,8 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
-                                  p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+                                           p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.c())));
 
     const FT sqac = CGAL::square(p.a()) + CGAL::square(p.c());
@@ -341,8 +341,8 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
-                                  p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+                                           p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.b())));
 
     const FT sqab = CGAL::square(p.a()) + CGAL::square(p.b());
@@ -394,8 +394,8 @@ namespace CGAL {
 
     // It has to be the equation of a diametral circle
     CGAL_kernel_precondition((intersect<AK>(p,s)));
-    CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
-                                  p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(CGAL_NTS sign(p.a() * s.a() + p.b() * s.b() + 
+                                           p.c() * s.c() + p.d()) == ZERO);
     CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.b())));
 
     const FT sqab = CGAL::square(p.a()) + CGAL::square(p.b());
