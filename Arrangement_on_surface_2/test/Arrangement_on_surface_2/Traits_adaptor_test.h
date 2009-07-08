@@ -118,8 +118,9 @@ ta_compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
             << " ) ? " << exp_answer << " ";
 
   unsigned int real_answer =
-    this->m_traits.compare_y_at_x_left_2_object()(this->m_xcurves[id1], this->m_xcurves[id2],
-                                            this->m_points[id3]);
+    this->m_traits.compare_y_at_x_left_2_object()(this->m_xcurves[id1],
+                                                  this->m_xcurves[id2],
+                                                  this->m_points[id3]);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -174,16 +175,20 @@ ta_is_between_cw_wrapper(std::istringstream & str_stream)
   str_stream >> xcv >> b >> xcv1 >> b1 >> xcv2 >> b2 >> p;
   bool exp_answer = this->get_expected_boolean(str_stream);
   std::cout << "Test: is_between_cw( " << this->m_xcurves[xcv] << " , " 
-            << (b==0?"false":"true") << " , " << this->m_xcurves[xcv1] << " , " 
-            << (b1==0?"false":"true") << " , " << this->m_xcurves[xcv2] << " , " 
-            << (b2==0?"false":"true") << " , " << this->m_points[p] << " ) ? ";
+            << (b == 0 ? "false" : "true") << " , " << this->m_xcurves[xcv1]
+            << " , " 
+            << (b1 == 0 ? "false" : "true") << " , " << this->m_xcurves[xcv2]
+            << " , " 
+            << (b2 == 0 ? "false" : "true") << " , " << this->m_points[p]
+            << " ) ? ";
   std::cout << exp_answer << " ";
 
   bool real_answer =
-    this->m_traits.is_between_cw_2_object()(this->m_xcurves[xcv], (b==0?false:true), 
-                                            this->m_xcurves[xcv1], (b1==0?false:true), 
-                                            this->m_xcurves[xcv2], (b2==0?false:true),
-                                            this->m_points[p], b_ref1, b_ref2);
+    this->m_traits.is_between_cw_2_object()
+    (this->m_xcurves[xcv], (b != 0), 
+     this->m_xcurves[xcv1], (b1 != 0), 
+     this->m_xcurves[xcv2], (b2 != 0),
+     this->m_points[p], b_ref1, b_ref2);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -194,18 +199,22 @@ ta_compare_cw_around_point_wrapper(std::istringstream & str_stream)
   unsigned int xcv1 , b1 , xcv2 , b2 , p , b3;
   str_stream >> xcv1 >> b1 >> xcv2 >> b2 >> p >> b3;
   unsigned int exp_answer = this->get_expected_enum(str_stream);
-  std::cout << "Test: compare_cw_around_point( " << this->m_xcurves[xcv1] << " , "
-            << (b1==0?"false":"true") << " , " << this->m_xcurves[xcv2] << " , "
-            << (b2==0?"false":"true") << " , " << this->m_points[p] << " , "
-            << (b3==0?"false":"true") << " ) ? ";
+  std::cout << "Test: compare_cw_around_point( " << this->m_xcurves[xcv1]
+            << " , "
+            << (b1 == 0 ? "false" : "true") << " , " << this->m_xcurves[xcv2]
+            << " , "
+            << (b2 == 0 ? "false" : "true") << " , " << this->m_points[p]
+            << " , "
+            << (b3 == 0 ? "false" : "true") << " ) ? ";
   std::cout << exp_answer << " ";
 
   unsigned int real_answer =
     this->m_traits.compare_cw_around_point_2_object()(this->m_xcurves[xcv1],
-                                                (b1 == 0 ? false : true),
-                                                this->m_xcurves[xcv2] ,
-                                                (b2 == 0 ? false : true),
-                                                this->m_points[p] , b3 );
+                                                      (b1 != 0),
+                                                      this->m_xcurves[xcv2],
+                                                      (b2 != 0),
+                                                      this->m_points[p],
+                                                      (b3 != 0));
   return this->compare(exp_answer, real_answer);
 }
 
@@ -244,7 +253,7 @@ ta_are_mergeable_wrapper_imp (std::istringstream & str_stream, CGAL::Tag_true)
 
 template <class T_Traits>
 bool Traits_adaptor_test<T_Traits>::ta_merge_wrapper
-                                             (std::istringstream & str_stream)
+(std::istringstream & str_stream)
 {
   typedef typename T_Traits::Has_merge_category          Has_merge_category;
   return ta_merge_wrapper_imp(str_stream, Has_merge_category());
