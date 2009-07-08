@@ -24,7 +24,7 @@ if ( CGAL_FOUND )
   if (MSVC)
     # Use /EHa option to catch stack overflows.
     # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
-    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
+    string(REGEX REPLACE "/EH[asc]*" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
     # Allow Windows applications to use up to 3GB of RAM
     SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
