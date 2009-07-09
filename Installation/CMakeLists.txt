@@ -123,6 +123,21 @@ if( "${CMAKE_CXX_COMPILER_ID}" MATCHES SunPro )
   uniquely_add_flags( CGAL_EXE_LINKER_FLAGS    "-library=stlport4" )
 endif()
 
+if( "${CMAKE_CXX_COMPILER}" MATCHES "icl" OR "${CMAKE_CXX_COMPILER}" MATCHES "icpc")
+  message( STATUS "Intel compiler is detected." )
+  set( IntelCompiler_FOUND TRUE )
+
+  get_dependency_version(IntelCompiler)
+
+  if( "${IntelCompiler_VERSION}" LESS "1100" )
+    message("Intel Compiler version ${IntelCompiler_VERSION} is not supported by CGAL-${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}! (too old)")
+  else()
+    message( STATUS "Using Intel Compiler version 11 or later. Adding -fp-model strict" )
+    uniquely_add_flags( CGAL_CXX_FLAGS "-fp-model strict" )
+  endif()
+endif()
+
+
 if ( CMAKE_COMPILER_IS_GNUCXX )
 
   set( GCC_FOUND TRUE )
