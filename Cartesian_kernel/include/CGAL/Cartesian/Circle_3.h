@@ -117,8 +117,7 @@ public:
     Plane_3 p3 = R().construct_bisector_3_object()(p, r);
     Object obj = R().intersect_3_object()(p1, p2, p3);
     // must be a point, otherwise they are collinear
-    Point_3 center;
-		assign(center, obj);
+    const Point_3& center=*object_cast<Point_3>(&obj);
 		FT sqr = R().compute_squared_distance_3_object()(center, r);
 		Sphere_3 s = R().construct_sphere_3_object()(center, sqr);
 		base = Rep(s, p1);
