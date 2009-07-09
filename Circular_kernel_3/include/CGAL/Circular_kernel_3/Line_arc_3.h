@@ -95,10 +95,11 @@ namespace CGAL {
          std::vector<Object> sols;
          SK().intersect_3_object()(l, s, std::back_inserter(sols));
          // l must intersect s in 2 points 
-         std::pair<typename SK::Circular_arc_point_3, unsigned> pair1, pair2;
          CGAL_kernel_precondition(sols.size() == 2);
-         assign(pair1,sols[0]);
-         assign(pair2,sols[1]);
+         const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
+            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
+         const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
+            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[1]);
          if(less_xyz_first) {
            *this = Line_arc_3(l, pair1.first, pair2.first);
          } else {
@@ -113,12 +114,13 @@ namespace CGAL {
          std::vector<Object> sols1, sols2;
          SK().intersect_3_object()(l, s1, std::back_inserter(sols1));
          SK().intersect_3_object()(l, s2, std::back_inserter(sols2));
-         std::pair<typename SK::Circular_arc_point_3, unsigned> pair1, pair2;
          // l must intersect s1 and s2
          CGAL_kernel_precondition(sols1.size() > 0);
          CGAL_kernel_precondition(sols2.size() > 0);
-         assign(pair1,sols1[(sols1.size()==1)?(0):(less_xyz_s1?0:1)]);
-         assign(pair2,sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]);
+         const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
+            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols1[(sols1.size()==1)?(0):(less_xyz_s1?0:1)]);
+         const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
+            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]);
          // the source and target must be different
          CGAL_kernel_precondition(pair1.first != pair2.first);
          *this = Line_arc_3(l, pair1.first, pair2.first);
@@ -131,15 +133,14 @@ namespace CGAL {
          // l must not be on p1 or p2
          CGAL_kernel_precondition(!SK().has_on_3_object()(p1,l));
          CGAL_kernel_precondition(!SK().has_on_3_object()(p2,l));
-         typename SK::Point_3 point1, point2;
          // l must intersect p1 and p2
-         CGAL_assertion(assign(point1,SK().intersect_3_object()(l, p1)));
-         CGAL_assertion(assign(point2,SK().intersect_3_object()(l, p2)));
-         assign(point1,SK().intersect_3_object()(l, p1));
-         assign(point2,SK().intersect_3_object()(l, p2));
+         const typename SK::Point_3* point1=object_cast<typename SK::Point_3>( & SK().intersect_3_object()(l, p1) );
+         const typename SK::Point_3* point2=object_cast<typename SK::Point_3>( & SK().intersect_3_object()(l, p2) );
+         CGAL_assertion(point1!=NULL);
+         CGAL_assertion(point2!=NULL);
          // the source and target must be different
-         CGAL_kernel_precondition(point1 != point2);
-         *this = Line_arc_3(l, point1, point2);
+         CGAL_kernel_precondition(*point1 != *point2);
+         *this = Line_arc_3(l, *point1, *point2);
       }
 
       const Line_3& supporting_line() const 

@@ -96,14 +96,12 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         Solution sol;
-         assign(sol, solutions[0]);
+         const Solution& sol=*object_cast<Solution>(&solutions[0]);
          if(SK().has_on_3_object()(ca,sol.first,true))
            *res++ = solutions[0];
       } else {
-         Solution sol1, sol2;
-         assign(sol1, solutions[0]);
-         assign(sol2, solutions[1]);
+         const Solution& sol1=*object_cast<Solution>(&solutions[0]);
+         const Solution& sol2=*object_cast<Solution>(&solutions[1]);        
          if(SK().has_on_3_object()(ca,sol1.first,true))
            *res++ = solutions[0];
          if(SK().has_on_3_object()(ca,sol2.first,true))
@@ -132,14 +130,12 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         Solution sol;
-         assign(sol, solutions[0]);
+         const Solution& sol=*object_cast<Solution>(&solutions[0]);
          if(SK().has_on_3_object()(ca,sol.first,true))
            *res++ = solutions[0];
       } else {
-         Solution sol1, sol2;
-         assign(sol1, solutions[0]);
-         assign(sol2, solutions[1]);
+         const Solution& sol1=*object_cast<Solution>(&solutions[0]);
+         const Solution& sol2=*object_cast<Solution>(&solutions[1]);        
          if(SK().has_on_3_object()(ca,sol1.first,true))
            *res++ = solutions[0];
          if(SK().has_on_3_object()(ca,sol2.first,true))
@@ -168,14 +164,12 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         Solution sol;
-         assign(sol, solutions[0]);
+         const Solution& sol=*object_cast<Solution>(&solutions[0]);
          if(SK().has_on_3_object()(c,sol.first,true))
            *res++ = solutions[0];
       } else {
-         Solution sol1, sol2;
-         assign(sol1, solutions[0]);
-         assign(sol2, solutions[1]);
+         const Solution& sol1=*object_cast<Solution>(&solutions[0]);        
+         const Solution& sol2=*object_cast<Solution>(&solutions[1]);        
          if(SK().has_on_3_object()(c,sol1.first,true))
            *res++ = solutions[0];
          if(SK().has_on_3_object()(c,sol2.first,true))
@@ -203,14 +197,12 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         Solution sol;
-         assign(sol, solutions[0]);
+         const Solution& sol=*object_cast<Solution>(&solutions[0]);
          if(SK().has_on_3_object()(ca,sol.first,true))
            *res++ = solutions[0];
       } else {
-         Solution sol1, sol2;
-         assign(sol1, solutions[0]);
-         assign(sol2, solutions[1]);
+         const Solution& sol1=*object_cast<Solution>(&solutions[0]);
+         const Solution& sol2=*object_cast<Solution>(&solutions[1]);        
          if(SK().has_on_3_object()(ca,sol1.first,true))
            *res++ = solutions[0];
          if(SK().has_on_3_object()(ca,sol2.first,true))
@@ -235,15 +227,13 @@ namespace CGAL {
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         Solution sol;
-         assign(sol, solutions[0]);
+         const Solution& sol=*object_cast<Solution>(&solutions[0]);
          if(SK().has_on_3_object()(ca,sol.first,true) &&
             SK().has_on_3_object()(la,sol.first,true))
            *res++ = solutions[0];
       } else {
-         Solution sol1, sol2;
-         assign(sol1, solutions[0]);
-         assign(sol2, solutions[1]);
+         const Solution& sol1=*object_cast<Solution>(&solutions[0]);
+         const Solution& sol2=*object_cast<Solution>(&solutions[1]);        
          if(SK().has_on_3_object()(ca,sol1.first,true) &&
             SK().has_on_3_object()(la,sol1.first,true))
            *res++ = solutions[0];
@@ -345,15 +335,13 @@ namespace CGAL {
                                   std::back_inserter(solutions) );
         if(solutions.size() == 0) return res;
         if(solutions.size() == 1) {
-          Solution sol;
-          assign(sol, solutions[0]);
+          const Solution& sol=*object_cast<Solution>(&solutions[0]);
           if(SK().has_on_3_object()(a1,sol.first,true) &&
              SK().has_on_3_object()(a2,sol.first,true))
             *res++ = solutions[0];
         } else {
-          Solution sol1, sol2;
-          assign(sol1, solutions[0]);
-          assign(sol2, solutions[1]);
+          const Solution& sol1=*object_cast<Solution>(&solutions[0]);
+          const Solution& sol2=*object_cast<Solution>(&solutions[1]);          
           if(SK().has_on_3_object()(a1,sol1.first,true) &&
              SK().has_on_3_object()(a2,sol1.first,true))
             *res++ = solutions[0];

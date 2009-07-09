@@ -169,12 +169,17 @@ namespace CGAL {
          CGAL_kernel_precondition(!SK().has_on_3_object()(s2,c));
          SK().intersect_3_object()(c, s1, std::back_inserter(sols1));
          SK().intersect_3_object()(c, s2, std::back_inserter(sols2));
-         std::pair<typename SK::Circular_arc_point_3, unsigned> pair1, pair2;
          // l must intersect s1 and s2
          CGAL_kernel_precondition(sols1.size() > 0);
          CGAL_kernel_precondition(sols2.size() > 0);
-         assign(pair1,sols1[(sols1.size()==1)?(0):(less_xyz_s1?0:1)]);
-         assign(pair2,sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]);
+         const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
+            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+              &sols1[(sols1.size()==1)?(0):(less_xyz_s1?0:1)]
+            );
+         const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
+            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+              &sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]
+            );        
          // the source and target must be different
          CGAL_kernel_precondition(pair1.first != pair2.first);
          *this = Circular_arc_3(c, pair1.first, pair2.first);
@@ -190,12 +195,17 @@ namespace CGAL {
          CGAL_kernel_precondition(!SK().has_on_3_object()(p2,c));
          SK().intersect_3_object()(c, p1, std::back_inserter(sols1));
          SK().intersect_3_object()(c, p2, std::back_inserter(sols2));
-         std::pair<typename SK::Circular_arc_point_3, unsigned> pair1, pair2;
          // l must intersect s1 and s2
          CGAL_kernel_precondition(sols1.size() > 0);
          CGAL_kernel_precondition(sols2.size() > 0);
-         assign(pair1,sols1[(sols1.size()==1)?(0):(less_xyz_p1?0:1)]);
-         assign(pair2,sols2[(sols2.size()==1)?(0):(less_xyz_p2?0:1)]);
+         const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
+            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+              &sols1[(sols1.size()==1)?(0):(less_xyz_p1?0:1)]
+            );
+         const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
+            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+              &sols2[(sols2.size()==1)?(0):(less_xyz_p2?0:1)]
+            );                
          // the source and target must be different
          CGAL_kernel_precondition(pair1.first != pair2.first);
          *this = Circular_arc_3(c, pair1.first, pair2.first);
