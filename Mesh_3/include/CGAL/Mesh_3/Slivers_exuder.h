@@ -388,6 +388,32 @@ private:
     std::for_each(cells.begin(), cells.end(), Erase_from_queue(cells_queue_));
   }
   
+  /**
+   * A functor to remove one handle (Cell_handle/Facet_handle) from complex
+   */
+  class Remove_from_complex
+  {
+  public:
+    Remove_from_complex(C3T3& c3t3)
+    : c3t3_(c3t3) { }
+    
+    template <typename Handle_>
+    void operator()(const Handle_& handle)
+    { c3t3_.remove_from_complex(handle); }
+    
+  private:
+    C3T3& c3t3_;
+  };
+  
+  /**
+   * Removes objects of [begin,end[ range from \c c3t3_
+   */
+  template<typename ForwardIterator>
+  void remove_from_c3t3(ForwardIterator begin, ForwardIterator end)
+  {
+    std::for_each(begin, end, Remove_from_complex(c3t3_));
+  }
+  
 private:
   // -----------------------------------
   // Private data
@@ -951,6 +977,11 @@ update_mesh(const Weighted_point& new_point,
 
   // Delete old cells from queue (they aren't in the triangulation anymore)
   delete_cells_from_queue(deleted_cells);
+  
+  // Delete old cells & facets from c3t3
+  remove_from_c3t3(deleted_cells.begin(),deleted_cells.end());
+  remove_from_c3t3(boundary_facets.begin(),boundary_facets.end());
+  remove_from_c3t3(internal_facets.begin(),internal_facets.end());
   
   // Insert new point (v will be updated using a wp)
   int dimension = c3t3_.in_dimension(old_vertex);

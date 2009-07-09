@@ -52,6 +52,9 @@ struct Tester
               const unsigned int max_cells_expected = (unsigned int)(-1) ) const
   {
     typedef typename C3t3::size_type size_type;
+    typedef typename C3t3::Triangulation::Geom_traits Gt;
+    typedef typename CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt> Sliver_criterion;
+    typedef typename CGAL::Mesh_3::Slivers_exuder<C3t3, Sliver_criterion> Exuder;
 
     // Store mesh properties
     size_type v = c3t3.triangulation().number_of_vertices();
@@ -71,6 +74,14 @@ struct Tester
     std::cerr << "\tRefining again...\n";
     refine_mesh_3(c3t3,domain,criteria,false);
     verify_c3t3(c3t3,v,v,f,f,c,c);
+    
+    // Exude.
+    // Vertex number should not change (obvious)
+    // Facet number should not change as exuder preserves boundary facets
+    std::cerr << "\tExude...\n";
+    Exuder exuder(c3t3);
+    exuder.pump_vertices();
+    verify_c3t3(c3t3,v,v,f,f);
   }
 
   template<typename C3t3>
