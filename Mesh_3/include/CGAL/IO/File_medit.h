@@ -504,14 +504,18 @@ namespace details {
     class Debug_aux {
       Debug* debug;
     public:
+      Debug_aux() : debug(0) {}
       Debug_aux(Debug* d) : debug(d) {}
 
       template <typename T>
       Debug_aux& operator<<(const T& t)
       {
-        debug->apply(t, false);
+        if ( debug )
+          debug->apply(t, false);
         return *this;
       }
+      
+      void set_debug(debug* d) { debug = d; }
 
       operator bool() const
       {
@@ -526,8 +530,9 @@ namespace details {
           std::ostream* debug_str = &std::cout,
           const std::string header_string = "")
       : active(debug), out(debug_str), header(header_string),
-        aux(this)
+        aux()
     {
+      aux.set_debug(this);
     }
 
     template <class T>
