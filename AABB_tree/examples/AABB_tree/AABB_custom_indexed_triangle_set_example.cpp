@@ -26,7 +26,7 @@
 #include <list>
 #include <boost/iterator.hpp>
 
-#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_tree.h> // must be inserted before kernel
 #include <CGAL/AABB_traits.h>
 
 #include <CGAL/Simple_cartesian.h>
