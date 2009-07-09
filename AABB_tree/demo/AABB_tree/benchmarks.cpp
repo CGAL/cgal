@@ -144,7 +144,14 @@ void Scene::bench_intersections_vs_nbt()
 {
 	std::cout << std::endl << "Benchmark intersections against #triangles" << std::endl;
 	std::cout << std::endl << "for random ray queries and all_intersections()" << std::endl;
-	std::cout << "#Facets    #queries/s" << std::endl;
+	std::cout << "#Facets, #queries/s" << std::endl;
+
+  // generates 10K random ray queries
+  const int nb_queries = 10000;
+  srand(0);
+  std::vector<Ray> queries;
+  for(int i=0;i<nb_queries;i++)
+      queries.push_back(random_ray(m_bbox));
 
 	while(m_pPolyhedron->size_of_facets() < 1000000)
 	{
@@ -154,23 +161,19 @@ void Scene::bench_intersections_vs_nbt()
 		unsigned int nb_splits = (unsigned int)(0.2 * std::pow(10.0,(double)digits - 1.0));
 		refiner.run_nb_splits(nb_splits);
 
-		// constructs tree
+		// constructs tree (out of timing)
 		Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 
-		// calls 10K random ray queries (neglects random generation of ray query)
-		std::list<Object_and_primitive_id> intersections;
+		// calls ray queries
 		QTime time;
 		time.start();
-		const int nb_queries = 10000;
+		std::list<Object_and_primitive_id> intersections;
 		for(int i=0;i<nb_queries;i++)
-		{
-			Ray ray = random_ray(tree.bbox());
-			tree.all_intersections(ray,std::back_inserter(intersections));
-		}
+			tree.all_intersections(queries[i],std::back_inserter(intersections));
 		double duration = time.elapsed();
-		int speed = (int)(1000 * nb_queries / duration);
+		int speed = (int)(1000.0 * (double)nb_queries / (double)duration);
 
-		std::cout << m_pPolyhedron->size_of_facets() << "\t" << speed << std::endl;
+		std::cout << m_pPolyhedron->size_of_facets() << ", " << speed << std::endl;
 	}
 }
 
@@ -178,7 +181,14 @@ void Scene::bench_distances_vs_nbt()
 {
 	std::cout << std::endl << "Benchmark distances against #triangles" << std::endl;
 	std::cout << std::endl << "for random point queries and closest_point()" << std::endl;
-	std::cout << "#Facets    #queries/s" << std::endl;
+	std::cout << "#Facets, #queries/s" << std::endl;
+
+  // generates 10K random point queries
+  const int nb_queries = 10000;
+  std::vector<Point> queries(nb_queries);
+  srand(0);
+  for(int i=0;i<nb_queries;i++)
+      queries.push_back(random_point(m_bbox));
 
 	while(m_pPolyhedron->size_of_facets() < 1000000)
 	{
@@ -188,24 +198,19 @@ void Scene::bench_distances_vs_nbt()
 		unsigned int nb_splits = (unsigned int)(0.2 * std::pow(10.0,(double)digits - 1.0));
 		refiner.run_nb_splits(nb_splits);
 
-		// constructs tree
+		// constructs tree (out of timing)
 		Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 		tree.accelerate_distance_queries();
 
-		// calls 100K random point queries (neglects random generation of ray query)
-		std::list<Object_and_primitive_id> intersections;
+		// calls queries
 		QTime time;
 		time.start();
-		const int nb_queries = 10000;
 		for(int i=0;i<nb_queries;i++)
-		{
-			Point query = random_point(tree.bbox());
-			tree.closest_point(query);
-		}
+			tree.closest_point(queries[i]);
 		double duration = time.elapsed();
-		int speed = (int)(1000 * nb_queries / duration);
+		int speed = (int)(1000.0 * (double)nb_queries / (double)duration);
 
-		std::cout << m_pPolyhedron->size_of_facets() << "\t" << speed << std::endl;
+		std::cout << m_pPolyhedron->size_of_facets() << ", " << speed << std::endl;
 	}
 }
 
