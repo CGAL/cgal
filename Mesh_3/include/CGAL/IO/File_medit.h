@@ -515,7 +515,7 @@ namespace details {
         return *this;
       }
       
-      void set_debug(debug* d) { debug = d; }
+      void set_debug(Debug* d) { debug = d; }
 
       operator bool() const
       {
