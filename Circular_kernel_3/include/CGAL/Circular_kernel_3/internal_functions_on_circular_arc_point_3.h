@@ -44,14 +44,14 @@ namespace CGAL {
     int x=CGAL_NTS sign(Rx);
     int y=CGAL_NTS sign(Ry);
     if (y>0){
-      if (x>0)  switch (CGAL_NTS sign(Rx-Ry)){case -1: return 2; break;  case 0: return 1.5; break; case 1: return 1; break; }; 
-      if (x<0) switch (CGAL::opposite(CGAL_NTS sign(Rx+Ry))){case -1: return 3; break;  case 0: return 3.5; break; case 1: return 4; break; };
+      if (x>0)  switch (CGAL_NTS sign(Rx-Ry)){case -1: return 2; case 0: return 1.5; case 1: return 1; }; 
+      if (x<0) switch (CGAL::opposite(CGAL_NTS sign(Rx+Ry))){case -1: return 3; case 0: return 3.5; case 1: return 4; };
       return 2.5;//OPTI : we have more information here by x_y
     }
     else{
       if (y<0){
-        if (x>0) switch (CGAL_NTS sign(Rx+Ry)){case -1: return 7; break;  case 0: return 7.5; break; case 1: return 8; break; };
-        if (x<0) switch (CGAL::opposite(CGAL_NTS sign(Rx-Ry))){case -1: return 6; break; case 0: return 5.5; break; case 1: return 5; break; };
+        if (x>0) switch (CGAL_NTS sign(Rx+Ry)){case -1: return 7; case 0: return 7.5; case 1: return 8; };
+        if (x<0) switch (CGAL::opposite(CGAL_NTS sign(Rx-Ry))){case -1: return 6; case 0: return 5.5; case 1: return 5; };
         return 6.5;//OPTI : we have more information here by x_y
       }
       else{
@@ -89,24 +89,22 @@ namespace CGAL {
                               (pt2.x()!=sphere.center().x() || pt2.y()!=sphere.center().x()) );
     float hq1=half_quadrant<SK>(pt1,sphere);
     float hq2=half_quadrant<SK>(pt2,sphere);
-    float res=hq1-hq2;
-    if (res == 0.){//same quadrant 
+    CGAL::Sign res=CGAL_NTS sign(hq1-hq2);
+    if (res == CGAL::EQUAL){//same quadrant 
       if (floor(hq1)!=hq1)//for hquadrant boundary
-        res=0;
+        res=CGAL::EQUAL;
       else{
         //compare tan or cot, same expression due to constant sign within a hquadrant
         //and different monotonicity type of tan and cot
         if ( is_hquadrant_a_tangent<SK>(hq1) )
-          res= CGAL::compare( (pt1.y() - sphere.center().y()) / (pt1.x() - sphere.center().x()) ,
+          res= CGAL_NTS compare( (pt1.y() - sphere.center().y()) / (pt1.x() - sphere.center().x()) ,
                               (pt2.y() - sphere.center().y()) / (pt2.x() - sphere.center().x()) ); 
         else
-          res= CGAL::compare( (pt2.x() - sphere.center().x()) / (pt2.y() - sphere.center().y()) ,
+          res= CGAL_NTS compare( (pt2.x() - sphere.center().x()) / (pt2.y() - sphere.center().y()) ,
                               (pt1.x() - sphere.center().x()) / (pt1.y() - sphere.center().y()) );          
       }
     }
-    if (res < 0) return (CGAL::SMALLER);
-    if (res >0 ) return (CGAL::LARGER);  
-    return CGAL::EQUAL;
+    return res;
   }
 
   template <class SK>
@@ -118,20 +116,18 @@ namespace CGAL {
                               (v.x()!=0 || v.y()!=0) &&  v.z()==0);
     float hq1=half_quadrant<SK>(pt,sphere);
     float hq2=half_quadrant<SK>(v.x(),v.y());
-    float res=hq1-hq2;
-    if (res == 0.){//same quadrant 
+    CGAL::Sign res=CGAL_NTS sign(hq1-hq2);
+    if (res == CGAL::EQUAL){//same quadrant 
       if (floor(hq1)!=hq1)//for hquadrant boundary
-        res=0;
+        res=CGAL::EQUAL;
       else{
         //compare tan or cot, same expression due to constant sign within a hquadrant
         //and different monotonicity type of tan and cot
-        res= CGAL::compare( v.x() * (pt.y() - sphere.center().y()) ,
+        res= CGAL_NTS compare( v.x() * (pt.y() - sphere.center().y()) ,
                             v.y() * (pt.x() - sphere.center().x())  ); 
       }
     }
-    if (res < 0) return (CGAL::SMALLER);
-    if (res >0 ) return (CGAL::LARGER);  
-    return CGAL::EQUAL;
+    return res;
   }
 
   template <class SK>
@@ -143,20 +139,18 @@ namespace CGAL {
                              (m2.x()!=0 || m2.y()!=0) &&  m2.z()==0 );
     float hq1=half_quadrant<SK>(m1.x(),m1.y());
     float hq2=half_quadrant<SK>(m2.x(),m2.y());
-    float res=hq1-hq2;
-    if (res == 0.){//same quadrant 
+    CGAL::Sign res=CGAL_NTS sign(hq1-hq2);
+    if (res == CGAL::EQUAL){//same quadrant 
       if (floor(hq1)!=hq1)//for hquadrant boundary
-        res=0;
+        res=CGAL::EQUAL;
       else{
         //compare tan or cot, same expression due to constant sign within a hquadrant
         //and different monotonicity type of tan and cot
-        res= CGAL::compare( m2.x() * m1.y() ,
+        res= CGAL_NTS compare( m2.x() * m1.y() ,
                             m2.y() * m1.x() ); 
       }
     }
-    if (res < 0) return (CGAL::SMALLER);
-    if (res >0 ) return (CGAL::LARGER);  
-    return CGAL::EQUAL;
+    return res;
   }
   
   template <class SK>
