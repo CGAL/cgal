@@ -41,26 +41,26 @@ typedef CGAL::AABB_tree<Traits> Tree;
 
 int main()
 {
-	Point p(1.0, 0.0, 0.0);
-	Point q(0.0, 1.0, 0.0);
-	Point r(0.0, 0.0, 1.0);
-	Point s(0.0, 0.0, 0.0);
-	Polyhedron polyhedron;
-	polyhedron.make_tetrahedron(p, q, r, s);
+    Point p(1.0, 0.0, 0.0);
+    Point q(0.0, 1.0, 0.0);
+    Point r(0.0, 0.0, 1.0);
+    Point s(0.0, 0.0, 0.0);
+    Polyhedron polyhedron;
+    polyhedron.make_tetrahedron(p, q, r, s);
 
-	// constructs the AABB tree and the internal search tree for 
-	// efficient distance queries.
-	Tree tree(polyhedron.edges_begin(),polyhedron.edges_end());
-	tree.accelerate_distance_queries();
+    // constructs the AABB tree and the internal search tree for 
+    // efficient distance queries.
+    Tree tree(polyhedron.edges_begin(),polyhedron.edges_end());
+    tree.accelerate_distance_queries();
 
-	// counts #intersections with a triangle query
-	Triangle triangle_query(p,q,r);
-	std::cout << tree.number_of_intersected_primitives(triangle_query)
-		<< " intersections(s) with triangle" << std::endl;
+    // counts #intersections with a triangle query
+    Triangle triangle_query(p,q,r);
+    std::cout << tree.number_of_intersected_primitives(triangle_query)
+        << " intersections(s) with triangle" << std::endl;
 
-	// computes the closest point from a query point
-	Point point_query(2.0, 2.0, 2.0);
-	Point closest = tree.closest_point(point_query);
+    // computes the closest point from a query point
+    Point point_query(2.0, 2.0, 2.0);
+    Point closest = tree.closest_point(point_query);
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

@@ -46,34 +46,34 @@ typedef CGAL::AABB_tree<Traits> Tree;
 
 int main()
 {
-	Point a(1.0, 0.0, 0.0);
-	Point b(0.0, 1.0, 0.0);
-	Point c(0.0, 0.0, 1.0);
-	Point d(0.0, 0.0, 0.0);
+    Point a(1.0, 0.0, 0.0);
+    Point b(0.0, 1.0, 0.0);
+    Point c(0.0, 0.0, 1.0);
+    Point d(0.0, 0.0, 0.0);
 
-	std::list<Segment> segments;
-	segments.push_back(Segment(a,b));
-	segments.push_back(Segment(a,c));
-	segments.push_back(Segment(c,d));
+    std::list<Segment> segments;
+    segments.push_back(Segment(a,b));
+    segments.push_back(Segment(a,c));
+    segments.push_back(Segment(c,d));
 
-	// constructs the AABB tree and the internal search tree for 
-	// efficient distance computations.
-	Tree tree(segments.begin(),segments.end());
-	tree.accelerate_distance_queries();
+    // constructs the AABB tree and the internal search tree for 
+    // efficient distance computations.
+    Tree tree(segments.begin(),segments.end());
+    tree.accelerate_distance_queries();
 
-	// counts #intersections with a plane query
-	Plane plane_query(a,b,d);
-	std::cout << tree.number_of_intersected_primitives(plane_query)
-		<< " intersections(s) with plane" << std::endl;
+    // counts #intersections with a plane query
+    Plane plane_query(a,b,d);
+    std::cout << tree.number_of_intersected_primitives(plane_query)
+        << " intersections(s) with plane" << std::endl;
 
-	// counts #intersections with a triangle query
-	Triangle triangle_query(a,b,c);
-	std::cout << tree.number_of_intersected_primitives(triangle_query)
-		<< " intersections(s) with triangle" << std::endl;
+    // counts #intersections with a triangle query
+    Triangle triangle_query(a,b,c);
+    std::cout << tree.number_of_intersected_primitives(triangle_query)
+        << " intersections(s) with triangle" << std::endl;
 
-	// computes the closest point from a point query 
-	Point point_query(2.0, 2.0, 2.0);
-	Point closest = tree.closest_point(point_query);
+    // computes the closest point from a point query 
+    Point point_query(2.0, 2.0, 2.0);
+    Point closest = tree.closest_point(point_query);
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
