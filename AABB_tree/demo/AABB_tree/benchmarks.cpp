@@ -66,8 +66,8 @@ void Scene::benchmark_distances(const int duration)
 	tree.accelerate_distance_queries();
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
-	std::cout << "One single call to initialize KD-tree" << std::endl;
-	tree.closest_point(CGAL::ORIGIN);
+  // one dummy query (remove bias for large models)
+  tree.closest_point(CGAL::ORIGIN);
 
 	// benchmark
 	bench_closest_point(tree,duration);
@@ -126,15 +126,16 @@ void Scene::bench_construction()
 		refiner.run_nb_splits(nb_splits);
 
 		// constructs tree
-		QTime time;
-		time.start();
+		QTime time1;
+		time1.start();
 		Facet_tree tree1(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
-		double duration_construction_alone = time.elapsed();
+		double duration_construction_alone = time1.elapsed();
 
-		time.start();
+		QTime time2;
+		time2.start();
 		Facet_tree tree2(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 		tree2.accelerate_distance_queries();
-		double duration_construction_and_kdtree = time.elapsed();
+		double duration_construction_and_kdtree = time2.elapsed();
 
 		std::cout << m_pPolyhedron->size_of_facets() << "\t" 
 			        << duration_construction_alone     << "\t" 
@@ -267,6 +268,7 @@ void Scene::bench_distance(Facet_tree& tree,
 	QTime time;
 	time.start();
 	unsigned int nb = 0;
+  srand(0);
 	while(time.elapsed() < duration)
 	{
 		Point query = random_point(tree.bbox());

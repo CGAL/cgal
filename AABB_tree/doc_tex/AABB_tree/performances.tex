@@ -5,18 +5,16 @@ We provide some performance numbers for the case where the AABB tree contains a 
 
 \subsection{Tree Construction}
 
-The surface triangle mesh chosen for benchmarking the tree construction is the knot model (14,400 triangles) available in the demo data folder. We measure the tree construction time for this model as well as for three denser versions subdivided through the Loop subdivision scheme which increases the number of triangles by a factor of four.
+The surface triangle mesh chosen for benchmarking the tree construction is the knot model (14,400 triangles) available in the demo data folder. We measure the tree construction time (both AABB tree alone and AABB tree with internal KD-tree)  for this model as well as for three denser versions subdivided through the Loop subdivision scheme which increases the number of triangles by a factor of four.
 
-% TODO: add column with construction + internal KD-tree construction
-
-\begin{tabular}{|l|c|}
+\begin{tabular}{|l|c|c|}
   \hline
-  Number of triangles & Construction (in ms)\\
+  Number of triangles & Construction (in ms) & Construction with internal KD-tree (in ms)\\
   \hline
-   14,400 &   156 \\
-   57,600 &   328 \\
-  230,400 & 1,141 \\
-  921,600 & 4,813 \\
+   14,400 &   156 &   157 \\
+   57,600 &   328 &   313 \\
+  230,400 & 1,141 & 1,203 \\
+  921,600 & 4,813 & 5,047 \\
   \hline
 \end{tabular}
 
@@ -50,7 +48,7 @@ The following table measures the number of intersection queries per second on th
   Function                              & Segment &     Ray &    Line &   Plane \\
   \hline
   do\_intersect()                       & 187,868 & 185,649 & 206,096 & 377,969 \\
-  any\_intersected\_primitive()          & 190,684 & 190,027 & 208,941 & 360,337 \\
+  any\_intersected\_primitive()         & 190,684 & 190,027 & 208,941 & 360,337 \\
   any\_intersection()                   & 147,468 & 143,230 & 148,235 & 229,336 \\
   number\_of\_intersected\_primitives() &  64,389 &  52,943 &  54,559 &   7,906 \\
   all\_intersected\_primitives()        &  65,553 &  54,838 &  53,183 &   5,693 \\
@@ -95,19 +93,18 @@ The following table measures the number of \ccc{all_intersections()} queries per
 
 \subsection{Distances}
 
-The surface triangle mesh chosen for benchmarking distances is again the knot model in four increasing resolutions obtained through Loop subdivision. In the following table we first measure the tree construction time which includes the construction of the internal KD-tree data structure to accelerate the distance queries (note how the internal KD-tree construction time is negligible compared to the AABB tree construction time, while it brings an acceleration of up to one order of magnitude). We then measure the number of queries per second for the three types distance queries (\ccc{closest_point}, \ccc{squared_distance} and \ccc{closest_point_and_primitive}) from point queries randomly chosen inside the bounding box.
+The surface triangle mesh chosen for benchmarking distances is again the knot model in four increasing resolutions obtained through Loop subdivision. In the following table we first measure the tree construction time (which includes the construction of the internal KD-tree data structure used to accelerate the distance queries by up to one order of magnitude in our experiments). We then measure the number of queries per second for the three types distance queries (\ccc{closest_point}, \ccc{squared_distance} and \ccc{closest_point_and_primitive}) from point queries randomly chosen inside the bounding box.
 
 \begin{tabular}{|l|c|c|c|c|}
   \hline
-  Nb triangles & Construction (in ms) & Closest\_point() & squared\_distance() & closest\_point\_and\_primitive() \\
+  Nb triangles & Construction (ms) & Closest\_point() & squared\_distance() & closest\_point\_and\_primitive() \\
   \hline
-   14,400 &   157 & 31,472 & 33,529 & 34,817 \\
-   57,600 &   330 & 15,602 & 16,355 & 17,106 \\
-  230,400 & 1,203 &  6,528 &  8,287 &  8,683 \\
-  921,600 & 5,047 &  4,399 &  4,221 &  4,424 \\
+   14,400 &   157 & 45,132 & 45,626 & 45,770 \\
+   57,600 &   313 & 21,589 & 21,312 & 21,137 \\
+  230,400 & 1,203 & 11,063 & 10,962 & 11,086 \\
+  921,600 & 5,047 &  5,636 &  5,722 &  5,703 \\
   \hline
 \end{tabular}
-
 
 \subsection{Summary}
 
