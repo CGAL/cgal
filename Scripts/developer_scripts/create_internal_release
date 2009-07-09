@@ -600,12 +600,12 @@ if ($::opt_l){
 lock;
 
 install_packages();
-make_testscripts_for_cmake();
 CreateDemoTestDirs();
 CreateExampleTestDirs();
 create_version_file();
 create_version_tex_file();
 #make_testscripts();
+make_testscripts_for_cmake();
 
 unlock;
 }
