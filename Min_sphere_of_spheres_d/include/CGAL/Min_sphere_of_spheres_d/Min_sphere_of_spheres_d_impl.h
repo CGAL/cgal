@@ -208,7 +208,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const double dist = inner_product_n<D>(center,
-         t.center_cartesian_begin(*l[k]),0.0.f,std::plus<double>(),
+         t.center_cartesian_begin(*l[k]),0.0f,std::plus<double>(),
          Subtract_and_square_to_double<FT>());
   
       const double r = CGAL_MINIBALL_NTS to_double(t.radius(*l[k]));
