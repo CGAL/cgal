@@ -66,9 +66,6 @@ void Scene::benchmark_distances(const int duration)
 	tree.accelerate_distance_queries();
 	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
-  // one dummy query (remove bias for large models)
-  tree.closest_point(CGAL::ORIGIN);
-
 	// benchmark
 	bench_closest_point(tree,duration);
 	bench_squared_distance(tree,duration);
