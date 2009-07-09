@@ -107,6 +107,8 @@ set(ALL_CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_PDB CGAL_Qt3 CGAL_Qt4 CA
 if( MSVC )
   
   uniquely_add_flags ( CGAL_CXX_FLAGS "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS" )
+  uniquely_add_flags ( "/fp:strict" )
+  uniquely_add_flags ( "/fp:except-" )
 
   if ( RUNNING_CGAL_AUTO_TEST )
     set(CMAKE_CXX_WARNING_LEVEL 2 CACHE STRING "MSVC C++ compiler warning level" FORCE)
