@@ -1767,7 +1767,7 @@ protected:
       // arrangement (which is currently empty, thus contain a single
       // unbounded face), and find a halfedge that matches hec.
       CGAL_assertion_msg
-        (to.number_of_faces(),
+        ((to.number_of_faces() != 0),
          "if all halfedges are fictitious then there should be only one face");
       Face_handle              to_uf = to.faces_begin();
       Ccb_halfedge_circulator  to_uf_hec = to_uf->outer_ccb();
