@@ -152,25 +152,24 @@ public:
   Envelope_divide_and_conquer_3(Envelope_type type = ENVELOPE_LOWER)
   {    
     // Allocate the traits.
-    traits = new Traits;                                                     
-
-    own_traits = true;
+    m_geom_traits = new Traits;
+    m_own_traits = true;
 
     // Allocate the Envelope resolver with our traits
-    resolver = new Envelope_resolver(traits, type);
+    resolver = new Envelope_resolver(m_geom_traits, type);
 
     m_is_lower = ((type == ENVELOPE_LOWER) ? true : false);
   }
 
-  Envelope_divide_and_conquer_3(const Traits * tr,
+  Envelope_divide_and_conquer_3(const Traits * geom_traits,
                                 Envelope_type type = ENVELOPE_LOWER)
   {
     // Set the traits.
-    traits = tr;
-    own_traits = false;
+    m_geom_traits = geom_traits;
+    m_own_traits = false;
 
     // Allocate the Envelope resolver with our traits
-    resolver = new Envelope_resolver(traits, type);
+    resolver = new Envelope_resolver(m_geom_traits, type);
 
     m_is_lower = ((type == ENVELOPE_LOWER) ? true : false);
   }
@@ -179,8 +178,8 @@ public:
   virtual ~Envelope_divide_and_conquer_3()
   {
     // Free the traits object, if necessary.
-    if (own_traits)
-      delete traits;
+    if (m_own_traits)
+      delete m_geom_traits;
 
     // Free the resolver
     delete resolver;
@@ -211,8 +210,9 @@ public:
     // make the general surfaces xy-monotone
     std::list<Xy_monotone_surface_3> xy_monotones;
     for (; begin != end; ++begin)
-      traits->make_xy_monotone_3_object()(*begin, m_is_lower,
-                                          std::back_inserter(xy_monotones));
+      m_geom_traits->
+        make_xy_monotone_3_object()(*begin, m_is_lower,
+                                    std::back_inserter(xy_monotones));
 
     // recursively construct the envelope of the xy-monotone parts
     construct_lu_envelope_xy_monotones(xy_monotones.begin(), 
@@ -248,10 +248,10 @@ public:
     CGAL_assertion(is_envelope_valid(result));
   }
 
-  /*! Access the traits object (const version). */
+  /*! Access the traits object. */
   const Traits * get_traits() const
   {
-    return traits;
+    return m_geom_traits;
   }
 
   void reset()
@@ -286,12 +286,13 @@ protected:
    
     // divide the surfaces into 2 groups (insert surface to each group
     // alternately)
+    // Efi: this copy is redundant. It is sufficient to determine the range
     std::list<Xy_monotone_surface_3> group1, group2;
     dividor(first, end,
             std::back_inserter(group1), std::back_inserter(group2));
     
     // recursively calculate the LU_envelope of the 2 groups
-    Minimization_diagram_2 result1(traits), result2(traits);
+    Minimization_diagram_2 result1(m_geom_traits), result2(m_geom_traits);
     construct_lu_envelope_xy_monotones(group1.begin(), group1.end(),
                                        result1, dividor);
     construct_lu_envelope_xy_monotones(group2.begin(), group2.end(),
@@ -302,8 +303,8 @@ protected:
 
     result1.clear();
     result2.clear();
-    
-    CGAL_assertion(is_envelope_valid(result));   
+
+    CGAL_assertion(is_envelope_valid(result));
   }
 
   void deal_with_one_surface(Xy_monotone_surface_3& surf,
@@ -314,31 +315,32 @@ protected:
     typedef Boundary_list::iterator                      Boundary_iterator;
 
     Boundary_list     boundary;
-    traits->
+    m_geom_traits->
       construct_projected_boundary_2_object()(surf,
                                               std::back_inserter(boundary));
     
-    if(boundary.empty())
+    if (boundary.empty())
     {
       //one infinite surface
-      CGAL_assertion_msg (result.number_of_faces() == 1, "In the beginning there should be only one face");
+      CGAL_assertion_msg (result.number_of_faces() == 1,
+                          "In the beginning there should be only one face");
       result.faces_begin()->set_data(surf);
       return;
     }
 
     for (Boundary_iterator boundary_it = boundary.begin();
-        boundary_it != boundary.end();
-        ++boundary_it)
+         boundary_it != boundary.end();
+         ++boundary_it)
     {
       const Object& obj = *boundary_it;
       Boundary_xcurve boundary_cv;
-      if(assign(boundary_cv, obj))
+      if (assign(boundary_cv, obj))
       {
         Oriented_side side = boundary_cv.second;
         Halfedge_handle he =
           insert_non_intersecting_curve(result, boundary_cv.first);
         
-        if(side == ON_ORIENTED_BOUNDARY)
+        if (side == ON_ORIENTED_BOUNDARY)
         {
           // vertical xy-surface
           he->face()->set_no_data();
@@ -347,13 +349,13 @@ protected:
           continue;
         }
 
-        if(he->face() != he->twin()->face())
+        if (he->face() != he->twin()->face())
         {
           // new face created.
           // 'he' is directed from left to right, so the face to the left
           // of 'he'  is above 'cv.
           Face_handle f;
-          if(side == ON_NEGATIVE_SIDE) // the surface is below cv.
+          if (side == ON_NEGATIVE_SIDE) // the surface is below cv.
           {
             f = he->twin()->face();
             f->set_data(surf);
@@ -423,7 +425,6 @@ protected:
   
 
 public:
-  
   void merge_envelopes(Minimization_diagram_2& result1,
                        Minimization_diagram_2& result2,
                        Minimization_diagram_2& result)
@@ -475,7 +476,7 @@ public:
       }
 
       bool should_resolve = true;
-      #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
+#ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
         if (hh->get_has_equal_aux_data_in_face(0) &&
             hh->get_has_equal_aux_data_in_face(1))
           should_resolve = false;
@@ -483,7 +484,7 @@ public:
         if (hh->twin()->get_has_equal_aux_data_in_face(0) &&
             hh->twin()->get_has_equal_aux_data_in_face(1))
           should_resolve = false;
-      #endif
+#endif
 
       // we collect the edges in a list to deal afterwards, because the resolve
       // can split edges, and destroy the iterator
@@ -509,7 +510,7 @@ public:
 
     std::list<Face_handle> faces_to_split;
 
-    #ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
+#ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
     // we traverse the faces of result in BFS order to maximize the
     // efficiency gain by the conclusion mechanism of
     // compare_distance_to_envelope results
@@ -560,8 +561,8 @@ public:
         // face can change and destroy the iterator
         faces_to_split.push_back(fh);
       }
-    #endif
-        
+#endif
+
     deal_with_faces_to_split(faces_to_split, result);
 
 //    #ifndef CGAL_ENVELOPE_SAVE_COMPARISONS
@@ -729,8 +730,8 @@ protected:
       Halfedge_handle h = *ci;
       Vertex_handle src = h->source(), trg = h->target();
       Face_handle h_face = h->face();
-      bool remove_src = can_remove_edge_target(h->twin()),
-           remove_trg = can_remove_edge_target(h);
+      bool remove_src = can_remove_edge_target(h->twin());
+      bool remove_trg = can_remove_edge_target(h);
       bool src_is_equal_0 = (h->twin()->get_is_equal_aux_data_in_face(0) &&
                              h->twin()->get_is_equal_aux_data_in_target(0));
       bool src_is_equal_1 = (h->twin()->get_is_equal_aux_data_in_face(1) &&
@@ -746,12 +747,17 @@ protected:
       bool trg_has_equal_0 = h->get_has_equal_aux_data_in_target_and_face(0);
       bool trg_has_equal_1 = h->get_has_equal_aux_data_in_target_and_face(1);
 
+      /* A vertex at an open boundary is removed once it becomes redundant
+       * regardless of the boolean values passed as the 2nd and 3rd argument
+       * to the remove_edge() member function.
+       */
+      if (src->is_at_open_boundary()) remove_src = true;
+      if (trg->is_at_open_boundary()) remove_trg = true;
       result.remove_edge(*ci, remove_src, remove_trg);
       // otherwise, we should make sure, they will not be removed
       // the first check is needed since if the vertex was removed, then the
       // handle is invalid
-      if (!remove_src && src->is_isolated())
-      {
+      if (!remove_src && src->is_isolated()) {
         // to be precise we copy from the halfedge-face and halfedge-target
         // relations
         src->set_is_equal_aux_data_in_face(0, src_is_equal_0);
@@ -869,13 +875,13 @@ protected:
        When I tried to use the following code I got a Segmentation Fault when
        trying to compute power diagram:
        
-       if((v->parameter_space_in_x() != ARR_INTERIOR) ||
+       if ((v->parameter_space_in_x() != ARR_INTERIOR) ||
           (v->parameter_space_in_y() != ARR_INTERIOR))
           return false;
 
      */
     Vertex_handle v = h->target();
-    if(v->is_at_open_boundary())
+    if (v->is_at_open_boundary())
       return false;
 
 
@@ -1013,9 +1019,9 @@ protected:
         isolated_to_remove.push_back(vh);
     }
 
-    typename Traits::Merge_2 curves_merge = traits->merge_2_object();
+    typename Traits::Merge_2 curves_merge = m_geom_traits->merge_2_object();
     typename Traits::Are_mergeable_2 curves_can_merge = 
-      traits->are_mergeable_2_object();
+      m_geom_traits->are_mergeable_2_object();
 
     // check the candidates and remove if necessary
     typename std::list<Vertex_handle>::iterator ci;
@@ -1055,19 +1061,27 @@ protected:
       // x----------->x<------------x
       //  <----------- ------------>
       //   he1->twin()   he2->twin()
-      he1->set_is_equal_aux_data_in_target(0, he2->twin()->get_is_equal_aux_data_in_target(0));
-      he1->set_is_equal_aux_data_in_target(1, he2->twin()->get_is_equal_aux_data_in_target(1));
-      he1->set_has_equal_aux_data_in_target(0, he2->twin()->get_has_equal_aux_data_in_target(0));
-      he1->set_has_equal_aux_data_in_target(1, he2->twin()->get_has_equal_aux_data_in_target(1));
+      he1->set_is_equal_aux_data_in_target
+        (0, he2->twin()->get_is_equal_aux_data_in_target(0));
+      he1->set_is_equal_aux_data_in_target
+        (1, he2->twin()->get_is_equal_aux_data_in_target(1));
+      he1->set_has_equal_aux_data_in_target
+        (0, he2->twin()->get_has_equal_aux_data_in_target(0));
+      he1->set_has_equal_aux_data_in_target
+        (1, he2->twin()->get_has_equal_aux_data_in_target(1));
       he1->set_has_equal_aux_data_in_target_and_face
         (0, he2->twin()->get_has_equal_aux_data_in_target_and_face(0));
       he1->set_has_equal_aux_data_in_target_and_face
         (1, he2->twin()->get_has_equal_aux_data_in_target_and_face(1));
 
-      he2->set_is_equal_aux_data_in_target(0, he1->twin()->get_is_equal_aux_data_in_target(0));
-      he2->set_is_equal_aux_data_in_target(1, he1->twin()->get_is_equal_aux_data_in_target(1));
-      he2->set_has_equal_aux_data_in_target(0, he1->twin()->get_has_equal_aux_data_in_target(0));
-      he2->set_has_equal_aux_data_in_target(1, he1->twin()->get_has_equal_aux_data_in_target(1));
+      he2->set_is_equal_aux_data_in_target
+        (0, he1->twin()->get_is_equal_aux_data_in_target(0));
+      he2->set_is_equal_aux_data_in_target
+        (1, he1->twin()->get_is_equal_aux_data_in_target(1));
+      he2->set_has_equal_aux_data_in_target
+        (0, he1->twin()->get_has_equal_aux_data_in_target(0));
+      he2->set_has_equal_aux_data_in_target
+        (1, he1->twin()->get_has_equal_aux_data_in_target(1));
       he2->set_has_equal_aux_data_in_target_and_face
         (0, he1->twin()->get_has_equal_aux_data_in_target_and_face(0));
       he2->set_has_equal_aux_data_in_target_and_face
@@ -1661,26 +1675,40 @@ protected:
       /*new_vertex->set_is_fake(org_he->get_is_fake());*/
 
       // update all new bools
-      new_he->
-        set_is_equal_aux_data_in_face(0, org_he->get_is_equal_aux_data_in_face(0));
-      new_he->twin()->set_is_equal_aux_data_in_face(0, org_he->twin()->get_is_equal_aux_data_in_face(0));
-      new_he->set_is_equal_aux_data_in_face(1, org_he->get_is_equal_aux_data_in_face(1));
-      new_he->twin()->set_is_equal_aux_data_in_face(1, org_he->twin()->get_is_equal_aux_data_in_face(1));
+      new_he->set_is_equal_aux_data_in_face
+        (0, org_he->get_is_equal_aux_data_in_face(0));
+      new_he->twin()->set_is_equal_aux_data_in_face
+        (0, org_he->twin()->get_is_equal_aux_data_in_face(0));
+      new_he->set_is_equal_aux_data_in_face
+        (1, org_he->get_is_equal_aux_data_in_face(1));
+      new_he->twin()->set_is_equal_aux_data_in_face
+        (1, org_he->twin()->get_is_equal_aux_data_in_face(1));
 
-      new_he->set_has_equal_aux_data_in_face(0, org_he->get_has_equal_aux_data_in_face(0));
-      new_he->twin()->set_has_equal_aux_data_in_face(0, org_he->twin()->get_has_equal_aux_data_in_face(0));
-      new_he->set_has_equal_aux_data_in_face(1, org_he->get_has_equal_aux_data_in_face(1));
-      new_he->twin()->set_has_equal_aux_data_in_face(1, org_he->twin()->get_has_equal_aux_data_in_face(1));
+      new_he->set_has_equal_aux_data_in_face
+        (0, org_he->get_has_equal_aux_data_in_face(0));
+      new_he->twin()->set_has_equal_aux_data_in_face
+        (0, org_he->twin()->get_has_equal_aux_data_in_face(0));
+      new_he->set_has_equal_aux_data_in_face
+        (1, org_he->get_has_equal_aux_data_in_face(1));
+      new_he->twin()->set_has_equal_aux_data_in_face
+        (1, org_he->twin()->get_has_equal_aux_data_in_face(1));
 
-      // new_he->target is the original edge's target, and org_he->target is the new vertex
-      new_he->set_is_equal_aux_data_in_target(0, org_he->get_is_equal_aux_data_in_target(0));
-      new_he->set_is_equal_aux_data_in_target(1, org_he->get_is_equal_aux_data_in_target(1));
+      // new_he->target is the original edge's target, and org_he->target
+      // is the new vertex
+      new_he->set_is_equal_aux_data_in_target
+        (0, org_he->get_is_equal_aux_data_in_target(0));
+      new_he->set_is_equal_aux_data_in_target
+        (1, org_he->get_is_equal_aux_data_in_target(1));
       org_he->set_is_equal_aux_data_in_target(0, true);
       org_he->set_is_equal_aux_data_in_target(1, true);
-      new_he->set_has_equal_aux_data_in_target(0, org_he->get_has_equal_aux_data_in_target(0));
-      new_he->set_has_equal_aux_data_in_target(1, org_he->get_has_equal_aux_data_in_target(1));
-      org_he->set_has_equal_aux_data_in_target(0, !base->aux_has_no_data(org_he, 0));
-      org_he->set_has_equal_aux_data_in_target(1, !base->aux_has_no_data(org_he, 1));
+      new_he->set_has_equal_aux_data_in_target
+        (0, org_he->get_has_equal_aux_data_in_target(0));
+      new_he->set_has_equal_aux_data_in_target
+        (1, org_he->get_has_equal_aux_data_in_target(1));
+      org_he->set_has_equal_aux_data_in_target
+        (0, !base->aux_has_no_data(org_he, 0));
+      org_he->set_has_equal_aux_data_in_target
+        (1, !base->aux_has_no_data(org_he, 1));
       new_he->set_has_equal_aux_data_in_target_and_face
         (0, org_he->get_has_equal_aux_data_in_target_and_face(0));
       new_he->set_has_equal_aux_data_in_target_and_face
@@ -1690,11 +1718,14 @@ protected:
       org_he->set_has_equal_aux_data_in_target_and_face
         (1, org_he->get_has_equal_aux_data_in_face(1));
 
-      // new_he->source is the new vertex, and org_he->source is the original vertex
+      // new_he->source is the new vertex, and org_he->source is the
+      // original vertex
       new_he->twin()->set_is_equal_aux_data_in_target(0, true);
       new_he->twin()->set_is_equal_aux_data_in_target(1, true);
-      new_he->twin()->set_has_equal_aux_data_in_target(0,!base->aux_has_no_data(org_he, 0));
-      new_he->twin()->set_has_equal_aux_data_in_target(1,!base->aux_has_no_data(org_he, 1));
+      new_he->twin()->set_has_equal_aux_data_in_target
+        (0,!base->aux_has_no_data(org_he, 0));
+      new_he->twin()->set_has_equal_aux_data_in_target
+        (1,!base->aux_has_no_data(org_he, 1));
 
       new_he->twin()->set_has_equal_aux_data_in_target_and_face
         (0, org_he->twin()->get_has_equal_aux_data_in_face(0));
@@ -1764,8 +1795,8 @@ protected:
   
 protected:
   Envelope_resolver         *resolver;
-  const Traits * traits;
-  bool                      own_traits; 
+  const Traits * m_geom_traits;
+  bool m_own_traits; 
   bool                      m_is_lower;
 };
 
