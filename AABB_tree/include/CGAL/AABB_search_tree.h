@@ -110,6 +110,7 @@ namespace CGAL
                                 ++begin;
                         }
                         m_tree = new Tree(points.begin(), points.end());
+                        m_tree->build();
                 }
 
                 ~AABB_search_tree() {
