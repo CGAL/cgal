@@ -97,6 +97,7 @@ void MainWindow::open(QString filename)
 
 			// update bbox
 			updateViewerBBox();
+      m_pViewer->update();
 		}
 	}
 }
@@ -160,6 +161,7 @@ void MainWindow::on_actionInside_points_triggered()
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	m_pScene->generate_inside_points(nb_points);
 	QApplication::restoreOverrideCursor();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionBoundary_segments_triggered()
@@ -174,6 +176,7 @@ void MainWindow::on_actionBoundary_segments_triggered()
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	m_pScene->generate_boundary_segments(nb_slices);
 	QApplication::restoreOverrideCursor();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionBoundary_points_triggered()
@@ -188,6 +191,7 @@ void MainWindow::on_actionBoundary_points_triggered()
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	m_pScene->generate_boundary_points(nb_points);
 	QApplication::restoreOverrideCursor();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionEdge_points_triggered()
@@ -202,6 +206,7 @@ void MainWindow::on_actionEdge_points_triggered()
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	m_pScene->generate_edge_points(nb_points);
 	QApplication::restoreOverrideCursor();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionBench_distances_triggered()
@@ -237,6 +242,7 @@ void MainWindow::on_actionUnsigned_distance_function_to_facets_triggered()
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	m_pScene->unsigned_distance_function();
 	QApplication::restoreOverrideCursor();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionUnsigned_distance_function_to_edges_triggered()
@@ -244,6 +250,7 @@ void MainWindow::on_actionUnsigned_distance_function_to_edges_triggered()
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	m_pScene->unsigned_distance_function_to_edges();
 	QApplication::restoreOverrideCursor();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionSigned_distance_function_to_facets_triggered()
@@ -251,41 +258,49 @@ void MainWindow::on_actionSigned_distance_function_to_facets_triggered()
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	m_pScene->signed_distance_function();
 	QApplication::restoreOverrideCursor();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionView_polyhedron_triggered()
 {
 	m_pScene->toggle_view_poyhedron();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionView_points_triggered()
 {
 	m_pScene->toggle_view_points();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionView_segments_triggered()
 {
 	m_pScene->toggle_view_segments();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionView_distance_function_triggered()
 {
 	m_pScene->toggle_view_distance_function();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionClear_points_triggered()
 {
 	m_pScene->clear_points();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionClear_segments_triggered()
 {
 	m_pScene->clear_segments();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionClear_distance_function_triggered()
 {
 	m_pScene->clear_distance_function();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionRefine_bisection_triggered()
@@ -300,6 +315,7 @@ void MainWindow::on_actionRefine_bisection_triggered()
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	m_pScene->refine_bisection(max_len * max_len);
 	QApplication::restoreOverrideCursor();
+  m_pViewer->update();
 }
 
 void MainWindow::on_actionBench_memory_triggered()
