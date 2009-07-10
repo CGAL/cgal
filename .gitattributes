@@ -2104,20 +2104,22 @@ Mesh_2/test/Mesh_2/fish.poly -text svneol=unset#application/octet-stream
 Mesh_3/doc_tex/Mesh_3/PkgDescription.tex -text
 Mesh_3/doc_tex/Mesh_3/main.tex -text
 Mesh_3/doc_tex/Mesh_3/mesh_3_user.tex -text
-Mesh_3/doc_tex/Mesh_3/multilabel_mesher.eps -text
-Mesh_3/doc_tex/Mesh_3/multilabel_mesher.png -text
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain.eps -text svneol=unset#application/postscript
-Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_3.eps -text svneol=unset#application/postscript
-Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_3.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_3.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_4.eps -text svneol=unset#application/postscript
-Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_4.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_4.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_5.eps -text svneol=unset#application/postscript
-Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_5.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_5.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/liver.eps -text svneol=unset#application/postscript
+Mesh_3/doc_tex/Mesh_3/pictures/liver.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher.eps -text svneol=unset#application/postscript
+Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.eps -text svneol=unset#application/postscript
-Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain_2.eps -text svneol=unset#application/postscript
-Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain_2.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain_2.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3_ref/BisectionGeometricTraits_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/Implicit_mesh_domain_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/IntersectionGeometricTraits_3.tex -text

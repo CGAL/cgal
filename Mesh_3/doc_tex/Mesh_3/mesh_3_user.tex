@@ -1,10 +1,10 @@
 \begin{figure}[ht]
 \begin{center}
  \begin{ccTexOnly}
-   \includegraphics[height=10cm]{Mesh_3/multilabel_mesher}
+   \includegraphics[height=9cm]{Mesh_3/pictures/multilabel_mesher}
  \end{ccTexOnly}
  \begin{ccHtmlOnly}
-   <img border="0" src="./multilabel_mesher.png">
+   <img border="0" src="./pictures/multilabel_mesher.jpg"><br/>
  \end{ccHtmlOnly}
  \caption{Cut-view of a multi-domain 3D mesh generated from a segmented image.}
   \label{figure:multilabel_mesher}
@@ -185,7 +185,10 @@ behaves with respect to these parameters.
    \includegraphics[height=5cm]{Mesh_3/pictures/implicit_domain_5}
  \end{ccTexOnly}
  \begin{ccHtmlOnly}
-   <img border="0" src="./pictures/implicit_domain.png">
+   <img border="0" src="./pictures/implicit_domain.jpg"><br/>
+   <img border="0" src="./pictures/implicit_domain_3.jpg">
+   <img border="0" src="./pictures/implicit_domain_4.jpg">
+   <img border="0" src="./pictures/implicit_domain_5.jpg"><br/>
  \end{ccHtmlOnly}
  \caption{Top : the mesh  is obtained using the parameters $(25,0.15,0.05)$ for the angular bound,
 radius bound and distance bound of  surface facets
@@ -306,7 +309,7 @@ resulting mesh.
    \includegraphics[height=6cm]{Mesh_3/pictures/implicit_domain}
  \end{ccTexOnly}
  \begin{ccHtmlOnly}
-   <img border="0" src="./pictures/implicit_domain.png">
+   <img border="0" src="./pictures/implicit_domain.jpg"><br/>
  \end{ccHtmlOnly}
  \caption{Cut-View of a 3D mesh produced from an implicit domain}
   \label{figure:implicit_domain}
@@ -329,8 +332,8 @@ shows the resulting mesh.
    \includegraphics[height=7cm]{Mesh_3/pictures/polyhedral_domain_2}
  \end{ccTexOnly}
  \begin{ccHtmlOnly}
-   <img border="0" src="./pictures/polyhedral_domain.png">
-   <img border="0" src="./pictures/polyhedral_domain_2.png">
+   <img border="0" src="./pictures/polyhedral_domain.jpg">
+   <img border="0" src="./pictures/polyhedral_domain_2.jpg"><br/>
  \end{ccHtmlOnly}
  \caption{View of 3D meshes produced from a polyhedral domain. (i) 
    is a view of file out\_1.mesh and (ii) is a view of file
@@ -343,13 +346,27 @@ shows the resulting mesh.
 
 
 \subsection{Mesh Generation From a Segmented 3D Image}
-
+\label{Mesh_3_subsection_examples_3d_image}
 The following code produces  a 3D mesh from
 a 3D image. The image is a segmented medical image  in which each 
 voxel  is associated a label  in accordance with
 the tissue  the voxel belongs to.
 The domain is therefore a multi-domain
 where each subdomain corresponds to a specific tissue.
-The resulting mesh is shown in Figure~\ref{figure:multilabel_mesher}.
+The resulting mesh is shown in Figure~\ref{figure:liver_3d_image_mesh}.
 
 \ccIncludeExampleCode{Mesh_3/mesh_3D_image.cpp}
+
+\begin{figure}[ht]
+\begin{center}
+ \begin{ccTexOnly}
+   \includegraphics[width=14cm]{Mesh_3/pictures/liver}
+ \end{ccTexOnly}
+ \begin{ccHtmlOnly}
+   <img border="0" src="./pictures/liver.jpg"><br/>
+ \end{ccHtmlOnly}
+ \caption{Cut-view of a 3D mesh produced from a segmented liver image. Code from
+ subsection~\ref{Mesh_3_subsection_examples_3d_image} generates this file.}
+  \label{figure:liver_3d_image_mesh}
+\end{center}
+\end{figure}
