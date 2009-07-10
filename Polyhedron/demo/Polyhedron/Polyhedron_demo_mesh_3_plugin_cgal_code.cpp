@@ -14,6 +14,8 @@
 
 #include <CGAL/Timer.h>
 
+
+// @TODO: Is that the right kernel?!
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Kernel> Mesh_domain;
 
 // Triangulation
