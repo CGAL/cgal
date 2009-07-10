@@ -1,6 +1,7 @@
 #ifndef CGAL_PDB_BASIC_H
 #define CGAL_PDB_BASIC_H
 #include <CGAL/basic.h>
+#include <CGAL/auto_link/PDB.h>
 #include <CGAL/Tools/utility_macros.h>
 #include <CGAL/Tools/Log.h>
 
