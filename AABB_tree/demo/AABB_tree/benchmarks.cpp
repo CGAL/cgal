@@ -187,7 +187,7 @@ void Scene::bench_distances_vs_nbt()
 
   // generates 10K random point queries
   const int nb_queries = 10000;
-  std::vector<Point> queries(nb_queries);
+  std::vector<Point> queries;
   srand(0);
   for(int i=0;i<nb_queries;i++)
       queries.push_back(random_point(m_bbox));
