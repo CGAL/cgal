@@ -2135,8 +2135,6 @@ Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSEVertexBase_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/make_mesh_3_with_sharp_edges.tex -text
 Mesh_3/examples/Mesh_3/data/elephant.off -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/data/liver.inr.gz -text svneol=unset#application/gzip
-Mesh_3/examples/Mesh_3/data/lucy.off -text svneol=unset#application/octet-stream
-Mesh_3/examples/Mesh_3/data/star.off -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/mesh_3D_image.cpp -text
 Mesh_3/examples/Mesh_3/mesh_implicit_domains.cpp -text
 Mesh_3/examples/Mesh_3/mesh_polyhedral_domain.cpp -text
