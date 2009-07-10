@@ -4065,4 +4065,5 @@ wininst/developer_scripts/cgal_very_small_FFFFFF.bmp -text svneol=unset#image/bm
 wininst/developer_scripts/locate.zip -text svneol=unset#application/zip
 wininst/developer_scripts/script_cgal_3_3.nsh -text
 wininst/developer_scripts/script_cgal_3_4.nsh -text
+wininst/developer_scripts/script_cgal_3_5.nsh -text
 wininst/developer_scripts/zirkel.bmp -text svneol=unset#image/bmp
