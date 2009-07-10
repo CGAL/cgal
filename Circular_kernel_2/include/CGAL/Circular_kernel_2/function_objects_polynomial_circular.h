@@ -504,7 +504,6 @@ namespace CircularFunctors {
     result_type
     operator()(const T1& t1, const T2& t2) const
     { return CGALi::do_intersect(t1, t2, CK()); }
-    using CK::Linear_kernel::Do_intersect_2::operator();
   };
   
   template < class CK >
