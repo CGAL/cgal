@@ -12,7 +12,6 @@ AABB_tree/demo/AABB_tree/Viewer.h -text
 AABB_tree/demo/AABB_tree/cleanup.bat eol=crlf
 AABB_tree/demo/AABB_tree/data/hand.off -text svneol=unset#application/octet-stream
 AABB_tree/demo/AABB_tree/data/knot.off -text
-AABB_tree/demo/AABB_tree/data/shark.off -text
 AABB_tree/demo/AABB_tree/render_edges.h -text
 AABB_tree/demo/AABB_tree/resources/about.html -text
 AABB_tree/demo/AABB_tree/resources/cgal_logo.xpm -text
@@ -22,11 +21,8 @@ AABB_tree/doc_tex/AABB_tree/details.tex -text
 AABB_tree/doc_tex/AABB_tree/examples.tex -text
 AABB_tree/doc_tex/AABB_tree/figs/anchor.eps -text
 AABB_tree/doc_tex/AABB_tree/figs/anchor.png -text
-AABB_tree/doc_tex/AABB_tree/figs/anchor.ppt -text
 AABB_tree/doc_tex/AABB_tree/figs/bench.eps -text
 AABB_tree/doc_tex/AABB_tree/figs/bench.png -text svneol=unset#image/png
-AABB_tree/doc_tex/AABB_tree/figs/memory.eps -text svneol=unset#application/postscript
-AABB_tree/doc_tex/AABB_tree/figs/memory.png -text svneol=unset#image/png
 AABB_tree/doc_tex/AABB_tree/figs/teaser-thumb.png -text svneol=unset#image/png
 AABB_tree/doc_tex/AABB_tree/figs/teaser.png -text svneol=unset#image/png
 AABB_tree/doc_tex/AABB_tree/figs/teaser.ppt -text svneol=unset#application/vnd.ms-powerpoint

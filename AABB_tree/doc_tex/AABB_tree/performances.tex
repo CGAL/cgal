@@ -20,23 +20,18 @@ The surface triangle mesh chosen for benchmarking the tree construction is the k
 
 \subsection{Memory}
 
-The following curve plots the AABB tree memory consumption (without constructing the internal KD-tree) against the number of triangles of a polyhedron triangle surface mesh, when using the polyhedron triangle primitive. As expected the memory grows linearly and peaks to 128Mbytes for 2.3M triangles in the example shown. The AABB tree occupies approximately 60 bytes per primitive. The memory consumption goes up to almost 100 bytes per primitive when constructing the internal KD-tree with one reference point per primitive (the default mode when calling the function \ccc{tree.accelerate_distance_queries()}). For large models we thus recommend to specify a lower number of reference point (evenly distributed) to construct the internal KD-tree through the same function which takes an iterator range as input.
+The AABB tree occupies approximately 60 bytes per primitive (without constructing the internal KD-tree). It increases to almost 100 bytes per primitive when constructing the internal KD-tree with one reference point per primitive (the default mode when calling the function \ccc{tree.accelerate_distance_queries()}). For large models we thus recommend to specify a lower number of reference point (evenly distributed) to construct the internal KD-tree through the same function which takes an iterator range as input.
 
-% memory
-\begin{center}
-    \label{fig:AABB-tree-memory}
-    \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{AABB_tree/figs/memory}
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img width="99%" border=0 src="./figs/memory.png"><P>
-    \end{ccHtmlOnly}
-    \begin{figure}[h]
-        \caption{Memory consumption in Bytes against number of triangles, here
-                 ranging from 100 to 2.3M triangles.}
-    \end{figure}
-\end{center}
-
+\begin{tabular}{|l|c|c|}
+  \hline
+  Number of triangles & Memory (in Bytes)\\
+  \hline
+   14,400 &   156 &   157 \\
+   57,600 &   328 &   328 \\
+  230,400 & 1,141 & 1,437 \\
+  921,600 & 4,813 & 5,953 \\
+  \hline
+\end{tabular}
 
 
 \subsection{Intersections}
