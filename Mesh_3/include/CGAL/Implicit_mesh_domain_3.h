@@ -62,7 +62,7 @@ public:
    * @param bounding_sphere a bounding sphere of the domain
    * @param error_bound the error bound relative to the sphere radius
    */
-  Implicit_mesh_domain_3(const Function& f,
+  Implicit_mesh_domain_3(Function& f,
                          const Sphere_3& bounding_sphere,
                          const FT& error_bound = FT(1e-3))
     : Base(Function_wrapper(f), bounding_sphere, error_bound)  { };
