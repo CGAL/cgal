@@ -35,13 +35,13 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE ../../include)
 
-    add_executable  (Envelope_3_demo  envelope_3.cpp)
+    add_executable  (envelope_3  envelope_3.cpp)
   
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS Envelope_3_demo )
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS envelope_3 )
   
   
     # Link the executable to CGAL and third-party libraries
-    target_link_libraries(Envelope_3_demo ${QT3_LIBRARIES} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+    target_link_libraries(envelope_3 ${QT3_LIBRARIES} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   else()
   
     message(STATUS "NOTICE: This demo requires Qt3 and the CGAL Qt3 library, and will not be compiled.")
