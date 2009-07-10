@@ -2,14 +2,16 @@
 #include <QInputDialog>
 #include <CGAL/Memory_sizer.h>
 
+#include <CGAL/Timer.h>
+
 void Scene::benchmark_intersections(const int duration)
 {
 	// constructs tree
 	std::cout << "Construct AABB tree...";
-	QTime time;
-	time.start();
+  CGAL::Timer timer;
+	timer.start();
 	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
-	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+	std::cout << "done (" << timer.time() << " s)" << std::endl;
 
 	// generates random queries
 	const int nb_queries = 1000000;
@@ -18,7 +20,7 @@ void Scene::benchmark_intersections(const int duration)
 	std::vector<Line> lines;
 	std::vector<Plane> planes;
 	std::vector<Segment> segments;
-	time.start();
+	timer.start();
 	srand(0);
 	int i = 0;
 	for(i=0; i<nb_queries; i++)
@@ -28,7 +30,7 @@ void Scene::benchmark_intersections(const int duration)
 		planes.push_back(random_plane(tree.bbox()));
 		segments.push_back(random_segment(tree.bbox()));
 	}
-	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+	std::cout << "done (" << timer.time() << " s)" << std::endl;
 
 	// bench for all functions and query types
 	bench_intersections(tree,duration,DO_INTERSECT,"do_intersect()",rays,lines,planes,segments,nb_queries);
@@ -59,12 +61,12 @@ void Scene::bench_intersections(Facet_tree& tree,
 
 void Scene::benchmark_distances(const int duration)
 {
-	QTime time;
-	time.start();
+	CGAL::Timer timer;
+	timer.start();
 	std::cout << "Construct AABB tree and internal KD tree...";
 	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	tree.accelerate_distance_queries();
-	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+	std::cout << "done (" << timer.time() << " s)" << std::endl;
 
 	// benchmark
 	bench_closest_point(tree,duration);
@@ -84,7 +86,7 @@ unsigned int Scene::nb_digits(unsigned int value)
 }
 
 // bench memory against number of facets in the tree
-// the tree is reconstructed each time in the mesh 
+// the tree is reconstructed each timer in the mesh 
 // refinement loop
 void Scene::bench_memory()
 {
@@ -112,7 +114,7 @@ void Scene::bench_memory()
 void Scene::bench_construction()
 {
 	std::cout << std::endl << "Benchmark construction" << std::endl;
-	std::cout << "#Facets    alone (ms)   with KD-tree (ms)" << std::endl;
+	std::cout << "#Facets    alone (s)   with KD-tree (s)" << std::endl;
 
 	while(m_pPolyhedron->size_of_facets() < 1000000)
 	{
@@ -123,16 +125,16 @@ void Scene::bench_construction()
 		refiner.run_nb_splits(nb_splits);
 
 		// constructs tree
-		QTime time1;
+		CGAL::Timer time1;
 		time1.start();
 		Facet_tree tree1(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
-		double duration_construction_alone = time1.elapsed();
+		double duration_construction_alone = time1.time();
 
-		QTime time2;
+		CGAL::Timer time2;
 		time2.start();
 		Facet_tree tree2(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 		tree2.accelerate_distance_queries();
-		double duration_construction_and_kdtree = time2.elapsed();
+		double duration_construction_and_kdtree = time2.time();
 
 		std::cout << m_pPolyhedron->size_of_facets() << "\t" 
 			        << duration_construction_alone     << "\t" 
@@ -165,13 +167,13 @@ void Scene::bench_intersections_vs_nbt()
 		Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 
 		// calls ray queries
-		QTime time;
-		time.start();
+    CGAL::Timer timer;
+		timer.start();
 		std::list<Object_and_primitive_id> intersections;
 		for(int i=0;i<nb_queries;i++)
 			tree.all_intersections(queries[i],std::back_inserter(intersections));
-		double duration = time.elapsed();
-		int speed = (int)(1000.0 * (double)nb_queries / (double)duration);
+		double duration = timer.time();
+		int speed = (int)((double)nb_queries / (double)duration);
 
 		std::cout << m_pPolyhedron->size_of_facets() << ", " << speed << std::endl;
 	}
@@ -203,12 +205,12 @@ void Scene::bench_distances_vs_nbt()
 		tree.accelerate_distance_queries();
 
 		// calls queries
-		QTime time;
-		time.start();
+		CGAL::Timer timer;
+		timer.start();
 		for(int i=0;i<nb_queries;i++)
 			tree.closest_point(queries[i]);
-		double duration = time.elapsed();
-		int speed = (int)(1000.0 * (double)nb_queries / (double)duration);
+		double duration = timer.time();
+		int speed = (int)((double)nb_queries / (double)duration);
 
 		std::cout << m_pPolyhedron->size_of_facets() << ", " << speed << std::endl;
 	}
@@ -218,16 +220,16 @@ template <class Query>
 void Scene::bench_intersection(Facet_tree& tree,
 									const int function,
 									const int duration,
-									const char *query_name,
+									char *query_name,
 									const std::vector<Query>& queries,
 									const int nb_queries)
 {
-	QTime time;
-	time.start();
+	CGAL::Timer timer;
+	timer.start();
 	unsigned int nb = 0;
 	std::list<Primitive_id> primitive_ids;
 	std::list<Object_and_primitive_id> intersections;
-	while(time.elapsed() < duration)
+	while(timer.time() < duration)
 	{
 		const Query& query = queries[nb % nb_queries]; // loop over vector
 		switch(function)
@@ -253,7 +255,7 @@ void Scene::bench_intersection(Facet_tree& tree,
 		nb++;
 	}
 
-	double speed = 1000.0 * nb / time.elapsed();
+	double speed = (double)nb / (double)timer.time();
 	std::cout << speed << " queries/s with " << query_name << std::endl;
 }
 
@@ -267,13 +269,20 @@ void Scene::bench_distance(Facet_tree& tree,
 						   const int function,
 						   const int duration)
 {
-	QTime time;
-	time.start();
-	unsigned int nb = 0;
+
+  // generates 100K random point queries
   srand(0);
-	while(time.elapsed() < duration)
+	unsigned int nb_queries = 100000;
+  std::vector<Point> queries;
+	for(unsigned int i=0;i<nb_queries;i++)
+		queries.push_back(random_point(tree.bbox()));
+
+	CGAL::Timer timer;
+	timer.start();
+	unsigned int nb = 0;
+	while(timer.time() < duration)
 	{
-		Point query = random_point(tree.bbox());
+		const Point& query = queries[nb%nb_queries];
 		switch(function)
 		{
 		case SQ_DISTANCE:
@@ -288,15 +297,7 @@ void Scene::bench_distance(Facet_tree& tree,
 		nb++;
 	}
 
-	// subtract random generation time to be more accurate
-	double duration_random_and_tests = time.elapsed();
-	time.start();
-	for(unsigned int i=0;i<nb;i++)
-		random_point(tree.bbox());
-	double duration_random = time.elapsed();
-
-	double elapsed = duration_random_and_tests - duration_random;
-	double speed = 1000.0 * nb / elapsed;
+	double speed = (double)nb / (double)timer.time();
 	std::cout << speed << " queries/s" << std::endl;
 }
 

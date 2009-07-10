@@ -6,12 +6,12 @@
 #include <QString>
 #include <QTextStream>
 #include <QFileInfo>
-#include <QTime>
 #include <QInputDialog>
 
 #include "Refiner.h"
 #include "render_edges.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Timer.h>
 
 Scene::Scene()
 {
@@ -331,8 +331,8 @@ void Scene::generate_inside_points(const unsigned int nb_points)
 	Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	std::cout << "done." << std::endl;
 
-	QTime time;
-	time.start();
+	CGAL::Timer timer;
+	timer.start();
 	std::cout << "Generate " << nb_points << " inside points";
 
 	unsigned int nb_trials = 0;
@@ -350,9 +350,9 @@ void Scene::generate_inside_points(const unsigned int nb_points)
 		}
 		nb_trials++;
 	}
-	double speed = 1000.0 * (double)nb_trials / time.elapsed();
+	double speed = (double)nb_trials / timer.time();
 	std::cout << "done (" << nb_trials << " trials, "
-		      << time.elapsed() << " ms, "
+		      << timer.time() << " s, "
 			  << speed << " queries/s)" << std::endl;
 }
 
@@ -367,8 +367,8 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
 	Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	std::cout << "done." << std::endl;
 
-	QTime time;
-	time.start();
+	CGAL::Timer timer;
+	timer.start();
 	std::cout << "Generate boundary segments from " << nb_slices << " slices: ";
 
 	Vector normal((FT)0.0,(FT)0.0,(FT)1.0);
@@ -396,7 +396,7 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
 				m_segments.push_back(segment);
 		}
 	}
-	std::cout << m_segments.size() << " segments, " << time.elapsed() << " ms." << std::endl;
+	std::cout << m_segments.size() << " segments, " << timer.time() << " s." << std::endl;
 }
 
 void Scene::generate_boundary_points(const unsigned int nb_points)
@@ -410,8 +410,8 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
 	Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	std::cout << "done." << std::endl;
 
-	QTime time;
-	time.start();
+	CGAL::Timer timer;
+	timer.start();
 	std::cout << "Generate boundary points: ";
 
 	unsigned int nb = 0;
@@ -439,7 +439,7 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
 			}
 		}
 	}
-	std::cout << nb_lines << " line queries, " << time.elapsed() << " ms." << std::endl;
+	std::cout << nb_lines << " line queries, " << timer.time() << " s." << std::endl;
 }
 
 void Scene::generate_edge_points(const unsigned int nb_points)
@@ -453,8 +453,8 @@ void Scene::generate_edge_points(const unsigned int nb_points)
 	Tree tree(m_pPolyhedron->edges_begin(),m_pPolyhedron->edges_end());
 	std::cout << "done." << std::endl;
 
-	QTime time;
-	time.start();
+	CGAL::Timer timer;
+	timer.start();
 	std::cout << "Generate edge points: ";
 
 	unsigned int nb = 0;
@@ -482,17 +482,17 @@ void Scene::generate_edge_points(const unsigned int nb_points)
 			}
 		}
 	}
-	std::cout << nb_planes << " plane queries, " << time.elapsed() << " ms." << std::endl;
+	std::cout << nb_planes << " plane queries, " << timer.time() << " s." << std::endl;
 }
 
 void Scene::unsigned_distance_function()
 {
-	QTime time;
-	time.start();
+	CGAL::Timer timer;
+	timer.start();
 	std::cout << "Construct AABB tree...";
 	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	tree.accelerate_distance_queries();
-	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+	std::cout << "done (" << timer.time() << " s)" << std::endl;
 
 	m_max_distance_function = (FT)0.0;
 	int i,j;
@@ -522,12 +522,12 @@ void Scene::unsigned_distance_function_to_edges()
 	typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
 	typedef CGAL::AABB_tree<Traits> Edge_tree;
 
-	QTime time;
-	time.start();
+	CGAL::Timer timer;
+	timer.start();
 	std::cout << "Construct AABB tree from edges...";
 	Edge_tree tree(m_pPolyhedron->edges_begin(),m_pPolyhedron->edges_end());
 	tree.accelerate_distance_queries();
-	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+	std::cout << "done (" << timer.time() << " s)" << std::endl;
 
 	m_max_distance_function = (FT)0.0;
 	const double dx = m_bbox.xmax() - m_bbox.xmin();
@@ -553,12 +553,12 @@ distance : m_max_distance_function;
 
 void Scene::signed_distance_function()
 {
-	QTime time;
-	time.start();
+	CGAL::Timer timer;
+	timer.start();
 	std::cout << "Construct AABB tree...";
 	Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
 	tree.accelerate_distance_queries();
-	std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
+	std::cout << "done (" << timer.time() << " s)" << std::endl;
 
 	m_max_distance_function = (FT)0.0;
 	Vector vec = random_vector();
