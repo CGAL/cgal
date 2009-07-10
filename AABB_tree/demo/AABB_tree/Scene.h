@@ -103,13 +103,13 @@ public:
 	void bench_construction();
 	void bench_distances_vs_nbt();
 	void bench_intersections_vs_nbt();
-	void benchmark_intersections(const int duration);
+	void benchmark_intersections(const double duration);
 	unsigned int nb_digits(const unsigned int value);
 
 	template <class Query>
-	void bench_intersection(Facet_tree& tree,const int function,const int duration,
+	void bench_intersection(Facet_tree& tree,const int function,const double duration,
 		char *query_name, const std::vector<Query>& queries, const int nb_queries);
-	void bench_intersections(Facet_tree& tree, const int duration, const int function,
+	void bench_intersections(Facet_tree& tree, const double duration, const int function,
 		char *function_name, const std::vector<Ray>& rays,
 		const std::vector<Line>& lines, const std::vector<Plane>& planes,
 		const std::vector<Segment>& segments, const int nb_queries);
@@ -118,11 +118,11 @@ public:
 	enum {SQ_DISTANCE,
 	      CLOSEST_POINT,
 	      CLOSEST_POINT_AND_PRIMITIVE_ID};
-	void benchmark_distances(const int duration);
-	void bench_closest_point(Facet_tree& tree,const int duration);
-	void bench_squared_distance(Facet_tree& tree,const int duration);
-	void bench_closest_point_and_primitive(Facet_tree& tree,const int duration);
-	void bench_distance(Facet_tree& tree,const int function,const int duration);
+	void benchmark_distances(const double duration);
+	void bench_closest_point(Facet_tree& tree,const double duration);
+	void bench_squared_distance(Facet_tree& tree,const double duration);
+	void bench_closest_point_and_primitive(Facet_tree& tree,const double duration);
+	void bench_distance(Facet_tree& tree,const int function,const double duration);
 
 	// drawing
 	void draw_points();

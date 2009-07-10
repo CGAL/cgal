@@ -4,7 +4,7 @@
 
 #include <CGAL/Timer.h>
 
-void Scene::benchmark_intersections(const int duration)
+void Scene::benchmark_intersections(const double duration)
 {
 	// constructs tree
 	std::cout << "Construct AABB tree...";
@@ -42,7 +42,7 @@ void Scene::benchmark_intersections(const int duration)
 }
 
 void Scene::bench_intersections(Facet_tree& tree,
-									              const int duration,
+									              const double duration,
 													      const int function,
 													      char *function_name,
 																const std::vector<Ray>& rays,
@@ -59,7 +59,7 @@ void Scene::bench_intersections(Facet_tree& tree,
 }
 
 
-void Scene::benchmark_distances(const int duration)
+void Scene::benchmark_distances(const double duration)
 {
 	CGAL::Timer timer;
 	timer.start();
@@ -219,7 +219,7 @@ void Scene::bench_distances_vs_nbt()
 template <class Query>
 void Scene::bench_intersection(Facet_tree& tree,
 									const int function,
-									const int duration,
+									const double duration,
 									char *query_name,
 									const std::vector<Query>& queries,
 									const int nb_queries)
@@ -267,7 +267,7 @@ void Scene::bench_intersection(Facet_tree& tree,
 
 void Scene::bench_distance(Facet_tree& tree,
 						   const int function,
-						   const int duration)
+						   const double duration)
 {
 
   // generates 100K random point queries
@@ -302,21 +302,21 @@ void Scene::bench_distance(Facet_tree& tree,
 }
 
 void Scene::bench_squared_distance(Facet_tree& tree,
-								   const int duration)
+								   const double duration)
 {
 	std::cout << "Benchmark squared distance" << std::endl;
 	bench_distance(tree,SQ_DISTANCE,duration);
 }
 
 void Scene::bench_closest_point(Facet_tree& tree,
-								const int duration)
+								const double duration)
 {
 	std::cout << "Benchmark closest point" << std::endl;
 	bench_distance(tree,CLOSEST_POINT,duration);
 }
 
 void Scene::bench_closest_point_and_primitive(Facet_tree& tree,
-											  const int duration)
+											  const double duration)
 {
 	std::cout << "Benchmark closest point and primitive" << std::endl;
 	bench_distance(tree,CLOSEST_POINT_AND_PRIMITIVE_ID,duration);

@@ -212,8 +212,8 @@ void MainWindow::on_actionEdge_points_triggered()
 void MainWindow::on_actionBench_distances_triggered()
 {
 	bool ok;
-	const int duration = QInputDialog::getInteger(NULL, "Duration",
-		"Duration (s):",1,0.01,1000000,8,&ok);
+	const double duration = QInputDialog::getDouble(NULL, "Duration",
+		"Duration (s):",1.0,0.01,1000,8,&ok);
 	if(!ok)
 		return;
 
@@ -226,8 +226,8 @@ void MainWindow::on_actionBench_distances_triggered()
 void MainWindow::on_actionBench_intersections_triggered()
 {
 	bool ok;
-	const int duration = QInputDialog::getInteger(NULL, "Duration",
-		"Duration (s):",1,0.01,1000000,8,&ok);
+	const double duration = QInputDialog::getDouble(NULL, "Duration",
+		"Duration (s):",1.0,0.01,1000.0,8,&ok);
 	if(!ok)
 		return;
 
