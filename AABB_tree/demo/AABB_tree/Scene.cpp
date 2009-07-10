@@ -321,6 +321,54 @@ Plane Scene::random_plane(const CGAL::Bbox_3& bbox)
 	return Plane(p,vec);
 }
 
+void Scene::generate_points_in(const unsigned int nb_points,
+                               const double min,
+                               const double max)
+{
+	typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
+	typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+	typedef CGAL::AABB_tree<Traits> Tree;
+
+	std::cout << "Construct AABB tree...";
+	Tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+	std::cout << "done." << std::endl;
+
+	CGAL::Timer timer;
+	timer.start();
+	std::cout << "Generate " << nb_points << " points in interval ["
+      << min << ";" << max << "]";
+
+	unsigned int nb_trials = 0;
+	Vector vec = random_vector();
+	while(m_points.size() < nb_points)
+	{
+		Point p = random_point(tree.bbox());
+
+    // measure distance
+    FT signed_distance = std::sqrt(tree.squared_distance(p));
+
+    // measure sign
+		Ray ray(p,vec);
+		int nb_intersections = (int)tree.number_of_intersected_primitives(ray);
+		if(nb_intersections % 2 != 0)
+        signed_distance *= -1.0;
+
+    if(signed_distance >= min &&
+       signed_distance <= max)
+		{
+			m_points.push_back(p);
+			if(m_points.size()%(nb_points/10) == 0)
+				std::cout << "."; // ASCII progress bar
+		}
+		nb_trials++;
+	}
+	double speed = (double)nb_trials / timer.time();
+	std::cout << "done (" << nb_trials << " trials, "
+		      << timer.time() << " s, "
+			  << speed << " queries/s)" << std::endl;
+}
+
+
 void Scene::generate_inside_points(const unsigned int nb_points)
 {
 	typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;

@@ -70,11 +70,13 @@ public:
 	void clear_distance_function() { m_max_distance_function = 0.0; }
 
 	// algorithms
+	void refine_bisection(const FT max_sqlen);
 	void generate_edge_points(const unsigned int nb_points);
 	void generate_inside_points(const unsigned int nb_points);
 	void generate_boundary_points(const unsigned int nb_points);
 	void generate_boundary_segments(const unsigned int nb_slices);
-	void refine_bisection(const FT max_sqlen);
+  void generate_points_in(const unsigned int nb_points,
+      const double min, const double max);
 
 	// distance functions 
 	void signed_distance_function();

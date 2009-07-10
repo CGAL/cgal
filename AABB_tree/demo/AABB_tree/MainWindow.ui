@@ -68,6 +68,7 @@
     </widget>
     <addaction name="actionEdge_points" />
     <addaction name="actionInside_points" />
+    <addaction name="actionPoints_in_interval" />
     <addaction name="actionBoundary_points" />
     <addaction name="actionBoundary_segments" />
     <addaction name="separator" />
@@ -232,6 +233,11 @@
   <action name="actionBench_distances_vs_nbt" >
    <property name="text" >
     <string>Distances</string>
+   </property>
+  </action>
+  <action name="actionPoints_in_interval" >
+   <property name="text" >
+    <string>Points in interval...</string>
    </property>
   </action>
  </widget>

@@ -164,6 +164,32 @@ void MainWindow::on_actionInside_points_triggered()
   m_pViewer->update();
 }
 
+void MainWindow::on_actionPoints_in_interval_triggered()
+{
+	bool ok;
+	const unsigned int nb_points = (unsigned)
+		QInputDialog::getInteger(NULL, "#Points",
+		"#Points:",10000,1,100000000,9,&ok);
+	if(!ok)
+		return;
+
+  const double min = 
+		QInputDialog::getDouble(NULL, "min",
+		"Min:",-0.1,-1000.0,1000.0,9,&ok);
+	if(!ok)
+		return;
+  const double max = 
+		QInputDialog::getDouble(NULL, "max",
+		"Max:",0.1,-1000.0,1000.0,9,&ok);
+	if(!ok)
+		return;
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	m_pScene->generate_points_in(nb_points,min,max);
+	QApplication::restoreOverrideCursor();
+  m_pViewer->update();
+}
+
 void MainWindow::on_actionBoundary_segments_triggered()
 {
 	bool ok;
