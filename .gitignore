@@ -479,6 +479,7 @@ Point_set_processing_3/include/CGAL/*.object_pool
 Point_set_processing_3/include/CGAL/*.pool
 Point_set_processing_3/include/CGAL/*.reserve_RAM
 Point_set_processing_3/include/CGAL/*.set_se_translator
+Point_set_processing_3/myrun_testsuite_with_cmake.bat
 Point_set_processing_3/test/Point_set_processing_3/*.kdev*
 Point_set_processing_3/test/Point_set_processing_3/*.ncb
 Point_set_processing_3/test/Point_set_processing_3/*.sln
@@ -796,6 +797,7 @@ Surface_reconstruction_points_3/include/CGAL/*.object_pool
 Surface_reconstruction_points_3/include/CGAL/*.pool
 Surface_reconstruction_points_3/include/CGAL/*.reserve_RAM
 Surface_reconstruction_points_3/include/CGAL/*.set_se_translator
+Surface_reconstruction_points_3/myrun_testsuite_with_cmake.bat
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/*.kdev*
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/*.ncb
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/*.sln

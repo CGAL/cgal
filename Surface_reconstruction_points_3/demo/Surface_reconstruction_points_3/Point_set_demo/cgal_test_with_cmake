@@ -173,8 +173,8 @@ else
     compile_and_run Polyhedron_demo_inside_out_plugin
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
-  if [ `can_compile PS_demo_APSS_reconstruction_plugin` == "y" ]; then
-    compile_and_run PS_demo_APSS_reconstruction_plugin
+  if [ `can_compile PS_demo_APSS_plugin` == "y" ]; then
+    compile_and_run PS_demo_APSS_plugin
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
   if [ `can_compile PS_demo_average_spacing_plugin` == "y" ]; then
@@ -197,12 +197,12 @@ else
     compile_and_run PS_demo_off_plugin
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
-  if [ `can_compile PS_demo_point_set_simplification_plugin` == "y" ]; then
-    compile_and_run PS_demo_point_set_simplification_plugin
+  if [ `can_compile PS_demo_simplification_plugin` == "y" ]; then
+    compile_and_run PS_demo_simplification_plugin
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
-  if [ `can_compile PS_demo_poisson_reconstruction_plugin` == "y" ]; then
-    compile_and_run PS_demo_poisson_reconstruction_plugin
+  if [ `can_compile PS_demo_poisson_plugin` == "y" ]; then
+    compile_and_run PS_demo_poisson_plugin
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
   if [ `can_compile PS_demo_smoothing_plugin` == "y" ]; then

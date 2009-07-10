@@ -11,7 +11,7 @@
 #include <QtPlugin>
 #include <QInputDialog>
 
-#include "ui_PS_demo_poisson_reconstruction_plugin.h"
+#include "ui_PS_demo_poisson_plugin.h"
 
 // Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
@@ -20,7 +20,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                                 FT sm_radius, // Max triangle radius w.r.t. point set radius. 0.1 is fine.
                                 FT sm_distance); // Approximation error w.r.t. p.s.r.. For Poisson: 0.015=fast, 0.003=smooth.
 
-class PS_demo_poisson_reconstruction_plugin :
+class PS_demo_poisson_plugin :
   public QObject,
   protected Polyhedron_demo_plugin_helper
 {
@@ -48,14 +48,14 @@ public slots:
 private:
   QAction* actionPoissonReconstruction;
 
-}; // end class PS_demo_poisson_reconstruction_plugin
+}; // end class PS_demo_poisson_plugin
 
 
-class PS_demo_poisson_reconstruction_plugin_dialog : public QDialog, private Ui::PoissonDialog
+class PS_demo_poisson_plugin_dialog : public QDialog, private Ui::PoissonDialog
 {
   Q_OBJECT
   public:
-    PS_demo_poisson_reconstruction_plugin_dialog(QWidget *parent = 0)
+    PS_demo_poisson_plugin_dialog(QWidget *parent = 0)
     {
       setupUi(this);
     }
@@ -65,7 +65,7 @@ class PS_demo_poisson_reconstruction_plugin_dialog : public QDialog, private Ui:
     double triangleError() const { return m_inputDistance->value(); }
 };
 
-void PS_demo_poisson_reconstruction_plugin::reconstruct()
+void PS_demo_poisson_plugin::reconstruct()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -79,7 +79,7 @@ void PS_demo_poisson_reconstruction_plugin::reconstruct()
     if(!points) return;
 
     // Gets options
-    PS_demo_poisson_reconstruction_plugin_dialog dialog;
+    PS_demo_poisson_plugin_dialog dialog;
     if(!dialog.exec())
       return;
     const double sm_angle     = dialog.triangleAngle();
@@ -111,6 +111,6 @@ void PS_demo_poisson_reconstruction_plugin::reconstruct()
   }
 }
 
-Q_EXPORT_PLUGIN2(PS_demo_poisson_reconstruction_plugin, PS_demo_poisson_reconstruction_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_poisson_plugin, PS_demo_poisson_plugin);
 
-#include "PS_demo_poisson_reconstruction_plugin.moc"
+#include "PS_demo_poisson_plugin.moc"

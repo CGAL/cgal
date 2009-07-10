@@ -11,7 +11,7 @@
 #include <QtPlugin>
 #include <QInputDialog>
 
-#include "ui_PS_demo_APSS_reconstruction_plugin.h"
+#include "ui_PS_demo_APSS_plugin.h"
 
 // APSS reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
@@ -26,7 +26,7 @@ Polyhedron* APSS_reconstruct_mc(const Point_set& points,
                                 FT smoothness, // Smoothness factor. In the range 2 (clean datasets) and 8 (noisy datasets).
                                 int grid_size); // size of the grid
 
-class PS_demo_APSS_reconstruction_plugin :
+class PS_demo_APSS_plugin :
   public QObject,
   protected Polyhedron_demo_plugin_helper
 {
@@ -54,14 +54,14 @@ public slots:
 private:
   QAction* actionAPSSReconstruction;
 
-}; // end class PS_demo_APSS_reconstruction_plugin
+}; // end class PS_demo_APSS_plugin
 
 
-class PS_demo_APSS_reconstruction_plugin_dialog : public QDialog, private Ui::ApssDialog
+class PS_demo_APSS_plugin_dialog : public QDialog, private Ui::ApssDialog
 {
   Q_OBJECT
   public:
-    PS_demo_APSS_reconstruction_plugin_dialog(QWidget *parent = 0)
+    PS_demo_APSS_plugin_dialog(QWidget *parent = 0)
     {
       setupUi(this);
     }
@@ -79,7 +79,7 @@ class PS_demo_APSS_reconstruction_plugin_dialog : public QDialog, private Ui::Ap
     }
 };
 
-void PS_demo_APSS_reconstruction_plugin::reconstruct()
+void PS_demo_APSS_plugin::reconstruct()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -93,7 +93,7 @@ void PS_demo_APSS_reconstruction_plugin::reconstruct()
     if(!points) return;
 
     // Gets options
-    PS_demo_APSS_reconstruction_plugin_dialog dialog;
+    PS_demo_APSS_plugin_dialog dialog;
     if(!dialog.exec())
       return;
     const double sm_angle     = dialog.triangleAngle();
@@ -140,6 +140,6 @@ void PS_demo_APSS_reconstruction_plugin::reconstruct()
   }
 }
 
-Q_EXPORT_PLUGIN2(PS_demo_APSS_reconstruction_plugin, PS_demo_APSS_reconstruction_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_APSS_plugin, PS_demo_APSS_plugin);
 
-#include "PS_demo_APSS_reconstruction_plugin.moc"
+#include "PS_demo_APSS_plugin.moc"
