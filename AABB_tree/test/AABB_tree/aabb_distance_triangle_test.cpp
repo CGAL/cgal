@@ -54,6 +54,5 @@ int main(void)
   test_kernels<TRIANGLE>("./data/pinion.off",duration);
   test_kernels<TRIANGLE>("./data/finger.off",duration);
   test_kernels<TRIANGLE>("./data/coverrear.off",duration);
-  test_kernels<TRIANGLE>("./data/nested_spheres.off",duration);
   return 0;
 }

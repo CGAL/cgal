@@ -57,6 +57,5 @@ int main(void)
   test_kernels<SEGMENT>("./data/finger.off",duration);
   test_kernels<SEGMENT>("./data/pinion.off",duration);
   test_kernels<SEGMENT>("./data/coverrear.off",duration);
-  test_kernels<SEGMENT>("./data/nested_spheres.off",duration);
   return 0;
 }

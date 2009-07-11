@@ -117,13 +117,10 @@ void test_impl(Tree& tree, Polyhedron&, const double duration)
 
 int main()
 {
-    // duration of each test
-    const double duration = 0.1;
+    const double duration = 0.1; // duration of each test
     test_kernels<TRIANGLE>("./data/cube.off",duration);
     test_kernels<TRIANGLE>("./data/coverrear.off",duration);
-    test_kernels<TRIANGLE>("./data/nested_spheres.off",duration);
     test_kernels<TRIANGLE>("./data/finger.off",duration);
     test_kernels<TRIANGLE>("./data/pinion.off",duration);
-
     return EXIT_SUCCESS;
 }

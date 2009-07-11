@@ -60,7 +60,6 @@ int main(void)
   const double duration = 0.1;
   test_kernels<SEGMENT>("./data/cube.off",duration);
   test_kernels<SEGMENT>("./data/coverrear.off",duration);
-  test_kernels<SEGMENT>("./data/nested_spheres.off",duration);
   test_kernels<SEGMENT>("./data/finger.off",duration);
   test_kernels<SEGMENT>("./data/pinion.off",duration);
 
