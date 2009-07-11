@@ -42,7 +42,8 @@ public:
 			void on_actionLoadPolyhedron_triggered();
 
 			// edit menu
-      void on_actionSnapshot_triggered();
+      void on_actionSave_snapshot_triggered();
+      void on_actionCopy_snapshot_triggered();
 			void on_actionClear_points_triggered();
 			void on_actionClear_segments_triggered();
 			void on_actionClear_distance_function_triggered();

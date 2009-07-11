@@ -373,11 +373,24 @@ void MainWindow::on_actionBench_distances_vs_nbt_triggered()
 	QApplication::restoreOverrideCursor();
 }
 
-void MainWindow::on_actionSnapshot_triggered()
+void MainWindow::on_actionSave_snapshot_triggered()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
   m_pViewer->saveSnapshot(QString("snapshot.png"));
 	QApplication::restoreOverrideCursor();
 }
+void MainWindow::on_actionCopy_snapshot_triggered()
+{
+  // copy snapshot to clipboard
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+  QClipboard *qb = QApplication::clipboard();
+  m_pViewer->makeCurrent();
+  m_pViewer->raise();
+  QImage snapshot = m_pViewer->grabFrameBuffer(true);
+  qb->setImage(snapshot);
+	QApplication::restoreOverrideCursor();
+}
+
+
 
 
