@@ -123,7 +123,7 @@ public:
      * \return The past-the-end iterator.
      */
     template<class OutputIterator>
-    OutputIterator operator() (const Curve_2& cv, OutputIterator oi)
+    OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const
     {
       // Make the original curve x-monotone.
       std::list<CGAL::Object>       base_objects;
@@ -185,7 +185,7 @@ public:
      * \pre p lies on cv but is not one of its end-points.
      */
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
-                     X_monotone_curve_2& c1, X_monotone_curve_2& c2)
+                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
       // Split the original curve.
       base->split_2_object() (cv, p, c1, c2);
@@ -228,7 +228,7 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const X_monotone_curve_2& cv1,
                                const X_monotone_curve_2& cv2,
-                               OutputIterator oi)
+                               OutputIterator oi) const
     {
       // Use the base functor to obtain all intersection objects.
       std::list<CGAL::Object>                   base_objects;
@@ -357,7 +357,7 @@ public:
      */
     void operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2,
-                     X_monotone_curve_2& c)
+                     X_monotone_curve_2& c) const
     {
       // The function is implemented based on the base Has_merge category.
       _merge_imp (cv1, cv2, c, Base_has_merge_category());
@@ -371,7 +371,7 @@ public:
     void _merge_imp (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2,
                      X_monotone_curve_2& c,
-                     Tag_true)
+                     Tag_true) const
     {      
       // Merge the two base curve.
       Base_x_monotone_curve_2  base_cv;
