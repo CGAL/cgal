@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QHeaderView>
+#include <QClipboard>
 
 #include "ui_MainWindow.h"
 
@@ -371,4 +372,12 @@ void MainWindow::on_actionBench_distances_vs_nbt_triggered()
 	m_pScene->bench_distances_vs_nbt();
 	QApplication::restoreOverrideCursor();
 }
+
+void MainWindow::on_actionSnapshot_triggered()
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_pViewer->saveSnapshot(QString("snapshot.png"));
+	QApplication::restoreOverrideCursor();
+}
+
 

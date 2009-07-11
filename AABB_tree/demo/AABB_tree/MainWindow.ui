@@ -102,6 +102,8 @@
     <addaction name="actionClear_points" />
     <addaction name="actionClear_segments" />
     <addaction name="actionClear_distance_function" />
+    <addaction name="separator" />
+    <addaction name="actionSnapshot" />
    </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
@@ -238,6 +240,11 @@
   <action name="actionPoints_in_interval" >
    <property name="text" >
     <string>Points in interval...</string>
+   </property>
+  </action>
+  <action name="actionSnapshot" >
+   <property name="text" >
+    <string>Save snapshot</string>
    </property>
   </action>
  </widget>
