@@ -1618,28 +1618,22 @@ split_edge(Halfedge_handle e,
                          "The edge must be a valid one.");
 
   // Get the split halfedge and its twin, its source and target.
-  DHalfedge       *he1 = _halfedge (e);
-  DHalfedge       *he2 = he1->opposite();
-  DVertex         *source = he2->vertex();
-  CGAL_precondition_code (
-    DVertex         *target = he1->vertex();
-  );
+  DHalfedge * he1 = _halfedge(e);
+  DHalfedge * he2 = he1->opposite();
+  DVertex   * source = he2->vertex();
+  CGAL_precondition_code(DVertex * target = he1->vertex(););
 
   // Determine the point where we split the halfedge. We also determine which
   // curve should be associated with he1 (and he2), which is the curve who
   // has an endpoint that equals e's source, and which should be associated
   // with the new pair of halfedges we are about to split (the one who has
   // an endpoint which equals e's target).
-  Point_2                    split_pt;
-  const X_monotone_curve_2  *p_cv1 = NULL;
-  const X_monotone_curve_2  *p_cv2 = NULL;
-
   if (m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MAX_END) ==
       ARR_INTERIOR &&
       m_geom_traits->parameter_space_in_y_2_object()(cv1, ARR_MAX_END) ==
       ARR_INTERIOR)
   {
-    const Point_2&  cv1_right = 
+    const Point_2 & cv1_right = 
       m_geom_traits->construct_max_vertex_2_object() (cv1);
 
     if (m_geom_traits->parameter_space_in_x_2_object()(cv2, ARR_MIN_END) ==
@@ -1653,37 +1647,29 @@ split_edge(Halfedge_handle e,
       // cv1's right endpoint and cv2's left endpoint are equal, so this should
       // be the split point. Now we check whether cv1 is incident to e's source
       // and cv2 to its target, or vice versa.
-      split_pt = cv1_right;
-
-      if (_are_equal (source, cv1, ARR_MIN_END))
-      {
+      if (_are_equal (source, cv1, ARR_MIN_END)) {
         CGAL_precondition_msg
           (_are_equal (target, cv2, ARR_MAX_END),
            "The subcurve endpoints must match e's end vertices.");
 
-        p_cv1 = &cv1;
-        p_cv2 = &cv2;
+        return (Halfedge_handle (_split_edge (he1, cv1_right, cv1, cv2)));
       }
-      else
-      {
-        CGAL_precondition_msg
-          (_are_equal (source, cv2, ARR_MAX_END) &&
-           _are_equal (target, cv1, ARR_MIN_END),
-           "The subcurve endpoints must match e's end vertices.");
 
-        p_cv1 = &cv2;
-        p_cv2 = &cv1;      
-      }
+      CGAL_precondition_msg
+        (_are_equal (source, cv2, ARR_MAX_END) &&
+         _are_equal (target, cv1, ARR_MIN_END),
+         "The subcurve endpoints must match e's end vertices.");
+
+      return (Halfedge_handle (_split_edge (he1, cv1_right, cv2, cv1)));
     }
   }
   
-  if (p_cv1 == NULL && p_cv2 == NULL &&
-      m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MIN_END) ==
+  if (m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MIN_END) ==
       ARR_INTERIOR &&
       m_geom_traits->parameter_space_in_y_2_object()(cv1, ARR_MIN_END) ==
       ARR_INTERIOR)
   {
-    const Point_2&  cv1_left = 
+    const Point_2 & cv1_left = 
       m_geom_traits->construct_min_vertex_2_object() (cv1);
 
     if (m_geom_traits->parameter_space_in_x_2_object()(cv2, ARR_MAX_END) ==
@@ -1697,35 +1683,25 @@ split_edge(Halfedge_handle e,
       // cv1's left endpoint and cv2's right endpoint are equal, so this should
       // be the split point. Now we check whether cv1 is incident to e's source
       // and cv2 to its target, or vice versa.
-      split_pt = cv1_left;
-
-      if (_are_equal (source, cv2, ARR_MIN_END))
-      {
+      if (_are_equal (source, cv2, ARR_MIN_END)) {
         CGAL_precondition_msg
           (_are_equal (target, cv1, ARR_MAX_END),
            "The subcurve endpoints must match e's end vertices.");
 
-        p_cv1 = &cv2;
-        p_cv2 = &cv1;
+        return (Halfedge_handle (_split_edge (he1, cv1_left, cv2, cv1)));
       }
-      else
-      {
-        CGAL_precondition_msg
-          (_are_equal (source, cv1, ARR_MAX_END) && 
-           _are_equal (target, cv2, ARR_MIN_END),
-           "The subcurve endpoints must match e's end vertices.");
 
-        p_cv1 = &cv1;
-        p_cv2 = &cv2;      
-      }
+      CGAL_precondition_msg
+        (_are_equal (source, cv1, ARR_MAX_END) && 
+         _are_equal (target, cv2, ARR_MIN_END),
+         "The subcurve endpoints must match e's end vertices.");
+
+      return (Halfedge_handle (_split_edge (he1, cv1_left, cv1, cv2)));
     }
   }
 
-  CGAL_precondition_msg (p_cv1 != NULL && p_cv2 != NULL,
-                         "The two subcurves must have a common endpoint.");
-
-  // Perform the split.
-  return (Halfedge_handle (_split_edge (he1, split_pt, *p_cv1, *p_cv2)));
+  CGAL_error_msg ("The two subcurves must have a common endpoint.");
+  return Halfedge_handle();
 }
 
 //-----------------------------------------------------------------------------
