@@ -21,7 +21,7 @@ int main (int argc, char *argv[])
 {
   // Get the name of the input file from the command line, or use the default
   // points.dat file if no command-line parameters are given.
-  const char   *filename = (argc > 1) ? argv[1] : "coll_points.dat";
+  const char * filename = (argc > 1) ? argv[1] : "coll_points.dat";
 
   // Open the input file.
   std::ifstream     in_file (filename);
@@ -32,22 +32,23 @@ int main (int argc, char *argv[])
   }
 
   // Read the points from the file, and consturct their dual lines.
-  unsigned int                   n;
-  int                            px, py;
   std::vector<Point_2>           points;
-  Line_2                         dual_line;
   std::list<X_monotone_curve_2>  dual_lines;
-  unsigned int                   k;
 
+  unsigned int n;
   in_file >> n;
   points.resize (n);
-  for (k = 0; k < n; k++) {
+  unsigned int k;
+  for (k = 0; k < n; ++k) {
+    int px, py;
     in_file >> px >> py;
     points[k] = Point_2 (px, py);
 
     // The line dual to the point (p_x, p_y) is y = p_x*x - p_y,
     // or: p_x*x - y - p_y = 0:
-    dual_line = Line_2 (Number_type(px), Number_type(-1), Number_type(-py));
+    Line_2 dual_line = Line_2(Number_type(px),
+                              Number_type(-1),
+                              Number_type(-py));
 
     // Generate the x-monotone curve based on the line and the point index.
     dual_lines.push_back (X_monotone_curve_2 (dual_line, k));

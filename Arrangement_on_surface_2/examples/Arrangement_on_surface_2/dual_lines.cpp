@@ -36,14 +36,15 @@ int main (int argc, char *argv[])
   // <x_2> <y_2>                         // point #2.
   //   :      :       :      :
   // <x_n> <y_n>                         // point #n.
-  unsigned int                   n, k;
-  int                            px, py;
   std::vector<Point_2>           points;
   std::list<X_monotone_curve_2>  dual_lines;
 
+  unsigned int n;
   in_file >> n;
-  points.resize (n);
-  for (k = 0; k < n; k++) {
+  points.resize(n);
+  unsigned int k;
+  for (k = 0; k < n; ++k) {
+    int px, py;
     in_file >> px >> py;
     points[k] = Point_2 (px, py);
 
