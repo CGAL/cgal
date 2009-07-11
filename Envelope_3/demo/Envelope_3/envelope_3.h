@@ -111,7 +111,7 @@ private:
     widget->clear_history();
 
     std::list<Surface_3> surfaces;
-    int num_of_surfaces;
+    unsigned int num_of_surfaces = 0;
     in_file >> num_of_surfaces;
     CGAL::Random rand;
     for (int i=0 ; i<num_of_surfaces; i++) {
