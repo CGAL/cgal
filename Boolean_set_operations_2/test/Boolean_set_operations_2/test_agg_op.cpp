@@ -67,9 +67,10 @@ template <class Vector>
 void read_polygons_vector(std::istream& inp,
                           Vector& vec)
 {
-  int n, i;
+  unsigned int n = 0;
   inp >> n;
   vec.resize(n);
+  unsigned int i;
   for(i=0; i<n; ++i)
   {
     inp >> vec[i];
