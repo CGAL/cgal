@@ -3,6 +3,8 @@
 
 We provide some performance numbers for the case where the AABB tree contains a set of polyhedron triangle facets. We measure the tree construction time, the memory occupancy, and the number of queries per second for a variety of intersection and distance queries. The machine used is a PC running Windows XP64 with an Intel CPU Core2 Extreme clocked at 3.06 GHz with 4GB of RAM. By default the kernel used is \ccc{Simple_cartesian<double>} (the fastest in our experiments). The program has been compiled with Visual C++ 2005 compiler with the O2 option (maximize speed).
 
+
+
 \subsection{Tree Construction}
 
 The surface triangle mesh chosen for benchmarking the tree construction is the knot model (14,400 triangles) available in the demo data folder. We measure the tree construction time (both AABB tree alone and AABB tree with internal KD-tree)  for this model as well as for three denser versions subdivided through the Loop subdivision scheme which increases the number of triangles by a factor of four.
@@ -18,20 +20,25 @@ The surface triangle mesh chosen for benchmarking the tree construction is the k
   \hline
 \end{tabular}
 
+
+
 \subsection{Memory}
 
-The AABB tree occupies approximately 60 bytes per primitive (without constructing the internal KD-tree). It increases to almost 100 bytes per primitive when constructing the internal KD-tree with one reference point per primitive (the default mode when calling the function \ccc{tree.accelerate_distance_queries()}). For large models we thus recommend to specify a lower number of reference point (evenly distributed) to construct the internal KD-tree through the same function which takes an iterator range as input.
+When using the polyhedron triangle facet primitive (defined in \ccc{AABB_polyhedron_triangle_primitive.h}) the AABB tree occupies approximately 61 bytes per primitive (without constructing the internal KD-tree). It increases to approximately 150 bytes per primitive when constructing the internal KD-tree with one reference point per primitive (the default mode when calling the function \ccc{tree.accelerate_distance_queries()}). Note that the polyhedron facet primitive primitive stores only one facet handle as primitive id and computes on the fly a 3D triangle from the facet handle stored internally. When explicitly storing a 3D triangle in the primitive the tree occupies approximately 140 bytes per primitive instead of 60 (without constructing the internal KD-tree).\\
+
+The following table provides orders of memory occupancy in MBytes for an increasing number of triangles. As the internal KD-tree used to accelerate the distance queries dominates the memory occupancy, we recommend to specify for large models a lower number of reference point (evenly distributed) to construct the internal KD-tree through the function \ccc{tree.accelerate_distance_queries(begin,end)} which takes an iterator range as input.
 
 \begin{tabular}{|l|c|c|}
   \hline
-  Number of triangles & Memory (in Bytes)\\
+  Number of triangles & AABB tree (in MBytes) & AABB tree with internal KD-tree (in MBytes)\\
   \hline
-   14,400 &   156 &   157 \\
-   57,600 &   328 &   328 \\
-  230,400 & 1,141 & 1,437 \\
-  921,600 & 4,813 & 5,953 \\
+   18,400 &   1.10 &    2.76 \\
+  102,400 &   6.33 &   14.73 \\
+1,022,400 &  59.56 &  151.31 \\
+1,822,400 & 108.34 &  291.84 \\
   \hline
 \end{tabular}
+
 
 
 \subsection{Intersections}
@@ -86,6 +93,7 @@ The following table measures the number of \ccc{all_intersections()} queries per
 \end{tabular}
 
 
+
 \subsection{Distances}
 
 The surface triangle mesh chosen for benchmarking distances is again the knot model in four increasing resolutions obtained through Loop subdivision. In the following table we first measure the tree construction time (which includes the construction of the internal KD-tree data structure used to accelerate the distance queries by up to one order of magnitude in our experiments). We then measure the number of queries per second for the three types distance queries (\ccc{closest_point}, \ccc{squared_distance} and \ccc{closest_point_and_primitive}) from point queries randomly chosen inside the bounding box.
@@ -100,6 +108,8 @@ The surface triangle mesh chosen for benchmarking distances is again the knot mo
   921,600 & 5,953 &  5,636 &  5,722 &  5,703 \\
   \hline
 \end{tabular}
+
+
 
 \subsection{Summary}
 
