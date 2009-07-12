@@ -99,10 +99,10 @@ bool are_equal(const Container& l1, Container& l2)
 {
   bool eq = ((l1.size() == l2.size()) &&
              (std::equal(l1.begin(), l1.end(), l2.begin())));
-  if(!eq) 
+  if (!eq) 
   {
     std::ostream_iterator<Polygon_with_holes_2> osi(std::cout, "\n");
-    std::cout<<"infile: " << std::endl;
+    std::cout << "infile: " << std::endl;
     std::copy(l1.begin(), l1.end(), osi);
     std::cout<<std::endl<<"calculated: " <<std::endl;
     std::copy(l2.begin(), l2.end(), osi);
@@ -130,8 +130,6 @@ void my_complement(const typename Traits_::Polygon_with_holes_2& p,
 {
   CGAL::complement(p, std::back_inserter(vec));
 }
-
-     
 
 template <class Polygon1, class Polygon2>
 bool test(std::istream& inp,
@@ -162,16 +160,16 @@ bool test(std::istream& inp,
   std::back_insert_iterator<std::vector<Polygon_with_holes_2> > oi(temp_result);
   
   CGAL::intersection(p1, p2, oi);
-  if(! are_equal(intersection_res_from_file, temp_result))
+  if (! are_equal(intersection_res_from_file, temp_result))
   {
-    std::cout<<"intersection failed...\n";
+    std::cout << "intersection failed..." << std::endl;
     return false;
   }
 
   CGAL::intersection(p2, p1, oi);
-  if(! are_equal(intersection_res_from_file, temp_result))
+  if (! are_equal(intersection_res_from_file, temp_result))
   {
-    std::cout<<"intersection failed...\n";
+    std::cout << "intersection failed..." << std::endl;
     return false;
   }
 
@@ -179,77 +177,77 @@ bool test(std::istream& inp,
   bool do_x;
   
   do_x = CGAL::join(p1, p2, join_res);
-  if(do_x != intersect)
+  if (do_x != intersect)
   {
-    std::cout<<"join failed...\n";
+    std::cout << "join failed..." << std::endl;
     return false;
   }
-  if(do_x)
+  if (do_x)
   {
-    if(join_res != join_res_from_file)
+    if (join_res != join_res_from_file)
     {
-      std::cout<<"join failed...\n";
+      std::cout << "join failed..." << std::endl;
       return false;
     }  
   }
 
   do_x = CGAL::join(p2, p1, join_res);
-  if(do_x != intersect)
+  if (do_x != intersect)
   {
-    std::cout<<"join failed...\n";
+    std::cout << "join failed..." << std::endl;
     return false;
   }
-  if(do_x)
+  if (do_x)
   {
-    if(join_res != join_res_from_file)
+    if (join_res != join_res_from_file)
     {
-      std::cout<<"join failed...\n";
+      std::cout << "join failed..." << std::endl;
       return false;
     }  
   }
 
   CGAL::difference(p1 ,p2, oi);
-  if(! are_equal(diff1_res_from_file, temp_result))
+  if (! are_equal(diff1_res_from_file, temp_result))
   {
-    std::cout<<"diff1 failed...\n";
+    std::cout << "diff1 failed..." << std::endl;
     return false;
   }
 
   CGAL::difference(p2 ,p1, oi);
   
-  if(! are_equal(diff2_res_from_file, temp_result))
+  if (! are_equal(diff2_res_from_file, temp_result))
   {
-    std::cout<<"diff2 failed\n";
+    std::cout << "diff2 failed" << std::endl;
     return false;
   }
 
   CGAL::symmetric_difference(p1 ,p2, oi);
-  if(! are_equal(symm_diff_res_from_file, temp_result))
+  if (! are_equal(symm_diff_res_from_file, temp_result))
   {
-    std::cout<<"symmetric_difference failed\n";
+    std::cout << "symmetric_difference failed" << std::endl;
     return false;
   }
 
   CGAL::symmetric_difference(p2 ,p1, oi);
-  if(! are_equal(symm_diff_res_from_file, temp_result))
+  if (! are_equal(symm_diff_res_from_file, temp_result))
   {
-    std::cout<<"symmetric_difference failed\n";
+    std::cout << "symmetric_difference failed" << std::endl;
     return false;
   }
 
   Traits tr;
   my_complement(p1, temp_result, tr);
 
-  if(! are_equal(comp1_res_from_file, temp_result))
+  if (! are_equal(comp1_res_from_file, temp_result))
   {
-    std::cout<<"complement1 failed\n";
+    std::cout << "complement1 failed" << std::endl;
     return false;
   }
 
   my_complement(p2, temp_result, tr);
-  if(! are_equal(comp2_res_from_file, temp_result))
+  if (! are_equal(comp2_res_from_file, temp_result))
   {
-    std::cout<<"complement2 failed\n";
+    std::cout << "complement2 failed" << std::endl;
     return false;
   }
 
@@ -261,56 +259,56 @@ bool test(std::istream& inp,
  
   ps.intersection(ps1, ps2);
   ps.polygons_with_holes(oi);
-  if(!ps.is_valid() || ! are_equal(intersection_res_from_file, temp_result))
+  if (!ps.is_valid() || ! are_equal(intersection_res_from_file, temp_result))
   {
-    std::cout<<"intersection failed\n";
+    std::cout << "intersection failed" << std::endl;
     return false;
   }
 
   ps.clear();
   ps.join(ps1, ps2);
   ps.polygons_with_holes(oi);
-  if(!ps.is_valid())
+  if (!ps.is_valid())
   {
-    std::cout<<"join failed\n";
+    std::cout << "join failed" << std::endl;
     return false;
   }
-  if(intersect)
+  if (intersect)
   {
-    if(ps.number_of_polygons_with_holes() != 1)
+    if (ps.number_of_polygons_with_holes() != 1)
     {
-      std::cout<<"join failed\n";
+      std::cout << "join failed" << std::endl;
       return false;
     }
 
-    if(temp_result[0] != join_res_from_file)
+    if (temp_result[0] != join_res_from_file)
     {
-      std::cout<<"join failed\n";
+      std::cout << "join failed" << std::endl;
       return false;
     }
   }
   else
   {
-    if(temp_result.size() > 2)
+    if (temp_result.size() > 2)
     {
-       std::cout<<"join failed\n";
+       std::cout << "join failed" << std::endl;
        return false;
     }
-    if(temp_result.size() == 1)
+    if (temp_result.size() == 1)
     {
-      if(! (temp_result[0] == p1 || temp_result[0]==p2))
+      if (! (temp_result[0] == p1 || temp_result[0]==p2))
       {
-        std::cout<<"join failed\n";
+        std::cout << "join failed" << std::endl;
         return false;
       }
     }
     else
-      if(temp_result.size() == 2)
+      if (temp_result.size() == 2)
       {
-        if(! (temp_result[0]==p1 && temp_result[1]==p2) || 
+        if (! (temp_result[0]==p1 && temp_result[1]==p2) || 
              (temp_result[0]==p2 && temp_result[1]==p1))
         {
-          std::cout<<"join failed\n";
+          std::cout << "join failed" << std::endl;
           return false;
         }
       }
@@ -319,27 +317,27 @@ bool test(std::istream& inp,
 
   ps.difference(ps1, ps2);
   ps.polygons_with_holes(oi);
-  if(!ps.is_valid() ||! are_equal(diff1_res_from_file, temp_result))
+  if (!ps.is_valid() ||! are_equal(diff1_res_from_file, temp_result))
   {
-    std::cout<<"diff1 failed\n";
+    std::cout << "diff1 failed" << std::endl;
     return false;
   }
   ps.clear();
 
   ps.difference(ps2, ps1);
   ps.polygons_with_holes(oi);
-  if(!ps.is_valid() ||! are_equal(diff2_res_from_file, temp_result))
+  if (!ps.is_valid() ||! are_equal(diff2_res_from_file, temp_result))
   {
-    std::cout<<"diff2 failed\n";
+    std::cout << "diff2 failed" << std::endl;
     return false;
   }
   ps.clear();
 
   ps.symmetric_difference(ps1, ps2);
   ps.polygons_with_holes(oi);
-  if(!ps.is_valid() ||! are_equal(symm_diff_res_from_file, temp_result))
+  if (!ps.is_valid() ||! are_equal(symm_diff_res_from_file, temp_result))
   {
-    std::cout<<"symmetric_difference failed\n";
+    std::cout << "symmetric_difference failed" << std::endl;
     return false;
   }
   ps.clear();
@@ -347,113 +345,72 @@ bool test(std::istream& inp,
   return true;
 }
 
-
-
-bool test_one_file(std::ifstream& inp)
+bool test_one_file(std::ifstream & inp)
 {
-  int type1;
   Polygon_2 p1;
   Polygon_with_holes_2 pwh1;
 
+  unsigned int type1;
   inp >> type1;
-  if(type1 == 0)
-  {
+  if (type1 == 0)
     inp >> p1;
-  }
   else
-  {
     inp >> pwh1;
-  }
 
-  int type2;
   Polygon_2 p2;
   Polygon_with_holes_2 pwh2;
 
+  unsigned int type2;
   inp >> type2;
-  if(type2 == 0)
-  {
+  if (type2 == 0)
     inp >> p2;
-  }
   else
-  {
     inp >> pwh2;
-  }
 
   bool success = false;
 
-  if(type1 == 0 && type2 == 0)
-  {
-    success = test(inp, p1 ,p2);
-  }
-  else
-  {
-    if(type1 == 0 && type2 == 1)
-    {
-      success = test(inp, p1 ,pwh2);
-    }
-    else
-    {
-      if(type1 == 1 && type2 == 0)
-      {
-        success = test(inp, pwh1, p2);
-      }
-      else
-      {
-        if(type1 == 1 && type2 == 1)
-          success = test(inp, pwh1, pwh2);
-      }
-    }
-  }
-
-  return (success);
+  if (type1 == 0 && type2 == 0) return test(inp, p1 ,p2);
+  if (type1 == 0 && type2 == 1) return test(inp, p1 ,pwh2);
+  if (type1 == 1 && type2 == 0) return test(inp, pwh1, p2);
+  if (type1 == 1 && type2 == 1) return test(inp, pwh1, pwh2);
 }
 
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-  if(argc < 2)
-  {
-    std::cerr<<"Missing input file\n";
+  if (argc < 2) {
+    std::cerr << "Missing input file" << std::endl;
     std::exit (-1);
   }
 
   int success = 0;
-  for(int i=1; i<argc; ++i)
-  {
+  for (int i = 1; i < argc; ++i) {
     std::string str(argv[i]);
-    if(str.empty())
-      continue;
+    if (str.empty()) continue;
 
     std::string::iterator itr = str.end();
     --itr;
-    while(itr != str.begin())
-    {
+    while (itr != str.begin()) {
       std::string::iterator tmp = itr;
       --tmp;
-      if(*itr == 't')
-        break;
+      if (*itr == 't') break;
       
       str.erase(itr);
       itr = tmp;
-      
     }
-    if(str.size() <= 1)
-      continue;
+    if (str.size() <= 1) continue;
     std::ifstream inp(str.c_str());
-    if(!inp.is_open())
-    {
-      std::cerr<<"Failed to open " <<str<<"\n";
+    if (!inp.is_open()) {
+      std::cerr << "Failed to open " << str << std::endl;
       return (-1);
     }
-    if (! test_one_file(inp))
-    {
-      inp.close();
-      std::cout<<str<<": ERROR\n";
-      success = -1;
+    if (! test_one_file(inp)) {
+      std::cout << str << ": ERROR" << std::endl;
+      ++success;
     }
     else
     {
-      std::cout<<str<<": succeeded\n";
+      std::cout << str << ": succeeded" << std::endl;
     }
     inp.close();
   }
