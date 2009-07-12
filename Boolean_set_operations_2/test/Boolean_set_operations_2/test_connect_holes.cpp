@@ -1,5 +1,3 @@
-
-
 /*! \file test_connect_holes.cpp
  * Connecting a polygon with holes.
  */
@@ -21,7 +19,6 @@
 #endif
 #endif
 
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/connect_holes.h>
 #include <list>
@@ -38,29 +35,29 @@ typedef Polygon_with_holes_2::Hole_const_iterator  Hole_const_iterator;
 typedef Polygon_with_holes_2::Hole_iterator  		Hole_iterator;
 
 //compute the area of a polygon with holes 
-FT pwh_area(Polygon_with_holes_2 pwh) {
-	Polygon_2 outerP = pwh.outer_boundary();
-	FT result = outerP.area();	
-	if (! pwh.has_holes())
-	  return result;
-	Hole_const_iterator hit = pwh.holes_begin();
-	while (hit != pwh.holes_end()) {
-	  FT curHoleArea= (*hit).area();
-	  result = result + curHoleArea;
-	  ++hit;
-	}
-	//std::cout<< "The input pwh area is: " << result << std::endl;
-	return result;
+FT pwh_area(Polygon_with_holes_2 pwh)
+{
+  Polygon_2 outerP = pwh.outer_boundary();
+  FT result = outerP.area();	
+  if (! pwh.has_holes())
+    return result;
+  Hole_const_iterator hit = pwh.holes_begin();
+  while (hit != pwh.holes_end()) {
+    FT curHoleArea= (*hit).area();
+    result = result + curHoleArea;
+    ++hit;
+  }
+  //std::cout<< "The input pwh area is: " << result << std::endl;
+  return result;
 }
 
-
-bool testExampleFile(const char* filename) {
-  
+bool testExampleFile(const char* filename)
+{  
   // Read a polygon with holes from a file.
   std::ifstream input_file (filename);
   if (! input_file.is_open())
   {
-    std::cerr << "Failed to open the " << filename <<std::endl;
+    std::cerr << "Failed to open the " << filename << std::endl;
     return false;
   }  
   Polygon_2               outerP;
@@ -97,28 +94,28 @@ signature. The input polygon with holes area is calculated, and then
 after the holes are connected, an output polygon is created, and its
 area is calculated 
 */
-int main (int argc, char **argv)
+int main()
 { 
   std::string testfilePrefix = "data/pgn_holes";
   std::string testfileSuffix = ".dat";   
   int result = 0;  
-  for (int i=1;i<6;i++) {
+  for (int i = 1; i < 6; ++i) {
     std::stringstream strs;
     std::string si;
     strs << i;
     strs >> si;     
     std::string filename = testfilePrefix + si + testfileSuffix;
-    const char *cfilename = filename.c_str();    
+    const char * cfilename = filename.c_str();    
     bool res = testExampleFile(cfilename);
     if (!res) {
         std::cout << "test " << i << " was a bitter failure" << std::endl;
-        result=1;
+        result = 1;
     }  
     else {
       std::cout <<"test " << i << " was a great success" << std::endl;      
     }
   }
-  if (result==0)
+  if (result == 0)
     std::cout << "ALL TESTS SUCCEEDED!" << std::endl;  
   return result;
 }
