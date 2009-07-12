@@ -54,50 +54,44 @@ bool read_segments (const char *filename,
   segs.clear();
 
   // Open the input file.
-  std::ifstream          ifile (filename);
+  std::ifstream ifile (filename);
 
-  if (! ifile.is_open())
-  {
+  if (! ifile.is_open()) {
     std::cerr << "Failed to open <" << filename << ">." << std::endl;
     return (false);
   }
 
   // Read the segments.
-  int                    n_segments;
-  int                    ix1, iy1, ix2, iy2;
-  double                 dx1, dy1, dx2, dy2;
-  const int              denom = 100000;
-  NT                     x1, y1, x2, y2;
-  Segment_2              seg;
-  int                    k;
-
+  unsigned int n_segments;
   ifile >> n_segments;
 
-  for (k = 0; k < n_segments; k++)
-  {
+  unsigned int k;
+  for (k = 0; k < n_segments; k++) {
+      NT x1, y1, x2, y2;
+
     // Read the coordinates of the current segment.
-    if (format == F_INTEGER)
-    {
+    if (format == F_INTEGER) {
+      int ix1, iy1, ix2, iy2;
       ifile >> ix1 >> iy1 >> ix2 >> iy2;
       x1 = NT (ix1);
       y1 = NT (iy1);
       x2 = NT (ix2);
       y2 = NT (iy2);
     }
-    else if (format == F_DOUBLE)
-    {
+    else if (format == F_DOUBLE) {
+      const int denom = 100000;
+      double dx1, dy1, dx2, dy2;
       ifile >> dx1 >> dy1 >> dx2 >> dy2;
       x1 = NT (static_cast<int> (denom * dx1), denom);
       y1 = NT (static_cast<int> (denom * dy1), denom);
       x2 = NT (static_cast<int> (denom * dx2), denom);
       y2 = NT (static_cast<int> (denom * dy2), denom);
     }
-    else
-    {
+    else {
       ifile >> x1 >> y1 >> x2 >> y2;
     }
       
-    seg = Segment_2 (Point_2 (x1, y1), Point_2 (x2, y2));
+    Segment_2 seg = Segment_2 (Point_2 (x1, y1), Point_2 (x2, y2));
     segs.push_back (Curve_2(seg, segs.size()));
   }
   ifile.close();
@@ -310,7 +304,7 @@ bool check_envelope (const Curve_list& segs,
 /*!
  * The main program.
  */
-int main (int argc, char **argv)
+int main (int argc, char *argv[])
 {
   if (argc % 2 == 0 || argc == 1)
   {
