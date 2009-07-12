@@ -77,8 +77,7 @@ void MyWindow::fileOpenSegmentPm()
   }
   else
   {
-    FileOpenOptionsForm
-         *form = new FileOpenOptionsForm(false);
+    FileOpenOptionsForm * form = new FileOpenOptionsForm(false);
     if ( form->exec() )
     {
         int id = form->buttonGroup->id(form->buttonGroup->selected());
@@ -201,7 +200,6 @@ void MyWindow::fileOpenConic()
 /*! open a file */
 void MyWindow::fileOpen( bool clear_flag )
 {
-
   QString filename =
     QFileDialog::getOpenFileName(QString::null, 0, this,
                                  "file open", "Demo -- File Open" );
@@ -311,7 +309,8 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     Conic_reader<Conic_traits>  reader;
     std::list<Arr_conic_2>               curve_list;
     reader.read_data(filename, std::back_inserter(curve_list), w_demo->bbox);
-    CGAL::insert (*(w_demo_p->m_curves_arr), curve_list.begin(), curve_list.end());
+    CGAL::insert (*(w_demo_p->m_curves_arr), curve_list.begin(),
+                  curve_list.end());
   }
 
   else if (w_demo->traits_type == POLYLINE_TRAITS)
@@ -322,20 +321,20 @@ void MyWindow::load( const QString& filename , bool clear_flag )
     if (clear_flag)
       w_demo_p->m_curves_arr->clear();
 
-    int num_polylines, num_segments;
-    int ix, iy;
     std::vector<Arr_pol_point_2> points;
-    int i, j;
 
+    unsigned int num_polylines;
     inputFile >> num_polylines;
     std::list<Arr_pol_2> pol_list;
 
-    for (i = 0; i < num_polylines; i++)
-    {
+    unsigned int i;
+    for (i = 0; i < num_polylines; i++) {
+      unsigned int num_segments;
       inputFile >> num_segments;
       points.clear();
-      for (j = 0; j < num_segments; j++)
-      {
+      unsigned int j;
+      for (j = 0; j < num_segments; j++) {
+        int ix, iy;
         inputFile >> ix >> iy;
         points.push_back (Arr_pol_point_2(NT(ix),NT(iy)));
       }
@@ -432,7 +431,6 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
     // where (x0, y0) is the center of the circle and R_sq is its squared
     // radius.
     Rational    x0, y0, R_sq;
-
     str_line >> x0 >> y0 >> R_sq;
 
     Rat_point_2   p0(x0, y0);
@@ -488,7 +486,8 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
 
     // Read the end points of the arc and create it.
     // Notice we read the coordinates as strings, then we convert them to
-    // the Algebraic type, as we do not want to initialize Algebraic from a double.
+    // the Algebraic type, as we do not want to initialize Algebraic from
+    // a double.
     char    num[50];
     Algebraic    x1, y1, x2, y2;
 
