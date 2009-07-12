@@ -55,61 +55,43 @@ void read_file(std::istream& inp,
                std::vector<Polygon_with_holes_2>&  comp1_res,
                std::vector<Polygon_with_holes_2>&  comp2_res)
 {
-  int x;
+  unsigned int x;
   inp >> x;
   intresect = (x!=0);
-  if(intresect)
-    inp >>join_res;
+  if (intresect)
+    inp >> join_res;
   
-  int n_pgns, i;
-
+  unsigned int n_pgns;
   inp >> n_pgns;
   intersection_res.resize(n_pgns);
-
-  for(i=0; i<n_pgns; ++i)
-  {
+  unsigned int i;
+  for (i = 0; i < n_pgns; ++i)
     inp >> intersection_res[i];
-  }
 
   inp >> n_pgns;
   diff1_res.resize(n_pgns);
-  
-  for(i=0; i<n_pgns; ++i)
-  {
+  for (i = 0; i < n_pgns; ++i)
     inp >> diff1_res[i];
-  }
 
   inp >> n_pgns;
   diff2_res.resize(n_pgns);
-
-  for(i=0; i<n_pgns; ++i)
-  {
+  for (i = 0; i < n_pgns; ++i)
     inp >> diff2_res[i];
-  }
 
   inp >> n_pgns;
   symm_diff_res.resize(n_pgns);
-
-  for(i=0; i<n_pgns; ++i)
-  {
+  for (i=0; i<n_pgns; ++i)
     inp >> symm_diff_res[i];
-  }
 
   inp >> n_pgns;
   comp1_res.resize(n_pgns);
-
-  for(i=0; i<n_pgns; ++i)
-  {
+  for (i = 0; i < n_pgns; ++i)
     inp >> comp1_res[i];
-  }
 
   inp >> n_pgns;
   comp2_res.resize(n_pgns);
-
-  for(i=0; i<n_pgns; ++i)
-  {
+  for (i = 0; i < n_pgns; ++i)
     inp >> comp2_res[i];
-  }
 }
 
 template <class Container>
@@ -117,7 +99,7 @@ bool are_equal(const Container& l1, Container& l2)
 {
   bool eq = ((l1.size() == l2.size()) &&
              (std::equal(l1.begin(), l1.end(), l2.begin())));
-  if(!eq)
+  if(!eq) 
   {
     std::ostream_iterator<Polygon_with_holes_2> osi(std::cout, "\n");
     std::cout<<"infile: " << std::endl;
