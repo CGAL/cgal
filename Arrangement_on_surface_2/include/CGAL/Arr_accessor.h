@@ -851,6 +851,23 @@ public:
     return;
   }
 
+   /*!
+   * Set the boundary of a vertex
+   * \param p A vertex
+   * \param ps_x The boundary condition at x.
+   * \param ps_y The boundary condition at y.
+   * \return A pointer to the created DCEL vertex.
+   */
+  Dcel_vertex* set_vertex_boundary (const Vertex_handle v,
+                           Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+  {
+    Dcel_vertex     *v_to_set = p_arr->_vertex (v);
+
+    v_to_set->set_boundary (ps_x, ps_y);
+
+    return (v_to_set);
+  }
+
   /*!
    * Create a new vertex.
    * \param p A pointer to the point (may be NULL in case of a vertex at
