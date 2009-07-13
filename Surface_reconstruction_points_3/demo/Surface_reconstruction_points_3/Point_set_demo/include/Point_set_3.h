@@ -83,9 +83,6 @@ private:
 
   unsigned int m_nb_selected_points; // number of selected points
 
-  // Iterator over the first point with an unoriented normal.
-  Point_iterator m_unoriented_points_begin;
-
 // Public methods
 public:
 
@@ -94,7 +91,6 @@ public:
   {
     m_nb_selected_points = 0;
     m_bounding_box_is_valid = false;
-    m_unoriented_points_begin = end();
   }
 
   // Default copy constructor and operator =() are fine.
@@ -139,13 +135,9 @@ public:
     // Deletes selected points using erase-remove idiom
     erase(std::remove_if(begin(), end(), std::mem_fun_ref(&UI_point::is_selected)),
           end());
-          
+
     // after erase(), use Scott Meyer's "swap trick" to trim excess capacity
     Point_set_3(*this).swap(*this);
-
-    // TODO: Update m_unoriented_points_begin.
-    //       This is tricky as erase() invalidates iterators.
-    m_unoriented_points_begin = end();
 
     m_nb_selected_points = 0;
     invalidate_bounds();

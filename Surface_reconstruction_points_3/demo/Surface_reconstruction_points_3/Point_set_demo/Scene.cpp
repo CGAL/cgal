@@ -45,7 +45,7 @@ Scene::addItem(Scene_item* item)
   return entries.size() - 1;
 }
 
-// Erases a scene item. 
+// Erases a scene item.
 // Returns the index of the polyhedra just before the one that is erased,
 //  or just after. Returns -1 if the list is empty.
 Scene::Item_id Scene::erase(Item_id index)
@@ -542,8 +542,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 				const QStyleOptionViewItem &option,
 				const QModelIndex &index)
 {
-  Scene *scene = static_cast<Scene*>(model);
-  Q_ASSERT(scene);
+//  Scene *scene = static_cast<Scene*>(model);
   switch(index.column()) {
   case Scene::VisibleColumn:
     if (event->type() == QEvent::MouseButtonPress) {

@@ -56,9 +56,6 @@ if ( CGAL_FOUND )
   ADD_DEFINITIONS( "-DDEBUG_TRACE" )
   #ADD_DEFINITIONS( "-DCGAL_PROFILE" )
 
-  # Executables that do *not* require BLAS, LAPACK nor TAUCS
-  create_single_source_cgal_program( "APSS_reconstruction_test.cpp" )
-
   # Link with BLAS, LAPACK and TAUCS (optional)
   find_package(TAUCS)
   if(TAUCS_FOUND)

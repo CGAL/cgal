@@ -100,7 +100,6 @@
      <string>Reconstruction</string>
     </property>
     <addaction name="actionPoissonReconstruction" />
-    <addaction name="actionAPSSReconstruction" />
     <addaction name="actionInsideOut" />
    </widget>
    <addaction name="menuFile" />
@@ -338,11 +337,6 @@
   <action name="actionInsideOut" >
    <property name="text" >
     <string>Inside-out</string>
-   </property>
-  </action>
-  <action name="actionAPSSReconstruction" >
-   <property name="text" >
-    <string>APSS Reconstruction</string>
    </property>
   </action>
   <action name="actionRadiusFromDensity" >

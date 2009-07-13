@@ -165,10 +165,6 @@ if [ $# -ne 0 ] ; then
   done
 else
   echo "Run all tests."
-  if [ `can_compile APSS_reconstruction_test` == "y" ]; then
-    compile_and_run APSS_reconstruction_test
-    [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
-  fi
   if [ `can_compile poisson_reconstruction_test` == "y" ]; then
     compile_and_run poisson_reconstruction_test
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y

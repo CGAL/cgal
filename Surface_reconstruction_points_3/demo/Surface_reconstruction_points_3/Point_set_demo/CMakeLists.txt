@@ -235,14 +235,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   endmacro(polyhedron_demo_plugin)
 
-  qt4_wrap_ui( APSS_UI_FILES PS_demo_APSS_plugin.ui)
-  polyhedron_demo_plugin(PS_demo_APSS_plugin
-    PS_demo_APSS_plugin
-    PS_demo_APSS_plugin_cgal_code.cpp
-    PS_demo_APSS_plugin_cgal_mc.cpp
-    ${APSS_UI_FILES})
-  target_link_libraries(PS_demo_APSS_plugin scene_polyhedron_item point_set)
-
   if(TAUCS_FOUND)
     qt4_wrap_ui( POISSON_UI_FILES PS_demo_poisson_plugin.ui)
     polyhedron_demo_plugin(PS_demo_poisson_plugin

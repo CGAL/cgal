@@ -162,7 +162,7 @@ void PS_demo_normal_estimation_plugin::on_actionNormalEstimation_triggered()
     {
       QMessageBox::information(NULL,
                                tr("Points with an unoriented normal"),
-                               tr("%1 point(s) with an unoriented normal are selected.\nPlease orient them or remove them before running Poisson or APSS reconstructions.")
+                               tr("%1 point(s) with an unoriented normal are selected.\nPlease orient them or remove them before running Poisson reconstruction.")
                                .arg(nb_unoriented_normals));
     }
   }
