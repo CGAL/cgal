@@ -65,6 +65,7 @@
       <string>Refine</string>
      </property>
      <addaction name="actionRefine_bisection" />
+     <addaction name="actionRefine_loop" />
     </widget>
     <addaction name="actionEdge_points" />
     <addaction name="actionInside_points" />
@@ -251,6 +252,11 @@
   <action name="actionCopy_snapshot" >
    <property name="text" >
     <string>Copy snapshot</string>
+   </property>
+  </action>
+  <action name="actionRefine_loop" >
+   <property name="text" >
+    <string>Loop subdivision</string>
    </property>
   </action>
  </widget>

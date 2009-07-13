@@ -1,11 +1,11 @@
 \section{Performances}
 \label{AABB_tree_section_performances}
 
-We provide some performance numbers for the case where the AABB tree contains a set of polyhedron triangle facets. We measure the tree construction time, the memory occupancy, and the number of queries per second for a variety of intersection and distance queries. The machine used is a PC running Windows XP64 with an Intel CPU Core2 Extreme clocked at 3.06 GHz with 4GB of RAM. By default the kernel used is \ccc{Simple_cartesian<double>} (the fastest in our experiments). The program has been compiled with Visual C++ 2005 compiler with the O2 option (maximize speed).
+We provide some performance numbers for the case where the AABB tree contains a set of polyhedron triangle facets. We measure the tree construction time, the memory occupancy and the number of queries per second for a variety of intersection and distance queries. The machine used is a PC running Windows XP64 with an Intel CPU Core2 Extreme clocked at 3.06 GHz with 4GB of RAM. By default the kernel used is \ccc{Simple_cartesian<double>} (the fastest in our experiments). The program has been compiled with Visual C++ 2005 compiler with the O2 option which maximizes speed.
 
 \subsection{Construction}
 
-The surface triangle mesh chosen for benchmarking the tree construction is the knot model (14,400 triangles) available in the demo data folder. We measure the tree construction time (both AABB tree alone and AABB tree with internal KD-tree)  for this model as well as for three denser versions subdivided through the Loop subdivision scheme which increases the number of triangles by a factor of four.
+The surface triangle mesh chosen for benchmarking the tree construction is the knot model (14,400 triangles) depicted by Figure \ref{fig:AABB-tree-bench}. We measure the tree construction time (both AABB tree alone and AABB tree with internal KD-tree)  for this model as well as for three denser versions subdivided through the Loop subdivision scheme which multiplies the number of triangles by four.
 
 \begin{tabular}{|l|c|c|}
   \hline
@@ -111,7 +111,7 @@ The surface triangle mesh chosen for benchmarking distances is again the knot mo
 
 \subsection{Summary}
 
-The experiments described above are neither exhaustive nor conclusive as we have chosen one specific case where the input primitives are the facets of a triangle surface polyhedron. Nevertheless we provide the reader with some general observations and advices about how to put the AABB tree to use with satisfactory performances. While the tree construction times and memory occupancy do not fluctuate much in our experiments depending on the input surface triangle mesh, the performance expressed in number of queries varies greatly depending on a complex combination of criteria: type of kernel, number of input primitives, distribution of primitives in space, type of function queried, type of query, and location of query in space. 
+The experiments described above are neither exhaustive nor conclusive as we have chosen one specific case where the input primitives are the facets of a triangle surface polyhedron. Nevertheless we now provide some general observations and advices about how to put the AABB tree to use with satisfactory performances. While the tree construction times and memory occupancy do not fluctuate much in our experiments depending on the input surface triangle mesh, the performance expressed in number of queries varies greatly depending on a complex combination of criteria: type of kernel, number of input primitives, distribution of primitives in space, type of function queried, type of query and location of query in space. 
 
 \begin{itemize}
 

@@ -373,6 +373,14 @@ void MainWindow::on_actionBench_distances_vs_nbt_triggered()
 	QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::on_actionRefine_loop_triggered()
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	m_pScene->refine_loop();
+	QApplication::restoreOverrideCursor();
+  m_pViewer->update();
+}
+
 void MainWindow::on_actionSave_snapshot_triggered()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);

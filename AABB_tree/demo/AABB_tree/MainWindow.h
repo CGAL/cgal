@@ -49,6 +49,7 @@ public:
 			void on_actionClear_distance_function_triggered();
 
 			// algorithm menu
+      void on_actionRefine_loop_triggered();
 			void on_actionEdge_points_triggered();
 			void on_actionInside_points_triggered();
 			void on_actionBoundary_points_triggered();
