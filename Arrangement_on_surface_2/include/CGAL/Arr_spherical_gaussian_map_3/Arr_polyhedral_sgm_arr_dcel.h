@@ -65,6 +65,11 @@ public:
    * the halfedge while performing the minkowski sum
    */
   unsigned int arr_mask() const { return m_arr_mask; }
+
+  /*! Set the arr of an edge with a value.
+  * \param arr_id the id to set to.
+  */
+  void set_arr(unsigned int id) { m_arr_mask  = id; }
 };
 
 /*! Extend the arrangement face */
