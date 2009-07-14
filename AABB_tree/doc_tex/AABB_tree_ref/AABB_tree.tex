@@ -61,16 +61,16 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
        void rebuild(InputIterator begin, 
                     InputIterator beyond);}
 {Clears the current tree and rebuilds it from scratch. See constructor above for the parameters. }
-
+\ccGlue
 \ccMethod{void clear();}
 {Clears the AABB tree. }
-
+\ccGlue
 \ccMethod{Bounding_box bbox();}
 {Returns the axis-aligned bounding box of the whole tree. }
-
+\ccGlue
 \ccMethod{size_type size();}
 {Returns the number of primitives in the tree. }
-
+\ccGlue
 \ccMethod{bool empty();}
 {Returns \ccc{true}, iff tree contains no primitive. }
 
@@ -80,17 +80,17 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 \ccMethod{template <class Query>
 	        bool do_intersect(const Query& query);}
 {Returns \ccc{true}, iff the query intersects at least one of the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
-	
+\ccGlue	
 \ccMethod{template <class Query>
 	        size_type number_of_intersected_primitives(const Query& query);}
 {Returns the number of primitives intersected by the query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
-
+\ccGlue
 \ccMethod{template <class Query, class OutputIterator>
 	        OutputIterator 
           all_intersected_primitives(const Query& query,
                                      OutputIterator out);}
 {Outputs to the iterator the list of all intersected primitives ids. This function does not compute the intersection points and is hence faster than the function \ccc{all_intersections} function below. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
-
+\ccGlue
 \ccMethod{template <class Query>
 	        boost::optional<Primitive::Id>
 	        any_intersected_primitive(const Query& query);}
@@ -105,7 +105,7 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
           all_intersections(const Query& query,
                             OutputIterator out);}
 {Outputs to the iterator the list of all intersections between the query and input data, as objects of type \ccc{Object_and_primitive_id}. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates and intersections are defined in the \ccc{AT} class.}
-
+\ccGlue
 \ccMethod{template <class Query>
 	        boost::optional<Object_and_primitive_id>
 	        any_intersection(const Query& query);}
@@ -119,11 +119,11 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 \ccMethod{FT
 squared_distance(const Point& query);} 
 {Returns the minimum squared distance between the query point and all input primitives. Method \ccc{accelerate_distance_queries} should be called before the first distance query, so that an internal secondary search structure is build, for improving performance.}
-
+\ccGlue
 \ccMethod{Point
 closest_point(const Point& query);} 
 {Returns the point in the union of all input primitives which is closest to the query. In case there are several closest points, one arbitrarily chosen closest point is returned. Method \ccc{accelerate_distance_queries} should be called before the first distance query, so that an internal secondary search structure is build, for improving performance.}
-
+\ccGlue
 \ccMethod{Point_and_primitive_id
 closest_point_and_primitive(const Point& query);} 
 {Returns a \ccc{Point_and_primitive_id} which realizes the smallest distance between the query point and all input primitives. Method \ccc{accelerate_distance_queries} should be called before the first distance query, so that an internal secondary search structure is build, for improving performance.}
