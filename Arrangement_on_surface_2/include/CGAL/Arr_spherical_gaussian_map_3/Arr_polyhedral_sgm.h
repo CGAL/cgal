@@ -667,10 +667,36 @@ public:
   Arr_polyhedral_sgm() : m_dirty_center(true) {}
   
   /*! Copy Constructor */
-  Arr_polyhedral_sgm(const Arr_polyhedral_sgm & sgm)
+  Arr_polyhedral_sgm(const Self & sgm)
   {
-    // Not implemented yet!
-    CGAL_error();
+	assign(sgm);
+  }
+
+  void assign(const Self & sgm)
+  {
+	  // Call the assign of the base class.
+	  Base::assign(sgm);
+
+	  typename Dcel::Face_iterator  fit;
+	  Face_const_iterator fit1 = sgm.faces_begin();
+	  
+	  // Set the points of the faces.
+	  for (fit = _dcel().faces_begin(); fit != _dcel().faces_end(); ++fit)
+	  {
+		  fit->set_point (fit1->point());
+		  ++fit1;
+	  }
+	  	  
+	  typename Dcel::Edge_iterator eit;
+	  Edge_const_iterator eit1 = sgm.edges_begin();
+
+	  // Set the arr_mask of the edges
+	  for (eit = _dcel().edges_begin(); eit != _dcel().edges_end(); ++eit)
+	  {
+		 eit->set_arr(eit1->arr_mask());
+		 eit->opposite()->set_arr(eit1->arr_mask());
+		 ++eit1;
+	  }
   }
   
   /*! Destructor */
