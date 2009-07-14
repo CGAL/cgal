@@ -298,7 +298,7 @@ public:
    * \param i The segment index(from 0 to size()-1).
    * \return A const reference to the segment.
    */
-  inline const Segment_2& operator[] (const unsigned int& i) const
+  inline const Segment_2& operator[] (const unsigned int i) const
   {
     CGAL_assertion (i < size());
     return (segments[i]);
