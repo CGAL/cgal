@@ -113,9 +113,9 @@ public:
 
     template <class Query>
     void bench_intersection(Facet_tree& tree,const int function,const double duration,
-        char *query_name, const std::vector<Query>& queries, const int nb_queries);
+        const char *query_name, const std::vector<Query>& queries, const int nb_queries);
     void bench_intersections(Facet_tree& tree, const double duration, const int function,
-        char *function_name, const std::vector<Ray>& rays,
+        const char *function_name, const std::vector<Ray>& rays,
         const std::vector<Line>& lines, const std::vector<Plane>& planes,
         const std::vector<Segment>& segments, const int nb_queries);
 
