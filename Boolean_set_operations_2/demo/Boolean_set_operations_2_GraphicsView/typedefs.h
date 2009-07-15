@@ -19,29 +19,13 @@
 #ifndef CGAL_TYPEDEFS_H
 #define CGAL_TYPEDEFS_H
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Lazy_exact_nt.h>
-#include <CGAL/Polygon_2.h>
-#include <CGAL/General_polygon_with_holes_2.h>
-#include <CGAL/General_polygon_set_2.h>
-#include <CGAL/Polygon_with_holes_2.h>
-#include <CGAL/Iso_rectangle_2.h>
-#include <CGAL/Gps_circle_segment_traits_2.h>
-#include <CGAL/minkowski_sum_2.h>
-#include <CGAL/approximated_offset_2.h>
-
 #ifdef CGAL_USE_GMP
 
-  #include <CGAL/Gmpq.h>
-
-  typedef CGAL::Gmpq                                    Base_nt;
+  typedef CGAL::Gmpq                     Base_nt;
 
 #else
 
-  #include <CGAL/MP_Float.h>
-  #include <CGAL/Quotient.h>
-
-  typedef CGAL::Quotient<CGAL::MP_Float>                Base_nt;
+  typedef CGAL::Quotient<CGAL::MP_Float> Base_nt;
 
 #endif
 
@@ -69,4 +53,36 @@ typedef Polygon_with_holes::Hole_const_iterator       Hole_const_iterator;
 
 typedef CGAL::Polygon_2<Kernel>                       Linear_polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>            Linear_polygon_with_holes_2;
+
+
+//
+// Bezier curves typedefs
+//
+#ifdef CGAL_USE_CORE
+
+typedef CGAL::CORE_algebraic_number_traits            Bezier_nt_traits;
+typedef Bezier_nt_traits::Rational                    Bezier_rational;
+typedef Bezier_nt_traits::Algebraic                   Bezier_algebraic;
+
+struct Bezier_rat_kernel  : public CGAL::Cartesian<Bezier_rational>  {};
+struct Bezier_alg_kernel  : public CGAL::Cartesian<Bezier_algebraic> {};
+
+struct Bezier_traits_2 : public CGAL::Arr_Bezier_curve_traits_2<Bezier_rat_kernel, Bezier_alg_kernel, Bezier_nt_traits> {};
+  
+typedef Bezier_rat_kernel::Point_2                      Bezier_rat_point;
+typedef Bezier_traits_2::Curve_2                        Bezier_curve;
+typedef Bezier_traits_2::X_monotone_curve_2             Bezier_X_monotone_curve;
+typedef CGAL::Gps_traits_2<Bezier_traits_2>             Bezier_gps_traits;
+typedef Bezier_gps_traits::General_polygon_2            Bezier_polygon;
+typedef Bezier_gps_traits::General_polygon_with_holes_2 Bezier_polygon_with_holes;
+typedef boost::shared_ptr<Bezier_polygon>               Bezier_polygon_ptr ;
+typedef boost::shared_ptr<Bezier_polygon_with_holes>    Bezier_polygon_with_holes_ptr ;
+typedef std::list<Bezier_polygon_ptr>                   Bezier_polygon_list ;
+typedef std::list<Bezier_polygon_with_holes_ptr>        Bezier_polygon_with_holes_list ;
+
+typedef CGAL::Qt::BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes> Bezier_GI;
+
+
+#endif
+
 #endif

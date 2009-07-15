@@ -944,6 +944,7 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/symm_d
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/symm_diff.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/union.bmp -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/union.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL/Qt/BezierPolygonWithHolesGraphicsItem.h -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/typedefs.h -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/bso_def.tex -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/Boolean_set_operations_2.png -text
