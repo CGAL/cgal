@@ -55,7 +55,8 @@ CGAL_BEGIN_NAMESPACE
  */
 template <typename PolyhedralSgm,
           typename Polyhedron,
-          typename Visitor = Arr_polyhedral_sgm_initializer_visitor<PolyhedralSgm, Polyhedron> >
+          typename Visitor =
+            Arr_polyhedral_sgm_initializer_visitor<PolyhedralSgm, Polyhedron> >
 class Arr_polyhedral_sgm_initializer :
   public Arr_sgm_initializer<typename PolyhedralSgm::Base>
 {
@@ -669,40 +670,43 @@ public:
   /*! Copy Constructor */
   Arr_polyhedral_sgm(const Self & sgm)
   {
-	assign(sgm);
+    assign(sgm);
   }
 
+  /*! Assign a spherical Gaussian map to this */
   void assign(const Self & sgm)
   {
-	  // Call the assign of the base class.
-	  Base::assign(sgm);
+    // Call the assign of the base class.
+    Base::assign(sgm);
 
-	  typename Dcel::Face_iterator  fit;
-	  Face_const_iterator fit1 = sgm.faces_begin();
+    typename Dcel::Face_iterator fit;
+    typename Base::Face_const_iterator fit1 = sgm.faces_begin();
 	  
-	  // Set the points of the faces.
-	  for (fit = _dcel().faces_begin(); fit != _dcel().faces_end(); ++fit)
-	  {
-		  fit->set_point (fit1->point());
-		  ++fit1;
-	  }
+    // Set the points of the faces.
+    for (fit = this->_dcel().faces_begin(); fit != this->_dcel().faces_end();
+         ++fit)
+    {
+      fit->set_point (fit1->point());
+      ++fit1;
+    }
 	  	  
-	  typename Dcel::Edge_iterator eit;
-	  Edge_const_iterator eit1 = sgm.edges_begin();
+    typename Dcel::Edge_iterator eit;
+    typename Base::Edge_const_iterator eit1 = sgm.edges_begin();
 
-	  // Set the arr_mask of the edges
-	  for (eit = _dcel().edges_begin(); eit != _dcel().edges_end(); ++eit)
-	  {
-		 eit->set_arr(eit1->arr_mask());
-		 eit->opposite()->set_arr(eit1->arr_mask());
-		 ++eit1;
-	  }
+    // Set the arr_mask of the edges
+    for (eit = this->_dcel().edges_begin(); eit != this->_dcel().edges_end();
+         ++eit)
+    {
+      eit->set_arr(eit1->arr_mask());
+      eit->opposite()->set_arr(eit1->arr_mask());
+      ++eit1;
+    }
   }
   
   /*! Destructor */
   virtual ~Arr_polyhedral_sgm() { clear(); }
 
-  /*! \brief clears the internal representation and auxiliary data structures
+  /*! Clear the internal representation and auxiliary data structures
    */
   void clear()
   {
