@@ -1,11 +1,14 @@
 #include <QtGui/QMainWindow>
+#include <QtGui/QMessageBox>
 #include "Scene.h"
 
 class MainWindow : public QMainWindow
 {
 
+  Q_OBJECT
+
 public:
-  MainWindow() {
+  MainWindow(QWidget* parent = 0) {
     ui = new Ui::MainWindow;
     ui->setupUi(this);
     s = new Scene(ui);
@@ -80,6 +83,12 @@ public:
     connect(ui->action2_color_clipping, SIGNAL(toggled(bool)),
 	    s, SLOT(toggle_two_color_clipping(bool)));
 
+    // Help menu:
+    connect(ui->actionDemo_Help, SIGNAL(triggered()),
+            this, SLOT(help()));
+    connect(ui->actionAbout, SIGNAL(triggered()),
+            this, SLOT(about()));
+
   }
 
   ~MainWindow() {
@@ -87,6 +96,37 @@ public:
     delete(s);
   }
 
+public slots:
+  void help() {
+
+  }
+  
+  void about() {
+    QMessageBox mb(QMessageBox::NoIcon,
+	"About the demo...",
+	"<html>\n\
+          <body>\n\
+            <h2>3D Periodic Triangulations</h2>\n\
+            <p>Copyright &copy;2008-2009<br>\n\
+              <a href=\"http://www-sop.inria.fr/\">\
+                INRIA Sophia Antipolis - Mediterranee\
+              <a/>\n\
+            </p>\n\
+            <p>This application illustrates the 3D Periodic Delaunay\
+              Triangulations of <a href=\"http://www.cgal.org/\">CGAL</a>.\
+            </p>\n\
+            <p>See also the package manual:<br>\n\
+              <a href=\"http://www.cgal.org/Pkg/Periodic_3_triangulation_3\">\
+              3D Periodic Triangulations</a>\
+            </p>\n\
+          </body>\n\
+        </html>",
+	QMessageBox::Ok,
+	this);
+    mb.exec();
+  }
+
+public:
   Ui::MainWindow* ui;
   Scene* s;
 };

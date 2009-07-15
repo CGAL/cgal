@@ -85,11 +85,20 @@
     <addaction name="separator" />
     <addaction name="actionGrab_image" />
    </widget>
+   <widget class="QMenu" name="menuHelp" >
+    <property name="title" >
+     <string>Help</string>
+    </property>
+    <addaction name="actionDemo_Help" />
+    <addaction name="separator" />
+    <addaction name="actionAbout" />
+   </widget>
    <addaction name="menuFile" />
    <addaction name="menuInitialization" />
    <addaction name="menuActions" />
    <addaction name="menuFeatures" />
    <addaction name="menuOptions" />
+   <addaction name="menuHelp" />
   </widget>
   <widget class="QStatusBar" name="statusBar" />
   <action name="actionLoad_Points" >
@@ -115,6 +124,9 @@
    <property name="text" >
     <string>Wireframe</string>
    </property>
+   <property name="toolTip" >
+    <string>Switches wireframe rendering on and off</string>
+   </property>
    <property name="shortcut" >
     <string>X</string>
    </property>
@@ -125,6 +137,9 @@
    </property>
    <property name="text" >
     <string>Planar triangulation</string>
+   </property>
+   <property name="toolTip" >
+    <string>Shows only simplices for which z=0 everywhere</string>
    </property>
    <property name="shortcut" >
     <string>Z</string>
@@ -140,6 +155,9 @@
    <property name="text" >
     <string>Draw 1-sheeted covering</string>
    </property>
+   <property name="toolTip" >
+    <string>toggles between displaying only one periodic copy of each simplex and the internal representation </string>
+   </property>
    <property name="shortcut" >
     <string>1</string>
    </property>
@@ -153,6 +171,9 @@
    </property>
    <property name="text" >
     <string>Draw bordering cells multiply</string>
+   </property>
+   <property name="toolTip" >
+    <string>Draws each simplex for which the intersection with the fundamental cube is non-empty</string>
    </property>
    <property name="shortcut" >
     <string>M</string>
@@ -176,10 +197,16 @@
    <property name="text" >
     <string>2-color clipping</string>
    </property>
+   <property name="toolTip" >
+    <string>show the clipped part of all clipped edges in a different color</string>
+   </property>
   </action>
   <action name="actionPoint_grid" >
    <property name="text" >
     <string>Point grid</string>
+   </property>
+   <property name="toolTip" >
+    <string>A grid of 36 points that can be triangulated in 1-sheeted covering space</string>
    </property>
    <property name="shortcut" >
     <string>F5</string>
@@ -197,6 +224,9 @@
    <property name="text" >
     <string>Random planar point set</string>
    </property>
+   <property name="toolTip" >
+    <string>Initial triangulation of 10 points chosen at random with z=0</string>
+   </property>
    <property name="shortcut" >
     <string>F4</string>
    </property>
@@ -204,6 +234,9 @@
   <action name="actionRandom_Point_Set" >
    <property name="text" >
     <string>Random point set</string>
+   </property>
+   <property name="toolTip" >
+    <string>Initial triangulation of 30 points chosen at random</string>
    </property>
    <property name="shortcut" >
     <string>F3</string>
@@ -249,6 +282,9 @@
    <property name="text" >
     <string>Point location</string>
    </property>
+   <property name="toolTip" >
+    <string>Marks the tetrahedron that currently contains the flying ball</string>
+   </property>
    <property name="shortcut" >
     <string>L</string>
    </property>
@@ -259,6 +295,9 @@
    </property>
    <property name="text" >
     <string>Conflict region</string>
+   </property>
+   <property name="toolTip" >
+    <string>Shows all tetrahedra in whose circumcircle the flying ball is contained</string>
    </property>
    <property name="shortcut" >
     <string>C</string>
@@ -293,6 +332,9 @@
    <property name="text" >
     <string>Flying ball</string>
    </property>
+   <property name="toolTip" >
+    <string>Shows a ball flying through the cube, showing the periodicity</string>
+   </property>
    <property name="shortcut" >
     <string>B</string>
    </property>
@@ -304,6 +346,9 @@
    <property name="text" >
     <string>Pause</string>
    </property>
+   <property name="toolTip" >
+    <string>Pauses the flying ball</string>
+   </property>
    <property name="shortcut" >
     <string>P</string>
    </property>
@@ -312,6 +357,9 @@
    <property name="text" >
     <string>Insert point</string>
    </property>
+   <property name="toolTip" >
+    <string>Insert point at the position of the flying ball (whether it is shown or not)</string>
+   </property>
    <property name="shortcut" >
     <string>I</string>
    </property>
@@ -319,6 +367,9 @@
   <action name="actionInsert_random_point" >
    <property name="text" >
     <string>Insert random point</string>
+   </property>
+   <property name="toolTip" >
+    <string>Insert one point at random position (within the cube)</string>
    </property>
    <property name="shortcut" >
     <string>R</string>
@@ -380,6 +431,32 @@
    </property>
    <property name="shortcut" >
     <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionDemo_Help" >
+   <property name="text" >
+    <string>Demo Help</string>
+   </property>
+   <property name="shortcut" >
+    <string>H</string>
+   </property>
+  </action>
+  <action name="actionAbout" >
+   <property name="text" >
+    <string>About</string>
+   </property>
+   <property name="shortcut" >
+    <string>A</string>
+   </property>
+  </action>
+  <action name="actionHallo" >
+   <property name="text" >
+    <string>Hallo</string>
+   </property>
+  </action>
+  <action name="actionAboutt" >
+   <property name="text" >
+    <string>Aboutt</string>
    </property>
   </action>
  </widget>
