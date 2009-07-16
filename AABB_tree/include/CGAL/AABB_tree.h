@@ -518,7 +518,7 @@ namespace CGAL {
     }
 	}
 
-	// constructs the search KD tree from interal primitives
+	// constructs the search KD tree from internal primitives
 	template<typename Tr>
 	bool AABB_tree<Tr>::accelerate_distance_queries()
 	{
