@@ -28,6 +28,5 @@
     <qresource prefix="/cgal/help" lang="en" >
 	<file>resources/about.html</file>
     	<file>resources/about_CGAL.html</file>
-	<file>resources/CGAL.gif</file>
     </qresource>
 </RCC>

@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1566</width>
-    <height>713</height>
+    <width>962</width>
+    <height>750</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -37,7 +37,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1566</width>
+     <width>962</width>
      <height>22</height>
     </rect>
    </property>
@@ -123,7 +123,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak" >
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="actionLoad_Points" />
    <addaction name="actionGrab_image" />
