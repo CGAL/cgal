@@ -1,5 +1,7 @@
 #include <QtGui/QMainWindow>
 #include <QtGui/QMessageBox>
+#include <QFile>
+#include <QTextStream>
 #include "Scene.h"
 
 class MainWindow : public QMainWindow
@@ -86,6 +88,8 @@ public:
     // Help menu:
     connect(ui->actionDemo_Help, SIGNAL(triggered()),
             this, SLOT(help()));
+    connect(ui->actionAbout_CGAL, SIGNAL(triggered()),
+            this, SLOT(about_CGAL()));
     connect(ui->actionAbout, SIGNAL(triggered()),
             this, SLOT(about()));
 
@@ -102,25 +106,22 @@ public slots:
   }
   
   void about() {
+    QFile about("resources/about.html");
+    about.open(QIODevice::ReadOnly);
     QMessageBox mb(QMessageBox::NoIcon,
 	"About the demo...",
-	"<html>\n\
-          <body>\n\
-            <h2>3D Periodic Triangulations</h2>\n\
-            <p>Copyright &copy;2008-2009<br>\n\
-              <a href=\"http://www-sop.inria.fr/\">\
-                INRIA Sophia Antipolis - Mediterranee\
-              <a/>\n\
-            </p>\n\
-            <p>This application illustrates the 3D Periodic Delaunay\
-              Triangulations of <a href=\"http://www.cgal.org/\">CGAL</a>.\
-            </p>\n\
-            <p>See also the package manual:<br>\n\
-              <a href=\"http://www.cgal.org/Pkg/Periodic_3_triangulation_3\">\
-              3D Periodic Triangulations</a>\
-            </p>\n\
-          </body>\n\
-        </html>",
+	QTextStream(&about).readAll(),
+	QMessageBox::Ok,
+	this);
+    mb.exec();
+  }
+
+  void about_CGAL() {
+    QFile about("resources/about_CGAL.html");
+    about.open(QIODevice::ReadOnly);
+    QMessageBox mb(QMessageBox::NoIcon,
+	"About CGAL...",
+	QTextStream(&about).readAll(),
 	QMessageBox::Ok,
 	this);
     mb.exec();

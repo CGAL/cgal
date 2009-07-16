@@ -34,8 +34,13 @@ if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND)
 
    include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
+  # UI files (Qt Designer files)
   qt4_wrap_ui ( UI_FILES MainWindow.ui )
 
+  # qrc files (resource files)
+  qt4_add_resources( RESOURCE_FILES ./Periodic_3_triangulation_3.qrc )
+
+  # use the Qt MOC preprocessor on classes that derive from QObject
   qt4_generate_moc ( Scene.h moc_Scene.cpp )
   qt4_generate_moc ( MainWindow.h moc_MainWindow.cpp )
 
@@ -44,10 +49,12 @@ if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND)
   include_directories( ${QT_INCLUDE_DIR} )
   include_directories( ../../include )
 
+  # The executable itself
   add_executable  ( periodic_3_triangulation_3_demo
   		    Scene.cpp moc_Scene.cpp
   		    periodic_3_triangulation_3_demo.cpp
-  		    MainWindow.ui moc_MainWindow.cpp )
+  		    MainWindow.ui moc_MainWindow.cpp 
+		    ${UI_FILES} ${RESOURCE_FILES})
 
   # Link the executable to CGAL and third-party libraries
   target_link_libraries(periodic_3_triangulation_3_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
