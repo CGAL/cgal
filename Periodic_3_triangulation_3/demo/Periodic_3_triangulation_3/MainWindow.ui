@@ -137,6 +137,9 @@
    <addaction name="actionPause" />
    <addaction name="actionFlying_ball" />
    <addaction name="separator" />
+   <addaction name="actionInsert_point" />
+   <addaction name="actionInsert_random_point" />
+   <addaction name="separator" />
    <addaction name="actionPoint_location" />
    <addaction name="actionConflict_region" />
    <addaction name="separator" />
@@ -462,6 +465,10 @@
    </property>
   </action>
   <action name="actionInsert_point" >
+   <property name="icon" >
+    <iconset resource="Periodic_3_triangulation_3.qrc" >
+     <normaloff>:/cgal/Periodic_3_triangulation_3/icons/inputPointBall.png</normaloff>:/cgal/Periodic_3_triangulation_3/icons/inputPointBall.png</iconset>
+   </property>
    <property name="text" >
     <string>Insert point</string>
    </property>
@@ -473,6 +480,10 @@
    </property>
   </action>
   <action name="actionInsert_random_point" >
+   <property name="icon" >
+    <iconset resource="Periodic_3_triangulation_3.qrc" >
+     <normaloff>:/cgal/Periodic_3_triangulation_3/icons/inputPointRandom.png</normaloff>:/cgal/Periodic_3_triangulation_3/icons/inputPointRandom.png</iconset>
+   </property>
    <property name="text" >
     <string>Insert random point</string>
    </property>
