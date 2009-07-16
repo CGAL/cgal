@@ -100,7 +100,7 @@ namespace CGAL
 
         public:
                 template <class ConstPointIterator>
-                AABB_search_tree(ConstPointIterator begin, ConstPointIterator beyond)
+                AABB_search_tree(ConstPointIterator begin, ConstPointIterator beyond): m_tree(0)
                 {
                         typedef typename Add_decorated_point<Traits, typename Traits::Primitive::Id>::Point_3 Decorated_point;
                         std::vector<Decorated_point> points;
@@ -110,7 +110,10 @@ namespace CGAL
                                 ++begin;
                         }
                         m_tree = new Tree(points.begin(), points.end());
-                        m_tree->build();
+                        if(m_tree)
+                                m_tree->build();
+                        else
+                                std::cerr << "unable to build the search tree!" << std::endl;
                 }
 
                 ~AABB_search_tree() {
