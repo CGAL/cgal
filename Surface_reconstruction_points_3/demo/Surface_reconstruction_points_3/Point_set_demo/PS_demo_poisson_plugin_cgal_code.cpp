@@ -31,7 +31,7 @@ typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surfac
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
 Polyhedron* poisson_reconstruct(const Point_set& points,
                                 FT sm_angle, // Min triangle angle (degrees). 20 = fast, 30 guaranties convergence.
-                                FT sm_radius, // Max triangle radius w.r.t. point set radius. 0.1 is fine.
+                                FT sm_radius, // Max triangle size w.r.t. point set radius. 0.1 is fine.
                                 FT sm_distance) // Approximation error w.r.t. p.s.r.. For Poisson: 0.01=fast, 0.002=smooth.
 {
     CGAL::Timer task_timer; task_timer.start();
@@ -107,13 +107,24 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     // defining the implicit surface = implicit function + bounding sphere centered at inner_point
     FT sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bsphere.center(),inner_point));
     sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
+    FT sm_dichotomy_error = sm_distance/10.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,
-                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius));
+                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
+                      sm_dichotomy_error);
 
     // Defines surface mesh generation criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
-                                                        sm_radius*radius,  // Max triangle radius
+                                                        sm_radius*radius,  // Max triangle size
                                                         sm_distance*radius); // Approximation error
+
+    CGAL_TRACE_STREAM << "  make_surface_mesh(sphere center=("<<inner_point << "),\n"
+                      << "                    sphere radius="<<sm_sphere_radius<<",\n"
+                      << "                    dichotomy error="<<sm_dichotomy_error<<" * sphere radius,\n"
+                      << "                    angle="<<sm_angle << " degrees,\n"
+                      << "                    triangle size="<<sm_radius<<" * point set radius,\n"
+                      << "                    distance="<<sm_distance<<" * p.s.r.,\n"
+                      << "                    Manifold_with_boundary_tag)\n"
+                      << "  where point set radius="<<radius<<"\n";
 
     // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation

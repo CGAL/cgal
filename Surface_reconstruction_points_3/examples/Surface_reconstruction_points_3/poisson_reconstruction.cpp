@@ -2,8 +2,8 @@
 
 //----------------------------------------------------------
 // Poisson Delaunay Reconstruction method.
-// Reads a point set or a mesh's set of vertices, reconstruct a surface using Poisson,
-// and save the surface.
+// Reads a point set or a mesh's set of vertices, reconstructs a surface using Poisson,
+// and saves the surface.
 // Output format is .off.
 //----------------------------------------------------------
 // poisson_reconstruction file_in file_out [options]
@@ -72,8 +72,8 @@ int main(int argc, char * argv[])
     // usage
     if (argc-1 < 2)
     {
-      std::cerr << "Reads a point set or a mesh's set of vertices, reconstruct a surface,\n";
-      std::cerr << "and save the surface.\n";
+      std::cerr << "Reads a point set or a mesh's set of vertices, reconstructs a surface using Poisson,\n";
+      std::cerr << "and saves the surface.\n";
       std::cerr << "\n";
       std::cerr << "Usage: " << argv[0] << " file_in file_out [options]\n";
       std::cerr << "Input file formats are .off (mesh) and .xyz or .pwn (point set).\n";
@@ -86,7 +86,7 @@ int main(int argc, char * argv[])
 
     // Poisson options
     FT sm_angle = 20.0; // Min triangle angle (degrees). 20=fast, 30 guaranties convergence.
-    FT sm_radius = 0.1; // Max triangle radius w.r.t. point set radius. 0.1 is fine.
+    FT sm_radius = 0.1; // Max triangle size w.r.t. point set radius. 0.1 is fine.
     FT sm_distance = 0.002; // Approximation error w.r.t. p.s.r. For Poisson: 0.01=fast, 0.002=smooth.
 
     // decode parameters
@@ -238,16 +238,27 @@ int main(int argc, char * argv[])
     Sphere bsphere = function.bounding_sphere();
     FT radius = std::sqrt(bsphere.squared_radius());
 
-    // defining the implicit surface = implicit function + bounding sphere centered at inner_point
+    // Defines the implicit surface = implicit function + bounding sphere centered at inner_point
     FT sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bsphere.center(),inner_point));
     sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
+    FT sm_dichotomy_error = sm_distance/10.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,
-                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius));
+                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
+                      sm_dichotomy_error);
 
     // Defines surface mesh generation criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
-                                                        sm_radius*radius,  // Max triangle radius
+                                                        sm_radius*radius,  // Max triangle size
                                                         sm_distance*radius); // Approximation error
+
+    CGAL_TRACE_STREAM << "  make_surface_mesh(sphere center=("<<inner_point << "),\n"
+                      << "                    sphere radius="<<sm_sphere_radius<<",\n"
+                      << "                    dichotomy error="<<sm_dichotomy_error<<" * sphere radius,\n"
+                      << "                    angle="<<sm_angle << " degrees,\n"
+                      << "                    triangle size="<<sm_radius<<" * point set radius,\n"
+                      << "                    distance="<<sm_distance<<" * p.s.r.,\n"
+                      << "                    Manifold_with_boundary_tag)\n"
+                      << "  where point set radius="<<radius<<"\n";
 
     // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
@@ -267,7 +278,7 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
 
     //***************************************
-    // save the mesh
+    // saves reconstructed surface mesh
     //***************************************
 
     std::cerr << "Write file " << output_filename << std::endl << std::endl;

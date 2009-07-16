@@ -25,6 +25,11 @@ typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surfac
 
 int main(void)
 {
+    // Poisson options
+    FT sm_angle = 20.0; // Min triangle angle in degrees.
+    FT sm_radius = 0.03; // Max triangle size w.r.t. point set radius.
+    FT sm_distance = 0.003; // Surface approximation error w.r.t. p.s.r.
+
     // Reads the point set file in points[].
     // Note: read_xyz_points_and_normals() requires an iterator over points
     // + property maps to access each point's position and normal.
@@ -58,21 +63,20 @@ int main(void)
     // and computes implicit function bounding sphere radius.
     Point inner_point = function.get_inner_point();
     Sphere bsphere = function.bounding_sphere();
-	FT radius = std::sqrt(bsphere.squared_radius());
+    FT radius = std::sqrt(bsphere.squared_radius());
 
-    // Defines implicit surface: requires defining a
+    // Defines the implicit surface: requires defining a
   	// conservative bounding sphere centered at inner point.
-	FT sm_sphere_radius = 2.01 * radius;
+    FT sm_sphere_radius = 2.01 * radius;
+    FT sm_dichotomy_error = sm_distance/10.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,
-                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius));
+                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
+                      sm_dichotomy_error);
 
     // Defines surface mesh generation criteria
-    FT sm_shape = 20.0; // min triangle angle in degrees
-    FT sm_size = 0.03;    // max triangle size
-    FT sm_approx = 0.003; // surface approximation error
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_shape,
-                                                        sm_size * radius,
-                                                        sm_approx * radius);
+    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
+                                                        sm_radius*radius,  // Max triangle size
+                                                        sm_distance*radius); // Approximation error
 
     // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
