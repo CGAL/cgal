@@ -512,7 +512,10 @@ namespace CGAL {
 			return true;
 		}
 		else
+    {
+			std::cerr << "Unable to allocate memory for accelerating distance queries" << std::endl;
 			return false;
+    }
 	}
 
 	// constructs the search KD tree from interal primitives
