@@ -331,6 +331,12 @@ void Scene::generate_points_in(const unsigned int nb_points,
                                const double min,
                                const double max)
 {
+    if(m_pPolyhedron == NULL)
+    {
+        std::cout << "Load polyhedron first." << std::endl;
+        return;
+    }
+
     typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
     typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
@@ -377,6 +383,12 @@ void Scene::generate_points_in(const unsigned int nb_points,
 
 void Scene::generate_inside_points(const unsigned int nb_points)
 {
+    if(m_pPolyhedron == NULL)
+    {
+        std::cout << "Load polyhedron first." << std::endl;
+        return;
+    }
+
     typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
     typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
@@ -412,6 +424,12 @@ void Scene::generate_inside_points(const unsigned int nb_points)
 
 void Scene::generate_boundary_segments(const unsigned int nb_slices)
 {
+    if(m_pPolyhedron == NULL)
+    {
+        std::cout << "Load polyhedron first." << std::endl;
+        return;
+    }
+
     typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
     typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
@@ -455,6 +473,12 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
 
 void Scene::generate_boundary_points(const unsigned int nb_points)
 {
+    if(m_pPolyhedron == NULL)
+    {
+        std::cout << "Load polyhedron first." << std::endl;
+        return;
+    }
+
     typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
     typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
@@ -498,6 +522,12 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
 
 void Scene::generate_edge_points(const unsigned int nb_points)
 {
+    if(m_pPolyhedron == NULL)
+    {
+        std::cout << "Load polyhedron first." << std::endl;
+        return;
+    }
+
     typedef CGAL::AABB_polyhedron_segment_primitive<Kernel,Polyhedron> Primitive;
     typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
@@ -541,6 +571,12 @@ void Scene::generate_edge_points(const unsigned int nb_points)
 
 void Scene::unsigned_distance_function()
 {
+    if(m_pPolyhedron == NULL)
+    {
+        std::cout << "Load polyhedron first." << std::endl;
+        return;
+    }
+
     CGAL::Timer timer;
     timer.start();
     std::cout << "Construct AABB tree...";
@@ -572,6 +608,12 @@ distance : m_max_distance_function;
 
 void Scene::unsigned_distance_function_to_edges()
 {
+    if(m_pPolyhedron == NULL)
+    {
+        std::cout << "Load polyhedron first." << std::endl;
+        return;
+    }
+
     typedef CGAL::AABB_polyhedron_segment_primitive<Kernel,Polyhedron> Primitive;
     typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Edge_tree;
@@ -607,6 +649,12 @@ distance : m_max_distance_function;
 
 void Scene::signed_distance_function()
 {
+    if(m_pPolyhedron == NULL)
+    {
+        std::cout << "Load polyhedron first." << std::endl;
+        return;
+    }
+
     CGAL::Timer timer;
     timer.start();
     std::cout << "Construct AABB tree...";
@@ -667,6 +715,11 @@ void Scene::toggle_view_distance_function()
 
 void Scene::refine_bisection(const FT max_sqlen)
 {
+    if(m_pPolyhedron == NULL)
+    {
+        std::cout << "Load polyhedron first." << std::endl;
+        return;
+    }
     std::cout << "Refine through recursive longest edge bisection...";
     Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
     refiner(max_sqlen);
@@ -675,6 +728,11 @@ void Scene::refine_bisection(const FT max_sqlen)
 
 void Scene::refine_loop()
 {
+    if(m_pPolyhedron == NULL)
+    {
+        std::cout << "Load polyhedron first." << std::endl;
+        return;
+    }
     std::cout << "Loop subdivision...";
     CGAL::Subdivision_method_3::Loop_subdivision(*m_pPolyhedron, 1);
     std::cout << "done (" << m_pPolyhedron->size_of_facets() << " facets)" << std::endl;
