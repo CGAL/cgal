@@ -1,4 +1,9 @@
+#ifdef CGAL_GLEW_ENABLED
+# include "GlSplat/GlSplat.h"
+#endif
+
 #include "Point_set_scene_item.h"
+#include "Scene.h"
 #include "Polyhedron_type.h"
 #include "CGAL/compute_normal.h"
 
@@ -64,9 +69,9 @@ Point_set_scene_item::clone() const
 }
 
 // Is selection empty?
-bool Point_set_scene_item::isSelectionEmpty() const 
-{ 
-  return (m_points->nb_selected_points() == 0); 
+bool Point_set_scene_item::isSelectionEmpty() const
+{
+  return (m_points->nb_selected_points() == 0);
 }
 
 // Delete selection
@@ -98,11 +103,11 @@ bool Point_set_scene_item::read_off_point_set(std::istream& stream)
 
   m_points->clear();
   bool ok = stream &&
-            CGAL::read_off_points_and_normals(stream, 
+            CGAL::read_off_points_and_normals(stream,
                                               std::back_inserter(*m_points),
                                               CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(*m_points))) &&
             !isEmpty();
-    
+
   return ok;
 }
 
@@ -124,11 +129,11 @@ bool Point_set_scene_item::read_xyz_point_set(std::istream& stream)
 
   m_points->clear();
   bool ok = stream &&
-            CGAL::read_xyz_points_and_normals(stream, 
+            CGAL::read_xyz_points_and_normals(stream,
                                               std::back_inserter(*m_points),
                                               CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(*m_points))) &&
             !isEmpty();
-    
+
   return ok;
 }
 
@@ -157,7 +162,11 @@ Point_set_scene_item::toolTip() const
 }
 
 bool Point_set_scene_item::supportsRenderingMode(RenderingMode m) const {
-  return m==Points || m==PointsPlusNormals || m==Splatting;
+  return m==Points || m==PointsPlusNormals
+  #ifdef CGAL_GLEW_ENABLED
+     || (m==Splatting && Scene::splatting()->isSupported())
+  #endif
+  ;
 }
 
 // Points OpenGL drawing in a display list
