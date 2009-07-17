@@ -2606,6 +2606,10 @@ Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/MainWindow.ui -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/Periodic_3_triangulation_3.qrc -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/data/oneH.xyz -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/data/oneK.xyz -text
+Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/documentation/images/mainwindow.png -text
+Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/documentation/index.html -text
+Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/documentation/introduction.html -text
+Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/documentation/menu.html -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/icons/ball.png -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/icons/camera.png -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/icons/clipping.png -text
