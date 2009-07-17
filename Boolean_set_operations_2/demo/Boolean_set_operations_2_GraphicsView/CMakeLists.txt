@@ -21,6 +21,7 @@ find_package(Qt4)
 
 include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../include )
 include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include )
 
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND CGAL_Core_FOUND )
 

@@ -24,6 +24,11 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Qt/GraphicsItem.h>
+#include <CGAL/Qt/Converter.h>
+
+#include <QPainter>
 #include <QBrush>
 #include <QPen>
 
@@ -31,20 +36,160 @@ namespace CGAL {
 
 namespace Qt {
 
+template <class Bezier_polygon_with_holes_, class Converter_, class Path_builder_>
+class Bezier_to_path
+{
+  typedef Bezier_polygon_with_holes_ Bezier_polygon_with_holes ;
+  typedef Converter_                 Converter ;
+  typedef Path_builder_              Path_builder ;
+  
+  typedef typename Bezier_polygon_with_holes::Hole_const_iterator Hole_const_iterator ;
+  typedef typename Bezier_polygon_with_holes::General_polygon_2   Bezier_polygon ;
+  typedef typename Bezier_polygon::Curve_const_iterator           Curve_const_iterator ;
+  typedef typename Bezier_polygon::X_monotone_curve_2             Bezier_X_monotone_curve ;
+  typedef typename Bezier_X_monotone_curve::Point_2               Bezier_point ;
+  typedef typename Bezier_X_monotone_curve::Curve_2               Bezier_curve ;
+  
+  typedef Simple_cartesian<double> Dbl_kernel;
+  typedef Dbl_kernel::Line_2       Dbl_Line ;
+  typedef Dbl_kernel::Point_2      Dbl_point;
+  typedef std::deque<Dbl_point>    Dbl_control_points ;
+
+public :
+  
+  Bezier_to_path( Converter& aConverter, Path_builder& aPath_builder ) 
+    : convert(aConverter)
+    , path_builder(aPath_builder) 
+    , mParameterApproximationError(0.001)
+    , mSubdivisionErrorThreshold(0.1)
+  {}
+   
+  template<class OutputIterator> 
+  void recursive_subdivision( Dbl_control_points const& aCtrlPts, double aMin, double aMid, double aMax, double aErrThreshold, OutputIterator aOut )
+  {
+    Dbl_control_points lLeft;
+    Dbl_control_points lRight;
+    
+    Dbl_point lP = de_Casteljau_2(aCtrlPts.begin(), aCtrlPts.end(), aMid, std::back_inserter(lLeft), std::front_inserter(lRight) ) ;
+    
+    Dbl_point lFirst = aCtrlPts.front();
+    Dbl_point lLast  = aCtrlPts.back ();
+    
+    double lErr = CGAL::square_distance(lP, Line(lFirst, lLast));    
+    
+    if ( lErr > aErrThreshold )
+    {
+      recursive_subdivision(lLeft,aMin,(aMin+aMid)/2,aMid,aOut);
+      
+      *aOut ++ = lP ;
+      
+      recursive_subdivision(lLeft,aMid,(aMid+aMax)/2,aMax,aOut);
+    }
+    else
+    {
+      *aOut ++ = lP ;
+    }
+    
+  }
+   
+  void process( Bezier_X_monotone_curve const& aBXMC, bool first_point )
+  {
+    Bezier_cuve const& lBC = aBXMC.supporting_curve();
+    
+    double lST = get_approximate_endpoint_parameter(aBXMC.source(), lBC, aBXMC.xid(), mParameterApproximationError ) ;
+    double lET = get_approximate_endpoint_parameter(aBXMC.target(), lBC, aBXMC.xid(), mParameterApproximationError ) ;
+    
+    Dbl_control_points lCtrlPoints ;
+    for ( int k = 0 ; k < lBC.number_of_control_points(); ++ k )
+    {
+      Dbl_point p ( CGAL::to_double ( lBC.control_point(k).x() )
+                  , CGAL::to_double ( lBC.control_point(k).y() )
+                  ) ;
+      
+    }
+    
+    std::vector<Dbl_point> lSample ;
+    
+    recursive_subdivision(lCtrlPoints, lST, ( lST + lET ) / 2.0 , lET, mSubdivisionErrorThreshold, std::back_inserter(lSample) ) ;
+    
+    for( typename std::vector<Dbl_point>::const_iterator it = lSample.begin(); it != lSample.end() ; ++ it )
+    {
+       
+      if ( first_point && it == lSample.begin() )
+            path_builder.moveTo( convert(*it) ) ;
+      else  path_builder.lineTo( convert(*it) ) ;
+    }
+    
+  }
+  
+  void process( Bezier_polygon const& aBP)
+  {
+    bool first_point = true ;
+    for( Curve_const_iterator cit = aBP.curves_begin(); cit != aBP.curves_end(); first_point = false, ++ cit )
+      process(*cit,first_point);    
+  }
+  
+  void process( Bezier_polygon_with_holes const& aBPWH )
+  {
+    process(aBPWH.outer_boundary());
+    
+    for( Hole_const_iterator hit = aBPWH.holes_begin(); hit != aBPWH.holes_end(); ++ hit )
+      process(*hit);    
+  }
+  
+private:
+  
+  double get_approximate_endpoint_parameter( Bezier_point const& p, Bezier_curve const& curve, unsigned int xid, double err )
+  {
+    typedef typename Bezier_point::Originator_iterator Originator_iterator ;
+    
+    // First try to use the approximate representation of the endpoints.
+    Originator_iterator org = p.get_originator (curve, xid);
+  
+    double t_min = CGAL::to_double(org->point_bound().t_min) ;
+    double t_max = CGAL::to_double(org->point_bound().t_max) ;
+    
+    bool can_refine = !p.is_exact();
+    
+    do
+    {
+      if ( t_max - t_min <= err )
+        break ;
+      
+      if ( can_refine )
+      {
+        can_refine = p.refine();
+        
+        t_min = CGAL::to_double(org->point_bound().t_min) ;
+        t_max = CGAL::to_double(org->point_bound().t_max) ;
+      }  
+    }
+    while ( can_refine ) ;
+    
+    return ( t_min + t_max) / 2.0 ;
+  }
+  
+private:
+  
+  Converter&    convert ;
+  Path_builder& path_builder ;
+  
+  double        mParameterApproximationError ;
+  double        mSubdivisionErrorThreshold;
+} ;
+
 template <typename Bezier_polygon_wiht_holes_>
 class BezierPolygonWithHolesGraphicsItem : public GraphicsItem
 {
   typedef Bezier_polygon_wiht_holes_ Bezier_polygon_wiht_holes ;
   
-  typedef boost::shared_ptr<Bezier_polygon_wiht_holes> Bezier_polygon_wiht_holes_ptr ;
-  
-  typedef std::list<Bezier_polygon_wiht_holes_ptr> Bezier_polygon_wiht_holes_list ;
+  typedef std::list<Bezier_polygon_wiht_holes> Bezier_polygon_wiht_holes_list ;
   
   typedef typename Bezier_polygon_wiht_holes_list::iterator list_iterator ;
   
   typedef typename Bezier_polygon_wiht_holes::General_polygon_2 Bezier_polygon ;
   
-  typedef typename Bezier_polygon::Traits Traits;
+  typedef typename Bezier_polygon::Traits_2 Traits;
   
   typedef typename Traits::Point_2 Point;
   
@@ -72,12 +217,11 @@ protected:
 
   void updateBoundingBox();
 
+  bool isModelEmpty() const { return !mList || mList->size() == 0 || mList->front().outer_boundary().size() == 0 ; }
+
 protected:
 
   Bezier_polygon_wiht_holes_list* mList;
-  QPainter*                       mPainter;
-  PainterOstream<Traits>          mPainter_ostream;
-  Point                           mP;
   QRectF                          mBounding_rect;
   QBrush                          mBrush;
   QPen                            mPen;
@@ -87,28 +231,10 @@ protected:
 template <typename Bezier_polygon_wiht_holes>
 BezierPolygonWithHolesGraphicsItem<Bezier_polygon_wiht_holes>::BezierPolygonWithHolesGraphicsItem(Bezier_polygon_wiht_holes_list* aList)
   : mList(aList)
-  , mPainter_ostream(0)
 {
-  if(mList->size() == 0)
-    this->hide();
-  
-  updateBoundingBox();
-}
-
-template <class Bezier_polygon, class SampleOutputIterator>
-SampleOutputIterator Sample_bezier_polygon( Bezier_polygon const& aBP, SampleOutputIterator aSampleOut )
-{
-}
-
-
-template <class Bezier_polygon, class SampleOutputIterator>
-SampleOutputIterator Sample_bezier_polygon( Bezier_polygon const& aBP, SampleOutputIterator aSampleOut )
-{
-}
-
-template <class Bezier_polygon_wiht_holes, class SampleOutputIterator>
-SampleOutputIterator Sample_bezier_polygon_with_holes( Bezier_polygon_with_holes const& aBPWH, SampleOutputIterator aSampleOut )
-{
+  if( ! isModelEmpty() )
+       updateBoundingBox();
+  else this->hide();
 }
 
 template <typename Bezier_polygon_wiht_holes>
@@ -117,78 +243,44 @@ void BezierPolygonWithHolesGraphicsItem<Bezier_polygon_wiht_holes>::paint( QPain
                                                                          , QWidget*                        aWidget
                                                                          )
 {
-  Converter<Traits> convert;
-  
-  QPainterPath lPath;
-  
-  std::vector<Point> lSample ;
-   
-  for ( list_iterator it = mList->begin() ; it != mList->end() ; ++ it )
-    Sample_bezier_polygon_with_holes( *it, std::back_inserter(lSample) ) ;
-      
-  for ( typename std::vector<Point>::const_iterator it = lSample.begin(); it != lSample.end() ; ++ it )
+  if ( ! isModelEmpty() )
   {
-    Bezier_polygon_wiht_holes_ptr region = *sit ;
-    QPointF firstPoint = convert(*it);
-    border.moveTo(firstPoint);
-    mPainter_ostream = PainterOstream<Traits>(painter);
-  
-    for(++it;
-        it != poly->outer_boundary().vertices_end();
-        ++it){
-      border.lineTo(convert(*it)); 
-    }
-    border.lineTo(firstPoint);
-  
-  
-    for(typename Bezier_polygon_wiht_holes::Hole_const_iterator hit = poly->holes_begin();
-        hit != poly->holes_end();
-        ++hit){
-      typename Bezier_polygon_wiht_holes::General_polygon_2::Vertex_iterator it = hit->vertices_begin();
-      QPointF firstPoint = convert(*it);
-      border.moveTo(firstPoint);
-      for(++it;
-          it != hit->vertices_end();
-          ++it){
-        border.lineTo(convert(*it)); 
-      }
-      border.lineTo(firstPoint);
-    }
+    Converter<Traits> lConverter;
     
+    QPainterPath lPath;
+    
+    Bezier_to_path<Bezier_polygon_wiht_holes, Converter<Traits>, QPainterPath > to_path(lConverter,lPath);
+    
+    for ( list_iterator it = mList->begin() ; it != mList->end() ; ++ it )
+      to_path.process(*it);
+    
+    aPainter->setPen  (mPen );
+    aPainter->setBrush(mBrush);
+    aPainter->drawPath(lPath);
   }
-  
-  aPainter->setPen  (this->Pen());
-  aPainter->setBrush(this->mBrush());
-  aPainter->drawPath(lPath);
-
-  for ( typename std::vector<QPointF>::const_iterator vit = lVertices.begin() ; vit != lVertices.end(); ++ vit )
-    aPainter->drawPoint(*vit);
 }
 
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
 template <typename Bezier_polygon_wiht_holes>
-void 
-BezierPolygonWithHolesGraphicsItem<Bezier_polygon_wiht_holes>::updateBoundingBox()
+void BezierPolygonWithHolesGraphicsItem<Bezier_polygon_wiht_holes>::updateBoundingBox()
 {
-  Converter<Traits> convert;
-  prepareGeometryChange();
-  if(poly->outer_boundary().size() == 0){
-    return;
+  if ( ! isModelEmpty() )
+  {
+    prepareGeometryChange();
+    Converter<Traits> convert;
+//    mBounding_rect = convert(mList->front().outer_boundary().bbox());
   }
-  mBounding_rect = convert(poly->outer_boundary().bbox());
 }
 
 
 template <typename Bezier_polygon_wiht_holes>
-void 
-BezierPolygonWithHolesGraphicsItem<Bezier_polygon_wiht_holes>::modelChanged()
+void BezierPolygonWithHolesGraphicsItem<Bezier_polygon_wiht_holes>::modelChanged()
 {
-  if((poly->outer_boundary().size() == 0) ){
-    this->hide();
-  } else if((poly->outer_boundary().size() > 0) && (! this->isVisible())){
-    this->show();
-  }
+  if ( !isModelEmpty() && this->isVisible() )
+       this->show();
+  else this->hide();
+  
   updateBoundingBox();
   update();
 }

@@ -75,10 +75,8 @@ typedef Bezier_traits_2::X_monotone_curve_2             Bezier_X_monotone_curve;
 typedef CGAL::Gps_traits_2<Bezier_traits_2>             Bezier_gps_traits;
 typedef Bezier_gps_traits::General_polygon_2            Bezier_polygon;
 typedef Bezier_gps_traits::General_polygon_with_holes_2 Bezier_polygon_with_holes;
-typedef boost::shared_ptr<Bezier_polygon>               Bezier_polygon_ptr ;
-typedef boost::shared_ptr<Bezier_polygon_with_holes>    Bezier_polygon_with_holes_ptr ;
-typedef std::list<Bezier_polygon_ptr>                   Bezier_polygon_list ;
-typedef std::list<Bezier_polygon_with_holes_ptr>        Bezier_polygon_with_holes_list ;
+typedef std::list<Bezier_polygon>                       Bezier_polygon_list ;
+typedef std::list<Bezier_polygon_with_holes>            Bezier_polygon_with_holes_list ;
 
 typedef CGAL::Qt::BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes> Bezier_GI;
 
