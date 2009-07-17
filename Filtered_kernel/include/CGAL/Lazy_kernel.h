@@ -155,11 +155,12 @@ public:
 
 };
 
-template < typename EK_, typename AK_, typename E2A_, typename Kernel >
+template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >
 class Lazy_kernel_base
-  : public Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel>
+  : public Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_>
 {
 public:
+  typedef Kernel_ Kernel;
   typedef AK_   Approximate_kernel;
   typedef EK_   Exact_kernel;
   typedef E2A_  E2A;
