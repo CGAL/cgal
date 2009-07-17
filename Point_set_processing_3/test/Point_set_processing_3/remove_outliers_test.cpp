@@ -41,24 +41,17 @@ typedef Kernel::Point_3 Point;
 
 // Removes outliers
 void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
-                              double nb_neighbors_remove_outliers, // K-nearest neighbors (%)
+                              unsigned int nb_neighbors_remove_outliers, // K-nearest neighbors
                               double removed_percentage) // percentage of points to remove
 {
   CGAL::Timer task_timer; task_timer.start();
-
-  // percentage -> number of neighbors
-  int nb_neighbors = int(double(points.size()) * nb_neighbors_remove_outliers / 100.0);
-  if (nb_neighbors < 7)
-    nb_neighbors = 7;
-  if ((unsigned int)nb_neighbors > points.size()-1)
-    nb_neighbors = points.size()-1;
-
   std::cerr << "Removes outliers wrt average squared distance to k nearest neighbors (remove "
             << removed_percentage << "%, k="
-            << nb_neighbors_remove_outliers << "%=" << nb_neighbors << ")...\n";
+            << nb_neighbors_remove_outliers << ")...\n";
 
   // Removes outliers using erase-remove idiom
-  points.erase(CGAL::remove_outliers(points.begin(), points.end(), nb_neighbors, removed_percentage),
+  points.erase(CGAL::remove_outliers(points.begin(), points.end(), 
+                                     nb_neighbors_remove_outliers, removed_percentage),
                points.end());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
@@ -97,7 +90,7 @@ int main(int argc, char * argv[])
 
   // Outlier Removal options
   const double removed_percentage = 5.0 /* % */; // percentage of outliers to remove
-  const double nb_neighbors_remove_outliers = 0.05; // K-nearest neighbors (%)
+  const unsigned int nb_neighbors_remove_outliers = 24; // K-nearest neighbors
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;

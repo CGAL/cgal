@@ -56,13 +56,13 @@ void PS_demo_smoothing_plugin::on_actionJetSmoothing_triggered()
     bool ok;
     const unsigned int nb_neighbors =
       QInputDialog::getInteger((QWidget*)mw,
-                              tr("Jet Smoothing"), // dialog title
-                              tr("Number of neighbors:"), // field label
-                              16, // default value = fast
-                              4, // min
-                              1000, // max
-                              1, // step
-                              &ok);
+                               tr("Jet Smoothing"), // dialog title
+                               tr("Number of neighbors:"), // field label
+                               24, // default value = fast
+                               6, // min
+                               1000, // max
+                               1, // step
+                               &ok);
     if(!ok) return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);

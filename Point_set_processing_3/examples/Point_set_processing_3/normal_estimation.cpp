@@ -52,19 +52,11 @@ typedef std::vector<PointVectorPair> PointList;
 
 // Computes normals direction by Principal Component Analysis
 void run_pca_estimate_normals(PointList& points, // input points + output normals
-                              double nb_neighbors_pca_normals) // number of neighbors (%)
+                              unsigned int nb_neighbors_pca_normals) // number of neighbors
 {
   CGAL::Timer task_timer; task_timer.start();
-
-  // percentage -> number of neighbors
-  int nb_neighbors = int(double(points.size()) * nb_neighbors_pca_normals / 100.0);
-  if (nb_neighbors < 7)
-    nb_neighbors = 7;
-  if ((unsigned int)nb_neighbors > points.size()-1)
-    nb_neighbors = points.size()-1;
-
   std::cerr << "Estimates Normals Direction by PCA (k="
-            << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
+            << nb_neighbors_pca_normals << ")...\n";
 
   // Estimates normals direction.
   // Note: pca_estimate_normals() requires an iterator over points
@@ -72,7 +64,7 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
   CGAL::pca_estimate_normals(points.begin(), points.end(),
                              CGAL::First_of_pair_property_map<PointVectorPair>(),
                              CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                             nb_neighbors);
+                             nb_neighbors_pca_normals);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -82,19 +74,11 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
 
 // Computes normals direction by Jet Fitting
 void run_jet_estimate_normals(PointList& points, // input points + output normals
-                              double nb_neighbors_jet_fitting_normals) // number of neighbors (%)
+                              unsigned int nb_neighbors_jet_fitting_normals) // number of neighbors
 {
   CGAL::Timer task_timer; task_timer.start();
-
-  // percentage -> number of neighbors
-  int nb_neighbors = int(double(points.size()) * nb_neighbors_jet_fitting_normals / 100.0);
-  if (nb_neighbors < 7)
-    nb_neighbors = 7;
-  if ((unsigned int)nb_neighbors > points.size()-1)
-    nb_neighbors = points.size()-1;
-
   std::cerr << "Estimates Normals Direction by Jet Fitting (k="
-            << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
+            << nb_neighbors_jet_fitting_normals << ")...\n";
 
   // Estimates normals direction.
   // Note: jet_estimate_normals() requires an iterator over points
@@ -102,7 +86,7 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
   CGAL::jet_estimate_normals(points.begin(), points.end(),
                              CGAL::First_of_pair_property_map<PointVectorPair>(),
                              CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                             nb_neighbors);
+                             nb_neighbors_jet_fitting_normals);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -166,9 +150,9 @@ int main(int argc, char * argv[])
       std::cerr << "  -estimate plane|quadric          Estimates normals direction\n";
       std::cerr << "  using a tangent plane or quadric (default=quadric)\n";
       std::cerr << "  -nb_neighbors_pca <int>          Number of neighbors\n";
-      std::cerr << "  to compute tangent plane (default=0.15% of points)\n";
+      std::cerr << "  to compute tangent plane (default=18)\n";
       std::cerr << "  -nb_neighbors_jet_fitting <int>  Number of neighbors\n";
-      std::cerr << "  to compute quadric (default=default=0.1% of points)\n";
+      std::cerr << "  to compute quadric (default=18)\n";
       std::cerr << "  -orient MST                      Orient normals\n";
       std::cerr << "  using a Minimum Spanning Tree (default=MST)\n";
       std::cerr << "  -nb_neighbors_mst <int>          Number of neighbors\n";
@@ -177,9 +161,9 @@ int main(int argc, char * argv[])
     }
 
     // Normals Computing options
-    double nb_neighbors_pca_normals = 0.15 /* % */; // K-nearest neighbors (estimate normals by PCA)
-    double nb_neighbors_jet_fitting_normals = 0.1 /* % */; // K-nearest neighbors (estimate normals by Jet Fitting)
-    unsigned int nb_neighbors_mst = 18; // K-nearest neighbors = 3 rings (orient normals by MST)
+    unsigned int nb_neighbors_pca_normals = 18; // K-nearest neighbors = 3 rings (estimate normals by PCA)
+    unsigned int nb_neighbors_jet_fitting_normals = 18; // K-nearest neighbors (estimate normals by Jet Fitting)
+    unsigned int nb_neighbors_mst = 18; // K-nearest neighbors (orient normals by MST)
     std::string estimate = "quadric"; // estimate normals by jet fitting
     std::string orient = "MST"; // orient normals using a Minimum Spanning Tree
 
@@ -194,10 +178,10 @@ int main(int argc, char * argv[])
           std::cerr << "invalid option " << argv[i] << "\n";
       }
       else if (std::string(argv[i])=="-nb_neighbors_pca") {
-        nb_neighbors_pca_normals = atof(argv[++i]);
+        nb_neighbors_pca_normals = atoi(argv[++i]);
       }
       else if (std::string(argv[i])=="-nb_neighbors_jet_fitting") {
-        nb_neighbors_jet_fitting_normals = atof(argv[++i]);
+        nb_neighbors_jet_fitting_normals = atoi(argv[++i]);
       }
       else if (std::string(argv[i])=="-orient") {
         orient = argv[++i];

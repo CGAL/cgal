@@ -29,7 +29,7 @@
 namespace CGAL {
 
 
-/// Very simple property map that converts a 'T*' pointer (or in general
+/// Property map that converts a 'T*' pointer (or in general
 /// an iterator over 'T' elements) to the 'T' object.
 ///
 /// @heading Is Model for the Concepts:
@@ -70,8 +70,7 @@ make_dereference_property_map(Iter)
 // Property maps Pair* -> Pair::first_type
 // and           Pair* -> Pair::second_type.
 
-/// Property map that accesses the first item of a std::pair Pair
-/// from a Pair* pointer (or in general an iterator over Pair elements).
+/// Property map that accesses the first item of a std::pair.
 ///
 /// @heading Is Model for the Concepts:
 /// Model of boost::LvaluePropertyMap concept.
@@ -109,8 +108,7 @@ make_first_of_pair_property_map(Iter)
   return First_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>();
 }
 
-/// Property map that accesses the second item of a std::pair Pair
-/// from a Pair* pointer (or in general an iterator over Pair elements).
+/// Property map that accesses the second item of a std::pair.
 ///
 /// @heading Is Model for the Concepts:
 /// Model of boost::LvaluePropertyMap concept.
@@ -152,14 +150,13 @@ make_second_of_pair_property_map(Iter)
 //=========================================================================
 
 
-/// Property map that accesses the Nth item of a boost::tuple Tuple
-/// from a Tuple* pointer (or in general an iterator over Tuple elements).
+/// Property map that accesses the Nth item of a boost::tuple.
 ///
 /// @heading Is Model for the Concepts:
 /// Model of boost::LvaluePropertyMap concept.
 ///
 /// @heading Parameters:
-/// @param Index of the item to access.
+/// @param N Index of the item to access.
 /// @param Tuple Instance of boost::tuple.
 
 template <int N, typename Tuple>
@@ -183,6 +180,7 @@ struct Nth_of_tuple_property_map
 /// Free function to create a Nth_of_tuple_property_map property map.
 ///
 /// @relates Nth_of_tuple_property_map
+
 template <int N, class Iter> // Type convertible to key_type
 Nth_of_tuple_property_map<N, typename CGAL::value_type_traits<Iter>::type>
 make_nth_of_tuple_property_map(Iter)

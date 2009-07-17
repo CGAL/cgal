@@ -41,21 +41,12 @@ typedef Kernel::Vector_3 Vector;
 // ----------------------------------------------------------------------------
 
 void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
-                             double nb_neighbors_smooth_jet_fitting) // number of neighbors
+                             unsigned int nb_neighbors_smooth_jet_fitting) // number of neighbors
 {
   CGAL::Timer task_timer; task_timer.start();
+  std::cerr << "Smoothes Point Set (k=" << nb_neighbors_smooth_jet_fitting <<  ")...\n";
 
-  // percentage -> number of neighbors
-  int nb_neighbors = int(double(points.size()) * nb_neighbors_smooth_jet_fitting / 100.0);
-  if (nb_neighbors < 7)
-    nb_neighbors = 7;
-  if ((unsigned int)nb_neighbors > points.size()-1)
-    nb_neighbors = points.size()-1;
-
-  std::cerr << "Smoothes Point Set (k="
-            << nb_neighbors_smooth_jet_fitting << "%=" << nb_neighbors << ")...\n";
-
-  CGAL::jet_smooth_point_set(points.begin(), points.end(), nb_neighbors);
+  CGAL::jet_smooth_point_set(points.begin(), points.end(), nb_neighbors_smooth_jet_fitting);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
@@ -88,7 +79,7 @@ int main(int argc, char * argv[])
   }
 
   // Smoothing options
-  const double nb_neighbors_smooth_jet_fitting = 0.1 /* % */; // K-nearest neighbors (smooth points by Jet Fitting)
+  const unsigned int nb_neighbors_smooth_jet_fitting = 24; // K-nearest neighbors (smooth points by Jet Fitting)
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;

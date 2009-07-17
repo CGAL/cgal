@@ -80,7 +80,7 @@ int main(int argc, char * argv[])
   }
 
   // Average Spacing options
-  const unsigned int nb_neighbors = 7; // K-nearest neighbors = 1 ring (average spacing)
+  const unsigned int nb_neighbors = 6; // K-nearest neighbors = 1 ring (average spacing)
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -119,7 +119,7 @@ int main(int argc, char * argv[])
     // Test
     //***************************************
 
-    test_average_spacing(points,nb_neighbors);
+    test_average_spacing(points, nb_neighbors);
 
   } // for each input file
 

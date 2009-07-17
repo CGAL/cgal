@@ -21,6 +21,16 @@
 
 \ccc{CGAL::mst_orient_normals()} orients the normals of a point set using the propagation of a seed orientation through a minimum spanning tree computed over the Riemannian graph \cite{cgal:hddms-srup-92}.
 
+The seed is the top point of the point set. Its normal is oriented towards +Z axis.
+
+The success of the orientation algorithm depends on the \ccc{k} parameter.
+The number of neighbors controls the candidates to progagate the orientation around each input point.
+In general, a value equal to a few rings, e.g. 18, works well.
+With smaller values, the propagation may be blocked by gaps in the point set.
+Large values will cause problems with points scattered over thin objects: the algorithm may incorrectly propagate the orientation from one side of the object to the other one.
+
+In the presence of several clusters of points, this algorithm cannot propagate the orientation from one cluster to the others, and will orient only the top cluster.
+
 This method modifies the order of the input points so as to pack all successfully oriented normals first, and returns an iterator over the first point with an unoriented normal (see erase-remove idiom). For this reason it should not be called on sorted containers.
 
 \ccInclude{CGAL/mst_orient_normals.h}

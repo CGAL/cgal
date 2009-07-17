@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Dialog</string>
+   <string>Outlier Removal</string>
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
@@ -26,10 +26,13 @@
       <string> %</string>
      </property>
      <property name="minimum" >
-      <double>1.000000000000000</double>
+      <double>0.100000000000000</double>
      </property>
      <property name="maximum" >
       <double>100.000000000000000</double>
+     </property>
+     <property name="singleStep" >
+      <double>0.100000000000000</double>
      </property>
      <property name="value" >
       <double>5.000000000000000</double>
@@ -45,11 +48,14 @@
    </item>
    <item row="1" column="1" >
     <widget class="QSpinBox" name="m_inputNbNeighbors" >
+     <property name="minimum" >
+      <number>6</number>
+     </property>
      <property name="maximum" >
       <number>9999</number>
      </property>
      <property name="value" >
-      <number>7</number>
+      <number>24</number>
      </property>
     </widget>
    </item>

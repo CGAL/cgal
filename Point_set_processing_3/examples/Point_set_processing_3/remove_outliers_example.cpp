@@ -27,11 +27,11 @@ int main(void)
   // Removes outliers using erase-remove idiom.
   // The Dereference_property_map property map can be omitted here as it is the default value.
   const double removed_percentage = 5.0; // percentage of points to remove
-  const int nb_neighbors = 7; // considers 7 nearest neighbor points
-  points.erase(
-         CGAL::remove_outliers(points.begin(), points.end(),
-                               CGAL::Dereference_property_map<Point>(),
-                               nb_neighbors,removed_percentage), points.end());
+  const int nb_neighbors = 24; // considers 24 nearest neighbor points
+  points.erase(CGAL::remove_outliers(points.begin(), points.end(),
+                                     CGAL::Dereference_property_map<Point>(),
+                                     nb_neighbors, removed_percentage), 
+               points.end());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
   std::vector<Point>(points).swap(points);

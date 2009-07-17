@@ -5,14 +5,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>372</width>
-    <height>137</height>
+    <width>403</width>
+    <height>153</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Dialog</string>
+   <string>Simplification</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
+  <layout class="QGridLayout" >
    <item row="0" column="0" >
     <widget class="QLabel" name="label" >
      <property name="text" >
@@ -50,13 +50,13 @@
       <number>2</number>
      </property>
      <property name="minimum" >
-      <double>1.000000000000000</double>
+      <double>0.100000000000000</double>
      </property>
      <property name="maximum" >
       <double>100.000000000000000</double>
      </property>
      <property name="singleStep" >
-      <double>1.000000000000000</double>
+      <double>0.100000000000000</double>
      </property>
      <property name="value" >
       <double>50.000000000000000</double>
@@ -73,22 +73,22 @@
    <item row="2" column="1" >
     <widget class="QDoubleSpinBox" name="m_gridCellSize" >
      <property name="suffix" >
-      <string> * point set radius</string>
+      <string> * average spacing</string>
      </property>
      <property name="decimals" >
-      <number>7</number>
+      <number>2</number>
      </property>
      <property name="minimum" >
-      <double>0.000100000000000</double>
+      <double>0.100000000000000</double>
      </property>
      <property name="maximum" >
-      <double>1.000000000000000</double>
+      <double>10.000000000000000</double>
      </property>
      <property name="singleStep" >
-      <double>0.000100000000000</double>
+      <double>0.100000000000000</double>
      </property>
      <property name="value" >
-      <double>0.004000000000000</double>
+      <double>1.000000000000000</double>
      </property>
     </widget>
    </item>
@@ -98,7 +98,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons" >
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>

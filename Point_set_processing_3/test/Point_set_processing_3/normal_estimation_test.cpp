@@ -119,24 +119,16 @@ bool verify_normal_direction(const PointList& points, // input points + computed
 // Computes normals direction by Principal Component Analysis
 // @return true on success.
 bool run_pca_estimate_normals(PointList& points, // input points + output normals
-                              double nb_neighbors_pca_normals, // number of neighbors (%)
+                              unsigned int nb_neighbors_pca_normals, // number of neighbors
                               const std::vector<Vector>& original_normals) // may be empty
 {
   CGAL::Timer task_timer; task_timer.start();
-
-  // percentage -> number of neighbors
-  int nb_neighbors = int(double(points.size()) * nb_neighbors_pca_normals / 100.0);
-  if (nb_neighbors < 7)
-    nb_neighbors = 7;
-  if ((unsigned int)nb_neighbors > points.size()-1)
-    nb_neighbors = points.size()-1;
-
   std::cerr << "Estimates Normals Direction by PCA (k="
-            << nb_neighbors_pca_normals << "%=" << nb_neighbors <<")...\n";
+            << nb_neighbors_pca_normals << ")...\n";
 
   CGAL::pca_estimate_normals(points.begin(), points.end(),
                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
-                             nb_neighbors);
+                             nb_neighbors_pca_normals);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -151,24 +143,16 @@ bool run_pca_estimate_normals(PointList& points, // input points + output normal
 // Computes normals direction by Jet Fitting
 // @return true on success.
 bool run_jet_estimate_normals(PointList& points, // input points + output normals
-                              double nb_neighbors_jet_fitting_normals, // number of neighbors (%)
+                              unsigned int nb_neighbors_jet_fitting_normals, // number of neighbors
                               const std::vector<Vector>& original_normals) // may be empty
 {
   CGAL::Timer task_timer; task_timer.start();
-
-  // percentage -> number of neighbors
-  int nb_neighbors = int(double(points.size()) * nb_neighbors_jet_fitting_normals / 100.0);
-  if (nb_neighbors < 7)
-    nb_neighbors = 7;
-  if ((unsigned int)nb_neighbors > points.size()-1)
-    nb_neighbors = points.size()-1;
-
   std::cerr << "Estimates Normals Direction by Jet Fitting (k="
-            << nb_neighbors_jet_fitting_normals << "%=" << nb_neighbors <<")...\n";
+            << nb_neighbors_jet_fitting_normals << ")...\n";
 
   CGAL::jet_estimate_normals(points.begin(), points.end(),
                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
-                             nb_neighbors);
+                             nb_neighbors_jet_fitting_normals);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -287,9 +271,9 @@ int main(int argc, char * argv[])
   }
 
   // Normals Computing options
-  double nb_neighbors_pca_normals = 0.15 /* % */; // K-nearest neighbors (estimate normals by PCA)
-  double nb_neighbors_jet_fitting_normals = 0.1 /* % */; // K-nearest neighbors (estimate normals by Jet Fitting)
-  unsigned int nb_neighbors_mst = 18; // K-nearest neighbors = 3 rings (orient normals by MST)
+  unsigned int nb_neighbors_pca_normals = 18; // K-nearest neighbors = 3 rings (estimate normals by PCA)
+  unsigned int nb_neighbors_jet_fitting_normals = 18; // K-nearest neighbors (estimate normals by Jet Fitting)
+  unsigned int nb_neighbors_mst = 18; // K-nearest neighbors (orient normals by MST)
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
