@@ -83,6 +83,8 @@ private:
 
   unsigned int m_nb_selected_points; // number of selected points
 
+  bool m_radii_are_uptodate;
+
 // Public methods
 public:
 
@@ -91,6 +93,7 @@ public:
   {
     m_nb_selected_points = 0;
     m_bounding_box_is_valid = false;
+    m_radii_are_uptodate = false;
   }
 
   // Default copy constructor and operator =() are fine.
@@ -294,6 +297,10 @@ public:
     }
     ::glEnd();
   }
+
+
+  bool are_radii_uptodate() const { return m_radii_are_uptodate; }
+  void set_radii_uptodate(bool on) { m_radii_are_uptodate = false; }
 
 // Private methods:
 private:

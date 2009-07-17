@@ -27,7 +27,7 @@ public:
   Point_set_scene_item(const Polyhedron& p);
   ~Point_set_scene_item();
   Point_set_scene_item* clone() const;
-  
+
   // Is selection empty?
   virtual bool isSelectionEmpty() const;
   // Delete selection
@@ -61,6 +61,11 @@ public:
   virtual bool isFinite() const { return true; }
   virtual bool isEmpty() const;
   virtual Bbox bbox() const;
+
+  virtual void setRenderingMode(RenderingMode m);
+
+  // computes the local point spacing (aka radius) of each point
+  void computes_local_spacing(int k);
 
 // Data
 private:
