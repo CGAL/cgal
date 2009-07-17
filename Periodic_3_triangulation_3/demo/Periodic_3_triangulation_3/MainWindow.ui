@@ -558,7 +558,7 @@
   </action>
   <action name="actionDemo_Help" >
    <property name="text" >
-    <string>Demo Help</string>
+    <string>Demo Manual</string>
    </property>
    <property name="shortcut" >
     <string>H</string>

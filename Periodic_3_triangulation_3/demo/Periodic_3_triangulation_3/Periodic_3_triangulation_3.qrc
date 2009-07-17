@@ -25,8 +25,9 @@
 	<file>icons/inputPointBall.png</file>
 	<file>icons/inputPointRandom.png</file>
     </qresource>
-    <qresource prefix="/cgal/help" lang="en" >
+    <qresource prefix="/cgal/help">
 	<file>resources/about.html</file>
     	<file>resources/about_CGAL.html</file>
+	<file>resources/about_help.html</file>
     </qresource>
 </RCC>

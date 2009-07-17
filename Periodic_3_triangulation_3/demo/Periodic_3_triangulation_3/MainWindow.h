@@ -102,26 +102,24 @@ public:
 
 public slots:
   void help() {
-
+    showFileBox("Demo manual","resources/about_help.html");
   }
   
   void about() {
-    QFile about("resources/about.html");
-    about.open(QIODevice::ReadOnly);
-    QMessageBox mb(QMessageBox::NoIcon,
-	"About the demo...",
-	QTextStream(&about).readAll(),
-	QMessageBox::Ok,
-	this);
-    mb.exec();
+    showFileBox("About the demo...","resources/about.html");
   }
 
   void about_CGAL() {
-    QFile about("resources/about_CGAL.html");
-    about.open(QIODevice::ReadOnly);
+    showFileBox("About CGAL...","resources/about_CGAL.html");
+  }
+
+private:
+  void showFileBox(QString title, QString fileName) {
+    QFile textFile(fileName);
+    textFile.open(QIODevice::ReadOnly);
     QMessageBox mb(QMessageBox::NoIcon,
-	"About CGAL...",
-	QTextStream(&about).readAll(),
+	title,
+	QTextStream(&textFile).readAll(),
 	QMessageBox::Ok,
 	this);
     mb.exec();
