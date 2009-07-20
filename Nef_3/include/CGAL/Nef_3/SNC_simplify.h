@@ -238,7 +238,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
       SVertex_iterator sv(v->svertices_begin());
       Halfedge_handle e1(sv++), e2(sv++);
       CGAL_assertion( sv == v->svertices_end());
-      if( e1->mark() == v->mark() && v->mark() == e2->mark()) {
+      if( e1->mark() == v->mark() && e1->mark() == e2->mark()) {
 	//	CGAL_NEF_TRACEN("merging "<<IO->index(e1)<<" & "<<IO->index(e2)<<
 	//			" in "<<IO->index(v));
 	if(snc_computed)
@@ -257,7 +257,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
       SVertex_iterator sv(v->svertices_begin());
       Halfedge_handle e1(sv++), e2(sv++);
       CGAL_assertion( sv == v->svertices_end());
-      if( e1->mark() == v->mark() && v->mark() == e2->mark()) {
+      if( e1->mark() == v->mark() && e1->mark() == e2->mark()) {
 	SHalfedge_around_svertex_circulator 
 	  sec(e1->out_sedge()), send(sec);
 	CGAL_For_all(sec,send) {
@@ -401,7 +401,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
            	      " mark(f)="<<f->mark() <<
 		      " mark(c2)="<<c2->mark()<<
       	              " is_f->twin()="<<f->is_twin());
-      if( c1->mark() == f->mark() && f->mark() == c2->mark()
+      if( c1->mark() == f->mark() && c1->mark() == c2->mark()
 	  && D.is_standard(f)) {
 	merge_sets( c1, c2, hash_volume, uf_volume);
 	remove_f_including_all_edge_uses_in_its_boundary_cycles
@@ -443,7 +443,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
 	  SHalfedge_handle e1(SD.first_out_edge(e)); 
 	  SHalfedge_handle e2(SD.cyclic_adj_succ(e1));
 	  if( e1->circle()==e2->twin()->circle() &&
-	      e1->mark()==e->mark() && e->mark()==e2->mark()) {
+	      e1->mark()==e->mark() && e1->mark()==e2->mark()) {
 	    Halffacet_handle f1(e1->facet()); 
 	    Halffacet_handle f2(e2->facet());
 	    CGAL_NEF_TRACEN("UNION of f1 & f2->twin()");

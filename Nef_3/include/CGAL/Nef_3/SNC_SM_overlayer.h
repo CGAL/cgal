@@ -104,7 +104,7 @@ public:
 			e->incident_sface()->mark() << " " << 
 			e->twin()->incident_sface()->mark());
 	if (( e->mark() == e->incident_sface()->mark() && 
-	      e->mark() == e->twin()->incident_sface()->mark())){
+	      e->incident_sface()->mark() == e->twin()->incident_sface()->mark())){
 	  CGAL_NEF_TRACEN("deleting "<<PH(e));
 	  if ( !UF.same_set(Pitem[e->incident_sface()],
 			    Pitem[e->twin()->incident_sface()]) ) {
@@ -159,7 +159,7 @@ public:
       } else { // v not isolated
 	SHalfedge_handle e2 = first_out_edge(v), e1 = e2->sprev();
 	if ( has_outdeg_two(v) &&
-	     v->mark() == e1->mark() && v->mark() == e2->mark() &&
+	     v->mark() == e1->mark() && e1->mark() == e2->mark() &&
 	     e1->circle() == e2->circle() ) {
 	  CGAL_NEF_TRACEN("collinear at "<<PH(v)<<PH(e1)<<PH(e2));
 	  if ( e1 == e2 ){ 
@@ -353,7 +353,7 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
 			e->incident_sface()->mark() << " " << 
 			e->twin()->incident_sface()->mark());
 	if (( e->mark() == e->incident_sface()->mark() && 
-	      e->mark() == e->twin()->incident_sface()->mark())){
+	      e->incident_sface()->mark() == e->twin()->incident_sface()->mark())){
 	  CGAL_NEF_TRACEN("deleting "<<PH(e));
 	  if ( !UF.same_set(Pitem[e->incident_sface()],
 			    Pitem[e->twin()->incident_sface()]) ) {
@@ -408,7 +408,7 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
       } else { // v not isolated
 	SHalfedge_handle e2 = first_out_edge(v), e1 = e2->sprev();
 	if ( has_outdeg_two(v) &&
-	     v->mark() == e1->mark() && v->mark() == e2->mark() &&
+	     v->mark() == e1->mark() && e1->mark() == e2->mark() &&
 	     e1->circle() == e2->circle() ) {
 	  CGAL_NEF_TRACEN("collinear at "<<PH(v)<<PH(e1)<<PH(e2));
 	  if ( e1 == e2 ){ 
