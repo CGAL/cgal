@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2009  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -14,7 +14,8 @@
 // $URL: svn+ssh://pmachado@scm.gforge.inria.fr/svn/cgal/trunk/Circular_kernel_2/include/CGAL/global_functions_on_line_arcs_2.h $
 // $Id: global_functions_on_line_arcs_2.h 45945 2008-10-01 12:25:23Z pmachado $
 //
-// Author(s)     : Monique Teillaud, Sylvain Pion, Julien Hazebrouck, Pedro Machado
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+//             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
 // RTD (FET Open) Project under Contract No  IST-2000-26473 

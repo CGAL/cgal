@@ -14,7 +14,8 @@
 // $URL$
 // $Id$
 //
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+//             Sebastien Loriot
 
 // Partially supported by the IST Programme of the EU as a 
 // STREP (FET Open) Project under Contract No  IST-006413 

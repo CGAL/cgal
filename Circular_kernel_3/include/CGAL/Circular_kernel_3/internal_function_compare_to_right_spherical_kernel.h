@@ -20,7 +20,7 @@
 // $URL:  $
 // $Id: internal_function_compare_to_right_spherical_kernel.h 40627 2007-10-16 15:00:59Z sloriot $
 //
-// Author(s) : 
+// Author(s) : Sebastien Loriot
 
 
 #ifndef CGAL_SPHERICAL_KERNEL_PREDICATES_COMPARE_TO_RIGHT_H
