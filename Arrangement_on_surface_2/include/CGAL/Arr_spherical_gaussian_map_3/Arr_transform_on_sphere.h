@@ -198,10 +198,10 @@ void Arr_transform_on_sphere(Arrangement & arr,
       Halfedge_around_vertex_circulator havc = vi->incident_halfedges();
 			
       Arr_curve_end ind;
-      if (havc->curve().is_directed_right())
-        ind = ARR_MIN_END;
-      else
-        ind = ARR_MAX_END;
+	  if (geom_traits->construct_min_vertex_2_object()(havc->curve()) == vi->point()) 
+		ind = ARR_MIN_END;
+	  else 
+		ind = ARR_MAX_END;
 
       // Check if it was already added.
       if (topol_traits->discontinuity_vertex(havc->curve(), ind)== NULL &&
