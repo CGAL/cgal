@@ -1,8 +1,9 @@
-#include <QtGui/QMainWindow>
-#include <QtGui/QMessageBox>
+#include <QtGui>
 #include <QFile>
 #include <QTextStream>
 #include "Scene.h"
+
+#include <QtAssistant/QAssistantClient>
 
 class MainWindow : public QMainWindow
 {
@@ -14,6 +15,14 @@ public:
     ui = new Ui::MainWindow;
     ui->setupUi(this);
     s = new Scene(ui);
+
+    QString loc = QLibraryInfo::location(QLibraryInfo::BinariesPath);
+    assistantClient = new QAssistantClient(loc, this);
+    QStringList arguments;
+    arguments << "-profile"
+	      << QCoreApplication::applicationDirPath() + QDir::separator()
+      + QString("documentation/Periodic_3_triangulation_3.adp");
+    assistantClient->setArguments(arguments);
 
     // QGLViewer drawing signals
     connect(ui->viewer, SIGNAL(viewerInitialized()), s, SLOT(init()));
@@ -98,11 +107,14 @@ public:
   ~MainWindow() {
     delete(ui);
     delete(s);
+    delete(assistantClient);
   }
 
 public slots:
   void help() {
-    showFileBox("Demo manual","resources/about_help.html");
+    QString loc = QCoreApplication::applicationDirPath() + QDir::separator()
+      + QString("documentation/index.html");
+    assistantClient->showPage(loc);
   }
   
   void about() {
@@ -128,5 +140,8 @@ private:
 public:
   Ui::MainWindow* ui;
   Scene* s;
+
+private:
+  QAssistantClient *assistantClient;
 };
 
