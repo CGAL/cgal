@@ -21,11 +21,8 @@
 
 \ccc{CGAL::pca_estimate_normals()} estimates normal directions at all points of an input point set by linear least squares fitting of a plane over their $k$ nearest neighbors. The result is an unoriented normal for each input point.
 
-The quality of the normal estimation algorithm highly depends on the \ccc{k} parameter.
-The number of neighbors controls the width of the point subset considered for plane fitting at each input point.
-Larger value leads to smoother surface approximations and better normal estimations. Obviously, it also leads to longer computation times.
-For clean datasets, this value can be set to a few rings, e.g. 18. On the other hand, as the amount of noise increases, this value should be increased as well.
-For these reasons, we do not provide any default value for this parameter.
+The output of the normal estimation algorithm highly depends on the \ccc{k} parameter.
+The number of neighbors controls the size of the point subset considered for plane fitting at each input point. As this parameter is application-specific we do not provide any default value. For noise-free point sets this value can be set to a small number, e.g., 15. Larger values (e.g., 30 or more) lead to smoother normal fields and are more time consuming. We thus recommend using them only for noisy data sets. 
 
 \ccInclude{CGAL/pca_estimate_normals.h}
 
