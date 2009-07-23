@@ -71,11 +71,15 @@ pointers or references:
     {returns the associated point.
      \ccPrecond{\ccVar() is associated with a valid point.}}
 
-\ccMethod{Boundary_type boundary_in_x () const;}
-    {return whether the vertex has an infinite $x$-coordinate.}
+\ccMethod{Arr_parameter_space parameter_space_in_x () const;}
+    {returns the placement of the $x$-coordinate in the parameter space,
+    that is, either the left boundary-side, the interior, or the right
+    boundary-side.}
 
-\ccMethod{Boundary_type boundary_in_y () const;}
-    {return whether the vertex has an infinite $y$-coordinate.}
+\ccMethod{Arr_parameter_space parameter_space_in_y () const;}
+    {returns the placement of the $y$-coordinate in the parameter space,
+    that is, either the bottom boundary-side, the interior, or the top
+    boundary-side.}
 
 \ccModifiers
 %===========

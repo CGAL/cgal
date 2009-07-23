@@ -60,17 +60,20 @@ that return constant handles, iterators or circulators:
     {returns a handle to the face that contains \ccVar{} in its interior.
      \ccPrecond{\ccVar{} is an isolated vertex.}}
 
-\ccMethod{Boundary_type boundary_in_x () const;}
-    {returns whether the $x$-coordinate of the vertex is finite or whether
-     it lies at $\pm\infty$.}
-
-\ccMethod{Boundary_type boundary_in_y () const;}
-    {returns whether the $y$-coordinate of the vertex is finite or whether
-     it lies at $\pm\infty$.}
-
 \ccMethod{const typename Traits::Point_2& point() const;}
     {returns the point associated with the vertex.
      \ccPrecond{\ccVar{} is not a vertex at infinity.}}
+
+\ccMethod{Arr_parameter_space parameter_space_in_x () const;}
+    {returns the placement of the $x$-coordinate in the parameter space,
+    that is, either the left boundary-side, the interior, or the right
+    boundary-side.}
+
+\ccMethod{Arr_parameter_space parameter_space_in_y () const;}
+    {returns the placement of the $y$-coordinate in the parameter space,
+    that is, either the bottom boundary-side, the interior, or the top
+    boundary-side.}
+     
 
 \end{ccRefClass}
 
