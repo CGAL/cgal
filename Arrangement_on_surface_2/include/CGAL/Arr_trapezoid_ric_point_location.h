@@ -28,6 +28,7 @@
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #include <CGAL/Arr_point_location/Td_traits.h>
+#include <CGAL/Arr_observer.h>
 
 CGAL_BEGIN_NAMESPACE
 
