@@ -183,23 +183,6 @@ public:
             this->topology_traits()->number_of_concrete_vertices());
   }
 
-  /*! Get the number of unbounded faces. */
-  Size number_of_unbounded_faces () const
-  {
-    typename Base::Face_const_iterator  fit = this->faces_begin();
-    typename Base::Face_const_iterator  end = this->faces_end();
-    Size                                n_unb = 0;
-
-    while (fit != end)
-    {
-      if (fit->is_unbounded())
-        n_unb++;
-      ++fit;
-    }
-
-    return (n_unb);
-  }
-
   /*! Get the unbounded face (non-const version). */
   Face_handle unbounded_face ()
   {
