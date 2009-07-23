@@ -831,6 +831,10 @@ Triangulation_2/test/Triangulation_2/test_triangulation_2_bis
 Triangulation_2/test/Triangulation_2/test_triangulation_geom_traits
 Triangulation_2/test/Triangulation_2/test_triangulation_tds
 Triangulation_2/test/Triangulation_2/vrml_tds*
+Triangulation_3/examples/Triangulation_3/*.exe
+Triangulation_3/examples/Triangulation_3/hierarchy
+Triangulation_3/examples/Triangulation_3/makefile
+Triangulation_3/examples/Triangulation_3/regular
 Triangulation_3/test/Triangulation_3/Test??_triangulation_IO_3
 Triangulation_3/test/Triangulation_3/Test?_triangulation_IO_3
 Triangulation_3/test/Triangulation_3/Test_tds_IO_3
