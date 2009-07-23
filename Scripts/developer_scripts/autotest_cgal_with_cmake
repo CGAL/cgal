@@ -651,6 +651,10 @@ EOF
       cat >> "$file" <<EOF
 echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
+if [ -n "\$COLLECT_DEMOS_BINARIES" ]; then 
+  echo 'COLLECTING DEMOS BINARIES';
+  tar czvf '${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar.gz' *_Demo/*.exe *_Demo/*.dll
+fi
 echo 'COPYING RESULTS';
 cp 'results_${CGAL_TESTER}_${PLATFORM}.tar.gz' 'results_${CGAL_TESTER}_${PLATFORM}.txt' '${CGAL_TEST_DIR}';
 cd ..;
