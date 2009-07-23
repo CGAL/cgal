@@ -162,11 +162,11 @@ assignment operator are provided for rational arcs. In addition, an
 \ccMethod{const Polynomial& denominator () const;}
   {returns a polynomial with integer coefficients equivalent to $Q(x)$.}
 
-\ccMethod{Boundary_type source_boundary_in_x () const;}
+\ccMethod{Arr_parameter_space source_boundary_in_x () const;}
   {returns whether the $x$-coordinate of the source is finite or
    whether it is $\pm\infty$.}
 \ccGlue
-\ccMethod{Boundary_type source_boundary_in_y () const;}
+\ccMethod{Arr_parameter_space source_boundary_in_y () const;}
   {returns whether the $y$-coordinate of the source is finite or
    whether it is $\pm\infty$.}
 \ccGlue
@@ -182,11 +182,11 @@ assignment operator are provided for rational arcs. In addition, an
   {Get the $y$-coordinate of the source point.
    \ccPrecond{The source point is finite in $y$.}}
 
-\ccMethod{Boundary_type target_boundary_in_x () const;}
+\ccMethod{Arr_parameter_space target_boundary_in_x () const;}
   {returns whether the $x$-coordinate of the target is finite or
    whether it is $\pm\infty$.}
 \ccGlue
-\ccMethod{Boundary_type target_boundary_in_y () const;}
+\ccMethod{Arr_parameter_space target_boundary_in_y () const;}
   {returns whether the $y$-coordinate of the target is finite or
    whether it is $\pm\infty$.}
 \ccGlue
@@ -202,11 +202,11 @@ assignment operator are provided for rational arcs. In addition, an
   {Get the $y$-coordinate of the target point.
    \ccPrecond{The target point is finite in $y$.}}
 
-\ccMethod{Boundary_type left_boundary_in_x () const;}
+\ccMethod{Arr_parameter_space left_boundary_in_x () const;}
   {returns whether the $x$-coordinate of \ccVar's left end is finite or
    whether it is $\pm\infty$.}
 \ccGlue
-\ccMethod{Boundary_type left_boundary_in_y () const;}
+\ccMethod{Arr_parameter_space left_boundary_in_y () const;}
   {returns whether the $y$-coordinate of \ccVar's left end is finite or
    whether it is $\pm\infty$.}
 \ccGlue
@@ -214,11 +214,11 @@ assignment operator are provided for rational arcs. In addition, an
   {returns the left (lexicographically smaller) endpoint of \ccVar{}.
    \ccPrecond{The left end is finite in both $x$ and $y$.}}
 
-\ccMethod{Boundary_type right_boundary_in_x () const;}
+\ccMethod{Arr_parameter_space right_boundary_in_x () const;}
   {returns whether the $x$-coordinate of \ccVar's right end is finite or
    whether it is $\pm\infty$.}
 \ccGlue
-\ccMethod{Boundary_type right_boundary_in_y () const;}
+\ccMethod{Arr_parameter_space right_boundary_in_y () const;}
   {returns whether the $y$-coordinate of \ccVar's right end is finite or
    whether it is $\pm\infty$.}
 \ccGlue

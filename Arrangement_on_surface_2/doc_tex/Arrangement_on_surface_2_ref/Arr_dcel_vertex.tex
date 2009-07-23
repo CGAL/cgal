@@ -94,9 +94,9 @@ pointers or references:
 \ccMethod{void set_point (Point* p);}
     {sets the associated point.}
 
-\ccMethod{void set_boundary (Boundary_type inf_x, Boundary_type inf_y);}
-    {sets \ccVar{} as a vertex at infinity.
-     \ccPrecond{Either \ccc{inf_x} or \ccc{inf_y} is not \ccc{NO_BOUNDARY}.}}
+\ccMethod{void set_boundary (Arr_parameter_space inf_x, Arr_parameter_space inf_y);}
+    {sets \ccVar{} as a vertex on a boundary side.
+     \ccPrecond{Either \ccc{inf_x} or \ccc{inf_y} is not \ccc{ARR_INTERIOR}.}}
 
 } % ccHtmlNoLinksFrom
 
