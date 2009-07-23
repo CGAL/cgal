@@ -257,6 +257,34 @@ protected:
     }
   };
 
+  /*! \struct
+   * A functor for filtering bounded faces.
+   */
+  class _Is_unbounded_face
+  {
+  private:
+
+    const Topology_traits * m_topol_traits;
+
+  public:
+
+    _Is_unbounded_face () :
+      m_topol_traits (NULL)
+    {}
+
+    _Is_unbounded_face (const Topology_traits * topol_traits) :
+      m_topol_traits (topol_traits)
+    {}
+
+    const Topology_traits * topology_traits() const { return m_topol_traits; }
+
+    bool operator() (const DFace& f) const
+    {
+      return (m_topol_traits->is_valid_face (&f) &&
+              m_topol_traits->is_unbounded (&f));
+    }
+  };
+
 public:
 
   // Forward declerations:
@@ -387,6 +415,83 @@ public:
     <Halfedge,
      Halfedge_const_iterator,
      Bidirectional_circulator_tag>    Ccb_halfedge_const_circulator;
+
+  /*! \class
+   * Unbounded faces iterator - defined as a derived class to make it
+   * assignable to the face iterator type.
+   */  
+  class Unbounded_face_iterator :
+    public I_Filtered_iterator<DFace_iter, _Is_unbounded_face,
+                               Face, DDifference,
+                               DIterator_category>
+  {
+    typedef I_Filtered_iterator<DFace_iter,
+                                _Is_unbounded_face,
+                                Face, DDifference,
+                                DIterator_category>         Base;
+
+  public:
+ 
+    Unbounded_face_iterator ()
+    {}
+
+    Unbounded_face_iterator (DFace_iter iter, DFace_iter iend,
+                             const _Is_unbounded_face & is_unbounded) :
+      Base (iter, iend, is_unbounded)
+    {}
+
+    // Casting to a face iterator.
+    operator Face_iterator () const
+    {
+      return (Face_iterator (DFace_iter (this->current_iterator()),
+                             DFace_iter (this->past_the_end()),
+                             _Is_valid_face(this->filter().topology_traits())));
+    }
+
+    operator Face_const_iterator () const
+    {
+      return (Face_const_iterator
+              (DFace_const_iter (this->current_iterator()),
+               DFace_const_iter (this->past_the_end()),
+               _Is_valid_face(this->filter().topology_traits())));
+    }    
+  };
+
+  class Unbounded_face_const_iterator :
+    public I_Filtered_const_iterator<DFace_const_iter,
+                                     _Is_unbounded_face, 
+                                     DFace_iter, Face,
+                                     DDifference,
+                                     DIterator_category>
+  {
+    typedef I_Filtered_const_iterator<DFace_const_iter,
+                                      _Is_unbounded_face, 
+                                      DFace_iter, Face,
+                                      DDifference,
+                                      DIterator_category>   Base;
+
+  public:
+ 
+    Unbounded_face_const_iterator ()
+    {}
+
+    Unbounded_face_const_iterator (Unbounded_face_iterator iter) :
+      Base (iter)
+    {}
+
+    Unbounded_face_const_iterator (DFace_const_iter iter,
+                                   DFace_const_iter iend,
+                                   const _Is_unbounded_face & is_unbounded) :
+      Base (iter, iend, is_unbounded)
+    {}
+
+    // Casting to a face iterator.
+    operator Face_const_iterator () const
+    {
+      return (Face_const_iterator (DFace_const_iter(this->current_iterator()),
+                                   DFace_const_iter(this->past_the_end())));
+    }
+  };
 
 protected:
 
@@ -1070,6 +1175,22 @@ public:
   {
     return (m_topol_traits.number_of_valid_faces());
   }
+
+  /*! Get the number of unbounded faces in the arrangement. */
+  Size number_of_unbounded_faces () const
+  {
+    Unbounded_face_const_iterator    iter = unbounded_faces_begin();
+    Unbounded_face_const_iterator    end = unbounded_faces_end();
+    Size                             n_unb = 0;
+
+    while (iter != end)
+    {
+      n_unb++;
+      ++iter;
+    }
+
+    return (n_unb);
+  }
   //@}
 
   /// \name Traversal functions for the arrangement vertices.
@@ -1239,6 +1360,42 @@ public:
 
   //@}
 
+  /// \name Traversal functions for the unbounded faces of the arrangement.
+  //@{
+
+  /*! Get an iterator for the first unbounded face in the arrangement. */
+  Unbounded_face_iterator unbounded_faces_begin() 
+  { 
+    return Unbounded_face_iterator(_dcel().faces_begin(),
+                                   _dcel().faces_end(),
+                                   _Is_unbounded_face (&m_topol_traits)); 
+  }
+
+  /*! Get a past-the-end iterator for the unbounded arrangement faces. */
+  Unbounded_face_iterator unbounded_faces_end()
+  {
+    return Unbounded_face_iterator(_dcel().faces_end(),
+                                   _dcel().faces_end(),
+                                   _Is_unbounded_face (&m_topol_traits)); 
+  }
+
+  /*! Get a const iterator for the first unbounded face in the arrangement. */
+  Unbounded_face_const_iterator unbounded_faces_begin() const
+  { 
+    return Unbounded_face_const_iterator(_dcel().faces_begin(),
+                                         _dcel().faces_end(),
+                                         _Is_unbounded_face (&m_topol_traits));
+  }
+  
+  /*! Get a past-the-end const iterator for the unbounded arrangement faces. */
+  Unbounded_face_const_iterator unbounded_faces_end() const
+  {
+    return Unbounded_face_const_iterator(_dcel().faces_end(),
+                                         _dcel().faces_end(),
+                                         _Is_unbounded_face (&m_topol_traits));
+  }
+  //@}
+  
   /// \name Casting away constness for handle types.
   //@{
   Vertex_handle non_const_handle (Vertex_const_handle vh)
