@@ -205,7 +205,7 @@ Represents a planar (weakly) $x$-monotone curve.
 \ccCreationVariable{fo}
 \ccMethod{Comparison_result operator()(ArrTraits::Point_2 p,
                                        ArrTraits::X_monotone_curve_2 xc,
-                                       Curve_end ce);}
+                                       Arr_curve_end ce);}
   {returns \ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER} according
   to the $x$-ordering of a vertical line passing through the point
   \ccc{p} and an unbounded end of the curve \ccc{xc}. The relevant end
@@ -216,9 +216,9 @@ Represents a planar (weakly) $x$-monotone curve.
   vertical asymptote.}}
 \ccGlue
 \ccMethod{Comparison_result operator()(ArrTraits::X_monotone_curve_2 xc1,
-                                       Curve_end ce1,
+                                       Arr_curve_end ce1,
                                        ArrTraits::X_monotone_curve_2 xc2,
-                                       Curve_end ce2);}
+                                       Arr_curve_end ce2);}
   {returns \ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER}
   according to the $x$-ordering of the unbounded curve ends of
   \ccc{xc1} and \ccc{xc2}.
@@ -247,36 +247,34 @@ Represents a planar (weakly) $x$-monotone curve.
 %%%%%%%% BoundaryInX_2
 % ====================
 \ccRefPageBegin
-\begin{ccRefConcept}{ArrTraits::BoundaryInX_2}
+\begin{ccRefConcept}{ArrTraits::ParameterSpaceInX_2}
 \ccRefines{Functor}
 
-\ccHasModels\ccc{ArrangementBasicTraits_2::Boundary_in_x_2}
+\ccHasModels\ccc{ArrangementBasicTraits_2::Parameter_space_in_x_2}
 
 \ccCreationVariable{fo}
-\ccMethod{Boundary_type operator()(ArrTraits::X_monotone_curve_2 xc,
-                                   Curve_end ce);}
-  {determines if the $x$-coordinate of the minimal end (or maximal
-  end) of \ccc{xc} is infinite. It returns \ccc{MINUS_INFINITY} or
-  \ccc{PLUS_INFINITY} if the curve end is infinite in $x$, and
-  \ccc{NO_BOUNDARY} if it has a finite $x$-coordinate.}
+\ccMethod{Arr_parameter_space operator()(ArrTraits::X_monotone_curve_2 xc,
+                                         Arr_curve_end ce);}
+  {determines the placement of the $x$-coordinate of the minimal end or 
+  maximal end of \ccc{xc} in the parameter space, that is,
+  \ccc{ARR_LEFT_BOUNDARY}, \ccc{ARR_INTERIOR}, or \ccc{ARR_RIGHT_BOUNDARY}.}
 \end{ccRefConcept}
 \ccRefPageEnd
 
 %%%%%%%% BoundaryInY_2
 % ====================
 \ccRefPageBegin
-\begin{ccRefConcept}{ArrTraits::BoundaryInY_2}
+\begin{ccRefConcept}{ArrTraits::ParameterSpaceInY_2}
 \ccRefines{Functor}
 
-\ccHasModels\ccc{ArrangementBasicTraits_2::Boundary_in_y_2}
+\ccHasModels\ccc{ArrangementBasicTraits_2::Parameter_space_in_y_2}
 
 \ccCreationVariable{fo}
-\ccMethod{Boundary_type operator()(ArrTraits::X_monotone_curve_2 xc,
-                                   Curve_end ce);}
-  {determines if the $y$-coordinate of the minimal end (or 
-  maximal end) of \ccc{xc} is infinite. It returns \ccc{MINUS_INFINITY}
-  or \ccc{PLUS_INFINITY} if the curve end is infinite in $y$, and 
-  \ccc{NO_BOUNDARY} if it has a finite $y$-coordinate.}
+\ccMethod{Arr_parameter_space operator()(ArrTraits::X_monotone_curve_2 xc,
+                                         Arr_curve_end ce);}
+  {determines the placement of the $x$-coordinate of the minimal end or 
+  maximal end of \ccc{xc} in the parameter space, that is,
+  \ccc{ARR_BOTTOM_BOUNDARY}, \ccc{ARR_INTERIOR}, or \ccc{ARR_TOP_BOUNDARY}.}
 \end{ccRefConcept}
 \ccRefPageEnd
 
@@ -350,7 +348,7 @@ Represents a planar (weakly) $x$-monotone curve.
 \ccCreationVariable{fo}
 \ccMethod{Comparison_result operator()(ArrTraits::X_monotone_curve_2 xc1,
                                        ArrTraits::X_monotone_curve_2 xc2,
-                                       Curve_end ce);}
+                                       Arr_curve_end ce);}
   {returns \ccc{SMALLER, EQUAL} or \ccc{LARGER} according to the
   $y$-ordering of the two curves \ccc{xc1} and \ccc{xc2} at $x = -\infty$
   (if \ccc{ce} is \ccc{MIN_END}) or at $x = \infty$ (if \ccc{ce} is 
