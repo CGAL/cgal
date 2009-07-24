@@ -464,6 +464,19 @@ public:
       return locate( p, lt, li, lj, start);
   }
 
+  Cell_handle
+  locate(const Point & p,
+	 Locate_type & lt, int & li, int & lj, Vertex_handle hint) const
+  {
+      return locate(p, lt, li, lj, hint == Vertex_handle() ? infinite_cell() : hint->cell());
+  }
+
+  Cell_handle
+  locate(const Point & p, Vertex_handle hint) const
+  {
+      return locate(p, hint == Vertex_handle() ? infinite_cell() : hint->cell());
+  }
+
   // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
 
   Bounded_side
@@ -553,6 +566,10 @@ public:
 
   //INSERTION 
 
+  Vertex_handle insert(const Point & p, Vertex_handle hint)
+  {
+    return insert(p, hint == Vertex_handle() ? infinite_cell() : hint->cell());
+  }
   Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle());
   Vertex_handle insert(const Point & p, Locate_type lt, Cell_handle c,
 	               int li, int lj);
@@ -572,10 +589,10 @@ public:
       std::random_shuffle (points.begin(), points.end());
       spatial_sort (points.begin(), points.end(), geom_traits());
 
-      Cell_handle hint;
+      Vertex_handle hint;
       for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
               p != end; ++p)
-          hint = insert (*p, hint)->cell();
+          hint = insert(*p, hint);
 
       return number_of_vertices() - n;
     }

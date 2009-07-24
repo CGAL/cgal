@@ -195,12 +195,17 @@ public:
     std::random_shuffle (points.begin(), points.end());
     spatial_sort (points.begin(), points.end(), geom_traits());
 
-    Cell_handle hint;
+    Vertex_handle hint;
     for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
             p != end; ++p)
-        hint = insert (*p, hint)->cell();
+        hint = insert(*p, hint);
 
     return number_of_vertices() - n;
+  }
+
+  Vertex_handle insert(const Point & p, Vertex_handle hint)
+  {
+    return insert(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell());
   }
 
   Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle());

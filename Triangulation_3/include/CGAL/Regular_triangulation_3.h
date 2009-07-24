@@ -156,6 +156,11 @@ public:
     return number_of_vertices() - n;
   }
 
+  Vertex_handle insert(const Weighted_point & p, Vertex_handle hint)
+  {
+    return insert(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell());
+  }
+
   Vertex_handle insert(const Weighted_point & p,
 	               Cell_handle start = Cell_handle());
 

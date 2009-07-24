@@ -420,6 +420,10 @@ The optional argument \ccc{start} is used as a starting place for the search.
 }
 
 \ccMethod{Cell_handle
+          locate(const Point & query, Vertex_handle hint) const;}
+{ Same as above but uses \ccc{hint} as the starting place for the search.  }
+
+\ccMethod{Cell_handle
           locate(const Point & query, Locate_type & lt,
                  int & li, int & lj, Cell_handle start = Cell_handle() ) const;}
 {If \ccc{query} lies inside the affine hull of the points, the $k$-face
@@ -446,6 +450,11 @@ triangulation, \ccc{lt} is set to \ccc{OUTSIDE_AFFINE_HULL} and
 \textit{locate} returns the default constructed handle. \\
 The optional argument \ccc{start} is used as a starting place for the search.
 }
+
+\ccMethod{Cell_handle
+          locate(const Point & query, Locate_type & lt,
+                 int & li, int & lj, Vertex_handle hint) const;}
+{ Same as above but uses \ccc{hint} as the starting place for the search. }
 
 \ccMethod{Bounded_side
           side_of_cell(const Point & p,
@@ -607,6 +616,9 @@ hull, so, the infinite vertex is linked to all the points to
 triangulate the new infinite face. See 
 Figure~\ref{Triangulation3-fig-insert_outside_affine_hull}.
 The optional argument \ccc{start} is used as a starting place for the search.}
+
+\ccMethod{Vertex_handle insert(const Point & p, Vertex_handle hint);}
+{ Same as above but uses \ccc{hint} as the starting place for the search. }
 
 \ccMethod{Vertex_handle insert(const Point & p, Locate_type lt,
                                Cell_handle loc, int li, int lj);}

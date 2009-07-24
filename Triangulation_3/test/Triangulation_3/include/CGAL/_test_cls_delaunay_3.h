@@ -817,8 +817,8 @@ _test_cls_delaunay_3(const Triangulation &)
   Cls T4;
   v0 = T4.insert(q0);
   Vertex_handle v1 = T4.insert(q1);
-  Vertex_handle v2 = T4.insert(q2);
-  Vertex_handle v3 = T4.insert(q3);
+  Vertex_handle v2 = T4.insert(q2, v1);         // testing with the hint
+  Vertex_handle v3 = T4.insert(q3, v2->cell()); // testing with the hint
   Cell_handle c;
   int j,k,l;
   assert(T4.is_facet(v0,v1,v2,c,j,k,l));

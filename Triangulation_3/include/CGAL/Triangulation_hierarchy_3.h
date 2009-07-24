@@ -90,6 +90,10 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
 
   // INSERT REMOVE
+  Vertex_handle insert(const Point &p, Vertex_handle hint)
+  {
+    return insert(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell());
+  }
   Vertex_handle insert(const Point &p, Cell_handle start = Cell_handle ());
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle loc,
       int li, int lj);
@@ -103,24 +107,20 @@ public:
       std::random_shuffle (points.begin(), points.end());
       spatial_sort (points.begin(), points.end(), geom_traits());
 
-      // hints[i] is the cell of the previously inserted point in level i.
+      // hints[i] is the vertex of the previously inserted point in level i.
       // Thanks to spatial sort, they are better hints than what the hierarchy
       // would give us.
-      Cell_handle hints[maxlevel];
+      Vertex_handle hints[maxlevel];
       for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
               p != end; ++p)
       {
           int vertex_level = random_level();
 
-          Vertex_handle v = hierarchy[0]->insert (*p, hints[0]);
-          hints[0] = v->cell();
-
+          Vertex_handle v = hints[0] = hierarchy[0]->insert (*p, hints[0]);
           Vertex_handle prev = v;
 
           for (int level = 1; level <= vertex_level; ++level) {
-              v = hierarchy[level]->insert (*p, hints[level]);
-              hints[level] = v->cell();
-
+              v = hints[level] = hierarchy[level]->insert (*p, hints[level]);
               v->set_down (prev);
               prev->set_up (v);
               prev = v;
@@ -148,6 +148,16 @@ public:
 
   //LOCATE
   Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj,
+                     Vertex_handle hint) const
+  {
+    return locate(p, lt, li, lj, hint == Vertex_handle() ? this->infinite_cell() : hint->cell());
+  }
+  Cell_handle locate(const Point& p, Vertex_handle hint) const
+  {
+    return locate(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell());
+  }
+
+  Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj,
           Cell_handle start = Cell_handle ()) const;
   Cell_handle locate(const Point& p, Cell_handle start = Cell_handle ()) const;
 
@@ -165,11 +175,6 @@ private:
   void locate(const Point& p, Locate_type& lt, int& li, int& lj,
 	      locs pos[maxlevel], Cell_handle start = Cell_handle ()) const;
   int random_level();
-
-  // added to make the test program of usual triangulations work
-  // undocumented
-public:
-
 };
 
 

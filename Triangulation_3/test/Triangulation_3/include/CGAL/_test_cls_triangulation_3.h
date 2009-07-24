@@ -480,8 +480,8 @@ _test_cls_triangulation_3(const Triangulation &)
   v0=T3_5.insert(p115);
   v0=T3_5.insert(p116);
   v0=T3_5.insert(p117);
-  v0=T3_5.insert(p118);
-  v0=T3_5.insert(p119);
+  v0=T3_5.insert(p118, v0->cell()); // testing with the hint
+  v0=T3_5.insert(p119, v0);         // testing with the hint
   
   assert(T3_5.is_valid());
   assert(T3_5.number_of_vertices()==10);
@@ -551,6 +551,11 @@ _test_cls_triangulation_3(const Triangulation &)
   c= Ti.locate(Point(100,100,0),lt,li,lj);
   assert(lt==Cls::VERTEX);
   i2=li;
+
+  // testing the locate with hint.
+  Cell_handle ccc = Ti.locate(Point(100,100,0),c);
+  assert(c == ccc);
+  ccc = Ti.locate(Point(100,100,0),c->vertex(0));
 
   Point p22(50,50,0);
   v0=Ti.insert_in_edge(p22,Ti.locate(Point(50,40,1)),i1,i2);
