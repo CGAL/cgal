@@ -1,6 +1,135 @@
 Release notes of CGAL.
 
------------------------------ Release 3.4 ----------------------------------
+----------------------------- Release 3.5 ----------------------------------
+CGAL releases will now be published about every six months. As a transition
+release, CGAL-3.5 has been developed during 9 months from the release
+CGAL-3.4.
+
+The following functionality has been added or changed:
+
+1 General
+  - Additional supported platforms:
+    - GNU g++ 4.4 supported.
+  - Fixed ABI incompatibilities when mixing CGAL and Boost Program Options
+    on Windows/Visual C++ (the compilation flag -D_SECURE_SCL=0 is not
+    longer use in Debug mode).
+
+
+2 Geometry Kernels
+
+2.1 3D Spherical Geometry Kernel
+
+  - Add functionalities to manipulate circles, circular arcs and points
+    that belong to the same sphere.
+
+
+3 Polygons
+
+3.1 2D Regularized Boolean Set-Operations
+
+  - The polygon validation operations were enhanced and their interface was
+    improved. They are now offered as free functions and applied properly.
+
+3.2 2D Straight Skeleton and Polygon Offsetting 
+
+  - Updated the manual to document the new partial skeletons feature
+    (already in the code since 3.4)
+
+
+4 Arrangements
+
+4.1 2D Arrangements
+  - The member function is_at_infinity() of Arrangement_2::Vertex was
+    replaced by the new function has_null_point(). The former is
+    deprecated. While still supported in version 3.5, It will not be
+    supported in future releases.
+
+  - The tags in the geometry traits that indicate the type of boundary of 
+    the embedding surface were replaced by the following new tags:
+      Arr_left_side_tag
+      Arr_bottom_side_tag
+      Arr_top_side_tag
+      Arr_right_side_tag
+    In addition, the code was change, and now it is possible not to
+    indicate the tags at all. Default values are assumed. This however will
+    produce warning messages, and should be avoided.
+
+  - All operations of the geometry traits-class were made 'const'. This
+    change was reflected in the code of this package and all other packages
+    that are based on it. Traits classes that maintain state, should
+    declare the data members that store the state as mutable.
+
+4.2 Envelopes of Surfaces in 3D
+
+  - A few bugs in the code that computes envelopes were fixed, in
+    particular in the code that computes the envelopes of planes.
+
+
+5 Triangulations and Delaunay Triangulations
+
+5.1 3D Periodic Triangulations (new package)
+
+  - This package allows to build and handle triangulations of point sets in
+    the three dimensional flat torus. Triangulations are built
+    incrementally and can be modified by insertion or removal of
+    vertices. They offer point location facilities.
+
+
+6 Mesh Generation
+
+6.1 Surface Reconstruction from Point Sets (new package)
+  - This CGAL package implements an implicit surface reconstruction method:
+    Poisson Surface Reconstruction. The input is an unorganized point set
+    with oriented normals.
+
+6.2 3D Mesh Generation (new package)
+  - This package generates 3 dimensional meshes.  It computes isotropic
+    simplicial meshes for domains or multidomains provided that a domain
+    descriptor, able to answer queries from a few different types on the
+    domain, is given.  In the current version, Mesh_3 generate meshes for
+    domain described through implicit functional, 3D images or polyhedral
+    boundaries.  The output is a 3D mesh of the domain volume and conformal
+    surface meshes for all the boundary and subdividing surfaces.
+
+7 Geometry Processing
+
+7.1 Triangulated Surface Mesh Simplification
+
+   - BREAKING API change in the passing of the visitor object.
+
+   - Fixed a bug in the link_condition test
+
+   - Added a geometric test to avoid folding of facets
+
+   - Fixed a bug in the handling of overflow in the LindstromTurk
+     computations
+
+   - Updated the manual to account for the new visitor interface
+
+7.2 Point Set Processing (new package)
+
+   - This packages implements a set of algorithms for analysis, processing,
+     and normal estimation and orientation of point sets.
+
+
+8 Spatial Searching and Sorting
+
+8. 1 AABB tree (new package)
+
+ - This package implements a hierarchy of axis-aligned bounding boxes (a
+   AABB tree) for efficient intersection and distance computations between
+   3D queries and sets of input 3D geometric objects.
+
+9 Support Library
+
+9.1 CGAL_ipelets (new package):
+  - Object that eases the writing of Ipe's plugins that use CGAL.
+    Plugins for CGAL main 2D algorithm are provided as demo.
+
+
+
+
+------------------------- Release 3.4 ----------------------------------
 The following functionality has been added or changed:
 
 1 General
