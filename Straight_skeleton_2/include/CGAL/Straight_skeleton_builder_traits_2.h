@@ -23,6 +23,7 @@
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -212,6 +213,16 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
   result_type operator() ( Trisegment_2_ptr const& aTrisegment ) const
   {
+    typename Has_inexact_constructions<K>::type has_inexact_constructions
+    CGAL_SUNPRO_INITIALIZE( = typename Has_inexact_constructions<K>::type()) ;
+    
+    return calc(aTrisegment, has_inexact_constructions);
+  }
+ 
+  result_type calc ( Trisegment_2_ptr const& aTrisegment
+                   , Tag_false               // kernel already has exact constructions
+                   ) const
+  {
     bool lOK = false ;
     
     FT      t(0) ;
@@ -236,7 +247,58 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
     return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
   }
- 
+  
+  result_type calc ( Trisegment_2_ptr const& aTrisegment
+                   , Tag_true         // kernel does not provides exact constructions
+                   ) const
+  {
+    bool lOK = false ;
+    
+    FT      t(0) ;
+    Point_2 i = ORIGIN ;
+
+    optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment);
+
+    if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
+    {
+      t = ot->n() / ot->d();
+      
+      optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment);
+      if ( oi )
+      {
+        if ( is_point_calculation_clearly_wrong(t,*oi,aTrisegment)) 
+        {
+          typedef Exact_predicates_exact_constructions_kernel EK ;
+    
+          typedef Cartesian_converter<K,EK> BaseC2E;
+          typedef Cartesian_converter<EK,K> BaseE2C;
+    
+          SS_converter<BaseC2E> C2E ;  
+          SS_converter<BaseE2C> E2C ;  
+    
+          oi = E2C(construct_offset_lines_isecC2(C2E(aTrisegment)));
+          
+          if ( oi )
+          {
+            i   = *oi ;
+            CGAL_stskel_intrinsic_test_assertion(!is_point_calculation_clearly_wrong(t,i,aTrisegment));
+            lOK = true ;
+          }
+        }
+        else
+        {
+          i = *oi ;
+          lOK = true ;
+        }
+      }
+      
+    }
+    
+    CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(lOK,K,"Construct_ss_event_time_and_point_2",aTrisegment);
+
+    return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
+  }
+  
   bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p, Trisegment_2_ptr const& aTrisegment ) const 
   {
     bool rR = false ;

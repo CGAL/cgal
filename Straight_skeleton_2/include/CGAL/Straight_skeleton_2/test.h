@@ -42,8 +42,6 @@
 #  define CGAL_stskel_intrinsic_test_trace_if(EX,m)
 #endif
 
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING
-
 CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i {
@@ -168,8 +166,6 @@ inline bool is_time_clearly_within_possibly_inexact_bisector_time_interval( FT c
 } // namespace CGAL_SS_i
 
 CGAL_END_NAMESPACE
-
-#endif
 
 #endif // CGAL_STRAIGHT_SKELETON_TEST_H //
 // EOF //

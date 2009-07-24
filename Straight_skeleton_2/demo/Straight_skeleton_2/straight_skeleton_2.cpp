@@ -258,17 +258,19 @@ private slots:
         Polygon const& lOuter = *lRegion.front() ;
 
         Doubles::iterator last = offsets.end() ;
-        double lMaxOffset = offsets.size() > 0 ? *--last : 10.0 ;
+        FT lMaxOffset = offsets.size() > 0 ? *--last : 10.0 ;
 
-        boost::optional<double> lMargin = CGAL::compute_outer_frame_margin(lOuter.rbegin(),lOuter.rend(),lMaxOffset);
-        if ( lMargin )
+        boost::optional<FT> lOptMargin = CGAL::compute_outer_frame_margin(lOuter.rbegin(),lOuter.rend(),lMaxOffset);
+        if ( lOptMargin )
         {
+          double lMargin = CGAL::to_double(*lOptMargin);
+          
           CGAL::Bbox_2 lBbox = CGAL::bbox_2(lOuter.begin(),lOuter.end());
 
-          double flx = lBbox.xmin() - *lMargin ;
-          double fhx = lBbox.xmax() + *lMargin ;
-          double fly = lBbox.ymin() - *lMargin ;
-          double fhy = lBbox.ymax() + *lMargin ;
+          double flx = lBbox.xmin() - lMargin ;
+          double fhx = lBbox.xmax() + lMargin ;
+          double fly = lBbox.ymin() - lMargin ;
+          double fhy = lBbox.ymax() + lMargin ;
 
           Point lFrame[4]= { Point(flx,fly)
                            , Point(fhx,fly)
@@ -480,7 +482,7 @@ private slots:
 
           CGAL::Orientation expected = ( i == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
 
-          double area = CGAL::polygon_area_2(lPoly->begin(),lPoly->end(),K());
+          double area = CGAL::to_double(CGAL::polygon_area_2(lPoly->begin(),lPoly->end(),K()));
 
           CGAL::Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
 

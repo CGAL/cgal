@@ -20,6 +20,9 @@
 
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/or.hpp>
 
 #include <CGAL/Straight_skeleton_2/assertions.h>
 #include <CGAL/Straight_skeleton_2/debug.h>
@@ -32,6 +35,18 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i
 {
+
+template<class K> struct Has_inexact_constructions
+{ 
+  typedef typename K::FT FT ;
+  
+  typedef typename boost::mpl::if_< boost::mpl::or_< boost::is_same<FT,double>
+                                                   , boost::is_same<FT,Interval_nt_advanced>
+                                                   > 
+                                  , Tag_true
+                                  , Tag_false
+                                  >::type type ; 
+} ;
 
 
 //

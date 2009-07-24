@@ -23,6 +23,7 @@
 #include <CGAL/Polygon_2.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <boost/shared_ptr.hpp>
 #include <vector>
@@ -36,6 +37,7 @@
 namespace demo
 {
 
+//typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Polygon_2<K>            CGAL_Polygon ;

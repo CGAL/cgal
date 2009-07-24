@@ -24,25 +24,9 @@
 #include <CGAL/constructions/Polygon_offset_cons_ftC2.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include "boost/type_traits/is_same.hpp"
-#include "boost/mpl/if.hpp"
-#include "boost/mpl/or.hpp"
-
 CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i {
-
-template<class K> struct Has_inexact_constructions
-{ 
-  typedef typename K::FT FT ;
-  
-  typedef typename boost::mpl::if_< boost::mpl::or_< boost::is_same<FT,double>
-                                                   , boost::is_same<FT,Interval_nt_advanced>
-                                                   > 
-                                  , Tag_true
-                                  , Tag_false
-                                  >::type type ; 
-} ;
 
 template<class K>
 struct Compare_offset_against_event_time_2 : Functor_base_2<K>
