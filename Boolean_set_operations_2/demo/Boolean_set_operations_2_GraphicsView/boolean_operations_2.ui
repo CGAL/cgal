@@ -103,8 +103,22 @@
    <attribute name="toolBarBreak" >
     <bool>false</bool>
    </attribute>
-   <addaction name="actionMakeBlueActive" />
-   <addaction name="actionMakeRedActive" />
+   <widget class="QRadioButton" name="redActive">
+    <property name="text">
+     <string>Red</string>
+    </property>
+    <property name="checked" >
+      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="blueActive">
+    <property name="text">
+     <string>Blue</string>
+    </property>
+    <property name="checked" >
+      <bool>false</bool>
+    </property>
+   </widget>
    <addaction name="actionInsertPolygon" />
    <addaction name="actionInsertCircle" />
    <addaction name="actionInsertBezier" />
@@ -233,24 +247,12 @@
   </action>
   
   <action name="actionMakeBlueActive" >
-   <property name="checkable" >
-    <bool>true</bool>
-   </property>
-   <property name="checked" >
-    <bool>true</bool>
-   </property>
    <property name="text" >
     <string>Blue</string>
    </property>
   </action>
   
   <action name="actionMakeRedActive" >
-   <property name="checkable" >
-    <bool>true</bool>
-   </property>
-   <property name="checked" >
-    <bool>false</bool>
-   </property>
    <property name="text" >
     <string>Red</string>
    </property>
@@ -451,6 +453,25 @@
   </action>
   
  </widget>
+ 
+ <connections>
+  <connection>
+   <sender>redActive</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_actionMakeRedActive_toggled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>blueActive</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_actionMakeBlueActive_toggled(bool)</slot>
+  </connection>
+ </connections>
+ <slots>
+   <slot>on_actionMakeRedActive_toggled(bool)</slot>
+   <slot>on_actionMakeBlueActive_toggled(bool)</slot>
+ </slots>
  
  <resources>
   <include location="boolean_operations_2.qrc" />

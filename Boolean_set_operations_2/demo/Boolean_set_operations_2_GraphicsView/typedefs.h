@@ -77,6 +77,7 @@ typedef Bezier_gps_traits::General_polygon_2            Bezier_polygon;
 typedef Bezier_gps_traits::General_polygon_with_holes_2 Bezier_polygon_with_holes;
 typedef std::list<Bezier_polygon>                       Bezier_polygon_list ;
 typedef std::list<Bezier_polygon_with_holes>            Bezier_polygon_with_holes_list ;
+typedef Bezier_polygon_with_holes_list::const_iterator  Bezier_pwhl_const_iterator ;
 
 typedef CGAL::Qt::BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes> Bezier_GI;
 

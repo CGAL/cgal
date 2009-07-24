@@ -110,6 +110,11 @@ private:
   
 private:  
 
+  bool isEmpty( Bezier_polygon_with_holes_list const& aList ) const { return aList.size() == 0 || aList.front().outer_boundary().size() == 0 ; }
+  
+  bool isRedEmpty   () const { return isEmpty(mBezier_red_set);    }
+  bool isBlueEmpty  () const { return isEmpty(mBezier_blue_set);   }
+  bool isResultEmpty() const { return isEmpty(mBezier_result_set); }
   
 public:
 
@@ -119,6 +124,11 @@ private:
   
   void dragEnterEvent(QDragEnterEvent *event);
   void dropEvent(QDropEvent *event);
+  void zoomToFit();
+  
+protected slots:
+  
+  void open( QString filename ) ;
 
 public slots:
   
@@ -135,12 +145,10 @@ public slots:
   void on_actionAboutCGAL_triggered() {}
   void on_actionUndo_triggered() {}
   void on_actionRedo_triggered() {}
-  void on_actionMakeBlueActive_toggled(bool checked) {}
-  void on_actionMakeRedActive_toggled(bool checked) {}
 //   void on_actionInsertPolygon_triggered() {}
   void on_actionInsertCircle_triggered() {}
   void on_actionInsertBezier_triggered() {}
-  void on_actionIntersection_triggered() {}
+  void on_actionIntersection_triggered() ;
   void on_actionUnion_triggered() {}
   void on_actionBlueMinusRed_triggered() {}
   void on_actionRedMinusBlue_triggered() {}
@@ -154,14 +162,25 @@ public slots:
   void on_actionDeleteRed_triggered() {}
   void on_actionRefresh_triggered() {}
   
+  void on_actionMakeRedActive_toggled (bool checked) { MakeRedActive( checked); }
+  void on_actionMakeBlueActive_toggled(bool checked) { MakeRedActive(!checked); }
+  
 signals:
   void changed();
+  
+private:
+  
+  void MakeRedActive(bool checked)
+  { 
+    mBezier_red_active = checked ; 
+  }
+    
 };
 
 
 MainWindow::MainWindow()
   : DemosMainWindow()
-  , mBezier_red_active(false)
+  , mBezier_red_active(true)
 {
   CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);
@@ -177,10 +196,14 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()), mBezier_red_GI   , SLOT(modelChanged()));
   QObject::connect(this, SIGNAL(changed()), mBezier_blue_GI  , SLOT(modelChanged()));
   QObject::connect(this, SIGNAL(changed()), mBezier_result_GI, SLOT(modelChanged()));
-
-  mBezier_red_GI   ->setPen(QPen(Qt::red   , 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  mBezier_blue_GI  ->setPen(QPen(Qt::blue  , 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  mBezier_result_GI->setPen(QPen(Qt::yellow, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  
+  mBezier_red_GI   ->setPen  (QPen  (Qt::red  , 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  mBezier_blue_GI  ->setPen  (QPen  (Qt::blue , 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  mBezier_result_GI->setPen  (QPen  (Qt::green, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  
+  mBezier_red_GI   ->setBrush(QBrush(QColor(255,0,0,64)  ));
+  mBezier_blue_GI  ->setBrush(QBrush(QColor(0,0,255,64)  ));
+  mBezier_result_GI->setBrush(QBrush(QColor(0,255,0,200) ));
   
   mScene.addItem(mBezier_red_GI);
   mScene.addItem(mBezier_blue_GI);
@@ -207,7 +230,11 @@ MainWindow::MainWindow()
   this->addAboutCGAL();
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
-  //connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
+  connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
+  
+  QObject::connect(redActive , SIGNAL(toggled(bool)), this, SLOT(on_actionMakeRedActive_toggled (bool)));
+  QObject::connect(blueActive, SIGNAL(toggled(bool)), this, SLOT(on_actionMakeBlueActive_toggled(bool)));
+  
 	  
 }
 
@@ -220,7 +247,7 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 void MainWindow::dropEvent(QDropEvent *event)
 {
   QString filename = event->mimeData()->urls().at(0).path();
-//  open(filename);
+  open(filename);
   event->acceptProposedAction();
 }
 
@@ -314,15 +341,62 @@ std::size_t read_Bezier_polygon_with_holes ( QString aFileName, Bezier_polygon_w
 
 void MainWindow::on_actionOpenBezier_triggered()
 {
-  QString fileName = QFileDialog::getOpenFileName(this, tr("Open Bezier Curves file"), "../data", tr("Bezier Curve files (*.dat)") );
-  
-  if( read_Bezier_polygon_with_holes(fileName, mBezier_red_active ? mBezier_red_set : mBezier_blue_set ) > 0 )
+  open(QFileDialog::getOpenFileName(this, tr("Open Bezier Curves file"), "../data", tr("Bezier Curve files (*.dat)") ));
+}
+
+void MainWindow::on_actionIntersection_triggered() 
+{
+  if ( !isRedEmpty() && !isBlueEmpty() )
   {
+    Bezier_polygon_with_holes const& lRed  = *mBezier_red_set .begin();
+    Bezier_polygon_with_holes const& lBlue = *mBezier_blue_set.begin();
+    
+    intersection( lRed, lBlue, std::back_inserter(mBezier_result_set) ) ;
+    
     emit(changed());
-    this->addToRecentFiles(fileName);
   }
 }
 
+void MainWindow::open( QString fileName )
+{
+  if(! fileName.isEmpty())
+  {
+    if(fileName.endsWith(".dat"))
+    {
+      if( read_Bezier_polygon_with_holes(fileName, mBezier_red_active ? mBezier_red_set : mBezier_blue_set ) > 0 )
+      {
+        emit(changed());
+        zoomToFit();
+        this->addToRecentFiles(fileName);
+      }
+    }
+  }  
+}
+
+void MainWindow::zoomToFit()
+{
+  boost::optional<QRectF> lRedRect ;
+  boost::optional<QRectF> lBlueRect ;
+  boost::optional<QRectF> lResultRect ;
+  boost::optional<QRectF> lTotalRect ;
+  
+  if ( !mBezier_red_GI->isModelEmpty() )
+   lRedRect = mBezier_red_GI->boundingRect() ;
+   
+  if ( !mBezier_blue_GI->isModelEmpty() )
+   lBlueRect = mBezier_blue_GI->boundingRect() ;
+   
+  if ( !mBezier_result_GI->isModelEmpty() )
+   lResultRect = mBezier_result_GI->boundingRect() ;
+   
+  lTotalRect = lRedRect ;
+                   
+  if ( lTotalRect )
+  {
+    this->graphicsView->setSceneRect(*lTotalRect);
+    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);  
+  }                 
+}
 
 #include "boolean_operations_2.moc"
 
