@@ -1091,7 +1091,7 @@
 %\newcommand{\ccPkgDemo}[2]{\lciPushGlobalStack{\ccValueofPkgDemo}{#1}}
 \newcommand{\ccPkgDemo}[2]{\ccPkgDemoX{#1}{#2}{\ccValueofPkgDemo}}
 \newcommand{\ccPkgDemoX}[3]{\gdef\ccValueofPkgDemo{%
-#Y3\lcRawHtml{<b>Demo: </b><a href="http://www.cgal.org/demo/}\lcRawHtmlExpanded{\cgalversion{}/#2}\lcRawHtml{">}#1\lcRawHtml{</a><br>}}%
+#Y3\lcRawHtml{<b>Demo: </b><a href="http://www.cgal.org/demo/}\lcRawHtmlExpanded{\cgalrawversion{}/#2}\lcRawHtml{">}#1\lcRawHtml{</a><br>}}%
 }
 
 \newenvironment{ccPkgDescription}{\ccPkgDescriptionX}{\end{savestream}}
