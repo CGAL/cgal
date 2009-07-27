@@ -11,7 +11,7 @@ are for the most common use cases, and cover the command line tools.
 For further information, or in case of problems, please see the
 detailed installation instructions, which can be found in this
 distribution in the file ./doc_html/index.html or on the CGAL website
-http://www.cgal.org/Manual/3.4/doc_html/installation_manual/contents.html
+http://www.cgal.org/Manual/last/doc_html/installation_manual/contents.html
 
 The documentation of CGAL is available in PDF and HTML formats.
 It is not bundled with the software but can be downloaded separately
@@ -49,13 +49,13 @@ CGAL packages, some are only needed for demos.
 
      - GMP (>= 4.1.4)
        http://gmplib.org/
-       or precompiled version that can be downloaded with CGAL-3.4-Setup.exe
+       or precompiled version that can be downloaded with CGAL-3.5-Setup.exe
        based on http://fp.gladman.plus.com/computing/gmp4win.htm
 
 
      - MPFR (>= 2.2.1)
        http://www.mpfr.org/
-       or precompiled version that can be downloaded with CGAL-3.4-Setup.exe
+       or precompiled version that can be downloaded with CGAL-3.5-Setup.exe
        based on http://fp.gladman.plus.com/computing/gmp4win.htm
 
      - LEDA (>= 6.0)
@@ -85,13 +85,13 @@ CGAL packages, some are only needed for demos.
        o Approximation of Ridges and Umbilics
        o Planar Parameterization of Triangulated Surface Meshes
        http://www.netlib.org/blas/, http://www.netlib.org/lapack/
-       or precompiled version that can be downloaded with CGAL-3.4-Setup.exe
+       or precompiled version that can be downloaded with CGAL-3.5-Setup.exe
 
      - TAUCS (sparse matrix solver)
        Accelerates the package:
        o Planar Parameterization of Triangulated Surface Meshes
        http://www.tau.ac.il/~stoledo/taucs/
-       or precompiled version that can be downloaded with CGAL-3.4-Setup.exe
+       or precompiled version that can be downloaded with CGAL-3.5-Setup.exe
 
    * Miscellaneous
 

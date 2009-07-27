@@ -40,7 +40,7 @@
 \newcommand{\mswin}{\textsc{MS}~Windows}
 
 %% macro for CGAL release number
-\newcommand{\cgalrelease}{3.4}
+\newcommand{\cgalrelease}{3.5}
 
 %% macro for CGAL directory
 \newcommand{\cgaldir}{\texttt{CGAL-\cgalrelease}}
@@ -89,11 +89,11 @@ This document describes how to install \cgal\ on Windows, Unix-like systems and 
 Ideally, installing \cgal amounts to:
 
 \begin{verbatim}
-  cd  CGAL-3.4                                # go to CGAL directory
+  cd  CGAL-3.5                                # go to CGAL directory
   cmake .                                     # configure CGAL
   make                                        # build the CGAL libraries
   cd examples/Straight_skeleton_2             # go to an example directory
-  cmake -DCGAL_DIR=$HOME/CGAL-3.4 .           # configure the examples
+  cmake -DCGAL_DIR=$HOME/CGAL-3.5 .           # configure the examples
   make                                        # build the examples 
 \end{verbatim}
 %%   $   This dollar is there to trick syntax highlighting in emacs 
@@ -110,7 +110,7 @@ e.g. for numeric solvers, or visualization.
 \subsection{Compilers}
 
 In order to build the \cgal\ libraries, you need a \CC\ compiler.  
-\cgal~3.4 is supported for the following compilers/operating systems:
+\cgal~3.5 is supported for the following compilers/operating systems:
 
 \begin{center}\index{compilers!supported}\index{supported compilers}
   \renewcommand{\arraystretch}{1.3}
@@ -202,16 +202,16 @@ supported by the \taucs\ project, we provide a precompiled version of
 
 The \cgal\ library can be downloaded from  \path'http://www.cgal.org/download.html'.
 
-After you have downloaded the file \texttt{CGAL-3.4.tar.gz} containing the
+After you have downloaded the file \texttt{CGAL-3.5.tar.gz} containing the
 \cgal\ sources, you have to unpack it. Under a Unix-like shell, use the
 command:
 
 \begin{verbatim}
-      tar xzf CGAL-3.4.tar.gz
+      tar xzf CGAL-3.5.tar.gz
 \end{verbatim}
 
 
-When you are on Windows you may download and run the \texttt{CGAL-3.4-Setup.exe}. It is a
+When you are on Windows you may download and run the \texttt{CGAL-3.5-Setup.exe}. It is a
 self extracting executable that installs the \cgal\ source, and that allows
 you to select and download some precompiled third party libraries.
 
@@ -257,7 +257,7 @@ third-party libraries you want to use and where they can be found, and
 which \cgal\ libraries you want to build. Gathering
 all this information is called {\em configuration}. 
 
-For CGAL-3.4, the configuration is generated with \cmake, a
+For CGAL-3.5, the configuration is generated with \cmake, a
 cross-platform build system.  This manual explains only those features of
 \cmake\ which are needed in order to build \cgal. Please refer to the \cmake\ 
 documentation at \cmakepage\ for further details.
@@ -274,7 +274,7 @@ argument the root directory of \cgal. For example:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd  CGAL-3.4
+  cd  CGAL-3.5
   cmake-gui . # Notice the dot to indicate the current directory.
 \end{verbatim}
 }
@@ -302,7 +302,7 @@ Alternatively, you can run the command-line tool called
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd  CGAL-3.4
+  cd  CGAL-3.5
   cmake . # Notice the dot to indicate the current directory.
 \end{verbatim}
 }
@@ -334,7 +334,7 @@ build files). For example, the following generates solution files for use in Vis
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd CGAL-3.4
+  cd CGAL-3.5
   cmake -G"Visual Studio 9 2008" . 
 \end{verbatim}
 }
@@ -346,7 +346,7 @@ specify the desired compiler in the call to \cmake{}, as in this example:
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd CGAL-3.4
+  cd CGAL-3.5
   cmake -DCMAKE_CXX_COMPILER:FILEPATH=g++-3.4 . 
 \end{verbatim}
 }
@@ -401,7 +401,7 @@ If you turn off the configuration of a library, you can still configure it manua
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-  cd CGAL-3.4/src/CGALQt4 
+  cd CGAL-3.5/src/CGALQt4 
   cmake . # configures only the CGAL_Qt4 library
 \end{verbatim}
 }
@@ -454,12 +454,12 @@ You can, for example, generate subdirectories \cgaldir{}\texttt{/cmake/platforms
 
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
-mkdir CGAL-3.4/cmake/platforms/debug
-cd CGAL-3.4/cmake/platforms/debug
+mkdir CGAL-3.5/cmake/platforms/debug
+cd CGAL-3.5/cmake/platforms/debug
 cmake -DCMAKE_BUILD_TYPE=Debug ../../..
 
-mkdir CGAL-3.4/cmake/platforms/release
-cd CGAL-3.4/cmake/platforms/release
+mkdir CGAL-3.5/cmake/platforms/release
+cd CGAL-3.5/cmake/platforms/release
 cmake -DCMAKE_BUILD_TYPE=Release ../../..
 \end{verbatim}
 }
@@ -480,7 +480,7 @@ succeeding build step as follows:
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 
-cd CGAL-3.4
+cd CGAL-3.5
 
 # build all the selected libraries at once
 
@@ -578,7 +578,7 @@ installation in a {\sc Unix}-like environment:
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 
-cd CGAL-3.4
+cd CGAL-3.5
 
 cmake .      # configure
 make         # compile
@@ -600,7 +600,7 @@ variable explicitly {\em at the configuration time} and not when executing the i
 \end{ccAdvanced}
 
 The file \texttt{CGALCOnfig.cmake} is installed by default in
-\texttt{\$CMAKE\_INSTALLED\_PREFIX/lib/CGAL-3.4}.
+\texttt{\$CMAKE\_INSTALLED\_PREFIX/lib/CGAL-3.5}.
 
 
 \section{Configuring and Building Programs Using \cgal}
@@ -619,8 +619,8 @@ to indicate the location of that config file in the \cmake\ variable
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 
-cd CGAL-3.4/examples/Straight_skeleton_2
-cmake -DCGAL_DIR=$HOME/CGAL-3.4 .
+cd CGAL-3.5/examples/Straight_skeleton_2
+cmake -DCGAL_DIR=$HOME/CGAL-3.5 .
 make
 
 \end{verbatim}
@@ -660,13 +660,13 @@ controlling variable right up front:
 {\ccTexHtml{\scriptsize}{}
 \begin{verbatim}
 
-cd CGAL-3.4
+cd CGAL-3.5
 
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-g .
 
-cd CGAL-3.4/examples/Straight_skeleton_2
+cd CGAL-3.5/examples/Straight_skeleton_2
 
-cmake -DCGAL_DIR=CGAL-3.4 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
+cmake -DCGAL_DIR=CGAL-3.5 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
 
 \end{verbatim}
 }
@@ -1119,7 +1119,7 @@ cmake -DWITH_examples=false
 -- uic executable:     C:/Work/Downloaded/Libraries/qt-win-opensource-src-4.4.1/bin/uic.exe
 -- Configuring done
 -- Generating done
--- Build files have been written to: C:/Work/Active/GeometryFactory/CGAL/Autotest/CGAL-3.4-I-442/cmake/platforms/a
+-- Build files have been written to: C:/Work/Active/GeometryFactory/CGAL/Autotest/CGAL-3.5/cmake/platforms/a
 \end{verbatim}
 }
 
