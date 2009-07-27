@@ -763,6 +763,8 @@ Surface_mesher/test/Surface_mesher/my_makefile
 Surface_mesher/test/Surface_mesher/test_c2t3_iterators
 Surface_mesher/test/Surface_mesher/test_canonical_edge
 Surface_mesher/test/Surface_mesher/test_robust_circumcenter
+Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/*.sln
+Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/*.vcproj
 Surface_reconstruction_points_3/doc_doxygen
 Surface_reconstruction_points_3/doc_html
 Surface_reconstruction_points_3/doc_pdf

@@ -90,8 +90,8 @@ Scene::~Scene()
   entries.clear();
 
 #ifdef CGAL_GLEW_ENABLED
-  if((--ms_splattingCounter)==0);
-  delete ms_splatting;
+  if((--ms_splattingCounter)==0)
+    delete ms_splatting;
 #endif
 }
 
@@ -504,7 +504,12 @@ Scene::setData(const QModelIndex &index,
   {
     RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
     // Find next supported rendering mode
-    while ( ! item->supportsRenderingMode(rendering_mode) ) {
+    while ( !item->supportsRenderingMode(rendering_mode)
+#ifdef CGAL_GLEW_ENABLED
+         || (rendering_mode==Splatting && !Scene::splatting()->isSupported())
+#endif
+    )
+    {
       rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
     }
     item->setRenderingMode(rendering_mode);

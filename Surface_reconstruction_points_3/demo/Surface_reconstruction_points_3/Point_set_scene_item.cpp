@@ -1,9 +1,4 @@
-#ifdef CGAL_GLEW_ENABLED
-# include "GlSplat/GlSplat.h"
-#endif
-
 #include "Point_set_scene_item.h"
-#include "Scene.h"
 #include "Polyhedron_type.h"
 #include "CGAL/compute_normal.h"
 
@@ -164,12 +159,9 @@ Point_set_scene_item::toolTip() const
     .arg(color().name());
 }
 
-bool Point_set_scene_item::supportsRenderingMode(RenderingMode m) const {
-  return m==Points || m==PointsPlusNormals
-  #ifdef CGAL_GLEW_ENABLED
-     || (m==Splatting && Scene::splatting()->isSupported())
-  #endif
-  ;
+bool Point_set_scene_item::supportsRenderingMode(RenderingMode m) const 
+{
+  return m==Points || m==PointsPlusNormals || m==Splatting;
 }
 
 // Points OpenGL drawing in a display list
@@ -274,7 +266,7 @@ void Point_set_scene_item::setRenderingMode(RenderingMode m)
   Scene_item_with_display_list::setRenderingMode(m);
   if (rendering_mode==Splatting && (!m_points->are_radii_uptodate()))
   {
-    computes_local_spacing(16);
+    computes_local_spacing(18);
   }
 }
 
