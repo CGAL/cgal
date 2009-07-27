@@ -40,9 +40,13 @@ The following functionality has been added or changed:
 
 4.1 2D Arrangements
   - The member function is_at_infinity() of Arrangement_2::Vertex was
-    replaced by the new function has_null_point(). The former is
+    replaced by the new function is_at_open_boundary(). The former is
     deprecated. While still supported in version 3.5, It will not be
-    supported in future releases.
+    supported in future releases. The member functions boundary_type_in_x()
+    and boundary_type_in_y() were permanently replaced by the functions
+    parameter_space_in_x() and parameter_space_in_y(), respectively. The 2
+    new functions return an enumeration of a new type, namely
+    Arr_parameter_space.
 
   - The tags in the geometry traits that indicate the type of boundary of 
     the embedding surface were replaced by the following new tags:
