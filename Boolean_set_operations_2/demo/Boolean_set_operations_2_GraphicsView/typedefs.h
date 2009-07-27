@@ -50,7 +50,6 @@ typedef CGAL::General_polygon_with_holes_2<Polygon_2> Polygon_with_holes;
 typedef CGAL::General_polygon_set_2<Traits>           Polygon_set;
 typedef Polygon_with_holes::Hole_const_iterator       Hole_const_iterator;
 
-
 typedef CGAL::Polygon_2<Kernel>                       Linear_polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>            Linear_polygon_with_holes_2;
 
@@ -74,12 +73,11 @@ typedef Bezier_traits_2::Curve_2                        Bezier_curve;
 typedef Bezier_traits_2::X_monotone_curve_2             Bezier_X_monotone_curve;
 typedef CGAL::Gps_traits_2<Bezier_traits_2>             Bezier_gps_traits;
 typedef Bezier_gps_traits::General_polygon_2            Bezier_polygon;
+typedef std::vector<Bezier_polygon>                     Bezier_polygon_vector ;
 typedef Bezier_gps_traits::General_polygon_with_holes_2 Bezier_polygon_with_holes;
-typedef std::list<Bezier_polygon>                       Bezier_polygon_list ;
-typedef std::list<Bezier_polygon_with_holes>            Bezier_polygon_with_holes_list ;
-typedef Bezier_polygon_with_holes_list::const_iterator  Bezier_pwhl_const_iterator ;
+typedef CGAL::General_polygon_set_2<Bezier_gps_traits>  Bezier_polygon_set ;
 
-typedef CGAL::Qt::BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes> Bezier_GI;
+typedef CGAL::Qt::BezierPolygonWithHolesGraphicsItem<Bezier_polygon_set> Bezier_GI;
 
 
 #endif

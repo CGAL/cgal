@@ -85,7 +85,73 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
   throw std::runtime_error("CGAL Error");  
 }
 
+enum { RED, BLUE, RESULT } ;
+enum { BEZIER, LAST_KIND } ;
 
+QColor sPenColors  [] = { QColor(255,0,0)   , QColor(0,0,255)   , QColor(0,255,0)     } ;
+QColor sBrushColors[] = { QColor(255,0,0,64), QColor(0,0,255,64), QColor(0,255,0,200) } ;
+
+class Curve_set
+{
+public:
+  
+  virtual ~Curve_set() {}
+  
+  virtual CGAL::Qt::GraphicsItem* gi() const = 0 ;
+  virtual CGAL::Qt::GraphicsItem* gi()       = 0 ;
+  
+  virtual QRectF bounding_rect() const { return gi()->boundingRect() ; }
+  
+  virtual bool is_empty() const = 0 ;
+  
+  virtual void assign( Curve_set const& aOther ) = 0 ;
+   
+  virtual void intersect( Curve_set const& aOther ) = 0 ;
+   
+protected:
+  
+} ;
+
+typedef boost::shared_ptr<Curve_set> Curve_set_ptr ;
+
+typedef std::vector<Curve_set_ptr> Curve_set_vector ;
+
+typedef Curve_set_vector::iterator Curve_set_iterator ;
+
+class Bezier_curve_set : public Curve_set
+{
+public:
+
+  Bezier_curve_set ( int aGroup ) : mGI( new Bezier_GI(&mSet) )
+  {
+    mGI->setPen  (QPen  ( sPenColors  [aGroup], 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    mGI->setBrush(QBrush( sBrushColors[aGroup] ));
+  }
+  
+  virtual CGAL::Qt::GraphicsItem* gi() const { return mGI; }
+  virtual CGAL::Qt::GraphicsItem* gi()       { return mGI; }
+  
+  virtual bool is_empty() const { return mSet.is_empty() ; }
+  
+  virtual void assign( Curve_set const& aOther )
+  {
+    Bezier_curve_set const& lOther = dynamic_cast<Bezier_curve_set const&>(aOther);
+    
+    mSet = lOther.mSet;
+  }
+  
+  virtual void intersect( Curve_set const& aOther )
+  {
+    Bezier_curve_set const& lOther = dynamic_cast<Bezier_curve_set const&>(aOther);
+    
+    mSet.intersection(lOther.mSet);
+  }
+  
+private:
+
+  Bezier_GI*         mGI;
+  Bezier_polygon_set mSet ;
+} ;
 
 //global variable to aid naming windows 
 int winsOpened=2;
@@ -98,24 +164,12 @@ class MainWindow :
   
 private:  
 
-  QGraphicsScene                  mScene;
-  
-  bool                            mBezier_red_active ;
-  Bezier_GI*                      mBezier_red_GI;
-  Bezier_GI*                      mBezier_blue_GI;
-  Bezier_GI*                      mBezier_result_GI;
-  Bezier_polygon_with_holes_list  mBezier_red_set ;
-  Bezier_polygon_with_holes_list  mBezier_blue_set ;
-  Bezier_polygon_with_holes_list  mBezier_result_set ;
+  QGraphicsScene   mScene;
+  bool             mRed_active ;
+  Curve_set_vector mCurve_sets ;
   
 private:  
 
-  bool isEmpty( Bezier_polygon_with_holes_list const& aList ) const { return aList.size() == 0 || aList.front().outer_boundary().size() == 0 ; }
-  
-  bool isRedEmpty   () const { return isEmpty(mBezier_red_set);    }
-  bool isBlueEmpty  () const { return isEmpty(mBezier_blue_set);   }
-  bool isResultEmpty() const { return isEmpty(mBezier_result_set); }
-  
 public:
 
   MainWindow();
@@ -170,9 +224,15 @@ signals:
   
 private:
   
+  Curve_set& set( int aKind, int aGroup ) { return *mCurve_sets[ (aKind*3) + aGroup ] ; }
+  
+  Curve_set& active_set( int aKind )    { return set(aKind, mRed_active ? RED : BLUE) ; }
+  
+  Curve_set& result_set( int aKind )    { return set(aKind, RESULT) ; }
+
   void MakeRedActive(bool checked)
   { 
-    mBezier_red_active = checked ; 
+    mRed_active = checked ; 
   }
     
 };
@@ -180,7 +240,7 @@ private:
 
 MainWindow::MainWindow()
   : DemosMainWindow()
-  , mBezier_red_active(true)
+  , mRed_active(true)
 {
   CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);
@@ -189,25 +249,16 @@ MainWindow::MainWindow()
 
   setAcceptDrops(true);
 
-  mBezier_red_GI    = new Bezier_GI(&mBezier_red_set);
-  mBezier_blue_GI   = new Bezier_GI(&mBezier_blue_set);
-  mBezier_result_GI = new Bezier_GI(&mBezier_result_set);
-    
-  QObject::connect(this, SIGNAL(changed()), mBezier_red_GI   , SLOT(modelChanged()));
-  QObject::connect(this, SIGNAL(changed()), mBezier_blue_GI  , SLOT(modelChanged()));
-  QObject::connect(this, SIGNAL(changed()), mBezier_result_GI, SLOT(modelChanged()));
+  mCurve_sets.push_back( Curve_set_ptr(new Bezier_curve_set(RED)    ) )  ;
+  mCurve_sets.push_back( Curve_set_ptr(new Bezier_curve_set(BLUE)   ) ) ;
+  mCurve_sets.push_back( Curve_set_ptr(new Bezier_curve_set(RESULT) ) ) ;
   
-  mBezier_red_GI   ->setPen  (QPen  (Qt::red  , 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  mBezier_blue_GI  ->setPen  (QPen  (Qt::blue , 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  mBezier_result_GI->setPen  (QPen  (Qt::green, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  
-  mBezier_red_GI   ->setBrush(QBrush(QColor(255,0,0,64)  ));
-  mBezier_blue_GI  ->setBrush(QBrush(QColor(0,0,255,64)  ));
-  mBezier_result_GI->setBrush(QBrush(QColor(0,255,0,200) ));
-  
-  mScene.addItem(mBezier_red_GI);
-  mScene.addItem(mBezier_blue_GI);
-  mScene.addItem(mBezier_result_GI);
+  for( Curve_set_iterator si = mCurve_sets.begin(); si != mCurve_sets.end() ; ++ si )
+  {
+    CGAL::Qt::GraphicsItem* lGI = (*si)->gi() ;
+    QObject::connect(this, SIGNAL(changed()), lGI, SLOT(modelChanged()));
+    mScene.addItem( lGI );
+  }
   
   //
   // Setup the mScene and the view
@@ -251,8 +302,10 @@ void MainWindow::dropEvent(QDropEvent *event)
   event->acceptProposedAction();
 }
 
-std::size_t read_Bezier_polygon_with_holes ( QString aFileName, Bezier_polygon_with_holes_list& rList )
+bool read_Bezier_polygon_with_holes ( QString aFileName, Bezier_polygon_set& rSet )
 {
+  bool rOK = false ;
+  
   if( ! aFileName.isEmpty() && aFileName.endsWith(".dat") )
   {
     std::ifstream in_file (qPrintable(aFileName));
@@ -279,7 +332,7 @@ std::size_t read_Bezier_polygon_with_holes ( QString aFileName, Bezier_polygon_w
         std::list<Bezier_X_monotone_curve> xcvs;
         Bezier_rat_kernel                  ker;
         Bezier_rat_kernel::Equal_2         equal = ker.equal_2_object();
-        Bezier_polygon_list                polygons ;
+        Bezier_polygon_vector              polygons ;
       
         for ( unsigned int k = 0; k < n_curves; ++ k ) 
         {
@@ -329,14 +382,16 @@ std::size_t read_Bezier_polygon_with_holes ( QString aFileName, Bezier_polygon_w
         }
       
         // Construct the polygon with holes.
-        std::list<Bezier_polygon>::iterator  pit = polygons.begin();  ++pit;
-        rList.push_back( Bezier_polygon_with_holes(polygons.front(), pit, polygons.end()) ) ;
+        Bezier_polygon_vector::iterator  pit = polygons.begin();  ++pit;
+        rSet.insert( Bezier_polygon_with_holes(polygons.front(), pit, polygons.end()) ) ;
+        
+        rOK = true ;
       }
       
     }
   }
   
-  return rList.size();
+  return rOK ;
 }
 
 void MainWindow::on_actionOpenBezier_triggered()
@@ -346,15 +401,16 @@ void MainWindow::on_actionOpenBezier_triggered()
 
 void MainWindow::on_actionIntersection_triggered() 
 {
-  if ( !isRedEmpty() && !isBlueEmpty() )
+  for ( int k = BEZIER; k != LAST_KIND ; ++ k )
   {
-    Bezier_polygon_with_holes const& lRed  = *mBezier_red_set .begin();
-    Bezier_polygon_with_holes const& lBlue = *mBezier_blue_set.begin();
-    
-    intersection( lRed, lBlue, std::back_inserter(mBezier_result_set) ) ;
-    
-    emit(changed());
+    if ( !set(k,RED).is_empty() && !set(k,RED).is_empty() )
+    {
+      set(k,RESULT).assign( set(k,RED) ) ;
+      set(k,RESULT).intersect(set(k,BLUE));
+    }
   }
+    
+  emit(changed());
 }
 
 void MainWindow::open( QString fileName )
@@ -363,7 +419,8 @@ void MainWindow::open( QString fileName )
   {
     if(fileName.endsWith(".dat"))
     {
-      if( read_Bezier_polygon_with_holes(fileName, mBezier_red_active ? mBezier_red_set : mBezier_blue_set ) > 0 )
+      Bezier_polygon_set& lSet = dynamic_cast<Bezier_polygon_set&>(active_set(BEZIER));
+      if( read_Bezier_polygon_with_holes(fileName,lSet) )
       {
         emit(changed());
         zoomToFit();
@@ -375,21 +432,20 @@ void MainWindow::open( QString fileName )
 
 void MainWindow::zoomToFit()
 {
-  boost::optional<QRectF> lRedRect ;
-  boost::optional<QRectF> lBlueRect ;
-  boost::optional<QRectF> lResultRect ;
   boost::optional<QRectF> lTotalRect ;
   
-  if ( !mBezier_red_GI->isModelEmpty() )
-   lRedRect = mBezier_red_GI->boundingRect() ;
-   
-  if ( !mBezier_blue_GI->isModelEmpty() )
-   lBlueRect = mBezier_blue_GI->boundingRect() ;
-   
-  if ( !mBezier_result_GI->isModelEmpty() )
-   lResultRect = mBezier_result_GI->boundingRect() ;
-   
-  lTotalRect = lRedRect ;
+  for ( Curve_set_iterator si = mCurve_sets.begin() ; si != mCurve_sets.end() ; ++ si )
+  {
+    Curve_set& lSet = **si ;
+    
+    if ( !lSet.is_empty() ) 
+    {
+      QRectF lRect = lSet.bounding_rect();
+      if ( lTotalRect )
+           lTotalRect = *lTotalRect | lRect ;
+      else lTotalRect = lRect ;  
+    }
+  }
                    
   if ( lTotalRect )
   {

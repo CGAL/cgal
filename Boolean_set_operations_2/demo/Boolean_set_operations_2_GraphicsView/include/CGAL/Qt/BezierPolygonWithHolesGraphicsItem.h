@@ -40,36 +40,38 @@ namespace CGAL {
 
 namespace Qt {
 
-template <typename Bezier_polygon_with_holes_>
+template <typename Bezier_polygon_set_>
 class BezierPolygonWithHolesGraphicsItem : public GraphicsItem
 {
-  typedef Bezier_polygon_with_holes_                            Bezier_polygon_with_holes ;
-  typedef typename Bezier_polygon_with_holes::General_polygon_2 Bezier_polygon ;
-  typedef std::list<Bezier_polygon_with_holes>                  Bezier_polygon_with_holes_list ;
-  typedef typename Bezier_polygon::Traits_2                     Bezier_traits;
-  typedef typename Bezier_traits::Point_2                       Bezier_point;
+  typedef Bezier_polygon_set_                                       Bezier_polygon_set ;
+  typedef typename Bezier_polygon_set::Base                         Bezier_general_polygon_set ;
+  typedef typename Bezier_general_polygon_set::Polygon_with_holes_2 Bezier_polygon_with_holes ;
+  typedef typename Bezier_general_polygon_set::Polygon_2            Bezier_polygon ;
+  typedef typename Bezier_polygon_set::Traits_2                     Bezier_traits;
+  typedef typename Bezier_traits::Point_2                           Bezier_point;
+  typedef std::vector<Bezier_polygon_with_holes>                    Bezier_polygon_with_holes_vector ;
+   
+  typedef Simple_cartesian<double>               Linear_kernel ;
+  typedef Polygon_2<Linear_kernel>               Linear_polygon ;
+  typedef Polygon_with_holes_2<Linear_kernel>    Linear_polygon_with_holes ;
+  typedef std::vector<Linear_polygon_with_holes> Linear_polygon_with_holes_vector ;
   
-  typedef Simple_cartesian<double>                              Linear_kernel ;
-  typedef Polygon_2<Linear_kernel>                              Linear_polygon ;
-  typedef Polygon_with_holes_2<Linear_kernel>                   Linear_polygon_with_holes ;
-  typedef std::list<Linear_polygon_with_holes>                  Linear_polygon_with_holes_list ;
-  
-  typedef typename Bezier_polygon_with_holes_list::const_iterator Bezier_pwh_list_const_iterator ;
-  typedef typename Linear_polygon_with_holes_list::const_iterator Linear_pwh_list_const_iterator ;
-  typedef typename Linear_polygon_with_holes::Hole_const_iterator Linear_hole_const_itertator ;
-  typedef typename Linear_polygon::Vertex_const_iterator          Linear_vertex_const_iterator ;
+  typedef typename Bezier_polygon_with_holes_vector::const_iterator Bezier_pwh_const_iterator ; 
+  typedef typename Linear_polygon_with_holes_vector::const_iterator Linear_pwh_const_iterator ;
+  typedef typename Linear_polygon_with_holes::Hole_const_iterator   Linear_hole_const_itertator ;
+  typedef typename Linear_polygon::Vertex_const_iterator            Linear_vertex_const_iterator ;
   
   typedef Converter<Linear_kernel> ToQtConverter;
   
 public:
 
-  BezierPolygonWithHolesGraphicsItem( Bezier_polygon_with_holes_list* aList );
+  BezierPolygonWithHolesGraphicsItem( Bezier_polygon_set* aSet );
 
   void modelChanged();
 
 public:
 
-  bool isModelEmpty() const { return !mBList || mBList->size() == 0 || mBList->front().outer_boundary().size() == 0 ; }
+  bool isModelEmpty() const { return !mBSet || mBSet->is_empty() ; }
   
   QRectF boundingRect() const { return mBounding_rect ; }
   
@@ -93,19 +95,19 @@ protected:
   
 protected:
 
-  Bezier_polygon_with_holes_list* mBList;
-  Linear_polygon_with_holes_list  mPList ;
-  QRectF                          mBounding_rect;
-  QBrush                          mBrush;
-  QPen                            mPen;
+  Bezier_polygon_set*              mBSet;
+  Linear_polygon_with_holes_vector mPList ;
+  QRectF                           mBounding_rect;
+  QBrush                           mBrush;
+  QPen                             mPen;
   
   ToQtConverter to_Qt;
 };
 
 
 template <typename Bezier_polygon_with_holes>
-BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes>::BezierPolygonWithHolesGraphicsItem(Bezier_polygon_with_holes_list* aList)
-  : mBList(aList)
+BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes>::BezierPolygonWithHolesGraphicsItem(Bezier_polygon_set* aSet)
+  : mBSet(aSet)
 {
   if( ! isModelEmpty() )
        updateBoundingBox();
@@ -136,16 +138,13 @@ void BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes>::dump_linear_
 
 
 template <typename Bezier_polygon_with_holes>
-void BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes>::paint( QPainter*                       aPainter
-                                                                         , const QStyleOptionGraphicsItem* aOption
-                                                                         , QWidget*                        aWidget
-                                                                         )
+void BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes>::paint( QPainter* aPainter, const QStyleOptionGraphicsItem* aOption, QWidget* aWidget )
 {
   if ( ! isModelEmpty() )
   {
     QPainterPath lPath;
     
-    for ( Linear_pwh_list_const_iterator rit = mPList.begin() ; rit != mPList.end() ; ++ rit )
+    for ( Linear_pwh_const_iterator rit = mPList.begin() ; rit != mPList.end() ; ++ rit )
     {
       dump_linear_polygon(rit->outer_boundary(), lPath);
       
@@ -172,17 +171,22 @@ void BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes>::updateBoundi
     
     boost::optional<Bbox_2> lBBox ;
      
-    for ( Linear_pwh_list_const_iterator rit = mPList.begin() ; rit != mPList.end() ; ++ rit )
+    for ( Linear_pwh_const_iterator rit = mPList.begin() ; rit != mPList.end() ; ++ rit )
     {
-      if ( !lBBox )
-           lBBox =          rit->outer_boundary().bbox();
-      else lBBox = *lBBox + rit->outer_boundary().bbox();
+      if ( lBBox )
+           lBBox = *lBBox + rit->outer_boundary().bbox();
+      else lBBox =          rit->outer_boundary().bbox();
       
       for ( Linear_hole_const_itertator hit = rit->holes_begin() ; hit != rit->holes_end() ; ++ hit )
-        lBBox = *lBBox + hit->bbox();
+      {
+        if ( lBBox )
+             lBBox = *lBBox + hit->bbox();
+        else lBBox =          hit->bbox();
+      }  
     }
     
-    mBounding_rect = to_Qt(*lBBox);
+    if ( lBBox ) 
+      mBounding_rect = to_Qt(*lBBox);
   }
 }
 
@@ -205,7 +209,9 @@ void BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes>::updateSample
   if ( !isModelEmpty() )
   {
     mPList.clear();
-    for( Bezier_pwh_list_const_iterator lit = mBList->begin(); lit != mBList->end(); ++ lit )
+    Bezier_polygon_with_holes_vector vec ;
+    mBSet->polygons_with_holes( std::back_inserter(vec) ) ;
+    for( Bezier_pwh_const_iterator lit = vec.begin(); lit != vec.end(); ++ lit )
     {
       Bezier_polygon_with_holes const& lBezier_pwh = *lit ;
       Linear_polygon_with_holes lLinear_pwh ;
