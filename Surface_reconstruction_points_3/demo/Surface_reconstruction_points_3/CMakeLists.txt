@@ -137,19 +137,19 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_polyhedron_item.cpp)
 
   # AUXILIARY LIBRARIES
-  add_library(reconstruction_scene_item SHARED
+  add_library(PS_demo_scene_item SHARED
     Scene_item.cpp Scene_item.moc
     Scene_item_with_display_list.cpp
     Polyhedron_demo_plugin_helper.cpp)
-  target_link_libraries(reconstruction_scene_item ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  target_link_libraries(PS_demo_scene_item ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
-  add_library(reconstruction_scene_basic_objects SHARED
+  add_library(PS_demo_scene_basic_objects SHARED
     Scene_plane_item.cpp Scene_plane_item.moc)
-  target_link_libraries(reconstruction_scene_basic_objects reconstruction_scene_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  target_link_libraries(PS_demo_scene_basic_objects PS_demo_scene_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
-  add_library(reconstruction_scene_polyhedron_item SHARED
+  add_library(PS_demo_scene_polyhedron_item SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
-  target_link_libraries(reconstruction_scene_polyhedron_item reconstruction_scene_item)
+  target_link_libraries(PS_demo_scene_polyhedron_item PS_demo_scene_item)
 
   if(GLEW_FOUND)
     qt4_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
@@ -160,7 +160,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(point_set SHARED
     Point_set_scene_item.cpp Point_set_scene_item.moc)
-  target_link_libraries(point_set reconstruction_scene_item)
+  target_link_libraries(point_set PS_demo_scene_item)
 
   if(GLEW_FOUND)
     target_link_libraries( point_set gl_splat ${GLEW_LIBRARIES} )
@@ -198,7 +198,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries( Point_set_demo ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
   # Link with the scene_item libraries
-  target_link_libraries( Point_set_demo reconstruction_scene_item reconstruction_scene_polyhedron_item point_set )
+  target_link_libraries( Point_set_demo PS_demo_scene_item PS_demo_scene_polyhedron_item point_set )
 
   if(GLEW_FOUND)
     target_link_libraries( Point_set_demo gl_splat ${GLEW_LIBRARIES} )
@@ -212,7 +212,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   ###########
   remove_definitions(-DQT_STATICPLUGIN)
 
-  macro(polyhedron_demo_plugin plugin_name plugin_implementation_base_name)
+  macro(point_set_demo_plugin plugin_name plugin_implementation_base_name)
     list_split(option ARGN_TAIL ${ARGN} )
     if(NOT ${option} STREQUAL "EXCLUDE_FROM_ALL")
       set(other_sources ${ARGN})
@@ -227,56 +227,56 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
     # Link with scene_item
-    target_link_libraries( ${plugin_name} reconstruction_scene_item)
+    target_link_libraries( ${plugin_name} PS_demo_scene_item)
     # Link with CGAL
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-  endmacro(polyhedron_demo_plugin)
+  endmacro(point_set_demo_plugin)
 
   if(TAUCS_FOUND)
     qt4_wrap_ui( POISSON_UI_FILES PS_demo_poisson_plugin.ui)
-    polyhedron_demo_plugin(PS_demo_poisson_plugin
+    point_set_demo_plugin(PS_demo_poisson_plugin
       PS_demo_poisson_plugin
       PS_demo_poisson_plugin_cgal_code.cpp
       ${POISSON_UI_FILES})
-    target_link_libraries(PS_demo_poisson_plugin reconstruction_scene_polyhedron_item point_set)
+    target_link_libraries(PS_demo_poisson_plugin PS_demo_scene_polyhedron_item point_set)
   endif()
 
-  polyhedron_demo_plugin(Polyhedron_demo_inside_out_plugin Polyhedron_demo_inside_out_plugin)
-  target_link_libraries(Polyhedron_demo_inside_out_plugin reconstruction_scene_polyhedron_item point_set)
+  point_set_demo_plugin(PS_demo_inside_out_plugin Polyhedron_demo_inside_out_plugin)
+  target_link_libraries(PS_demo_inside_out_plugin PS_demo_scene_polyhedron_item point_set)
 
-  polyhedron_demo_plugin(PS_demo_off_plugin PS_demo_off_plugin)
-  target_link_libraries(PS_demo_off_plugin reconstruction_scene_polyhedron_item point_set)
+  point_set_demo_plugin(PS_demo_off_plugin PS_demo_off_plugin)
+  target_link_libraries(PS_demo_off_plugin PS_demo_scene_polyhedron_item point_set)
 
-  polyhedron_demo_plugin(PS_demo_xyz_plugin PS_demo_xyz_plugin)
-  target_link_libraries(PS_demo_xyz_plugin reconstruction_scene_polyhedron_item point_set)
+  point_set_demo_plugin(PS_demo_xyz_plugin PS_demo_xyz_plugin)
+  target_link_libraries(PS_demo_xyz_plugin PS_demo_scene_polyhedron_item point_set)
 
   qt4_wrap_ui(SIMPLIFICATION_UI_FILES PS_demo_simplification_plugin.ui)
-  polyhedron_demo_plugin(PS_demo_simplification_plugin
+  point_set_demo_plugin(PS_demo_simplification_plugin
     PS_demo_simplification_plugin
     ${SIMPLIFICATION_UI_FILES})
   target_link_libraries(PS_demo_simplification_plugin point_set)
 
-  polyhedron_demo_plugin(PS_demo_local_spacing_plugin PS_demo_local_spacing_plugin)
+  point_set_demo_plugin(PS_demo_local_spacing_plugin PS_demo_local_spacing_plugin)
   target_link_libraries(PS_demo_local_spacing_plugin point_set)
 
-  polyhedron_demo_plugin(PS_demo_average_spacing_plugin PS_demo_average_spacing_plugin)
+  point_set_demo_plugin(PS_demo_average_spacing_plugin PS_demo_average_spacing_plugin)
   target_link_libraries(PS_demo_average_spacing_plugin point_set)
 
   if(LAPACK_FOUND)
-    polyhedron_demo_plugin(PS_demo_smoothing_plugin PS_demo_smoothing_plugin)
+    point_set_demo_plugin(PS_demo_smoothing_plugin PS_demo_smoothing_plugin)
     target_link_libraries(PS_demo_smoothing_plugin point_set)
   endif()
 
   if(LAPACK_FOUND)
     qt4_wrap_ui( NORMAL_UI_FILES PS_demo_normal_estimation_plugin.ui)
-    polyhedron_demo_plugin(PS_demo_normal_estimation_plugin
+    point_set_demo_plugin(PS_demo_normal_estimation_plugin
       PS_demo_normal_estimation_plugin
       ${NORMAL_UI_FILES})
     target_link_libraries(PS_demo_normal_estimation_plugin point_set)
   endif()
 
   qt4_wrap_ui( CLEANING_UI_FILES PS_demo_cleaning_plugin.ui)
-  polyhedron_demo_plugin(PS_demo_cleaning_plugin
+  point_set_demo_plugin(PS_demo_cleaning_plugin
     PS_demo_cleaning_plugin
     ${CLEANING_UI_FILES})
   target_link_libraries(PS_demo_cleaning_plugin point_set)

@@ -3,7 +3,7 @@
 
 #include <Qt/qglobal.h>
 
-#ifdef scene_item_EXPORTS
+#ifdef PS_demo_scene_item_EXPORTS
 #  define SCENE_ITEM_EXPORT Q_DECL_EXPORT
 #else
 #  define SCENE_ITEM_EXPORT Q_DECL_IMPORT
