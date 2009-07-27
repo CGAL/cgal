@@ -137,19 +137,19 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_polyhedron_item.cpp)
 
   # AUXILIARY LIBRARIES
-  add_library(scene_item SHARED
+  add_library(reconstruction_scene_item SHARED
     Scene_item.cpp Scene_item.moc
     Scene_item_with_display_list.cpp
     Polyhedron_demo_plugin_helper.cpp)
-  target_link_libraries(scene_item ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  target_link_libraries(reconstruction_scene_item ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
-  add_library(scene_basic_objects SHARED
+  add_library(reconstruction_scene_basic_objects SHARED
     Scene_plane_item.cpp Scene_plane_item.moc)
-  target_link_libraries(scene_basic_objects scene_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  target_link_libraries(reconstruction_scene_basic_objects reconstruction_scene_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
-  add_library(scene_polyhedron_item SHARED
+  add_library(reconstruction_scene_polyhedron_item SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
-  target_link_libraries(scene_polyhedron_item scene_item)
+  target_link_libraries(reconstruction_scene_polyhedron_item reconstruction_scene_item)
 
   if(GLEW_FOUND)
     qt4_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
@@ -160,7 +160,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(point_set SHARED
     Point_set_scene_item.cpp Point_set_scene_item.moc)
-  target_link_libraries(point_set scene_item)
+  target_link_libraries(point_set reconstruction_scene_item)
 
   if(GLEW_FOUND)
     target_link_libraries( point_set gl_splat ${GLEW_LIBRARIES} )
@@ -198,7 +198,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries( Point_set_demo ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
   # Link with the scene_item libraries
-  target_link_libraries( Point_set_demo scene_item scene_polyhedron_item point_set )
+  target_link_libraries( Point_set_demo reconstruction_scene_item reconstruction_scene_polyhedron_item point_set )
 
   if(GLEW_FOUND)
     target_link_libraries( Point_set_demo gl_splat ${GLEW_LIBRARIES} )
@@ -227,7 +227,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
     # Link with scene_item
-    target_link_libraries( ${plugin_name} scene_item)
+    target_link_libraries( ${plugin_name} reconstruction_scene_item)
     # Link with CGAL
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   endmacro(polyhedron_demo_plugin)
@@ -238,17 +238,17 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       PS_demo_poisson_plugin
       PS_demo_poisson_plugin_cgal_code.cpp
       ${POISSON_UI_FILES})
-    target_link_libraries(PS_demo_poisson_plugin scene_polyhedron_item point_set)
+    target_link_libraries(PS_demo_poisson_plugin reconstruction_scene_polyhedron_item point_set)
   endif()
 
   polyhedron_demo_plugin(Polyhedron_demo_inside_out_plugin Polyhedron_demo_inside_out_plugin)
-  target_link_libraries(Polyhedron_demo_inside_out_plugin scene_polyhedron_item point_set)
+  target_link_libraries(Polyhedron_demo_inside_out_plugin reconstruction_scene_polyhedron_item point_set)
 
   polyhedron_demo_plugin(PS_demo_off_plugin PS_demo_off_plugin)
-  target_link_libraries(PS_demo_off_plugin scene_polyhedron_item point_set)
+  target_link_libraries(PS_demo_off_plugin reconstruction_scene_polyhedron_item point_set)
 
   polyhedron_demo_plugin(PS_demo_xyz_plugin PS_demo_xyz_plugin)
-  target_link_libraries(PS_demo_xyz_plugin scene_polyhedron_item point_set)
+  target_link_libraries(PS_demo_xyz_plugin reconstruction_scene_polyhedron_item point_set)
 
   qt4_wrap_ui(SIMPLIFICATION_UI_FILES PS_demo_simplification_plugin.ui)
   polyhedron_demo_plugin(PS_demo_simplification_plugin
