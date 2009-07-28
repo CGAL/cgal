@@ -1298,9 +1298,9 @@ void _test_intersection_construct(SK sk) {
 
   std::cout << "Testing intersection(Circle,Line)..." << std::endl;
   Polynomial_for_spheres_2_3 pol_s = Polynomial_for_spheres_2_3(0,0,0,1);
-  for(int vx=-2;vx<3;vx++) {
-    for(int vy=-2;vy<3;vy++) {
-      for(int vz=-2;vz<3;vz++) {
+  for(int vx=-2;vx<1;vx++) {
+    for(int vy=-2;vy<1;vy++) {
+      for(int vz=-2;vz<1;vz++) {
         if(vx == -1 && vy == 0 && vz == 0) continue;
         const FT x = FT(vx);
         const FT y = FT(vy);
@@ -1366,9 +1366,9 @@ void _test_intersection_construct(SK sk) {
   }
 
   std::cout << "Testing global version intersection(Circle,Line)..." << std::endl;
-  for(int vx=-2;vx<3;vx++) {
-    for(int vy=-2;vy<3;vy++) {
-      for(int vz=-2;vz<3;vz++) {
+  for(int vx=-2;vx<1;vx++) {
+    for(int vy=-2;vy<1;vy++) {
+      for(int vz=-2;vz<1;vz++) {
         if(vx == -1 && vy == 0 && vz == 0) continue;
         const FT x = FT(vx);
         const FT y = FT(vy);
@@ -1435,110 +1435,106 @@ void _test_intersection_construct(SK sk) {
 
   std::cout << "Testing intersection(Line_arc, Line_arc)..." << std::endl;
   // Testing the case where it overlaps, or do not intersect
-  for(int vx=0;vx<2;vx++) {
-    for(int vy=0;vy<2;vy++) {
-      for(int vz=0;vz<2;vz++) { 
-        if(vx == 0 && vy == 0 && vz == 0) continue;
-        const FT a = FT(vx);
-        const FT b = FT(vy);
-        const FT c = FT(vz);
-        Line_3 l = theConstruct_line_3(Point_3(0,0,0), Point_3(a,b,c));
-        for(int t1=-1;t1<2;t1++) {
-          Point_3 source = Point_3(a*t1,b*t1,c*t1);
-          for(int t2=t1+1;t2<3;t2++) {
-            Point_3 target = Point_3(a*t2,b*t2,c*t2);
-            Line_arc_3 la = theConstruct_line_arc_3(l,source,target);
-            for(int t3=-1;t3<2;t3++) {
-              Point_3 sourcel = Point_3(a*t3,b*t3,c*t3);
-              for(int t4=t3+1;t4<3;t4++) {
-                Point_3 targetl = Point_3(a*t4,b*t4,c*t4);
-                Line_arc_3 lb = theConstruct_line_arc_3(l,sourcel,targetl);
-                std::vector< CGAL::Object > intersection_1;
-                theIntersect_3(la, lb, std::back_inserter(intersection_1));
-                if(t1 == t3) {
-                  Line_arc_3 line_a;
-                  assert(theDo_intersect_3(la, lb));
-                  assert(intersection_1.size() == 1);
-                  assert(assign(line_a, intersection_1[0]));
-                  if(t2 <= t4) {
-                    assert(theEqual_3(line_a, la));
-                  } else {
-                    assert(theEqual_3(line_a, lb));
-                  } 
-                } else if(t2 == t4) {
-                  Line_arc_3 line_a;
-                  assert(theDo_intersect_3(la, lb));
-                  assert(intersection_1.size() == 1);
-                  assert(assign(line_a, intersection_1[0]));
-                  if(t1 > t3) {
-                    assert(theEqual_3(line_a, la));
-                  } else {
-                    assert(theEqual_3(line_a, lb));
-                  }
-                }
-                else if((t1 == t4) || (t2 == t3)) {
-	                assert(theDo_intersect_3(la, lb));
-                  std::pair<Circular_arc_point_3, unsigned> pair;
-                  assert(intersection_1.size() == 1);
-                  assert(assign(pair, intersection_1[0]));
-                  if(t2 == t3) assert(theEqual_3(pair.first,target)); 
-                  if(t1 == t4) assert(theEqual_3(pair.first,source));
-                } else if((t1 < t3) && (t3 < t2 )) {
-                  Line_arc_3 line_a;
-                  assert(theDo_intersect_3(la, lb));
-                  assert(intersection_1.size() == 1);
-                  assert(assign(line_a, intersection_1[0]));
-                  if(t2 < t4) { 
-                    Line_arc_3 line_b;
-                    line_b = theConstruct_line_arc_3(l,sourcel,target);
-                    assert(theEqual_3(line_a, line_b));
-                  } else {
-                    assert(theEqual_3(line_a, lb));
-                  } 
-                } else if((t3 < t1) && (t1 < t4)) {
-                  Line_arc_3 line_a;
-                  assert(intersection_1.size() == 1);
-                  assert(theDo_intersect_3(la, lb));
-                  assert(assign(line_a, intersection_1[0]));
-                  if(t4 < t2) {
-                    Line_arc_3 line_b;
-                    line_b = theConstruct_line_arc_3(l,source,targetl);
-                    assert(theEqual_3(line_a, line_b));
-                  } else {
-                      assert(theEqual_3(line_a, la));
-                  }
-                } else {
-	                assert(!theDo_intersect_3(la, lb));
-                  assert(intersection_1.size() == 0);
-                } 
-              }
+	int vx=1, vy=1, vz=1;
+	
+  const FT a = FT(vx);
+  const FT b = FT(vy);
+  const FT c = FT(vz);
+  Line_3 l = theConstruct_line_3(Point_3(0,0,0), Point_3(a,b,c));
+  for(int t1=-1;t1<2;t1++) {
+    Point_3 source = Point_3(a*t1,b*t1,c*t1);
+    for(int t2=t1+1;t2<3;t2++) {
+      Point_3 target = Point_3(a*t2,b*t2,c*t2);
+      Line_arc_3 la = theConstruct_line_arc_3(l,source,target);
+      for(int t3=-1;t3<2;t3++) {
+        Point_3 sourcel = Point_3(a*t3,b*t3,c*t3);
+        for(int t4=t3+1;t4<3;t4++) {
+          Point_3 targetl = Point_3(a*t4,b*t4,c*t4);
+          Line_arc_3 lb = theConstruct_line_arc_3(l,sourcel,targetl);
+          std::vector< CGAL::Object > intersection_1;
+          theIntersect_3(la, lb, std::back_inserter(intersection_1));
+          if(t1 == t3) {
+            Line_arc_3 line_a;
+            assert(theDo_intersect_3(la, lb));
+            assert(intersection_1.size() == 1);
+            assert(assign(line_a, intersection_1[0]));
+            if(t2 <= t4) {
+              assert(theEqual_3(line_a, la));
+            } else {
+              assert(theEqual_3(line_a, lb));
             } 
+          } else if(t2 == t4) {
+            Line_arc_3 line_a;
+            assert(theDo_intersect_3(la, lb));
+            assert(intersection_1.size() == 1);
+            assert(assign(line_a, intersection_1[0]));
+            if(t1 > t3) {
+              assert(theEqual_3(line_a, la));
+            } else {
+              assert(theEqual_3(line_a, lb));
+            }
           }
+          else if((t1 == t4) || (t2 == t3)) {
+	          assert(theDo_intersect_3(la, lb));
+            std::pair<Circular_arc_point_3, unsigned> pair;
+            assert(intersection_1.size() == 1);
+            assert(assign(pair, intersection_1[0]));
+            if(t2 == t3) assert(theEqual_3(pair.first,target)); 
+            if(t1 == t4) assert(theEqual_3(pair.first,source));
+          } else if((t1 < t3) && (t3 < t2 )) {
+            Line_arc_3 line_a;
+            assert(theDo_intersect_3(la, lb));
+            assert(intersection_1.size() == 1);
+            assert(assign(line_a, intersection_1[0]));
+            if(t2 < t4) { 
+              Line_arc_3 line_b;
+              line_b = theConstruct_line_arc_3(l,sourcel,target);
+              assert(theEqual_3(line_a, line_b));
+            } else {
+              assert(theEqual_3(line_a, lb));
+            } 
+          } else if((t3 < t1) && (t1 < t4)) {
+            Line_arc_3 line_a;
+            assert(intersection_1.size() == 1);
+            assert(theDo_intersect_3(la, lb));
+            assert(assign(line_a, intersection_1[0]));
+            if(t4 < t2) {
+              Line_arc_3 line_b;
+              line_b = theConstruct_line_arc_3(l,source,targetl);
+              assert(theEqual_3(line_a, line_b));
+            } else {
+              assert(theEqual_3(line_a, la));
+            }
+          } else {
+	          assert(!theDo_intersect_3(la, lb));
+            assert(intersection_1.size() == 0);
+          } 
         }
-      }
+      } 
     }
   }
+
   // testing for intersections of Line Arcs without the same line support
-  for(int u1=-1;u1<=1;u1++) {
-    for(int v1=-1;v1<=1;v1++) {
+  for(int u1=0;u1<=1;u1++) {
+    for(int v1=0;v1<=1;v1++) {
       Point_3 p1 = Point_3(3*u1 + 2*v1,
                            u1 + v1 + 3,
                            5 + 2*u1 + v1);
-      for(int u2=-1;u2<=1;u2++) {
-        for(int v2=-1;v2<=1;v2++) {
+      for(int u2=-1;u2<=0;u2++) {
+        for(int v2=-1;v2<=0;v2++) {
           Point_3 p2 = Point_3(3*u2 + 2*v2,
                                  u2 + v2 + 3,
                                5 + 2*u2 + v2);
           if(theEqual_3(p1,p2)) continue;
-          for(int u3=-1;u3<=1;u3++) {
-            for(int v3=-1;v3<=1;v3++) {
+          for(int u3=0;u3<=1;u3++) {
+            for(int v3=0;v3<=1;v3++) {
               Point_3 p3 = Point_3(3*u3 + 2*v3,
                                    u3 + v3 + 3,
                                    5 + 2*u3 + v3);
               if(theEqual_3(p1,p3) || 
                  theEqual_3(p2,p3)) continue;
-              for(int u4=-1;u4<=1;u4++) {
-                for(int v4=-1;v4<=1;v4++) {
+              for(int u4=-1;u4<=0;u4++) {
+                for(int v4=-1;v4<=0;v4++) {
                   Point_3 p4 = Point_3(3*u4 + 2*v4,
                                        u4 + v4 + 3,
                                        5 + 2*u4 + v4);
@@ -1610,110 +1606,102 @@ void _test_intersection_construct(SK sk) {
 
   std::cout << "Testing global version intersection(Line_arc, Line_arc)..." << std::endl;
   // Testing the case where it overlaps, or do not intersect
-  for(int vx=0;vx<2;vx++) {
-    for(int vy=0;vy<2;vy++) {
-      for(int vz=0;vz<2;vz++) { 
-        if(vx == 0 && vy == 0 && vz == 0) continue;
-        const FT a = FT(vx);
-        const FT b = FT(vy);
-        const FT c = FT(vz);
-        Line_3 l = theConstruct_line_3(Point_3(0,0,0), Point_3(a,b,c));
-        for(int t1=-1;t1<2;t1++) {
-          Point_3 source = Point_3(a*t1,b*t1,c*t1);
-          for(int t2=t1+1;t2<3;t2++) {
-            Point_3 target = Point_3(a*t2,b*t2,c*t2);
-            Line_arc_3 la = theConstruct_line_arc_3(l,source,target);
-            for(int t3=-1;t3<2;t3++) {
-              Point_3 sourcel = Point_3(a*t3,b*t3,c*t3);
-              for(int t4=t3+1;t4<3;t4++) {
-                Point_3 targetl = Point_3(a*t4,b*t4,c*t4);
-                Line_arc_3 lb = theConstruct_line_arc_3(l,sourcel,targetl);
-                std::vector< CGAL::Object > intersection_1;
-                intersection(la, lb, std::back_inserter(intersection_1));
-                if(t1 == t3) {
-                  Line_arc_3 line_a;
-                  assert(CGAL::do_intersect(la, lb));
-                  assert(intersection_1.size() == 1);
-                  assert(assign(line_a, intersection_1[0]));
-                  if(t2 <= t4) {
-                    assert(theEqual_3(line_a, la));
-                  } else {
-                    assert(theEqual_3(line_a, lb));
-                  } 
-                } else if(t2 == t4) {
-                  Line_arc_3 line_a;
-                  assert(CGAL::do_intersect(la, lb));
-                  assert(intersection_1.size() == 1);
-                  assert(assign(line_a, intersection_1[0]));
-                  if(t1 > t3) {
-                    assert(theEqual_3(line_a, la));
-                  } else {
-                    assert(theEqual_3(line_a, lb));
-                  }
-                }
-                else if((t1 == t4) || (t2 == t3)) {
-	                assert(CGAL::do_intersect(la, lb));
-                  std::pair<Circular_arc_point_3, unsigned> pair;
-                  assert(intersection_1.size() == 1);
-                  assert(assign(pair, intersection_1[0]));
-                  if(t2 == t3) assert(theEqual_3(pair.first,target)); 
-                  if(t1 == t4) assert(theEqual_3(pair.first,source));
-                } else if((t1 < t3) && (t3 < t2 )) {
-                  Line_arc_3 line_a;
-                  assert(CGAL::do_intersect(la, lb));
-                  assert(intersection_1.size() == 1);
-                  assert(assign(line_a, intersection_1[0]));
-                  if(t2 < t4) { 
-                    Line_arc_3 line_b;
-                    line_b = theConstruct_line_arc_3(l,sourcel,target);
-                    assert(theEqual_3(line_a, line_b));
-                  } else {
-                    assert(theEqual_3(line_a, lb));
-                  } 
-                } else if((t3 < t1) && (t1 < t4)) {
-                  Line_arc_3 line_a;
-                  assert(intersection_1.size() == 1);
-                  assert(CGAL::do_intersect(la, lb));
-                  assert(assign(line_a, intersection_1[0]));
-                  if(t4 < t2) {
-                    Line_arc_3 line_b;
-                    line_b = theConstruct_line_arc_3(l,source,targetl);
-                    assert(theEqual_3(line_a, line_b));
-                  } else {
-                      assert(theEqual_3(line_a, la));
-                  }
-                } else {
-	                assert(!do_intersect(la, lb));
-                  assert(intersection_1.size() == 0);
-                } 
-              }
+
+  l = theConstruct_line_3(Point_3(0,0,0), Point_3(a,b,c));
+  for(int t1=-1;t1<2;t1++) {
+    Point_3 source = Point_3(a*t1,b*t1,c*t1);
+    for(int t2=t1+1;t2<3;t2++) {
+      Point_3 target = Point_3(a*t2,b*t2,c*t2);
+      Line_arc_3 la = theConstruct_line_arc_3(l,source,target);
+      for(int t3=-1;t3<2;t3++) {
+        Point_3 sourcel = Point_3(a*t3,b*t3,c*t3);
+        for(int t4=t3+1;t4<3;t4++) {
+          Point_3 targetl = Point_3(a*t4,b*t4,c*t4);
+          Line_arc_3 lb = theConstruct_line_arc_3(l,sourcel,targetl);
+          std::vector< CGAL::Object > intersection_1;
+          intersection(la, lb, std::back_inserter(intersection_1));
+          if(t1 == t3) {
+            Line_arc_3 line_a;
+            assert(CGAL::do_intersect(la, lb));
+            assert(intersection_1.size() == 1);
+            assert(assign(line_a, intersection_1[0]));
+            if(t2 <= t4) {
+              assert(theEqual_3(line_a, la));
+            } else {
+              assert(theEqual_3(line_a, lb));
             } 
+          } else if(t2 == t4) {
+            Line_arc_3 line_a;
+            assert(CGAL::do_intersect(la, lb));
+            assert(intersection_1.size() == 1);
+            assert(assign(line_a, intersection_1[0]));
+            if(t1 > t3) {
+              assert(theEqual_3(line_a, la));
+            } else {
+              assert(theEqual_3(line_a, lb));
+            }
           }
+          else if((t1 == t4) || (t2 == t3)) {
+            assert(CGAL::do_intersect(la, lb));
+            std::pair<Circular_arc_point_3, unsigned> pair;
+            assert(intersection_1.size() == 1);
+            assert(assign(pair, intersection_1[0]));
+            if(t2 == t3) assert(theEqual_3(pair.first,target)); 
+            if(t1 == t4) assert(theEqual_3(pair.first,source));
+          } else if((t1 < t3) && (t3 < t2 )) {
+            Line_arc_3 line_a;
+            assert(CGAL::do_intersect(la, lb));
+            assert(intersection_1.size() == 1);
+            assert(assign(line_a, intersection_1[0]));
+            if(t2 < t4) { 
+              Line_arc_3 line_b;
+              line_b = theConstruct_line_arc_3(l,sourcel,target);
+              assert(theEqual_3(line_a, line_b));
+            } else {
+              assert(theEqual_3(line_a, lb));
+            } 
+          } else if((t3 < t1) && (t1 < t4)) {
+            Line_arc_3 line_a;
+            assert(intersection_1.size() == 1);
+            assert(CGAL::do_intersect(la, lb));
+            assert(assign(line_a, intersection_1[0]));
+            if(t4 < t2) {
+              Line_arc_3 line_b;
+              line_b = theConstruct_line_arc_3(l,source,targetl);
+              assert(theEqual_3(line_a, line_b));
+            } else {
+              assert(theEqual_3(line_a, la));
+            }
+          } else {
+            assert(!do_intersect(la, lb));
+            assert(intersection_1.size() == 0);
+          } 
         }
-      }
+      } 
     }
   }
+
   // testing for intersections of Line Arcs without the same line support
-  for(int u1=-1;u1<=1;u1++) {
-    for(int v1=-1;v1<=1;v1++) {
+  for(int u1=0;u1<=1;u1++) {
+    for(int v1=0;v1<=1;v1++) {
       Point_3 p1 = Point_3(3*u1 + 2*v1,
                            u1 + v1 + 3,
                            5 + 2*u1 + v1);
-      for(int u2=-1;u2<=1;u2++) {
-        for(int v2=-1;v2<=1;v2++) {
+      for(int u2=-1;u2<=0;u2++) {
+        for(int v2=-1;v2<=0;v2++) {
           Point_3 p2 = Point_3(3*u2 + 2*v2,
                                  u2 + v2 + 3,
                                5 + 2*u2 + v2);
           if(theEqual_3(p1,p2)) continue;
-          for(int u3=-1;u3<=1;u3++) {
-            for(int v3=-1;v3<=1;v3++) {
+          for(int u3=0;u3<=1;u3++) {
+            for(int v3=0;v3<=1;v3++) {
               Point_3 p3 = Point_3(3*u3 + 2*v3,
                                    u3 + v3 + 3,
                                    5 + 2*u3 + v3);
               if(theEqual_3(p1,p3) || 
                  theEqual_3(p2,p3)) continue;
-              for(int u4=-1;u4<=1;u4++) {
-                for(int v4=-1;v4<=1;v4++) {
+              for(int u4=-1;u4<=0;u4++) {
+                for(int v4=-1;v4<=0;v4++) {
                   Point_3 p4 = Point_3(3*u4 + 2*v4,
                                        u4 + v4 + 3,
                                        5 + 2*u4 + v4);

@@ -42,7 +42,7 @@ int pipo(int r){return r;}
 
 int main()
 {
-  typedef CORE::BigRat                                        FT;
+  typedef CORE::Expr                                          FT;
   typedef CGAL::Cartesian<FT>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_spheres_2_3<FT>          Algebraic_k1;
   typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>    SK1;
