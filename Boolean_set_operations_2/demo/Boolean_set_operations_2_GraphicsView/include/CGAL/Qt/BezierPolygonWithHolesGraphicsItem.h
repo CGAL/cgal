@@ -109,9 +109,7 @@ template <typename Bezier_polygon_with_holes>
 BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes>::BezierPolygonWithHolesGraphicsItem(Bezier_polygon_set* aSet)
   : mBSet(aSet)
 {
-  if( ! isModelEmpty() )
-       updateBoundingBox();
-  else this->hide();
+  updateBoundingBox();
 }
 
 
@@ -194,10 +192,6 @@ void BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes>::updateBoundi
 template <typename Bezier_polygon_with_holes>
 void BezierPolygonWithHolesGraphicsItem<Bezier_polygon_with_holes>::modelChanged()
 {
-  if ( !isModelEmpty() /*&& this->isVisible()*/ )
-       this->show();
-  else this->hide();
-  
   updateSample();
   updateBoundingBox();
   update();

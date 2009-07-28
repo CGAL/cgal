@@ -86,16 +86,16 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 }
 
 enum { RED, BLUE, RESULT } ;
-enum { BEZIER, LAST_KIND } ;
+enum { FIRST_KIND, BEZIER = FIRST_KIND , LAST_KIND } ;
 
 QColor sPenColors  [] = { QColor(255,0,0)   , QColor(0,0,255)   , QColor(0,255,0)     } ;
-QColor sBrushColors[] = { QColor(255,0,0,64), QColor(0,0,255,64), QColor(0,255,0,200) } ;
+QColor sBrushColors[] = { QColor(255,0,0,32), QColor(0,0,255,32), QColor(0,255,0,220) } ;
 
-class Curve_set
+class Curve_set_base
 {
 public:
   
-  virtual ~Curve_set() {}
+  virtual ~Curve_set_base() {}
   
   virtual CGAL::Qt::GraphicsItem* gi() const = 0 ;
   virtual CGAL::Qt::GraphicsItem* gi()       = 0 ;
@@ -104,53 +104,74 @@ public:
   
   virtual bool is_empty() const = 0 ;
   
-  virtual void assign( Curve_set const& aOther ) = 0 ;
-   
-  virtual void intersect( Curve_set const& aOther ) = 0 ;
+  virtual void clear               ()                               = 0 ;
+  virtual void complement          ()                               = 0 ;
+  virtual void assign              ( Curve_set_base const& aOther ) = 0 ;
+  virtual void intersect           ( Curve_set_base const& aOther ) = 0 ;
+  virtual void join                ( Curve_set_base const& aOther ) = 0 ;
+  virtual void difference          ( Curve_set_base const& aOther ) = 0 ;
+  virtual void symmetric_difference( Curve_set_base const& aOther ) = 0 ;
    
 protected:
   
 } ;
 
-typedef boost::shared_ptr<Curve_set> Curve_set_ptr ;
+typedef boost::shared_ptr<Curve_set_base> Curve_set_base_ptr ;
 
-typedef std::vector<Curve_set_ptr> Curve_set_vector ;
+typedef std::vector<Curve_set_base_ptr> Curve_set_vector ;
 
-typedef Curve_set_vector::iterator Curve_set_iterator ;
+typedef Curve_set_vector::const_iterator Curve_set_const_iterator ;
+typedef Curve_set_vector::iterator       Curve_set_iterator ;
 
-class Bezier_curve_set : public Curve_set
+template<class GI_, class Set_>
+class Curve_set : public Curve_set_base
 {
 public:
 
-  Bezier_curve_set ( int aGroup ) : mGI( new Bezier_GI(&mSet) )
+  typedef GI_  GI  ;
+  typedef Set_ Set ;
+  
+  typedef Curve_set<GI,Set> Self ;
+  
+  Curve_set ( int aGroup ) 
   {
+    mGI = new GI(&mSet) ; 
     mGI->setPen  (QPen  ( sPenColors  [aGroup], 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     mGI->setBrush(QBrush( sBrushColors[aGroup] ));
   }
+  
+  Set const& set() const { return mSet ; }
+  Set      & set()       { return mSet ; }
   
   virtual CGAL::Qt::GraphicsItem* gi() const { return mGI; }
   virtual CGAL::Qt::GraphicsItem* gi()       { return mGI; }
   
   virtual bool is_empty() const { return mSet.is_empty() ; }
   
-  virtual void assign( Curve_set const& aOther )
-  {
-    Bezier_curve_set const& lOther = dynamic_cast<Bezier_curve_set const&>(aOther);
-    
-    mSet = lOther.mSet;
-  }
+  virtual void clear               ()                               { mSet.clear() ; }
+  virtual void complement          ()                               { mSet.complement(); }
+  virtual void assign              ( Curve_set_base const& aOther ) { mSet = cast(aOther).mSet; }
+  virtual void intersect           ( Curve_set_base const& aOther ) { mSet.intersection        ( cast(aOther).mSet); }
+  virtual void join                ( Curve_set_base const& aOther ) { mSet.join                ( cast(aOther).mSet); }
+  virtual void difference          ( Curve_set_base const& aOther ) { mSet.difference          ( cast(aOther).mSet); }
+  virtual void symmetric_difference( Curve_set_base const& aOther ) { mSet.symmetric_difference( cast(aOther).mSet); }
   
-  virtual void intersect( Curve_set const& aOther )
-  {
-    Bezier_curve_set const& lOther = dynamic_cast<Bezier_curve_set const&>(aOther);
-    
-    mSet.intersection(lOther.mSet);
-  }
+  static Self const& cast( Curve_set_base const& aOther ) { return dynamic_cast<Self const&>(aOther); }
+  static Self      & cast( Curve_set_base      & aOther ) { return dynamic_cast<Self      &>(aOther); }
   
 private:
 
-  Bezier_GI*         mGI;
-  Bezier_polygon_set mSet ;
+  GI* mGI;
+  Set mSet ;
+} ;
+
+class Bezier_curve_set : public Curve_set<Bezier_GI, Bezier_polygon_set>
+{
+  typedef Curve_set<Bezier_GI, Bezier_polygon_set> Base ;
+  
+public:
+  
+  Bezier_curve_set ( int aGroup ) : Base(aGroup) {} 
 } ;
 
 //global variable to aid naming windows 
@@ -165,7 +186,7 @@ class MainWindow :
 private:  
 
   QGraphicsScene   mScene;
-  bool             mRed_active ;
+  bool             mBlue_active ;
   Curve_set_vector mCurve_sets ;
   
 private:  
@@ -192,8 +213,6 @@ public slots:
   void on_actionOpenDXF_triggered() {}
   void on_actionOpenBezier_triggered() ;
   void on_actionPrint_triggered() {}
-  void on_actionClose_triggered() {}
-  void on_actionQuit_triggered() {}
   void on_actionHowTo_triggered() {}
   void on_actionAbout_triggered() {}
   void on_actionAboutCGAL_triggered() {}
@@ -203,44 +222,48 @@ public slots:
   void on_actionInsertCircle_triggered() {}
   void on_actionInsertBezier_triggered() {}
   void on_actionIntersection_triggered() ;
-  void on_actionUnion_triggered() {}
-  void on_actionBlueMinusRed_triggered() {}
-  void on_actionRedMinusBlue_triggered() {}
-  void on_actionSymmDiff_triggered() {}
-  void on_actionMinkowskiSum_triggered() {}
-  void on_actionBlueComplement_triggered() {}
-  void on_actionRedComplement_triggered() {}
-  void on_actionAllBlue_triggered() {}
-  void on_actionAllRed_triggered() {}
-  void on_actionDeleteBlue_triggered() {}
-  void on_actionDeleteRed_triggered() {}
+  void on_actionUnion_triggered() ;
+  void on_actionBlueMinusRed_triggered() ;
+  void on_actionRedMinusBlue_triggered() ;
+  void on_actionSymmDiff_triggered() ;
+  void on_actionMinkowskiSum_triggered();
+  void on_actionBlueComplement_triggered();
+  void on_actionRedComplement_triggered();
+  void on_actionAllBlue_triggered();
+  void on_actionAllRed_triggered(); 
+  void on_actionDeleteBlue_triggered();
+  void on_actionDeleteRed_triggered();
   void on_actionRefresh_triggered() {}
   
-  void on_actionMakeRedActive_toggled (bool checked) { MakeRedActive( checked); }
-  void on_actionMakeBlueActive_toggled(bool checked) { MakeRedActive(!checked); }
+  void on_checkboxShowBlue_toggled      (bool aChecked) { ToogleView(BLUE  ,aChecked); }
+  void on_checkboxShowRed_toggled       (bool aChecked) { ToogleView(RED   ,aChecked); }
+  void on_checkboxShowResult_toggled    (bool aChecked) { ToogleView(RESULT,aChecked); }
+  
+  void on_radioMakeBlueActive_toggled(bool aChecked) { mBlue_active =  aChecked ; }
+  void on_radioMakeRedActive_toggled (bool aChecked) { mBlue_active = !aChecked ; }
   
 signals:
   void changed();
   
 private:
   
-  Curve_set& set( int aKind, int aGroup ) { return *mCurve_sets[ (aKind*3) + aGroup ] ; }
+  Curve_set_base& set( int aKind, int aGroup ) { return *mCurve_sets[ (aKind*3) + aGroup ] ; }
   
-  Curve_set& active_set( int aKind )    { return set(aKind, mRed_active ? RED : BLUE) ; }
+  Curve_set_base& active_set( int aKind )    { return set(aKind, mBlue_active ? BLUE : RED) ; }
   
-  Curve_set& result_set( int aKind )    { return set(aKind, RESULT) ; }
+  Curve_set_base& result_set( int aKind )    { return set(aKind, RESULT) ; }
 
-  void MakeRedActive(bool checked)
-  { 
-    mRed_active = checked ; 
-  }
-    
+  void SetViewBlue  ( bool aChecked ) { checkboxShowBlue  ->setChecked(aChecked); }  
+  void SetViewRed   ( bool aChecked ) { checkboxShowRed   ->setChecked(aChecked); }  
+  void SetViewResult( bool aChecked ) { checkboxShowResult->setChecked(aChecked); }  
+
+  void ToogleView( int aGROUP, bool aChecked );
 };
 
 
 MainWindow::MainWindow()
   : DemosMainWindow()
-  , mRed_active(true)
+  , mBlue_active(true)
 {
   CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);
@@ -249,9 +272,9 @@ MainWindow::MainWindow()
 
   setAcceptDrops(true);
 
-  mCurve_sets.push_back( Curve_set_ptr(new Bezier_curve_set(RED)    ) )  ;
-  mCurve_sets.push_back( Curve_set_ptr(new Bezier_curve_set(BLUE)   ) ) ;
-  mCurve_sets.push_back( Curve_set_ptr(new Bezier_curve_set(RESULT) ) ) ;
+  mCurve_sets.push_back( Curve_set_base_ptr(new Bezier_curve_set(RED)    ) )  ;
+  mCurve_sets.push_back( Curve_set_base_ptr(new Bezier_curve_set(BLUE)   ) ) ;
+  mCurve_sets.push_back( Curve_set_base_ptr(new Bezier_curve_set(RESULT) ) ) ;
   
   for( Curve_set_iterator si = mCurve_sets.begin(); si != mCurve_sets.end() ; ++ si )
   {
@@ -283,8 +306,12 @@ MainWindow::MainWindow()
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
   
-  QObject::connect(redActive , SIGNAL(toggled(bool)), this, SLOT(on_actionMakeRedActive_toggled (bool)));
-  QObject::connect(blueActive, SIGNAL(toggled(bool)), this, SLOT(on_actionMakeBlueActive_toggled(bool)));
+  QObject::connect(radioMakeBlueActive, SIGNAL(toggled(bool)), this, SLOT(on_radioMakeBlueActive_toggled (bool)));
+  QObject::connect(radioMakeRedActive , SIGNAL(toggled(bool)), this, SLOT(on_radioMakeRedActive_toggled(bool)));
+  
+  QObject::connect(checkboxShowBlue   , SIGNAL(toggled(bool)), this, SLOT(on_checkboxShowBlue_toggled   (bool)));
+  QObject::connect(checkboxShowRed    , SIGNAL(toggled(bool)), this, SLOT(on_checkboxShowRed_toggled    (bool)));
+  QObject::connect(checkboxShowResult , SIGNAL(toggled(bool)), this, SLOT(on_checkboxShowResult_toggled (bool)));
   
 	  
 }
@@ -401,15 +428,260 @@ void MainWindow::on_actionOpenBezier_triggered()
 
 void MainWindow::on_actionIntersection_triggered() 
 {
-  for ( int k = BEZIER; k != LAST_KIND ; ++ k )
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
   {
-    if ( !set(k,RED).is_empty() && !set(k,RED).is_empty() )
+    if ( !set(k,BLUE).is_empty() && !set(k,RED).is_empty() )
     {
+      QCursor old = this->cursor();
+      this->setCursor(Qt::WaitCursor);
       set(k,RESULT).assign( set(k,RED) ) ;
       set(k,RESULT).intersect(set(k,BLUE));
+      this->setCursor(old);
+    }
+  }
+  
+  SetViewBlue  (false);
+  SetViewRed   (false);
+  SetViewResult(true);
+  
+  emit(changed());
+}
+
+void MainWindow::on_actionUnion_triggered() 
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    if ( !set(k,BLUE).is_empty() && !set(k,RED).is_empty() )
+    {
+      QCursor old = this->cursor();
+      this->setCursor(Qt::WaitCursor);
+      set(k,RESULT).assign( set(k,RED) ) ;
+      set(k,RESULT).join(set(k,BLUE));
+      this->setCursor(old);
     }
   }
     
+  
+  SetViewBlue  (false);
+  SetViewRed   (false);
+  SetViewResult(true);
+  
+  emit(changed());
+}
+
+void MainWindow::on_actionBlueMinusRed_triggered() 
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    if ( !set(k,BLUE).is_empty() && !set(k,RED).is_empty() )
+    {
+      QCursor old = this->cursor();
+      this->setCursor(Qt::WaitCursor);
+      set(k,RESULT).assign( set(k,BLUE) ) ;
+      set(k,RESULT).difference(set(k,RED));
+      this->setCursor(old);
+    }
+  }
+    
+  
+  SetViewBlue  (false);
+  SetViewRed   (false);
+  SetViewResult(true);
+  
+  emit(changed());
+}
+
+void MainWindow::on_actionRedMinusBlue_triggered() 
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    if ( !set(k,BLUE).is_empty() && !set(k,RED).is_empty() )
+    {
+      QCursor old = this->cursor();
+      this->setCursor(Qt::WaitCursor);
+      set(k,RESULT).assign( set(k,RED) ) ;
+      set(k,RESULT).difference(set(k,BLUE));
+      this->setCursor(old);
+    }
+  }
+    
+  
+  SetViewBlue  (false);
+  SetViewRed   (false);
+  SetViewResult(true);
+  
+  emit(changed());
+}
+
+void MainWindow::on_actionSymmDiff_triggered() 
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    if ( !set(k,BLUE).is_empty() && !set(k,RED).is_empty() )
+    {
+      QCursor old = this->cursor();
+      this->setCursor(Qt::WaitCursor);
+      set(k,RESULT).assign( set(k,RED) ) ;
+      set(k,RESULT).symmetric_difference(set(k,BLUE));
+      this->setCursor(old);
+    }
+  }
+    
+  
+  SetViewBlue  (false);
+  SetViewRed   (false);
+  SetViewResult(true);
+  
+  emit(changed());
+}
+
+void MainWindow::on_actionMinkowskiSum_triggered()
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    if ( !set(k,RED).is_empty() && !set(k,RED).is_empty() )
+    {
+      QCursor old = this->cursor();
+      this->setCursor(Qt::WaitCursor);
+      set(k,RESULT).assign( set(k,RED) ) ;
+      set(k,RESULT).complement();
+      this->setCursor(old);
+    }
+  }
+    
+  SetViewBlue  (false);
+  SetViewRed   (false);
+  SetViewResult(true);
+  
+  emit(changed());
+}
+
+void MainWindow::on_actionBlueComplement_triggered()
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    if ( !set(k,BLUE).is_empty() )
+    {
+      QCursor old = this->cursor();
+      this->setCursor(Qt::WaitCursor);
+      set(k,RESULT).assign( set(k,BLUE) ) ;
+      set(k,RESULT).complement();
+      this->setCursor(old);
+    }
+  }
+    
+  SetViewBlue  (false);
+  SetViewRed   (false);
+  SetViewResult(true);
+  
+  emit(changed());
+}
+
+void MainWindow::on_actionRedComplement_triggered()
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    if ( !set(k,RED).is_empty() )
+    {
+      QCursor old = this->cursor();
+      this->setCursor(Qt::WaitCursor);
+      set(k,RESULT).assign( set(k,RED) ) ;
+      set(k,RESULT).complement();
+      this->setCursor(old);
+    }
+  }
+    
+  SetViewBlue  (false);
+  SetViewRed   (false);
+  SetViewResult(true);
+  
+  emit(changed());
+}
+
+void MainWindow::on_actionAllBlue_triggered()
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    bool lProceed = true ;
+    
+    if ( set(k,RESULT).is_empty() )
+    {
+      int answer = 0;
+      answer = QMessageBox::warning(this, "Store result",
+                                    QString( "Result is empty, all polygons will be deleted\n continue anyway?\n" ),
+                                    "&Yes", "&No", QString::null, 1, 1 );
+      lProceed = answer == 0 ;
+    }
+    
+    if ( lProceed ) 
+    {
+      set(k,BLUE).assign( set(k,RESULT) ) ;
+      set(k,RESULT).clear();
+      radioMakeRedActive->setChecked(true);
+    }
+  }
+    
+  SetViewBlue  (true);
+  SetViewRed   (false);
+  SetViewResult(true);
+  
+  emit(changed());
+}
+
+void MainWindow::on_actionAllRed_triggered()
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    bool lProceed = true ;
+    
+    if ( set(k,RESULT).is_empty() )
+    {
+      int answer = 0;
+      answer = QMessageBox::warning(this, "Store result",
+                                    QString( "Result is empty, all polygons will be deleted\n continue anyway?\n" ),
+                                    "&Yes", "&No", QString::null, 1, 1 );
+      lProceed = answer == 0 ;
+    }
+    
+    if ( lProceed ) 
+    {
+      set(k,RED).assign( set(k,RESULT) ) ;
+      set(k,RESULT).clear();
+      radioMakeBlueActive->setChecked(true);
+    }
+  }
+    
+  SetViewBlue  (false);
+  SetViewRed   (true);
+  SetViewResult(true);
+  
+  emit(changed());
+}
+void MainWindow::on_actionDeleteBlue_triggered()
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    set(k,BLUE).clear();
+  }
+    
+  SetViewBlue  (true);
+  SetViewRed   (true);
+  SetViewResult(true);
+  
+  emit(changed());
+}
+
+void MainWindow::on_actionDeleteRed_triggered()
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    set(k,RED).clear();
+  }
+    
+  SetViewBlue  (true);
+  SetViewRed   (true);
+  SetViewResult(true);
+  
   emit(changed());
 }
 
@@ -419,24 +691,40 @@ void MainWindow::open( QString fileName )
   {
     if(fileName.endsWith(".dat"))
     {
-      Bezier_polygon_set& lSet = dynamic_cast<Bezier_polygon_set&>(active_set(BEZIER));
-      if( read_Bezier_polygon_with_holes(fileName,lSet) )
+      Bezier_curve_set& lSet = dynamic_cast<Bezier_curve_set&>(active_set(BEZIER));
+      if( read_Bezier_polygon_with_holes(fileName,lSet.set()) )
       {
         emit(changed());
         zoomToFit();
         this->addToRecentFiles(fileName);
+        
+        if ( mBlue_active )
+             radioMakeRedActive ->setChecked(true);
+        else radioMakeBlueActive->setChecked(true);
+        
       }
     }
   }  
 }
 
+void MainWindow::ToogleView( int aGROUP, bool aChecked )
+{
+  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
+  {
+    if ( aChecked )
+         set(k,aGROUP).gi()->show();
+    else set(k,aGROUP).gi()->hide();
+  }
+}
+
+
 void MainWindow::zoomToFit()
 {
   boost::optional<QRectF> lTotalRect ;
   
-  for ( Curve_set_iterator si = mCurve_sets.begin() ; si != mCurve_sets.end() ; ++ si )
+  for ( Curve_set_const_iterator si = mCurve_sets.begin() ; si != mCurve_sets.end() ; ++ si )
   {
-    Curve_set& lSet = **si ;
+    Curve_set_base const& lSet = **si ;
     
     if ( !lSet.is_empty() ) 
     {

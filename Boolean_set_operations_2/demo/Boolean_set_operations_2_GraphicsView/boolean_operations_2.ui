@@ -89,8 +89,48 @@
    <attribute name="toolBarBreak" >
     <bool>false</bool>
    </attribute>
+   <addaction name="separator" />
    <addaction name="actionUndo" />
    <addaction name="actionRedo" />
+   <widget class="QCheckBox" name="checkboxShowBlue">
+    <property name="checked" >
+      <bool>true</bool>
+    </property>
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/Actions/icons/P.xpm</normaloff>:/cgal/Actions/icons/P.xpm
+    </iconset>
+   </property>
+   <property name="toolTip" >
+    <string>Show the Blue Curve Set</string>
+   </property>
+   </widget>
+   <widget class="QCheckBox" name="checkboxShowRed">
+    <property name="checked" >
+      <bool>true</bool>
+    </property>
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/Actions/icons/Q.xpm</normaloff>:/cgal/Actions/icons/Q.xpm
+    </iconset>
+   </property>
+   <property name="toolTip" >
+    <string>Show the Red Curve Set</string>
+   </property>
+   </widget>
+   <widget class="QCheckBox" name="checkboxShowResult">
+    <property name="checked" >
+      <bool>true</bool>
+    </property>
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/Actions/icons/PQ.xpm</normaloff>:/cgal/Actions/icons/PQ.xpm
+    </iconset>
+   </property>
+   <property name="toolTip" >
+    <string>Show the Resulting Curve Set</string>
+   </property>
+   </widget>
   </widget>
   
   <widget class="QToolBar" name="inputToolBar" >
@@ -103,22 +143,33 @@
    <attribute name="toolBarBreak" >
     <bool>false</bool>
    </attribute>
-   <widget class="QRadioButton" name="redActive">
-    <property name="text">
-     <string>Red</string>
-    </property>
+   <widget class="QRadioButton" name="radioMakeBlueActive">
     <property name="checked" >
       <bool>true</bool>
     </property>
-   </widget>
-   <widget class="QRadioButton" name="blueActive">
-    <property name="text">
-     <string>Blue</string>
+    <property name="icon" >
+     <iconset resource="boolean_operations_2.qrc" >
+      <normaloff>:/cgal/Actions/icons/P.xpm</normaloff>:/cgal/Actions/icons/P.xpm
+     </iconset>
     </property>
+    <property name="toolTip" >
+     <string>Input into the Blue Curve Set</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioMakeRedActive">
     <property name="checked" >
       <bool>false</bool>
     </property>
+    <property name="icon" >
+     <iconset resource="boolean_operations_2.qrc" >
+      <normaloff>:/cgal/Actions/icons/Q.xpm</normaloff>:/cgal/Actions/icons/Q.xpm
+     </iconset>
+    </property>
+    <property name="toolTip" >
+     <string>Input into the Red Curve Set</string>
+    </property>
    </widget>
+   <addaction name="separator" />
    <addaction name="actionInsertPolygon" />
    <addaction name="actionInsertCircle" />
    <addaction name="actionInsertBezier" />
@@ -451,27 +502,44 @@
     <string>Refresh</string>
    </property>
   </action>
+
+  <action name="actionShowBlue" >  
+   <property name="text" >
+    <string>Show Blue</string>
+   </property>
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+  </action>
+
+  <action name="actionShowRed" >  
+   <property name="text" >
+    <string>Show Red</string>
+   </property>
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+  </action>
+  
+  <action name="actionShowResult" >  
+   <property name="text" >
+    <string>Show Result</string>
+   </property>
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+  </action>
   
  </widget>
- 
- <connections>
-  <connection>
-   <sender>redActive</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>on_actionMakeRedActive_toggled(bool)</slot>
-  </connection>
-  <connection>
-   <sender>blueActive</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>on_actionMakeBlueActive_toggled(bool)</slot>
-  </connection>
- </connections>
- <slots>
-   <slot>on_actionMakeRedActive_toggled(bool)</slot>
-   <slot>on_actionMakeBlueActive_toggled(bool)</slot>
- </slots>
  
  <resources>
   <include location="boolean_operations_2.qrc" />

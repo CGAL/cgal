@@ -912,6 +912,12 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/boolean_oper
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/boolean_operations_2.ui -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/vlsi_1.dxf -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/help/index.html -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/P.bmp -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/P.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/PQ.bmp -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/PQ.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/Q.bmp -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/Q.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/comp_P.bmp -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/comp_P.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/comp_Q.bmp -text

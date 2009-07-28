@@ -1,5 +1,14 @@
 <RCC>
   <qresource prefix="/cgal/Actions" >
+    <file>icons/P.xpm</file>
+  </qresource>
+  <qresource prefix="/cgal/Actions" >
+    <file>icons/Q.xpm</file>
+  </qresource>
+  <qresource prefix="/cgal/Actions" >
+    <file>icons/PQ.xpm</file>
+  </qresource>
+  <qresource prefix="/cgal/Actions" >
     <file>icons/comp_P.xpm</file>
   </qresource>
   <qresource prefix="/cgal/Actions" >
