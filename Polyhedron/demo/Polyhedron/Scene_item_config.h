@@ -1,7 +1,7 @@
 #ifndef SCENE_ITEM_CONFIG_H
 #define SCENE_ITEM_CONFIG_H
 
-#include <Qt/qglobal.h>
+#include <QtCore/qglobal.h>
 
 #ifdef scene_item_EXPORTS
 #  define SCENE_ITEM_EXPORT Q_DECL_EXPORT

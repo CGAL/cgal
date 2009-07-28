@@ -1,4 +1,4 @@
-#include <Qt/qglobal.h>
+#include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
 #include "Scene_item_with_display_list.h"
