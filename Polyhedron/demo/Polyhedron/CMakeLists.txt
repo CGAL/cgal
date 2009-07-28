@@ -24,7 +24,7 @@ foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_ker
 endforeach()
 
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../../include )
+include_directories( BEFORE ./ ./include ../../include )
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)
@@ -56,19 +56,21 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  if(LAPACK_FOUND)
-    include( ${LAPACK_USE_FILE} )
-    add_definitions(-DCGAL_LAPACK_ENABLED)
-  else(LAPACK_FOUND)
-    message(STATUS "warning: LAPACK is not found. curvatures estimation will not be available.")
-  endif(LAPACK_FOUND)
-
+  # Link with BLAS, LAPACK and TAUCS (optional)
   if(TAUCS_FOUND)
     include( ${TAUCS_USE_FILE} )
     add_definitions(-DCGAL_TAUCS_ENABLED)
   else(TAUCS_FOUND)
     message(STATUS "warning: TAUCS is not found. parametrization will not be available.")
   endif(TAUCS_FOUND)
+
+  # Link with BLAS and LAPACK only (optional)
+  if(LAPACK_FOUND)
+    include( ${LAPACK_USE_FILE} )
+    add_definitions(-DCGAL_LAPACK_ENABLED)
+  else(LAPACK_FOUND)
+    message(STATUS "warning: LAPACK is not found. curvatures estimation will not be available.")
+  endif(LAPACK_FOUND)
 
   qt4_wrap_ui( UI_FILES MainWindow.ui )
 
