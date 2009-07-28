@@ -65,8 +65,8 @@ void PS_demo_average_spacing_plugin::on_actionAverageSpacing_triggered()
       QInputDialog::getInteger((QWidget*)mw,
                                tr("Average Spacing"), // dialog title
                                tr("Number of neighbors:"), // field label
-                               7, // default value = 1 ring
-                               7, // min
+                               6, // default value = 1 ring
+                               6, // min
                                1000, // max
                                1, // step
                                &ok);
@@ -80,9 +80,10 @@ void PS_demo_average_spacing_plugin::on_actionAverageSpacing_triggered()
 
     // Computes average spacing
     double average_spacing = CGAL::compute_average_spacing(
-                                points->begin(), points->end(),
-                                nb_neighbors);
+                                      points->begin(), points->end(),
+                                      nb_neighbors);
 
+    // Print result
     Sphere bsphere = points->bounding_sphere();
     FT radius = std::sqrt(bsphere.squared_radius());
     long memory = CGAL::Memory_sizer().virtual_size();
@@ -93,8 +94,6 @@ void PS_demo_average_spacing_plugin::on_actionAverageSpacing_triggered()
                                       << std::endl;
     QApplication::restoreOverrideCursor();
 
-
-    // Print result
     QMessageBox::information(NULL,
                              tr("Average Spacing"),
                              tr("Average Spacing = %1 = %2 * point set radius")

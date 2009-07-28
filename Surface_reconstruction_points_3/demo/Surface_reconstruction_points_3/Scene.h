@@ -42,14 +42,14 @@ public:
 
   Item_id addItem(Scene_item* item);
 
-  // Erases a scene item. 
+  // Erases a scene item.
   // Returns the index of the polyhedra just before the one that is erased,
   //  or just after. Returns -1 if the list is empty.
-  Item_id erase(Item_id index);     
+  Item_id erase(Item_id index);
 
   // Duplicates a scene item. Returns the ID of the new item (-1 on error).
   Item_id duplicate(Item_id index);
-  // Converts a polyhedron to a point set. 
+  // Converts a polyhedron to a point set.
   // Returns the ID of the new item (-1 on error).
   Item_id convertToPointSet(Item_id index);
 
@@ -115,7 +115,10 @@ private:
   Entries entries;
   int selected_item;
 #ifdef CGAL_GLEW_ENABLED
-  GlSplat::SplatRenderer* mSplatting;
+  static GlSplat::SplatRenderer* ms_splatting;
+  static int ms_splattingCounter;
+public:
+  static GlSplat::SplatRenderer* splatting();
 #endif
 
 }; // end class Scene

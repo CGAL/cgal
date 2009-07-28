@@ -1,104 +1,103 @@
 <ui version="4.0" >
- <class>PointSetSimplificationDialog</class>
- <widget class="QDialog" name="PointSetSimplificationDialog" >
+ <class>PoissonDialog</class>
+ <widget class="QDialog" name="PoissonDialog" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>372</width>
-    <height>137</height>
+    <width>399</width>
+    <height>155</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Dialog</string>
+   <string>Poisson reconstruction</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
+  <layout class="QGridLayout" >
    <item row="0" column="0" >
     <widget class="QLabel" name="label" >
      <property name="text" >
-      <string>Method:</string>
+      <string>Min triangle angle:</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1" >
-    <widget class="QComboBox" name="m_simplificationMethod" >
-     <item>
-      <property name="text" >
-       <string>Random</string>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Grid Clustering</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="1" column="0" >
-    <widget class="QLabel" name="label_2" >
-     <property name="text" >
-      <string>Points to Remove Randomly</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" >
-    <widget class="QDoubleSpinBox" name="m_randomSimplificationPercentage" >
+   <item row="0" column="1" colspan="2" >
+    <widget class="QDoubleSpinBox" name="m_inputAngle" >
      <property name="suffix" >
-      <string> %</string>
-     </property>
-     <property name="decimals" >
-      <number>2</number>
+      <string> °</string>
      </property>
      <property name="minimum" >
       <double>1.000000000000000</double>
      </property>
      <property name="maximum" >
-      <double>100.000000000000000</double>
-     </property>
-     <property name="singleStep" >
-      <double>1.000000000000000</double>
+      <double>30.000000000000000</double>
      </property>
      <property name="value" >
-      <double>50.000000000000000</double>
+      <double>20.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>Max triangle size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2" >
+    <widget class="QDoubleSpinBox" name="m_inputRadius" >
+     <property name="suffix" >
+      <string> * point set radius</string>
+     </property>
+     <property name="decimals" >
+      <number>6</number>
+     </property>
+     <property name="minimum" >
+      <double>0.010000000000000</double>
+     </property>
+     <property name="maximum" >
+      <double>1.000000000000000</double>
+     </property>
+     <property name="singleStep" >
+      <double>0.010000000000000</double>
+     </property>
+     <property name="value" >
+      <double>0.100000000000000</double>
      </property>
     </widget>
    </item>
    <item row="2" column="0" >
     <widget class="QLabel" name="label_3" >
      <property name="text" >
-      <string>Grid Cell Size</string>
+      <string>Approximation error:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" >
-    <widget class="QDoubleSpinBox" name="m_gridCellSize" >
+   <item row="2" column="1" colspan="2" >
+    <widget class="QDoubleSpinBox" name="m_inputDistance" >
      <property name="suffix" >
       <string> * point set radius</string>
      </property>
      <property name="decimals" >
-      <number>7</number>
+      <number>6</number>
      </property>
      <property name="minimum" >
-      <double>0.000100000000000</double>
+      <double>0.001000000000000</double>
      </property>
      <property name="maximum" >
       <double>1.000000000000000</double>
      </property>
      <property name="singleStep" >
-      <double>0.000100000000000</double>
+      <double>0.001000000000000</double>
      </property>
      <property name="value" >
-      <double>0.004000000000000</double>
+      <double>0.002000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2" >
+   <item row="3" column="1" >
     <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
      <property name="standardButtons" >
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -109,32 +108,32 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>PointSetSimplificationDialog</receiver>
+   <receiver>PoissonDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>248</x>
-     <y>254</y>
+     <x>177</x>
+     <y>123</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>157</x>
-     <y>274</y>
+     <x>53</x>
+     <y>125</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>PointSetSimplificationDialog</receiver>
+   <receiver>PoissonDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>316</x>
-     <y>260</y>
+     <x>257</x>
+     <y>119</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>286</x>
-     <y>274</y>
+     <x>257</x>
+     <y>143</y>
     </hint>
    </hints>
   </connection>

@@ -10,9 +10,6 @@
 #include <QtPlugin>
 #include <QInputDialog>
 
-#include <CGAL/Fast_orthogonal_k_neighbor_search.h>
-#include <CGAL/Search_traits_3.h>
-
 class PS_demo_local_spacing_plugin :
   public QObject,
   protected Polyhedron_demo_plugin_helper
@@ -44,12 +41,6 @@ private:
 
 void PS_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
 {
-  typedef Kernel Geom_traits;
-  typedef Geom_traits::FT FT;
-  typedef CGAL::Search_traits_3<Geom_traits> TreeTraits;
-  typedef CGAL::Fast_orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
-  typedef Neighbor_search::Tree Tree;
-
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Point_set_scene_item* item =
@@ -57,9 +48,8 @@ void PS_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
 
   if(item)
   {
-    // Gets point set
-    Point_set* points = item->point_set();
-    if(points == NULL)
+    // Check there is a point set
+    if(item->point_set() == NULL)
         return;
 
     // Gets options
@@ -68,8 +58,8 @@ void PS_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
       QInputDialog::getInteger((QWidget*)mw,
                               tr("Local spacing"), // dialog title
                               tr("Number of neighbors:"), // field label
-                              16, // default value = fast
-                              4, // min
+                              18, // default value = fast
+                              6, // min
                               1000, // max
                               1, // step
                               &ok);
@@ -77,21 +67,8 @@ void PS_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    Point_set::iterator end(points->end());
+    item->computes_local_spacing(k);
 
-    // build kdtree
-    Tree tree(points->begin(), end);
-
-    // Compute the radius of each point = (distance max to k nearest neighbors)/2.
-    {
-      int i=0;
-      for (Point_set::iterator it=points->begin(); it!=end; ++it, ++i)
-      {
-        Neighbor_search search(tree, *it, k);
-        double maxdist2 = search.begin()->second; // squared distance to furthest neighbor
-        it->radius() = 2.0 * sqrt(maxdist2/(double(k)-1));
-      }
-    }
     QApplication::restoreOverrideCursor();
   }
 }

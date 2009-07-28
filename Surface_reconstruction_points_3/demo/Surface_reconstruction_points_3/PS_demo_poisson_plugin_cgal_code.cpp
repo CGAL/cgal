@@ -67,7 +67,6 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
-
     // Prints status
     std::cerr << "Creates Poisson triangulation: " << task_timer.time() << " seconds\n";
     task_timer.reset();

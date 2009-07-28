@@ -5,6 +5,7 @@
 
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/random_simplify_point_set.h>
+#include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -13,7 +14,6 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QtPlugin>
-#include <QInputDialog>
 #include <QMessageBox>
 
 #include "ui_PS_demo_simplification_plugin.h"
@@ -78,7 +78,7 @@ void PS_demo_simplification_plugin::on_actionSimplify_triggered()
     Point_set_demo_point_set_simplification_dialog dialog;
     if(!dialog.exec())
       return;
-      
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     CGAL::Timer task_timer; task_timer.start();
@@ -97,16 +97,17 @@ void PS_demo_simplification_plugin::on_actionSimplify_triggered()
     }
     else if (dialog.simplificationMethod() == "Grid Clustering")
     {
-      std::cerr << "Point cloud simplification by clustering (cell size = " << dialog.gridCellSize() <<" * point set radius)...\n";
+      std::cerr << "Point cloud simplification by clustering (cell size = " << dialog.gridCellSize() <<" * average spacing)...\n";
 
-      // Gets point set's radius
-      Sphere bsphere = points->bounding_sphere();
-      FT radius = std::sqrt(bsphere.squared_radius());
+      // Computes average spacing
+      double average_spacing = CGAL::compute_average_spacing(
+                                      points->begin(), points->end(),
+                                      6 /* knn = 1 ring */);
 
       // Computes points to remove by Grid Clustering
       first_point_to_remove =
         CGAL::grid_simplify_point_set(points->begin(), points->end(),
-                                      dialog.gridCellSize()*radius);
+                                      dialog.gridCellSize()*average_spacing);
     }
 
     int nb_points_to_remove = std::distance(first_point_to_remove, points->end());

@@ -9,6 +9,9 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
+#include <CGAL/Fast_orthogonal_k_neighbor_search.h>
+#include <CGAL/Search_traits_3.h>
+
 #include <QObject>
 
 #include <set>
@@ -64,9 +67,9 @@ Point_set_scene_item::clone() const
 }
 
 // Is selection empty?
-bool Point_set_scene_item::isSelectionEmpty() const 
-{ 
-  return (m_points->nb_selected_points() == 0); 
+bool Point_set_scene_item::isSelectionEmpty() const
+{
+  return (m_points->nb_selected_points() == 0);
 }
 
 // Delete selection
@@ -98,11 +101,11 @@ bool Point_set_scene_item::read_off_point_set(std::istream& stream)
 
   m_points->clear();
   bool ok = stream &&
-            CGAL::read_off_points_and_normals(stream, 
+            CGAL::read_off_points_and_normals(stream,
                                               std::back_inserter(*m_points),
                                               CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(*m_points))) &&
             !isEmpty();
-    
+
   return ok;
 }
 
@@ -124,11 +127,11 @@ bool Point_set_scene_item::read_xyz_point_set(std::istream& stream)
 
   m_points->clear();
   bool ok = stream &&
-            CGAL::read_xyz_points_and_normals(stream, 
+            CGAL::read_xyz_points_and_normals(stream,
                                               std::back_inserter(*m_points),
                                               CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(*m_points))) &&
             !isEmpty();
-    
+
   return ok;
 }
 
@@ -156,7 +159,8 @@ Point_set_scene_item::toolTip() const
     .arg(color().name());
 }
 
-bool Point_set_scene_item::supportsRenderingMode(RenderingMode m) const {
+bool Point_set_scene_item::supportsRenderingMode(RenderingMode m) const 
+{
   return m==Points || m==PointsPlusNormals || m==Splatting;
 }
 
@@ -228,6 +232,42 @@ Point_set_scene_item::bbox() const
   Iso_cuboid bbox = m_points->bounding_box();
   return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
               bbox.xmax(),bbox.ymax(),bbox.zmax());
+}
+
+void Point_set_scene_item::computes_local_spacing(int k)
+{
+  typedef Kernel Geom_traits;
+  typedef Geom_traits::FT FT;
+  typedef CGAL::Search_traits_3<Geom_traits> TreeTraits;
+  typedef CGAL::Fast_orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
+  typedef Neighbor_search::Tree Tree;
+
+  Point_set::iterator end(m_points->end());
+
+  // build kdtree
+  Tree tree(m_points->begin(), end);
+
+  // Compute the radius of each point = (distance max to k nearest neighbors)/2.
+  {
+    int i=0;
+    for (Point_set::iterator it=m_points->begin(); it!=end; ++it, ++i)
+    {
+      Neighbor_search search(tree, *it, k);
+      double maxdist2 = search.begin()->second; // squared distance to furthest neighbor
+      it->radius() = 2.0 * sqrt(maxdist2/(double(k)-1));
+    }
+  }
+
+  m_points->set_radii_uptodate(true);
+}
+
+void Point_set_scene_item::setRenderingMode(RenderingMode m)
+{
+  Scene_item_with_display_list::setRenderingMode(m);
+  if (rendering_mode==Splatting && (!m_points->are_radii_uptodate()))
+  {
+    computes_local_spacing(18);
+  }
 }
 
 #include "Point_set_scene_item.moc"
