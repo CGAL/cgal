@@ -1,0 +1,67 @@
+\section{Poisson}
+
+Given a set of 3D points with oriented normals (denoted oriented points in the sequel) sampled on the boundary of a 3D solid, the Poisson Surface Reconstruction method \cite{Kazhdan06} solves for an approximate indicator function of the inferred solid, whose gradient best matches the input normals. The output scalar function, represented in an adaptive octree, is then iso-contoured using an adaptive marching cubes.
+
+\cgal\ implements a variant of this algorithm which solves for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree. The algorithm takes as input a set of 3D oriented points. It builds a 3D Delaunay triangulation from these points and refines it by Delaunay refinement so as to remove all badly shaped (non isotropic) tetrahedra and to tessellate a loose bounding box of the input oriented points. The normal of each Steiner point added during refinement is set to zero. It then solves for a scalar indicator function $f$ represented as a piecewise linear function over the refined triangulation. More specifically, it solves for the Poisson equation  $\Delta f = div(\mathbf{n})$ at each vertex of the triangulation using a sparse linear solver. Eventually, the \cgal\ surface mesh generator extracts an isosurface with function value set by default to be the median value of $f$ at all input points.
+
+\subsection{Interface}
+
+The class template declaration is:
+
+template$<$  \\
+class Gt$>$   \\
+class \ccc{Poisson_reconstruction_function};
+
+with  \\
+\ccc{Gt}: Geometric traits class.
+
+Creation:
+
+% Reduce left margin
+\ccTwo{1234567890123456789012}{}
+
+\ccFunction{template<typename InputIterator, typename PointPMap, typename NormalPMap> Poisson_reconstruction_function(InputIterator first, InputIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap);}
+{
+Creates a Poisson implicit function from the [first, beyond) range of points.
+\ccCommentHeading{Template Parameters}  \\
+\ccc{InputIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3}. It can be omitted if \ccc{InputIterator} \ccc{value_type} is convertible to \ccc{Point_3}. \ccc{NormalPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Vector_3}.
+\ccCommentHeading{Parameters}  \\
+\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map to access the position of an input point. \ccc{normal_pmap}: property map to access the {\bf oriented} normal of an input point.
+}
+
+The main operations are:
+
+\ccFunction{Sphere bounding_sphere() const;}
+{
+Returns a sphere bounding the inferred surface.
+}
+\ccGlue
+\ccFunction{bool compute_implicit_function();}
+{
+The function \ccc{compute_implicit_function}() must be called after each insertion of oriented points. It computes the piecewise linear scalar function operator() by: applying Delaunay refinement, solving for operator() at each vertex of the triangulation with a sparse linear solver, and shifting and orienting operator() such that it is 0 at all input points and negative inside the inferred surface.  \\
+Returns false if the linear solver fails.
+}
+\ccGlue
+\ccFunction{FT value(const Point& p) const;}
+{
+Evaluates the implicit function at a given 3D query point.
+}
+\ccGlue
+\ccFunction{Point get_inner_point() const;}
+{
+Returns a point located inside the inferred surface.
+}
+
+See details in \\
+\ccc{CGAL::Poisson_reconstruction_function<GeomTraits>}
+
+
+\subsection{Example}
+
+\ccc{poisson_reconstruction_example.cpp} reads a point set, creates a Poisson implicit function and reconstructs a surface.
+
+% I feel like we should further simplify it by providing
+% just a list of oriented points.
+\ccIncludeExampleCode{Surface_reconstruction_points_3/poisson_reconstruction_example.cpp}
+
+

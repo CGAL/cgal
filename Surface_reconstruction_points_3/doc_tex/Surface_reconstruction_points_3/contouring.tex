@@ -1,0 +1,9 @@
+\section{Contouring}
+
+The computed implicit functions can be iso-contoured to reconstruct a surface by using the \cgal\ surface mesh generator~\cite{cgal:ry-gsddrm-06,cgal:bo-pgsms-05}: \\
+\ccc{CGAL::make_surface_mesh} \\
+\\
+The parameter \ccc{Tag} affects the behavior of \ccc{make_surface_mesh()}: \\
+- \ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold surface without boundary.\\
+- \ccc{Manifold_with_boundary_tag}: the output mesh is guaranteed to be manifold and may have boundaries.\\
+- \ccc{Non_manifold_tag}: the output mesh has no guarantee and hence is outputted as a polygon soup.

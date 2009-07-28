@@ -1,0 +1,10 @@
+#ifndef CGAL_POINT_SET_DEMO_CONFIG_H
+#define CGAL_POINT_SET_DEMO_CONFIG_H
+
+
+//
+// Empty
+//
+
+
+#endif // CGAL_POINT_SET_DEMO_CONFIG_H

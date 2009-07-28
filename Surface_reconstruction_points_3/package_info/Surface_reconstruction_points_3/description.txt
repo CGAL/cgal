@@ -1,0 +1,3 @@
+Surface Reconstruction from Point Sets
+
+This CGAL package implements two implicit surface reconstruction methods (Poisson Surface Reconstruction and Algebraic Point Set Surfaces). The input is an unorganized point set with oriented normals.
