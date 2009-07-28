@@ -24,11 +24,11 @@ foreach(DEP_PKG STL_Extension GraphicsView Filtered_kernel Profiling_tools Mesh_
 endforeach()
 
 # Require packages new or improved since CGAL 3.4
-include_directories (BEFORE ../../../../../trunk/AABB_tree/include)
-include_directories (BEFORE ../../../../../trunk/Surface_mesher/include)
-include_directories (BEFORE ../../../../../trunk/Polyhedron/include/)
-include_directories (BEFORE ../../../../../trunk/HalfedgeDS/include/)
-include_directories (BEFORE ../../../../../trunk/Point_set_processing_3/include)
+include_directories (BEFORE ../../../../AABB_tree/include)
+include_directories (BEFORE ../../../../Surface_mesher/include)
+include_directories (BEFORE ../../../../Polyhedron/include/)
+include_directories (BEFORE ../../../../HalfedgeDS/include/)
+include_directories (BEFORE ../../../../Point_set_processing_3/include)
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../../include )
