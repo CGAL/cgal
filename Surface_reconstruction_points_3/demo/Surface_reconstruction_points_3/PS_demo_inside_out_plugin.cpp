@@ -8,7 +8,7 @@
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 
-class Polyhedron_demo_inside_out_plugin : 
+class PS_demo_inside_out_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -23,9 +23,9 @@ public:
 public slots:
   void on_actionInsideOut_triggered();
 
-}; // end Polyhedron_demo_inside_out_plugin
+}; // end PS_demo_inside_out_plugin
 
-void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
+void PS_demo_inside_out_plugin::on_actionInsideOut_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   
@@ -50,6 +50,6 @@ void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_inside_out_plugin, Polyhedron_demo_inside_out_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_inside_out_plugin, PS_demo_inside_out_plugin);
 
-#include "Polyhedron_demo_inside_out_plugin.moc"
+#include "PS_demo_inside_out_plugin.moc"

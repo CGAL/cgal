@@ -169,16 +169,16 @@ else
     compile_and_run Point_set_demo
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
-  if [ `can_compile Polyhedron_demo_inside_out_plugin` == "y" ]; then
-    compile_and_run Polyhedron_demo_inside_out_plugin
-    [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
-  fi
   if [ `can_compile PS_demo_average_spacing_plugin` == "y" ]; then
     compile_and_run PS_demo_average_spacing_plugin
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
   if [ `can_compile PS_demo_cleaning_plugin` == "y" ]; then
     compile_and_run PS_demo_cleaning_plugin
+    [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
+  fi
+  if [ `can_compile PS_demo_inside_out_plugin` == "y" ]; then
+    compile_and_run PS_demo_inside_out_plugin
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
   if [ `can_compile PS_demo_local_spacing_plugin` == "y" ]; then
@@ -193,12 +193,12 @@ else
     compile_and_run PS_demo_off_plugin
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
-  if [ `can_compile PS_demo_simplification_plugin` == "y" ]; then
-    compile_and_run PS_demo_simplification_plugin
-    [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
-  fi
   if [ `can_compile PS_demo_poisson_plugin` == "y" ]; then
     compile_and_run PS_demo_poisson_plugin
+    [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
+  fi
+  if [ `can_compile PS_demo_simplification_plugin` == "y" ]; then
+    compile_and_run PS_demo_simplification_plugin
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
   if [ `can_compile PS_demo_smoothing_plugin` == "y" ]; then

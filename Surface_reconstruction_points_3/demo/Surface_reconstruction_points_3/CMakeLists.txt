@@ -241,7 +241,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries(PS_demo_poisson_plugin PS_demo_scene_polyhedron_item point_set)
   endif()
 
-  point_set_demo_plugin(PS_demo_inside_out_plugin Polyhedron_demo_inside_out_plugin)
+  point_set_demo_plugin(PS_demo_inside_out_plugin PS_demo_inside_out_plugin)
   target_link_libraries(PS_demo_inside_out_plugin PS_demo_scene_polyhedron_item point_set)
 
   point_set_demo_plugin(PS_demo_off_plugin PS_demo_off_plugin)
