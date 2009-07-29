@@ -104,30 +104,30 @@ The following functionality has been added or changed:
 
 7.1 Triangulated Surface Mesh Simplification
 
-   - BREAKING API change in the passing of the visitor object.
+  - BREAKING API change in the passing of the visitor object.
 
-   - Fixed a bug in the link_condition test
+  - Fixed a bug in the link_condition test
 
-   - Added a geometric test to avoid folding of facets
+  - Added a geometric test to avoid folding of facets
 
-   - Fixed a bug in the handling of overflow in the LindstromTurk
-     computations
+  - Fixed a bug in the handling of overflow in the LindstromTurk
+    computations
 
-   - Updated the manual to account for the new visitor interface
+  - Updated the manual to account for the new visitor interface
 
 7.2 Point Set Processing (new package)
 
-   - This packages implements a set of algorithms for analysis, processing,
-     and normal estimation and orientation of point sets.
+  - This packages implements a set of algorithms for analysis, processing,
+    and normal estimation and orientation of point sets.
 
 
 8 Spatial Searching and Sorting
 
 8. 1 AABB tree (new package)
 
- - This package implements a hierarchy of axis-aligned bounding boxes (a
-   AABB tree) for efficient intersection and distance computations between
-   3D queries and sets of input 3D geometric objects.
+  - This package implements a hierarchy of axis-aligned bounding boxes (a
+    AABB tree) for efficient intersection and distance computations between
+    3D queries and sets of input 3D geometric objects.
 
 9 Support Library
 
