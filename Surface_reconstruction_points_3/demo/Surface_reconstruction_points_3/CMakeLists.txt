@@ -162,6 +162,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Point_set_scene_item.cpp Point_set_scene_item.moc)
   target_link_libraries(point_set PS_demo_scene_item)
 
+  foreach(lib PS_demo_scene_item PS_demo_scene_basic_objects PS_demo_scene_polyhedron_item point_set)
+    add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${lib})
+  endforeach()
+
   if(GLEW_FOUND)
     target_link_libraries( point_set gl_splat ${GLEW_LIBRARIES} )
   endif(GLEW_FOUND)
@@ -180,6 +184,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       Scene_moc.cpp
       Viewer_moc.cpp
       ${RESOURCE_FILES} )
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS Point_set_demo )
 #  else(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
 #    add_file_dependencies( Point_set_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
 #                                            "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp"
@@ -224,6 +229,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
 
     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
     # Link with scene_item

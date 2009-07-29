@@ -24,7 +24,7 @@ foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_ker
 endforeach()
 
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../../include )
+include_directories( BEFORE ./ ./include ../../include )
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)
@@ -56,19 +56,21 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  if(LAPACK_FOUND)
-    include( ${LAPACK_USE_FILE} )
-    add_definitions(-DCGAL_LAPACK_ENABLED)
-  else(LAPACK_FOUND)
-    message(STATUS "warning: LAPACK is not found. curvatures estimation will not be available.")
-  endif(LAPACK_FOUND)
-
+  # Link with BLAS, LAPACK and TAUCS (optional)
   if(TAUCS_FOUND)
     include( ${TAUCS_USE_FILE} )
     add_definitions(-DCGAL_TAUCS_ENABLED)
   else(TAUCS_FOUND)
     message(STATUS "warning: TAUCS is not found. parametrization will not be available.")
   endif(TAUCS_FOUND)
+
+  # Link with BLAS and LAPACK only (optional)
+  if(LAPACK_FOUND)
+    include( ${LAPACK_USE_FILE} )
+    add_definitions(-DCGAL_LAPACK_ENABLED)
+  else(LAPACK_FOUND)
+    message(STATUS "warning: LAPACK is not found. curvatures estimation will not be available.")
+  endif(LAPACK_FOUND)
 
   qt4_wrap_ui( UI_FILES MainWindow.ui )
 
@@ -114,6 +116,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_nef_rendering.cpp)
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
 
+  foreach( lib scene_item scene_basic_objects scene_polyhedron_item polygon_soup scene_nef_polyhedron_item )
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
+  endforeach()
+
   add_definitions(-DQT_STATICPLUGIN)
 #  if(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
     add_definitions(-DUSE_FORWARD_DECL)
@@ -128,6 +134,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       Viewer_moc.cpp
       texture.cpp
       ${UI_FILES} ${RESOURCE_FILES} )
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
     if(TAUCS_FOUND)
 #      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
     endif()
@@ -171,6 +178,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
 
     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
     # Link with scene_item
