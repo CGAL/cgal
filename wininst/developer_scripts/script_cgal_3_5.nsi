@@ -275,7 +275,7 @@ SectionEnd
 
 Section /o "HTML Manuals" DOC_Idx
   !ifndef FetchLocal
-    !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/3.4/Manual/" "cgal_manual.zip"  "$INSTDIR\doc_html"
+    !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/3.5/Manual/" "cgal_manual.zip"  "$INSTDIR\doc_html"
   !endif  
 SectionEnd
 
