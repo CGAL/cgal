@@ -189,6 +189,8 @@ cd ..
 tar -cf "${release_name}.tar" "${release_name}"
 gzip "${release_name}.tar"
 cp "${release_name}.tar.gz" "${HTML_DIR}"
+rm -f "$HTML_DIR/CGAL-last.tar.gz"
+ln -s "${release_name}.tar.gz" "$HTML_DIR/CGAL-last.tar.gz"
 if [ -z "${NO_TESTSUITE}" ]; then
   echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
 fi
@@ -251,6 +253,8 @@ if [ -n "$DO_PUBLIC" ]; then
     # Do a Zip file as well for the public version.
     zip -q -r ${public_release_name}.zip ${public_release_name}
     cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/"
+    rm -f "$HTML_DIR/CGAL-last-public"
+    ln -s "${release_name}-public" "$HTML_DIR/CGAL-last-public"
 fi
 
 # Build the SRPM of the public version
