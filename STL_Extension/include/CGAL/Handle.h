@@ -24,6 +24,7 @@
 #ifndef CGAL_HANDLE_H
 #define CGAL_HANDLE_H
 
+#include <cstddef>
 #include <CGAL/Handle_for.h>
 #include <CGAL/assertions.h>
 
@@ -72,7 +73,7 @@ class Handle
     int
     refs()  const { return PTR->count; }
 
-    friend unsigned long id(const Handle& x);
+    friend std::ptrdiff_t id(const Handle& x);
     friend bool identical(const Handle& h1, const Handle& h2);
 
   protected:
@@ -80,15 +81,14 @@ class Handle
 };
 
 inline
-unsigned long
+std::ptrdiff_t
 id(const Handle& x)
-{ return reinterpret_cast<unsigned long>(x.PTR); }
+{ return x.PTR - static_cast<Rep*>(static_cast<void*>(0)); }
 
 inline
 bool
 identical(const Handle &h1, const Handle &h2)
-{ return reinterpret_cast<unsigned long>(h1.PTR) ==
-         reinterpret_cast<unsigned long>(h2.PTR); }
+{ return h1.PTR == h2.PTR; }
 
 CGAL_END_NAMESPACE
 
