@@ -258,7 +258,7 @@ int main(int argc, char * argv[])
                       << "                    angle="<<sm_angle << " degrees,\n"
                       << "                    triangle size="<<sm_radius<<" * point set radius,\n"
                       << "                    distance="<<sm_distance<<" * p.s.r.,\n"
-                      << "                    Manifold_with_boundary_tag)\n"
+                      << "                    Manifold_tag)\n"
                       << "  where point set radius="<<radius<<"\n";
 
     // Generates surface mesh with manifold option
