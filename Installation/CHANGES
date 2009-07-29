@@ -8,8 +8,10 @@ CGAL-3.4.
 The following functionality has been added or changed:
 
 1 General
+
   - Additional supported platforms:
     - GNU g++ 4.4 supported.
+
   - Fixed ABI incompatibilities when mixing CGAL and Boost Program Options
     on Windows/Visual C++ (the compilation flag -D_SECURE_SCL=0 is not
     longer use in Debug mode).
@@ -39,6 +41,7 @@ The following functionality has been added or changed:
 4 Arrangements
 
 4.1 2D Arrangements
+
   - The member function is_at_infinity() of Arrangement_2::Vertex was
     replaced by the new function is_at_open_boundary(). The former is
     deprecated. While still supported in version 3.5, It will not be
@@ -82,11 +85,13 @@ The following functionality has been added or changed:
 6 Mesh Generation
 
 6.1 Surface Reconstruction from Point Sets (new package)
+
   - This CGAL package implements an implicit surface reconstruction method:
     Poisson Surface Reconstruction. The input is an unorganized point set
     with oriented normals.
 
 6.2 3D Mesh Generation (new package)
+
   - This package generates 3 dimensional meshes.  It computes isotropic
     simplicial meshes for domains or multidomains provided that a domain
     descriptor, able to answer queries from a few different types on the
@@ -99,34 +104,35 @@ The following functionality has been added or changed:
 
 7.1 Triangulated Surface Mesh Simplification
 
-   - BREAKING API change in the passing of the visitor object.
+  - BREAKING API change in the passing of the visitor object.
 
-   - Fixed a bug in the link_condition test
+  - Fixed a bug in the link_condition test
 
-   - Added a geometric test to avoid folding of facets
+  - Added a geometric test to avoid folding of facets
 
-   - Fixed a bug in the handling of overflow in the LindstromTurk
-     computations
+  - Fixed a bug in the handling of overflow in the LindstromTurk
+    computations
 
-   - Updated the manual to account for the new visitor interface
+  - Updated the manual to account for the new visitor interface
 
 7.2 Point Set Processing (new package)
 
-   - This packages implements a set of algorithms for analysis, processing,
-     and normal estimation and orientation of point sets.
+  - This packages implements a set of algorithms for analysis, processing,
+    and normal estimation and orientation of point sets.
 
 
 8 Spatial Searching and Sorting
 
 8. 1 AABB tree (new package)
 
- - This package implements a hierarchy of axis-aligned bounding boxes (a
-   AABB tree) for efficient intersection and distance computations between
-   3D queries and sets of input 3D geometric objects.
+  - This package implements a hierarchy of axis-aligned bounding boxes (a
+    AABB tree) for efficient intersection and distance computations between
+    3D queries and sets of input 3D geometric objects.
 
 9 Support Library
 
-9.1 CGAL_ipelets (new package):
+9.1 CGAL_ipelets (new package)
+
   - Object that eases the writing of Ipe's plugins that use CGAL.
     Plugins for CGAL main 2D algorithm are provided as demo.
 
