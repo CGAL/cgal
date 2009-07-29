@@ -56,7 +56,7 @@
   <qresource prefix="/cgal/Actions" >
     <file>icons/union.xpm</file>
   </qresource>
-  <qresource prefix="/cgal/help" lang="en" >
+  <qresource prefix="/cgal" lang="en" >
     <file>help/index.html</file>
   </qresource>
 </RCC>

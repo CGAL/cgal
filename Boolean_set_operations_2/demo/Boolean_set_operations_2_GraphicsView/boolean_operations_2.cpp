@@ -62,7 +62,9 @@
   #include <CGAL/Quotient.h>
 #endif
 
+#include <CGAL/Qt/PolygonWithHolesGraphicsItem.h>
 #include <CGAL/Qt/BezierPolygonWithHolesGraphicsItem.h>
+#include <CGAL/Qt/GraphicsViewPolygonWithHolesInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Qt/utility.h>
@@ -174,9 +176,6 @@ public:
   Bezier_curve_set ( int aGroup ) : Base(aGroup) {} 
 } ;
 
-//global variable to aid naming windows 
-int winsOpened=2;
-
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
   public Ui::Boolean_operations_2
@@ -207,18 +206,11 @@ protected slots:
 
 public slots:
   
-  void on_actionNew_triggered() {}
-  void on_actionNewWindow_triggered() {}
+  void on_actionNew_triggered() ;
   void on_actionOpenLinear_triggered() {}
   void on_actionOpenDXF_triggered() {}
   void on_actionOpenBezier_triggered() ;
-  void on_actionPrint_triggered() {}
-  void on_actionHowTo_triggered() {}
-  void on_actionAbout_triggered() {}
-  void on_actionAboutCGAL_triggered() {}
-  void on_actionUndo_triggered() {}
-  void on_actionRedo_triggered() {}
-//   void on_actionInsertPolygon_triggered() {}
+  void on_actionInsertPolygon_triggered() {}
   void on_actionInsertCircle_triggered() {}
   void on_actionInsertBezier_triggered() {}
   void on_actionIntersection_triggered() ;
@@ -233,7 +225,6 @@ public slots:
   void on_actionAllRed_triggered(); 
   void on_actionDeleteBlue_triggered();
   void on_actionDeleteRed_triggered();
-  void on_actionRefresh_triggered() {}
   
   void on_checkboxShowBlue_toggled      (bool aChecked) { ToogleView(BLUE  ,aChecked); }
   void on_checkboxShowRed_toggled       (bool aChecked) { ToogleView(RED   ,aChecked); }
@@ -304,7 +295,9 @@ MainWindow::MainWindow()
   this->addAboutCGAL();
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
-  connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
+  
+  QObject::connect(this->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
+  QObject::connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
   
   QObject::connect(radioMakeBlueActive, SIGNAL(toggled(bool)), this, SLOT(on_radioMakeBlueActive_toggled (bool)));
   QObject::connect(radioMakeRedActive , SIGNAL(toggled(bool)), this, SLOT(on_radioMakeRedActive_toggled(bool)));
@@ -314,6 +307,21 @@ MainWindow::MainWindow()
   QObject::connect(checkboxShowResult , SIGNAL(toggled(bool)), this, SLOT(on_checkboxShowResult_toggled (bool)));
   
 	  
+}
+
+void MainWindow::on_actionNew_triggered() 
+{
+  for( Curve_set_iterator si = mCurve_sets.begin(); si != mCurve_sets.end() ; ++ si )
+    (*si)->clear();
+    
+  SetViewBlue  (true);
+  SetViewRed   (true);
+  SetViewResult(true);
+  
+  radioMakeBlueActive->setChecked(true);
+  
+  emit(changed());
+  
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -428,178 +436,216 @@ void MainWindow::on_actionOpenBezier_triggered()
 
 void MainWindow::on_actionIntersection_triggered() 
 {
+  bool lDone = false ;
+  
+  QCursor old = this->cursor();
+  this->setCursor(Qt::WaitCursor);
+  
   for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
   {
     if ( !set(k,BLUE).is_empty() && !set(k,RED).is_empty() )
     {
-      QCursor old = this->cursor();
-      this->setCursor(Qt::WaitCursor);
       set(k,RESULT).assign( set(k,RED) ) ;
       set(k,RESULT).intersect(set(k,BLUE));
-      this->setCursor(old);
+      lDone = true ;
     }
   }
   
-  SetViewBlue  (false);
-  SetViewRed   (false);
-  SetViewResult(true);
+  this->setCursor(old);
   
-  emit(changed());
+  if ( lDone )
+  {
+    SetViewBlue  (false);
+    SetViewRed   (false);
+    SetViewResult(true);
+    
+    emit(changed());
+  }
 }
 
 void MainWindow::on_actionUnion_triggered() 
 {
+  bool lDone = false ;
+  
+  QCursor old = this->cursor();
+  this->setCursor(Qt::WaitCursor);
+  
   for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
   {
     if ( !set(k,BLUE).is_empty() && !set(k,RED).is_empty() )
     {
-      QCursor old = this->cursor();
-      this->setCursor(Qt::WaitCursor);
       set(k,RESULT).assign( set(k,RED) ) ;
       set(k,RESULT).join(set(k,BLUE));
-      this->setCursor(old);
+      lDone = true ;
     }
   }
+  
+  this->setCursor(old);
+  
+  if ( lDone )
+  {
+    SetViewBlue  (false);
+    SetViewRed   (false);
+    SetViewResult(true);
     
-  
-  SetViewBlue  (false);
-  SetViewRed   (false);
-  SetViewResult(true);
-  
-  emit(changed());
+    emit(changed());
+  }
 }
 
 void MainWindow::on_actionBlueMinusRed_triggered() 
 {
+  bool lDone = false ;
+  
+  QCursor old = this->cursor();
+  this->setCursor(Qt::WaitCursor);
+  
   for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
   {
     if ( !set(k,BLUE).is_empty() && !set(k,RED).is_empty() )
     {
-      QCursor old = this->cursor();
-      this->setCursor(Qt::WaitCursor);
       set(k,RESULT).assign( set(k,BLUE) ) ;
       set(k,RESULT).difference(set(k,RED));
-      this->setCursor(old);
+      lDone = true ;
     }
   }
+  
+  this->setCursor(old);
     
-  
-  SetViewBlue  (false);
-  SetViewRed   (false);
-  SetViewResult(true);
-  
-  emit(changed());
+  if ( lDone )
+  {
+    SetViewBlue  (false);
+    SetViewRed   (false);
+    SetViewResult(true);
+    
+    emit(changed());
+  }
 }
 
 void MainWindow::on_actionRedMinusBlue_triggered() 
 {
+  bool lDone = false ;
+  
+  QCursor old = this->cursor();
+  this->setCursor(Qt::WaitCursor);
+  
   for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
   {
     if ( !set(k,BLUE).is_empty() && !set(k,RED).is_empty() )
     {
-      QCursor old = this->cursor();
-      this->setCursor(Qt::WaitCursor);
       set(k,RESULT).assign( set(k,RED) ) ;
       set(k,RESULT).difference(set(k,BLUE));
-      this->setCursor(old);
+      lDone = true ;
     }
   }
+  
+  this->setCursor(old);
     
-  
-  SetViewBlue  (false);
-  SetViewRed   (false);
-  SetViewResult(true);
-  
-  emit(changed());
+  if ( lDone )
+  {
+    SetViewBlue  (false);
+    SetViewRed   (false);
+    SetViewResult(true);
+    
+    emit(changed());
+  }
 }
 
 void MainWindow::on_actionSymmDiff_triggered() 
 {
+  bool lDone = false ;
+  
+  QCursor old = this->cursor();
+  this->setCursor(Qt::WaitCursor);
+  
   for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
   {
     if ( !set(k,BLUE).is_empty() && !set(k,RED).is_empty() )
     {
-      QCursor old = this->cursor();
-      this->setCursor(Qt::WaitCursor);
       set(k,RESULT).assign( set(k,RED) ) ;
       set(k,RESULT).symmetric_difference(set(k,BLUE));
-      this->setCursor(old);
+      lDone = true ;
     }
   }
+  
+  this->setCursor(old);
     
   
-  SetViewBlue  (false);
-  SetViewRed   (false);
-  SetViewResult(true);
-  
-  emit(changed());
+  if ( lDone )
+  {
+    SetViewBlue  (false);
+    SetViewRed   (false);
+    SetViewResult(true);
+    
+    emit(changed());
+  }
 }
 
 void MainWindow::on_actionMinkowskiSum_triggered()
 {
-  for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
-  {
-    if ( !set(k,RED).is_empty() && !set(k,RED).is_empty() )
-    {
-      QCursor old = this->cursor();
-      this->setCursor(Qt::WaitCursor);
-      set(k,RESULT).assign( set(k,RED) ) ;
-      set(k,RESULT).complement();
-      this->setCursor(old);
-    }
-  }
-    
-  SetViewBlue  (false);
-  SetViewRed   (false);
-  SetViewResult(true);
-  
-  emit(changed());
 }
 
 void MainWindow::on_actionBlueComplement_triggered()
 {
+  bool lDone = false ;
+  
+  QCursor old = this->cursor();
+  this->setCursor(Qt::WaitCursor);
+  
   for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
   {
     if ( !set(k,BLUE).is_empty() )
     {
-      QCursor old = this->cursor();
-      this->setCursor(Qt::WaitCursor);
       set(k,RESULT).assign( set(k,BLUE) ) ;
       set(k,RESULT).complement();
-      this->setCursor(old);
+      lDone = true ;
     }
   }
-    
-  SetViewBlue  (false);
-  SetViewRed   (false);
-  SetViewResult(true);
   
-  emit(changed());
+  this->setCursor(old);
+    
+  if ( lDone )
+  {
+    SetViewBlue  (false);
+    SetViewRed   (false);
+    SetViewResult(true);
+    
+    emit(changed());
+  }
 }
 
 void MainWindow::on_actionRedComplement_triggered()
 {
+  bool lDone = false ;
+  
+  QCursor old = this->cursor();
+  this->setCursor(Qt::WaitCursor);
+  
   for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
   {
     if ( !set(k,RED).is_empty() )
     {
-      QCursor old = this->cursor();
-      this->setCursor(Qt::WaitCursor);
       set(k,RESULT).assign( set(k,RED) ) ;
       set(k,RESULT).complement();
-      this->setCursor(old);
+      lDone = true ;
     }
   }
-    
-  SetViewBlue  (false);
-  SetViewRed   (false);
-  SetViewResult(true);
   
-  emit(changed());
+  this->setCursor(old);
+    
+  if ( lDone )
+  {
+    SetViewBlue  (false);
+    SetViewRed   (false);
+    SetViewResult(true);
+    
+    emit(changed());
+  }
 }
 
 void MainWindow::on_actionAllBlue_triggered()
 {
+  bool lDone = false ;
+  
   for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
   {
     bool lProceed = true ;
@@ -618,18 +664,24 @@ void MainWindow::on_actionAllBlue_triggered()
       set(k,BLUE).assign( set(k,RESULT) ) ;
       set(k,RESULT).clear();
       radioMakeRedActive->setChecked(true);
+      lDone = true ;
     }
   }
     
-  SetViewBlue  (true);
-  SetViewRed   (false);
-  SetViewResult(true);
-  
-  emit(changed());
+  if ( lDone )
+  {
+    SetViewBlue  (true);
+    SetViewRed   (false);
+    SetViewResult(true);
+    
+    emit(changed());
+  }
 }
 
 void MainWindow::on_actionAllRed_triggered()
 {
+  bool lDone = false ;
+  
   for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
   {
     bool lProceed = true ;
@@ -648,21 +700,23 @@ void MainWindow::on_actionAllRed_triggered()
       set(k,RED).assign( set(k,RESULT) ) ;
       set(k,RESULT).clear();
       radioMakeBlueActive->setChecked(true);
+      lDone = true ;
     }
   }
     
-  SetViewBlue  (false);
-  SetViewRed   (true);
-  SetViewResult(true);
-  
-  emit(changed());
+  if ( lDone )
+  {
+    SetViewBlue  (false);
+    SetViewRed   (true);
+    SetViewResult(true);
+    
+    emit(changed());
+  }
 }
 void MainWindow::on_actionDeleteBlue_triggered()
 {
   for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
-  {
     set(k,BLUE).clear();
-  }
     
   SetViewBlue  (true);
   SetViewRed   (true);
@@ -674,9 +728,7 @@ void MainWindow::on_actionDeleteBlue_triggered()
 void MainWindow::on_actionDeleteRed_triggered()
 {
   for ( int k = FIRST_KIND; k != LAST_KIND ; ++ k )
-  {
     set(k,RED).clear();
-  }
     
   SetViewBlue  (true);
   SetViewRed   (true);
