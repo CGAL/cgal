@@ -35,6 +35,7 @@ if ( CGAL_FOUND )
 
     foreach(IPELET ${CGAL_IPELETS})
       add_library(CGAL_${IPELET} MODULE ${IPELET}.cpp)
+      add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_${IPELET})
       target_link_libraries( CGAL_${IPELET} ipe)
       if ( IPELET_INSTALL_DIR )
         install(TARGETS CGAL_${IPELET} DESTINATION ${IPELET_INSTALL_DIR})
