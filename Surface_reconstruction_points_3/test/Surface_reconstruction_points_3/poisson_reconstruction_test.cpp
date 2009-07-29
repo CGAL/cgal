@@ -272,10 +272,10 @@ int main(int argc, char * argv[])
     // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
     C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                                // reconstructed mesh
-                            surface,                             // implicit surface
-                            criteria,                            // meshing criteria
-                            CGAL::Manifold_with_boundary_tag()); // require manifold mesh
+    CGAL::make_surface_mesh(c2t3,                  // reconstructed mesh
+                            surface,               // implicit surface
+                            criteria,              // meshing criteria
+                            CGAL::Manifold_tag()); // require manifold mesh with no boundary
 
     // Prints status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();

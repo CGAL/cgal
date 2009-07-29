@@ -16,13 +16,13 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
+#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 
 // This package
 #include <CGAL/APSS_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 
 #include "compute_normal.h"
 
@@ -257,10 +257,10 @@ int main(int argc, char * argv[])
     // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
     C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                                // reconstructed mesh
-                            surface,                             // implicit surface
-                            criteria,                            // meshing criteria
-                            CGAL::Manifold_with_boundary_tag()); // require manifold mesh
+    CGAL::make_surface_mesh(c2t3,                  // reconstructed mesh
+                            surface,               // implicit surface
+                            criteria,              // meshing criteria
+                            CGAL::Manifold_tag()); // require manifold mesh with no boundary
 
     // Prints status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
