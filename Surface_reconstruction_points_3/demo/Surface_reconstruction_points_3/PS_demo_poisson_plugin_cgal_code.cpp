@@ -12,10 +12,10 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
+#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 
 // This package
 #include <CGAL/Poisson_reconstruction_function.h>
-#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 
 
 // Poisson implicit function
@@ -123,16 +123,16 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                       << "                    angle="<<sm_angle << " degrees,\n"
                       << "                    triangle size="<<sm_radius<<" * point set radius,\n"
                       << "                    distance="<<sm_distance<<" * p.s.r.,\n"
-                      << "                    Manifold_with_boundary_tag)\n"
+                      << "                    Manifold_tag)\n"
                       << "  where point set radius="<<radius<<"\n";
 
     // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
     C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                                // reconstructed mesh
-                            surface,                             // implicit surface
-                            criteria,                            // meshing criteria
-                            CGAL::Manifold_with_boundary_tag()); // require manifold mesh
+    CGAL::make_surface_mesh(c2t3,                  // reconstructed mesh
+                            surface,               // implicit surface
+                            criteria,              // meshing criteria
+                            CGAL::Manifold_tag()); // require manifold mesh with no boundary
 
     // Prints status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "

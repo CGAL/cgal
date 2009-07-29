@@ -16,6 +16,7 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
+#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 // This package
@@ -257,16 +258,16 @@ int main(int argc, char * argv[])
                       << "                    angle="<<sm_angle << " degrees,\n"
                       << "                    triangle size="<<sm_radius<<" * point set radius,\n"
                       << "                    distance="<<sm_distance<<" * p.s.r.,\n"
-                      << "                    Manifold_with_boundary_tag)\n"
+                      << "                    Manifold_tag)\n"
                       << "  where point set radius="<<radius<<"\n";
 
     // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
     C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                                // reconstructed mesh
-                            surface,                             // implicit surface
-                            criteria,                            // meshing criteria
-                            CGAL::Manifold_with_boundary_tag()); // require manifold mesh
+    CGAL::make_surface_mesh(c2t3,                  // reconstructed mesh
+                            surface,               // implicit surface
+                            criteria,              // meshing criteria
+                            CGAL::Manifold_tag()); // require manifold mesh with no boundary
 
     // Prints status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
@@ -284,7 +285,10 @@ int main(int argc, char * argv[])
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
 
     std::ofstream out(output_filename.c_str());
-    CGAL::output_surface_facets_to_off(out, c2t3);
+    //CGAL::output_surface_facets_to_off(out, c2t3);
+    Polyhedron output_mesh;
+    CGAL::output_surface_facets_to_polyhedron(c2t3, output_mesh);
+    out << output_mesh;
 
     return EXIT_SUCCESS;
 }

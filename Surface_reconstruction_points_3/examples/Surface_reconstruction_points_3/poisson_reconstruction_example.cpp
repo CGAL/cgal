@@ -1,7 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
+#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
@@ -18,6 +21,7 @@ typedef Kernel::Point_3 Point;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
 typedef std::vector<Point_with_normal> PointList;
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
@@ -91,7 +95,10 @@ int main(void)
 
     // saves reconstructed surface mesh
     std::ofstream out("kitten_poisson_0.003.off");
-    CGAL::output_surface_facets_to_off(out, c2t3);
+    //CGAL::output_surface_facets_to_off(out, c2t3);
+    Polyhedron output_mesh;
+    CGAL::output_surface_facets_to_polyhedron(c2t3, output_mesh);
+    out << output_mesh;
 
     return EXIT_SUCCESS;
 }
