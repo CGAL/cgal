@@ -32,7 +32,7 @@ int main(void)
     // APSS options
     FT sm_angle = 20.0; // Min triangle angle in degrees.
     FT sm_radius = 0.1; // Max triangle size w.r.t. point set radius.
-    FT sm_distance = 0.01; // Surface approximation error w.r.t. p.s.r.
+    FT sm_distance = 0.015; // Approximation error w.r.t. p.s.r.. For APSS: 0.015=fast, 0.003=smooth.
     const FT smoothness = (FT)4.0;
                     	// Smoothness factor: ranges from 2 for clean datasets to 8 for noisy datasets.
 
