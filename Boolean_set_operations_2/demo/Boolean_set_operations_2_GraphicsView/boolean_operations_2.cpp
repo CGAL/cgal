@@ -90,7 +90,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 }
 
 enum { RED, BLUE, RESULT } ;
-enum { FIRST_KIND, LINEAR = FIRST_KIND, CIRCULAR, BEZIER, LAST_KIND } ;
+enum { FIRST_KIND, CIRCULAR = FIRST_KIND, BEZIER, LAST_KIND } ;
 
 QColor sPenColors  [] = { QColor(255,0,0)   , QColor(0,0,255)   , QColor(0,255,0)     } ;
 QColor sBrushColors[] = { QColor(255,0,0,32), QColor(0,0,255,32), QColor(0,255,0,220) } ;
@@ -167,15 +167,6 @@ private:
 
   GI* mGI;
   Set mSet ;
-} ;
-
-class Linear_curve_set : public Curve_set<Linear_GI, Linear_polygon_set>
-{
-  typedef Curve_set<Linear_GI, Linear_polygon_set> Base ;
-  
-public:
-  
-  Linear_curve_set ( int aGroup ) : Base(aGroup) {} 
 } ;
 
 class Circular_curve_set : public Curve_set<Circular_GI, Circular_polygon_set>
@@ -284,10 +275,6 @@ MainWindow::MainWindow()
 
   setAcceptDrops(true);
 
-  mCurve_sets.push_back( Curve_set_base_ptr(new Linear_curve_set(RED)    ) ) ;
-  mCurve_sets.push_back( Curve_set_base_ptr(new Linear_curve_set(BLUE)   ) ) ;
-  mCurve_sets.push_back( Curve_set_base_ptr(new Linear_curve_set(RESULT) ) ) ;
-  
   mCurve_sets.push_back( Curve_set_base_ptr(new Circular_curve_set(RED)    ) ) ;
   mCurve_sets.push_back( Curve_set_base_ptr(new Circular_curve_set(BLUE)   ) ) ;
   mCurve_sets.push_back( Curve_set_base_ptr(new Circular_curve_set(RESULT) ) ) ;
@@ -366,7 +353,17 @@ void MainWindow::dropEvent(QDropEvent *event)
   event->acceptProposedAction();
 }
 
-bool read_set ( QString aFileName, Linear_polygon_set& rSet )
+Circular_polygon linear_2_circ( Linear_polygon const& pgn)
+{
+  Circular_polygon rCP;
+  
+  for( Linear_polygon::Edge_const_iterator ei = pgn.edges_begin(); ei != pgn.edges_end(); ++ei )
+    rCP.push_back( Circular_X_monotone_curve(ei->source(), ei->target()) );
+
+  return rCP;
+}
+
+bool read_linear ( QString aFileName, Circular_polygon_set& rSet )
 {
   bool rOK = false ;
   
@@ -377,31 +374,27 @@ bool read_set ( QString aFileName, Linear_polygon_set& rSet )
     // Red the number of bezier polygon with holes
     unsigned int n_regions ;
     in_file >> n_regions;
-    Linear_polygon outer ;
-    std::vector<Linear_polygon> holes ;
+    Circular_polygon outer ;
+    std::vector<Circular_polygon> holes ;
     
     for ( unsigned int r = 0 ; r < n_regions ; ++ r )
     {
+      Linear_polygon p ;
+      in_file >> p ;
+      
       if ( r == 0 )
-      {
-        in_file >> outer ;
-      }
-      else
-      {
-        Linear_polygon hole ;
-        in_file >> hole ;
-        holes.push_back(hole);
-      }
+           outer = linear_2_circ(p); 
+      else holes.push_back( linear_2_circ(p) );
     }
     
-    rSet.insert( Linear_polygon_with_holes(outer,holes.begin(),holes.end()) ) ;    
+    rSet.join( Circular_polygon_with_holes(outer,holes.begin(),holes.end()) ) ;    
     rOK = true ;
   }
   
   return rOK ;
 }
 
-bool read_set ( QString aFileName, Circular_polygon_set& rSet )
+bool read_dxf ( QString aFileName, Circular_polygon_set& rSet )
 {
   bool rOK = false ;
   
@@ -410,22 +403,26 @@ bool read_set ( QString aFileName, Circular_polygon_set& rSet )
   if ( in_file )
   {
     CGAL::Dxf_bsop_reader<Kernel>            reader;
-    std::vector<Circular_polygon>            Circular_polygons;
-    std::vector<Circular_polygon_with_holes> Circular_polygons_with_holes;
+    std::vector<Circular_polygon>            circ_polygons;
+    std::vector<Circular_polygon_with_holes> circ_polygons_with_holes;
     
     reader(in_file
-          ,std::back_inserter(circ_polygons),
-          ,std::back_inserter(circ_polygons_with_holes),
-          ,true
+          ,std::back_inserter(circ_polygons)
+          ,std::back_inserter(circ_polygons_with_holes)
+          ,false
           );
           
+    rSet.join( circ_polygons.begin()           , circ_polygons.end() 
+             , circ_polygons_with_holes.begin(), circ_polygons_with_holes.end()
+             ) ;
+                      
     rOK = true ;
   }
   
   return rOK ;
 }
 
-bool read_set ( QString aFileName, Bezier_polygon_set& rSet )
+bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
 {
   bool rOK = false ;
   
@@ -504,7 +501,7 @@ bool read_set ( QString aFileName, Bezier_polygon_set& rSet )
     
       // Construct the polygon with holes.
       Bezier_polygon_vector::iterator  pit = polygons.begin();  ++pit;
-      rSet.insert( Bezier_polygon_with_holes(polygons.front(), pit, polygons.end()) ) ;
+      rSet.join( Bezier_polygon_with_holes(polygons.front(), pit, polygons.end()) ) ;
       
       rOK = true ;
     }
@@ -537,15 +534,15 @@ void MainWindow::open( QString fileName )
     
     if(fileName.endsWith(".poly"))
     {
-      lRead = read_set(fileName,dynamic_cast<Linear_curve_set&>(active_set(LINEAR)).set()) ;
+      lRead = read_linear(fileName,dynamic_cast<Circular_curve_set&>(active_set(CIRCULAR)).set()) ;
     }
     else if (fileName.endsWith(".dxf"))
     {
-      lRead = read_set(fileName,dynamic_cast<Circular_curve_set&>(active_set(CIRCULAR)).set()) ;
+      lRead = read_dxf(fileName,dynamic_cast<Circular_curve_set&>(active_set(CIRCULAR)).set()) ;
     }
     else if (fileName.endsWith(".bps"))
     {
-      lRead = read_set(fileName,dynamic_cast<Bezier_curve_set&>(active_set(BEZIER)).set()) ;
+      lRead = read_bezier(fileName,dynamic_cast<Bezier_curve_set&>(active_set(BEZIER)).set()) ;
     }
       
     if ( lRead )
@@ -553,10 +550,6 @@ void MainWindow::open( QString fileName )
       emit(changed());
       zoomToFit();
       this->addToRecentFiles(fileName);
-      
-      if ( mBlue_active )
-           radioMakeRedActive ->setChecked(true);
-      else radioMakeBlueActive->setChecked(true);
     }
   }  
 }

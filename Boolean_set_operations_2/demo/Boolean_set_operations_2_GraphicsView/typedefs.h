@@ -50,9 +50,6 @@ typedef CGAL::Polygon_2<Kernel>            Linear_polygon;
 typedef CGAL::Polygon_with_holes_2<Kernel> Linear_polygon_with_holes;
 typedef CGAL::Polygon_set_2<Kernel>        Linear_polygon_set;
 
-typedef CGAL::Qt::GeneralPolygonSetGraphicsItem<Linear_polygon_set> Linear_GI;
-
-
 //
 // Circle-segment polygons
 //
@@ -67,9 +64,9 @@ typedef CGAL::General_polygon_set_2<Circular_traits>         Circular_polygon_se
 
 //typedef Polygon_with_holes::Hole_const_iterator       Hole_const_iterator;
 
-typedef CGAL::Qt::PolygonWithHolesGraphicsItem<Circular_polygon_with_holes
-                                              , CGAL::Circular_polygon_with_holes_sampler<Dbl_polygon_with_holes>
-                                              > Circular_GI;
+typedef CGAL::Qt::GeneralPolygonSetGraphicsItem<Circular_polygon_set
+                                               , CGAL::Circular_polygon_with_holes_sampler<Dbl_polygon_with_holes>
+                                               > Circular_GI;
 
 
 

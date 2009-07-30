@@ -40,21 +40,21 @@ void sample_circular_X_monotone_curve_2( CircularXMonotoneCurve const& aCXMC, Ou
   
   Samples_vector lSamples ;
   
-  if(aCXMC->is_linear())
+  if(aCXMC.is_linear())
   {
     // when the curve is linear approximate will allways return
     // two pairs (for each endpoint) regardless the parameter of number
     // of points
-    citr->approximate(std::back_inserter(lSamples), 0);
+    aCXMC.approximate(std::back_inserter(lSamples), 0);
   }
   else
   {
     // circular arc
-    double sx = CGAL::to_double(aCXMC->source().x());
-    double tx = CGAL::to_double(aCXMC->target().x());
+    double sx = CGAL::to_double(aCXMC.source().x());
+    double tx = CGAL::to_double(aCXMC.target().x());
     int x_min;
     int x_max;
-    if(aCXMC->is_directed_right())
+    if(aCXMC.is_directed_right())
     {
       x_min =  sx;
       x_max =  tx;
@@ -67,7 +67,7 @@ void sample_circular_X_monotone_curve_2( CircularXMonotoneCurve const& aCXMC, Ou
     
     const int n = ( x_max - x_min ) * 100 ;
     if (n > 0)
-      aCXMC->approximate(std::back_inserter(lSamples), n);
+      aCXMC.approximate(std::back_inserter(lSamples), n);
   }
       
   for( typename Samples_vector::const_iterator it = lSamples.begin(); it != lSamples.end(); ++ it )
@@ -109,6 +109,7 @@ struct Circular_polygon_with_holes_sampler
   }
   
 } ;
+
 } // namespace CGAL
 
 #endif // CGAL_CIRCULAR_POLYGONAL_SAMPLER_2_H
