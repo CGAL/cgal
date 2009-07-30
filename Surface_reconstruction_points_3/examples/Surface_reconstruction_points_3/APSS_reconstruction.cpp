@@ -191,6 +191,8 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
+    CGAL::Timer reconstruction_timer; reconstruction_timer.start();
+
     //***************************************
     // Creates implicit function
     //***************************************
@@ -289,6 +291,9 @@ int main(int argc, char * argv[])
                                                       << nb_erased_components << " component(s) erased"
                                                       << std::endl;
     task_timer.reset();
+
+    // Prints total reconstruction duration
+    std::cerr << "Total reconstruction (implicit function + meshing + erase small components): " << reconstruction_timer.time() << " seconds\n";
 
     //***************************************
     // saves reconstructed surface mesh

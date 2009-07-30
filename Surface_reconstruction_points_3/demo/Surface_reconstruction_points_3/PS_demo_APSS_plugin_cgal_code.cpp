@@ -55,6 +55,8 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
       return NULL;
     }
 
+    CGAL::Timer reconstruction_timer; reconstruction_timer.start();
+
     //***************************************
     // Creates implicit function
     //***************************************
@@ -92,7 +94,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
     Sphere bsphere = function.bounding_sphere();
     FT radius = std::sqrt(bsphere.squared_radius());
 
-    // defining the implicit surface = implicit function + bounding sphere centered at inner_point
+    // Defines the implicit surface = implicit function + bounding sphere centered at inner_point
     FT sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bsphere.center(),inner_point));
     sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
     FT sm_dichotomy_error = sm_distance/10.0; // Dichotomy error must be << sm_distance
@@ -152,6 +154,9 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
                                                       << nb_erased_components << " component(s) erased"
                                                       << std::endl;
     task_timer.reset();
+
+    // Prints total reconstruction duration
+    std::cerr << "Total reconstruction (implicit function + meshing + erase small components): " << reconstruction_timer.time() << " seconds\n";
 
     return output_mesh;
 }

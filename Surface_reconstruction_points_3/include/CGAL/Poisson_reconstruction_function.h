@@ -145,11 +145,19 @@ public:
     NormalPMap normal_pmap) ///< property map to access the *oriented* normal of an input point.
   : m_tr(new Triangulation)
   {
-    // Insert them in triangulation
+    CGAL::Timer task_timer; task_timer.start();
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
+
+    // Inserts points in triangulation
     m_tr->insert(
       first,beyond,
       point_pmap,
       normal_pmap);
+
+    // Prints status
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
+                                                           << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
+                                                           << std::endl;
   }
 
   /// @cond SKIP_IN_MANUAL
@@ -163,10 +171,18 @@ public:
     NormalPMap normal_pmap) ///< property map to access the *oriented* normal of an input point.
   : m_tr(new Triangulation)
   {
-    // Insert them in triangulation
+    CGAL::Timer task_timer; task_timer.start();
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
+
+    // Inserts points in triangulation
     m_tr->insert(
       first,beyond,
       normal_pmap);
+
+    // Prints status
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
+                                                           << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
+                                                           << std::endl;
   }
   /// @endcond
 

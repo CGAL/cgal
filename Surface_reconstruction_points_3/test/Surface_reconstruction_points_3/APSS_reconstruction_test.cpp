@@ -188,6 +188,8 @@ int main(int argc, char * argv[])
       continue;
     }
 
+    CGAL::Timer reconstruction_timer; reconstruction_timer.start();
+
     //***************************************
     // Creates implicit function
     //***************************************
@@ -296,6 +298,9 @@ int main(int argc, char * argv[])
                                                       << (memory>>20) << " Mb allocated"
                                                       << std::endl;
     task_timer.reset();
+
+    // Prints total reconstruction duration
+    std::cerr << "Total reconstruction (implicit function + meshing + erase small components): " << reconstruction_timer.time() << " seconds\n";
 
   } // for each input file
 
