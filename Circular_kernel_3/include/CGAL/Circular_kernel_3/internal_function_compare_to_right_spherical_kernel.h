@@ -123,10 +123,10 @@ struct Compare_to_right_of_arcs{
   
   typename SK::FT square_norm_tk_normal (const typename SK::Point_3& c,const typename SK::FT& rk,const typename SK::FT& R) const;
   typename SK::FT square_norm_tk_threaded (const typename SK::Point_3& c,const typename SK::FT& rk,const typename SK::FT& R) const;
-  void fill_tzk_n(const typename SK::Circular_arc_3& ES,typename Traits::Tk_type& tz,typename SK::FT& n,bool is_supporting_circle_threaded) const;
+  void fill_tzk_n(const typename SK::Circular_arc_3& arc,typename Traits::Tk_type& tz,typename SK::FT& n,bool is_supporting_circle_threaded) const;
   int sign_of_delta(const typename SK::Circular_arc_3& arc1,bool circle1_threaded,const typename SK::Circular_arc_3& arc2,bool circle2_threaded) const;
-  typename SK::FT give_rk(const typename SK::Circular_arc_3& ES) const;
-  int compare_for_delta_eq_0_threaded(const typename SK::Circular_arc_3& EST,const typename SK::Circular_arc_3& ES,bool circle_threaded) const;
+  typename SK::FT give_rk(const typename SK::Circular_arc_3& arc) const;
+  int compare_for_delta_eq_0_threaded(const typename SK::Circular_arc_3& arc_threaded,const typename SK::Circular_arc_3& arc,bool circle_threaded) const;
   int compare_for_delta_eq_0(const typename SK::Circular_arc_3& arc1,bool circle1_threaded,const typename SK::Circular_arc_3& arc2,bool circle2_threaded) const;
   CGAL::Comparison_result operator()(const typename SK::Circular_arc_3& arc1,const typename SK::Circular_arc_3& arc2,bool do_it_to_left=false) const; 
 };
