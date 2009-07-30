@@ -43,6 +43,7 @@
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Polygon_set_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Iso_rectangle_2.h>
@@ -54,6 +55,8 @@
 #include <CGAL/approximated_offset_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Circular_polygon_with_holes_sampler_2.h>
+#include <CGAL/Bezier_polygon_with_holes_sampler_2.h>
 
 #ifdef CGAL_USE_GMP
   #include <CGAL/Gmpq.h>
@@ -62,9 +65,8 @@
   #include <CGAL/Quotient.h>
 #endif
 
-#include <CGAL/Qt/PolygonWithHolesGraphicsItem.h>
-#include <CGAL/Qt/BezierPolygonWithHolesGraphicsItem.h>
-#include <CGAL/Qt/GraphicsViewPolygonWithHolesInput.h>
+#include <CGAL/Qt/GeneralPolygonSetGraphicsItem.h>
+//#include <CGAL/Qt/GraphicsViewPolygonWithHolesInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Qt/utility.h>
@@ -88,7 +90,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 }
 
 enum { RED, BLUE, RESULT } ;
-enum { FIRST_KIND, BEZIER = FIRST_KIND , LAST_KIND } ;
+enum { FIRST_KIND, LINEAR = FIRST_KIND, CIRCULAR, BEZIER, LAST_KIND } ;
 
 QColor sPenColors  [] = { QColor(255,0,0)   , QColor(0,0,255)   , QColor(0,255,0)     } ;
 QColor sBrushColors[] = { QColor(255,0,0,32), QColor(0,0,255,32), QColor(0,255,0,220) } ;
@@ -138,7 +140,7 @@ public:
   Curve_set ( int aGroup ) 
   {
     mGI = new GI(&mSet) ; 
-    mGI->setPen  (QPen  ( sPenColors  [aGroup], 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    mGI->setPen  (QPen  ( sPenColors  [aGroup], 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     mGI->setBrush(QBrush( sBrushColors[aGroup] ));
   }
   
@@ -167,6 +169,24 @@ private:
   Set mSet ;
 } ;
 
+class Linear_curve_set : public Curve_set<Linear_GI, Linear_polygon_set>
+{
+  typedef Curve_set<Linear_GI, Linear_polygon_set> Base ;
+  
+public:
+  
+  Linear_curve_set ( int aGroup ) : Base(aGroup) {} 
+} ;
+
+class Circular_curve_set : public Curve_set<Circular_GI, Circular_polygon_set>
+{
+  typedef Curve_set<Circular_GI, Circular_polygon_set> Base ;
+  
+public:
+  
+  Circular_curve_set ( int aGroup ) : Base(aGroup) {} 
+} ;
+
 class Bezier_curve_set : public Curve_set<Bezier_GI, Bezier_polygon_set>
 {
   typedef Curve_set<Bezier_GI, Bezier_polygon_set> Base ;
@@ -175,6 +195,7 @@ public:
   
   Bezier_curve_set ( int aGroup ) : Base(aGroup) {} 
 } ;
+
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -207,8 +228,8 @@ protected slots:
 public slots:
   
   void on_actionNew_triggered() ;
-  void on_actionOpenLinear_triggered() {}
-  void on_actionOpenDXF_triggered() {}
+  void on_actionOpenLinear_triggered() ;
+  void on_actionOpenDXF_triggered() ;
   void on_actionOpenBezier_triggered() ;
   void on_actionInsertPolygon_triggered() {}
   void on_actionInsertCircle_triggered() {}
@@ -263,6 +284,14 @@ MainWindow::MainWindow()
 
   setAcceptDrops(true);
 
+  mCurve_sets.push_back( Curve_set_base_ptr(new Linear_curve_set(RED)    ) ) ;
+  mCurve_sets.push_back( Curve_set_base_ptr(new Linear_curve_set(BLUE)   ) ) ;
+  mCurve_sets.push_back( Curve_set_base_ptr(new Linear_curve_set(RESULT) ) ) ;
+  
+  mCurve_sets.push_back( Curve_set_base_ptr(new Circular_curve_set(RED)    ) ) ;
+  mCurve_sets.push_back( Curve_set_base_ptr(new Circular_curve_set(BLUE)   ) ) ;
+  mCurve_sets.push_back( Curve_set_base_ptr(new Circular_curve_set(RESULT) ) ) ;
+  
   mCurve_sets.push_back( Curve_set_base_ptr(new Bezier_curve_set(RED)    ) )  ;
   mCurve_sets.push_back( Curve_set_base_ptr(new Bezier_curve_set(BLUE)   ) ) ;
   mCurve_sets.push_back( Curve_set_base_ptr(new Bezier_curve_set(RESULT) ) ) ;
@@ -337,101 +366,199 @@ void MainWindow::dropEvent(QDropEvent *event)
   event->acceptProposedAction();
 }
 
-bool read_Bezier_polygon_with_holes ( QString aFileName, Bezier_polygon_set& rSet )
+bool read_set ( QString aFileName, Linear_polygon_set& rSet )
 {
   bool rOK = false ;
   
-  if( ! aFileName.isEmpty() && aFileName.endsWith(".dat") )
+  std::ifstream in_file (qPrintable(aFileName));
+
+  if ( in_file )
   {
-    std::ifstream in_file (qPrintable(aFileName));
-  
-    if ( in_file )
+    // Red the number of bezier polygon with holes
+    unsigned int n_regions ;
+    in_file >> n_regions;
+    Linear_polygon outer ;
+    std::vector<Linear_polygon> holes ;
+    
+    for ( unsigned int r = 0 ; r < n_regions ; ++ r )
     {
-      // Red the number of bezier polygon with holes
-      unsigned int n_regions ;
-      in_file >> n_regions;
-      
-      for ( unsigned int r = 0 ; r < n_regions ; ++ r )
+      if ( r == 0 )
       {
-        // Read the number of bezier curves.
-        unsigned int n_curves;
-        in_file >> n_curves;
-      
-        // Read the curves one by one, and construct the general polygon these
-        // curve form (the outer boundary and the holes inside it).
-        Bezier_traits_2                    traits;
-        Bezier_traits_2::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
-        
-        bool                               first = true;
-        Bezier_rat_point                   p_0;
-        std::list<Bezier_X_monotone_curve> xcvs;
-        Bezier_rat_kernel                  ker;
-        Bezier_rat_kernel::Equal_2         equal = ker.equal_2_object();
-        Bezier_polygon_vector              polygons ;
-      
-        for ( unsigned int k = 0; k < n_curves; ++ k ) 
-        {
-          // Read the current curve and subdivide it into x-monotone subcurves.
-          
-          Bezier_curve                            B;
-          std::list<CGAL::Object>                 x_objs;
-          std::list<CGAL::Object>::const_iterator xoit;
-          Bezier_X_monotone_curve                 xcv;
-      
-          in_file >> B;
-          make_x_monotone (B, std::back_inserter (x_objs));
-          
-          for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
-          {
-            if (CGAL::assign (xcv, *xoit))
-              xcvs.push_back (xcv);
-          }
-          
-          // Check if the current curve closes a polygon, namely whether it target
-          // point (the last control point) equals the source of the first curve in
-          // the current chain.
-          if (! first) 
-          {
-            if (equal (p_0, B.control_point(B.number_of_control_points() - 1))) 
-            {
-              // Push a new polygon into the polygon list. Make sure that the polygon
-              // is counterclockwise oriented if it represents the outer boundary
-              // and clockwise oriented if it represents a hole.
-              Bezier_polygon  pgn (xcvs.begin(), xcvs.end());
-              CGAL::Orientation  orient = pgn.orientation();
-              
-              if ((polygons.empty() && orient == CGAL::CLOCKWISE) || (! polygons.empty() && orient == CGAL::COUNTERCLOCKWISE))
-                pgn.reverse_orientation();
-              
-              polygons.push_back (pgn);
-              xcvs.clear();
-              first = true;
-            }
-          }
-          else 
-          {
-            // This is the first curve in the chain - store its source point.
-            p_0 = B.control_point(0);
-            first = false;
-          }
-        }
-      
-        // Construct the polygon with holes.
-        Bezier_polygon_vector::iterator  pit = polygons.begin();  ++pit;
-        rSet.insert( Bezier_polygon_with_holes(polygons.front(), pit, polygons.end()) ) ;
-        
-        rOK = true ;
+        in_file >> outer ;
       }
-      
+      else
+      {
+        Linear_polygon hole ;
+        in_file >> hole ;
+        holes.push_back(hole);
+      }
     }
+    
+    rSet.insert( Linear_polygon_with_holes(outer,holes.begin(),holes.end()) ) ;    
+    rOK = true ;
   }
   
   return rOK ;
 }
 
+bool read_set ( QString aFileName, Circular_polygon_set& rSet )
+{
+  bool rOK = false ;
+  
+  std::ifstream in_file (qPrintable(aFileName));
+
+  if ( in_file )
+  {
+    CGAL::Dxf_bsop_reader<Kernel>            reader;
+    std::vector<Circular_polygon>            Circular_polygons;
+    std::vector<Circular_polygon_with_holes> Circular_polygons_with_holes;
+    
+    reader(in_file
+          ,std::back_inserter(circ_polygons),
+          ,std::back_inserter(circ_polygons_with_holes),
+          ,true
+          );
+          
+    rOK = true ;
+  }
+  
+  return rOK ;
+}
+
+bool read_set ( QString aFileName, Bezier_polygon_set& rSet )
+{
+  bool rOK = false ;
+  
+  std::ifstream in_file (qPrintable(aFileName));
+  
+  if ( in_file )
+  {
+    // Red the number of bezier polygon with holes
+    unsigned int n_regions ;
+    in_file >> n_regions;
+    
+    for ( unsigned int r = 0 ; r < n_regions ; ++ r )
+    {
+      // Read the number of bezier curves.
+      unsigned int n_curves;
+      in_file >> n_curves;
+    
+      // Read the curves one by one, and construct the general polygon these
+      // curve form (the outer boundary and the holes inside it).
+      Bezier_traits                    traits;
+      Bezier_traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
+      
+      bool                               first = true;
+      Bezier_rat_point                   p_0;
+      std::list<Bezier_X_monotone_curve> xcvs;
+      Bezier_rat_kernel                  ker;
+      Bezier_rat_kernel::Equal_2         equal = ker.equal_2_object();
+      Bezier_polygon_vector              polygons ;
+    
+      for ( unsigned int k = 0; k < n_curves; ++ k ) 
+      {
+        // Read the current curve and subdivide it into x-monotone subcurves.
+        
+        Bezier_curve                            B;
+        std::list<CGAL::Object>                 x_objs;
+        std::list<CGAL::Object>::const_iterator xoit;
+        Bezier_X_monotone_curve                 xcv;
+    
+        in_file >> B;
+        make_x_monotone (B, std::back_inserter (x_objs));
+        
+        for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
+        {
+          if (CGAL::assign (xcv, *xoit))
+            xcvs.push_back (xcv);
+        }
+        
+        // Check if the current curve closes a polygon, namely whether it target
+        // point (the last control point) equals the source of the first curve in
+        // the current chain.
+        if (! first) 
+        {
+          if (equal (p_0, B.control_point(B.number_of_control_points() - 1))) 
+          {
+            // Push a new polygon into the polygon list. Make sure that the polygon
+            // is counterclockwise oriented if it represents the outer boundary
+            // and clockwise oriented if it represents a hole.
+            Bezier_polygon  pgn (xcvs.begin(), xcvs.end());
+            CGAL::Orientation  orient = pgn.orientation();
+            
+            if ((polygons.empty() && orient == CGAL::CLOCKWISE) || (! polygons.empty() && orient == CGAL::COUNTERCLOCKWISE))
+              pgn.reverse_orientation();
+            
+            polygons.push_back (pgn);
+            xcvs.clear();
+            first = true;
+          }
+        }
+        else 
+        {
+          // This is the first curve in the chain - store its source point.
+          p_0 = B.control_point(0);
+          first = false;
+        }
+      }
+    
+      // Construct the polygon with holes.
+      Bezier_polygon_vector::iterator  pit = polygons.begin();  ++pit;
+      rSet.insert( Bezier_polygon_with_holes(polygons.front(), pit, polygons.end()) ) ;
+      
+      rOK = true ;
+    }
+    
+  }
+  
+  return rOK ;
+}
+
+void MainWindow::on_actionOpenLinear_triggered()
+{
+  open(QFileDialog::getOpenFileName(this, tr("Open Linear Polygon"), "../data", tr("Linear Curve files (*.poly)") ));
+}
+
+void MainWindow::on_actionOpenDXF_triggered()
+{
+  open(QFileDialog::getOpenFileName(this, tr("Open DXF"), "../data", tr("DXF files (*.dxf)") ));
+}
+
 void MainWindow::on_actionOpenBezier_triggered()
 {
-  open(QFileDialog::getOpenFileName(this, tr("Open Bezier Curves file"), "../data", tr("Bezier Curve files (*.dat)") ));
+  open(QFileDialog::getOpenFileName(this, tr("Open Bezier Polygon"), "../data", tr("Bezier Curve files (*.bps)") ));
+}
+
+void MainWindow::open( QString fileName )
+{
+  if(! fileName.isEmpty())
+  {
+    bool lRead = false ;
+    
+    if(fileName.endsWith(".poly"))
+    {
+      lRead = read_set(fileName,dynamic_cast<Linear_curve_set&>(active_set(LINEAR)).set()) ;
+    }
+    else if (fileName.endsWith(".dxf"))
+    {
+      lRead = read_set(fileName,dynamic_cast<Circular_curve_set&>(active_set(CIRCULAR)).set()) ;
+    }
+    else if (fileName.endsWith(".bps"))
+    {
+      lRead = read_set(fileName,dynamic_cast<Bezier_curve_set&>(active_set(BEZIER)).set()) ;
+    }
+      
+    if ( lRead )
+    {
+      emit(changed());
+      zoomToFit();
+      this->addToRecentFiles(fileName);
+      
+      if ( mBlue_active )
+           radioMakeRedActive ->setChecked(true);
+      else radioMakeBlueActive->setChecked(true);
+    }
+  }  
 }
 
 void MainWindow::on_actionIntersection_triggered() 
@@ -737,27 +864,6 @@ void MainWindow::on_actionDeleteRed_triggered()
   emit(changed());
 }
 
-void MainWindow::open( QString fileName )
-{
-  if(! fileName.isEmpty())
-  {
-    if(fileName.endsWith(".dat"))
-    {
-      Bezier_curve_set& lSet = dynamic_cast<Bezier_curve_set&>(active_set(BEZIER));
-      if( read_Bezier_polygon_with_holes(fileName,lSet.set()) )
-      {
-        emit(changed());
-        zoomToFit();
-        this->addToRecentFiles(fileName);
-        
-        if ( mBlue_active )
-             radioMakeRedActive ->setChecked(true);
-        else radioMakeBlueActive->setChecked(true);
-        
-      }
-    }
-  }  
-}
 
 void MainWindow::ToogleView( int aGROUP, bool aChecked )
 {

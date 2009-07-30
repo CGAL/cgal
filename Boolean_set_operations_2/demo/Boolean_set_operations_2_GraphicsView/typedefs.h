@@ -16,9 +16,12 @@
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//
 #ifndef CGAL_TYPEDEFS_H
 #define CGAL_TYPEDEFS_H
 
+typedef CGAL::Simple_cartesian<double>         Dbl_kernel ;
+typedef CGAL::Polygon_with_holes_2<Dbl_kernel> Dbl_polygon_with_holes ;
 
 #ifdef CGAL_USE_GMP
 
@@ -43,25 +46,30 @@ typedef Kernel::Iso_rectangle_2                       Iso_rectangle;
 //
 // Linear polygons
 //
-typedef CGAL::Polygon_2<Kernel>                       Linear_polygon;
-typedef CGAL::Polygon_with_holes_2<Kernel>            Linear_polygon_with_holes;
+typedef CGAL::Polygon_2<Kernel>            Linear_polygon;
+typedef CGAL::Polygon_with_holes_2<Kernel> Linear_polygon_with_holes;
+typedef CGAL::Polygon_set_2<Kernel>        Linear_polygon_set;
+
+typedef CGAL::Qt::GeneralPolygonSetGraphicsItem<Linear_polygon_set> Linear_GI;
 
 
 //
 // Circle-segment polygons
 //
 
-typedef CGAL::Gps_circle_segment_traits_2<Kernel>           Circseg_traits;
-typedef Circseg_traits::Curve_2                             Circseg_curve;
-typedef Circseg_traits::X_monotone_curve_2                  Circseg_X_monotone_curve;
-typedef Circseg_traits::Point_2                             Circseg_point ;
-typedef Circseg_traits::Polygon_2                           Circseg_polygon;
-typedef CGAL::General_polygon_with_holes_2<Circseg_polygon> Circseg_polygon_with_holes;
-typedef CGAL::General_polygon_set_2<Circseg_traits>         Circseg_polygon_set;
+typedef CGAL::Gps_circle_segment_traits_2<Kernel>            Circular_traits;
+typedef Circular_traits::Curve_2                             Circular_curve;
+typedef Circular_traits::X_monotone_curve_2                  Circular_X_monotone_curve;
+typedef Circular_traits::Point_2                             Circular_point ;
+typedef Circular_traits::Polygon_2                           Circular_polygon;
+typedef CGAL::General_polygon_with_holes_2<Circular_polygon> Circular_polygon_with_holes;
+typedef CGAL::General_polygon_set_2<Circular_traits>         Circular_polygon_set;
 
 //typedef Polygon_with_holes::Hole_const_iterator       Hole_const_iterator;
 
-typedef CGAL::Qt::PolygonWithHolesGraphicsItem<Circseg_polygon_with_holes> Circseg_GI;
+typedef CGAL::Qt::PolygonWithHolesGraphicsItem<Circular_polygon_with_holes
+                                              , CGAL::Circular_polygon_with_holes_sampler<Dbl_polygon_with_holes>
+                                              > Circular_GI;
 
 
 
@@ -88,9 +96,10 @@ typedef std::vector<Bezier_polygon>                     Bezier_polygon_vector ;
 typedef Bezier_gps_traits::General_polygon_with_holes_2 Bezier_polygon_with_holes;
 typedef CGAL::General_polygon_set_2<Bezier_gps_traits>  Bezier_polygon_set ;
 
-
-
-typedef CGAL::Qt::BezierPolygonWithHolesGraphicsItem<Bezier_polygon_set> Bezier_GI;
+typedef CGAL::Qt::GeneralPolygonSetGraphicsItem<Bezier_polygon_set
+                                               ,CGAL::Bezier_polygon_with_holes_sampler<Dbl_polygon_with_holes>
+                                               > 
+                                               Bezier_GI;
 
 
 #endif
