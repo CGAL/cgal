@@ -134,7 +134,7 @@ The following functionality has been added or changed:
 9.1 CGAL_ipelets (new package)
 
   - Object that eases the writing of Ipe's plugins that use CGAL.
-    Plugins for CGAL main 2D algorithm are provided as demo.
+    Plugins for CGAL main 2D algorithms are provided as demo.
 
 
 
