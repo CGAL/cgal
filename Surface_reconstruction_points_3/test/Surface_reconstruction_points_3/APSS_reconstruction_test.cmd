@@ -1,1 +1,1 @@
-data/*.off
+data/ChineseDragon-10kv.off
