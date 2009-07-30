@@ -311,7 +311,7 @@ void MainWindow::open(QString filename)
     if(item) {
       Scene::Item_id index = scene->addItem(item);
       QSettings settings;
-      settings.setValue("OFF open directory",
+      settings.setValue("Point set open directory",
                         fileinfo.absoluteDir().absolutePath());
       this->addToRecentFiles(filename);
       selectSceneItem(index);
@@ -411,7 +411,7 @@ void MainWindow::on_actionFileOpen_triggered()
   filters << tr("All files (*)");
 
   QSettings settings;
-  QString directory = settings.value("OFF open directory",
+  QString directory = settings.value("Point set open directory",
                                      QDir::current().dirName()).toString();
   QStringList filenames =
     QFileDialog::getOpenFileNames(this,
@@ -454,17 +454,22 @@ void MainWindow::on_actionSaveAs_triggered()
   }
 
   QSettings settings;
-  QString directory = settings.value("OFF save directory",
+  QString directory = settings.value("Point set save directory",
                                      QDir::current().dirName()).toString();
+
   QString filename =
     QFileDialog::getSaveFileName(this,
                                  tr("Save As..."),
                                  directory,
                                  filters.join(";;"));
   QFileInfo fileinfo(filename);
+
   Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, canSavePlugins) {
-    if(plugin->save(item, fileinfo))
+    if(plugin->save(item, fileinfo)) {
+      settings.setValue("Point set save directory",
+                        fileinfo.absoluteDir().absolutePath());
       break;
+    }
   }
 }
 
