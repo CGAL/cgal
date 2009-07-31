@@ -21,6 +21,8 @@
 #ifndef CGAL_QT_GRAPHICS_VIEW_POLYGON_WITH_HOLES_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_POLYGON_WITH_HOLES_INPUT_H
 
+#include <list>
+
 #include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
@@ -29,7 +31,7 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/PolygonWithHolesGraphicsItem.h>
-#include <CGAL/Qt/ProcessInput.h>
+#include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/array.h>
 
 namespace CGAL {
@@ -134,7 +136,7 @@ GraphicsViewPolygonWithHolesInput<K>::processInput(CGAL::Object o)
 	}
       }
       holes.push_back(polygon);
-      std::list<Polygon>::iterator it = holes.begin();
+      typename std::list<Polygon>::iterator it = holes.begin();
       it++;
       pwh = Polygon_with_holes(holes.front(), it, holes.end());
     }
