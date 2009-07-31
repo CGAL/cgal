@@ -48,7 +48,7 @@ PS_demo_xyz_plugin::load(QFileInfo fileinfo)
 
   // Read .xyz in a point set
   Point_set_scene_item* point_set_item = new Point_set_scene_item;
-  point_set_item->setName(fileinfo.baseName());
+  point_set_item->setName(fileinfo.completeBaseName());
   if(!point_set_item->read_xyz_point_set(in)) {
     delete point_set_item;
     return NULL;
