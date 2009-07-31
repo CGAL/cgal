@@ -54,11 +54,13 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
       return NULL;
     }
 
+    CGAL::Timer reconstruction_timer; reconstruction_timer.start();
+
     //***************************************
     // Computes implicit function
     //***************************************
 
-    std::cerr << "Creates Poisson triangulation...\n";
+    std::cerr << "Computes Poisson implicit function...\n";
 
     // Creates implicit function from the point set.
     // Note: this method requires an iterator over points
@@ -67,11 +69,6 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
-    // Prints status
-    std::cerr << "Creates Poisson triangulation: " << task_timer.time() << " seconds\n";
-    task_timer.reset();
-
-    std::cerr << "Computes implicit function...\n";
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
@@ -82,7 +79,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     }
 
     // Prints status
-    std::cerr << "Computes implicit function: " << task_timer.time() << " seconds\n";
+    std::cerr << "Total implicit function (triangulation+refinement+solver): " << task_timer.time() << " seconds\n";
     task_timer.reset();
 
     //***************************************
@@ -104,7 +101,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     Sphere bsphere = function.bounding_sphere();
     FT radius = std::sqrt(bsphere.squared_radius());
 
-    // defining the implicit surface = implicit function + bounding sphere centered at inner_point
+    // Defines the implicit surface = implicit function + bounding sphere centered at inner_point
     FT sm_sphere_radius = radius + std::sqrt(CGAL::squared_distance(bsphere.center(),inner_point));
     sm_sphere_radius *= 1.01; // make sure that the bounding sphere contains the surface
     FT sm_dichotomy_error = sm_distance/10.0; // Dichotomy error must be << sm_distance
@@ -142,6 +139,9 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
 
     if(tr.number_of_vertices() == 0)
       return NULL;
+
+    // Prints total reconstruction duration
+    std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";
 
     //***************************************
     // Converts to polyhedron

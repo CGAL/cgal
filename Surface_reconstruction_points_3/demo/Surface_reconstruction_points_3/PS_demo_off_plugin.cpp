@@ -47,14 +47,14 @@ PS_demo_off_plugin::load(QFileInfo fileinfo) {
 
   // Try to read .off in a polyhedron
   Scene_polyhedron_item* item = new Scene_polyhedron_item();
-  item->setName(fileinfo.baseName());
+  item->setName(fileinfo.completeBaseName());
   if(!item->load(in))
   {
     delete item;
 
     // Try to read .off in a point set
     Point_set_scene_item* point_set_item = new Point_set_scene_item;
-    point_set_item->setName(fileinfo.baseName());
+    point_set_item->setName(fileinfo.completeBaseName());
     in.close();
     std::ifstream in2(fileinfo.filePath().toUtf8().data());
     if(!point_set_item->read_off_point_set(in2)) {

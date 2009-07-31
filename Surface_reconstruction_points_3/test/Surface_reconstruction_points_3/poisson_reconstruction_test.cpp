@@ -185,11 +185,13 @@ int main(int argc, char * argv[])
       continue;
     }
 
+    CGAL::Timer reconstruction_timer; reconstruction_timer.start();
+
     //***************************************
     // Computes implicit function
     //***************************************
 
-    std::cerr << "Creates Poisson triangulation...\n";
+    std::cerr << "Computes Poisson implicit function...\n";
 
     // Creates implicit function from the read points.
     // Note: this method requires an iterator over points
@@ -202,15 +204,6 @@ int main(int argc, char * argv[])
     // Recover memory used by points[]
     points.clear();
 
-    // Prints status
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
-                                                  << (memory>>20) << " Mb allocated"
-                                                  << std::endl;
-    task_timer.reset();
-
-    std::cerr << "Computes implicit function...\n";
-
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
     if ( ! function.compute_implicit_function() )
@@ -221,10 +214,7 @@ int main(int argc, char * argv[])
     }
 
     // Prints status
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Computes implicit function: " << task_timer.time() << " seconds, "
-                                               << (memory>>20) << " Mb allocated"
-                                               << std::endl;
+    std::cerr << "Total implicit function (triangulation+refinement+solver): " << task_timer.time() << " seconds\n";
     task_timer.reset();
 
     //***************************************
@@ -289,6 +279,9 @@ int main(int argc, char * argv[])
       accumulated_fatal_err = EXIT_FAILURE;
       continue;
     }
+
+    // Prints total reconstruction duration
+    std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";
 
   } // for each input file
 

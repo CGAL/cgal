@@ -75,7 +75,7 @@ private:
 
   /// Internal 3D triangulation, of type Reconstruction_triangulation_3.
   // Note: poisson_refine_triangulation() requires a robust circumcenter computation.
-  typedef Reconstruction_triangulation_3<Robust_circumcenter_filtered_traits_3<Gt> > 
+  typedef Reconstruction_triangulation_3<Robust_circumcenter_filtered_traits_3<Gt> >
                                                    Triangulation;
 
   // Repeat Triangulation types
@@ -145,11 +145,19 @@ public:
     NormalPMap normal_pmap) ///< property map to access the *oriented* normal of an input point.
   : m_tr(new Triangulation)
   {
-    // Insert them in triangulation
+    CGAL::Timer task_timer; task_timer.start();
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
+
+    // Inserts points in triangulation
     m_tr->insert(
       first,beyond,
       point_pmap,
       normal_pmap);
+
+    // Prints status
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
+                                                           << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
+                                                           << std::endl;
   }
 
   /// @cond SKIP_IN_MANUAL
@@ -163,10 +171,18 @@ public:
     NormalPMap normal_pmap) ///< property map to access the *oriented* normal of an input point.
   : m_tr(new Triangulation)
   {
-    // Insert them in triangulation
+    CGAL::Timer task_timer; task_timer.start();
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
+
+    // Inserts points in triangulation
     m_tr->insert(
       first,beyond,
       normal_pmap);
+
+    // Prints status
+    CGAL_TRACE_STREAM << "Creates Poisson triangulation: " << task_timer.time() << " seconds, "
+                                                           << (CGAL::Memory_sizer().virtual_size()>>20) << " Mb allocated"
+                                                           << std::endl;
   }
   /// @endcond
 
@@ -345,7 +361,9 @@ private:
     // Prints peak memory (Windows only)
     long max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
     if (max_memory > old_max_memory)
-      CGAL_TRACE("  Max allocation = %ld Mb\n", max_memory>>20);
+      CGAL_TRACE("  Max allocation in Choleschy factorization = %ld Mb\n", max_memory>>20);
+    else
+      CGAL_TRACE("  Sorry. Choleschy factorization max allocation cannot be recorded on this platform.\n");
 
     CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
     CGAL_TRACE("  Direct solve...\n");
