@@ -927,7 +927,7 @@ void MyWindow::perform_mink_sum()
       res_pgns.push_back(res_p_wh);
       draw_result(res_pgns.begin(), res_pgns.end());
       widget->setCursor(old);
-    }
+    } 
   else
     {
       mink_sum_warning();
