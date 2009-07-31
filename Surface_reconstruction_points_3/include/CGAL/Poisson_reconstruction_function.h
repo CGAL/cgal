@@ -75,7 +75,7 @@ private:
 
   /// Internal 3D triangulation, of type Reconstruction_triangulation_3.
   // Note: poisson_refine_triangulation() requires a robust circumcenter computation.
-  typedef Reconstruction_triangulation_3<Robust_circumcenter_filtered_traits_3<Gt> > 
+  typedef Reconstruction_triangulation_3<Robust_circumcenter_filtered_traits_3<Gt> >
                                                    Triangulation;
 
   // Repeat Triangulation types
@@ -361,7 +361,9 @@ private:
     // Prints peak memory (Windows only)
     long max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
     if (max_memory > old_max_memory)
-      CGAL_TRACE("  Max allocation = %ld Mb\n", max_memory>>20);
+      CGAL_TRACE("  Max allocation in Choleschy factorization = %ld Mb\n", max_memory>>20);
+    else
+      CGAL_TRACE("  Sorry. Choleschy factorization max allocation cannot be recorded on this platform.\n");
 
     CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
     CGAL_TRACE("  Direct solve...\n");

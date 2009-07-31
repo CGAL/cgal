@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// Utility class for poisson_refine_triangulation():
-/// implements Delaunay refinement in a loose bounding 
+/// implements Delaunay refinement in a loose bounding
 /// box of point set (break bad tetrahedra, where
 /// bad means badly shaped or too big).
 ///
@@ -239,7 +239,7 @@ unsigned int poisson_refine_triangulation(
   int nb_vertices_added = tr.number_of_vertices() - nb_vertices;
 
   long max_memory = refiner.max_memory_allocated();
-  CGAL_TRACE("  Max allocation = %ld Mb\n", max_memory>>20);
+  CGAL_TRACE("  Max allocation in Delaunay refinement = %ld Mb\n", max_memory>>20);
 
   /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of poisson_refine_triangulation()\n");
