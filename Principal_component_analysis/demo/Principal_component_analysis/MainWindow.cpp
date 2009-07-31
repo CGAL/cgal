@@ -182,3 +182,27 @@ void MainWindow::on_actionCopy_snapshot_triggered()
   qb->setImage(snapshot);
 	QApplication::restoreOverrideCursor();
 }
+
+void MainWindow::on_actionFit_triangles_triggered()
+{
+ 	QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_pScene->fit_triangles();
+  m_pViewer->update();
+	QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionFit_edges_triggered()
+{
+ 	QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_pScene->fit_edges();
+  m_pViewer->update();
+	QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionFit_vertices_triggered()
+{
+ 	QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_pScene->fit_vertices();
+  m_pViewer->update();
+	QApplication::restoreOverrideCursor();
+}

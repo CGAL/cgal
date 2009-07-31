@@ -7,7 +7,6 @@
 
 #include "types.h"
 
-
 class Scene
 {
 public:
@@ -25,9 +24,13 @@ public:
 private:
     // member data
     Bbox m_bbox;
+    Line m_line;
+    Plane m_plane;
+    Point m_centroid;
     Polyhedron *m_pPolyhedron;
 
-private:
+    // view options
+    bool m_view_polyhedron;
 
 public:
     // file menu
@@ -36,14 +39,22 @@ public:
     // toggle view options
     void toggle_view_poyhedron();
 
-    // view options
-    bool m_view_polyhedron;
+    // algorithms
+    Vector normalize(const Vector& v);
 
-    // refinement
     void refine_loop();
+    void fit_edges();
+    void fit_vertices();
+    void fit_triangles();
 
-    // drawing
+    // rendering
     void draw_polyhedron();
+
+private:
+
+
+
+
 }; // end class Scene
 
 

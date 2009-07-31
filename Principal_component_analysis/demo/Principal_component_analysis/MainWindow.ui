@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>CGAL - PCA tree demo</string>
+   <string>CGAL - PCA demo</string>
   </property>
   <property name="windowIcon" >
    <iconset resource="PCA_demo.qrc" >
@@ -57,14 +57,11 @@
     <property name="title" >
      <string>Algorithms</string>
     </property>
-    <widget class="QMenu" name="menuRefine" >
-     <property name="title" >
-      <string>Refine</string>
-     </property>
-     <addaction name="actionRefine_bisection" />
-     <addaction name="actionRefine_loop" />
-    </widget>
-    <addaction name="menuRefine" />
+    <addaction name="actionFit_edges" />
+    <addaction name="actionFit_vertices" />
+    <addaction name="actionFit_triangles" />
+    <addaction name="separator" />
+    <addaction name="actionRefine_loop" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
@@ -76,7 +73,6 @@
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
    <addaction name="menuAlgorithms" />
-   <addaction name="menuBenchmarks" />
    <addaction name="menuView" />
   </widget>
   <action name="actionQuit" >
@@ -223,6 +219,21 @@
   <action name="actionRefine_loop" >
    <property name="text" >
     <string>Loop subdivision</string>
+   </property>
+  </action>
+  <action name="actionFit_vertices" >
+   <property name="text" >
+    <string>Fit vertices</string>
+   </property>
+  </action>
+  <action name="actionFit_edges" >
+   <property name="text" >
+    <string>Fit edges</string>
+   </property>
+  </action>
+  <action name="actionFit_triangles" >
+   <property name="text" >
+    <string>Fit triangles</string>
    </property>
   </action>
  </widget>

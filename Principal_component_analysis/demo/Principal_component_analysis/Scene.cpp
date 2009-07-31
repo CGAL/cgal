@@ -12,6 +12,10 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Subdivision_method_3.h>
 
+#include <CGAL/centroid.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
+
+
 #include "render_edges.h"
 
 Scene::Scene()
@@ -93,6 +97,26 @@ void Scene::draw()
 {
     if(m_view_polyhedron)
         draw_polyhedron();
+
+    // draw plane
+    ::glColor3ub(255,0,0);
+    ::glBegin(GL_QUADS);
+    Point o = m_plane.projection(m_centroid);
+    Point a = o + normalize(m_plane.base1()) + normalize(m_plane.base2());
+    Point b = o + normalize(m_plane.base1()) - normalize(m_plane.base2());
+    Point c = o - normalize(m_plane.base1()) - normalize(m_plane.base2());
+    Point d = o - normalize(m_plane.base1()) + normalize(m_plane.base2());
+    ::glVertex3d(a.x(),a.y(),a.z());
+    ::glVertex3d(b.x(),b.y(),b.z());
+    ::glVertex3d(c.x(),c.y(),c.z());
+    ::glVertex3d(d.x(),d.y(),d.z());
+    ::glEnd();
+}
+
+
+Vector Scene::normalize(const Vector& v)
+{
+    return v / std::sqrt(v*v);
 }
 
 void Scene::draw_polyhedron()
@@ -123,4 +147,83 @@ void Scene::toggle_view_poyhedron()
 {
     m_view_polyhedron = !m_view_polyhedron;
 }
+
+void Scene::fit_triangles()
+{
+    std::cout << "Fit triangles...";
+
+    std::list<Triangle> triangles;
+    Polyhedron::Facet_iterator it;
+    for(it = m_pPolyhedron->facets_begin();
+        it != m_pPolyhedron->facets_end();
+        it++)
+    {
+        Polyhedron::Halfedge_handle he = it->halfedge();
+        const Point& a = he->vertex()->point();
+        const Point& b = he->next()->vertex()->point();
+        const Point& c = he->next()->next()->vertex()->point();
+        Triangle triangle(a,b,c);
+        triangles.push_back(triangle);
+    }
+
+    m_centroid = CGAL::centroid(triangles.begin(),triangles.end());
+    CGAL::linear_least_squares_fitting_3(triangles.begin(),
+        triangles.end(), m_line, CGAL::Dimension_tag<2>()); 
+    CGAL::linear_least_squares_fitting_3(triangles.begin(),
+        triangles.end(), m_plane, CGAL::Dimension_tag<2>()); 
+
+    std::cout << "done" << std::endl;
+}
+
+void Scene::fit_edges()
+{
+    std::cout << "Fit edges...";
+
+    std::list<Segment> segments;
+    Polyhedron::Edge_iterator he;
+    for(he = m_pPolyhedron->edges_begin();
+        he != m_pPolyhedron->edges_end();
+        he++)
+    {
+        const Point& a = he->vertex()->point();
+        const Point& b = he->opposite()->vertex()->point();
+        Segment segment(a,b);
+        segments.push_back(segment);
+    }
+    
+    m_centroid = CGAL::centroid(segments.begin(),segments.end());
+    CGAL::linear_least_squares_fitting_3(segments.begin(),
+        segments.end(), m_line, CGAL::Dimension_tag<1>()); 
+    CGAL::linear_least_squares_fitting_3(segments.begin(),
+        segments.end(), m_plane, CGAL::Dimension_tag<1>()); 
+
+    std::cout << "done" << std::endl;
+}
+
+void Scene::fit_vertices()
+{
+    std::cout << "Fit vertices...";
+
+    std::list<Point> points;
+    Polyhedron::Vertex_iterator v;
+    for(v = m_pPolyhedron->vertices_begin();
+        v != m_pPolyhedron->vertices_end();
+        v++)
+    {
+        const Point& p = v->point();
+        points.push_back(p);
+    }
+    
+    m_centroid = CGAL::centroid(points.begin(),points.end());
+    CGAL::linear_least_squares_fitting_3(points.begin(),
+        points.end(), m_line, CGAL::Dimension_tag<0>()); 
+    CGAL::linear_least_squares_fitting_3(points.begin(),
+        points.end(), m_plane, CGAL::Dimension_tag<0>()); 
+
+    std::cout << "done" << std::endl;
+}
+
+
+
+
 

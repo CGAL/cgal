@@ -2979,13 +2979,9 @@ Polytope_distance_d/test/Polytope_distance_d/zwick_bug.cpp -text
 Principal_component_analysis/demo/Principal_component_analysis/MainWindow.ui -text
 Principal_component_analysis/demo/Principal_component_analysis/PCA_demo.qrc -text
 Principal_component_analysis/demo/Principal_component_analysis/cleanup.bat eol=crlf
-Principal_component_analysis/demo/Principal_component_analysis/data/cylinder_iso1_locally_refined.off -text
-Principal_component_analysis/demo/Principal_component_analysis/data/cylinder_iso2.off -text
+Principal_component_analysis/demo/Principal_component_analysis/data/cylinder.off -text
+Principal_component_analysis/demo/Principal_component_analysis/data/cylinder_locally_refined.off -text
 Principal_component_analysis/demo/Principal_component_analysis/data/ellipsoid.off -text
-Principal_component_analysis/demo/Principal_component_analysis/data/mushroom-19v.off -text
-Principal_component_analysis/demo/Principal_component_analysis/data/mushroom-651v.off -text
-Principal_component_analysis/demo/Principal_component_analysis/data/mushroom-81v.off -text
-Principal_component_analysis/demo/Principal_component_analysis/data/mushroom.off -text
 Principal_component_analysis/demo/Principal_component_analysis/resources/about.html svneol=native#text/html
 Principal_component_analysis/doc_tex/Principal_component_analysis/examples.tex -text
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text svneol=unset#application/postscript
