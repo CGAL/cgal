@@ -125,6 +125,8 @@ protected:
 
   void dump_linear_polygon( Linear_polygon const& aPoly, QPainterPath& rPath ) ;
   
+  Bbox_2 computeBoundingBox( Linear_polygon_with_holes const& aLPWH ) const ;
+  
 protected:
 
   General_polygon_set*             mBSet;
@@ -181,9 +183,7 @@ void GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::paint
       dump_linear_polygon(rit->outer_boundary(), lPath);
       
       for ( Linear_hole_const_itertator hit = rit->holes_begin() ; hit != rit->holes_end() ; ++ hit )
-      {
         dump_linear_polygon(*hit, lPath);
-      }
     }
     
     aPainter->setPen  (mPen );
@@ -192,6 +192,25 @@ void GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::paint
   }
 }
 
+template <class General_polygon_with_holes, class Linearizer>
+Bbox_2 GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::computeBoundingBox( Linear_polygon_with_holes const& aLPWH ) const
+{
+  boost::optional<Bbox_2> lBBox ;
+  
+  if ( ! aLPWH.is_unbounded() )
+    lBBox = aLPWH.outer_boundary().bbox();
+  
+  for ( Linear_hole_const_itertator hit = aLPWH.holes_begin() ; hit != aLPWH.holes_end() ; ++ hit )
+  {
+    if ( lBBox )
+         lBBox = *lBBox + hit->bbox();
+    else lBBox =          hit->bbox();
+  } 
+  
+  CGAL_assertion_msg( !!lBBox, "Invalid polygon with holes: completely empty!" ) ;
+   
+  return *lBBox ;
+}
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
 template <class General_polygon_with_holes, class Linearizer>
@@ -206,15 +225,8 @@ void GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::updat
     for ( Linear_pwh_const_iterator rit = mPList.begin() ; rit != mPList.end() ; ++ rit )
     {
       if ( lBBox )
-           lBBox = *lBBox + rit->outer_boundary().bbox();
-      else lBBox =          rit->outer_boundary().bbox();
-      
-      for ( Linear_hole_const_itertator hit = rit->holes_begin() ; hit != rit->holes_end() ; ++ hit )
-      {
-        if ( lBBox )
-             lBBox = *lBBox + hit->bbox();
-        else lBBox =          hit->bbox();
-      }  
+           lBBox = *lBBox + computeBoundingBox(*rit);
+      else lBBox =          computeBoundingBox(*rit);
     }
     
     if ( lBBox ) 
@@ -240,7 +252,33 @@ void GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::updat
     General_polygon_with_holes_vector vec ;
     mBSet->polygons_with_holes( std::back_inserter(vec) ) ;
     for( General_pwh_const_iterator lit = vec.begin(); lit != vec.end(); ++ lit )
-      mPList.push_back(  mLinearizer(*lit) );
+    {
+      Linear_polygon_with_holes lLPWH = mLinearizer(*lit) ;
+      
+      if ( lLPWH.is_unbounded() )
+      {
+        // Create an artificial frame around the unbounded region to visualize it.
+        Bbox_2 lBBox = computeBoundingBox(lLPWH);
+        
+        double lLX = lBBox.xmin() ; 
+        double lHX = lBBox.xmax() ; 
+        double lLY = lBBox.ymin() ; 
+        double lHY = lBBox.ymax() ; 
+        
+        double lD = (std::max)(lHX-lLX,lHY-lLY) ;
+        
+        Linear_polygon lFrame ;
+        
+        lFrame.push_back( Linear_point(lLX-lD,lLY-lD) ) ;
+        lFrame.push_back( Linear_point(lHX+lD,lLY-lD) ) ;
+        lFrame.push_back( Linear_point(lHX+lD,lHY+lD) ) ;
+        lFrame.push_back( Linear_point(lLX-lD,lHY+lD) ) ;
+        
+        lLPWH.outer_boundary() = lFrame ;
+      }
+      
+      mPList.push_back( lLPWH  );
+    }  
   }
 }
 

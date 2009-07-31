@@ -159,9 +159,7 @@
     </property>
    </widget>
    <addaction name="separator" />
-   <addaction name="actionInsertPolygon" />
-   <addaction name="actionInsertCircle" />
-   <addaction name="actionInsertBezier" />
+   <addaction name="actionInsertPWH" />
   </widget>
   
   <widget class="QToolBar" name="operationsToolBar" >
@@ -257,7 +255,7 @@
    </property>
   </action>
   
-  <action name="actionInsertPolygon" >
+  <action name="actionInsertPWH" >
    <property name="checkable" >
     <bool>true</bool>
    </property>
@@ -270,7 +268,7 @@
     </iconset>
    </property>
    <property name="toolTip" >
-    <string>Insert Circular Polygon</string>
+    <string>Insert Linear Polygon With Holes</string>
    </property>
   </action>
   

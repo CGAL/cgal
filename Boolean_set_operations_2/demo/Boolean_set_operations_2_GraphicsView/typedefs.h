@@ -20,8 +20,17 @@
 #ifndef CGAL_TYPEDEFS_H
 #define CGAL_TYPEDEFS_H
 
-typedef CGAL::Simple_cartesian<double>         Dbl_kernel ;
-typedef CGAL::Polygon_with_holes_2<Dbl_kernel> Dbl_polygon_with_holes ;
+//
+// Linear polygons
+//
+typedef CGAL::Simple_cartesian<double>            Linear_kernel ;
+typedef CGAL::Polygon_2<Linear_kernel>            Linear_polygon;
+typedef CGAL::Polygon_with_holes_2<Linear_kernel> Linear_polygon_with_holes;
+
+
+//
+// Circlular polygons
+//
 
 #ifdef CGAL_USE_GMP
 
@@ -36,25 +45,16 @@ typedef CGAL::Polygon_with_holes_2<Dbl_kernel> Dbl_polygon_with_holes ;
 typedef CGAL::Lazy_exact_nt<Base_nt> Coord_type;
 
 
-struct Kernel : public CGAL::Cartesian<Coord_type> {};
+struct Circular_kernel : public CGAL::Cartesian<Coord_type> {};
 
-typedef Kernel::Segment_2                             Segment;
-typedef Kernel::Point_2                               Point_2;
-typedef Kernel::Circle_2                              Circle;
-typedef Kernel::Iso_rectangle_2                       Iso_rectangle;
+//typedef Kernel::Segment_2                             Segment;
+//typedef Kernel::Point_2                               Point_2;
+//typedef Kernel::Circle_2                              Circle;
+//typedef Kernel::Iso_rectangle_2                       Iso_rectangle;
 
-//
-// Linear polygons
-//
-typedef CGAL::Polygon_2<Kernel>            Linear_polygon;
-typedef CGAL::Polygon_with_holes_2<Kernel> Linear_polygon_with_holes;
-typedef CGAL::Polygon_set_2<Kernel>        Linear_polygon_set;
 
-//
-// Circle-segment polygons
-//
 
-typedef CGAL::Gps_circle_segment_traits_2<Kernel>            Circular_traits;
+typedef CGAL::Gps_circle_segment_traits_2<Circular_kernel>   Circular_traits;
 typedef Circular_traits::Curve_2                             Circular_curve;
 typedef Circular_traits::X_monotone_curve_2                  Circular_X_monotone_curve;
 typedef Circular_traits::Point_2                             Circular_point ;
@@ -65,7 +65,7 @@ typedef CGAL::General_polygon_set_2<Circular_traits>         Circular_polygon_se
 //typedef Polygon_with_holes::Hole_const_iterator       Hole_const_iterator;
 
 typedef CGAL::Qt::GeneralPolygonSetGraphicsItem<Circular_polygon_set
-                                               , CGAL::Circular_polygon_with_holes_sampler<Dbl_polygon_with_holes>
+                                               , CGAL::Circular_polygon_with_holes_sampler<Linear_polygon_with_holes>
                                                > Circular_GI;
 
 
@@ -94,7 +94,7 @@ typedef Bezier_gps_traits::General_polygon_with_holes_2 Bezier_polygon_with_hole
 typedef CGAL::General_polygon_set_2<Bezier_gps_traits>  Bezier_polygon_set ;
 
 typedef CGAL::Qt::GeneralPolygonSetGraphicsItem<Bezier_polygon_set
-                                               ,CGAL::Bezier_polygon_with_holes_sampler<Dbl_polygon_with_holes>
+                                               ,CGAL::Bezier_polygon_with_holes_sampler<Linear_polygon_with_holes>
                                                > 
                                                Bezier_GI;
 

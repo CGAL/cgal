@@ -35,6 +35,7 @@
 #include <QProgressBar>
 
 #include <CGAL/basic.h>
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/Timer.h> 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/iterator.h>
@@ -66,7 +67,7 @@
 #endif
 
 #include <CGAL/Qt/GeneralPolygonSetGraphicsItem.h>
-//#include <CGAL/Qt/GraphicsViewPolygonWithHolesInput.h>
+#include <CGAL/Qt/GraphicsViewPolygonWithHolesInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Qt/utility.h>
@@ -324,11 +325,12 @@ class MainWindow :
   
 private:  
 
-  QGraphicsScene   mScene;
-  bool             mCircular_active ;
-  bool             mBlue_active ;
-  Curve_set_vector mCurve_sets ;
-  
+  QGraphicsScene                                              mScene;
+  bool                                                        mCircular_active ;
+  bool                                                        mBlue_active ;
+  Curve_set_vector                                            mCurve_sets ;
+  CGAL::Qt::GraphicsViewPolygonWithHolesInput<Linear_kernel>* mPWHI ;
+    
 public:
 
   MainWindow();
@@ -345,13 +347,11 @@ protected slots:
 
 public slots:
   
+  void processInput(CGAL::Object o);
   void on_actionNew_triggered() ;
   void on_actionOpenLinear_triggered() ;
   void on_actionOpenDXF_triggered() ;
   void on_actionOpenBezier_triggered() ;
-  void on_actionInsertPolygon_triggered() {}
-  void on_actionInsertCircle_triggered() {}
-  void on_actionInsertBezier_triggered() {}
   void on_actionIntersection_triggered() ;
   void on_actionUnion_triggered() ;
   void on_actionBlueMinusRed_triggered() ;
@@ -365,6 +365,8 @@ public slots:
   void on_actionDeleteBlue_triggered();
   void on_actionDeleteRed_triggered();
   
+  void on_actionInsertPWH_toggled(bool aChecked);
+  
   void on_checkboxShowBlue_toggled      (bool aChecked) { ToogleView(BLUE_GROUP  ,aChecked); }
   void on_checkboxShowRed_toggled       (bool aChecked) { ToogleView(RED_GROUP   ,aChecked); }
   void on_checkboxShowResult_toggled    (bool aChecked) { ToogleView(RESULT_GROUP,aChecked); }
@@ -377,6 +379,12 @@ signals:
   void changed();
   
 private:
+  
+  void modelChanged()
+  {
+    emit(changed());
+    zoomToFit();
+  }
   
   bool ask_user_yesno( const char* aTitle, const char* aQuestion )
   {
@@ -470,6 +478,10 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   
+  mPWHI = new CGAL::Qt::GraphicsViewPolygonWithHolesInput<Linear_kernel>(this, &mScene);
+  
+  QObject::connect(mPWHI, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
+
   QObject::connect(this->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   QObject::connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
   
@@ -492,9 +504,11 @@ void MainWindow::on_actionNew_triggered()
   SetViewRed   (true);
   SetViewResult(true);
   
+  mCircular_active = true ;
+  
   radioMakeBlueActive->setChecked(true);
   
-  emit(changed());
+  modelChanged();
   
 }
 
@@ -511,12 +525,27 @@ void MainWindow::dropEvent(QDropEvent *event)
   event->acceptProposedAction();
 }
 
-Circular_polygon linear_2_circ( Linear_polygon const& pgn)
+Circular_polygon linear_2_circ( Linear_polygon const& pgn )
 {
+  CGAL::Cartesian_converter<Linear_kernel,Circular_kernel> convert ;
+  
   Circular_polygon rCP;
   
   for( Linear_polygon::Edge_const_iterator ei = pgn.edges_begin(); ei != pgn.edges_end(); ++ei )
-    rCP.push_back( Circular_X_monotone_curve(ei->source(), ei->target()) );
+  {
+    if  ( ei->source() != ei->target() )
+      rCP.push_back( Circular_X_monotone_curve( convert(ei->source()), convert(ei->target())) );
+  }  
+
+  return rCP;
+}
+
+Circular_polygon_with_holes linear_2_circ( Linear_polygon_with_holes const& pwh )
+{
+  Circular_polygon_with_holes rCP( linear_2_circ(pwh.outer_boundary()) ) ;
+  
+  for( Linear_polygon_with_holes::Hole_const_iterator hi = pwh.holes_begin(); hi != pwh.holes_end(); ++ hi )
+    rCP.add_hole( linear_2_circ(*hi)  );
 
   return rCP;
 }
@@ -560,7 +589,7 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet )
 
   if ( in_file )
   {
-    CGAL::Dxf_bsop_reader<Kernel>            reader;
+    CGAL::Dxf_bsop_reader<Circular_kernel>   reader;
     std::vector<Circular_polygon>            circ_polygons;
     std::vector<Circular_polygon_with_holes> circ_polygons_with_holes;
     
@@ -692,7 +721,7 @@ void MainWindow::switch_set_type( Curve_set& aSet, int aType )
   
   link_GI( aSet.gi() ) ;
   
-  emit(changed());
+  modelChanged();
 }
 
 void MainWindow::switch_sets_type( int aType )
@@ -771,11 +800,28 @@ void MainWindow::open( QString fileName )
      
     if ( lRead )
     {
-      emit(changed());
-      zoomToFit();
+      modelChanged();
       this->addToRecentFiles(fileName);
     }
   }  
+}
+
+void MainWindow::on_actionInsertPWH_toggled(bool aChecked)
+{
+  if(aChecked)
+       mScene.installEventFilter(mPWHI);
+  else mScene.removeEventFilter (mPWHI);
+}
+
+void MainWindow::processInput(CGAL::Object o )
+{
+  Linear_polygon_with_holes lPWH ;
+  if(CGAL::assign(lPWH, o))
+  {
+    if ( ensure_circular_mode() )
+      active_set().circular().join( linear_2_circ(lPWH) ) ;  
+  }
+  modelChanged();
 }
 
 void MainWindow::on_actionIntersection_triggered() 
@@ -796,11 +842,9 @@ void MainWindow::on_actionIntersection_triggered()
   
   if ( lDone )
   {
-    SetViewBlue  (false);
-    SetViewRed   (false);
-    SetViewResult(true);
+    //SetViewBlue(false); SetViewRed(false); SetViewResult(true);
     
-    emit(changed());
+    modelChanged();
   }
 }
 
@@ -822,11 +866,9 @@ void MainWindow::on_actionUnion_triggered()
   
   if ( lDone )
   {
-    SetViewBlue  (false);
-    SetViewRed   (false);
-    SetViewResult(true);
+    //SetViewBlue(false);  SetViewRed(false);  SetViewResult(true);
     
-    emit(changed());
+    modelChanged();
   }
 }
 
@@ -848,11 +890,9 @@ void MainWindow::on_actionBlueMinusRed_triggered()
     
   if ( lDone )
   {
-    SetViewBlue  (false);
-    SetViewRed   (false);
-    SetViewResult(true);
+    //SetViewBlue(false);  SetViewRed(false); SetViewResult(true);
     
-    emit(changed());
+    modelChanged();
   }
 }
 
@@ -874,11 +914,9 @@ void MainWindow::on_actionRedMinusBlue_triggered()
     
   if ( lDone )
   {
-    SetViewBlue  (false);
-    SetViewRed   (false);
-    SetViewResult(true);
+    //SetViewBlue(false);  SetViewRed(false); SetViewResult(true);
     
-    emit(changed());
+    modelChanged();
   }
 }
 
@@ -901,11 +939,9 @@ void MainWindow::on_actionSymmDiff_triggered()
   
   if ( lDone )
   {
-    SetViewBlue  (false);
-    SetViewRed   (false);
-    SetViewResult(true);
+    //SetViewBlue(false); SetViewRed(false); SetViewResult(true);
     
-    emit(changed());
+    modelChanged();
   }
 }
 
@@ -931,11 +967,9 @@ void MainWindow::on_actionBlueComplement_triggered()
     
   if ( lDone )
   {
-    SetViewBlue  (false);
-    SetViewRed   (false);
-    SetViewResult(true);
+    //SetViewBlue(false); SetViewRed(false); SetViewResult(true);
     
-    emit(changed());
+    modelChanged();
   }
 }
 
@@ -957,11 +991,9 @@ void MainWindow::on_actionRedComplement_triggered()
     
   if ( lDone )
   {
-    SetViewBlue  (false);
-    SetViewRed   (false);
-    SetViewResult(true);
+    //SetViewBlue(false);  SetViewRed(false); SetViewResult(true);
     
-    emit(changed());
+    modelChanged();
   }
 }
 
@@ -982,11 +1014,9 @@ void MainWindow::on_actionAllBlue_triggered()
     
   if ( lDone )
   {
-    SetViewBlue  (true);
-    SetViewRed   (false);
-    SetViewResult(true);
+    //SetViewBlue(true);  SetViewRed(false); SetViewResult(true);
     
-    emit(changed());
+    modelChanged();
   }
 }
 
@@ -1007,33 +1037,27 @@ void MainWindow::on_actionAllRed_triggered()
     
   if ( lDone )
   {
-    SetViewBlue  (false);
-    SetViewRed   (true);
-    SetViewResult(true);
+    //SetViewBlue(false); SetViewRed(true);  SetViewResult(true);
     
-    emit(changed());
+    modelChanged();
   }
 }
 void MainWindow::on_actionDeleteBlue_triggered()
 {
   blue_set().clear();
     
-  SetViewBlue  (true);
-  SetViewRed   (true);
-  SetViewResult(true);
+  //SetViewBlue(true);SetViewRed(true); SetViewResult(true);
   
-  emit(changed());
+  modelChanged();
 }
 
 void MainWindow::on_actionDeleteRed_triggered()
 {
   red_set().clear();
     
-  SetViewBlue  (true);
-  SetViewRed   (true);
-  SetViewResult(true);
+  //SetViewBlue(true); SetViewRed(true); SetViewResult(true);
   
-  emit(changed());
+  modelChanged();
 }
 
 
