@@ -558,24 +558,31 @@ bool read_linear ( QString aFileName, Circular_polygon_set& rSet )
 
   if ( in_file )
   {
-    // Red the number of bezier polygon with holes
     unsigned int n_regions ;
     in_file >> n_regions;
-    Circular_polygon outer ;
-    std::vector<Circular_polygon> holes ;
     
     for ( unsigned int r = 0 ; r < n_regions ; ++ r )
     {
-      Linear_polygon p ;
-      in_file >> p ;
+      unsigned int n_boundaries;
+      in_file >> n_boundaries;
       
-      if ( r == 0 )
-           outer = linear_2_circ(p); 
-      else holes.push_back( linear_2_circ(p) );
+      Circular_polygon outer ;
+      std::vector<Circular_polygon> holes ;
+      
+      for ( unsigned int r = 0 ; r < n_boundaries ; ++ r )
+      {
+        Linear_polygon p ;
+        in_file >> p ;
+        
+        if ( r == 0 )
+             outer = linear_2_circ(p); 
+        else holes.push_back( linear_2_circ(p) );
+      }
+      
+      rSet.join( Circular_polygon_with_holes(outer,holes.begin(),holes.end()) ) ;    
+      rOK = true ;
     }
     
-    rSet.join( Circular_polygon_with_holes(outer,holes.begin(),holes.end()) ) ;    
-    rOK = true ;
   }
   
   return rOK ;
@@ -700,7 +707,7 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
 
 void MainWindow::on_actionOpenLinear_triggered()
 {
-  open(QFileDialog::getOpenFileName(this, tr("Open Linear Polygon"), "../data", tr("Linear Curve files (*.poly)") ));
+  open(QFileDialog::getOpenFileName(this, tr("Open Linear Polygon"), "../data", tr("Linear Curve files (*.lps)") ));
 }
 
 void MainWindow::on_actionOpenDXF_triggered()
@@ -782,7 +789,7 @@ void MainWindow::open( QString fileName )
   {
     bool lRead = false ;
     
-    if(fileName.endsWith(".poly"))
+    if(fileName.endsWith(".lps"))
     {
       if ( ensure_circular_mode() )
         lRead = read_linear(fileName,active_set().circular()) ;
