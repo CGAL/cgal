@@ -2983,25 +2983,6 @@ Principal_component_analysis/demo/Principal_component_analysis/data/mushroom-19v
 Principal_component_analysis/demo/Principal_component_analysis/data/mushroom-651v.off -text
 Principal_component_analysis/demo/Principal_component_analysis/data/mushroom-81v.off -text
 Principal_component_analysis/demo/Principal_component_analysis/data/mushroom.off -text
-Principal_component_analysis/demo/Principal_component_analysis/qt3/help/index.html svneol=native#text/html
-Principal_component_analysis/demo/Principal_component_analysis/qt3/linear_least_squares_fitting.vcproj eol=crlf
-Principal_component_analysis/demo/Principal_component_analysis/windows/2d/pca.sln eol=crlf
-Principal_component_analysis/demo/Principal_component_analysis/windows/2d/pca.vcproj eol=crlf
-Principal_component_analysis/demo/Principal_component_analysis/windows/2d/res/pca.ico -text svneol=unset#image/x-icon
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/Mesh.sln eol=crlf
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/Mesh.vcproj eol=crlf
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/Mesh.ico -text svneol=unset#image/x-icon
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/MeshDoc.ico -text svneol=unset#image/x-icon
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/Toolbar.bmp -text svneol=unset#image/bmp
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb0.bmp -text svneol=unset#image/bmp
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb1.bmp -text svneol=unset#image/bmp
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb2.bmp -text svneol=unset#image/bmp
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb3.bmp -text svneol=unset#image/bmp
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb4.bmp -text svneol=unset#image/bmp
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb5.bmp -text svneol=unset#image/bmp
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb6.bmp -text svneol=unset#image/bmp
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb7.bmp -text svneol=unset#image/bmp
-Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#image/bmp
 Principal_component_analysis/doc_tex/Principal_component_analysis/examples.tex -text
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text svneol=unset#application/postscript
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.jpg -text
