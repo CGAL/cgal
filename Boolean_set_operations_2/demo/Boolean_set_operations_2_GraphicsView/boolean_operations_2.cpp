@@ -616,7 +616,7 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet )
   return rOK ;
 }
 
-bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
+bool read_bezier2 ( QString aFileName, Bezier_polygon_set& rSet )
 {
   bool rOK = false ;
   
@@ -624,12 +624,14 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
   
   if ( in_file )
   {
-    // Red the number of bezier polygon with holes
     unsigned int n_regions ;
     in_file >> n_regions;
     
     for ( unsigned int r = 0 ; r < n_regions ; ++ r )
     {
+      unsigned int n_regions ;
+      in_file >> n_regions;
+      
       // Read the number of bezier curves.
       unsigned int n_curves;
       in_file >> n_curves;
@@ -700,6 +702,80 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
       rOK = true ;
     }
     
+  }
+  
+  return rOK ;
+}
+
+bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
+{
+  Bezier_traits                    traits;
+  Bezier_traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
+  
+  bool rOK = false ;
+  
+  std::ifstream in_file (qPrintable(aFileName));
+  
+  if ( in_file )
+  {
+    // Red the number of bezier polygon with holes
+    unsigned int n_regions ;
+    in_file >> n_regions;
+    
+    for ( unsigned int r = 0 ; r < n_regions ; ++ r )
+    {
+      Bezier_polygon_vector  polygons ;
+      
+      // Read the number of bezier curves.
+      unsigned int n_boundaries;
+      in_file >> n_boundaries;
+    
+      for ( unsigned int b = 0 ; b < n_boundaries ; ++ b )
+      {
+        // Read the number of bezier curves.
+        unsigned int n_curves;
+        in_file >> n_curves;
+        
+        // Read the curves one by one, and construct the general polygon these
+        // curve form (the outer boundary and the holes inside it).
+        
+        std::list<Bezier_X_monotone_curve> xcvs;
+      
+        for ( unsigned int k = 0; k < n_curves; ++ k ) 
+        {
+          // Read the current curve and subdivide it into x-monotone subcurves.
+          
+          Bezier_curve                            B;
+          std::list<CGAL::Object>                 x_objs;
+          std::list<CGAL::Object>::const_iterator xoit;
+          Bezier_X_monotone_curve                 xcv;
+      
+          in_file >> B;
+          make_x_monotone (B, std::back_inserter (x_objs));
+          
+          for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
+          {
+            if (CGAL::assign (xcv, *xoit))
+              xcvs.push_back (xcv);
+          }
+        }  
+        
+        Bezier_polygon  pgn (xcvs.begin(), xcvs.end());
+        CGAL::Orientation  orient = pgn.orientation();
+          
+        if (( b == 0 && orient == CGAL::CLOCKWISE) || ( b > 0 && orient == CGAL::COUNTERCLOCKWISE))
+          pgn.reverse_orientation();
+          
+        polygons.push_back (pgn);
+          
+      }
+    
+      // Construct the polygon with holes.
+      Bezier_polygon_vector::iterator  pit = polygons.begin();  ++pit;
+      rSet.join( Bezier_polygon_with_holes(polygons.front(), pit, polygons.end()) ) ;      
+      
+      rOK = true ;
+    }
   }
   
   return rOK ;
@@ -803,6 +879,11 @@ void MainWindow::open( QString fileName )
     {
       if ( ensure_bezier_mode() )
         lRead = read_bezier(fileName,active_set().bezier()) ;
+    }
+    else if (fileName.endsWith(".dat"))
+    {
+      if ( ensure_bezier_mode() )
+        lRead = read_bezier2(fileName,active_set().bezier()) ;
     }
      
     if ( lRead )
