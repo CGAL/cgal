@@ -252,9 +252,9 @@ void Point_set_scene_item::computes_local_spacing(int k)
     int i=0;
     for (Point_set::iterator it=m_points->begin(); it!=end; ++it, ++i)
     {
-      Neighbor_search search(tree, *it, k);
+      Neighbor_search search(tree, *it, k+1);
       double maxdist2 = search.begin()->second; // squared distance to furthest neighbor
-      it->radius() = 2.0 * sqrt(maxdist2/(double(k)-1));
+      it->radius() = sqrt(maxdist2)/2.;
     }
   }
 
@@ -266,7 +266,7 @@ void Point_set_scene_item::setRenderingMode(RenderingMode m)
   Scene_item_with_display_list::setRenderingMode(m);
   if (rendering_mode==Splatting && (!m_points->are_radii_uptodate()))
   {
-    computes_local_spacing(18);
+    computes_local_spacing(6); // default value = small
   }
 }
 

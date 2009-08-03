@@ -128,7 +128,7 @@ void PS_demo_APSS_plugin::reconstruct()
                              .arg(sm_distance)
                              .arg(smoothness));
       }
-      new_item->setColor(Qt::magenta);
+      new_item->setColor(Qt::lightGray);
       scene->addItem(new_item);
 
       // Hide point set

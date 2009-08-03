@@ -17,6 +17,9 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
 // This package
 #include <CGAL/APSS_reconstruction_function.h>
@@ -29,6 +32,7 @@
 #include <deque>
 #include <cstdlib>
 #include <fstream>
+#include <math.h>
 
 
 // ----------------------------------------------------------------------------
@@ -56,6 +60,11 @@ typedef CGAL::APSS_reconstruction_function<Kernel> APSS_reconstruction_function;
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, APSS_reconstruction_function> Surface_3;
+
+// AABB tree
+typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
+typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
+typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
 
 // ----------------------------------------------------------------------------
@@ -208,9 +217,6 @@ int main(int argc, char * argv[])
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
                               smoothness);
 
-    // Recover memory used by points[]
-    points.clear();
-
     // Prints status
     std::cerr << "Creates implicit function: " << task_timer.time() << " seconds\n";
     task_timer.reset();
@@ -296,11 +302,35 @@ int main(int argc, char * argv[])
     std::cerr << "Total reconstruction (implicit function + meshing + erase small components): " << reconstruction_timer.time() << " seconds\n";
 
     //***************************************
-    // saves reconstructed surface mesh
+    // Computes reconstruction error
+    //***************************************
+    
+    // Constructs AABB tree and computes internal KD-tree 
+    // data structure to accelerate distance queries
+    AABB_tree tree(output_mesh.facets_begin(), output_mesh.facets_end());
+    tree.accelerate_distance_queries();
+
+    // Computes distance from each input point to reconstructed mesh
+    double max_distance = DBL_MIN;
+    double avg_distance = 0;
+    for (PointList::const_iterator p=points.begin(); p!=points.end(); p++)
+    {
+      double distance = std::sqrt(tree.squared_distance(*p));
+
+      max_distance = (std::max)(max_distance, distance);
+      avg_distance += distance;
+    }
+    avg_distance /= double(points.size());
+
+    std::cerr << "Reconstruction error:\n"
+              << "  max = " << max_distance << " = " << max_distance/radius << " * point set radius\n"
+              << "  avg = " << avg_distance << " = " << avg_distance/radius << " * point set radius\n";
+                                   
+    //***************************************
+    // Saves reconstructed surface mesh
     //***************************************
 
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
-
     std::ofstream out(output_filename.c_str());
     out << output_mesh;
 

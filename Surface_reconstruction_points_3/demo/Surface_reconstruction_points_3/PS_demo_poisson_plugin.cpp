@@ -99,7 +99,7 @@ void PS_demo_poisson_plugin::reconstruct()
                          .arg(sm_angle)
                          .arg(sm_radius)
                          .arg(sm_distance));
-      new_item->setColor(Qt::magenta);
+      new_item->setColor(Qt::lightGray);
       scene->addItem(new_item);
 
       // Hide point set
