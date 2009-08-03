@@ -363,7 +363,7 @@ private:
     if (max_memory > old_max_memory)
       CGAL_TRACE("  Max allocation in Choleschy factorization = %ld Mb\n", max_memory>>20);
     else
-      CGAL_TRACE("  Sorry. Choleschy factorization max allocation cannot be recorded on this platform.\n");
+      CGAL_TRACE("  Sorry. Failed to get Choleschy factorization max allocation.\n");
 
     CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
     CGAL_TRACE("  Direct solve...\n");
