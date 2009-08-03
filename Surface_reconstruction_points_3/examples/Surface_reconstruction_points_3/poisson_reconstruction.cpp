@@ -9,6 +9,9 @@
 // poisson_reconstruction file_in file_out [options]
 
 // CGAL
+#include <CGAL/AABB_tree.h> // must be included before kernel
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Polyhedron_3.h>
@@ -17,9 +20,6 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
 // This package
 #include <CGAL/Poisson_reconstruction_function.h>
@@ -289,8 +289,8 @@ int main(int argc, char * argv[])
     //***************************************
     // Computes reconstruction error
     //***************************************
-    
-    // Constructs AABB tree and computes internal KD-tree 
+
+    // Constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
     AABB_tree tree(output_mesh.facets_begin(), output_mesh.facets_end());
     tree.accelerate_distance_queries();
@@ -310,7 +310,7 @@ int main(int argc, char * argv[])
     std::cerr << "Reconstruction error:\n"
               << "  max = " << max_distance << " = " << max_distance/radius << " * point set radius\n"
               << "  avg = " << avg_distance << " = " << avg_distance/radius << " * point set radius\n";
-                                   
+
     //***************************************
     // Saves reconstructed surface mesh
     //***************************************

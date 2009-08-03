@@ -3,24 +3,24 @@
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
 //----------------------------------------------------------
 
-#include "Kernel_type.h"
-#include "Polyhedron_type.h"
-#include "Point_set_scene_item.h"
-
 // CGAL
+#include <CGAL/AABB_tree.h> // must be included before kernel
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
 // This package
 #include <CGAL/Poisson_reconstruction_function.h>
 
 #include <math.h>
+
+#include "Kernel_type.h"
+#include "Polyhedron_type.h"
+#include "Point_set_scene_item.h"
 
 
 // Poisson implicit function
@@ -160,8 +160,8 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     //***************************************
     // Computes reconstruction error
     //***************************************
-    
-    // Constructs AABB tree and computes internal KD-tree 
+
+    // Constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
     AABB_tree tree(output_mesh->facets_begin(), output_mesh->facets_end());
     tree.accelerate_distance_queries();
@@ -181,7 +181,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     std::cerr << "Reconstruction error:\n"
               << "  max = " << max_distance << " = " << max_distance/radius << " * point set radius\n"
               << "  avg = " << avg_distance << " = " << avg_distance/radius << " * point set radius\n";
-                                   
+
     return output_mesh;
 }
 
