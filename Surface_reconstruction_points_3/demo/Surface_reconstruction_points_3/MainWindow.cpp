@@ -431,7 +431,6 @@ void MainWindow::on_actionSaveAs_triggered()
   if(selectedRows.size() != 1)
     return;
   Scene_item* item = scene->item(getSelectedSceneItemIndex());
-
   if(!item)
     return;
 
@@ -456,20 +455,33 @@ void MainWindow::on_actionSaveAs_triggered()
   QSettings settings;
   QString directory = settings.value("Point set save directory",
                                      QDir::current().dirName()).toString();
-
   QString filename =
     QFileDialog::getSaveFileName(this,
                                  tr("Save As..."),
                                  directory,
                                  filters.join(";;"));
+  if (filename.isEmpty())
+    return;
+    
   QFileInfo fileinfo(filename);
 
+  bool saved = false;
   Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, canSavePlugins) {
     if(plugin->save(item, fileinfo)) {
-      settings.setValue("Point set save directory",
-                        fileinfo.absoluteDir().absolutePath());
+      saved = true;
       break;
     }
+  }
+  if (saved) {
+    settings.setValue("Point set save directory",
+                      fileinfo.absoluteDir().absolutePath());
+  }
+  else {
+    QMessageBox::warning(this,
+                         tr("Cannot save"),
+                         tr("Error while saving object %1 as %2.")
+                         .arg(item->name())
+                         .arg(filename));
   }
 }
 
