@@ -5,8 +5,8 @@ html, body {
   color:black;
 }
 
-li { font-size:10pt;}
-p { text-align:justify; font-size:10pt; margin: 5pt;}
+li { font-size:100%;}
+p { text-align:justify; font-size:100%; margin: 5pt;}
 
 img { border-width: 0pt; }
 
@@ -15,14 +15,14 @@ dl,p,h1,h2,h3,h4,ul,ol,li,div,td,th,address,blockquote,nobr,b
 
 td { text-align:justify;}
 
-h1 { font-size:18pt; margin-left: 5pt;}
-h2 { font-size:16pt; margin-left: 5pt;}
-h3 { font-size:11pt; margin-left: 5pt;}
-h4 { font-size:10pt; margin-left: 5pt;}
+h1 { font-size:180%; margin-left: 5pt;}
+h2 { font-size:160%; margin-left: 5pt;}
+h3 { font-size:100%; margin-left: 5pt;}
+h4 { font-size:90%; margin-left: 5pt;}
 
-pre { font-family:Courier New,Courier; font-size:10pt; }
+pre { font-family:Courier New,Courier; font-size:100%; }
 
-tt { font-family:Courier New,Courier; font-size:10pt; }
+tt { font-family:Courier New,Courier; font-size:100%; }
 
 /* a:link { color:#050060; text-decoration:none; } */
 /* a:visited { color:#590059; text-decoration:none; } */
@@ -33,24 +33,26 @@ a:visited { color: #5000CC; text-decoration:none; }
 a:active { color: #00A080; text-decoration:none; }  
 
 
-.contact { font-family:arial,sans-serif; font-size:10pt}
+.contact { font-family:arial,sans-serif; font-size:100%}
 
-.news {font-size:9pt;}
+.news {font-size:90%;}
 
 td.menu { background-color: #C0C0D0; white-space:nowrap }
 
 /* We are forced to duplicate definitions because IE does not support ">" */
 
-div.menu { font-size:10pt; /* margin-left: -30pt; */ /* margin-top: 10pt; margin-bottom: 3pt */ }
+div.menu { font-size:100%; /* margin-left: -30pt; */ /* margin-top: 10pt; margin-bottom: 3pt */ }
 
-div.menu > h4 { font-size:10pt; /* margin-left: 3pt; */ margin-top: 10pt; margin-bottom: 3pt; }
+div.menu > h4 { font-size:100%; /* margin-left: 3pt; */ margin-top: 10pt; margin-bottom: 3pt; }
 
-h4.menu { font-size:10pt; /* margin-left: 3pt; */ margin-top: 10pt; margin-bottom: 3pt; }
+h4.menu { font-size:100%; /* margin-left: 3pt; */ margin-top: 10pt; margin-bottom: 3pt; }
 
-div.menu > p { font-size:10pt; margin-left: 10pt; margin-top: 0pt; margin-bottom:0pt; /*; margin-right:5pt */ }
+div.menu > p { font-size:100%; margin-left: 10pt; margin-top: 0pt; margin-bottom:0pt; /*; margin-right:5pt */ }
 
-p.menu { font-size:10pt; margin-left: 10pt; margin-top: 0pt; margin-bottom:0pt; /*; margin-right:5pt */ }
+p.menu { font-size:100%; margin-left: 10pt; margin-top: 0pt; margin-bottom:0pt; /*; margin-right:5pt */ }
 
 img.menu { margin-top: 0pt; margin-bottom:0pt }
 
-em.menu { font-style: normal; font-family:Arial,sans-serif; font-size:9pt; }
+em.menu { font-style: normal; font-family:Arial,sans-serif; font-size:90%; }
+
+.subtitle { font-family: cursive; font-size: 120% }
