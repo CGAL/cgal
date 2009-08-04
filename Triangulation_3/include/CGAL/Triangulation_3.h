@@ -2419,8 +2419,6 @@ insert_in_conflict(const Point & p,
 		   const Conflict_tester &tester,
 		   Hidden_points_visitor &hider)
 {
-  Vertex_handle v;
-
   switch (dimension()) {
   case 3:
     {
@@ -2451,8 +2449,8 @@ insert_in_conflict(const Point & p,
       
       
       // Insertion.
-      v = tds()._insert_in_hole(cells.begin(), cells.end(),
-				facet.first, facet.second);
+      Vertex_handle v = tds()._insert_in_hole(cells.begin(), cells.end(),
+				              facet.first, facet.second);
       
       v->set_point (p);
       // Store the hidden points in their new cells.
@@ -2492,8 +2490,8 @@ insert_in_conflict(const Point & p,
       
       
       // Insertion.
-      v = tds()._insert_in_hole(cells.begin(), cells.end(),
-				facet.first, facet.second);
+      Vertex_handle v = tds()._insert_in_hole(cells.begin(), cells.end(),
+				              facet.first, facet.second);
       
       v->set_point (p);
       // Store the hidden points in their new cells.
@@ -2550,7 +2548,7 @@ insert_in_conflict(const Point & p,
       tds().delete_cells(cells.begin(), cells.end());
       
       // We preserve the order (like the orientation in 2D-3D).
-      v = tds().create_vertex();
+      Vertex_handle v = tds().create_vertex();
       Cell_handle c0 = tds().create_face(v, bound[0]->vertex(0), Vertex_handle());
       Cell_handle c1 = tds().create_face(bound[1]->vertex(1), v, Vertex_handle());
       tds().set_adjacency(c0, 1, c1, 0);
@@ -2566,8 +2564,6 @@ insert_in_conflict(const Point & p,
       return v;
     }
   }
-  
-
 }
 
 template < class GT, class Tds >
