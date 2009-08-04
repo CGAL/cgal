@@ -131,8 +131,15 @@ void test_conflicts(T& T3_13, const P *q)
       if (T3_13.dimension() == 2)
           assert(F.size() == V.size());
 
-      T3_13.insert_in_hole(q[i], C.begin(), C.end(),
-                           F.begin()->first, F.begin()->second);
+      if (i%2 == 0)
+          T3_13.insert_in_hole(q[i], C.begin(), C.end(),
+                               F.begin()->first, F.begin()->second);
+      else {
+	  // alternately test the overload which takes a Vertex_handle.
+	  Vertex_handle v = T3_13.tds().create_vertex();
+          T3_13.insert_in_hole(q[i], C.begin(), C.end(),
+                               F.begin()->first, F.begin()->second, v);
+      }
     }
   }
 }

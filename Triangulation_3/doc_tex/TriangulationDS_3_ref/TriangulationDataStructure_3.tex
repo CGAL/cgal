@@ -424,6 +424,12 @@ a new cell (resp. facet) with \ccc{v} as vertex.  \ccc{v} is returned.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, the set of cells (resp. facets)
 is connected, and its boundary is connected.}}
 
+\ccMethod{template <class CellIt>
+          Vertex_handle insert_in_hole(CellIt cell_begin, CellIt cell_end,
+	                               Cell_handle begin, int i, Vertex_handle newv);}
+{ Same as above, except that \ccc{newv} will be used as the new vertex, which
+  must have been allocated previously with e.g. \ccc{create_vertex}.}
+
 \ccHeading{Removal}
 
 \ccMethod{void remove_decrease_dimension(Vertex_handle v, Vertex_handle w = v);}

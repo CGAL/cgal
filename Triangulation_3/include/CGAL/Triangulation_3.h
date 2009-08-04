@@ -635,6 +635,39 @@ public:
       return v;
   }
 
+  template <class CellIt>
+  Vertex_handle
+  insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
+	         Cell_handle begin, int i, Vertex_handle newv)
+  {
+      // Some geometric preconditions should be tested...
+      newv->set_point(p);
+      return _tds.insert_in_hole(cell_begin, cell_end, begin, i, newv);
+  }
+
+  // Internal function, cells should already be marked.
+  template <class CellIt>
+  Vertex_handle
+  _insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
+	          Cell_handle begin, int i)
+  {
+      // Some geometric preconditions should be tested...
+      Vertex_handle v = _tds._insert_in_hole(cell_begin, cell_end, begin, i);
+      v->set_point(p);
+      return v;
+  }
+
+  // Internal function, cells should already be marked.
+  template <class CellIt>
+  Vertex_handle
+  _insert_in_hole(const Point & p, CellIt cell_begin, CellIt cell_end,
+	          Cell_handle begin, int i, Vertex_handle newv)
+  {
+      // Some geometric preconditions should be tested...
+      newv->set_point(p);
+      return _tds._insert_in_hole(cell_begin, cell_end, begin, i, newv);
+  }
+
 protected:
   // - c is the current cell, which must be in conflict.
   // - tester is the function object that tests if a cell is in conflict.
@@ -2447,12 +2480,9 @@ insert_in_conflict(const Point & p,
       // as they will be deleted during the insertion.
       hider.process_cells_in_conflict(cells.begin(), cells.end());
 
+      Vertex_handle v = _insert_in_hole(p, cells.begin(), cells.end(),
+			                facet.first, facet.second);
 
-      // Insertion.
-      Vertex_handle v = tds()._insert_in_hole(cells.begin(), cells.end(),
-				              facet.first, facet.second);
-
-      v->set_point (p);
       // Store the hidden points in their new cells.
       hider.reinsert_vertices(v);
       return v;
@@ -2488,12 +2518,9 @@ insert_in_conflict(const Point & p,
       // as they will be deleted during the insertion.
       hider.process_cells_in_conflict(cells.begin(), cells.end());
 
+      Vertex_handle v = _insert_in_hole(p, cells.begin(), cells.end(),
+			                facet.first, facet.second);
 
-      // Insertion.
-      Vertex_handle v = tds()._insert_in_hole(cells.begin(), cells.end(),
-				              facet.first, facet.second);
-
-      v->set_point (p);
       // Store the hidden points in their new cells.
       hider.reinsert_vertices(v);
       return v;

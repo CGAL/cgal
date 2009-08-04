@@ -350,14 +350,13 @@ public:
   // Internal function : assumes the conflict cells are marked.
   template <class CellIt>
   Vertex_handle _insert_in_hole(CellIt cell_begin, CellIt cell_end,
-	                        const Cell_handle& begin, int i)
+	                        const Cell_handle& begin, int i,
+			       	Vertex_handle newv)
   {
       CGAL_triangulation_precondition(begin != Cell_handle());
       // if begin == NULL (default arg), we could compute one by walking in
       // CellIt.  At the moment, the functionality is not available, you have
       // to specify a starting facet.
-
-      Vertex_handle newv = create_vertex();
 
       Cell_handle cnew;
       if (dimension() == 3)
@@ -370,15 +369,32 @@ public:
       return newv;
   }
 
+  // Internal function : assumes the conflict cells are marked.
+  template <class CellIt>
+  Vertex_handle _insert_in_hole(CellIt cell_begin, CellIt cell_end,
+	                        const Cell_handle& begin, int i)
+  {
+      return _insert_in_hole(cell_begin, cell_end, begin, i, create_vertex());
+  }
+
+  // Mark the cells in conflict, then calls the internal function.
+  template <class CellIt>
+  Vertex_handle insert_in_hole(CellIt cell_begin, CellIt cell_end,
+	                       const Cell_handle& begin, int i,
+			       Vertex_handle newv)
+  {
+      for (CellIt cit = cell_begin; cit != cell_end; ++cit)
+	  (*cit)->set_in_conflict_flag(1);
+
+      return _insert_in_hole(cell_begin, cell_end, begin, i, newv);
+  }
+
   // Mark the cells in conflict, then calls the internal function.
   template <class CellIt>
   Vertex_handle insert_in_hole(CellIt cell_begin, CellIt cell_end,
 	                       const Cell_handle& begin, int i)
   {
-      for (CellIt cit = cell_begin; cit != cell_end; ++cit)
-	  (*cit)->set_in_conflict_flag(1);
-
-      return _insert_in_hole(cell_begin, cell_end, begin, i);
+      return insert_in_hole(cell_begin, cell_end, begin, i, create_vertex());
   }
 
   //INSERTION

@@ -753,6 +753,12 @@ v->set_point(p)}.
 dimension 2) is connected, its boundary is connected, and \ccc{p} lies inside
 the hole, which is star-shaped wrt \ccc{p}}.}
 
+\ccMethod{template <class CellIt>
+     Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end,
+	                          Cell_handle begin, int i, Vertex_handle newv);}
+{ Same as above, except that \ccc{newv} will be used as the new vertex, which
+  must have been allocated previously with e.g. \ccc{create_vertex}.}
+
 \ccHeading{Traversal of the Triangulation}
 
 The triangulation class provides several iterators and circulators
