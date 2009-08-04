@@ -5,11 +5,11 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
-#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/compute_average_spacing.h>
 
 #include <vector>
 #include <fstream>
@@ -31,8 +31,8 @@ int main(void)
 {
     // Poisson options
     FT sm_angle = 20.0; // Min triangle angle in degrees.
-    FT sm_radius = 0.03; // Max triangle size w.r.t. point set radius.
-    FT sm_distance = 0.003; // Surface approximation error w.r.t. p.s.r.
+    FT sm_radius = 30; // Max triangle size w.r.t. point set average spacing.
+    FT sm_distance = 0.375; // Surface Approximation error w.r.t. point set average spacing.
 
     // Reads the point set file in points[].
     // Note: read_xyz_points_and_normals() requires an iterator over points
@@ -63,6 +63,10 @@ int main(void)
     if ( ! function.compute_implicit_function() )
       return EXIT_FAILURE;
 
+    // Computes average spacing
+    FT average_spacing = CGAL::compute_average_spacing(points.begin(), points.end(),
+                                                       6 /* knn = 1 ring */);
+
     // Gets one point inside the implicit surface
     // and computes implicit function bounding sphere radius.
     Point inner_point = function.get_inner_point();
@@ -72,15 +76,15 @@ int main(void)
     // Defines the implicit surface: requires defining a
   	// conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 2.01 * radius;
-    FT sm_dichotomy_error = sm_distance/10.0; // Dichotomy error must be << sm_distance
+    FT sm_dichotomy_error = sm_distance*average_spacing/10.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,
                       Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
-                      sm_dichotomy_error);
+                      sm_dichotomy_error/sm_sphere_radius);
 
     // Defines surface mesh generation criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
-                                                        sm_radius*radius,  // Max triangle size
-                                                        sm_distance*radius); // Approximation error
+                                                        sm_radius*average_spacing,  // Max triangle size
+                                                        sm_distance*average_spacing); // Approximation error
 
     // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
@@ -94,8 +98,7 @@ int main(void)
       return EXIT_FAILURE;
 
     // saves reconstructed surface mesh
-    std::ofstream out("kitten_poisson_0.003.off");
-    //CGAL::output_surface_facets_to_off(out, c2t3);
+    std::ofstream out("kitten_poisson-20-30-0.375.off");
     Polyhedron output_mesh;
     CGAL::output_surface_facets_to_polyhedron(c2t3, output_mesh);
     out << output_mesh;

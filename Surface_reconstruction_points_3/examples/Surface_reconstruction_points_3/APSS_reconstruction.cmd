@@ -1,1 +1,1 @@
-data/kitten.xyz kitten_apss_0.015.off -sm_distance 0.015 -smooth 2
+data/kitten.xyz kitten_apss-20-100-0.5.off -sm_distance 0.5 -smooth 2
