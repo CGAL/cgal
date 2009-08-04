@@ -441,10 +441,10 @@ private:
       const Self *t;
 
   public:
-    
+
     Conflict_tester_3(const Point &pt, const Self *tr)
       : p(pt), t(tr) {}
-    
+
     bool operator()(const Cell_handle c) const
     {
       return t->side_of_sphere(c, p, true) == ON_BOUNDED_SIDE;
@@ -468,7 +468,7 @@ private:
 
     Conflict_tester_2(const Point &pt, const Self *tr)
       : p(pt), t(tr) {}
-    
+
     bool operator()(const Cell_handle c) const
     {
       return t->side_of_circle(c, 3, p, true) == ON_BOUNDED_SIDE;
@@ -491,7 +491,7 @@ private:
     template <class InputIterator>
     void process_cells_in_conflict(InputIterator, InputIterator) const {}
     void reinsert_vertices(Vertex_handle ) {}
-    Vertex_handle replace_vertex(Cell_handle c, int index, 
+    Vertex_handle replace_vertex(Cell_handle c, int index,
 				 const Point &) {
       return c->vertex(index);
     }
@@ -540,14 +540,14 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int lj)
   case 3:
     {
       Conflict_tester_3 tester(p, this);
-      Vertex_handle v = insert_in_conflict(p, lt, c, li, lj, 
+      Vertex_handle v = insert_in_conflict(p, lt, c, li, lj,
 					   tester, hidden_point_visitor);
       return v;
     }// dim 3
   case 2:
     {
       Conflict_tester_2 tester(p, this);
-      return insert_in_conflict(p, lt, c, li, lj, 
+      return insert_in_conflict(p, lt, c, li, lj,
 				tester, hidden_point_visitor);
     }//dim 2
   default :

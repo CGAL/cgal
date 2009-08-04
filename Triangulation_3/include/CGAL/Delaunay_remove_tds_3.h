@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     :  Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
 //                  Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -50,9 +50,9 @@ public :
 };
 
 
-/* We derive the face class, because we need additional pointers to 
+/* We derive the face class, because we need additional pointers to
    a successor and predecessor.
- 
+
    We want to change the order to avoid looking at faces too often.
    When we make an operation (flip of an edge / removal of a vertex)
    we mark the adjacent four / three edges and move them right
@@ -81,7 +81,7 @@ public:
 
   // Handling the doubly connected list of faces
   // These functions should not be public, but private
-  // and the tds should be declared friend. 
+  // and the tds should be declared friend.
 
   // Returns the sucessor
   Face_handle n() const {return _n;}
@@ -106,7 +106,7 @@ protected:
   void remove_from_list() {
     // Q: Can't we be sure that there is always a predecessor
     // and successor?? This might pose a problem when we
-    // remove the final tetrahedron, that is we have to 
+    // remove the final tetrahedron, that is we have to
     // check whether that one still performs the
     // Surface::remove_vertex_3() method
     if(&*_p)
@@ -142,7 +142,7 @@ public:
       mark_halfedge(i);
       if (h != handle())
 	h->move_after_this(handle());
-    }      
+    }
   }
 
   // unmarks the two halfedges
@@ -203,10 +203,10 @@ protected:
 // It only implements a constructor, the rest is inherited
 
 template <class T>
-class Delaunay_remove_tds_3_2 
-  : public Triangulation_data_structure_2< 
+class Delaunay_remove_tds_3_2
+  : public Triangulation_data_structure_2<
            Delaunay_remove_tds_vertex_3_2<typename T::Vertex_handle>,
-	   Delaunay_remove_tds_face_3_2<typename T::Facet> > 
+	   Delaunay_remove_tds_face_3_2<typename T::Facet> >
 {
 public:
   typedef typename T::Facet Facet;
@@ -214,7 +214,7 @@ public:
   typedef typename T::Vertex_handle Vertex_handle;
 
 private:
-  typedef Triangulation_data_structure_2< 
+  typedef Triangulation_data_structure_2<
             Delaunay_remove_tds_vertex_3_2<typename T::Vertex_handle>,
             Delaunay_remove_tds_face_3_2<typename T::Facet> > TDS_2;
 
@@ -251,7 +251,7 @@ public:
 
   Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole );
 
-  void remove_degree_3(Vertex_handle_3_2 v, Face_handle_3_2 f) 
+  void remove_degree_3(Vertex_handle_3_2 v, Face_handle_3_2 f)
   {
     int i = f->index(v);
     // As f->neighbor(cw(i)) and f->neighbor(ccw(i)) will be removed,
@@ -281,8 +281,8 @@ Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole)
       Facet facet = *fit;
       Cell_handle h = facet.first;
       int k = facet.second;
-    
-      // All 2d faces must have the same orientation, 
+
+      // All 2d faces must have the same orientation,
       // so we need a mapping from 3d to 2d indices.
       // Furthermore the triangles are seen "from the other side"
       int i0 = 0, i1 = 2, i2 = 3;
@@ -305,7 +305,7 @@ Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole)
       } else {
 	v0 = map_it->second;
       }
-      
+
       Vertex_handle w1 = h->vertex(i1);
       if((map_it = vertex_map.find(w1)) == vertex_map.end()) {
 	v1 = create_vertex();
@@ -314,7 +314,7 @@ Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole)
       } else {
 	v1 = map_it->second;
       }
-      
+
       Vertex_handle w2 = h->vertex(i2);
       if((map_it = vertex_map.find(w2)) == vertex_map.end()) {
 	v2 = create_vertex();
@@ -332,7 +332,7 @@ Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole)
       f->set_info(facet);
 
       for(int j = 0; j < 3; j++) {
-	Vertex_handle_3_2 v = f->vertex(j); 
+	Vertex_handle_3_2 v = f->vertex(j);
 	Vertex_handle_3_2 w = f->vertex(cw(j));
 	halfedges.push_back((v < w) ? Halfedge(v, w, f, ccw(j))
 	                            : Halfedge(w, v, f, ccw(j)));
@@ -342,7 +342,7 @@ Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole)
     std::sort(halfedges.begin(), halfedges.end());
 
     // The halfedges that are opposite to each other are neighbors
-    // in the sorted list. 
+    // in the sorted list.
 
     for(typename std::vector<Halfedge>::iterator it = halfedges.begin();
 	it != halfedges.end(); ++it) {
@@ -352,7 +352,7 @@ Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole)
       e1.third->set_neighbor(e1.fourth, e2.third);
       e2.third->set_neighbor(e2.fourth, e1.third);
     }
-    // The TDS cannot know that it is 2D because we constructed it 
+    // The TDS cannot know that it is 2D because we constructed it
     // with advanced functions
     set_dimension(2);
 

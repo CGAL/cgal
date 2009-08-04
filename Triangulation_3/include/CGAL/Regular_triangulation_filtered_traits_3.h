@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H

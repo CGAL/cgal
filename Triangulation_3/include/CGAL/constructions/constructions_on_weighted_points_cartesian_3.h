@@ -13,14 +13,14 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
 #ifndef CGAL_CONSTRUCTIONS_ON_WEIGHTED_POINTS_CARTESIAN_3_H
 #define CGAL_CONSTRUCTIONS_ON_WEIGHTED_POINTS_CARTESIAN_3_H
 
-CGAL_BEGIN_NAMESPACE 
+CGAL_BEGIN_NAMESPACE
 
 template <class FT>
 void
@@ -37,17 +37,17 @@ determinants_for_weighted_circumcenterC3(
   FT qpx = qx-px;
   FT qpy = qy-py;
   FT qpz = qz-pz;
-  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + 
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) +
            CGAL_NTS square(qpz) - qw + pw;
   FT rpx = rx-px;
   FT rpy = ry-py;
   FT rpz = rz-pz;
-  FT rp2 = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) + 
+  FT rp2 = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) +
            CGAL_NTS square(rpz) - rw + pw;
   FT spx = sx-px;
   FT spy = sy-py;
   FT spz = sz-pz;
-  FT sp2 = CGAL_NTS square(spx) + CGAL_NTS square(spy) + 
+  FT sp2 = CGAL_NTS square(spx) + CGAL_NTS square(spy) +
            CGAL_NTS square(spz) - sw + pw;
 
   num_x = determinant(qpy,qpz,qp2,
@@ -101,9 +101,9 @@ weighted_circumcenterC3(
                 const FT &sx, const FT &sy, const FT &sz, const FT &sw,
                 FT &x, FT &y, FT &z, FT &w)
 {
-  // this function  compute the weighted circumcenter point 
+  // this function  compute the weighted circumcenter point
   // and the squared weighted circumradius
-  
+
   // Translate p to origin and compute determinants
   FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
@@ -118,7 +118,7 @@ weighted_circumcenterC3(
   x = px + num_x*inv;
   y = py - num_y*inv;
   z = pz + num_z*inv;
-  
+
   w = (CGAL_NTS square(num_x)+CGAL_NTS square(num_y)+CGAL_NTS square(num_z))
       *CGAL_NTS square(inv) - pw;
 }
@@ -134,7 +134,7 @@ squared_radius_orthogonal_sphereC3(
 {
 
   // this function  compute the squared weighted circumradius only
-  
+
   // Translate p to origin and compute determinants
   FT num_x, num_y, num_z, den;
   determinants_for_weighted_circumcenterC3(px, py, pz, pw,
@@ -168,12 +168,12 @@ determinants_for_weighted_circumcenterC3(
   FT qpx = qx-px;
   FT qpy = qy-py;
   FT qpz = qz-pz;
-  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + 
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) +
            CGAL_NTS square(qpz) - qw + pw;
   FT rpx = rx-px;
   FT rpy = ry-py;
   FT rpz = rz-pz;
-  FT rp2 = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) + 
+  FT rp2 = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) +
            CGAL_NTS square(rpz) - rw + pw;
 
   FT sx = qpy*rpz-qpz*rpy;
@@ -208,7 +208,7 @@ determinants_for_weighted_circumcenterC3(
 
 template < class FT >
 void
-weighted_circumcenterC3( 
+weighted_circumcenterC3(
                   const FT &px, const FT &py, const FT &pz, const FT &pw,
 		  const FT &qx, const FT &qy, const FT &qz, const FT &qw,
 		  const FT &rx, const FT &ry, const FT &rz, const FT &rw,
@@ -234,7 +234,7 @@ weighted_circumcenterC3(
 
 template < class FT >
 void
-weighted_circumcenterC3( 
+weighted_circumcenterC3(
                   const FT &px, const FT &py, const FT &pz, const FT &pw,
 		  const FT &qx, const FT &qy, const FT &qz, const FT &qw,
 		  const FT &rx, const FT &ry, const FT &rz, const FT &rw,
@@ -291,7 +291,7 @@ squared_radius_smallest_orthogonal_sphereC3(
 
 template < class FT >
 void
-weighted_circumcenterC3( 
+weighted_circumcenterC3(
                   const FT &px, const FT &py, const FT &pz, const FT &pw,
 		  const FT &qx, const FT &qy, const FT &qz, const FT &qw,
 		  FT &x, FT &y, FT &z)
@@ -300,20 +300,20 @@ weighted_circumcenterC3(
   FT qpx = qx-px;
   FT qpy = qy-py;
   FT qpz = qz-pz;
-  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + 
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) +
            CGAL_NTS square(qpz);
   FT inv = FT(1)/(FT(2)*qp2);
   FT alpha = 1/FT(2) + (pw-qw)*inv;
-  
+
   x = px + alpha * qpx;
   y = py + alpha * qpy;
   z = pz + alpha * qpz;
-} 
+}
 
- 
+
 template < class FT >
 void
-weighted_circumcenterC3( 
+weighted_circumcenterC3(
                   const FT &px, const FT &py, const FT &pz, const FT &pw,
 		  const FT &qx, const FT &qy, const FT &qz, const FT &qw,
 		  FT &x, FT &y, FT &z, FT &w)
@@ -323,17 +323,17 @@ weighted_circumcenterC3(
   FT qpx = qx-px;
   FT qpy = qy-py;
   FT qpz = qz-pz;
-  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + 
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) +
            CGAL_NTS square(qpz);
   FT inv = FT(1)/(FT(2)*qp2);
   FT alpha = 1/FT(2) + (pw-qw)*inv;
-  
+
   x = px + alpha * qpx;
   y = py + alpha * qpy;
   z = pz + alpha * qpz;
 
   w = CGAL_NTS square(alpha)*qp2 - pw;
-} 
+}
 
 
 template< class FT >
@@ -342,32 +342,32 @@ FT
 squared_radius_smallest_orthogonal_sphereC3(
   const FT &px, const FT &py, const FT &pz, const FT  &pw,
   const FT &qx, const FT &qy, const FT &qz, const FT  &qw)
-{ 
+{
   // this function  computes
   // the weighted circumradius only
   FT qpx = qx-px;
   FT qpy = qy-py;
   FT qpz = qz-pz;
-  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + 
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) +
            CGAL_NTS square(qpz);
   FT inv = FT(1)/(FT(2)*qp2);
   FT alpha = 1/FT(2) + (pw-qw)*inv;
-  
+
   return  CGAL_NTS square(alpha)*qp2 - pw;
 }
 
 
 template< class FT >
 FT
-power_productC3( 
+power_productC3(
   const FT &px, const FT &py, const FT &pz, const FT  &pw,
   const FT &qx, const FT &qy, const FT &qz, const FT  &qw)
-{ 
+{
   // computes the power product of two weighted points
   FT qpx = qx-px;
   FT qpy = qy-py;
   FT qpz = qz-pz;
-  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) + 
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) +
            CGAL_NTS square(qpz);
   return qp2 - pw - qw ;
 }
@@ -389,7 +389,7 @@ radical_axisC3(const RT &px, const RT &py, const RT &pz, const We &pw,
 }
 
 // function used in critical_squared_radiusC3
-// power ( t, tw) with respect to 
+// power ( t, tw) with respect to
 // circle orthogonal (p,pw), (q,qw), (r,rw), (s,sw)
 template < class FT>
 FT
@@ -405,7 +405,7 @@ power_to_orthogonal_sphereC3(
     FT dpx = px - tx;
     FT dpy = py - ty;
     FT dpz = pz - tz;
-    FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + 
+    FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) +
              CGAL_NTS square(dpz) - pw + tw ;
     FT dqx = qx - tx;
     FT dqy = qy - ty;
@@ -415,12 +415,12 @@ power_to_orthogonal_sphereC3(
     FT drx = rx - tx;
     FT dry = ry - ty;
     FT drz = rz - tz;
-    FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) + 
+    FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) +
              CGAL_NTS square(drz) - rw + tw;
     FT dsx = sx - tx;
     FT dsy = sy - ty;
     FT dsz = sz - tz;
-    FT dst = CGAL_NTS square(dsx) + CGAL_NTS square(dsy) + 
+    FT dst = CGAL_NTS square(dsx) + CGAL_NTS square(dsy) +
              CGAL_NTS square(dsz) - sw + tw;
 
     return determinant(dpx, dpy, dpz, dpt,
@@ -432,7 +432,7 @@ power_to_orthogonal_sphereC3(
 
 
 
-// compute the critical weight tw 
+// compute the critical weight tw
 // where weighted point t is orthogonal to weighted points p, q,r,s
 template < class FT>
 FT
@@ -443,7 +443,7 @@ critical_squared_radiusC3(
                 const FT &sx, const FT &sy, const FT &sz, const FT &sw,
                 const FT &tx, const FT &ty, const FT &tz, const FT &  )
 {
-  // the 5x5 det  is a linear function of tw ff(tw)= ff(0) + tw ff(1) 
+  // the 5x5 det  is a linear function of tw ff(tw)= ff(0) + tw ff(1)
   // the critical value for tw is  - ff(0)/( ff(1) - ff(0))
 
 
@@ -452,7 +452,7 @@ critical_squared_radiusC3(
 					   rx, ry, rz, rw,
 					   sx, sy, sz, sw,
 					   tx, ty, tz, FT(0));
-    
+
     FT ff1 = power_to_orthogonal_sphereC3(px, py, pz, pw,
 					    qx, qy, qz, qw,
 					    rx, ry, rz, rw,

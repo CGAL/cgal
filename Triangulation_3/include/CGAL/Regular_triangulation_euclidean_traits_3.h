@@ -32,7 +32,7 @@
 #include <CGAL/predicates/predicates_on_weighted_points_cartesian_3.h>
 #include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
 
-CGAL_BEGIN_NAMESPACE 
+CGAL_BEGIN_NAMESPACE
 
 // returns minus the sign of the determinant of the lifted points
 // associated with p,q,r,s,t  [P,Q,R,S,T]
@@ -124,7 +124,7 @@ public:
     // return in fact minus the 5x5 determinant of lifted (p,q,r,s.t)
     return - o * os;
   }
-  
+
   Sign operator() ( const Weighted_point_3 & p,
 		    const Weighted_point_3 & q,
 		    const Weighted_point_3 & r,
@@ -176,7 +176,7 @@ public :
   {
     return enum_cast<CGAL::Bounded_side>( - In_sphere()(p,q,r,s,t));
   }
-  
+
   Bounded_side operator() ( const Weighted_point_3 & p,
 			    const Weighted_point_3 & q,
 			    const Weighted_point_3 & r,
@@ -196,8 +196,8 @@ public :
 
 
 // operator() returns true if the affine hull of the dual
-// to the given weighted points 
-// intersect  the simplex formed by the bare points 
+// to the given weighted points
+// intersect  the simplex formed by the bare points
 template < typename K >
 class Does_simplex_intersect_weighted_dual_support_3
 {
@@ -226,7 +226,7 @@ public:
     return does_simplex_intersect_weighted_dual_supportC3(
                                         p.x(), p.y(), p.z(), p.weight(),
 					q.x(), q.y(), q.z(), q.weight(),
-					r.x(), r.y(), r.z(), r.weight()); 
+					r.x(), r.y(), r.z(), r.weight());
   }
 
   Bounded_side operator()(const Weighted_point_3 & p,
@@ -351,9 +351,9 @@ template< typename K>
 class Compute_critical_squared_radius_3
 {
  public:
-  typedef typename K::Weighted_point_3                  Weighted_point_3; 
+  typedef typename K::Weighted_point_3                  Weighted_point_3;
   typedef typename K::FT                                FT;
- 
+
   typedef FT               result_type;
 
   result_type operator() (const Weighted_point_3 & p,
@@ -404,7 +404,7 @@ public:
   typedef CGAL::Side_of_bounded_orthogonal_sphere_3<Self>
                                 Side_of_bounded_orthogonal_sphere_3;
   typedef CGAL::Does_simplex_intersect_weighted_dual_support_3<Self>
-                                Does_simplex_intersect_dual_support_3; 
+                                Does_simplex_intersect_dual_support_3;
   typedef CGAL::Construct_weighted_circumcenter_3<Self>
                                  Construct_weighted_circumcenter_3;
   typedef CGAL::Compute_squared_radius_smallest_orthogonal_sphere_3<Self>
@@ -412,14 +412,14 @@ public:
   typedef CGAL::Compute_power_product_3<Self>    Compute_power_product_3;
   typedef CGAL::Compute_critical_squared_radius_3<Self>
                                        Compute_critical_squared_radius_3;
-  
+
   Power_test_3   power_test_3_object() const
   { return Power_test_3(); }
 
   Compare_power_distance_3 compare_power_distance_3_object() const
   { return Compare_power_distance_3(); }
 
-  In_smallest_orthogonal_sphere_3 
+  In_smallest_orthogonal_sphere_3
   in_smallest_orthogonal_sphere_3_object() const
   { return In_smallest_orthogonal_sphere_3(); }
 
@@ -427,11 +427,11 @@ public:
   side_of_bounded_orthogonal_sphere_3_object() const
   { return Side_of_bounded_orthogonal_sphere_3(); }
 
-  Does_simplex_intersect_dual_support_3 
+  Does_simplex_intersect_dual_support_3
   does_simplex_intersect_dual_support_3_object() const
   { return Does_simplex_intersect_dual_support_3(); }
 
-  Construct_weighted_circumcenter_3 
+  Construct_weighted_circumcenter_3
   construct_weighted_circumcenter_3_object() const
   { return Construct_weighted_circumcenter_3(); }
 
@@ -530,7 +530,7 @@ compare_power_distance_3 (const Point &p,
    return compare_power_distanceC3(p.x(), p.y(), p.z(),
 				   q.x(), q.y(), q.z(), FT(q.weight()),
 				   r.x(), r.y(), r.z(), FT(r.weight()));
-}     
+}
 
 
 
@@ -610,7 +610,7 @@ compare_power_distance_3 (const Point &p,
   return compare_power_distanceC3(p.x(), p.y(), p.z(), FT(p.weight()),
 				  q.x(), q.y(), q.z(), FT(q.weight()),
 				  t.x(), t.y(), t.z(), FT(t.weight()));
-}     
+}
 
 // Kludges for M$.
 

@@ -167,7 +167,7 @@ private:
   static int next_around_edge(const int i, const int j)
   {
       return Triangulation_utils_3::next_around_edge(i,j);
-  } 
+  }
 };
 
 template < class Tds_ >
@@ -385,7 +385,7 @@ private:
   static int next_around_edge(const int i, const int j)
   {
       return Triangulation_utils_3::next_around_edge(i,j);
-  } 
+  }
 };
 
 template < class Tds_ >
@@ -485,11 +485,11 @@ private:
   static int cw(int i)
   {
       return Triangulation_utils_3::cw(i);
-  } 
+  }
   static int ccw(int i)
   {
       return Triangulation_utils_3::ccw(i);
-  } 
+  }
 };
 
 CGAL_END_NAMESPACE

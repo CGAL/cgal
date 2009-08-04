@@ -53,7 +53,7 @@ public:
   // The next typedef is there for backward compatibility
   // Some users take their point type from the traits class.
   // Before this type was Point
-  typedef Point_3                      Point; 
+  typedef Point_3                      Point;
 
   typedef typename Rep::Compare_x_3                Compare_x_3;
   typedef typename Rep::Compare_y_3                Compare_y_3;
