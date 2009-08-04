@@ -60,6 +60,18 @@ class Triangulation_data_structure_3
 
 public:
 
+  // Tools to change the Vertex and Cell types of the TDS.
+  template < typename Vb2 >
+  struct Rebind_vertex {
+    typedef Triangulation_data_structure_3<Vb2, Cb>  Other;
+  };
+
+  template < typename Cb2 >
+  struct Rebind_cell {
+    typedef Triangulation_data_structure_3<Vb, Cb2>  Other;
+  };
+
+  // Put this TDS inside the Vertex and Cell types.
   typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex;
   typedef typename Cb::template Rebind_TDS<Tds>::Other  Cell;
 

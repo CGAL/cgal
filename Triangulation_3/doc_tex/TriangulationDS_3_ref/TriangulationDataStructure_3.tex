@@ -100,6 +100,21 @@ Requirements for \ccc{Vertex} and \ccc{Cell} are described in
 \ccRefPage{TriangulationDataStructure_3::Vertex} and
 \ccRefPage{TriangulationDataStructure_3::Cell})}.
 
+\begin{ccAdvanced}
+\ccNestedType{template <typename Vb2> struct Rebind_vertex}
+{This nested template class allows to get the type of a triangulation
+data structure that only changes the vertex type.  It has to define a type
+\ccc{Other} which is a {\it rebound} triangulation data structure, that is, the
+one whose \ccc{TriangulationDSVertexBase_3} will be \ccc{Vb2}.}
+\ccGlue
+\ccNestedType{template <typename Cb2> struct Rebind_cell}
+{This nested template class allows to get the type of a triangulation
+data structure that only changes the cell type.  It has to define a type
+\ccc{Other} which is a {\it rebound} triangulation data structure, that is, the
+one whose \ccc{TriangulationDSCellBase_3} will be \ccc{Cb2}.}
+\end{ccAdvanced}
+
+
 \ccTypedef{typedef Triple<Cell_handle, int, int> Edge;}{\ccc{(c,i,j)} is the
 edge of cell \ccc{c} whose vertices indices are \ccc{i} and
 \ccc{j}. (See Section~\ref{TDS3-sec-intro}.)}
