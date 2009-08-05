@@ -130,7 +130,7 @@ public:
     return;
   }
 
-  /*! Detach the observer to the arrangement. */
+  /*! Detach the observer from the arrangement. */
   void detach ()
   {
     if (p_arr == NULL)
