@@ -22,8 +22,8 @@
 //
 //******************************************************************************
 
-#ifndef MESH_STANDARD_FACET_CRITERIA_H_
-#define MESH_STANDARD_FACET_CRITERIA_H_
+#ifndef CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H_
+#define CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H_
 
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
@@ -100,12 +100,7 @@ protected:
   virtual Badness do_is_bad (const Facet& f) const
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
-
-//    if(B_ == FT(0))
-//    {
-//      q = 1;
-//      return false;
-//    }
+    CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits Gt;
     typedef typename Tr::Point Point_3;
@@ -179,11 +174,7 @@ protected:
   virtual Badness do_is_bad (const Facet& f) const
   {
     CGAL_assertion(f.first->is_facet_on_surface(f.second));
-
-//    if(B_ == Quality(0)) {
-//      q = 1;
-//      return false;
-//    }
+    CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits Gt;
     typedef typename Tr::Point Point_3;
@@ -255,11 +246,7 @@ protected:
   virtual Badness do_is_bad (const Facet& f) const
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
-
-//    if(B_ == Quality(0)) {
-//      q = 1;
-//      return false;
-//    }
+    CGAL_assertion (B_ != 0);
 
     typedef typename Tr::Geom_traits Gt;
     typedef typename Tr::Point Point_3;
@@ -326,6 +313,7 @@ protected:
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Cell_handle Cell_handle;
+    typedef typename Tr::Vertex::Index Index;
 
     const Cell_handle& ch = f.first;
     const int i = f.second;
@@ -334,9 +322,9 @@ protected:
     const Vertex_handle& v3 = ch->vertex((i+3)&3);
 
     // Look if vertex are on surface
-    if ( (v1->in_dimension() != 2) ||
-         (v2->in_dimension() != 2) ||
-         (v3->in_dimension() != 2) )
+    if ( (v1->in_dimension() > 2) ||
+         (v2->in_dimension() > 2) ||
+         (v3->in_dimension() > 2) )
     {
       return Badness(Quality(1));
     }
@@ -374,10 +362,9 @@ public:
 
 };  // end class Facet_criterion_visitor
 
-
 }  // end namespace Mesh_3
 
 }  // end namespace CGAL
 
 
-#endif // MESH_STANDARD_FACET_CRITERIA_H_
+#endif // CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H_

@@ -52,18 +52,7 @@ dihedral_angle_aux_compute_quotient(const typename K::Point_3& p0,
 
 } // end namespace details;
 
-  
-/**
- * Computes dihedral angle of planes (a,b,c) and (a,b,d)
- */  
-template <typename Point_3>
-typename Kernel_traits<Point_3>::Kernel::FT
-dihedral_angle(const Point_3& a, const Point_3& b,
-               const Point_3& c, const Point_3& d)
-{
-  return dihedral_angle(a, b, c, d, typename Kernel_traits<Point_3>::Kernel());
-}
-
+ 
 /**
  * Computes dihedral angle of planes (a,b,c) and (a,b,d)
  */
@@ -88,6 +77,17 @@ dihedral_angle(const typename K::Point_3& a,
            / FT(CGAL_PI) );
 }
 
+/**
+ * Computes dihedral angle of planes (a,b,c) and (a,b,d)
+ */  
+template <typename Point_3>
+typename Kernel_traits<Point_3>::Kernel::FT
+dihedral_angle(const Point_3& a, const Point_3& b,
+               const Point_3& c, const Point_3& d)
+{
+  return dihedral_angle(a, b, c, d, typename Kernel_traits<Point_3>::Kernel());
+}
+  
 } // end namespace Mesh_3
 } // end namespace CGAL
 

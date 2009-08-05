@@ -23,8 +23,8 @@
 //
 //******************************************************************************
 
-#ifndef LABELED_IMAGE_MESH_DOMAIN_3_H
-#define LABELED_IMAGE_MESH_DOMAIN_3_H
+#ifndef CGAL_LABELED_IMAGE_MESH_DOMAIN_3_H
+#define CGAL_LABELED_IMAGE_MESH_DOMAIN_3_H
 
 
 #include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
@@ -38,26 +38,24 @@ namespace CGAL {
  *
  *
  */
-template<class Image, class BGT>
+template<class Image,
+         class BGT,
+         class Wrapper = Mesh_3::Image_to_labeled_function_wrapper<Image, BGT> >
 class Labeled_image_mesh_domain_3
-: public Mesh_3::Labeled_mesh_domain_3<
-                Mesh_3::Image_to_labeled_function_wrapper<Image, BGT>,
-                BGT>
+: public Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT>
 {
 public:
-  typedef Mesh_3::Image_to_labeled_function_wrapper<Image, BGT> Image_wrapper;
-  typedef Mesh_3::Labeled_mesh_domain_3<Image_wrapper, BGT> Base;
+  typedef Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT> Base;
 
   typedef typename Base::Sphere_3 Sphere_3;
   typedef typename Base::FT FT;
   typedef BGT Geom_traits;
-//  typedef typename BGT::Iso_cuboid_3 Bbox_3;
   typedef CGAL::Bbox_3 Bbox_3;
 
   /// Constructor
   Labeled_image_mesh_domain_3(const Image& image,
-                               const FT& error_bound = FT(1e-3))
-    : Base(Image_wrapper(image),
+                              const FT& error_bound = FT(1e-3))
+    : Base(Wrapper(image),
            compute_bounding_box(image),
            error_bound)                           { };
 
@@ -66,12 +64,11 @@ public:
 
 
 private:
-  /// Returns a sphere enclosing image \c im
-  Sphere_3 compute_bounding_sphere(const Image& im) const;
+  /// Returns a box enclosing image \c im
   Bbox_3 compute_bounding_box(const Image& im) const
   {
-    return Bbox_3(0,0,0,
-                  im.xdim()*im.vx(), im.ydim()*im.vy(), im.zdim()*im.vz());
+    return Bbox_3(-1,-1,-1,
+                  im.xdim()*im.vx()+1, im.ydim()*im.vy()+1, im.zdim()*im.vz()+1);
   }
 
 private:
@@ -84,31 +81,8 @@ private:
 
 
 
-
-
-template<class Im, class BGT>
-typename Labeled_image_mesh_domain_3<Im,BGT>::Sphere_3
-Labeled_image_mesh_domain_3<Im,BGT>::compute_bounding_sphere(const Im& im) const
-{
-  typedef typename Base::Point_3 Point_3;
-
-  // Get center of image and return a sphere centered on center with radius
-  // [origin,center]
-  const Point_3 center(im.xdim()*im.vx()/2.,
-                       im.ydim()*im.vy()/2.,
-                       im.zdim()*im.vz()/2.);
-
-  const FT sq_radius = CGAL::squared_distance(center, Point_3(CGAL::ORIGIN));
-
-  // We add 1 to radius to ensure that image is strictly inside sphere
-  return Sphere_3(center, sq_radius + 1.);
-}
-
-
-
-
 }  // end namespace CGAL
 
 
 
-#endif // LABELED_IMAGE_MESH_DOMAIN_3_H
+#endif // CGAL_LABELED_IMAGE_MESH_DOMAIN_3_H

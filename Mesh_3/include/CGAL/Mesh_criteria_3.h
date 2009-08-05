@@ -23,24 +23,25 @@
 //******************************************************************************
 
 
-#ifndef MESH_CRITERIA_3_H
-#define MESH_CRITERIA_3_H
+#ifndef CGAL_MESH_CRITERIA_3_H
+#define CGAL_MESH_CRITERIA_3_H
 
-//#include <CGAL/Surface_mesh_default_criteria_3.h>
 #include <CGAL/Mesh_facet_criteria_3.h>
 #include <CGAL/Mesh_cell_criteria_3.h>
 
 namespace CGAL {
 
 // Class Mesh_criteria_3
-// Provides default meshing criteria to drive Mesh_3 process
-template <class Tr>
+// Provides default mesh criteria to drive Mesh_3 process
+template <class Tr,
+          typename FacetCriteria = Mesh_facet_criteria_3<Tr>,
+          typename CellCriteria = Mesh_cell_criteria_3<Tr> >
 class Mesh_criteria_3
 {
 public:
-  typedef Mesh_facet_criteria_3<Tr>     Facet_criteria;
-  typedef Mesh_cell_criteria_3<Tr>     Cell_criteria;
-
+  typedef FacetCriteria   Facet_criteria;
+  typedef CellCriteria    Cell_criteria;
+  
   // Constructor
   Mesh_criteria_3(const Facet_criteria& facet_criteria,
                   const Cell_criteria& cell_criteria)
@@ -59,8 +60,7 @@ private:
 
 };  // end class Mesh_criteria_3
 
-
 }  // end namespace CGAL
 
 
-#endif // MESH_CRITERIA_3_H
+#endif // CGAL_MESH_CRITERIA_3_H

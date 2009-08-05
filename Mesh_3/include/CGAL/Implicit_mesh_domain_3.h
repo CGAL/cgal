@@ -38,18 +38,15 @@ namespace CGAL {
  * Implements mesh_traits for a domain defined as the negative values of
  * an implicit function.
  */
-template<class Function, class BGT>
+template<class Function,
+  class BGT,
+  class Wrapper = Mesh_3::Implicit_to_labeled_function_wrapper<Function,BGT> >
 class Implicit_mesh_domain_3
-: public Mesh_3::Labeled_mesh_domain_3<
-                  Mesh_3::Implicit_to_labeled_function_wrapper<Function, BGT>,
-                  BGT >
+ : public Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT >
 {
 public:
-  /// The function wrapper
-  typedef Mesh_3::Implicit_to_labeled_function_wrapper<Function, BGT>
-                                                              Function_wrapper;
   /// Base type
-  typedef Mesh_3::Labeled_mesh_domain_3<Function_wrapper, BGT> Base;
+  typedef Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT> Base;
 
   /// Public types
   typedef typename Base::Sphere_3 Sphere_3;
@@ -65,7 +62,7 @@ public:
   Implicit_mesh_domain_3(Function& f,
                          const Sphere_3& bounding_sphere,
                          const FT& error_bound = FT(1e-3))
-    : Base(Function_wrapper(f), bounding_sphere, error_bound)  { };
+    : Base(Wrapper(f), bounding_sphere, error_bound)  { };
 
   /// Destructor
   virtual ~Implicit_mesh_domain_3() { };

@@ -106,7 +106,10 @@ public:
    */
   Polyhedral_mesh_domain_3(const Polyhedron& p)
     : tree_(TriangleAccessor().triangles_begin(p),
-            TriangleAccessor().triangles_end(p))            { };
+            TriangleAccessor().triangles_end(p))
+  { 
+    tree_.accelerate_distance_queries();
+  };
 
   /// Destructor
   ~Polyhedral_mesh_domain_3() { };
@@ -259,8 +262,8 @@ public:
   {
     return Construct_intersection(*this);
   }
-
-
+  
+  
   /**
    * Returns the index to be stored in a vertex lying on the surface identified
    * by \c index.
