@@ -17,10 +17,18 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
+#define TRACE(m) { std::ostringstream ss ; ss << m << std::endl ; trace(ss.str()); }
 
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <list>
+
+void trace( std::string s )
+{
+  static std::ofstream out("log.txt");
+  out << s ;
+}
 
 #include <boost/shared_ptr.hpp>
 
@@ -77,6 +85,7 @@
 #include "ui_boolean_operations_2.h"
 
 #include "typedefs.h"
+
 
 void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
 {
@@ -616,95 +625,24 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet )
   return rOK ;
 }
 
-bool read_bezier2 ( QString aFileName, Bezier_polygon_set& rSet )
+Bezier_curve read_bezier_curve ( std::istream& is )
 {
-  bool rOK = false ;
-  
-  std::ifstream in_file (qPrintable(aFileName));
-  
-  if ( in_file )
+  // Read the number of control points.
+  unsigned int  n;
+
+  is >> n;
+
+  // Read the control points.
+  std::vector<Bezier_rat_point>   ctrl_pts (n);
+
+  for ( unsigned int k = 0; k < n; k++)
   {
-    unsigned int n_regions ;
-    in_file >> n_regions;
-    
-    for ( unsigned int r = 0 ; r < n_regions ; ++ r )
-    {
-      unsigned int n_regions ;
-      in_file >> n_regions;
-      
-      // Read the number of bezier curves.
-      unsigned int n_curves;
-      in_file >> n_curves;
-    
-      // Read the curves one by one, and construct the general polygon these
-      // curve form (the outer boundary and the holes inside it).
-      Bezier_traits                    traits;
-      Bezier_traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
-      
-      bool                               first = true;
-      Bezier_rat_point                   p_0;
-      std::list<Bezier_X_monotone_curve> xcvs;
-      Bezier_rat_kernel                  ker;
-      Bezier_rat_kernel::Equal_2         equal = ker.equal_2_object();
-      Bezier_polygon_vector              polygons ;
-    
-      for ( unsigned int k = 0; k < n_curves; ++ k ) 
-      {
-        // Read the current curve and subdivide it into x-monotone subcurves.
-        
-        Bezier_curve                            B;
-        std::list<CGAL::Object>                 x_objs;
-        std::list<CGAL::Object>::const_iterator xoit;
-        Bezier_X_monotone_curve                 xcv;
-    
-        in_file >> B;
-        make_x_monotone (B, std::back_inserter (x_objs));
-        
-        for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
-        {
-          if (CGAL::assign (xcv, *xoit))
-            xcvs.push_back (xcv);
-        }
-        
-        // Check if the current curve closes a polygon, namely whether it target
-        // point (the last control point) equals the source of the first curve in
-        // the current chain.
-        if (! first) 
-        {
-          if (equal (p_0, B.control_point(B.number_of_control_points() - 1))) 
-          {
-            // Push a new polygon into the polygon list. Make sure that the polygon
-            // is counterclockwise oriented if it represents the outer boundary
-            // and clockwise oriented if it represents a hole.
-            Bezier_polygon  pgn (xcvs.begin(), xcvs.end());
-            CGAL::Orientation  orient = pgn.orientation();
-            
-            if ((polygons.empty() && orient == CGAL::CLOCKWISE) || (! polygons.empty() && orient == CGAL::COUNTERCLOCKWISE))
-              pgn.reverse_orientation();
-            
-            polygons.push_back (pgn);
-            xcvs.clear();
-            first = true;
-          }
-        }
-        else 
-        {
-          // This is the first curve in the chain - store its source point.
-          p_0 = B.control_point(0);
-          first = false;
-        }
-      }
-    
-      // Construct the polygon with holes.
-      Bezier_polygon_vector::iterator  pit = polygons.begin();  ++pit;
-      rSet.join( Bezier_polygon_with_holes(polygons.front(), pit, polygons.end()) ) ;
-      
-      rOK = true ;
-    }
-    
+    double x,y ;
+    is >> x >> y ;
+    ctrl_pts[k] = Bezier_rat_point(x,y);
   }
-  
-  return rOK ;
+
+  return Bezier_curve(ctrl_pts.begin(),ctrl_pts.end());
 }
 
 bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
@@ -718,63 +656,112 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
   
   if ( in_file )
   {
-    // Red the number of bezier polygon with holes
-    unsigned int n_regions ;
-    in_file >> n_regions;
-    
-    for ( unsigned int r = 0 ; r < n_regions ; ++ r )
+    try
     {
-      Bezier_polygon_vector  polygons ;
+      // Red the number of bezier polygon with holes
+      unsigned int n_regions ;
+      in_file >> n_regions;
       
-      // Read the number of bezier curves.
-      unsigned int n_boundaries;
-      in_file >> n_boundaries;
-    
-      for ( unsigned int b = 0 ; b < n_boundaries ; ++ b )
+      for ( unsigned int r = 0 ; r < n_regions ; ++ r )
       {
+        Bezier_polygon_vector  polygons ;
+        
         // Read the number of bezier curves.
-        unsigned int n_curves;
-        in_file >> n_curves;
-        
-        // Read the curves one by one, and construct the general polygon these
-        // curve form (the outer boundary and the holes inside it).
-        
-        std::list<Bezier_X_monotone_curve> xcvs;
+        unsigned int n_boundaries;
+        in_file >> n_boundaries;
       
-        for ( unsigned int k = 0; k < n_curves; ++ k ) 
+        for ( unsigned int b = 0 ; b < n_boundaries ; ++ b )
         {
-          // Read the current curve and subdivide it into x-monotone subcurves.
+          // Read the number of bezier curves.
+          unsigned int n_curves;
+          in_file >> n_curves;
           
-          Bezier_curve                            B;
-          std::list<CGAL::Object>                 x_objs;
-          std::list<CGAL::Object>::const_iterator xoit;
-          Bezier_X_monotone_curve                 xcv;
-      
-          in_file >> B;
-          make_x_monotone (B, std::back_inserter (x_objs));
+          // Read the curves one by one, and construct the general polygon these
+          // curve form (the outer boundary and the holes inside it).
           
-          for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
-          {
-            if (CGAL::assign (xcv, *xoit))
-              xcvs.push_back (xcv);
-          }
-        }  
+          std::list<Bezier_X_monotone_curve> xcvs;
         
-        Bezier_polygon  pgn (xcvs.begin(), xcvs.end());
-        CGAL::Orientation  orient = pgn.orientation();
+          for ( unsigned int k = 0; k < n_curves; ++ k ) 
+          {
+            // Read the current curve and subdivide it into x-monotone subcurves.
+            
+            std::list<CGAL::Object>                 x_objs;
+            std::list<CGAL::Object>::const_iterator xoit;
+            Bezier_X_monotone_curve                 xcv;
+        
+            Bezier_curve B = read_bezier_curve(in_file);
+            
+            TRACE( "region " << r << " boundary " << b << " curve " << k );
+            TRACE( "  " << B.control_point(0) ) ;
+            TRACE( "  " << B.control_point(1) );
+            TRACE( "  " << B.control_point(2) );
+            TRACE( "  " << B.control_point(3) );
+              
+            make_x_monotone (B, std::back_inserter (x_objs));
+            
+            for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
+            {
+              if (CGAL::assign (xcv, *xoit))
+              {
+                TRACE( " X montonote: " << xcv.source() << " -> " << xcv.target() << ( xcv.is_directed_right() ? " RIGHT":" LEFT") << ( xcv.is_vertical() ? " VERTICAL" : "")) ;
+                xcvs.push_back (xcv);
+              }  
+            }
+          }  
+            
+          Bezier_polygon  pgn (xcvs.begin(), xcvs.end());
           
-        if (( b == 0 && orient == CGAL::CLOCKWISE) || ( b > 0 && orient == CGAL::COUNTERCLOCKWISE))
-          pgn.reverse_orientation();
+          if ( true || is_valid_polygon(pgn, rSet.traits()) )
+          {
+            CGAL::Orientation  orient = pgn.orientation();
+            TRACE( "  Orientation: " << orient ) ;
+              
+            if (( b == 0 && orient == CGAL::CLOCKWISE) || ( b > 0 && orient == CGAL::COUNTERCLOCKWISE))
+            {
+              TRACE( "Reversing orientation: " ) ;
+              pgn.reverse_orientation();
+            }
+              
+            polygons.push_back (pgn);
           
-        polygons.push_back (pgn);
-          
-      }
-    
-      // Construct the polygon with holes.
-      Bezier_polygon_vector::iterator  pit = polygons.begin();  ++pit;
-      rSet.join( Bezier_polygon_with_holes(polygons.front(), pit, polygons.end()) ) ;      
+          }
+          else
+          {
+            std::cerr << "Bezier polygon is not valid" << std::endl ;
+          }
+        }
       
-      rOK = true ;
+        if ( polygons.size() > 0 )
+        {
+          Bezier_polygon_with_holes pwh(polygons.front());
+          
+          if ( polygons.size() > 1 )
+          {
+            for ( Bezier_polygon_vector::const_iterator it = CGAL::successor(polygons.begin())
+                ; it != polygons.end()
+                ; ++ it 
+                )
+              pwh.add_hole(*it);    
+          }
+          
+          // Construct the polygon with holes.
+          if ( true || is_valid_polygon_with_holes(pwh, rSet.traits() ) )
+          {
+            rSet.join(pwh) ;      
+          }
+          else
+          {
+            std::cerr << "Bezier polygon is not valid" << std::endl ;
+          }
+        }
+        
+        rOK = true ;
+      }
+      
+    }
+    catch ( ... ) 
+    {
+      std::cerr << "Exception ocurred during reading of bezier polygon set." << std::endl ;
     }
   }
   
@@ -879,11 +866,6 @@ void MainWindow::open( QString fileName )
     {
       if ( ensure_bezier_mode() )
         lRead = read_bezier(fileName,active_set().bezier()) ;
-    }
-    else if (fileName.endsWith(".dat"))
-    {
-      if ( ensure_bezier_mode() )
-        lRead = read_bezier2(fileName,active_set().bezier()) ;
     }
      
     if ( lRead )

@@ -96,12 +96,14 @@ void bezier_recursive_subdivision_2( ControlPointContainer const& aCtrlPts, NT a
     bezier_recursive_subdivision_2(aCtrlPts,aMin,(aMin+aMid)/NT(2.0),aMid,aOut);
     
     *aOut ++ = Output_point_type( numeric_cast<Output_FT>(lMidP.x()), numeric_cast<Output_FT>(lMidP.y()) ) ;
+//TRACE("      P:" << Output_point_type( numeric_cast<Output_FT>(lMidP.x()), numeric_cast<Output_FT>(lMidP.y()) ) ) ;
     
     bezier_recursive_subdivision_2(aCtrlPts,aMid,(aMid+aMax)/NT(2.0),aMax,aOut);
   }
   else
   {
     *aOut ++ = Output_point_type( numeric_cast<Output_FT>(lMaxP.x()), numeric_cast<Output_FT>(lMaxP.y()) ) ;
+//TRACE("      Q:" << Output_point_type( numeric_cast<Output_FT>(lMaxP.x()), numeric_cast<Output_FT>(lMaxP.y()) ) ) ;
   }
   
 }
@@ -112,36 +114,34 @@ void bezier_recursive_subdivision_2( ControlPointContainer const& aCtrlPts, NT a
 template<class BezierCurve, class NT, class OutputPointIterator>
 void sample_bezier_curve_2( BezierCurve const& aBC, NT aSourceT, NT aTargetT, OutputPointIterator aOut )
 {
-  if ( aSourceT != aTargetT )
+  typedef typename value_type_traits<OutputPointIterator>::type Output_point_type ;
+  
+  typedef std::deque<Output_point_type> Control_points ;
+  
+  bool lFwd = aSourceT < aTargetT ;
+  
+  Control_points lCtrlPoints ;
+  int nc = aBC.number_of_control_points() ;
+  for ( int i = 0 ; i < nc ; ++ i )
   {
-    typedef typename value_type_traits<OutputPointIterator>::type Output_point_type ;
+    int j = ( lFwd ? i : nc - i - 1 ) ;
     
-    typedef std::deque<Output_point_type> Control_points ;
+    Output_point_type lP ( CGALi::numeric_cast<NT>( aBC.control_point(j).x() )
+                         , CGALi::numeric_cast<NT>( aBC.control_point(j).y() )
+                         ) ;
     
-    bool lFwd = aSourceT < aTargetT ;
-    
-    Control_points lCtrlPoints ;
-    int nc = aBC.number_of_control_points() ;
-    for ( int i = 0 ; i < nc ; ++ i )
-    {
-      int j = ( lFwd ? i : nc - i - 1 ) ;
-      
-      Output_point_type lP ( CGALi::numeric_cast<NT>( aBC.control_point(j).x() )
-                           , CGALi::numeric_cast<NT>( aBC.control_point(j).y() )
-                           ) ;
-      
-      lCtrlPoints.push_back (lP);
-    }
-    
-    NT lMinT = lFwd ? aSourceT : NT(1.0) - aSourceT ;
-    NT lMaxT = lFwd ? aTargetT : NT(1.0) - aTargetT ;
-    
-    CGALi::bezier_recursive_subdivision_2(lCtrlPoints, lMinT, ( lMinT + lMaxT ) / NT(2.0) , lMaxT, aOut ) ;
+    lCtrlPoints.push_back (lP);
   }
+  
+  NT lMinT = lFwd ? aSourceT : NT(1.0) - aSourceT ;
+  NT lMaxT = lFwd ? aTargetT : NT(1.0) - aTargetT ;
+  
+TRACE("    Sampling from " << lMinT << " to " << lMaxT ) ;
+  CGALi::bezier_recursive_subdivision_2(lCtrlPoints, lMinT, ( lMinT + lMaxT ) / NT(2.0) , lMaxT, aOut ) ;
 }
 
 template<class BezierXMonotoneCurve, class OutputPointIterator>
-void sample_bezier_X_monotone_curve_2( BezierXMonotoneCurve const& aBXMC, OutputPointIterator aOut )
+void sample_bezier_X_monotone_curve_2( BezierXMonotoneCurve const& aBXMC, bool aFwd, OutputPointIterator aOut )
 {
   typedef typename BezierXMonotoneCurve::Curve_2                Bezier_curve ;
   typedef typename value_type_traits<OutputPointIterator>::type Output_point_type ;
@@ -150,22 +150,25 @@ void sample_bezier_X_monotone_curve_2( BezierXMonotoneCurve const& aBXMC, Output
   
   Bezier_curve const& lBC = aBXMC.supporting_curve();
   
-  Output_point_FT lSourceT = CGALi::get_approximated_bezier_endpoint_parameter_2<Output_point_FT>(aBXMC.source(), lBC, aBXMC.xid() ) ;
-  Output_point_FT lTargetT = CGALi::get_approximated_bezier_endpoint_parameter_2<Output_point_FT>(aBXMC.target(), lBC, aBXMC.xid() ) ;
+  Output_point_FT lFromT = CGALi::get_approximated_bezier_endpoint_parameter_2<Output_point_FT>(aFwd ? aBXMC.source() : aBXMC.target(), lBC, aBXMC.xid() ) ;
+  Output_point_FT lToT   = CGALi::get_approximated_bezier_endpoint_parameter_2<Output_point_FT>(aFwd ? aBXMC.target() : aBXMC.source(), lBC, aBXMC.xid() ) ;
   
-  sample_bezier_curve_2(lBC, lSourceT, lTargetT, aOut ); 
+TRACE("    Sampling bezier X monotone curve " << ( aBXMC.is_vertical() ? "[VERTICAL]":"") << ( aBXMC.is_directed_right() ? "[RIGHT]":"[LEFT]") << ":\n    source T=" << lFromT << " P=" << aBXMC.source() << "\n    target T=" << lToT << " P=" << aBXMC.target() );
+  sample_bezier_curve_2(lBC, lFromT, lToT, aOut ); 
 }
 
 template< class BezierPolygon, class Polygon>
 void sample_bezier_polygon_2( BezierPolygon const& aBP, Polygon& rPoly )
 {
+TRACE("  Sampling bezier polygon. Orientation=" << rPoly.orientation() );
   for( typename BezierPolygon::Curve_const_iterator cit = aBP.curves_begin(); cit != aBP.curves_end(); ++ cit )
-    sample_bezier_X_monotone_curve_2(*cit, std::back_inserter(rPoly) );    
+    sample_bezier_X_monotone_curve_2(*cit, rPoly.orientation() == COUNTERCLOCKWISE, std::back_inserter(rPoly) );    
 }
 
 template<class PolygonWihHoles, class BezierPolygonWithHoles>
 void sample_bezier_polygon_with_holes_2( BezierPolygonWithHoles const& aBPWH, PolygonWihHoles& rPolyWithHoles )
 {
+TRACE("Sampling bezier polygon with holes");
   sample_bezier_polygon_2(aBPWH.outer_boundary(), rPolyWithHoles.outer_boundary() ) ;
   
   for( typename BezierPolygonWithHoles::Hole_const_iterator hit = aBPWH.holes_begin(); hit != aBPWH.holes_end(); ++ hit )
@@ -173,8 +176,8 @@ void sample_bezier_polygon_with_holes_2( BezierPolygonWithHoles const& aBPWH, Po
     typename PolygonWihHoles::Polygon_2 lHole ;
     sample_bezier_polygon_2(*hit, lHole );    
     rPolyWithHoles.add_hole(lHole);
-    
   }
+TRACE("\n");
 }
 
 template<class PolygonWithHoles>
