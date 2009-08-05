@@ -633,22 +633,20 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet )
   return rOK ;
 }
 
-Bezier_curve read_bezier_curve ( std::istream& is )
+Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
 {
-
-#if 0
   // Read the number of control points.
   unsigned int  n;
 
   is >> n;
+  
 
   // Read the control points.
   std::vector<Bezier_rat_point>   ctrl_pts (n);
-
+  
   for ( unsigned int k = 0; k < n; k++)
   {
-    bool lDoubleFormat = false ;
-    if ( lDoubleFormat )
+    if ( aDoubleFormat )
     {
       double x,y ;
       is >> x >> y ;
@@ -662,12 +660,6 @@ Bezier_curve read_bezier_curve ( std::istream& is )
   }
 
   return Bezier_curve(ctrl_pts.begin(),ctrl_pts.end());
-  
-#else
-  Bezier_curve B ;
-  is >> B ;
-  return B ;
-#endif
 }
 
 bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
@@ -681,6 +673,12 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
   {
     try
     {
+      
+      std::string format ;
+      std::getline(in_file,format);
+      
+      bool lDoubleFormat = ( format.length() >= 6 && format.substr(0,6) == "DOUBLE") ;
+                              
       // Red the number of bezier polygon with holes
       unsigned int n_regions ;
       in_file >> n_regions;
@@ -714,7 +712,7 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
             Bezier_traits                           traits;
             Bezier_traits::Make_x_monotone_2        make_x_monotone = traits.make_x_monotone_2_object();
         
-            Bezier_curve B = read_bezier_curve(in_file);
+            Bezier_curve B = read_bezier_curve(in_file, lDoubleFormat);
             
             TRACE( "region " << r << " boundary " << b << " curve " << k );
               
@@ -732,24 +730,16 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
             
           Bezier_polygon  pgn (xcvs.begin(), xcvs.end());
           
-          if ( true /* is_valid_polygon(pgn, rSet.traits())*/ )
+          CGAL::Orientation  orient = pgn.orientation();
+          TRACE( "  Orientation: " << orient ) ;
+            
+          if (( b == 0 && orient == CGAL::CLOCKWISE) || ( b > 0 && orient == CGAL::COUNTERCLOCKWISE))
           {
-            CGAL::Orientation  orient = pgn.orientation();
-            TRACE( "  Orientation: " << orient ) ;
-              
-            if (( b == 0 && orient == CGAL::CLOCKWISE) || ( b > 0 && orient == CGAL::COUNTERCLOCKWISE))
-            {
-              TRACE( "Reversing orientation: " ) ;
-              pgn.reverse_orientation();
-            }
-              
-            polygons.push_back (pgn);
-          
+            TRACE( "Reversing orientation: " ) ;
+            pgn.reverse_orientation();
           }
-          else
-          {
-            std::cerr << "Bezier polygon is not valid" << std::endl ;
-          }
+            
+          polygons.push_back (pgn);
         }
       
         if ( polygons.size() > 0 )
@@ -765,8 +755,7 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
               pwh.add_hole(*it);    
           }
           
-          // Construct the polygon with holes.
-          if ( true /*|| is_valid_polygon_with_holes(pwh, rSet.traits() )*/ )
+          if ( is_valid_polygon_with_holes(pwh, rSet.traits() ) )
           {
             rSet.join(pwh) ;      
           }
