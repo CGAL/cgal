@@ -21,6 +21,9 @@
 
 #include <list>
 
+#include <CGAL/basic.h>
+#include <CGAL/memory.h>
+
 CGAL_BEGIN_NAMESPACE
 
 /*! \class
