@@ -175,9 +175,7 @@ public:
 
     CGAL_assertion(lm_gen != NULL);
     if (lm_gen)
-    {
-      lm_gen->detach(p_arr);
-    }
+      lm_gen->detach();
   }
   
   /*!
