@@ -160,9 +160,8 @@ TRACE("    Sampling bezier X monotone curve " << ( aBXMC.is_vertical() ? "[VERTI
 template< class BezierPolygon, class Polygon>
 void sample_bezier_polygon_2( BezierPolygon const& aBP, Polygon& rPoly )
 {
-TRACE("  Sampling bezier polygon. Orientation=" << rPoly.orientation() );
   for( typename BezierPolygon::Curve_const_iterator cit = aBP.curves_begin(); cit != aBP.curves_end(); ++ cit )
-    sample_bezier_X_monotone_curve_2(*cit, rPoly.orientation() == COUNTERCLOCKWISE, std::back_inserter(rPoly) );    
+    sample_bezier_X_monotone_curve_2(*cit, true, std::back_inserter(rPoly) );    
 }
 
 template<class PolygonWihHoles, class BezierPolygonWithHoles>

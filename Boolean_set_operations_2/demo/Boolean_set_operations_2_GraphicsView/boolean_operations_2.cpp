@@ -17,7 +17,15 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#define TRACE(m) { std::ostringstream ss ; ss << m << std::endl ; trace(ss.str()); }
+
+//#define ENABLE_TRACE
+
+#ifdef ENABLE_TRACE
+#  define TRACE(m) { std::ostringstream ss ; ss << m << std::endl ; trace(ss.str()); }
+#else
+#  define TRACE(m) 
+#endif
+
 
 #include <fstream>
 #include <string>
@@ -627,6 +635,8 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet )
 
 Bezier_curve read_bezier_curve ( std::istream& is )
 {
+
+#if 0
   // Read the number of control points.
   unsigned int  n;
 
@@ -637,18 +647,31 @@ Bezier_curve read_bezier_curve ( std::istream& is )
 
   for ( unsigned int k = 0; k < n; k++)
   {
-    double x,y ;
-    is >> x >> y ;
-    ctrl_pts[k] = Bezier_rat_point(x,y);
+    bool lDoubleFormat = false ;
+    if ( lDoubleFormat )
+    {
+      double x,y ;
+      is >> x >> y ;
+      ctrl_pts[k] = Bezier_rat_point(x,y);
+    }
+    else
+    {
+      is >> ctrl_pts[k] ;
+    }
+    
   }
 
   return Bezier_curve(ctrl_pts.begin(),ctrl_pts.end());
+  
+#else
+  Bezier_curve B ;
+  is >> B ;
+  return B ;
+#endif
 }
 
 bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
 {
-  Bezier_traits                    traits;
-  Bezier_traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
   
   bool rOK = false ;
   
@@ -688,14 +711,12 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
             std::list<CGAL::Object>                 x_objs;
             std::list<CGAL::Object>::const_iterator xoit;
             Bezier_X_monotone_curve                 xcv;
+            Bezier_traits                           traits;
+            Bezier_traits::Make_x_monotone_2        make_x_monotone = traits.make_x_monotone_2_object();
         
             Bezier_curve B = read_bezier_curve(in_file);
             
             TRACE( "region " << r << " boundary " << b << " curve " << k );
-            TRACE( "  " << B.control_point(0) ) ;
-            TRACE( "  " << B.control_point(1) );
-            TRACE( "  " << B.control_point(2) );
-            TRACE( "  " << B.control_point(3) );
               
             make_x_monotone (B, std::back_inserter (x_objs));
             
@@ -711,7 +732,7 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
             
           Bezier_polygon  pgn (xcvs.begin(), xcvs.end());
           
-          if ( true || is_valid_polygon(pgn, rSet.traits()) )
+          if ( true /* is_valid_polygon(pgn, rSet.traits())*/ )
           {
             CGAL::Orientation  orient = pgn.orientation();
             TRACE( "  Orientation: " << orient ) ;
@@ -745,7 +766,7 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
           }
           
           // Construct the polygon with holes.
-          if ( true || is_valid_polygon_with_holes(pwh, rSet.traits() ) )
+          if ( true /*|| is_valid_polygon_with_holes(pwh, rSet.traits() )*/ )
           {
             rSet.join(pwh) ;      
           }
