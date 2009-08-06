@@ -22,8 +22,8 @@
 // class Labeled_mesh_domain_3. See class description.
 //******************************************************************************
 
-#ifndef LABELED_MESH_DOMAIN_3_H_
-#define LABELED_MESH_DOMAIN_3_H_
+#ifndef CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
+#define CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
 
 #include <CGAL/Bbox_3.h>
 

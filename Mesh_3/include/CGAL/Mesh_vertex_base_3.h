@@ -24,8 +24,8 @@
 //******************************************************************************
 
 
-#ifndef MESH_VERTEX_BASE_3_H
-#define MESH_VERTEX_BASE_3_H
+#ifndef CGAL_MESH_VERTEX_BASE_3_H
+#define CGAL_MESH_VERTEX_BASE_3_H
 
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Surface_mesh_vertex_base_3.h>
@@ -94,4 +94,4 @@ private:
 
 
 
-#endif // MESH_VERTEX_BASE_3_H
+#endif // CGAL_MESH_VERTEX_BASE_3_H

@@ -21,8 +21,8 @@
 // File Description : refine_mesh_3 function declaration and implementation.
 //******************************************************************************
 
-#ifndef REFINE_MESH_3_H_
-#define REFINE_MESH_3_H_
+#ifndef CGAL_REFINE_MESH_3_H
+#define CGAL_REFINE_MESH_3_H
 
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 #include <CGAL/Mesh_3/Mesher_3.h>
@@ -133,4 +133,4 @@ void refine_mesh_3(C3T3& c3t3,
 }  // end namespace CGAL
 
 
-#endif // REFINE_MESH_3_H_
+#endif // CGAL_REFINE_MESH_3_H

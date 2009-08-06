@@ -22,8 +22,8 @@
 //
 //******************************************************************************
 
-#ifndef POLYHEDRAL_TO_LABELED_FUNCTION_WRAPPER_H_
-#define POLYHEDRAL_TO_LABELED_FUNCTION_WRAPPER_H_
+#ifndef CGAL_MESH_3_POLYHEDRAL_TO_LABELED_FUNCTION_WRAPPER_H
+#define CGAL_MESH_3_POLYHEDRAL_TO_LABELED_FUNCTION_WRAPPER_H
 
 
 #include <CGAL/AABB_tree.h>
@@ -338,4 +338,4 @@ private:
 
 }  // end namespace CGAL
 
-#endif // POLYHEDRAL_TO_LABELED_FUNCTION_WRAPPER_H_
+#endif // CGAL_MESH_3_POLYHEDRAL_TO_LABELED_FUNCTION_WRAPPER_H

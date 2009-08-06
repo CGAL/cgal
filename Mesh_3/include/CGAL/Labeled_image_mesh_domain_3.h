@@ -23,8 +23,8 @@
 //
 //******************************************************************************
 
-#ifndef LABELED_IMAGE_MESH_DOMAIN_3_H
-#define LABELED_IMAGE_MESH_DOMAIN_3_H
+#ifndef CGAL_LABELED_IMAGE_MESH_DOMAIN_3_H
+#define CGAL_LABELED_IMAGE_MESH_DOMAIN_3_H
 
 
 #include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
@@ -111,4 +111,4 @@ Labeled_image_mesh_domain_3<Im,BGT>::compute_bounding_sphere(const Im& im) const
 
 
 
-#endif // LABELED_IMAGE_MESH_DOMAIN_3_H
+#endif // CGAL_LABELED_IMAGE_MESH_DOMAIN_3_H

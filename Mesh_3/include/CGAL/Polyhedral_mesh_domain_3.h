@@ -22,8 +22,8 @@
 //
 //******************************************************************************
 
-#ifndef POLYHEDRAL_MESH_DOMAIN_3_H_
-#define POLYHEDRAL_MESH_DOMAIN_3_H_
+#ifndef CGAL_POLYHEDRAL_MESH_DOMAIN_3_H
+#define CGAL_POLYHEDRAL_MESH_DOMAIN_3_H
 
 #include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
 #include <CGAL/Triangle_accessor_3.h>

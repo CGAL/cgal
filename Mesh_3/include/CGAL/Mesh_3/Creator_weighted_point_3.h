@@ -23,8 +23,8 @@
 // Creator_weighted_point_3. See class description for further information.
 //******************************************************************************
 
-#ifndef CREATOR_WEIGHTED_POINT_3_H_
-#define CREATOR_WEIGHTED_POINT_3_H_
+#ifndef CGAL_MESH_3_CREATOR_WEIGHTED_POINT_3_H
+#define CGAL_MESH_3_CREATOR_WEIGHTED_POINT_3_H
 
 namespace CGAL {
 
@@ -73,4 +73,4 @@ private:
 
 }  // end namespace CGAL
 
-#endif // CREATOR_WEIGHTED_POINT_3_H_
+#endif // CGAL_MESH_3_CREATOR_WEIGHTED_POINT_3_H

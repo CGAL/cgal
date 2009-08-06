@@ -21,8 +21,8 @@
 // File Description :
 //******************************************************************************
 
-#ifndef TRIANGLE_ACCESSOR_PRIMITIVE_H
-#define TRIANGLE_ACCESSOR_PRIMITIVE_H
+#ifndef CGAL_MESH_3_TRIANGLE_ACCESSOR_PRIMITIVE_H
+#define CGAL_MESH_3_TRIANGLE_ACCESSOR_PRIMITIVE_H
 
 
 namespace CGAL {
@@ -101,4 +101,4 @@ private:
 
 
 
-#endif // TRIANGLE_ACCESSOR_PRIMITIVE_H
+#endif // CGAL_MESH_3_TRIANGLE_ACCESSOR_PRIMITIVE_H

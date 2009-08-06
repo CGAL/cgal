@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef CGAL_SLIVERS_EXUDER_CELL_ATTRIBUTES_TRAITS_H
-#define CGAL_SLIVERS_EXUDER_CELL_ATTRIBUTES_TRAITS_H
+#ifndef CGAL_MESH_3_SLIVERS_EXUDER_CELL_ATTRIBUTES_TRAITS_H
+#define CGAL_MESH_3_SLIVERS_EXUDER_CELL_ATTRIBUTES_TRAITS_H
 
 #include <boost/mpl/has_xxx.hpp>
 
@@ -76,4 +76,4 @@ struct Slivers_exuder_cell_attributes_traits
 } // end namespace CGAL
 
 
-#endif // CGAL_SLIVERS_EXUDER_CELL_ATTRIBUTES_TRAITS_H
+#endif // CGAL_MESH_3_SLIVERS_EXUDER_CELL_ATTRIBUTES_TRAITS_H

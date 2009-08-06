@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_RADIUS_RATIO_H
-#define CGAL_RADIUS_RATIO_H
+#ifndef CGAL_MESH_3_RADIUS_RATIO_H
+#define CGAL_MESH_3_RADIUS_RATIO_H
 
 namespace CGAL {
 
@@ -95,4 +95,4 @@ radius_ratio(const Tetrahedron_3& t)
 } // end namespace Mesh_3
 } // end namespace CGAL
 
-#endif // end CGAL_RADIUS_RATIO_H
+#endif // end CGAL_MESH_3_RADIUS_RATIO_H

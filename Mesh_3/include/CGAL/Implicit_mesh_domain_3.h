@@ -22,8 +22,8 @@
 // class Implicit_mesh_domain_3. See class description.
 //******************************************************************************
 
-#ifndef IMPLICIT_MESH_DOMAIN_3_H
-#define IMPLICIT_MESH_DOMAIN_3_H
+#ifndef CGAL_IMPLICIT_MESH_DOMAIN_3_H
+#define CGAL_IMPLICIT_MESH_DOMAIN_3_H
 
 
 #include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
@@ -82,4 +82,4 @@ private:
 
 }  // end namespace CGAL
 
-#endif // IMPLICIT_MESH_DOMAIN_3_H
+#endif // CGAL_IMPLICIT_MESH_DOMAIN_3_H

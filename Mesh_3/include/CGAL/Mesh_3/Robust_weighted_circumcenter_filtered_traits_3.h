@@ -22,8 +22,8 @@
 //
 //******************************************************************************
 
-#ifndef ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H_
-#define ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H_
+#ifndef CGAL_MESH_3_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H
+#define CGAL_MESH_3_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H
 
 
 #include <CGAL/number_utils_classes.h>
@@ -227,4 +227,4 @@ struct Robust_weighted_circumcenter_filtered_traits_3
 
 }  // end namespace CGAL
 
-#endif // ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H_
+#endif // CGAL_MESH_3_ROBUST_WEIGHTED_CIRCUMCENTER_FILTERED_TRAITS_3_H

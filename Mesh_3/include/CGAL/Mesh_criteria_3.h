@@ -23,8 +23,8 @@
 //******************************************************************************
 
 
-#ifndef MESH_CRITERIA_3_H
-#define MESH_CRITERIA_3_H
+#ifndef CGAL_MESH_CRITERIA_3_H
+#define CGAL_MESH_CRITERIA_3_H
 
 //#include <CGAL/Surface_mesh_default_criteria_3.h>
 #include <CGAL/Mesh_facet_criteria_3.h>
@@ -63,4 +63,4 @@ private:
 }  // end namespace CGAL
 
 
-#endif // MESH_CRITERIA_3_H
+#endif // CGAL_MESH_CRITERIA_3_H

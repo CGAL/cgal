@@ -22,8 +22,8 @@
 // Mesh_default_facet_criteria_3 class. See class description.
 //******************************************************************************
 
-#ifndef MESH_DEFAULT_FACET_CRITERIA_3_H_
-#define MESH_DEFAULT_FACET_CRITERIA_3_H_
+#ifndef CGAL_MESH_FACET_CRITERIA_3_H
+#define CGAL_MESH_FACET_CRITERIA_3_H
 
 
 #include <CGAL/Surface_mesher/Standard_criteria.h>
@@ -204,4 +204,4 @@ private:
 
 }  // end namespace CGAL
 
-#endif // MESH_DEFAULT_FACET_CRITERIA_3_H_
+#endif // CGAL_MESH_FACET_CRITERIA_3_H

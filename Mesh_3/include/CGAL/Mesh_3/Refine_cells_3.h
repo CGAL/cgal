@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent RINEAU, Stephane Tayeb
 
-#ifndef REFINE_CELLS_3_H
-#define REFINE_CELLS_3_H
+#ifndef CGAL_MESH_3_REFINE_CELLS_3_H
+#define CGAL_MESH_3_REFINE_CELLS_3_H
 
 
 #include <CGAL/Mesher_level.h>
@@ -375,4 +375,4 @@ insert_impl(const Point& point,
 }  // end namespace CGAL
 
 
-#endif // REFINE_CELLS_3_H
+#endif // CGAL_MESH_3_REFINE_CELLS_3_H
