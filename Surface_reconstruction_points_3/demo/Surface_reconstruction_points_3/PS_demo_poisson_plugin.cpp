@@ -16,9 +16,9 @@
 // Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
 Polyhedron* poisson_reconstruct(const Point_set& points,
-                                FT sm_angle, // Min triangle angle (degrees). 20=fast, 30 guaranties convergence.
-                                FT sm_radius, // Max triangle size w.r.t. point set radius. 0.1 is fine.
-                                FT sm_distance); // Approximation error w.r.t. p.s.r.. For Poisson: 0.015=fast, 0.003=smooth.
+                                FT sm_angle, // Min triangle angle (degrees). 
+                                FT sm_radius, // Max triangle size w.r.t. point set average spacing. 
+                                FT sm_distance); // Approximation error w.r.t. point set average spacing.
 
 class PS_demo_poisson_plugin :
   public QObject,
@@ -99,7 +99,7 @@ void PS_demo_poisson_plugin::reconstruct()
                          .arg(sm_angle)
                          .arg(sm_radius)
                          .arg(sm_distance));
-      new_item->setColor(Qt::magenta);
+      new_item->setColor(Qt::lightGray);
       scene->addItem(new_item);
 
       // Hide point set

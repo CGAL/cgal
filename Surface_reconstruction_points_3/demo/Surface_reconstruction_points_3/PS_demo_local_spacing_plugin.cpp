@@ -58,8 +58,8 @@ void PS_demo_local_spacing_plugin::on_actionRadiusFromDensity_triggered()
       QInputDialog::getInteger((QWidget*)mw,
                               tr("Local spacing"), // dialog title
                               tr("Number of neighbors:"), // field label
-                              18, // default value = fast
-                              6, // min
+                              6, // default value = small
+                              1, // min
                               1000, // max
                               1, // step
                               &ok);
