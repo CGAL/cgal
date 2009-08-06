@@ -921,6 +921,7 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/amer_h.
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/amer_i.bps -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/amer_j.bps -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/amer_k.bps -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/anchor.bps -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/bloop_a.bps -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/bloop_b.bps -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/bloop_c.bps -text
@@ -943,8 +944,14 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/brit_h.
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/brit_i.lps -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/brit_j.lps -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/brit_k.lps -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/bulldog_0.bps -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/bulldog_1.bps -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/bulldog_2.bps -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/char_g.bps -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/char_m.bps -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/flag.bps -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/logo.bps -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/spoun.bps -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/vlsi_1.dxf -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/data/vlsi_2.dxf -text svneol=unset#application/octet-stream
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/help/index.html -text

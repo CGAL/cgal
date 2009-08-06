@@ -95,17 +95,38 @@ void trace( std::string s )
 #include "typedefs.h"
 
 
+void show_warning( std::string aS )
+{
+  QMessageBox::warning(NULL,"Warning",QString(aS.c_str()) ) ;
+}
+
+void show_error( std::string aS )
+{
+  QMessageBox::critical(NULL,"Critical Error",QString(aS.c_str()) ) ;
+}
+
+void error( std::string aS )
+{
+  show_error(aS);
+  
+  throw std::runtime_error(aS);  
+}
+
 void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
 {
-  std::cerr << "CGAL error: " << what << " violation!" << std::endl
-       << "Expr: " << expr << std::endl
-       << "File: " << file << std::endl
-       << "Line: " << line << std::endl;
+  std::ostringstream ss ;
+  
+  ss << "CGAL error: " << what << " violation!" << std::endl
+     << "Expr: " << expr << std::endl
+     << "File: " << file << std::endl
+     << "Line: " << line << std::endl;
   if ( msg != 0)
-      std::cerr << "Explanation:" << msg << std::endl;
+    ss << "Explanation:" << msg << std::endl;
     
-  throw std::runtime_error("CGAL Error");  
+  error(ss.str());
+    
 }
+
 
 enum { BLUE_GROUP, RED_GROUP, RESULT_GROUP } ;
 
@@ -172,13 +193,89 @@ public:
       
   virtual bool is_empty() const { return mSet.is_empty() ; }
   
-  virtual void clear               ()                         { mSet.clear() ; }
-  virtual void complement          ()                         { mSet.complement(); }
-  virtual void assign              ( Rep_base const& aOther ) { mSet = cast(aOther).mSet; }
-  virtual void intersect           ( Rep_base const& aOther ) { mSet.intersection        ( cast(aOther).mSet); }
-  virtual void join                ( Rep_base const& aOther ) { mSet.join                ( cast(aOther).mSet); }
-  virtual void difference          ( Rep_base const& aOther ) { mSet.difference          ( cast(aOther).mSet); }
-  virtual void symmetric_difference( Rep_base const& aOther ) { mSet.symmetric_difference( cast(aOther).mSet); }
+  virtual void clear()                         
+  { 
+    try
+    {
+      mSet.clear() ; 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void complement()                         
+  { 
+    try
+    {
+      mSet.complement(); 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void assign( Rep_base const& aOther ) 
+  { 
+    try
+    {
+      mSet = cast(aOther).mSet; 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void intersect( Rep_base const& aOther ) 
+  { 
+    try
+    {
+      mSet.intersection( cast(aOther).mSet); 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void join( Rep_base const& aOther ) 
+  { 
+    try
+    {
+      mSet.join( cast(aOther).mSet); 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void difference( Rep_base const& aOther ) 
+  { 
+    try
+    {
+      mSet.difference( cast(aOther).mSet); 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
+  
+  virtual void symmetric_difference( Rep_base const& aOther ) 
+  { 
+    try
+    {
+      mSet.symmetric_difference( cast(aOther).mSet); 
+    } 
+    catch(...)
+    {
+      show_error("Exception thrown during boolean operation");
+    } 
+  }
   
   static Self const& cast( Rep_base const& aOther ) { return dynamic_cast<Self const&>(aOther); }
   static Self      & cast( Rep_base      & aOther ) { return dynamic_cast<Self      &>(aOther); }
@@ -640,23 +737,29 @@ Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
 
   is >> n;
   
-
   // Read the control points.
   std::vector<Bezier_rat_point>   ctrl_pts (n);
   
   for ( unsigned int k = 0; k < n; k++)
   {
+    Bezier_rat_point p ;
     if ( aDoubleFormat )
     {
       double x,y ;
       is >> x >> y ;
-      ctrl_pts[k] = Bezier_rat_point(x,y);
+      p = Bezier_rat_point(x,y);
     }
     else
     {
-      is >> ctrl_pts[k] ;
+      is >> p ;
     }
     
+    if ( k > 1 && ctrl_pts[k-1] == p ) 
+    {
+      error("Bezier data contains consecutive identical control points.");
+    }
+    
+    ctrl_pts[k] = p ;
   }
 
   return Bezier_curve(ctrl_pts.begin(),ctrl_pts.end());
@@ -761,7 +864,7 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
           }
           else
           {
-            std::cerr << "Bezier polygon is not valid" << std::endl ;
+            show_warning( "Bezier polygon is not valid" );
           }
         }
         
@@ -769,10 +872,10 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
       }
       
     }
-    catch ( ... ) 
+    catch(...)
     {
-      std::cerr << "Exception ocurred during reading of bezier polygon set." << std::endl ;
-    }
+      show_error("Exception ocurred during reading of bezier polygon set.");
+    } 
   }
   
   return rOK ;
