@@ -1,0 +1,156 @@
+\section{Performances}
+\label{surface_reconstruction_section_performances}
+
+We provide some performance numbers for scanning data. We measure the Poisson implicit function computation time, the contouring time for a variety of approximation distances, the memory occupancy and the influence of point set simplification.\\
+The machine used is a PC running Linux 32 bits with an Intel CPU Core 2 processor clocked at 3 GHz and with 3 GB of RAM. The program has been compiled with g++ 4.3.1 compiler with the 03 option which maximizes speed.
+
+\subsection{Poisson implicit function}
+
+The point set chosen for benchmarking the Poisson implicit function is the Bimba con Nastrino point set (1.6 million points) depicted on the next figure. We measure the Poisson implicit function computation (i.e. the call to \ccc{Poisson_reconstruction_function::compute_implicit_function()}) for this point set as well as for simplified versions computed by random simplification.
+
+The following table provides Poisson implicit function computation times in seconds for an increasing number of points.
+
+\begin{tabular}{|c|c|}
+  \hline
+  Number of points (kpoints) & Poisson duration (sec) \\
+  \hline
+  60                         & 65 \\
+  120                        & 137 \\
+  250                        & 282 \\
+  500                        & 566 \\
+  1000                       & 1130 \\
+  1500                       & 1777 \\
+  1600                       & 1919 \\
+  \hline
+\end{tabular}
+
+% Insert image poisson_bench.png/.eps
+\begin{center}
+    \label{Surface_reconstruction_points_3-fig-poisson_bench}
+    % Image
+    \begin{ccTexOnly}
+      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/poisson_bench} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="80%" border=0 src="./poisson_bench.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
+        \caption{Poisson implicit function computation duration (in seconds) against number of points,
+                 for the Bimba con Nastrino point set with 1.6 million points (shown)
+                 as well as for simplified versions.}
+    \end{figure}
+\end{center}
+
+
+
+\subsection{Contouring}
+
+The point set chosen for benchmarking the contouring stage is the Bimba con Nastrino point set simplified to 120 kpoints. We measure the contouring (i.e. the call to \ccc{make_surface_mesh()}) duration and the reconstruction error (expressed as the average distance from input points to the reconstructed surface) for a variety of approximation distances.
+
+\begin{tabular}{|c|c|c|}
+  \hline
+  Approx. distance (*average spacing)    & Contouring duration (sec) & Reconstruction error \\
+  \hline
+  0.1                                    & 177                       & 0.13 \\
+  0.25                                   & 47                        & 0.155 \\
+  0.5                                    & 21                        & 0.23 \\
+  1                                      & 10                        & 0.4 \\
+  2                                      & 5                         & 0.78 \\
+  \hline
+\end{tabular}
+
+% Insert image contouring_bench.png/.eps
+\begin{center}
+    \label{Surface_reconstruction_points_3-fig-contouring_bench}
+    \begin{ccTexOnly}
+      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/contouring_bench}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="80%" border=0 src="./contouring_bench.png"><P>
+    \end{ccHtmlOnly}
+    \begin{figure}[h]
+        \caption{Contouring duration and reconstruction error
+                 against several approximation distance parameters
+                 for the Bimba con Nastrino point set simplified to 120 kpoints.}
+    \end{figure}
+\end{center}
+
+
+
+\subsection{Memory}
+
+We measure the memory occupancy for the full Bimba con Nastrino point set (3.8 millions points) as well as for simplified versions.\\
+The Poisson implicit function computation has a memory peak when solving the Poisson linear system using {\sc Taucs} sparse linear solver. For large point sets, it may fail to allocate big chunks of memory due to memory fragmentation.\\
+The exact limit depends of the allocation scheme used by the compiler. In our experiments, a PC running Linux 32 bits can reconstruct the Bimba con Nastrino point set up to 1.6 million points when Windows 32 bits is limited to 1.3 million points.\\
+
+\begin{tabular}{|c|c|}
+  \hline
+  Number of points (kpoints) & Memory occupancy (MBytes) \\
+  \hline
+  60                         & 330 \\
+  120                        & 660 \\
+  250                        & 630 \\
+  500                        & 980 \\
+  1000                       & 1570 \\
+  1200                       & 1939 \\
+  \hline
+\end{tabular}
+
+% Insert image memory_bench.png/.eps
+\begin{center}
+    \label{Surface_reconstruction_points_3-fig-memory_bench}
+    \begin{ccTexOnly}
+      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/memory_bench}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="80%" border=0 src="./memory_bench.png"><P>
+    \end{ccHtmlOnly}
+    \begin{figure}[h]
+        \caption{Memory occupancy (in MBytes) against number of points
+                 for the Bimba con Nastrino point set with 1.2 million points
+                 as well as for simplified versions.}
+    \end{figure}
+\end{center}
+
+
+
+\subsection{Point Set Simplification}
+
+Due to memory limitations, it is a common practice to simplify the point sets captured by laser scanners.\\
+We measure the reconstruction error (expressed as the average distance from input points to the reconstructed surface) for the Bimba con Nastrino point set (1.6 million points) as well as for simplified versions. All reconstructions use the recommended contouring parameter approximation distance = 0.25 * the input point set's average spacing.
+
+\begin{tabular}{|c|c|}
+  \hline
+  Number of points (kpoints) & Reconstruction error \\
+  \hline
+  60                         & 0.27 \\
+  120                        & 0.15 \\
+  250                        & 0.11 \\
+  500                        & 0.079 \\
+  1000                       & 0.066 \\
+  1500                       & 0.061 \\
+  1600                       & 0.06 \\
+  \hline
+\end{tabular}
+
+% Insert image simplification_bench.png/.eps
+\begin{center}
+    \label{Surface_reconstruction_points_3-fig-simplification_bench}
+    \begin{ccTexOnly}
+      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/simplification_bench}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="80%" border=0 src="./simplification_bench.png"><P>
+    \end{ccHtmlOnly}
+    \begin{figure}[h]
+        \caption{Reconstruction error against number of points
+                 for the Bimba con Nastrino point set with 1.6 million points
+                 as well as for simplified versions.}
+    \end{figure}
+\end{center}
+
+
+
+
+
