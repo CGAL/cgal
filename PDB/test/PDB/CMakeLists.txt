@@ -13,7 +13,7 @@ endif()
 find_package(CGAL REQUIRED PDB )
 include( ${CGAL_USE_FILE} )
 
-INCLUDE_DIRECTORIES ( BEFORE ./include )
+INCLUDE_DIRECTORIES ( BEFORE ./include ../../include )
 
 if (CGAL_PDB_FOUND )
 
