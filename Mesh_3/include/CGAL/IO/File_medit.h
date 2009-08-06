@@ -79,6 +79,15 @@ public:
         ++index_counter;
       }
     }
+    
+    // Rebind indices in alphanumeric order
+    index_counter = first_index + 1;
+    for ( typename Surface_map::iterator mit = surface_map_.begin() ;
+          mit != surface_map_.end() ;
+          ++mit )
+    {
+      mit->second = index_counter++;
+    }
 
 #ifdef CGAL_MESH_3_IO_VERBOSE
     std::cerr << "Nb of surface patches: " << surface_map_.size() << "\n";
@@ -150,6 +159,15 @@ public:
                                              index_counter));
         ++index_counter;
       }
+    }
+    
+    // Rebind indices in alphanumeric order
+    index_counter = first_index + 1;
+    for ( typename Subdomain_map::iterator mit = subdomain_map_.begin() ;
+          mit != subdomain_map_.end() ;
+          ++mit )
+    {
+      mit->second = index_counter++;
     }
 
 #ifdef CGAL_MESH_3_IO_VERBOSE
