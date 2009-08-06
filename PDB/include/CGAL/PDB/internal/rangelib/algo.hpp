@@ -155,7 +155,7 @@ namespace detail {
 template<class container, class r> inline crange<r>
 erase_current(container & c, const crange<r> & rng) {
     return detail::erase_current_impl(c, rng, 
-        typename detail::int_keeper< ::CGAL::PDB::internal::rangelib::detail::has_key_type<container>::value>() );
+        detail::int_keeper< ::CGAL::PDB::internal::rangelib::detail::has_key_type<container>::value>() );
 }
 
 
