@@ -1,5 +1,5 @@
-// Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETHZ (Suisse).
-// Copyrigth (c) 2009  GeometryFactory (France)
+// Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETH Zurich (Switzerland).
+// Copyright (c) 2009  GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
