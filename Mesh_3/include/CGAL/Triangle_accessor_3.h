@@ -21,8 +21,8 @@
 // File Description :
 //******************************************************************************
 
-#ifndef POLYHEDRON_TRIANGLE_ACCESSOR_3_H
-#define POLYHEDRON_TRIANGLE_ACCESSOR_3_H
+#ifndef CGAL_TRIANGLE_ACCESSOR_3_H
+#define CGAL_TRIANGLE_ACCESSOR_3_H
 
 #include <CGAL/Polyhedron_3.h>
 

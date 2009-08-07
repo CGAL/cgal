@@ -26,8 +26,8 @@
 // See classes description to have more information.
 //******************************************************************************
 
-#ifndef IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H_
-#define IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H_
+#ifndef CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
+#define CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
 
 
 namespace CGAL {
@@ -135,4 +135,4 @@ private:
 
 
 
-#endif // IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H_
+#endif // CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H

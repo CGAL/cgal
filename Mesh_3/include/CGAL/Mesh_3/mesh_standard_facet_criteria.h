@@ -22,8 +22,9 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H_
-#define CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H_
+
+#ifndef CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H
+#define CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H
 
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
@@ -366,5 +367,4 @@ public:
 
 }  // end namespace CGAL
 
-
-#endif // CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H_
+#endif // CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H

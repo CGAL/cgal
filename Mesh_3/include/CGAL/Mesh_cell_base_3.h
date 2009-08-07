@@ -19,8 +19,8 @@
 // Author(s)     : Laurent Rineau, Stephane Tayeb
 
 
-#ifndef MESH_CELL_BASE_3_H
-#define MESH_CELL_BASE_3_H
+#ifndef CGAL_MESH_CELL_BASE_3_H
+#define CGAL_MESH_CELL_BASE_3_H
 
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
@@ -121,4 +121,4 @@ operator<<(std::ostream &os,
 }  // end namespace CGAL
 
 
-#endif // MESH_CELL_BASE_3_H
+#endif // CGAL_MESH_CELL_BASE_3_H

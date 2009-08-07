@@ -22,8 +22,8 @@
 //
 //******************************************************************************
 
-#ifndef MESH_STANDARD_CELL_CRITERIA_H_
-#define MESH_STANDARD_CELL_CRITERIA_H_
+#ifndef CGAL_MESH_3_MESH_STANDARD_CELL_CRITERIA_H
+#define CGAL_MESH_3_MESH_STANDARD_CELL_CRITERIA_H
 
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
@@ -260,4 +260,4 @@ public:
 }  // end namespace CGAL
 
 
-#endif // MESH_STANDARD_CELL_CRITERIA_H_
+#endif // CGAL_MESH_3_MESH_STANDARD_CELL_CRITERIA_H

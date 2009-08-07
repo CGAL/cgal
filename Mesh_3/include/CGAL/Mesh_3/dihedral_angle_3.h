@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_DIHEDRAL_ANGLE_3_H
-#define CGAL_DIHEDRAL_ANGLE_3_H
+#ifndef CGAL_MESH_3_DIHEDRAL_ANGLE_3_H
+#define CGAL_MESH_3_DIHEDRAL_ANGLE_3_H
 
 #include <CGAL/Kernel_traits.h>
 #include <cmath>
@@ -91,4 +91,4 @@ dihedral_angle(const Point_3& a, const Point_3& b,
 } // end namespace Mesh_3
 } // end namespace CGAL
 
-#endif // CGAL_DIHEDRAL_ANGLE_3_H
+#endif // CGAL_MESH_3_DIHEDRAL_ANGLE_3_H

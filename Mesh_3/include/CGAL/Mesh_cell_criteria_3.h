@@ -18,8 +18,8 @@
 // Author(s)     : Laurent RINEAU, Stephane Tayeb
 
 
-#ifndef MESH_CELL_CRITERIA_3_H
-#define MESH_CELL_CRITERIA_3_H
+#ifndef CGAL_MESH_CELL_CRITERIA_3_H
+#define CGAL_MESH_CELL_CRITERIA_3_H
 
 #include <iostream>
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
@@ -212,5 +212,5 @@ private:
 }  // end namespace CGAL
 
 
-#endif // MESH_CELL_CRITERIA_3_H
+#endif // CGAL_MESH_CELL_CRITERIA_3_H
 

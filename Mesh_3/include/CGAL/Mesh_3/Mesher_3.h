@@ -23,8 +23,8 @@
 // tets.
 //******************************************************************************
 
-#ifndef MESHER_3_H
-#define MESHER_3_H
+#ifndef CGAL_MESH_3_MESHER_3_H
+#define CGAL_MESH_3_MESHER_3_H
 
 #ifdef CGAL_MESH_3_VERBOSE
 #define CGAL_MESHER_3_SCAN_VERBOSE
@@ -201,4 +201,4 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
 }  // end namespace CGAL
 
 
-#endif // MESHER_3_H
+#endif // CGAL_MESH_3_MESHER_3_H

@@ -22,8 +22,8 @@
 //
 //******************************************************************************
 
-#ifndef MESH_STANDARD_CRITERIA_H_
-#define MESH_STANDARD_CRITERIA_H_
+#ifndef CGAL_MESH_3_MESH_STANDARD_CRITERIA_H
+#define CGAL_MESH_3_MESH_STANDARD_CRITERIA_H
 
 
 
@@ -194,4 +194,4 @@ private:
 
 }  // end namespace CGAL
 
-#endif // MESH_STANDARD_CRITERIA_H_
+#endif // CGAL_MESH_3_MESH_STANDARD_CRITERIA_H

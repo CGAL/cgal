@@ -22,8 +22,8 @@
 // Implements the concepts SurfaceMeshCellBase_3, with respect to Mesh_3 spec.
 //******************************************************************************
 
-#ifndef MESH_SURFACE_CELL_BASE_3_H_
-#define MESH_SURFACE_CELL_BASE_3_H_
+#ifndef CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
+#define CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
 
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
@@ -180,4 +180,4 @@ private:
 
 }  // end namespace CGAL
 
-#endif // MESH_SURFACE_CELL_BASE_3_H_
+#endif // CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H

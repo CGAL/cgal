@@ -23,8 +23,8 @@
 // class description.
 //******************************************************************************
 
-#ifndef IMAGE_TO_LABELED_FUNCTION_WRAPPER_H_
-#define IMAGE_TO_LABELED_FUNCTION_WRAPPER_H_
+#ifndef CGAL_MESH_3_IMAGE_TO_LABELED_FUNCTION_WRAPPER_H
+#define CGAL_MESH_3_IMAGE_TO_LABELED_FUNCTION_WRAPPER_H
 
 
 
@@ -115,4 +115,4 @@ private:
 
 }  // end namespace CGAL
 
-#endif // IMAGE_TO_LABELED_FUNCTION_WRAPPER_H_
+#endif // CGAL_MESH_3_IMAGE_TO_LABELED_FUNCTION_WRAPPER_H
