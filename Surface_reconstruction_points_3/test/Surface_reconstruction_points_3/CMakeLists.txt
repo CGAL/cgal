@@ -50,8 +50,7 @@ if ( CGAL_FOUND )
   endif()
 
   # Temporary debugging stuff
-  ADD_DEFINITIONS( "-DDEBUG_TRACE" )
-  #ADD_DEFINITIONS( "-DCGAL_PROFILE" )
+  ADD_DEFINITIONS( "-DDEBUG_TRACE=2" )
 
   # Executables that do *not* require BLAS, LAPACK nor TAUCS
   create_single_source_cgal_program( "APSS_reconstruction_test.cpp" )
