@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Random.h>
+#include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 
 CGAL_BEGIN_NAMESPACE
