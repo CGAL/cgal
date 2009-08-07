@@ -1,4 +1,3 @@
-
 ------- simple -----------------------------------------------
 
 This example shows the incremental construction of a 3D triangulation, 
@@ -6,35 +5,29 @@ the location of a point, and how to manipulate elementary operations
 on indices in a cell. It uses the default parameters proposed by
 CGAL for the Triangulation_3 class.
 
---------------------------------------------------------------
 
 ------- color ------------------------------------------------
 
 This example shows how the user can plug his own vertex base in a
 triangulation.
 
---------------------------------------------------------------
-
 ------- adding_handles ---------------------------------------
 
 This example shows how the user can plug his own vertex base
 in a triangulation, when he needs to add handles in it.
 
---------------------------------------------------------------
 
 ------- hierarchy --------------------------------------------
 
 This example shows the use of the hierarchy to speed up the 
 construction of a Delaunay triangulation. 
 
---------------------------------------------------------------
 
 ------- tds --------------------------------------------------
 
 Shows how to construct a 3D triangulation data structure by 
 inserting vertices.
 
---------------------------------------------------------------
 
 ------- find_conflicts ---------------------------------------
 
@@ -43,24 +36,18 @@ triangulation can be decomposed in order to give access to the
 cells in conflict (those which would be destroyed by the insertion
 of a point) prior to deciding to do the actual insertion or not.
 
---------------------------------------------------------------
 
 ------- linking_2d_and_3d ------------------------------------
 
 Illustrates how to setup a 2D and a 3D triangulation data structure
 whose vertices respectively store vertex handles of the other one.
 
---------------------------------------------------------------
 
 ------- regular ----------------------------------------------
 
 Illustrates the use of Regular_triangulation_3.
 
---------------------------------------------------------------
 
 ------- simplex ----------------------------------------------
 
 Illustrates the use of Triangulation_3::Simplex.
-
---------------------------------------------------------------
-
