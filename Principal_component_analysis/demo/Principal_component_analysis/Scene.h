@@ -17,7 +17,6 @@ public:
     typedef CGAL::Bbox_3 Bbox;
 
 public:
-    void draw(); 
     void update_bbox();
     Bbox bbox() { return m_bbox; }
 
@@ -48,7 +47,11 @@ public:
     void fit_triangles();
 
     // rendering
-    void draw_polyhedron();
+    void draw(); 
+    void render_line();
+    void render_plane();
+    void render_centroid();
+    void render_polyhedron();
 
 private:
 

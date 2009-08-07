@@ -96,9 +96,17 @@ void Scene::update_bbox()
 void Scene::draw()
 {
     if(m_view_polyhedron)
-        draw_polyhedron();
+        render_polyhedron();
 
-    // draw plane
+    render_line();
+    render_plane();
+    render_centroid();
+}
+
+void Scene::render_plane()
+{
+    ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    ::glLineWidth(3.0f);
     ::glColor3ub(255,0,0);
     ::glBegin(GL_QUADS);
     Point o = m_plane.projection(m_centroid);
@@ -113,13 +121,35 @@ void Scene::draw()
     ::glEnd();
 }
 
+void Scene::render_line()
+{
+    ::glLineWidth(3.0f);
+    ::glColor3ub(0,0,255);
+    ::glBegin(GL_LINES);
+    Point o = m_line.projection(m_centroid);
+    Point a = o + normalize(m_line.to_vector());
+    Point b = o - normalize(m_line.to_vector());
+    ::glVertex3d(a.x(),a.y(),a.z());
+    ::glVertex3d(b.x(),b.y(),b.z());
+    ::glEnd();
+}
+
+void Scene::render_centroid()
+{
+    ::glPointSize(10.0f);
+    ::glColor3ub(0,128,0);
+    ::glBegin(GL_POINTS);
+    ::glVertex3d(m_centroid.x(),m_centroid.y(),m_centroid.z());
+    ::glEnd();
+}
+
 
 Vector Scene::normalize(const Vector& v)
 {
     return v / std::sqrt(v*v);
 }
 
-void Scene::draw_polyhedron()
+void Scene::render_polyhedron()
 {
     // draw black edges
     if(m_pPolyhedron != NULL)
