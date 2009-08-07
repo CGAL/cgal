@@ -87,6 +87,9 @@ public:
   typedef typename Tds::Cell_circulator        Cell_circulator;
   typedef typename Tds::Facet_circulator       Facet_circulator;
 
+  // Not documented, see TDS.
+  typedef typename Tds::Face_circulator        Face_circulator;
+
   typedef typename Tds::Cell_iterator          Cell_iterator;
   typedef typename Tds::Facet_iterator         Facet_iterator;
   typedef typename Tds::Edge_iterator          Edge_iterator;
@@ -2865,8 +2868,8 @@ make_hole_2D(Vertex_handle v, std::list<Edge_2D> &hole, VertexRemover &remover)
 {
   std::vector<Cell_handle> to_delete;
 
-  typename Tds::Face_circulator fc = tds().incident_faces(v);
-  typename Tds::Face_circulator done(fc);
+  Face_circulator fc = tds().incident_faces(v);
+  Face_circulator done(fc);
 
   // We prepare for deleting all interior cells.
   // We ->set_cell() pointers to cells outside the hole.
