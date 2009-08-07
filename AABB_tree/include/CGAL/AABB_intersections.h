@@ -15,7 +15,7 @@
 // $Id: Bbox_3_ray_3_do_intersect.h 50124 2009-06-26 17:55:17Z palliez $
 // 
 //
-// Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez
+// Author(s)     : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
 #include <CGAL/intersections.h>
 

@@ -1,5 +1,4 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETH Zurich (Switzerland).
-// Copyright (c) 2009  GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -16,7 +15,7 @@
 // $Id$
 //
 //
-// Author(s)     :  Camille Wormser, Jane Tournois, Pierre Alliez
+// Author(s)     :  Camille Wormser, Pierre Alliez
 
 #ifndef CGAL_AABB_DRAWING_TRAITS_H
 #define CGAL_AABB_DRAWING_TRAITS_H
