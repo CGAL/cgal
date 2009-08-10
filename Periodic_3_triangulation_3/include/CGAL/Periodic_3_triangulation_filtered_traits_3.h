@@ -41,7 +41,7 @@ CGAL_BEGIN_NAMESPACE
 //   wants to be filtered or not (=> all homogeneous predicate define this
 //   tag).  We could even test-suite that automatically.  It makes a strong
 //   new requirement on the kernel though...
-//   Could be done with a traits mecanism ?
+//   Could be done with a traits mechanism ?
 //   A default template could use the current IA, but other tags or whatever
 //   could specify no filtering at all, or static filtering...
 // - same thing for constructions => virtual operator() ?

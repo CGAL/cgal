@@ -54,7 +54,7 @@ Backward
     - Must use the allocator, see Stefan's mail. [due, impossible !]
     - Ok, after reflexion : it can't use STL allocators, however we can do
       something clean by looking at auto_ptr<>, I think.
-    - It would also be nice if we could remove the ref-counting mecanism
+    - It would also be nice if we could remove the ref-counting mechanism
       easily, like for Handle_for<>. [low priority, but would be nice to
       get the right interface able to do that]
       Update : it is not possible to have it since we cannot copy this object

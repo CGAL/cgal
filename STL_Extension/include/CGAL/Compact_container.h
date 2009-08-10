@@ -48,7 +48,7 @@
 //   Also for the allocated memory alignment, and sizeof().
 // - Do a benchmark before/after.
 // - Check the end result with Valgrind.
-// - The bit squatting mecanism will be reused for the conflict flag, maybe
+// - The bit squatting mechanism will be reused for the conflict flag, maybe
 //   it could be put out of the class.
 
 // TODO low priority :

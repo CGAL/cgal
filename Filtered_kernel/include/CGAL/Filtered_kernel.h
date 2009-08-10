@@ -44,7 +44,7 @@
 //   Having the global functions working is another story...
 // - The converters are more a property of the types rather than anything else,
 //   so maybe they should not be passed as template parameter, but use a
-//   traits-like mecanism ?
+//   traits-like mechanism ?
 
 CGAL_BEGIN_NAMESPACE
 

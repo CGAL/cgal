@@ -52,7 +52,7 @@ namespace CGAL {
         typedef CGALi::Line_arc_3<SphericalKernel>                                  Line_arc_3;
         typedef CGALi::Circular_arc_3<SphericalKernel>                              Circular_arc_3;
        
-        // The mecanism that allows to specify reference-counting or not.
+        // The mechanism that allows to specify reference-counting or not.
         template < typename T >
         struct Handle { typedef T    type; };
 

@@ -37,7 +37,7 @@ struct Cartesian_base_no_ref_count
     typedef FT_                                           RT;
     typedef FT_                                           FT;
 
-    // The mecanism that allows to specify reference-counting or not.
+    // The mechanism that allows to specify reference-counting or not.
     template < typename T >
     struct Handle { typedef T   type; };
 

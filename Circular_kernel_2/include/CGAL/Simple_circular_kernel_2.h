@@ -61,7 +61,7 @@ struct Circular_kernel_base_ref_count: public LinearKernelBase
   typedef typename Linear_kernel::RT                       RT;
   typedef typename Linear_kernel::FT                       FT;
 
-  // The mecanism that allows to specify reference-counting or not.
+  // The mechanism that allows to specify reference-counting or not.
   template < typename T >
   struct Handle { typedef T    type; };
 

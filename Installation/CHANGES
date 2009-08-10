@@ -287,7 +287,7 @@ The following functionality has been added or changed:
     (bind_*, compose, compose_shared, swap_*, negate, along with the helper
     functions set_arity_* and Arity class and Arity_tag typedefs) which were provided
     by <CGAL/functional.h> have been removed.  Please use the better boost::bind
-    mecanism instead.  The concept AdaptableFunctor has been changed accordingly
+    mechanism instead.  The concept AdaptableFunctor has been changed accordingly
     such that only a nested result_type is required.
   - The accessory classes Twotuple, Threetuple, Fourtuple and Sixtuple are also
     deprecated (use CGAL::array instead).

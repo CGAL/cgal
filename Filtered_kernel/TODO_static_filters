@@ -87,7 +87,7 @@ class Filtered_Point_2
   IK::Point_2 app;
   const IK::Point_2 & approx() { return app; }
 
-#if No_cache_EK // via a traits parameter ?  Have a generic caching mecanism ?
+#if No_cache_EK // via a traits parameter ?  Have a generic caching mechanism ?
   EK::Point_2 exact() { return EK::Point_2(storage); }
 #else
   EK::Point_2 ex;
