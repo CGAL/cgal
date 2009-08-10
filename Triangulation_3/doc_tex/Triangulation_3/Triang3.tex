@@ -407,42 +407,12 @@ base classes.
 \label{T3-fig-layers}}
 \end{figure}
 
-\subsection{Backward Compatibility\label{T3-sec-compat}}
 
-Starting with \cgal\ release 3.0, the design of the triangulation data
-structure has been changed in order to give the possibility to store handles
-(an entity akin to pointers) directly in the vertex and cell base classes.
-Previously, \texttt{void*} pointers were stored there instead, and later
-converted internally to handles, but this happened to be too restrictive for
-some uses.
+The design of the triangulation data structure gives the possibility to store
+any kind of data, including handles (an entity akin to pointers) directly in
+the vertex and cell base classes.
 
-The difference is visible to the user when he provides his own vertex or cell
-base class.  Previously, something like the following had to be written:
-
-\begin{ccExampleCode}
-...
-template < class GT >
-class My_vertex
-  : public Triangulation_vertex_base<GT>
-{
-  typedef Triangulation_vertex_base<GT>  Vb;
-public:
-  typedef typename Vb::Point             Point;
-
-  My_vertex() {}
-  My_vertex(const Point&p)          : Vb(p) {}
-  My_vertex(const Point&p, void *c) : Vb(p, c) {}
-...
-};
-
-typedef Cartesian<double>                                               GT;
-typedef Triangulation_data_structure_3<My_vertex<GT>,
-                                       Triangulation_cell_base_3<GT> >  My_TDS;
-typedef Triangulation_3<GT, My_TDS>                                     Tr;
-...
-\end{ccExampleCode}
-
-While now, there are three possibilities.  The simplest one is to use the
+To do so, there are three possibilities.  The simplest one is to use the
 class \ccc{Triangulation_vertex_base_with_info_3}, and this approach is
 illustrated in a following subsection~\ref{Triangulation3-sec-examples-color}.
 The most complicated one, and probably useless for almost all cases, is to
@@ -475,16 +445,6 @@ public:
 };
 ... // The rest has not changed
 \end{ccExampleCode}
-
-The changes that need to be made are the following:
-\begin{itemize}
-\item{} \ccc{My_vertex} is now parameterized by the vertex base class it
-        derives from.
-\item{} a nested template class \ccc{Rebind_TDS} must be defined.
-\item{} \texttt{void*} must be changed to \ccc{Cell_handle}, and you need to
-        extract the \ccc{Cell_handle} type from the vertex base class that
-        \ccc{My_vertex} derives from.
-\end{itemize}
 
 The situation is exactly similar for cell base classes.
 Section~\ref{TDS3-sec-design} provides more detailed information.
