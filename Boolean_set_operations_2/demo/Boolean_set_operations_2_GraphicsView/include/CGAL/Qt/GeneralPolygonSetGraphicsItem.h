@@ -66,15 +66,13 @@ namespace Qt {
     } ;
   }
 
-template <class General_polygon_set_
-         , class Linearizer_ = CGAL::Identity< typename General_polygon_set_::Polygon_with_holes_2 >
-         >                                    
+template <class General_polygon_set_, class Compute_XM_curve_bbox_, class Draw_XM_curve_>
 class GeneralPolygonSetGraphicsItem : public GraphicsItem
 {
-  typedef Linearizer_ Linearizer ;
-  
   typedef CGALi::Polygon_set_traits<General_polygon_set_> GPS_traits ;
     
+  typedef Compute_XM_curve_bbox_                    Compute_XM_curve_bbox ;
+  typedef Draw_XM_curve_                            Draw_XM_curve ;
   typedef General_polygon_set_                      General_polygon_set ;
   typedef typename GPS_traits::Polygon_with_holes_2 General_polygon_with_holes ;
   typedef typename GPS_traits::Polygon_2            General_polygon ;
@@ -82,28 +80,24 @@ class GeneralPolygonSetGraphicsItem : public GraphicsItem
   typedef typename General_traits::Point_2          General_point;
   typedef std::vector<General_polygon_with_holes>   General_polygon_with_holes_vector ;
    
-  typedef typename Linearizer::result_type              Linear_polygon_with_holes ;
-  typedef typename Linear_polygon_with_holes::Polygon_2 Linear_polygon ;
-  typedef typename Linear_polygon::Point_2              Linear_point ;
-  typedef typename Kernel_traits<Linear_point>::Kernel  Linear_kernel ;
-  typedef std::vector<Linear_polygon_with_holes>        Linear_polygon_with_holes_vector ;
-  
   typedef typename General_polygon_with_holes_vector::const_iterator General_pwh_const_iterator ; 
-  typedef typename Linear_polygon_with_holes_vector::const_iterator  Linear_pwh_const_iterator ;
-  typedef typename Linear_polygon_with_holes::Hole_const_iterator    Linear_hole_const_itertator ;
-  typedef typename Linear_polygon::Vertex_const_iterator             Linear_vertex_const_iterator ;
-  
-  typedef Converter<Linear_kernel> ToQtConverter;
+  typedef typename General_polygon_with_holes::Hole_const_iterator   General_hole_const_itertator ;
+  typedef typename General_polygon::Curve_const_iterator             General_curve_const_iterator ;
+
+  typedef Converter< Simple_cartesian<double> > ToQtConverter;
   
 public:
 
-  GeneralPolygonSetGraphicsItem( General_polygon_set* aSet,  Linearizer const& aL = Linearizer() );
+  GeneralPolygonSetGraphicsItem( General_polygon_set*         aSet
+                               , Compute_XM_curve_bbox const& aBBoxComputer = Compute_XM_curve_bbox()
+                               , Draw_XM_curve  const&        aDrawe        = Draw_XM_curve()
+                               );
 
   void modelChanged();
 
 public:
 
-  bool isModelEmpty() const { return !mBSet || mBSet->is_empty() ; }
+  bool isModelEmpty() const { return !mSet || mSet->is_empty() ; }
   
   QRectF boundingRect() const { return mBounding_rect ; }
   
@@ -119,72 +113,77 @@ public:
 
 protected:
 
-  void updateSample();
+  struct ComputeBBox
+  {
+    ComputeBBox( Compute_XM_curve_bbox const& aComputer ) : mComputer(aComputer) {}
+     
+    template<class XM_curve>
+    void operator() ( XM_curve const& aCurve ) 
+    {
+      Bbox_2 lB = mComputer(aCurve); 
+      
+      if ( mBBox )
+           mBBox = *mBBox + lB;
+      else mBBox =          lB;
+    }
+    
+    Compute_XM_curve_bbox   mComputer ;
+    boost::optional<Bbox_2> mBBox ;
+  } ;
+  
+  struct DrawCurve
+  {
+    DrawCurve( QPainterPath* aPath, Draw_XM_curve const& aDrawer ) : mPath(aPath), mDrawer(aDrawer) {}
+    
+    template<class XM_curve>
+    void operator() ( XM_curve const& aCurve ) 
+    {
+      mDrawer(aCurve,mPath,ToQtConverter());
+    }
+    
+    QPainterPath*        mPath ;
+    Draw_XM_curve const& mDrawer ;
+  } ;
+  
+  template<class Visitor> void traverse_polygon           ( General_polygon const& aP, Visitor& aVisitor) ;
+  template<class Visitor> void traverse_polygon_with_holes( General_polygon_with_holes const& aPWH, Visitor& aVisitor) ;
+  template<class Visitor> void traverse_set               ( Visitor& aVisitor ) ;
   
   void updateBoundingBox();
 
-  void dump_linear_polygon( Linear_polygon const& aPoly, QPainterPath& rPath ) ;
-  
-  Bbox_2 computeBoundingBox( Linear_polygon_with_holes const& aLPWH ) const ;
-  
 protected:
 
-  General_polygon_set*             mBSet;
-  Linearizer                       mLinearizer ;
-  Linear_polygon_with_holes_vector mPList ;
-  QRectF                           mBounding_rect;
-  QBrush                           mBrush;
-  QPen                             mPen;
-  
-  ToQtConverter to_Qt;
+  General_polygon_set*  mSet;
+  Compute_XM_curve_bbox mBBoxComputer ;
+  Draw_XM_curve         mDrawer ;
+  QRectF                mBounding_rect;
+  QBrush                mBrush;
+  QPen                  mPen;
 };
 
 
-template <class General_polygon_with_holes, class Linearizer>
-GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::GeneralPolygonSetGraphicsItem(General_polygon_set* aSet, Linearizer const& aL )
-  : mBSet(aSet)
-  , mLinearizer(aL)
+template <class G, class B, class D>
+GeneralPolygonSetGraphicsItem<G,B,D>::GeneralPolygonSetGraphicsItem( General_polygon_set*         aSet
+                                                                   , Compute_XM_curve_bbox const& aBBoxComputer
+                                                                   , Draw_XM_curve  const&        aDrawer       
+                                                                   )
+  : mSet         (aSet)
+  , mBBoxComputer(aBBoxComputer)
+  , mDrawer      (aDrawer)
 {
   updateBoundingBox();
 }
 
-
-template <class General_polygon_with_holes, class Linearizer>
-void GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::dump_linear_polygon( Linear_polygon const& aPoly, QPainterPath& rPath )
-{
-  QPointF lFirstP ;
-  for ( Linear_vertex_const_iterator vit = aPoly.vertices_begin(); vit != aPoly.vertices_end() ; ++ vit )
-  {
-    QPointF lP = to_Qt(*vit);
-    if ( vit == aPoly.vertices_begin() )
-    {
-      lFirstP = lP ;
-      rPath.moveTo(lP);
-    }
-    else 
-    {
-      rPath.lineTo(lP);  
-    }  
-  }
-  
-  rPath.lineTo(lFirstP) ;
-}
-
-
-template <class General_polygon_with_holes, class Linearizer>
-void GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::paint( QPainter* aPainter, const QStyleOptionGraphicsItem* aOption, QWidget* aWidget )
+template <class G, class B, class D>
+void GeneralPolygonSetGraphicsItem<G,B,D>::paint( QPainter* aPainter, const QStyleOptionGraphicsItem* aOption, QWidget* aWidget )
 {
   if ( ! isModelEmpty() )
   {
-    QPainterPath lPath;
+    QPainterPath lPath ;
     
-    for ( Linear_pwh_const_iterator rit = mPList.begin() ; rit != mPList.end() ; ++ rit )
-    {
-      dump_linear_polygon(rit->outer_boundary(), lPath);
-      
-      for ( Linear_hole_const_itertator hit = rit->holes_begin() ; hit != rit->holes_end() ; ++ hit )
-        dump_linear_polygon(*hit, lPath);
-    }
+    DrawCurve lVisitor(&lPath,mDrawer);
+    
+    traverse_set(lVisitor);
     
     aPainter->setPen  (mPen );
     aPainter->setBrush(mBrush);
@@ -192,96 +191,64 @@ void GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::paint
   }
 }
 
-template <class General_polygon_with_holes, class Linearizer>
-Bbox_2 GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::computeBoundingBox( Linear_polygon_with_holes const& aLPWH ) const
-{
-  boost::optional<Bbox_2> lBBox ;
-  
-  if ( ! aLPWH.is_unbounded() )
-    lBBox = aLPWH.outer_boundary().bbox();
-  
-  for ( Linear_hole_const_itertator hit = aLPWH.holes_begin() ; hit != aLPWH.holes_end() ; ++ hit )
-  {
-    if ( lBBox )
-         lBBox = *lBBox + hit->bbox();
-    else lBBox =          hit->bbox();
-  } 
-  
-  CGAL_assertion_msg( !!lBBox, "Invalid polygon with holes: completely empty!" ) ;
-   
-  return *lBBox ;
-}
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
-template <class General_polygon_with_holes, class Linearizer>
-void GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::updateBoundingBox()
+template <class G, class B, class D>
+void GeneralPolygonSetGraphicsItem<G,B,D>::updateBoundingBox()
 {
   if ( ! isModelEmpty() )
   {
     prepareGeometryChange();
     
-    boost::optional<Bbox_2> lBBox ;
-     
-    for ( Linear_pwh_const_iterator rit = mPList.begin() ; rit != mPList.end() ; ++ rit )
-    {
-      if ( lBBox )
-           lBBox = *lBBox + computeBoundingBox(*rit);
-      else lBBox =          computeBoundingBox(*rit);
-    }
+    ComputeBBox lVisitor(mBBoxComputer);
     
-    if ( lBBox ) 
-      mBounding_rect = to_Qt(*lBBox);
-  }
-}
-
-
-template <class General_polygon_with_holes, class Linearizer>
-void GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::modelChanged()
-{
-  updateSample();
-  updateBoundingBox();
-  update();
-}
-
-template <class General_polygon_with_holes, class Linearizer>
-void GeneralPolygonSetGraphicsItem<General_polygon_with_holes,Linearizer>::updateSample()
-{
-  if ( !isModelEmpty() )
-  {
-    mPList.clear();
-    General_polygon_with_holes_vector vec ;
-    mBSet->polygons_with_holes( std::back_inserter(vec) ) ;
-    for( General_pwh_const_iterator lit = vec.begin(); lit != vec.end(); ++ lit )
+    traverse_set(lVisitor);  
+    
+    if ( lVisitor.mBBox ) 
     {
-      Linear_polygon_with_holes lLPWH = mLinearizer(*lit) ;
-      
-      if ( lLPWH.is_unbounded() )
-      {
-        // Create an artificial frame around the unbounded region to visualize it.
-        Bbox_2 lBBox = computeBoundingBox(lLPWH);
-        
-        double lLX = lBBox.xmin() ; 
-        double lHX = lBBox.xmax() ; 
-        double lLY = lBBox.ymin() ; 
-        double lHY = lBBox.ymax() ; 
-        
-        double lD = (std::max)(lHX-lLX,lHY-lLY) ;
-        
-        Linear_polygon lFrame ;
-        
-        lFrame.push_back( Linear_point(lLX-lD,lLY-lD) ) ;
-        lFrame.push_back( Linear_point(lHX+lD,lLY-lD) ) ;
-        lFrame.push_back( Linear_point(lHX+lD,lHY+lD) ) ;
-        lFrame.push_back( Linear_point(lLX-lD,lHY+lD) ) ;
-        
-        lLPWH.outer_boundary() = lFrame ;
-      }
-      
-      mPList.push_back( lLPWH  );
+      ToQtConverter to_Qt ;
+      mBounding_rect = to_Qt(*lVisitor.mBBox);
     }  
   }
 }
 
+
+template <class G, class B, class D>
+void GeneralPolygonSetGraphicsItem<G,B,D>::modelChanged()
+{
+  updateBoundingBox();
+  update();
+}
+
+template <class G, class B, class D>
+template<class Visitor>
+void GeneralPolygonSetGraphicsItem<G,B,D>::traverse_polygon( General_polygon const& aP, Visitor& aVisitor)
+{
+  for( General_curve_const_iterator cit = aP.curves_begin(); cit != aP.curves_end(); ++ cit )
+  {
+    aVisitor(*cit);
+  }
+}
+
+template <class G, class B, class D>
+template<class Visitor>
+void GeneralPolygonSetGraphicsItem<G,B,D>::traverse_polygon_with_holes( General_polygon_with_holes const& aPWH, Visitor& aVisitor)
+{
+  traverse_polygon(aPWH.outer_boundary(), aVisitor) ;
+  
+  for( General_hole_const_itertator hit = aPWH.holes_begin(); hit != aPWH.holes_end(); ++ hit )
+    traverse_polygon(*hit, aVisitor);
+}
+
+template <class G, class B, class D>
+template<class Visitor>
+void GeneralPolygonSetGraphicsItem<G,B,D>::traverse_set( Visitor& aVisitor )
+{
+  General_polygon_with_holes_vector vec ;
+  mSet->polygons_with_holes( std::back_inserter(vec) ) ;
+  for( General_pwh_const_iterator lit = vec.begin(); lit != vec.end(); ++ lit )
+    traverse_polygon_with_holes(*lit,aVisitor);
+}
 
 } // namespace Qt
 } // namespace CGAL
