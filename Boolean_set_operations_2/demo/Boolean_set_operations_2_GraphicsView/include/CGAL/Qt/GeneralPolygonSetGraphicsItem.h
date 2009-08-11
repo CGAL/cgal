@@ -24,6 +24,7 @@
 #include <list>
 
 #include <boost/optional.hpp>
+#include <boost/utility.hpp>
 
 #include <CGAL/function_objects.h>
 #include <CGAL/Bbox_2.h>
@@ -64,6 +65,25 @@ namespace Qt {
       typedef typename PS::Polygon_2            Polygon_2 ;
       typedef typename PS::Traits_2             Traits_2;
     } ;
+    
+    template<class Point>
+    struct arbitrary_point_helper
+    {
+      static std::pair<double,double> approximate( Point const& p )
+      {
+        return std::make_pair( to_double(p.x()), to_double(p.y()) ) ;
+      }
+      
+    };
+    
+    template <class R, class A, class N, class B>
+    struct arbitrary_point_helper< _Bezier_point_2<R,A,N,B> >
+    {
+      static std::pair<double,double> approximate( _Bezier_point_2<R,A,N,B> const& p )
+      {
+        return p.approximate();
+      }
+    } ;
   }
 
 template <class General_polygon_set_, class Compute_XM_curve_bbox_, class Draw_XM_curve_>
@@ -83,6 +103,7 @@ class GeneralPolygonSetGraphicsItem : public GraphicsItem
   typedef typename General_polygon_with_holes_vector::const_iterator General_pwh_const_iterator ; 
   typedef typename General_polygon_with_holes::Hole_const_iterator   General_hole_const_itertator ;
   typedef typename General_polygon::Curve_const_iterator             General_curve_const_iterator ;
+  typedef typename General_polygon::X_monotone_curve_2               General_X_monotone_curve_2 ;
 
   typedef Converter< Simple_cartesian<double> > ToQtConverter;
   
@@ -224,10 +245,57 @@ template <class G, class B, class D>
 template<class Visitor>
 void GeneralPolygonSetGraphicsItem<G,B,D>::traverse_polygon( General_polygon const& aP, Visitor& aVisitor)
 {
-  int c = 0 ;
-  for( General_curve_const_iterator cit = aP.curves_begin(); cit != aP.curves_end(); ++ cit )
+  //
+  // Hack to workaround some bezier incosistency proble where the ordering of the curves within the sequence is reversed
+  // w.r.t to the orientation of each curve in turn.
+  //
+
+  typedef std::vector<General_X_monotone_curve_2> XMC_vector ;
+  
+  typedef typename General_X_monotone_curve_2::Point_2 Point ;
+  
+  XMC_vector curves ;
+  std::copy(aP.curves_begin(),aP.curves_end(), std::back_inserter(curves) ) ;
+  
+  bool lFwd = true ;
+  
+  if ( curves.size() >= 2 )
   {
-    aVisitor(*cit,c++);
+    double s0x ;
+    double s0y ;
+    double t0x ;
+    double t0y ;
+    double s1x ;
+    double s1y ;
+    double t1x ;
+    double t1y ;
+    
+    boost::tie(s0x,s0y) = CGALi::arbitrary_point_helper<Point>::approximate(curves[0].source());
+    boost::tie(t0x,t0y) = CGALi::arbitrary_point_helper<Point>::approximate(curves[0].target());
+    boost::tie(s1x,s1y) = CGALi::arbitrary_point_helper<Point>::approximate(curves[1].source());
+    boost::tie(t1x,t1y) = CGALi::arbitrary_point_helper<Point>::approximate(curves[1].target());
+    
+    // squared distance between c0.target <-> c1.source
+    double dts = ((s1x-t0x)*(s1x-t0x))+((s1y-t0y)*(s1y-t0y));
+    
+    // squared distance between c1.source <-> c0.target
+    double dst = ((s0x-t1x)*(s0x-t1x))+((s0y-t1y)*(s0y-t1y));
+   
+    // The curves are reversed if c1 is followed by c0
+    if ( dst < dts )
+      lFwd = false ;
+  }
+  
+  int c = 0 ;
+  if ( lFwd )
+  {
+    for( typename XMC_vector::const_iterator cit = curves.begin(); cit != curves.end(); ++ cit )
+      aVisitor(*cit,c++);
+  }
+  else
+  {
+    for( typename XMC_vector::const_reverse_iterator cit = curves.rbegin(); cit != curves.rend(); ++ cit )
+      aVisitor(*cit,c++);
   }
 }
 

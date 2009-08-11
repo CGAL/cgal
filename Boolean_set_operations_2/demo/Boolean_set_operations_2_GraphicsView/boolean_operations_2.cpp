@@ -738,7 +738,7 @@ Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
   is >> n;
   
   // Read the control points.
-  std::vector<Bezier_rat_point>   ctrl_pts (n);
+  std::vector<Bezier_rat_point> ctrl_pts;
   
   for ( unsigned int k = 0; k < n; k++)
   {
@@ -754,12 +754,10 @@ Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
       is >> p ;
     }
     
-    if ( k > 1 && ctrl_pts[k-1] == p ) 
+    if ( k == 0 || ctrl_pts[k-1] != p ) 
     {
-      error("Bezier data contains consecutive identical control points.");
+      ctrl_pts.push_back(p) ;
     }
-    
-    ctrl_pts[k] = p ;
   }
 
   return Bezier_curve(ctrl_pts.begin(),ctrl_pts.end());
@@ -816,18 +814,20 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
             Bezier_traits::Make_x_monotone_2        make_x_monotone = traits.make_x_monotone_2_object();
         
             Bezier_curve B = read_bezier_curve(in_file, lDoubleFormat);
-            
-            TRACE( "region " << r << " boundary " << b << " curve " << k );
-              
-            make_x_monotone (B, std::back_inserter (x_objs));
-            
-            for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
+            if ( B.number_of_control_points() >= 2 )
             {
-              if (CGAL::assign (xcv, *xoit))
+              TRACE( "region " << r << " boundary " << b << " curve " << k );
+                
+              make_x_monotone (B, std::back_inserter (x_objs));
+              
+              for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
               {
-                TRACE( " X montonote: " << xcv.source() << " -> " << xcv.target() << ( xcv.is_directed_right() ? " RIGHT":" LEFT") << ( xcv.is_vertical() ? " VERTICAL" : "")) ;
-                xcvs.push_back (xcv);
-              }  
+                if (CGAL::assign (xcv, *xoit))
+                {
+                  TRACE( " X montonote: " << xcv.source() << " -> " << xcv.target() << ( xcv.is_directed_right() ? " RIGHT":" LEFT") << ( xcv.is_vertical() ? " VERTICAL" : "")) ;
+                  xcvs.push_back (xcv);
+                }  
+              }
             }
           }  
             

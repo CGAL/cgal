@@ -141,11 +141,11 @@ struct Bezier_helper
   }
 
   template<class OutputIterator>
-  static void get_control_points ( Bezier_curve const& aCurve, OutputIterator aOut )
+  static void get_control_points ( Bezier_curve const& aCurve, bool aFwd, OutputIterator aOut )
   {
     int nc = aCurve.number_of_control_points() ;
     
-    for ( int i = 0 ; i < nc ; ++ i )
+    for ( int i = aFwd ? 0 : nc - 1 ; aFwd ? i < nc : i >= 0 ; aFwd ? ++ i : -- i )
     {
       *aOut++ = Linear_point( CGAL::to_double( aCurve.control_point(i).x() )
                             , CGAL::to_double( aCurve.control_point(i).y() )
@@ -154,28 +154,32 @@ struct Bezier_helper
   }  
   
   template<class OutputIterator>
-  static void clip ( Bezier_curve const& aCurve, double aS, double aT, OutputIterator aOut )
+  static void clip ( Bezier_curve const& aCurve, double aS, double aT, bool aFwd, OutputIterator aOut )
   {
     std::vector<Linear_point> lQ ;
     
-    get_control_points(aCurve, std::back_inserter(lQ) ) ;
+    get_control_points(aCurve, aFwd, std::back_inserter(lQ) ) ;
     
-    int nc = aCurve.number_of_control_points() ;
-    int ncc = nc - 1 ;
-    
-    double lAlfa = aS ;
-    double lBeta = (aT-aS) / ( 1.0 - aS ) ;
-    
-    for ( int i = 1 ; i <= ncc ; ++ i )
+    if ( aS >= 0.0 || aT <= 1.0 )
     {
-      for ( int j = 0 ; j < ncc ; ++ j )
-        lQ[j] = lQ[j] + lAlfa * ( lQ[j+1] - lQ[j] ) ;
-        
-      for ( int j = nc - i ; j <= ncc ; ++ j )
-        lQ[j] = lQ[j-1] + lBeta * ( lQ[j] - lQ[j-1] ) ;
+      int nc = aCurve.number_of_control_points() ;
+      int ncc = nc - 1 ;
+      
+      double lAlfa = aS ;
+      double lBeta = (aT-aS) / ( 1.0 - aS ) ;
+
+      for ( int i = 1 ; i <= ncc ; ++ i )
+      {
+        for ( int j = 0 ; j < ncc ; ++ j )
+          lQ[j] = lQ[j] + lAlfa * ( lQ[j+1] - lQ[j] ) ;
+          
+        for ( int j = nc - i ; j <= ncc ; ++ j )
+          lQ[j] = lQ[j-1] + lBeta * ( lQ[j] - lQ[j-1] ) ;
+      }
     }
     
     std::copy(lQ.begin(), lQ.end(), aOut );    
+    
   }
   
   template<class OutputIterator>
@@ -186,12 +190,12 @@ struct Bezier_helper
     double lS = get_approximated_endpoint_parameter(aBXMC.source(), lBC, aBXMC.xid());
     double lT = get_approximated_endpoint_parameter(aBXMC.target(), lBC, aBXMC.xid());
     
-    bool lFwd = aBXMC.is_vertical() || lS <= lT ;
+    bool lFwd = lS <= lT ;
     
     double lMin = lFwd ? lS : 1.0 - lS ;
     double lMax = lFwd ? lT : 1.0 - lT ;
     
-    clip(lBC, lMin, lMax, aOut ); 
+    clip(lBC, lMin, lMax, lFwd, aOut ); 
   }
 } ;
 
@@ -199,9 +203,11 @@ struct Compute_bezier_X_monotone_cuve_bbox
 {
   CGAL::Bbox_2 operator()( Bezier_X_monotone_curve const& aCurve ) const 
   {
+    return aCurve.supporting_curve().bbox();
+    
     std::vector<Linear_point> lQ ;
     
-    Bezier_helper::get_control_points(aCurve.supporting_curve(), std::back_inserter(lQ) ) ;
+    Bezier_helper::get_control_points(aCurve.supporting_curve(), true, std::back_inserter(lQ) ) ;
     
     return CGAL::bbox_2(lQ.begin(),lQ.end());
   }
