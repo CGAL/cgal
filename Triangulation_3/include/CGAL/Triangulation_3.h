@@ -674,11 +674,6 @@ public:
 protected:
   // - c is the current cell, which must be in conflict.
   // - tester is the function object that tests if a cell is in conflict.
-  //
-  // in_conflict_flag value :
-  // 0 -> unknown
-  // 1 -> in conflict
-  // 2 -> not in conflict (== on boundary)
   template <
 	    class Conflict_test,
             class OutputIteratorBoundaryFacets,
@@ -697,7 +692,7 @@ protected:
 
     std::stack<Cell_handle> cell_stack;
     cell_stack.push(d);
-    d->set_in_conflict_flag(1);
+    d->tds_data().mark_in_conflict();
     *it.second++ = d;
 
     do {
@@ -706,22 +701,22 @@ protected:
 
         for (int i=0; i<dimension()+1; ++i) {
             Cell_handle test = c->neighbor(i);
-            if (test->get_in_conflict_flag() == 1) {
+            if (test->tds_data().is_in_conflict()) {
                 if (c < test)
                     *it.third++ = Facet(c, i); // Internal facet.
                 continue; // test was already in conflict.
             }
-            if (test->get_in_conflict_flag() == 0) {
+            if (test->tds_data().is_clear()) {
                 if (tester(test)) {
                     if (c < test)
                         *it.third++ = Facet(c, i); // Internal facet.
 
                     cell_stack.push(test);
-                    test->set_in_conflict_flag(1);
+                    test->tds_data().mark_in_conflict();
                     *it.second++ = test;
 	            continue;
                 }
-     	        test->set_in_conflict_flag(2); // test is on the boundary.
+     	        test->tds_data().mark_on_boundary();
             }
             *it.first++ = Facet(c, i);
         }

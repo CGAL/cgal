@@ -75,6 +75,20 @@ public:
   typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex;
   typedef typename Cb::template Rebind_TDS<Tds>::Other  Cell;
 
+  class Cell_data {
+    unsigned char conflict_state;
+  public:
+    Cell_data() : conflict_state(0) {}
+
+    void clear()            { conflict_state = 0; }
+    void mark_in_conflict() { conflict_state = 1; }
+    void mark_on_boundary() { conflict_state = 2; }
+
+    bool is_clear()       const { return conflict_state == 0; }
+    bool is_in_conflict() const { return conflict_state == 1; }
+    bool is_on_boundary() const { return conflict_state == 2; }
+  };
+
 private:
 
   friend class Triangulation_ds_facet_iterator_3<Tds>;
@@ -396,7 +410,7 @@ public:
 			       Vertex_handle newv)
   {
       for (CellIt cit = cell_begin; cit != cell_end; ++cit)
-	  (*cit)->set_in_conflict_flag(1);
+	  (*cit)->tds_data().mark_in_conflict();
 
       return _insert_in_hole(cell_begin, cell_end, begin, i, newv);
   }
@@ -587,7 +601,7 @@ private:
 	
 	std::stack<Cell_handle> cell_stack;
 	cell_stack.push(d);
-	d->set_in_conflict_flag(1);
+	d->tds_data().mark_in_conflict();
 	*it.first++ = d;
 	
 	do {
@@ -600,10 +614,10 @@ private:
 			Cell_handle next = c->neighbor(i);
 			if (c < next)
 				*it.second++ = Facet(c, i); // Incident facet.
-			if (next->get_in_conflict_flag() != 0)
+			if (! next->tds_data().is_clear())
 				continue;			
 			cell_stack.push(next);
-			next->set_in_conflict_flag(1);
+			next->tds_data().mark_in_conflict();
 			*it.first++ = next;
 		}
 	} while(!cell_stack.empty());
@@ -619,21 +633,21 @@ private:
   {
       CGAL_triangulation_precondition(dimension() == 2);
 
-      // TODO : in 2D, there's no real need for conflict_flag, we could use
+      // TODO : in 2D, there's no real need for tds_data, we could use
       // a smarter algorithm.  We could use the 2D Face_circulator.
       // Should we just have this Face_circulator ?
 
       // Flag values :
       // 1 : incident cell already visited
       // 0 : unknown
-      c->set_in_conflict_flag(1);
+      c->tds_data().mark_in_conflict();
       *cells++ = c;
 
       for (int i=0; i<3; ++i) {
 	  if (c->vertex(i) == v)
 	      continue;
 	  Cell_handle next = c->neighbor(i);
-	  if (next->get_in_conflict_flag() != 0)
+	  if (! next->tds_data().is_clear())
 	      continue;
 	  incident_cells_2(v, next, cells);
       }
@@ -928,7 +942,7 @@ public:
 	cit != tmp_cells.end();
 	++cit)
     {
-      (*cit)->set_in_conflict_flag(0);
+      (*cit)->tds_data().clear();
       visit(*cit);
     }
     return visit.result();
@@ -1025,9 +1039,8 @@ create_star_3(const Vertex_handle& v, const Cell_handle& c, int li,
 	      int prev_ind2)
 {
     CGAL_triangulation_precondition( dimension() == 3);
-    CGAL_triangulation_precondition( c->get_in_conflict_flag() == 1);
-    CGAL_triangulation_precondition( c->neighbor(li)->get_in_conflict_flag()
-	                             != 1);
+    CGAL_triangulation_precondition( c->tds_data().is_in_conflict() );
+    CGAL_triangulation_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
 
     Cell_handle cnew = create_cell(c->vertex(0),
 				   c->vertex(1),
@@ -1050,7 +1063,7 @@ create_star_3(const Vertex_handle& v, const Cell_handle& c, int li,
       int zz = ii;
       Cell_handle n = cur->neighbor(zz);
       // turn around the oriented edge vj1 vj2
-      while ( n->get_in_conflict_flag() == 1) {
+      while ( n->tds_data().is_in_conflict() ) {
 	CGAL_triangulation_assertion( n != c );
 	cur = n;
 	zz = next_around_edge(n->index(vj1), n->index(vj2));
@@ -1058,7 +1071,7 @@ create_star_3(const Vertex_handle& v, const Cell_handle& c, int li,
       }
       // Now n is outside region, cur is inside.
 
-      n->set_in_conflict_flag(0); // Reset the flag for boundary cells.
+      n->tds_data().clear(); // Reset the flag for boundary cells.
 
       int jj1 = n->index(vj1);
       int jj2 = n->index(vj2);
@@ -1098,12 +1111,12 @@ create_star_2(const Vertex_handle& v, const Cell_handle& c, int li )
   do {
     cur = bound;
     // turn around v2 until we reach the boundary of region
-    while ( cur->neighbor(cw(i1))->get_in_conflict_flag() == 1 ) {
+    while ( cur->neighbor(cw(i1))->tds_data().is_in_conflict() ) {
       // neighbor in conflict
       cur = cur->neighbor(cw(i1));
       i1 = cur->index( v1 );
     }
-    cur->neighbor(cw(i1))->set_in_conflict_flag(0);
+    cur->neighbor(cw(i1))->tds_data().clear();
     // here cur has an edge on the boundary of region
     cnew = create_face( v, v1, cur->vertex( ccw(i1) ) );
     set_adjacency(cnew, 0, cur->neighbor(cw(i1)),
@@ -2078,7 +2091,7 @@ insert_in_edge(const Cell_handle& c, int i, int j)
       do {
 	  Cell_handle cc = ccir;
 	  cells.push_back(cc);
-	  cc->set_in_conflict_flag(1);
+	  cc->tds_data().mark_in_conflict();
 	  ++ccir;
       } while (c != ccir);
 

@@ -55,6 +55,8 @@ class of \ccc{Triangulation_data_structure_3::Cell}.}
 \ccTypedef{typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;}{}
 \ccGlue
 \ccTypedef{typedef TriangulationDataStructure_3::Cell_handle Cell_handle;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Cell_data TDS_data;}{}
 
 \ccCreation
 \ccCreationVariable{c}  %% choose variable name
@@ -138,6 +140,8 @@ When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication of the kind of invalidity encountered. \ccc{level}
 increases the level of testing.}
 
+\begin{ccAdvanced}
+
 \ccHeading{Various}
 
 \ccMethod{void * for_compact_container() const;}{}
@@ -147,11 +151,13 @@ increases the level of testing.}
   because it uses \ccc{Compact_container} to store its cells.  See the
   documentation of \ccc{Compact_container} for the exact requirements.}
 
-\ccMethod{void set_in_conflict_flag(unsigned char f);}{}
+\ccMethod{TDS_data& tds_data();}{}
 \ccGlue
-\ccMethod{unsigned char get_in_conflict_flag() const;}{}
-{ These functions are used internally to mark cells with a flag.  The user is
+\ccMethod{const TDS_data& tds_data() const;}{}
+{ These functions are used internally by the triangulation data structure.  The user is
 not encouraged to use them directly as they may change in the future.}
+
+\end{ccAdvanced}
 
 \ccHeading{I/O}
 

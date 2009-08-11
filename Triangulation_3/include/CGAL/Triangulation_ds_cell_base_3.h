@@ -37,6 +37,7 @@ public:
   typedef typename TDS::Cell_handle    Cell_handle;
   typedef typename TDS::Vertex         Vertex;
   typedef typename TDS::Cell           Cell;
+  typedef typename TDS::Cell_data      TDS_data;
 
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_cell_base_3<TDS2> Other; };
@@ -45,7 +46,6 @@ public:
   {
     set_vertices();
     set_neighbors();
-    set_in_conflict_flag(0);
   }
 
   Triangulation_ds_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -53,7 +53,6 @@ public:
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors();
-    set_in_conflict_flag(0);
   }
 
   Triangulation_ds_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -63,7 +62,6 @@ public:
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors(n0, n1, n2, n3);
-    set_in_conflict_flag(0);
   }
 
   // ACCESS FUNCTIONS
@@ -198,16 +196,15 @@ public:
   void * for_compact_container() const { return N[0].for_compact_container(); }
   void * & for_compact_container()     { return N[0].for_compact_container(); }
 
-  // Conflict flag access functions.
-  // This should become a property map or something at some point.
-  void set_in_conflict_flag(unsigned char f) { _in_conflict_flag = f; }
-  unsigned char get_in_conflict_flag() const { return _in_conflict_flag; }
+  // TDS internal data access functions.
+        TDS_data& tds_data()       { return _tds_data; }
+  const TDS_data& tds_data() const { return _tds_data; }
 
 private:
 
   Cell_handle   N[4];
   Vertex_handle V[4];
-  unsigned char _in_conflict_flag;
+  TDS_data      _tds_data;
 };
 
 template < class TDS >
