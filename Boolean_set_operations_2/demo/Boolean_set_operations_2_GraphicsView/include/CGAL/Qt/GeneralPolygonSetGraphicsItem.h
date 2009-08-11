@@ -118,7 +118,7 @@ protected:
     ComputeBBox( Compute_XM_curve_bbox const& aComputer ) : mComputer(aComputer) {}
      
     template<class XM_curve>
-    void operator() ( XM_curve const& aCurve ) 
+    void operator() ( XM_curve const& aCurve, int ) 
     {
       Bbox_2 lB = mComputer(aCurve); 
       
@@ -136,9 +136,9 @@ protected:
     DrawCurve( QPainterPath* aPath, Draw_XM_curve const& aDrawer ) : mPath(aPath), mDrawer(aDrawer) {}
     
     template<class XM_curve>
-    void operator() ( XM_curve const& aCurve ) 
+    void operator() ( XM_curve const& aCurve, int aIdx ) 
     {
-      mDrawer(aCurve,mPath,ToQtConverter());
+      mDrawer(aCurve,mPath,ToQtConverter(),aIdx);
     }
     
     QPainterPath*        mPath ;
@@ -224,9 +224,10 @@ template <class G, class B, class D>
 template<class Visitor>
 void GeneralPolygonSetGraphicsItem<G,B,D>::traverse_polygon( General_polygon const& aP, Visitor& aVisitor)
 {
+  int c = 0 ;
   for( General_curve_const_iterator cit = aP.curves_begin(); cit != aP.curves_end(); ++ cit )
   {
-    aVisitor(*cit);
+    aVisitor(*cit,c++);
   }
 }
 

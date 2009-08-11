@@ -67,11 +67,15 @@ struct Compute_circular_X_monotone_cuve_bbox
 struct Draw_circular_X_monotone_cuve
 {
   template<class Path, class Converter>
-  void operator()( Circular_X_monotone_curve const& curve, Path* aPath, Converter aConvert ) const 
+  void operator()( Circular_X_monotone_curve const& curve, Path* aPath, Converter aConvert, int aIdx ) const 
   {
     Linear_point lS( CGAL::to_double(curve.source().x()), CGAL::to_double(curve.source().y()) ) ;
     Linear_point lT( CGAL::to_double(curve.target().x()), CGAL::to_double(curve.target().y()) ) ;
-    aPath->moveTo( aConvert( lS ) ) ;
+    
+    if ( aIdx == 0 )
+         aPath->moveTo( aConvert( lS ) ) ;
+    else aPath->lineTo( aConvert( lS ) ) ;
+    
     aPath->lineTo( aConvert( lT ) ) ;
   }
 } ;
@@ -96,17 +100,18 @@ struct Bezier_traits : public CGAL::Arr_Bezier_curve_traits_2<Bezier_rat_kernel,
 typedef Bezier_rat_kernel::Point_2                      Bezier_rat_point;
 typedef Bezier_traits::Curve_2                          Bezier_curve;
 typedef Bezier_traits::X_monotone_curve_2               Bezier_X_monotone_curve;
+typedef Bezier_traits::Point_2                          Bezier_point;
 typedef CGAL::Gps_traits_2<Bezier_traits>               Bezier_gps_traits;
 typedef Bezier_gps_traits::General_polygon_2            Bezier_polygon;
 typedef std::vector<Bezier_polygon>                     Bezier_polygon_vector ;
 typedef Bezier_gps_traits::General_polygon_with_holes_2 Bezier_polygon_with_holes;
 typedef CGAL::General_polygon_set_2<Bezier_gps_traits>  Bezier_polygon_set ;
 
-struct BezierHelper
+struct Bezier_helper
 {
-  double get_approximated_endpoint_parameter( Bezier_rat_point const& p, Bezier_curve const& curve, unsigned int xid  )
+  static double get_approximated_endpoint_parameter( Bezier_point const& p, Bezier_curve const& curve, unsigned int xid  )
   {
-    typedef typename Bezier_point::Originator_iterator Originator_iterator ;
+    typedef Bezier_point::Originator_iterator Originator_iterator ;
     
     Originator_iterator org = p.get_originator (curve, xid);
 
@@ -132,25 +137,24 @@ struct BezierHelper
     }
     while ( can_refine ) ;
     
-    return ( t_min + t_max) / NT(2.0) ;
+    return ( t_min + t_max) / 2.0 ;
   }
 
   template<class OutputIterator>
-  void get_control_points ( Bezier_curve const& aCurve, std::vector<Linear_point>& aQ )
+  static void get_control_points ( Bezier_curve const& aCurve, OutputIterator aOut )
   {
     int nc = aCurve.number_of_control_points() ;
     
     for ( int i = 0 ; i < nc ; ++ i )
     {
-      aQ.push_back( Linear_point( CGAL::to_double( aBC.control_point(i).x() )
-                                , CGAL::to_double( aBC.control_point(i).y() )
-                                )
-                  );
+      *aOut++ = Linear_point( CGAL::to_double( aCurve.control_point(i).x() )
+                            , CGAL::to_double( aCurve.control_point(i).y() )
+                            ) ;
     }
   }  
   
   template<class OutputIterator>
-  void clip ( Bezier_curve const& aCurve, double aS, double aT, OutputIterator aOut )
+  static void clip ( Bezier_curve const& aCurve, double aS, double aT, OutputIterator aOut )
   {
     std::vector<Linear_point> lQ ;
     
@@ -175,14 +179,14 @@ struct BezierHelper
   }
   
   template<class OutputIterator>
-  void clip ( Bezier_X_monotone_curve const& aBXMC, OutputIterator aOut )
+  static void clip ( Bezier_X_monotone_curve const& aBXMC, OutputIterator aOut )
   {
     Bezier_curve const& lBC = aBXMC.supporting_curve();
   
     double lS = get_approximated_endpoint_parameter(aBXMC.source(), lBC, aBXMC.xid());
     double lT = get_approximated_endpoint_parameter(aBXMC.target(), lBC, aBXMC.xid());
     
-    bool lFwd = lS <= lT ;
+    bool lFwd = aBXMC.is_vertical() || lS <= lT ;
     
     double lMin = lFwd ? lS : 1.0 - lS ;
     double lMax = lFwd ? lT : 1.0 - lT ;
@@ -193,11 +197,11 @@ struct BezierHelper
 
 struct Compute_bezier_X_monotone_cuve_bbox
 {
-  CGAL::Bbox_2 operator()( Bezier_X_monotone_curve const& curve ) const 
+  CGAL::Bbox_2 operator()( Bezier_X_monotone_curve const& aCurve ) const 
   {
     std::vector<Linear_point> lQ ;
     
-    get_control_points(aCurve, std::back_inserter(lQ) ) ;
+    Bezier_helper::get_control_points(aCurve.supporting_curve(), std::back_inserter(lQ) ) ;
     
     return CGAL::bbox_2(lQ.begin(),lQ.end());
   }
@@ -206,20 +210,56 @@ struct Compute_bezier_X_monotone_cuve_bbox
 struct Draw_bezier_X_monotone_cuve
 {
   template<class Path, class Converter>
-  void operator()( Bezier_X_monotone_curve const& aBXMC, Path* aPath, Converter aConvert ) const 
+  void operator()( Bezier_X_monotone_curve const& aBXMC, Path* aPath, Converter aConvert, int aIdx ) const 
   {
     std::vector<Linear_point> lQ ;
-    clip(aBXMC,std::back_inserter(lQ));
+    Bezier_helper::clip(aBXMC,std::back_inserter(lQ));
     if ( lQ.size() == 2 )
     {
+      if ( aIdx == 0 )
+           aPath->moveTo( aConvert(lQ[0]) ) ;
+      else aPath->lineTo( aConvert(lQ[0]) ) ; 
+      
+      aPath->lineTo( aConvert(lQ[1]) ) ;
+    }
+    else if ( lQ.size() == 3 )
+    {
+      if ( aIdx == 0 )
+           aPath->moveTo ( aConvert(lQ[0]) ) ;
+      else aPath->lineTo ( aConvert(lQ[0]) ) ; 
+      
+      aPath->quadTo( aConvert(lQ[1]), aConvert(lQ[2]) ) ; 
     }
     else if ( lQ.size() == 4 )
     {
+      if ( aIdx == 0 )
+           aPath->moveTo ( aConvert(lQ[0]) ) ;
+      else aPath->lineTo ( aConvert(lQ[0]) ) ; 
+      
+      aPath->cubicTo( aConvert(lQ[1]), aConvert(lQ[2]), aConvert(lQ[3]) ) ; 
     }
+    else
+    {
+      Bezier_curve const& lBC = aBXMC.supporting_curve();
+      
+      typedef std::pair<double,double> XY ;
+      typedef std::vector<XY> XY_vector ;
+      XY_vector lSample ;
+      
+      double lS = Bezier_helper::get_approximated_endpoint_parameter(aBXMC.source(), lBC, aBXMC.xid());
+      double lT = Bezier_helper::get_approximated_endpoint_parameter(aBXMC.target(), lBC, aBXMC.xid());
     
-    
-//    aPainter->moveTo( aConvert( curve.source() ) ) ;
-//    aPainter->lineTo( aConvert( curve.source() ) ) ;
+      lBC.sample(lS,lT,100, std::back_inserter(lSample) );
+      
+      for( typename XY_vector::const_iterator it = lSample.begin() ;  it != lSample.end() ; ++ it )
+      {
+        QPointF lP = aConvert( Linear_point(it->first,it->second) ) ;
+        
+        if ( aIdx == 0 && it == lSample.begin() ) 
+             aPath->moveTo(lP) ;
+        else aPath->lineTo(lP) ; 
+      }
+    }
   }
 } ;
 

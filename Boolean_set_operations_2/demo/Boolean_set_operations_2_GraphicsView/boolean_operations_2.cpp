@@ -858,7 +858,8 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
               pwh.add_hole(*it);    
           }
           
-          if ( is_valid_polygon_with_holes(pwh, rSet.traits() ) )
+          //if ( is_valid_polygon_with_holes(pwh, rSet.traits() ) )
+          if ( true )
           {
             rSet.join(pwh) ;      
           }
