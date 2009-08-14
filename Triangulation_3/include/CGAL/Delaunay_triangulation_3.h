@@ -741,43 +741,35 @@ side_of_sphere(const Vertex_handle& v0, const Vertex_handle& v1,
 {
     CGAL_triangulation_precondition( dimension() == 3 );
 
-    // TODO :
-    // - avoid accessing points of infinite vertex
-    // - share the 4 codes below (see old version)
-    const Point &p0 = v0->point();
-    const Point &p1 = v1->point();
-    const Point &p2 = v2->point();
-    const Point &p3 = v3->point();
-
     if (is_infinite(v0)) {
-	Orientation o = orientation(p2, p1, p3, p);
+	Orientation o = orientation(v2->point(), v1->point(), v3->point(), p);
 	if (o != COPLANAR)
 	    return Bounded_side(o);
-	return coplanar_side_of_bounded_circle(p2, p1, p3, p, perturb);
+	return coplanar_side_of_bounded_circle(v2->point(), v1->point(), v3->point(), p, perturb);
     }
 
     if (is_infinite(v1)) {
-	Orientation o = orientation(p2, p3, p0, p);
+	Orientation o = orientation(v2->point(), v3->point(), v0->point(), p);
 	if (o != COPLANAR)
 	    return Bounded_side(o);
-	return coplanar_side_of_bounded_circle(p2, p3, p0, p, perturb);
+	return coplanar_side_of_bounded_circle(v2->point(), v3->point(), v0->point(), p, perturb);
     }
 
     if (is_infinite(v2)) {
-	Orientation o = orientation(p1, p0, p3, p);
+	Orientation o = orientation(v1->point(), v0->point(), v3->point(), p);
 	if (o != COPLANAR)
 	    return Bounded_side(o);
-	return coplanar_side_of_bounded_circle(p1, p0, p3, p, perturb);
+	return coplanar_side_of_bounded_circle(v1->point(), v0->point(), v3->point(), p, perturb);
     }
 
     if (is_infinite(v3)) {
-	Orientation o = orientation(p0, p1, p2, p);
+	Orientation o = orientation(v0->point(), v1->point(), v2->point(), p);
 	if (o != COPLANAR)
 	    return Bounded_side(o);
-	return coplanar_side_of_bounded_circle(p0, p1, p2, p, perturb);
+	return coplanar_side_of_bounded_circle(v0->point(), v1->point(), v2->point(), p, perturb);
     }
 
-    return (Bounded_side) side_of_oriented_sphere(p0, p1, p2, p3, p, perturb);
+    return (Bounded_side) side_of_oriented_sphere(v0->point(), v1->point(), v2->point(), v3->point(), p, perturb);
 }
 
 template < class Gt, class Tds >
