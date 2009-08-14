@@ -118,121 +118,115 @@ The conditions listed above are rather restrictive and in practice not all of th
 
 \subsubsection{Sparse Sampling}
 
-Poisson surface reconstruction method expects a dense point set, respecting the epsilon-sampling condition:
-the input points spacing must be 10 times smaller than the local feature size. When this condition is not respected, the reconstruction may miss thin undersampled regions.
+The reconstruction algorithm expects a sufficiently dense point set. Although there is no formal proof of correctness of the algorithm under certain density conditions due to its variational nature, our experiments show that the algorithm reconstructs well all thin features when the local spacing is at most one tenth of the local feature size (the distance to the medial axis, which captures altogether curvature, thickness and separation). When this condition is not met the reconstruction does not reconstruct the thin undersampled features (see Figure~\ref{Surface_reconstruction_points_3-fig-sampling}).
 
 % Insert image sampling.png/.eps
 \begin{center}
     \label{Surface_reconstruction_points_3-fig-sampling}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/sampling} % omit .eps suffix
-    \end{ccTexOnly}
+\includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/sampling}     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./sampling.png"><P>
+        <img width="80%" border=0 src="./sampling.png"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Left: 50K points sampled on a Neptune trident.
-                 Right: point set simplified to 1K and then reconstructed
-                 (input points are drawn with normals to show the missed region).}
+        \caption{Left: 50K points sampled on the Neptune trident.
+                 The reconstruction (not shown) is successful in this case.
+                 % PA: better to show it... this may confuse the reader.
+                 Right: point set simplified to 1K points then reconstructed
+                 (all input points are depicted with normals). The thin
+                 feature is not reconstructed.}
     \end{figure}
 \end{center}
 
 
-\subsubsection{Holes}
+\subsubsection{Large Holes}
 
-By construction, this method contours the zero level set of an implicit function and reconstructs a closed mesh.\\
-For small holes, this is probably what you expect. \\
-In case of large holes that you do not want to close or that you want to close with a plane, you will need a postprocessing stage.
+The reconstruction is devised to solve for an implicit function which is an approximate indicator function of an inferred solid. For this reason the contouring algorithm always extracts a closed surface mesh and hence is able to fill the small holes where data are missing due, e.g., to occlusions during acquisition. In case of large holes the algorithm still closes them all but sometimes in an unexpected manner. In addition the resulting piecewise linear implicit function may exhibit large triangle patches and sharp creases as the 3D Delaunay triangulation used for solving is very coarse where the holes are filled (see Figure~\ref{Surface_reconstruction_points_3-fig-holes_bad}). 
 
 % Insert image holes_bad.png/.eps
 \begin{center}
     \label{Surface_reconstruction_points_3-fig-holes_bad}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/holes_bad} % omit .eps suffix
+\includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/holes_bad} 
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./holes_bad.png"><P>
+        <img width="80%" border=0 src="./holes_bad.png"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Left: 65K points sampled on hand with no data captured at the wrist base.
-                 Right: reconstructed surface mesh. Notice that surface is properly closed on the fingers
-                 but also closed at the wrist in a non-natural way.}
+        \caption{Left: 65K points sampled on a hand with no data
+                 captured at the wrist base.
+                 Right: reconstructed surface mesh. The surface is
+                 properly closed on the fingers and also closed 
+                 at the wrist but in a less plausible manner.}
     \end{figure}
 \end{center}
 
 
 \subsubsection{Wrongly Oriented Normals}
 
-As Poisson surface reconstruction solves a global linear system in the least square sense, it supports isolated flipped normals.
-On the other hand, a cluster of wrong normals will lead to an incorrect implicit function.
+The Poisson surface reconstruction approaches solves for an implicit function whose gradient best matches a set of input normals. Because it solves this problem in the least squares sense it is robust to few isolated wrongly oriented (flipped) normals. Nevertheless a cluster of wrongly oriented normals leads to an incorrect implicit function and hence to spurious geometric or even topological distortion (see Figure~\ref{Surface_reconstruction_points_3-fig-flipped_normals}).
 
 % Insert image flipped_normals.png/.eps
 \begin{center}
     \label{Surface_reconstruction_points_3-fig-flipped_normals}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/flipped_normals} % omit .eps suffix
+\includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/flipped_normals}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./flipped_normals.png"><P>
+        <img width="80%" border=0 src="./flipped_normals.png"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Left: points sampled on a sphere with a cluster of flipped normals.
-                 Right: reconstructed surface mesh. Notice the bump in the surface.}
+        \caption{Left: points sampled on a sphere with a cluster
+                 of wrongly oriented normals.
+                 Right: reconstructed surface mesh with a spurious bump.}
     \end{figure}
 \end{center}
 
 
 \subsubsection{Noise and Outliers}
 
-Poisson reconstruction method supports noise if the approximation distance requested at the contouring stage is large w.r.t. the noise.\\
-If you wish to use a small approximation distance, you may remove noise as a preprocessing step using \ccc{CGAL::jet_smooth_point_set()}.
+A large amount of noise inevitably impacts on the reconstruction (see Figure~\ref{Surface_reconstruction_points_3-fig-noise}, top) and the current implementation does not provide any mean to trade data fitting for smoothness. Nevertheless if the signal-to-noise ratio is sufficiently high and/or the 
+surface approximation and sizing parameters set for contouring the iso-surface is large with respect to the noise level the output surface mesh will appear smooth (not shown). If the user wants to produce a smooth and detailed output surface mesh we recommend to apply smoothing through \ccc{CGAL::jet_smooth_point_set()} ((see Figure~\ref{Surface_reconstruction_points_3-fig-noise}, bottom).
 
 % Insert image noise.png/.eps
 \begin{center}
     \label{Surface_reconstruction_points_3-fig-noise}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/noise} % omit .eps suffix
+\includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/noise}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./noise.png"><P>
+        <img width="80%" border=0 src="./noise.png"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Top-left: points sampled on sphere with a lot of noise.
-                 Top-right: reconstructed surface mesh. Notice the bumps.
+        \caption{Top-left: points sampled on a sphere and corrupted with a
+                 lot of noise.
+                 Top-right: reconstructed surface mesh.
                  Bottom-left: smoothed point set.
                  Bottom-right: reconstructed surface mesh.}
     \end{figure}
 \end{center}
 
-For a large number of outliers the failure cases (not shown) translate into spurious small connected components and massive distortion near the inferred surface. In this case the outliers must be removed as a preprocessing step using \ccc{CGAL::remove_outliers()}.
+For a large number of outliers the failure cases (not shown) translate into spurious small connected components and massive distortion near the inferred surface. In this case the outliers must be removed through \ccc{CGAL::remove_outliers()}.
 
 
 \subsubsection{Sharp Creases}
 
-Poisson surface reconstruction does not support sharp features.
+The current reconstruction algorithm is not able to recover the sharp creases and corners present in the inferred surface. This translates into smoothed sharp creases.
 
 % Insert image sharp_features.png/.eps
 \begin{center}
     \label{Surface_reconstruction_points_3-fig-sharp_features}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/sharp_features} % omit .eps suffix
+\includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/sharp_features}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./sharp_features.png"><P>
+        <img width="80%" border=0 src="./sharp_features.png"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Left: 5K points sampled on a mechanical piece.
-                 Right: reconstructed surface mesh. Notice that sharp edges are smoothed.}
+        \caption{Left: 5K points sampled on a mechanical piece with
+                 sharp features (creases, darts and corners).
+                 Right: reconstructed surface mesh with smoothed
+                 creases.}
     \end{figure}
 \end{center}
 
