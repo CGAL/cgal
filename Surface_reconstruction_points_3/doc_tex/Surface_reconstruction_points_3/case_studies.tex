@@ -103,13 +103,42 @@ Our implementation of the Poisson surface reconstruction algorithm computes an i
         <img width="80%" border=0 src="./contouring_bad.png"><P>
     \end{ccHtmlOnly}
     \begin{figure}[h]
-        \caption{Left: surface reconstructed with approximation distance = 0.25 * average spacing.
-                 Right: surface reconstructed with approximation distance = 0.15 * average spacing. Notice the spurious cluster on the chick.}
+        \caption{Left: surface reconstructed with approximation
+                 distance = 0.25 * average spacing.
+                 Right: surface reconstructed with approximation
+                 distance = 0.15 * average spacing.
+                 Notice the spurious cluster on the chick.}
     \end{figure}
 \end{center}
 
 
 \subsection{Degraded Conditions}
+
+The conditions listed above are rather restrictive and in practice not all of them are met in the applications. We now illustrates the behavior of the algorithm when the conditions are not met in terms of sampling, wrongly oriented normals, noise and sharp creases.
+
+\subsubsection{Sparse Sampling}
+
+Poisson surface reconstruction method expects a dense point set, respecting the epsilon-sampling condition:
+the input points spacing must be 10 times smaller than the local feature size. When this condition is not respected, the reconstruction may miss thin undersampled regions.
+
+% Insert image sampling.png/.eps
+\begin{center}
+    \label{Surface_reconstruction_points_3-fig-sampling}
+    % Image
+    \begin{ccTexOnly}
+      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/sampling} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="50%" border=0 src="./sampling.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
+        \caption{Left: 50K points sampled on a Neptune trident.
+                 Right: point set simplified to 1K and then reconstructed
+                 (input points are drawn with normals to show the missed region).}
+    \end{figure}
+\end{center}
+
 
 \subsubsection{Holes}
 
@@ -136,7 +165,30 @@ In case of large holes that you do not want to close or that you want to close w
 \end{center}
 
 
-\subsubsection{Noise}
+\subsubsection{Wrongly Oriented Normals}
+
+As Poisson surface reconstruction solves a global linear system in the least square sense, it supports isolated flipped normals.
+On the other hand, a cluster of wrong normals will lead to an incorrect implicit function.
+
+% Insert image flipped_normals.png/.eps
+\begin{center}
+    \label{Surface_reconstruction_points_3-fig-flipped_normals}
+    % Image
+    \begin{ccTexOnly}
+      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/flipped_normals} % omit .eps suffix
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="50%" border=0 src="./flipped_normals.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
+        \caption{Left: points sampled on a sphere with a cluster of flipped normals.
+                 Right: reconstructed surface mesh. Notice the bump in the surface.}
+    \end{figure}
+\end{center}
+
+
+\subsubsection{Noise and Outliers}
 
 Poisson reconstruction method supports noise if the approximation distance requested at the contouring stage is large w.r.t. the noise.\\
 If you wish to use a small approximation distance, you may remove noise as a preprocessing step using \ccc{CGAL::jet_smooth_point_set()}.
@@ -160,61 +212,10 @@ If you wish to use a small approximation distance, you may remove noise as a pre
     \end{figure}
 \end{center}
 
-
-\subsubsection{Outliers}
-
-Poisson reconstruction method supports a small amount of outliers (see elephant example above).\\
-Large clusters of outliers should be removed as a preprocessing step using \ccc{CGAL::remove_outliers()}.
+For a large number of outliers the failure cases (not shown) translate into spurious small connected components and massive distortion near the inferred surface. In this case the outliers must be removed as a preprocessing step using \ccc{CGAL::remove_outliers()}.
 
 
-\subsubsection{Sampling}
-
-Poisson surface reconstruction method expects a dense point set, respecting the epsilon-sampling condition:
-the input points spacing must be 10 times smaller than the local feature size. When this condition is not respected, the reconstruction may miss thin undersampled regions.
-
-% Insert image sampling.png/.eps
-\begin{center}
-    \label{Surface_reconstruction_points_3-fig-sampling}
-    % Image
-    \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/sampling} % omit .eps suffix
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./sampling.png"><P>
-    \end{ccHtmlOnly}
-    % Title
-    \begin{figure}[h]
-        \caption{Left: 50K points sampled on a Neptune trident.
-                 Right: point set simplified to 1K and then reconstructed
-                 (input points are drawn with normals to show the missed region).}
-    \end{figure}
-\end{center}
-
-
-\subsubsection{Normals}
-
-As Poisson surface reconstruction solves a global linear system in the least square sense, it supports isolated flipped normals.
-On the other hand, a cluster of wrong normals will lead to an incorrect implicit function.
-
-% Insert image flipped_normals.png/.eps
-\begin{center}
-    \label{Surface_reconstruction_points_3-fig-flipped_normals}
-    % Image
-    \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/flipped_normals} % omit .eps suffix
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./flipped_normals.png"><P>
-    \end{ccHtmlOnly}
-    % Title
-    \begin{figure}[h]
-        \caption{Left: points sampled on a sphere with a cluster of flipped normals.
-                 Right: reconstructed surface mesh. Notice the bump in the surface.}
-    \end{figure}
-\end{center}
-
-
-\subsubsection{Sharp Features}
+\subsubsection{Sharp Creases}
 
 Poisson surface reconstruction does not support sharp features.
 
@@ -236,7 +237,12 @@ Poisson surface reconstruction does not support sharp features.
 \end{center}
 
 
-\subsubsection{Several Connected Components}
 
-This package does not support point sets with several clusters of points. The main limitation is that \ccc{CGAL::mst_orient_normals()} cannot orient coherently the normals of several clusters of points. The contouring phase (i.e. the call to \ccc{make_surface_mesh()}) also requires a different initialization to handle several connected components.
+%====================================================
+% PA: I propose to comment this: this is rather the
+% failure of the mst stuff - we can have users which
+% provide oriented normals 
+%====================================================
+%\subsubsection{Several Connected Components}
+%This package does not support point sets with several clusters of points. The main limitation is that \ccc{CGAL::mst_orient_normals()} cannot orient coherently the normals of several clusters of points. The contouring phase (i.e. the call to \ccc{make_surface_mesh()}) also requires a different initialization to handle several connected components.
 
