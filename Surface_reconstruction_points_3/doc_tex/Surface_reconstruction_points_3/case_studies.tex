@@ -1,24 +1,25 @@
 \section{Case Studies}
 \label{surface_reconstruction_section_case_studies}
 
+The surface reconstruction problem being inherently ill-posed, the proposed algorithm does not pretend to reconstruct all kinds of surfaces with arbitrary sampling conditions. This section provides the user with some hints about the ideal sampling and contouring conditions, and depicts some failure cases when these conditions are not matched.
+
 \subsection{Ideal Conditions}
+
+The user must keep in mind that the poisson surface reconstruction algorithm comprises two phases (computing the implicit function from the input point set and contouring an iso-surface of this function). Both require some care in terms of sampling conditions and parameter tuning.
 
 \subsubsection{Point Set}
 
-This implementation of the Poisson surface reconstruction method expects a dense point set (respecting the epsilon-sampling condition), sampled over a smooth surface, with only one connected component. 3D points must come with an oriented normal.\\
-The point set can be anisotropic and contain holes. This reconstruction method supports noise and a limited amount of outliers.
+Ideally the current implementation of the Poisson surface reconstruction method expects a dense 3D oriented point set (typically matching the epsilon-sampling condition~\cite{cgal:bo-pgsms-05}) and sampled over a closed, smooth surface. Oriented herein means that all 3D points must come with consistently oriented normals to the inferred surface. Figures \ref{Surface_reconstruction_points_3-fig-bimba} and \ref{Surface_reconstruction_points_3-fig-eros} illustrate cases where these ideal conditions are met.
 
 % Insert image bimba.png/.eps
 \begin{center}
     \label{Surface_reconstruction_points_3-fig-bimba}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/bimba} % omit .eps suffix
+  \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/bimba}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./bimba.png"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
         \caption{Poisson reconstruction.
                  Left: 120K points sampled on a statue (Minolta laser scanner).
@@ -29,54 +30,62 @@ The point set can be anisotropic and contain holes. This reconstruction method s
 % Insert image eros.png/.eps
 \begin{center}
     \label{Surface_reconstruction_points_3-fig-eros}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/eros} % omit .eps suffix
+\includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/eros}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./eros.png"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
         \caption{Left: 120K points sampled on a statue (Minolta laser scanner).
                  Right: reconstructed surface mesh.}
     \end{figure}
 \end{center}
 
+
+The algorithm is fairly robust to anisotropic sampling and to noise. It is also robust to missing data through filling the corresponding holes as the algorithm is designed to reconstruct the indicator function of an inferred solid (see Figure~\ref{Surface_reconstruction_points_3-fig-holes_good}).
+
 % Insert image holes_good.png/.eps
 \begin{center}
     \label{Surface_reconstruction_points_3-fig-holes_good}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/holes_good} % omit .eps suffix
+\includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/holes_good}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./holes_good.png"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Left: 65K points sampled on hand (Kreon laser scanner).
-                 Bottom-left: notice that the point set is highly anisotropic.
-                 Right: reconstructed surface mesh. Notice that the hole on the fingers is properly closed.}
+        \caption{Top left: 65K points sampled on a hand (Kreon laser scanner).
+                 Bottom left: the point set is highly anisotropic due
+                 to the scanning technology.
+                 Right: reconstructed surface mesh and closeup.
+                 The holes are properly closed.}
     \end{figure}
 \end{center}
+
+
+The algorithm is in general not robust to outliers, although a few outliers do not always create a failure, see Figure~\ref{Surface_reconstruction_points_3-fig-outliers}.
 
 % Insert image outliers.png/.eps
 \begin{center}
     \label{Surface_reconstruction_points_3-fig-outliers}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/outliers} % omit .eps suffix
-    \end{ccTexOnly}
+\includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/outliers}    \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./outliers.png"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Left: 70K points sampled on an elephant with outliers (emphasized with circles).
+        \caption{Left: 70K points sampled on an elephant with few
+                 outliers emphasized with circles.
+                 % careful: show circles not disks
                  Right: reconstructed surface mesh.}
     \end{figure}
 \end{center}
+
+
+The algorithm works well even when the inferred surface is composed of several connected components, provided that both all normals are properly estimated and oriented (the current CGAL normal orienter algorithm may fail in some cases, see \ccc{CGAL::mst_orient_normals()}), and that the final contouring algorithm is properly seeded for each component. When the inferred surface is composed of several nested connected components care should be taken to orient the normals of each component in alternation (inward/outward) so that the final contouring stage picks a proper contouring value. 
+    
+
 
 
 \subsubsection{Contouring Parameters}
