@@ -42,7 +42,6 @@ Ideally the current implementation of the Poisson surface reconstruction method 
     \end{figure}
 \end{center}
 
-
 The algorithm is fairly robust to anisotropic sampling and to noise. It is also robust to missing data through filling the corresponding holes as the algorithm is designed to reconstruct the indicator function of an inferred solid (see Figure~\ref{Surface_reconstruction_points_3-fig-holes_good}).
 
 % Insert image holes_good.png/.eps
@@ -62,7 +61,6 @@ The algorithm is fairly robust to anisotropic sampling and to noise. It is also 
                  The holes are properly closed.}
     \end{figure}
 \end{center}
-
 
 The algorithm is in general not robust to outliers, although a few outliers do not always create a failure, see Figure~\ref{Surface_reconstruction_points_3-fig-outliers}.
 
@@ -86,41 +84,29 @@ The algorithm is in general not robust to outliers, although a few outliers do n
 The algorithm works well even when the inferred surface is composed of several connected components, provided that both all normals are properly estimated and oriented (the current CGAL normal orienter algorithm may fail in some cases, see \ccc{CGAL::mst_orient_normals()}), and that the final contouring algorithm is properly seeded for each component. When the inferred surface is composed of several nested connected components care should be taken to orient the normals of each component in alternation (inward/outward) so that the final contouring stage picks a proper contouring value. 
     
 
-
-
 \subsubsection{Contouring Parameters}
 
-This implementation of the Poisson surface reconstruction method computes a Poisson implicit function
-piecewise linear in the tetrahedra of a 3D triangulation of the input points.
-On the other hand, the contouring algorithm \ccc{make_surface_mesh()} expects a smooth implicit function.
-In order for the Poisson function to appear smooth, we should reconstruct meshes with edges longer than 10 input vertices.\\
-\\
-For this purpose, we recommend to use the next contouring parameters:
+Our implementation of the Poisson surface reconstruction algorithm computes an implicit function represented as a piecewise linear function over the tetrahedra of a 3D Delaunay triangulation constructed from the input points then refined through Delaunay refinement. For this reason any iso-surface is also piecewise linear and hence may contain sharp creases. As the contouring algorithm \ccc{CGAL::make_surface_mesh()} expects a smooth implicit function these sharp creases may create spurious clusters of vertices in the final reconstructed surface mesh when setting a small mesh sizing or surface approximation error parameter (see Figure~\ref{Surface_reconstruction_points_3-fig-contouring_bad}). One way to avoid these spurious clusters consists of adjusting the mesh sizing and surface approximation parameters large enough compared to the average sampling density (obtained through \ccc{CGAL::compute_average_spacing()}) so that the contouring algorithm ``perceives'' a smooth iso-surface. We recommend to use the following contouring parameters:
 \begin{itemize}
-\item Min triangle angle: 30 degrees, or less.
-\item Max triangle radius: 100 * the input point set's average spacing, or more.
-\item Approximation distance: 0.25 * the input point set's average spacing, or more.
+\item Max triangle radius: at least 100 times the average spacing.
+\item Approximation distance: at least 0.25 times the average spacing.
 \end{itemize}
 
+% PA: we are missing the number of input points here.
 % Insert image contouring_bad.png/.eps
 \begin{center}
     \label{Surface_reconstruction_points_3-fig-contouring_bad}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/contouring_bad} % omit .eps suffix
+\includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/contouring_bad}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./contouring_bad.png"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
         \caption{Left: surface reconstructed with approximation distance = 0.25 * average spacing.
-                 Right: surface reconstructed with approximation distance = 0.15 * average spacing.
-                 Notice the small triangles on the girl's chick at the frontier between two underlying tetrahedra.}
+                 Right: surface reconstructed with approximation distance = 0.15 * average spacing. Notice the spurious cluster on the chick.}
     \end{figure}
 \end{center}
-
-
 
 
 \subsection{Degraded Conditions}
