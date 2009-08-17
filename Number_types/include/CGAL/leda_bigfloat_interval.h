@@ -309,43 +309,43 @@ class Interval_traits<leda_bigfloat_interval>
 public: 
     typedef Interval_traits<leda_bigfloat_interval> Self; 
     typedef leda_bigfloat_interval Interval; 
-    typedef leda::bigfloat Boundary; 
+    typedef leda::bigfloat Bound; 
     typedef CGAL::Tag_true Is_interval; 
     typedef CGAL::Tag_true With_empty_interval; 
 
-    struct Construct :public std::binary_function<Boundary,Boundary,Interval>{
-        Interval operator()( const Boundary& l,const Boundary& r) const {
+    struct Construct :public std::binary_function<Bound,Bound,Interval>{
+        Interval operator()( const Bound& l,const Bound& r) const {
             CGAL_precondition( l < r ); 
             return Interval(l,r);
         }
     };
 
-    struct Lower :public std::unary_function<Interval,Boundary>{
-        Boundary operator()( const Interval& a ) const {
+    struct Lower :public std::unary_function<Interval,Bound>{
+        Bound operator()( const Interval& a ) const {
             return a.lower();
         }
     };
 
-    struct Upper :public std::unary_function<Interval,Boundary>{
-        Boundary operator()( const Interval& a ) const {
+    struct Upper :public std::unary_function<Interval,Bound>{
+        Bound operator()( const Interval& a ) const {
             return a.upper();
         }
     };
 
-    struct Width :public std::unary_function<Interval,Boundary>{
-        Boundary operator()( const Interval& a ) const {
+    struct Width :public std::unary_function<Interval,Bound>{
+        Bound operator()( const Interval& a ) const {
             return ::boost::numeric::width(a);
         }
     };
 
-    struct Median :public std::unary_function<Interval,Boundary>{
-        Boundary operator()( const Interval& a ) const {
+    struct Median :public std::unary_function<Interval,Bound>{
+        Bound operator()( const Interval& a ) const {
             return ::boost::numeric::median(a);
         }
     };
     
-    struct Norm :public std::unary_function<Interval,Boundary>{
-        Boundary operator()( const Interval& a ) const {
+    struct Norm :public std::unary_function<Interval,Bound>{
+        Bound operator()( const Interval& a ) const {
             return ::boost::numeric::norm(a);
         }
     };
@@ -368,8 +368,8 @@ public:
         }
     };
 
-    struct In :public std::binary_function<Boundary,Interval,bool>{
-        bool operator()( Boundary x, const Interval& a ) const {
+    struct In :public std::binary_function<Bound,Interval,bool>{
+        bool operator()( Bound x, const Interval& a ) const {
             return ::boost::numeric::in(x,a);
         }
     };

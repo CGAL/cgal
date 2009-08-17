@@ -70,7 +70,7 @@ template <class Interval>
 void test_interval() {    
     
     typedef CGAL::Interval_traits<Interval> IT;
-    typedef typename IT::Boundary Boundary;
+    typedef typename IT::Bound Bound;
     typedef typename IT::Is_interval Is_interval;
     typedef typename IT::With_empty_interval With_empty_interval;
 
@@ -113,20 +113,20 @@ void test_interval() {
     const  Hull hull = Hull();
 
       
-    Interval a(construct(Boundary(-7),Boundary(-5)));
-    Interval b(construct(Boundary(0),Boundary(4)));
-    Interval c(construct(Boundary(2),Boundary(6)));
+    Interval a(construct(Bound(-7),Bound(-5)));
+    Interval b(construct(Bound(0),Bound(4)));
+    Interval c(construct(Bound(2),Bound(6)));
 
-    assert(lower(a)  == Boundary(-7));
-    assert(upper(a)  == Boundary(-5));
-    assert(lower(b)  == Boundary( 0));
-    assert(upper(b)  == Boundary( 4));
-    assert(lower(c)  == Boundary( 2));
-    assert(upper(c)  == Boundary( 6));
+    assert(lower(a)  == Bound(-7));
+    assert(upper(a)  == Bound(-5));
+    assert(lower(b)  == Bound( 0));
+    assert(upper(b)  == Bound( 4));
+    assert(lower(c)  == Bound( 2));
+    assert(upper(c)  == Bound( 6));
 
-    assert(width(a)  == Boundary( 2));
-    assert(median(a) == Boundary(-6));
-    assert(norm(a)   == Boundary( 7));
+    assert(width(a)  == Bound( 2));
+    assert(median(a) == Bound(-6));
+    assert(norm(a)   == Bound( 7));
     
     // assert(!empty(a));
     assert( singleton(Interval(1)));
@@ -149,8 +149,8 @@ void test_interval() {
     assert(!CGAL::in_zero(c));
 //#########
     
-    assert(!in(Boundary( 3),a));
-    assert( in(Boundary(-7),a));
+    assert(!in(Bound( 3),a));
+    assert( in(Bound(-7),a));
     
     
     assert( equal(a,a));
@@ -161,14 +161,14 @@ void test_interval() {
 
     assert(!overlap(a,b));
     assert( overlap(b,c));
-    Interval I25 = construct(Boundary(2),Boundary(5));
-    assert(overlap(I25, construct(Boundary(6),Boundary(7))) == false);
-    assert(overlap(I25, construct(Boundary(5),Boundary(6))) == true);
-    assert(overlap(I25, construct(Boundary(4),Boundary(5))) == true);
-    assert(overlap(I25, construct(Boundary(3),Boundary(4))) == true);
-    assert(overlap(I25, construct(Boundary(2),Boundary(3))) == true);
-    assert(overlap(I25, construct(Boundary(1),Boundary(2))) == true);
-    assert(overlap(I25, construct(Boundary(0),Boundary(1))) == false);
+    Interval I25 = construct(Bound(2),Bound(5));
+    assert(overlap(I25, construct(Bound(6),Bound(7))) == false);
+    assert(overlap(I25, construct(Bound(5),Bound(6))) == true);
+    assert(overlap(I25, construct(Bound(4),Bound(5))) == true);
+    assert(overlap(I25, construct(Bound(3),Bound(4))) == true);
+    assert(overlap(I25, construct(Bound(2),Bound(3))) == true);
+    assert(overlap(I25, construct(Bound(1),Bound(2))) == true);
+    assert(overlap(I25, construct(Bound(0),Bound(1))) == false);
     
     assert(!subset(a,b));
     assert( subset(a,a));
@@ -179,24 +179,24 @@ void test_interval() {
     assert( proper_subset(Interval(-6),a));
     
     // assert( empty(intersection(a,b)));
-    assert( lower(intersection(b,c)) == Boundary(2));
-    assert( upper(intersection(b,c)) == Boundary(4));
+    assert( lower(intersection(b,c)) == Bound(2));
+    assert( upper(intersection(b,c)) == Bound(4));
     
     // hull
-    assert(lower(hull(b,c)) == Boundary(0));
-    assert(upper(hull(b,c)) == Boundary(6));  
-    assert(lower(hull(Interval(2),Interval(5))) >= Boundary(1));
-    assert(lower(hull(Interval(2),Interval(5))) <= Boundary(2));
-    assert(upper(hull(Interval(2),Interval(5))) >= Boundary(5));
-    assert(upper(hull(Interval(2),Interval(5))) <= Boundary(6));
+    assert(lower(hull(b,c)) == Bound(0));
+    assert(upper(hull(b,c)) == Bound(6));  
+    assert(lower(hull(Interval(2),Interval(5))) >= Bound(1));
+    assert(lower(hull(Interval(2),Interval(5))) <= Bound(2));
+    assert(upper(hull(Interval(2),Interval(5))) >= Bound(5));
+    assert(upper(hull(Interval(2),Interval(5))) <= Bound(6));
 
     // singleton
     assert(singleton(hull(Interval(2),Interval(2))) == true);
     assert(singleton(hull(Interval(2),Interval(3))) == false);
 
     // width
-    assert(width(hull(Interval(2),Interval(2))) == Boundary(0));
-    assert(width(hull(Interval(2),Interval(3))) == Boundary(1));   
+    assert(width(hull(Interval(2),Interval(2))) == Bound(0));
+    assert(width(hull(Interval(2),Interval(3))) == Bound(1));   
 }
 
 CGAL_END_NAMESPACE
