@@ -1813,12 +1813,16 @@ void test_multiple_dimensions(const PT& traits) {
     test_permute(PT());
     test_construct_innermost_coefficient_const_iterator_range(PT()); 
 
-     test_polynomial_traits_d(PT_IC_1()); 
-     test_polynomial_traits_d(PT_IC_2());
-     test_polynomial_traits_d(PT_IC_3());
+    Test_Pol::test_polynomial_traits_d(PT_IC_1()); 
+    Test_Pol::test_polynomial_traits_d(PT_IC_2());
+    Test_Pol::test_polynomial_traits_d(PT_IC_3());
 } 
-
 }//Namespace Test_Pol
+
+template< class PT >
+void test_polynomial_traits_d(const PT& traits){
+  Test_Pol::test_polynomial_traits_d(traits);
+}
 CGAL_END_NAMESPACE;
 
 #endif 

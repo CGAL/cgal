@@ -9,7 +9,7 @@
 #include <CGAL/ipower.h>
 #include <CGAL/Random.h>
 #include <cmath>
-#include <CGAL/Test/_test_Polynomial_traits_d.h>
+#include <CGAL/Test/_test_polynomial_traits_d.h>
 
 
 
