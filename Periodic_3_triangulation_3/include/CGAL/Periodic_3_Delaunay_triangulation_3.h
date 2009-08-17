@@ -675,14 +675,14 @@ Periodic_3_Delaunay_triangulation_3<Gt,Tds>::find_conflicts( const Point
   // Reset the conflict flag on the boundary.
   for(typename std::vector<Facet>::iterator fit=facets.begin();
   fit != facets.end(); ++fit) {
-    fit->first->neighbor(fit->second)->set_in_conflict_flag(0);
+    fit->first->neighbor(fit->second)->tds_data().clear();
     *bfit++ = *fit;
   }
 
   // Reset the conflict flag in the conflict cells.
   for(typename std::vector<Cell_handle>::iterator ccit=cells.begin();
       ccit != cells.end(); ++ccit) {
-    (*ccit)->set_in_conflict_flag(0);
+    (*ccit)->tds_data().clear();
     *cit++ = *ccit;
   }
 

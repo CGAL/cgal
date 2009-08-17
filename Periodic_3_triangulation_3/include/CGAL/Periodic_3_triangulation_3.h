@@ -2075,12 +2075,6 @@ too_long_edges[vit].push_back(temp_inc_cells[i]->vertex(j));
   *
   * c is the current cell, which must be in conflict.
   * tester is the function object that tests if a cell is in conflict.
-  * the cells in conflict are additionally marked by the in_conflict_flag
-  *
-  * in_conflict_flag value :
-  * 0 -> unknown
-  * 1 -> in conflict
-  * 2 -> not in conflict (== on boundary)
   */
 template <class GT, class TDS>
 template <class Conflict_test, class OutputIteratorBoundaryFacets,
@@ -2096,19 +2090,19 @@ find_conflicts(Cell_handle c, const Offset &current_off,
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
   CGAL_triangulation_precondition( tester(c, current_off) );
 
-  c->set_in_conflict_flag(1);
+  c->tds_data().mark_in_conflict();
   
   *it.second++ = c;
 
   for (int i=0; i< 4; ++i) {
     Cell_handle test = c->neighbor(i);
-    if (test->get_in_conflict_flag() == 1) {
+    if (test->tds_data().is_in_conflict()) {
       if (c < test) {
         *it.third++ = Facet(c, i); // Internal facet.
       }
       continue; // test was already in conflict.
     }
-    if (test->get_in_conflict_flag() == 0) {
+    if (!test->tds_data().is_in_conflict()) {
       Offset o_test = current_off + get_neighbor_offset(c, i, test);
       if (tester(test,o_test)) {
         if (c < test)
@@ -2116,7 +2110,7 @@ find_conflicts(Cell_handle c, const Offset &current_off,
         it = find_conflicts(test, o_test, tester, it);
         continue;
       }
-      test->set_in_conflict_flag(2); // test is on the boundary.
+      test->tds_data().mark_on_boundary(); // test is on the boundary.
     }
     *it.first++ = Facet(c, i);
     for (int j = 0 ; j<4 ; j++){

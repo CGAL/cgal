@@ -52,14 +52,14 @@ public:
   typedef typename TDS::Cell_handle    Cell_handle;
   typedef typename TDS::Vertex         Vertex;
   typedef typename TDS::Cell           Cell;
+  typedef typename TDS::Cell_data      TDS_data;
 
   template <typename TDS2>
   struct Rebind_TDS {
     typedef Periodic_3_triangulation_ds_cell_base_3<TDS2> Other;
   };
 
-  Periodic_3_triangulation_ds_cell_base_3() : _in_conflict_flag(0),
-      _additional_flag(0), off(0) {
+  Periodic_3_triangulation_ds_cell_base_3() : _additional_flag(0), off(0) {
     set_vertices();
     set_neighbors();
   }
@@ -67,7 +67,7 @@ public:
   Periodic_3_triangulation_ds_cell_base_3(
       const Vertex_handle& v0, const Vertex_handle& v1,
       const Vertex_handle& v2, const Vertex_handle& v3) :
-      _in_conflict_flag(0), _additional_flag(0), off(0) {
+      _additional_flag(0), off(0) {
     set_vertices(v0, v1, v2, v3);
     set_neighbors();
   }
@@ -77,7 +77,7 @@ public:
       const Vertex_handle& v2, const Vertex_handle& v3,
       const Cell_handle&   n0, const Cell_handle&   n1,
       const Cell_handle&   n2, const Cell_handle&   n3) :
-      _in_conflict_flag(0), _additional_flag(0), off(0) {
+      _additional_flag(0), off(0) {
     set_vertices(v0, v1, v2, v3);
     set_neighbors(n0, n1, n2, n3);
   }
@@ -249,15 +249,9 @@ public:
   void * for_compact_container() const { return N[0].for_compact_container(); }
   void * & for_compact_container()     { return N[0].for_compact_container(); }
 
-  // Conflict flag access functions.
-  // This should become a property map or something at some point.
-  void set_in_conflict_flag(unsigned char f) {
-    CGAL_triangulation_assertion(f < 4);
-    _in_conflict_flag = f;
-  }
-  unsigned char get_in_conflict_flag() const {
-    return _in_conflict_flag;
-  }
+  // TDS internal data access functions.
+  TDS_data& tds_data() { return _tds_data; }
+  const TDS_data& tds_data() const { return _tds_data; }
 
   // TODO: Get rid of this flag! Used in convert_to_1_cover.
   // Either use the conflict flag or a std::map.
@@ -272,7 +266,7 @@ public:
 private:
   Cell_handle   N[4];
   Vertex_handle V[4];
-  unsigned char _in_conflict_flag:2;
+  TDS_data _tds_data;
   unsigned char _additional_flag:2;
   // 3 respective bits are the offset in x,y and z
   // right to left: bit[0]-bit[2]: vertex(0),
