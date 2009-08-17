@@ -155,7 +155,7 @@ _test_cls_periodic_3_tds_3( const Tds &)
       // old name (up to CGAL 3.4)
       // kept for backwards compatibility but not documented
       std::set< Vertex_handle > set_of_vertices_old;
-      tds6.adjacent_vertices( (*ccit)->vertex(i),
+      tds6.incident_vertices( (*ccit)->vertex(i),
                               std::inserter(set_of_vertices_old,
                                             set_of_vertices_old.begin() ) );
       if ( set_of_vertices_old.find(tds6.mirror_vertex(*ccit, i)) 
@@ -195,7 +195,7 @@ _test_cls_periodic_3_tds_3( const Tds &)
 
       // old name (up to CGAL 3.4)
       // kept for backwards compatibility but not documented
-      tds6.adjacent_vertices
+      tds6.incident_vertices
 	( (*ccit)->vertex(i), std::back_inserter(vector_of_vertices_old));
       // correct name 
       tds6.adjacent_vertices
