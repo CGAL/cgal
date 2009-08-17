@@ -30,15 +30,13 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_remove_tds_3.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Default.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template < class Tr > class Natural_neighbors_3;
 
-template < class Gt,
-           class Tds = Triangulation_data_structure_3 <
-                                   Triangulation_vertex_base_3<Gt>,
-                                   Triangulation_cell_base_3<Gt> > >
+template < class Gt, class Tds = Default >
 class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
 {
   typedef Delaunay_triangulation_3<Gt, Tds> Self;
@@ -47,8 +45,10 @@ class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
   friend class Natural_neighbors_3<Self>;
 
 public:
-  typedef Tds Triangulation_data_structure;
-  typedef Gt  Geom_traits;
+
+  typedef typename Tr_Base::Triangulation_data_structure
+                                     Triangulation_data_structure;
+  typedef Gt                         Geom_traits;
 
   typedef typename Gt::Point_3       Point;
   typedef typename Gt::Segment_3     Segment;

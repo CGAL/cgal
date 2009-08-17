@@ -43,28 +43,32 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Random.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Default.h>
 
 #include <boost/bind.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class GT, class Tds > class Triangulation_3;
+template < class GT, class Tds = Default > class Triangulation_3;
 
 template < class GT, class Tds > std::istream& operator>>
 (std::istream& is, Triangulation_3<GT,Tds> &tr);
 
-template < class GT,
-           class Tds = Triangulation_data_structure_3 <
-                                   Triangulation_vertex_base_3<GT>,
-                                   Triangulation_cell_base_3<GT> > >
+template < class GT, class Tds_ >
 class Triangulation_3
-  :public Triangulation_utils_3
+  : public Triangulation_utils_3
 {
   friend std::istream& operator>> <>
-  (std::istream& is, Triangulation_3<GT,Tds> &tr);
+  (std::istream& is, Triangulation_3<GT,Tds_> &tr);
 
-  typedef Triangulation_3<GT, Tds>             Self;
+  typedef Triangulation_3<GT, Tds_>             Self;
+
+  typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
+                                          Triangulation_vertex_base_3<GT>,
+	                                  Triangulation_cell_base_3<GT> > >::type Tds;
+
 public:
+
   typedef Tds                                  Triangulation_data_structure;
   typedef GT                                   Geom_traits;
 

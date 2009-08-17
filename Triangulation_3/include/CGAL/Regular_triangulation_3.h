@@ -38,16 +38,23 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Gt,
-           class Tds = Triangulation_data_structure_3 <
-                           Triangulation_vertex_base_3<Gt>,
-                           Regular_triangulation_cell_base_3<Gt> > >
+template < class Gt, class Tds_ = Default >
 class Regular_triangulation_3
-  : public Triangulation_3<Gt,Tds>
+  : public Triangulation_3<Gt,
+              typename Default::Get<Tds_, Triangulation_data_structure_3 <
+                                             Triangulation_vertex_base_3<Gt>,
+                                             Regular_triangulation_cell_base_3<Gt> > >::type>
 {
-  typedef Regular_triangulation_3<Gt, Tds>      Self;
+  typedef Regular_triangulation_3<Gt, Tds_>      Self;
+
+  typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
+                                           Triangulation_vertex_base_3<Gt>,
+                                           Regular_triangulation_cell_base_3<Gt> > >::type Tds;
+
   typedef Triangulation_3<Gt,Tds>               Tr_Base;
+
 public:
+
   typedef Tds                                   Triangulation_data_structure;
   typedef Gt                                    Geom_traits;
 
