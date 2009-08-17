@@ -1667,10 +1667,9 @@ protected:
       {
         for (j = 0; j < n_ys; j++)
         {
-          if (CGAL::compare (ys[j], 
-                             -(nt_traits.convert(_t) * xs[i] + 
-                               nt_traits.convert(_v)) /
-                             nt_traits.convert(_two*_s)) == EQUAL)
+          if (CGAL::compare (nt_traits.convert(_two*_s) * ys[j],
+                             -(nt_traits.convert(_t) * xs[i] +
+                               nt_traits.convert(_v))) == EQUAL) 
           {
             ps[n] = Point_2 (xs[i], ys[j]);
             n++;
