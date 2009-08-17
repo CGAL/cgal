@@ -52,14 +52,14 @@ public:
   Triangulation_cell_base_3()
     : Cb() {}
 
-  Triangulation_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
-                            const Vertex_handle& v2, const Vertex_handle& v3)
+  Triangulation_cell_base_3(Vertex_handle v0, Vertex_handle v1,
+                            Vertex_handle v2, Vertex_handle v3)
     : Cb(v0, v1, v2, v3) {}
 
-  Triangulation_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
-                            const Vertex_handle& v2, const Vertex_handle& v3,
-                            const Cell_handle&   n0, const Cell_handle&   n1,
-                            const Cell_handle&   n2, const Cell_handle&   n3)
+  Triangulation_cell_base_3(Vertex_handle v0, Vertex_handle v1,
+                            Vertex_handle v2, Vertex_handle v3,
+                            Cell_handle   n0, Cell_handle   n1,
+                            Cell_handle   n2, Cell_handle   n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
 
   Point_iterator hidden_points_begin() const { return hidden_points_end(); }

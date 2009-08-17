@@ -46,10 +46,10 @@ public:
   Triangulation_vertex_base_3(const Point & p)
     : DSVb(), _p(p) {}
 
-  Triangulation_vertex_base_3(const Point & p, const Cell_handle& c)
+  Triangulation_vertex_base_3(const Point & p, Cell_handle c)
     : DSVb(c), _p(p) {}
 
-  Triangulation_vertex_base_3(const Cell_handle& c)
+  Triangulation_vertex_base_3(Cell_handle c)
     : DSVb(c), _p() {}
 
   const Point & point() const

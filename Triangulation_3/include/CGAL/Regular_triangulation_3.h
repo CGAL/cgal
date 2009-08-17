@@ -343,7 +343,7 @@ public:
 
   Vertex_handle
   nearest_power_vertex_in_cell(const Bare_point& p,
-			       const Cell_handle& c)  const;
+			       Cell_handle c)  const;
 
   Vertex_handle
   nearest_power_vertex(const Bare_point& p, Cell_handle c =
@@ -681,7 +681,7 @@ template < class Gt, class Tds >
 typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
 Regular_triangulation_3<Gt,Tds>::
 nearest_power_vertex_in_cell(const Bare_point& p,
-			     const Cell_handle& c) const
+			     Cell_handle c) const
 // Returns the finite vertex of the cell c with smaller
 // power distance  to p.
 {

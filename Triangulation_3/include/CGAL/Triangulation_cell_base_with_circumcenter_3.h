@@ -74,15 +74,15 @@ public:
   }
 
   Triangulation_cell_base_with_circumcenter_3(
-	                    const Vertex_handle& v0, const Vertex_handle& v1,
-                            const Vertex_handle& v2, const Vertex_handle& v3)
+	                    Vertex_handle v0, Vertex_handle v1,
+                            Vertex_handle v2, Vertex_handle v3)
     : Cb(v0, v1, v2, v3), circumcenter_(NULL) {}
 
   Triangulation_cell_base_with_circumcenter_3(
-	                    const Vertex_handle& v0, const Vertex_handle& v1,
-                            const Vertex_handle& v2, const Vertex_handle& v3,
-                            const Cell_handle&   n0, const Cell_handle&   n1,
-                            const Cell_handle&   n2, const Cell_handle&   n3)
+	                    Vertex_handle v0, Vertex_handle v1,
+                            Vertex_handle v2, Vertex_handle v3,
+                            Cell_handle   n0, Cell_handle   n1,
+                            Cell_handle   n2, Cell_handle   n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3), circumcenter_(NULL) {}
 
   ~Triangulation_cell_base_with_circumcenter_3()
@@ -93,7 +93,7 @@ public:
   // We must override the functions that modify the vertices.
   // And if the point inside a vertex is modified, we fail,
   // but there's not much we can do for this now.
-  void set_vertex(int i, const Vertex_handle& v)
+  void set_vertex(int i, Vertex_handle v)
   {
       invalidate_circumcenter();
       Cb::set_vertex(i, v);
@@ -105,8 +105,8 @@ public:
       Cb::set_vertices();
   }
 
-  void set_vertices(const Vertex_handle& v0, const Vertex_handle& v1,
-                    const Vertex_handle& v2, const Vertex_handle& v3)
+  void set_vertices(Vertex_handle v0, Vertex_handle v1,
+                    Vertex_handle v2, Vertex_handle v3)
   {
       invalidate_circumcenter();
       Cb::set_vertices(v0, v1, v2, v3);

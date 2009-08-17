@@ -38,13 +38,13 @@ public:
   Triangulation_ds_vertex_base_3()
     : _c() {}
 
-  Triangulation_ds_vertex_base_3(const Cell_handle& c)
+  Triangulation_ds_vertex_base_3(Cell_handle c)
     : _c(c) {}
 
-  const Cell_handle& cell() const
+  Cell_handle cell() const
   { return _c; }
 
-  void set_cell(const Cell_handle& c)
+  void set_cell(Cell_handle c)
   { _c = c; }
 
   // the following trivial is_valid allows
