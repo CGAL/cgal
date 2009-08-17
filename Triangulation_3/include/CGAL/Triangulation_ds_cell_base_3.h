@@ -42,27 +42,28 @@ public:
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_cell_base_3<TDS2> Other; };
 
-  Triangulation_ds_cell_base_3()
-  {
-    set_vertices();
-    set_neighbors();
-  }
+  Triangulation_ds_cell_base_3() {}
 
   Triangulation_ds_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
                                const Vertex_handle& v2, const Vertex_handle& v3)
-  {
-    set_vertices(v0, v1, v2, v3);
-    set_neighbors();
-  }
+#ifndef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
+    : V((Vertex_handle[4]) {v0, v1, v2, v3} ) {}
+#else
+  { set_vertices(v0, v1, v2, v3); }
+#endif
 
   Triangulation_ds_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
                                const Vertex_handle& v2, const Vertex_handle& v3,
                                const Cell_handle&   n0, const Cell_handle&   n1,
                                const Cell_handle&   n2, const Cell_handle&   n3)
+#ifndef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
+    : V((Vertex_handle[4]) {v0, v1, v2, v3} ), N((Cell_handle[4]) {n0, n1, n2, n3}) {}
+#else
   {
     set_vertices(v0, v1, v2, v3);
     set_neighbors(n0, n1, n2, n3);
   }
+#endif
 
   // ACCESS FUNCTIONS
 
