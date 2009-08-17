@@ -101,6 +101,15 @@ class Polynomial_algebraic_structure_traits_base< POLY,
           return POLY( x.unit_part() );
         }
     };
+  
+  class Is_zero
+    : public std::unary_function< POLY, bool > {
+  public:
+    bool operator()( const POLY& x ) const {
+      return x.is_zero();
+    }
+  };
+  
 };
 
 // Extend to the case that the coefficient range is a IntegralDomain (with div)
