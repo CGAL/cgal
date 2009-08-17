@@ -1069,14 +1069,14 @@ public:
   template <class OutputIterator>
   OutputIterator adjacent_vertices(
       Vertex_handle v, OutputIterator vertices) const {
-    return _tds.incident_vertices(v, vertices);
+    return _tds.adjacent_vertices(v, vertices);
   }
 
   //deprecated, don't use anymore
   template <class OutputIterator>
   OutputIterator incident_vertices(
       Vertex_handle v, OutputIterator vertices) const {
-    return _tds.incident_vertices(v, vertices);
+    return _tds.adjacent_vertices(v, vertices);
   }
 
   size_type degree(Vertex_handle v) const {
@@ -1315,7 +1315,7 @@ is_triangulation_in_1_sheet() const {
     std::set<Vertex_handle> nb_v_odom;
     Vertex_handle vh;
     Offset off;
-    incident_vertices(vit, std::back_inserter(nb_v));
+    adjacent_vertices(vit, std::back_inserter(nb_v));
     for (unsigned int i=0; i<nb_v.size(); i++) {
       get_vertex(nb_v[i],vh,off);
       nb_v_odom.insert(vh);

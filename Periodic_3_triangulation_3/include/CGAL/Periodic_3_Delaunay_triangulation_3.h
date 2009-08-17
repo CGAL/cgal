@@ -548,7 +548,7 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex(const Point& p,
   while (true) {
     Vertex_handle tmp = nearest;
     Offset tmp_off = get_min_dist_offset(p,o,tmp);
-    incident_vertices(nearest, std::back_inserter(vs));
+    adjacent_vertices(nearest, std::back_inserter(vs));
     for (typename std::vector<Vertex_handle>::const_iterator
 	   vsit = vs.begin(); vsit != vs.end(); ++vsit)
       tmp = (compare_distance(p,tmp->point(),(*vsit)->point(),

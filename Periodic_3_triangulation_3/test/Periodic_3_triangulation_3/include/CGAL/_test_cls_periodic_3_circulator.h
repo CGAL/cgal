@@ -114,7 +114,7 @@ _test_circulator( const Triangulation &T )
   Vertex_handle vh = T.vertices_begin();
 
   T.incident_cells(vh, std::back_inserter(cells));
-  T.incident_vertices(vh, std::back_inserter(vertices));
+  T.adjacent_vertices(vh, std::back_inserter(vertices));
   T.incident_facets(vh, std::back_inserter(facets));
 
   for(typename std::vector<Cell_handle>::const_iterator cit = cells.begin(),
