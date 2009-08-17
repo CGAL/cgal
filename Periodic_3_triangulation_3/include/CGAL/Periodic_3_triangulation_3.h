@@ -289,7 +289,7 @@ public:
   bool is_triangulation_in_1_sheet() const;
 
   void convert_to_1_sheeted_covering();
-  void convert_to_needed_covering();
+  void convert_to_27_sheeted_covering();
 
   size_type number_of_cells() const {
     if (is_1_cover()) return _tds.number_of_cells();
@@ -2592,7 +2592,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
 	  // to a triangulation in the needed covering space.
           if (is_1_cover()) {
 	    _tds.delete_cells(new_cells.begin(), new_cells.end());
-	    convert_to_needed_covering();
+	    convert_to_27_sheeted_covering();
             return;
           }
           else if (find(too_long_edges[v_no].begin(),
@@ -2886,7 +2886,8 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
 }
 
 template < class GT, class TDS >
-inline void Periodic_3_triangulation_3<GT,TDS>::convert_to_needed_covering() {
+inline void
+Periodic_3_triangulation_3<GT,TDS>::convert_to_27_sheeted_covering() {
   if (_cover == make_array(3,3,3)) return;
   CGAL_triangulation_precondition(is_1_cover());
 

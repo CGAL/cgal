@@ -216,10 +216,10 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   PT3_deg.convert_to_1_sheeted_covering();
   assert(PT3_deg.number_of_sheets() == CGAL::make_array(1,1,1));
   assert(PT3_deg.is_valid());
-  PT3_deg.convert_to_needed_covering();
+  PT3_deg.convert_to_27_sheeted_covering();
   assert(PT3_deg.number_of_sheets() == CGAL::make_array(3,3,3));
   assert(PT3_deg.is_valid());
-  PT3_deg.convert_to_needed_covering();
+  PT3_deg.convert_to_27_sheeted_covering();
   assert(PT3_deg.number_of_sheets() == CGAL::make_array(3,3,3));
   assert(PT3_deg.is_valid());
 

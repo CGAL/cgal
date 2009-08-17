@@ -37,7 +37,7 @@ int main()
     else
       std::cout<<"It is NOT safe to change the triangulation here!"<<std::endl;
 
-    T.convert_to_needed_covering();
+    T.convert_to_27_sheeted_covering();
     cs = T.number_of_sheets();
     std::cout<<"Current covering: "<<cs[0]<<' '<<cs[1]<<' '<<cs[2]<<std::endl;
   }
