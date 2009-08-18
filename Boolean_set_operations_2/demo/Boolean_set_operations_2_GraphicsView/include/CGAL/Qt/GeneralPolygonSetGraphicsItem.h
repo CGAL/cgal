@@ -1,4 +1,4 @@
-// Copyright (c) 2008  GeometryFactory Sarl (France).
+// Copyright (c) 2009  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,11 +11,11 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/branches/experimental-packages/Polyline_simplification_2/demo/Polyline_simplification_2/include/CGAL/Qt/Polyline_simplification_2_graphics_item.h $
-// $Id: Polyline_simplification_2_graphics_item.h 48710 2009-04-07 21:41:12Z fcacciola $
+// $URL:$
+// $Id:$
 // 
 //
-// Author(s) : Fernando Cacciola <Fernando.Cacciola @geometryfactory.com>
+// Author(s) : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 
 #ifndef CGAL_QT_GENERAL_POLYGON_SET_GRAPHICS_ITEM_H
 #define CGAL_QT_GENERAL_POLYGON_SET_GRAPHICS_ITEM_H
@@ -66,24 +66,28 @@ namespace Qt {
       typedef typename PS::Traits_2             Traits_2;
     } ;
     
-    template<class Point>
-    struct arbitrary_point_helper
+    template<class TPoint,class SPoint>
+    struct point_cast_helper
     {
-      static std::pair<double,double> approximate( Point const& p )
+      static TPoint convert( SPoint const& p )
       {
-        return std::make_pair( to_double(p.x()), to_double(p.y()) ) ;
+        return TPoint( to_double(p.x()), to_double(p.y()) ) ;
       }
       
     };
     
-    template <class R, class A, class N, class B>
-    struct arbitrary_point_helper< _Bezier_point_2<R,A,N,B> >
+    template <class TPoint, class R, class A, class N, class B>
+    struct point_cast_helper<TPoint, CGAL::_Bezier_point_2<R,A,N,B> >
     {
-      static std::pair<double,double> approximate( _Bezier_point_2<R,A,N,B> const& p )
+      static TPoint convert( CGAL::_Bezier_point_2<R,A,N,B> const& p )
       {
-        return p.approximate();
+        std::pair<double,double> xy = p.approximate();
+        return TPoint(xy.first, xy.second);
       }
     } ;
+    
+    template<class TPoint, class SPoint>
+    TPoint point_cast ( SPoint const& aP ) { return point_cast_helper<TPoint,SPoint>::convert(aP); }
   }
 
 template <class General_polygon_set_, class Compute_XM_curve_bbox_, class Draw_XM_curve_>
@@ -245,58 +249,9 @@ template <class G, class B, class D>
 template<class Visitor>
 void GeneralPolygonSetGraphicsItem<G,B,D>::traverse_polygon( General_polygon const& aP, Visitor& aVisitor)
 {
-  //
-  // Hack to workaround some bezier incosistency proble where the ordering of the curves within the sequence is reversed
-  // w.r.t to the orientation of each curve in turn.
-  //
-
-  typedef std::vector<General_X_monotone_curve_2> XMC_vector ;
-  
-  typedef typename General_X_monotone_curve_2::Point_2 Point ;
-  
-  XMC_vector curves ;
-  std::copy(aP.curves_begin(),aP.curves_end(), std::back_inserter(curves) ) ;
-  
-  bool lFwd = true ;
-  
-  if ( curves.size() >= 2 )
-  {
-    double s0x ;
-    double s0y ;
-    double t0x ;
-    double t0y ;
-    double s1x ;
-    double s1y ;
-    double t1x ;
-    double t1y ;
-    
-    boost::tie(s0x,s0y) = CGALi::arbitrary_point_helper<Point>::approximate(curves[0].source());
-    boost::tie(t0x,t0y) = CGALi::arbitrary_point_helper<Point>::approximate(curves[0].target());
-    boost::tie(s1x,s1y) = CGALi::arbitrary_point_helper<Point>::approximate(curves[1].source());
-    boost::tie(t1x,t1y) = CGALi::arbitrary_point_helper<Point>::approximate(curves[1].target());
-    
-    // squared distance between c0.target <-> c1.source
-    double dts = ((s1x-t0x)*(s1x-t0x))+((s1y-t0y)*(s1y-t0y));
-    
-    // squared distance between c1.source <-> c0.target
-    double dst = ((s0x-t1x)*(s0x-t1x))+((s0y-t1y)*(s0y-t1y));
-   
-    // The curves are reversed if c1 is followed by c0
-    if ( dst < dts )
-      lFwd = false ;
-  }
-  
   int c = 0 ;
-  if ( lFwd )
-  {
-    for( typename XMC_vector::const_iterator cit = curves.begin(); cit != curves.end(); ++ cit )
+  for( General_curve_const_iterator cit = aP.curves_begin(); cit != aP.curves_end(); ++ cit )
       aVisitor(*cit,c++);
-  }
-  else
-  {
-    for( typename XMC_vector::const_reverse_iterator cit = curves.rbegin(); cit != curves.rend(); ++ cit )
-      aVisitor(*cit,c++);
-  }
 }
 
 template <class G, class B, class D>

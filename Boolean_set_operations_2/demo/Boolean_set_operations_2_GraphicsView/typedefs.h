@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2009  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,7 +15,7 @@
 // $Id: typedefs.h 37003 2007-03-10 16:55:12Z spion $
 //
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_TYPEDEFS_H
 #define CGAL_TYPEDEFS_H
@@ -56,14 +56,6 @@ typedef Circular_traits::Polygon_2                           Circular_polygon;
 typedef CGAL::General_polygon_with_holes_2<Circular_polygon> Circular_polygon_with_holes;
 typedef CGAL::General_polygon_set_2<Circular_traits>         Circular_polygon_set;
 
-struct Compute_circular_X_monotone_cuve_bbox
-{
-  CGAL::Bbox_2 operator()( Circular_X_monotone_curve const& curve ) const 
-  {
-    return curve.bbox();   
-  }
-} ;
-
 struct Draw_circular_X_monotone_cuve
 {
   template<class Path, class Converter>
@@ -79,7 +71,7 @@ struct Draw_circular_X_monotone_cuve
     aPath->lineTo( aConvert( lT ) ) ;
   }
 } ;
-typedef CGAL::Qt::GeneralPolygonSetGraphicsItem<Circular_polygon_set,Compute_circular_X_monotone_cuve_bbox,Draw_circular_X_monotone_cuve> Circular_GI;
+typedef CGAL::Qt::Piecewise_set_graphics_item<Circular_polygon_set,Draw_circular_X_monotone_cuve> Circular_GI;
 
 
 
@@ -199,20 +191,6 @@ struct Bezier_helper
   }
 } ;
 
-struct Compute_bezier_X_monotone_cuve_bbox
-{
-  CGAL::Bbox_2 operator()( Bezier_X_monotone_curve const& aCurve ) const 
-  {
-    return aCurve.supporting_curve().bbox();
-    
-    std::vector<Linear_point> lQ ;
-    
-    Bezier_helper::get_control_points(aCurve.supporting_curve(), true, std::back_inserter(lQ) ) ;
-    
-    return CGAL::bbox_2(lQ.begin(),lQ.end());
-  }
-} ;
-
 struct Draw_bezier_X_monotone_cuve
 {
   template<class Path, class Converter>
@@ -269,7 +247,7 @@ struct Draw_bezier_X_monotone_cuve
   }
 } ;
 
-typedef CGAL::Qt::GeneralPolygonSetGraphicsItem<Bezier_polygon_set,Compute_bezier_X_monotone_cuve_bbox,Draw_bezier_X_monotone_cuve> Bezier_GI;
+typedef CGAL::Qt::Piecewise_set_graphics_item<Bezier_polygon_set,Draw_bezier_X_monotone_cuve> Bezier_GI;
 
 
 #endif

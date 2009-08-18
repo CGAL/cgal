@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
+// Copyright (c) 2009  GeometryFactory Sarl (France).
 // All rights reserved.
 // 
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,7 +15,7 @@
 // $Id: boolean_operations_2.cpp 45454 2008-09-09 21:42:42Z lrineau $
 // 
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 
 
 //#define ENABLE_TRACE
@@ -82,8 +82,8 @@ void trace( std::string s )
   #include <CGAL/Quotient.h>
 #endif
 
-#include <CGAL/Qt/GeneralPolygonSetGraphicsItem.h>
-#include <CGAL/Qt/GraphicsViewPolygonWithHolesInput.h>
+#include <CGAL/Qt/Piecewise_set_graphics_item.h>
+//#include <CGAL/Qt/GraphicsViewPolygonWithHolesInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Qt/utility.h>
@@ -443,7 +443,7 @@ private:
   bool                                                        mCircular_active ;
   bool                                                        mBlue_active ;
   Curve_set_vector                                            mCurve_sets ;
-  CGAL::Qt::GraphicsViewPolygonWithHolesInput<Linear_kernel>* mPWHI ;
+//  CGAL::Qt::GraphicsViewPolygonWithHolesInput<Linear_kernel>* mPWHI ;
     
 public:
 
@@ -592,9 +592,9 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   
-  mPWHI = new CGAL::Qt::GraphicsViewPolygonWithHolesInput<Linear_kernel>(this, &mScene);
+//  mPWHI = new CGAL::Qt::GraphicsViewPolygonWithHolesInput<Linear_kernel>(this, &mScene);
   
-  QObject::connect(mPWHI, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
+//  QObject::connect(mPWHI, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
 
   QObject::connect(this->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   QObject::connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
@@ -816,7 +816,7 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
             Bezier_curve B = read_bezier_curve(in_file, lDoubleFormat);
             if ( B.number_of_control_points() >= 2 )
             {
-              TRACE( "region " << r << " boundary " << b << " curve " << k );
+              //TRACE( "region " << r << " boundary " << b << " curve " << k );
                 
               make_x_monotone (B, std::back_inserter (x_objs));
               
@@ -824,7 +824,7 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
               {
                 if (CGAL::assign (xcv, *xoit))
                 {
-                  TRACE( " X montonote: " << xcv.source() << " -> " << xcv.target() << ( xcv.is_directed_right() ? " RIGHT":" LEFT") << ( xcv.is_vertical() ? " VERTICAL" : "")) ;
+                  //TRACE( " X montonote: " << xcv.source() << " -> " << xcv.target() << ( xcv.is_directed_right() ? " RIGHT":" LEFT") << ( xcv.is_vertical() ? " VERTICAL" : "")) ;
                   xcvs.push_back (xcv);
                 }  
               }
@@ -834,11 +834,11 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
           Bezier_polygon  pgn (xcvs.begin(), xcvs.end());
           
           CGAL::Orientation  orient = pgn.orientation();
-          TRACE( "  Orientation: " << orient ) ;
+          //TRACE( "  Orientation: " << orient ) ;
             
           if (( b == 0 && orient == CGAL::CLOCKWISE) || ( b > 0 && orient == CGAL::COUNTERCLOCKWISE))
           {
-            TRACE( "Reversing orientation: " ) ;
+            //TRACE( "Reversing orientation: " ) ;
             pgn.reverse_orientation();
           }
             
@@ -992,9 +992,9 @@ void MainWindow::open( QString fileName )
 
 void MainWindow::on_actionInsertPWH_toggled(bool aChecked)
 {
-  if(aChecked)
-       mScene.installEventFilter(mPWHI);
-  else mScene.removeEventFilter (mPWHI);
+//  if(aChecked)
+//       mScene.installEventFilter(mPWHI);
+//  else mScene.removeEventFilter (mPWHI);
 }
 
 void MainWindow::processInput(CGAL::Object o )

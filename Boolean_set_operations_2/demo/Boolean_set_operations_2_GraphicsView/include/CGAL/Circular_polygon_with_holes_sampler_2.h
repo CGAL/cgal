@@ -1,4 +1,4 @@
-// Copyright (c) 2008  GeometryFactory Sarl (France).
+// Copyright (c) 2009 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,11 +11,11 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/branches/experimental-packages/Polyline_simplification_2/demo/Polyline_simplification_2/include/CGAL/Qt/Polyline_simplification_2_graphics_item.h $
-// $Id: Polyline_simplification_2_graphics_item.h 48710 2009-04-07 21:41:12Z fcacciola $
+// $URL:$
+// $Id:$
 // 
 //
-// Author(s) : Fernando Cacciola <Fernando.Cacciola @geometryfactory.com>
+// Author(s) : Fernando Cacciola <fernando.Cacciola@geometryfactory.com>
 
 #ifndef CGAL_CIRCULAR_POLYGONAL_SAMPLER_2_H
 #define CGAL_CIRCULAR_POLYGONAL_SAMPLER_2_H
