@@ -1133,7 +1133,6 @@ Circular_kernel_2/examples/Circular_kernel_2/functor_has_on_2.cpp -text
 Circular_kernel_2/include/CGAL/Circular_kernel_intersections.h -text
 Circular_kernel_2/include/CGAL/Filtered_bbox_circular_kernel_2/interface_macros.h -text
 Circular_kernel_2/include/CGAL/global_functions_circular_kernel_2.h -text
-Circular_kernel_2/test/Circular_kernel_2/makefile -text
 Circular_kernel_2/test/Circular_kernel_2/test_Circular_kernel_basic.cpp -text
 Circular_kernel_2/test/Circular_kernel_2/test_Exact_circular_kernel_basic.cpp -text
 Circular_kernel_3/changes -text
