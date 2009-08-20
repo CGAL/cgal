@@ -1067,8 +1067,8 @@ namespace CartesianKernelFunctors {
 	       const Point_3& p2, const Point_3& p3) const
     {
       return determinant<FT>(p1.x()-p0.x(), p1.y()-p0.y(), p1.z()-p0.z(),
-                                   p2.x()-p0.x(), p2.y()-p0.y(), p2.z()-p0.z(),
-                                   p3.x()-p0.x(), p3.y()-p0.y(), p3.z()-p0.z())/6;
+                             p2.x()-p0.x(), p2.y()-p0.y(), p2.z()-p0.z(),
+                             p3.x()-p0.x(), p3.y()-p0.y(), p3.z()-p0.z())/6;
     }
 
     result_type
@@ -2062,8 +2062,8 @@ namespace CartesianKernelFunctors {
 	       - qs2 * determinant(psx,psy,rsx,rsy);
 
       FT den   = determinant(psx,psy,psz,
-                                   qsx,qsy,qsz,
-                                   rsx,rsy,rsz);
+                             qsx,qsy,qsz,
+                             rsx,rsy,rsz);
 
       CGAL_kernel_assertion( den != 0 );
       FT inv = 1 / (2 * den);
@@ -2100,17 +2100,17 @@ namespace CartesianKernelFunctors {
       FT sp2 = CGAL_NTS square(spx) + CGAL_NTS square(spy) + CGAL_NTS square(spz);
 
       FT num_x = determinant(qpy,qpz,qp2,
-                                   rpy,rpz,rp2,
-                                   spy,spz,sp2);
+                             rpy,rpz,rp2,
+                             spy,spz,sp2);
       FT num_y = determinant(qpx,qpz,qp2,
-                                   rpx,rpz,rp2,
-                                   spx,spz,sp2);
+                             rpx,rpz,rp2,
+                             spx,spz,sp2);
       FT num_z = determinant(qpx,qpy,qp2,
-                                   rpx,rpy,rp2,
-                                   spx,spy,sp2);
+                             rpx,rpy,rp2,
+                             spx,spy,sp2);
       FT den   = determinant(qpx,qpy,qpz,
-                                   rpx,rpy,rpz,
-                                   spx,spy,spz);
+                             rpx,rpy,rpz,
+                             spx,spy,spz);
       CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
       FT inv = 1 / (2 * den);
 
@@ -2360,8 +2360,8 @@ namespace CartesianKernelFunctors {
 	       - qs2 * determinant(psx,psy,rsx,rsy);
 
       FT den   = determinant(psx,psy,psz,
-                                   qsx,qsy,qsz,
-                                   rsx,rsy,rsz);
+                             qsx,qsy,qsz,
+                             rsx,rsy,rsz);
 
       CGAL_kernel_assertion( den != 0 );
       FT inv = 1 / (2 * den);
