@@ -27,7 +27,9 @@ are obligatory.
 \index{maintainer file@{\tt maintainer} file}
 \ccIndexMainItem{\tt description.txt}
 Submissions should not contain files in other places than described here.
-Packages may be rejected if they do, and the contents won't go into releases.
+It is possible to have some under SVN, but they need to be listed in the
+\ccc{dont_submit} file to avoid being submitted.
+
 
 The directory structure of a package named Package should be as follows: 
 
@@ -71,12 +73,12 @@ The directory structure of a package named Package should be as follows:
        contains the {\tt .cpp} files (if any) for the package.
        They are gathered in subdirectories corresponding to each
        library (be it static or shared).
-     \item[{\tt test}]\index{test directory@{\tt test} directory!for
+  \item[{\tt test}]\index{test directory@{\tt test} directory!for
          packages} contains the test suite code for the package. See
        Section~\ref{sec:test_subdirectory} for a detailed description.
   \item[{\tt doc\_tex}]\index{doc_tex directory@{\tt doc\_tex} directory}
        \ccIndexSubitem{source files}{documentation}
-       contains the documentation for the reference manuals.
+       contains the documentation for the user and reference manuals.
        These are the files used to produce the manuals for public releases and
        to run the internal release reference manual test suite.
        See Section~\ref{sec:doc_tex_subdirectory} for a detailed description 
@@ -94,32 +96,31 @@ The directory structure of a package named Package should be as follows:
        software and may require user interaction.  They are compiled but not
        run in the test suite. See Section~\ref{sec:demo_subdirectory} for a
        more detailed description of this subdirectory.
-     \item[{\tt auxiliary}]\index{auxiliary directory@{\tt auxiliary}
-         directory} contains auxiliary software for CGAL. For
-       instance, GMP goes here. The average package won't have this
-       directory.
-     \item[{\tt scripts}]\index{scripts directory@{\tt scripts}
-         directory} contains scripts that are of interest to CGAL
-       users.
-     \item[{\tt developer\_scripts}]\index{developers_scripts
-         directory@{\tt developers\_scripts} directory} contains
+  \item[{\tt auxiliary}]\index{auxiliary directory@{\tt auxiliary}
+       directory} contains auxiliary software for CGAL. For
+       instance, GMP goes here when using the Windows installer.
+       The average package won't have this directory.
+  \item[{\tt scripts}]\index{scripts directory@{\tt scripts}
+       directory} contains scripts that are of interest to CGAL users.
+  \item[{\tt developer\_scripts}]\index{developers\_scripts
+       directory@{\tt developers\_scripts} directory} contains
        scripts that are of interest to CGAL developers. This directory
        is included in internal releases only, not in public releases.
-  \item[{\tt description.txt}]%
-       \ccIndexMainItem{\tt description.txt}
-       should give a very short description of the contents of the package. 
   \item[{\tt dont\_submit}]%
-    \ccIndexMainItem{\tt dont_submit} specifies files and directories
+    \ccIndexMainItem{\tt dont\_submit} specifies files and directories
     that are to be excluded from the release, for example:
     \begin{verse}
       TODO\\
       include/CGAL/my\_internal\_file.h\\
-      Benchmark      
+      benchmark      
     \end{verse}
+  \item[{\tt package\_info/Package/description.txt}]%
+       \ccIndexMainItem{\tt description.txt}
+       should give a very short description of the contents of the package. 
   \item[{\tt long\_description.txt}]%
-       \ccIndexMainItem[c]{\tt long_description.txt}
+       \ccIndexMainItem[c]{\tt package\_info/Package/long\_description.txt}
        may be added with more detailed information about the package. 
-  \item[\ccAnchor{maintainer}{{\tt maintainer}}]%
+  \item[\ccAnchor{maintainer}{{\tt package\_info/Package/maintainer}}]%
        \index{maintainer file@{\tt maintainer} file}
        should be used to name the maintainers of the package. The file should
        have for each maintainer a line with the following format:
@@ -149,9 +150,9 @@ Chapter~\ref{chap:testing}.
                |
                +--- include/
                |
-               |- cgal_test
+               |- CMakeLists.txt
                |
-               |- makefile
+               |- cgal_test
                |
                |- *.cpp
                |
@@ -165,8 +166,8 @@ name.
         test suite\index{data directory@{\tt data} directory}.
    \item[{\tt include/}] is a subdirectory that contains local include files for
         the test suite.
-      \item[{\tt cgal\_test}]\index{cgal_test script@{\tt cgal\_test}
-          script|(} is the script that will be called when the entire
+   \item[{\tt cgal\_test}]\index{cgal_test script@{\tt cgal\_test}
+        script|(} is the script that will be called when the entire
         test suite is run. As this file is created automatically
         during the release process, submitting it is error-prone and
         thus {\bf strongly discouraged}.
@@ -177,18 +178,18 @@ name.
         script (Section~\ref{sec:create_cgal_test}).  
         \index{cgal_test script@{\tt cgal\_test} script|)}
 
-   \item[{\tt makefile}]\ccIndexSubitem{\tt makefile}{test suite} 
-        is the makefile for the test programs. It is created
+   \item[{\tt CMakeLists.txt}]\ccIndexSubitem{\tt CMakeLists.txt}{test suite} 
+        is the CMake configuration file for the test programs. It is created
         automatically, just like {\tt cgal\_test}. Submitting it is 
-        {\bf discouraged even more strongly}, because it is quite difficult 
-        to produce a makefile that works correctly on all supported platforms.
+        {\bf strongly discouraged}, and the only reason for submitting one is
+        when the automatic generation script cannot produce a working CMake
+        configuration file.
         
-        For testing purposes, such a makefile can be created using the
-        script
-        {\tt cgal\_create\_makefile}%
-        \index{cgal_create_makefile script@{\tt cgal\_create\_makefile} script} 
+        Such a {\tt CMakeLists.txt} can be created using the script
+        {\tt cgal\_create\_cmake\_script}%
+        \index{cgal_create_cmake_script script@{\tt cgal\_create\_cmake\_script} script} 
         with the argument {\tt -t} 
-        (Section~\ref{sec:cgal_create_makefile}).
+        (Section~\ref{sec:cgal_create_cmake_script}).
    \item[{\tt *.cpp}] source code for the test programs.
         \ccIndexSubitem{source files}{test suite}
 
@@ -336,15 +337,6 @@ the basic library can have the following documentation.
 \ccIndexSubitemEnd{manuals}{source files} 
 \index{doc_tex directory@{\tt doc\_tex} directory|)}
 
-\textbf{Historical Notes.} Once upon a time a file called
-\texttt{htmlfiles} has been used to indicate files (e.g., images) to
-be used for the html conversion. This file is no longer needed nor is
-it evaluated anymore. The functionality is now provided by an
-mechanism in the \texttt{latex\_to\_html} converter to find and copy
-the included raster images automatically. Also the \texttt{cgal.bib}
-files are not used anymore. They are replaced by a common file
-\texttt{doc\_tex/Manual/cgal\_manual.bib} in the \texttt{Manual}
-package.
 
 \section{{\tt examples} subdirectory}
 \label{sec:examples_subdirectory}
@@ -372,7 +364,7 @@ The structure of an example directory should be as follows:
                    |
                    |- cgal_test
                    |
-                   |- makefile
+                   |- CMakeLists.txt
                    |
                    |- *.cpp
 \end{verbatim}
@@ -404,7 +396,7 @@ The structure of this directory should be as follows:
             |
             |- README
             |
-            |- makefile
+            |- CMakeLists.txt
             |
             |- *.cpp
 \end{verbatim}
@@ -414,10 +406,10 @@ the package for which it is a demo.
 
 The file {\tt README} should contain information about what the program does, 
 and how to compile it ({\it i.e.}, what graphical libraries are needed, 
-{\it etc.}). Note that, in contrast to example programs and test suite
-programs, for demo programs is it necessary to submit a {\tt makefile}
-\ccIndexSubitem{\tt makefile}{demo programs} since
-different demos will require different libraries and thus the makefiles
+{\it etc.}). Note that, in contrast to example and test programs,
+demo programs more often need to submit a {\tt CMakeLists.txt}
+\ccIndexSubitem{\tt CMakeLists.txt}{demo programs} since
+different demos will require different libraries and thus the {\tt CMakeLists.txt}
 for these programs will be somewhat dissimilar.
 \ccIndexMainItem{demo programs}
 \ccIndexSubitemEnd{demo programs}{submitting}
@@ -440,7 +432,7 @@ Requirements:
 \noindent
 Recommendations:
 \begin{itemize}
-   \item Do not submit {\tt makefile}s for example programs and test suite
+   \item Do not submit {\tt CMakeLists.txt}s for example programs and test suite
          programs.
    \item Do not submit the script {\tt cgal\_test} used to compile and test
          your test suite programs.
