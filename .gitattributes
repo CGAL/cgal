@@ -2167,6 +2167,7 @@ Mesh_3/doc_tex/Mesh_3/pictures/liver.eps -text svneol=unset#application/postscri
 Mesh_3/doc_tex/Mesh_3/pictures/liver.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher.eps -text svneol=unset#application/postscript
 Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher_small.jpg -text
 Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.eps -text svneol=unset#application/postscript
 Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain_2.eps -text svneol=unset#application/postscript
