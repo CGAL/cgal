@@ -36,11 +36,11 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Tr > class Natural_neighbors_3;
 
-template < class Gt, class Tds = Default >
-class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds>
+template < class Gt, class Tds_ = Default >
+class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds_>
 {
-  typedef Delaunay_triangulation_3<Gt, Tds> Self;
-  typedef Triangulation_3<Gt,Tds>           Tr_Base;
+  typedef Delaunay_triangulation_3<Gt, Tds_> Self;
+  typedef Triangulation_3<Gt,Tds_>           Tr_Base;
 
   friend class Natural_neighbors_3<Self>;
 
