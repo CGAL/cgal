@@ -48,6 +48,8 @@ The directory structure of a package named Package should be as follows:
       |
       +--- demo/<demodir>/
       |
+      +--- benchmark/<benchmarkdir>/
+      |
       +--- auxiliary/
       |
       +--- scripts/
@@ -96,6 +98,10 @@ The directory structure of a package named Package should be as follows:
        software and may require user interaction.  They are compiled but not
        run in the test suite. See Section~\ref{sec:demo_subdirectory} for a
        more detailed description of this subdirectory.
+  \item[{\tt benchmark}]\index{benchmark directory@{\tt benchmark} directory}
+       contains the benchmark programs for the package.
+       See Section~\ref{sec:benchmark_subdirectory} for a detailed 
+       description of this subdirectory.
   \item[{\tt auxiliary}]\index{auxiliary directory@{\tt auxiliary}
        directory} contains auxiliary software for CGAL. For
        instance, GMP goes here when using the Windows installer.
@@ -377,6 +383,7 @@ and subdirectories.
 \ccIndexSubitemEnd{example programs}{submitting}
 \index{examples directory@{\tt examples} directory|)}
 
+
 \section{{\tt demo} subdirectory}
 \label{sec:demo_subdirectory}
 \index{demo directory@{\tt demo} directory|(}
@@ -414,6 +421,28 @@ for these programs will be somewhat dissimilar.
 \ccIndexMainItem{demo programs}
 \ccIndexSubitemEnd{demo programs}{submitting}
 \index{demo directory@{\tt demo} directory|)}
+
+
+\section{{\tt benchmark} subdirectory}
+\label{sec:benchmark_subdirectory}
+\index{benchmark directory@{\tt benchmark} directory|(}
+\ccIndexSubitemBegin{benchmark programs}{submitting}
+
+Benchmark programs for a package should be placed in a subdirectory of the directory {\tt benchmark}. 
+The subdirectory name, \verb|<benchmarkdir>|, will usually correspond to the 
+package name, but this is not a requirement.
+
+Benchmark programs are currently not subject to any automatic treatment in the
+test-suite, although they could evolve into an automatic benchmark-suite at
+some point.  We suggest at directory organization similar to the one of
+\verb|<exampledir>|.
+
+Some data sets can be placed under the {\tt data} subdirectory of \verb|<benchmarkdir>|,
+but we recommend that only a small number of small files go there.  Extensive
+benchmarks data sets should probably be gathered elsewhere, so as not to bloat
+the SVN server.
+
+\index{benchmark directory@{\tt benchmark} directory|)}
 
 
 \ccIndexSubitemEnd{submitting}{directory structure for}
