@@ -165,8 +165,9 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
     while((int) points.size() <= maxdegree + 1){
         i++;
         // timer1.start();
-        Coeff_1 Fat_i = typename PT::Evaluate()(F,IC(i));
-        Coeff_1 Gat_i = typename PT::Evaluate()(G,IC(i));
+        Coeff_1 c_i(i);
+        Coeff_1 Fat_i(typename PT::Evaluate()(F,c_i));
+        Coeff_1 Gat_i(typename PT::Evaluate()(G,c_i));
         // timer1.stop();
         
         int deg_f_at_i = coeff_degree(Fat_i,0);
@@ -204,10 +205,12 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
 
 #ifndef CGAL_NDEBUG
     while((int) points.size() <= maxdegree + 3){
-        i++;
-        Coeff_1 Fat_i = typename PT::Evaluate()(F,IC(i));
-        Coeff_1 Gat_i = typename PT::Evaluate()(G,IC(i));
-        
+        i++;        
+
+        Coeff_1 c_i(i);
+        Coeff_1 Fat_i(typename PT::Evaluate()(F,c_i));
+        Coeff_1 Gat_i(typename PT::Evaluate()(G,c_i));
+
         assert(coeff_degree(Fat_i,0) <= deg_f);
         assert(coeff_degree(Gat_i,0) <= deg_g);
         
