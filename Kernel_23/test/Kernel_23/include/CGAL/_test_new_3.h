@@ -567,6 +567,7 @@ test_new_3(const R& rep)
   typename R::Compare_squared_distance_3 compare_sq_dist
         = rep.compare_squared_distance_3_object();
                     tmp34ab = compare_sq_dist(p2,p3,FT(1));
+                    tmp34ab = compare_sq_dist(p2,p3,p2,p3);
 
   typename R::Compare_squared_radius_3 compare_sq_radius
         = rep.compare_squared_radius_3_object();
