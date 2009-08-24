@@ -715,6 +715,12 @@ namespace HomogeneousKernelFunctors {
     {
       return CGAL_NTS compare(squared_distance(p, q), d2);
     }
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s) const
+    {
+      return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
+    }
   };
 
   template <typename K>
