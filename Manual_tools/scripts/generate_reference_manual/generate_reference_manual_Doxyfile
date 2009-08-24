@@ -99,12 +99,9 @@ EXCLUDE                = ./test \
                          ./demo \
                          ./examples
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       = */internal/* \
-                         */CGALi/*
-EXCLUDE_SYMBOLS        = CGAL::CGALi \
-                         CGAL::internal \
+EXCLUDE_PATTERNS       = */internal/*
+EXCLUDE_SYMBOLS        = CGAL::internal \
                          CGAL::*::internal \
-                         CGAL::*::CGALi \
                          __pad*__
 EXAMPLE_PATH           =
 EXAMPLE_PATTERNS       = *
