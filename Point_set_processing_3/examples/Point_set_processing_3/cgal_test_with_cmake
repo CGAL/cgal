@@ -221,12 +221,13 @@ echo                                                                      >> cga
 #---------------------------------------------------------------------#
 
 if [ -n "$DO_RUN" ] ; then
-  echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
-  echo "- Tests output for platform $PLATFORM"                              >> cgal_test_with_cmake.log
-  echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
-  echo                                                                      >> cgal_test_with_cmake.log
-  cat ProgramOutput.*.$PLATFORM                                             >> cgal_test_with_cmake.log
-  echo                                                                      >> cgal_test_with_cmake.log
+  for f in ProgramOutput.*.$PLATFORM ; do
+    echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
+    echo "- $f"                                                               >> cgal_test_with_cmake.log
+    echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
+    cat $f                                                                    >> cgal_test_with_cmake.log
+    echo                                                                      >> cgal_test_with_cmake.log
+  done
 fi
 
 echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
