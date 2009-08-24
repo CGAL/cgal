@@ -2650,8 +2650,8 @@ Partition_2/doc_tex/Partition_2/Trier_opt_cvx.pdf -text svneol=unset#application
 Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text svneol=unset#application/postscript
 Partition_2/doc_tex/Partition_2/teaser-small.png -text svneol=unset#image/png
 Partition_2/doc_tex/Partition_2/teaser.png -text svneol=unset#image/png
-Periodic_3_triangulation_3/Benchmarks/Periodic_3_triangulation_3/.cdtproject -text
-Periodic_3_triangulation_3/Benchmarks/Periodic_3_triangulation_3/.project -text
+Periodic_3_triangulation_3/benchmark/Periodic_3_triangulation_3/.cdtproject -text
+Periodic_3_triangulation_3/benchmark/Periodic_3_triangulation_3/.project -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/MainWindow.h -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/MainWindow.ui -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/Periodic_3_triangulation_3.qrc -text
