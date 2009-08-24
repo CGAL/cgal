@@ -6,7 +6,13 @@ A model for this must provide:
 \ccMemberFunction{Comparison_result operator()(const Kernel::Point_3&p,
                                                const Kernel::Point_3&q, 
                                                const Kernel::FT&d2);}
-      {compares the squared distance of points \ccc{p} and \ccc{q} to \ccc{d2}}
+      {compares the squared distance of points \ccc{p} and \ccc{q} to \ccc{d2}.}
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Point_3&p,
+                                               const Kernel::Point_3&q,
+                                               const Kernel::Point_3&r,
+                                               const Kernel::Point_3&s);}
+      {compares the squared distance of points \ccc{p} and \ccc{q} to the squared distance of points \ccc{r} and \ccc{s}.}
 
 \ccRefines
 \ccc{AdaptableFunctor} (with three arguments)
