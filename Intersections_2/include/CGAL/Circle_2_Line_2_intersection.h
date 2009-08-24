@@ -32,7 +32,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 bool
@@ -52,7 +52,7 @@ do_intersect(const typename K::Line_2& l,
     return squared_distance(c.center(), l) <= c.squared_radius();
 }
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 inline

@@ -55,7 +55,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi{
+namespace internal{
 
 template<typename T> struct Interval_traits_base{
     
@@ -83,7 +83,7 @@ template<typename T> struct Interval_traits_base{
 };
 }
 
-template <typename T> struct Interval_traits: public CGALi::Interval_traits_base<T>{};
+template <typename T> struct Interval_traits: public internal::Interval_traits_base<T>{};
 class Exception_intersection_is_empty{}; 
 
 // function returning type Bound 

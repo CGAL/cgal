@@ -37,7 +37,7 @@ struct Dimension_tag
 struct Dynamic_dimension_tag {};
 
 
-namespace CGALi {
+namespace internal {
 
   template < typename D >
   struct Dim_value {
@@ -47,14 +47,14 @@ namespace CGALi {
   template <>
   struct Dim_value <Dynamic_dimension_tag> {};
 
-} // namespace CGALi
+} // namespace internal
 
 
 // Ambient_dimension gives access to the dimension of the ambient space of an object.
 
 template < typename T, typename K = typename Kernel_traits<T>::Kernel >
 struct Ambient_dimension
-  : public CGALi::Dim_value< typename K::template Ambient_dimension<T>::type >
+  : public internal::Dim_value< typename K::template Ambient_dimension<T>::type >
 {
   typedef typename K::template Ambient_dimension<T>::type type;
 };
@@ -64,7 +64,7 @@ struct Ambient_dimension
 
 template < typename T, typename K = typename Kernel_traits<T>::Kernel >
 struct Feature_dimension
-  : public CGALi::Dim_value< typename K::template Feature_dimension<T>::type >
+  : public internal::Dim_value< typename K::template Feature_dimension<T>::type >
 {
   typedef typename K::template Feature_dimension<T>::type type;
 };

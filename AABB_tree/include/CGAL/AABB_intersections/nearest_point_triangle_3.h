@@ -32,7 +32,7 @@
 namespace CGAL {
 
 
-namespace CGALi {
+namespace internal {
 
 
 template <class K>
@@ -226,7 +226,7 @@ nearest_point_3(const typename K::Point_3& origin,
   return moved_point;
 }
 
-}  // end namespace CGALi
+}  // end namespace internal
 
 
 template <class K>
@@ -236,7 +236,7 @@ nearest_point_3(const Point_3<K>& origin,
                 const Triangle_3<K>& triangle,
                 const Point_3<K>& bound)
 {
-  return CGALi::nearest_point_3(origin, triangle, bound, K());
+  return internal::nearest_point_3(origin, triangle, bound, K());
 }
 
 }  // end namespace CGAL

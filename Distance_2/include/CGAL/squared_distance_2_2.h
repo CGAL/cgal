@@ -40,7 +40,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
   template <class K>
   void
@@ -229,8 +229,8 @@ namespace CGALi {
     if (ind1 == -1)
       return FT(0);
     if (ind2 == -1)
-      return CGALi::squared_distance(pt, triangle.vertex(ind1), k);
-    return CGALi::squared_distance(pt,
+      return internal::squared_distance(pt, triangle.vertex(ind1), k);
+    return internal::squared_distance(pt,
 		 Line_2(triangle.vertex(ind1), triangle.vertex(ind2)),
 				   k);
   }
@@ -255,7 +255,7 @@ namespace CGALi {
 		   const typename K::Point_2 & pt,
 		   const K& k)
   {
-    return CGALi::squared_distance(pt, triangle, k);
+    return internal::squared_distance(pt, triangle, k);
   }
 
 
@@ -274,9 +274,9 @@ namespace CGALi {
       return FT(0);
     FT mindist, dist;
     int i;
-    mindist = CGALi::squared_distance(triangle.vertex(0),line,k);
+    mindist = internal::squared_distance(triangle.vertex(0),line,k);
     for (i=1; i<3; i++) {
-      dist = CGALi::squared_distance(triangle.vertex(i),line,k);
+      dist = internal::squared_distance(triangle.vertex(i),line,k);
       if (dist < mindist)
 	mindist = dist;
     }
@@ -290,7 +290,7 @@ namespace CGALi {
 		   const typename K::Line_2 & line,
 		   const K& k)
   {
-    return CGALi::squared_distance(line, triangle, k);
+    return internal::squared_distance(line, triangle, k);
   }
 
 
@@ -352,7 +352,7 @@ namespace CGALi {
 		   const typename K::Ray_2 & ray,
 		   const K& k)
   {
-    return CGALi::squared_distance(ray, triangle, k);
+    return internal::squared_distance(ray, triangle, k);
   }
 
 
@@ -367,11 +367,11 @@ namespace CGALi {
     typename K::Orientation_2 orientation;
     int i, ind_tr1 = 0, ind_tr2 = -1, ind_seg = 0, ind1, ind2;
     FT mindist, dist;
-    mindist = CGALi::squared_distance(seg.source(), triangle.vertex(0), k);
+    mindist = internal::squared_distance(seg.source(), triangle.vertex(0), k);
     for (i=0; i<2; i++) {
       const Point_2 &pt = seg.vertex(i);
       distance_index<K>(ind1, ind2, pt, triangle, k);
-      dist = CGALi::squared_distance_indexed(pt, triangle, ind1, ind2, k);
+      dist = internal::squared_distance_indexed(pt, triangle, ind1, ind2, k);
       if (dist < mindist) {
 	ind_seg = i;
 	ind_tr1 = ind1; ind_tr2 = ind2;
@@ -381,7 +381,7 @@ namespace CGALi {
     for (i=0; i<3; i++) {
       const Point_2& pt = triangle.vertex(i);
       distance_index<K>(ind1, pt, seg, k);
-      dist = CGALi::squared_distance_indexed(pt, seg, ind1, k);
+      dist = internal::squared_distance_indexed(pt, seg, ind1, k);
       if (dist < mindist) {
 	ind_seg = ind1;
 	ind_tr1 = i; ind_tr2 = -1;
@@ -425,7 +425,7 @@ namespace CGALi {
 		   const typename K::Segment_2 & seg,
 		   const K& k)
   {
-    return CGALi::squared_distance(seg, triangle, k);
+    return internal::squared_distance(seg, triangle, k);
   }
 
 
@@ -442,7 +442,7 @@ namespace CGALi {
     int i, ind1_1 = 0,ind1_2 = -1, ind2_1 = 0, ind2_2 = -1, ind1, ind2;
     FT mindist, dist;
     mindist =
-      CGALi::squared_distance(triangle1.vertex(0), triangle2.vertex(0), k);
+      internal::squared_distance(triangle1.vertex(0), triangle2.vertex(0), k);
     for (i=0; i<3; i++) {
       const Point_2& pt = triangle1.vertex(i);
       distance_index<K>(ind1, ind2, pt, triangle2, k);
@@ -494,14 +494,14 @@ namespace CGALi {
     return mindist;
   }
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 inline typename K::FT
 squared_distance(const Point_2<K> &pt,
 		 const Triangle_2<K> &triangle)
 {
-  return CGALi::squared_distance(pt, triangle, K());
+  return internal::squared_distance(pt, triangle, K());
 }
 
 template <class K>
@@ -509,7 +509,7 @@ inline typename K::FT
 squared_distance(const Triangle_2<K> &triangle,
 		 const Point_2<K> &pt)
 {
-  return CGALi::squared_distance(pt, triangle, K());
+  return internal::squared_distance(pt, triangle, K());
 }
 
 template <class K>
@@ -517,7 +517,7 @@ inline typename K::FT
 squared_distance(const Line_2<K> &line,
 		 const Triangle_2<K> &triangle)
 {
-  return CGALi::squared_distance(line, triangle, K());
+  return internal::squared_distance(line, triangle, K());
 }
 
 template <class K>
@@ -525,7 +525,7 @@ inline typename K::FT
 squared_distance(const Triangle_2<K> &triangle,
 		 const Line_2<K> &line)
 {
-  return CGALi::squared_distance(line, triangle, K());
+  return internal::squared_distance(line, triangle, K());
 }
 
 template <class K>
@@ -533,7 +533,7 @@ inline typename K::FT
 squared_distance(const Ray_2<K> &ray,
 		 const Triangle_2<K> &triangle)
 {
-  return CGALi::squared_distance(ray, triangle, K());
+  return internal::squared_distance(ray, triangle, K());
 }
 
 template <class K>
@@ -541,7 +541,7 @@ inline typename K::FT
 squared_distance(const Triangle_2<K> &triangle,
 		 const Ray_2<K> &ray)
 {
-  return CGALi::squared_distance(ray, triangle, K());
+  return internal::squared_distance(ray, triangle, K());
 }
 
 template <class K>
@@ -549,7 +549,7 @@ inline typename K::FT
 squared_distance(const Segment_2<K> &seg,
 		 const Triangle_2<K> &triangle)
 {
-  return CGALi::squared_distance(seg, triangle, K());
+  return internal::squared_distance(seg, triangle, K());
 }
 
 template <class K>
@@ -557,7 +557,7 @@ inline typename K::FT
 squared_distance(const Triangle_2<K> &triangle,
 		 const Segment_2<K> &seg)
 {
-  return CGALi::squared_distance(seg, triangle, K());
+  return internal::squared_distance(seg, triangle, K());
 }
 
 template <class K>
@@ -565,7 +565,7 @@ inline typename K::FT
 squared_distance(const Triangle_2<K> &triangle1,
 		 const Triangle_2<K> &triangle2)
 {
-  return CGALi::squared_distance(triangle1, triangle2, K());
+  return internal::squared_distance(triangle1, triangle2, K());
 }
 
 CGAL_END_NAMESPACE

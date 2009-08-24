@@ -26,7 +26,7 @@
 #include <CGAL/kernel_assertions.h>
 
 namespace CGAL {
-namespace CGALi {
+namespace internal {
 
 // Maybe we can trash this
 /*1 1*/template <class FT>
@@ -218,7 +218,7 @@ template <class FT>
 inline FT calcD(const FT& A1, const FT& I1, const FT& A2, const FT& I2)
 { return I1*CGAL_NTS square(A2) - I2*CGAL_NTS square(A1);}
 
-} // namespace CGALi
+} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_NUMBER_TypeS_ROOT_OF_COMPARISON_FUNCTIONS_22_H

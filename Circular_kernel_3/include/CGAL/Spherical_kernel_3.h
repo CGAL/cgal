@@ -42,15 +42,15 @@
 #include <CGAL/global_functions_spherical_kernel_3.h>
 
 namespace CGAL {
-  namespace CGALi {
+  namespace internal {
     
     template < class SphericalKernel, class LinearKernelBase >
       struct Spherical_kernel_base_ref_count: public LinearKernelBase
 				 // takes classes in internal sub-namespace
       {
-        typedef CGALi::Circular_arc_point_3<SphericalKernel>                        Circular_arc_point_3;
-        typedef CGALi::Line_arc_3<SphericalKernel>                                  Line_arc_3;
-        typedef CGALi::Circular_arc_3<SphericalKernel>                              Circular_arc_3;
+        typedef internal::Circular_arc_point_3<SphericalKernel>                        Circular_arc_point_3;
+        typedef internal::Line_arc_3<SphericalKernel>                                  Line_arc_3;
+        typedef internal::Circular_arc_3<SphericalKernel>                              Circular_arc_3;
        
         // The mechanism that allows to specify reference-counting or not.
         template < typename T >
@@ -68,14 +68,14 @@ namespace CGAL {
         #include <CGAL/Circular_kernel_3/interface_macros.h>
       };
     
-  } // namespace CGALi
+  } // namespace internal
 
   template < class LinearKernel, class AlgebraicKernel >
     struct Spherical_kernel_3
     :  // there should be a derivation from
   // LinearKernel::Kernel_base<Self> to have types equalities for
   // the Linearkernel types
-  public Spherical_kernel_type_equality_wrapper<CGALi::Spherical_kernel_base_ref_count<Spherical_kernel_3<LinearKernel,AlgebraicKernel>,
+  public Spherical_kernel_type_equality_wrapper<internal::Spherical_kernel_base_ref_count<Spherical_kernel_3<LinearKernel,AlgebraicKernel>,
     typename LinearKernel:: template Base<Spherical_kernel_3<LinearKernel,AlgebraicKernel> >::Type >,
     Spherical_kernel_3<LinearKernel,AlgebraicKernel> >
     {

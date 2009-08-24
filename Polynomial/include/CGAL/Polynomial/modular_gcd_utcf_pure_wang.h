@@ -85,7 +85,7 @@ Cached_extended_euclidean_algorithm<UFD>::cache;
 
 
 
-namespace CGALi{
+namespace internal{
 
 template <class NT> Polynomial<NT> 
 gcd_utcf_Integral_domain(Polynomial<NT>,Polynomial<NT>);
@@ -96,7 +96,7 @@ Polynomial< Polynomial<NT> > modular_gcd_utcf_pure_wang(
         const Polynomial< Polynomial<NT> >& FF1 ,
         const Polynomial< Polynomial<NT> >& FF2 ){
 #ifndef NDEBUG
-    std::cerr << "WARNING: still using CGALi::gcd_utcf_Integral_domain"
+    std::cerr << "WARNING: still using internal::gcd_utcf_Integral_domain"
               << std::endl;
     std::cerr << "TODO: fix mulitvariate modular_gcd_pure_wang"
               << std::endl;
@@ -120,7 +120,7 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
 
     typedef Polynomial<NT> Poly;
     typedef Polynomial_traits_d<Poly> PT;
-    typedef CGAL::CGALi::Wang_traits<Poly> WT_POLY;
+    typedef CGAL::internal::Wang_traits<Poly> WT_POLY;
     
     typename WT_POLY::Wang wang; 
     
@@ -209,10 +209,10 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
                 prime_index++;
 		if(prime_index >= 2000){
                     std::cerr<<"primes exhausted"<<std::endl;
-                    current_prime = CGALi::get_next_lower_prime(current_prime);
+                    current_prime = internal::get_next_lower_prime(current_prime);
                 }
                 else{
-                    current_prime = CGALi::primes[prime_index];
+                    current_prime = internal::primes[prime_index];
                 }
                 CGAL_assertion(current_prime != -1);
 		//std::cout<<current_prime<<std::endl;
@@ -271,7 +271,7 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
             if (mG_ == MPoly(1)) return Poly(1);
             // use ordinary algorithm if prs sequence is too short 
 //            if (prs_degrees_new.size() <= 2) 
-//                return CGALi::gcd_utcf_Integral_domain(F1, F2);
+//                return internal::gcd_utcf_Integral_domain(F1, F2);
             // --------------------------------------
         }
         // repeat until mG_ degree is less equal the known bound
@@ -391,7 +391,7 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
     
 }
 
-}//namespace CGALi
+}//namespace internal
 }//namespace CGAL
 
 #endif //#ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_PURE_WANG_H

@@ -31,7 +31,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 // By default it's a construction
 template <typename Return_type>
@@ -60,11 +60,11 @@ struct Return_type_of_predicate<CGAL::Angle> {
     typedef CGAL::Tag_true type;
 };
 
-} // namespace CGALi
+} // namespace internal
 
 template <typename Functor>
 struct Is_a_predicate {
-  typedef typename CGALi::Return_type_of_predicate<
+  typedef typename internal::Return_type_of_predicate<
                    typename Functor::result_type>::type type;
 };
 

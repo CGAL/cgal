@@ -29,7 +29,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class ToBeConstructed>
 class Construct
@@ -147,7 +147,7 @@ class Intersect
     { return intersection( t1, t2); }
 };
 
-} // end namespace CGALi
+} // end namespace internal
 CGAL_END_NAMESPACE
 
 #endif // CGAL_KERNEL_D_FUNCTION_OBJECTS_H

@@ -27,7 +27,7 @@
 CGAL_BEGIN_NAMESPACE
 
 // This subroutine has been retained here for use in both new files.
-namespace CGALi {
+namespace internal {
     template <class NT> inline
     void hgdelta_update(NT& h, const NT& g, int delta) {
         typename Algebraic_structure_traits<NT>::Integral_division idiv;
@@ -45,7 +45,7 @@ namespace CGALi {
             break;
         }
     }
-} // namespace CGALi
+} // namespace internal
 
 CGAL_END_NAMESPACE
 

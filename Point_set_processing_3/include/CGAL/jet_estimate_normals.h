@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi {
+namespace internal {
 
 
 /// Estimates normal direction using jet fitting
@@ -98,7 +98,7 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 }
 
 
-} /* namespace CGALi */
+} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -179,7 +179,7 @@ jet_estimate_normals(
   // vectors (already normalized)
   for(it = first; it != beyond; it++)
   {
-    Vector normal = CGALi::jet_estimate_normal<Kernel,Tree>(get(point_pmap,it), tree, k, degree_fitting);
+    Vector normal = internal::jet_estimate_normal<Kernel,Tree>(get(point_pmap,it), tree, k, degree_fitting);
     put(normal_pmap, it, normal); // normal_pmap[it] = normal
   }
 

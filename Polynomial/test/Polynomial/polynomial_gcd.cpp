@@ -122,14 +122,14 @@ void univariate_polynomial_test() {
         // random polynomials with integer coefficients
         for(l=0;l<2;l++){
             do{
-                f = CGAL::CGALi::rand_Poly_int<Integer>
+                f = CGAL::internal::rand_Poly_int<Integer>
                     (my_random.get_int(10,1000));
-                g = CGAL::CGALi::rand_Poly_int<Integer>
+                g = CGAL::internal::rand_Poly_int<Integer>
                     (my_random.get_int(10,1000));
                 result = CGAL::gcd(f, g);    
             }
             while(result != int_POLY(1)); 
-            d = CGAL::CGALi::rand_Poly_int<Integer>(my_random.get_int(10,1000));
+            d = CGAL::internal::rand_Poly_int<Integer>(my_random.get_int(10,1000));
             int_POLY p1 = f*d;
             int_POLY p2 = g*d;
             gcd_utcf_test(p1, p2, d);
@@ -220,18 +220,18 @@ void univariate_polynomial_test() {
 
         // random polynomials with sqrt-extensions of integers as coefficients
         for(l=0;l<2;l++){
-            root = CGAL::abs(CGAL::CGALi::rand_int<Integer>
+            root = CGAL::abs(CGAL::internal::rand_int<Integer>
                     (my_random.get_int(10,1000)));
             do{
-                f = CGAL::CGALi::rand_Poly_sqrt<int_EXT_1, Integer>
+                f = CGAL::internal::rand_Poly_sqrt<int_EXT_1, Integer>
                     (my_random.get_int(10,1000), root);
-                g = CGAL::CGALi::rand_Poly_sqrt<int_EXT_1, Integer>
+                g = CGAL::internal::rand_Poly_sqrt<int_EXT_1, Integer>
                     (my_random.get_int(10,1000), root);
-                result = CGAL::CGALi::gcd_utcf(f, g);    
+                result = CGAL::internal::gcd_utcf(f, g);    
             }
             while(result != int_EXT_1_POLY(1)); 
    
-            d = CGAL::CGALi::rand_Poly_sqrt<int_EXT_1, Integer>
+            d = CGAL::internal::rand_Poly_sqrt<int_EXT_1, Integer>
                 (my_random.get_int(10,1000), root);
             int_EXT_1_POLY p1 = f*d;
             int_EXT_1_POLY p2 = g*d;
@@ -295,43 +295,43 @@ void univariate_polynomial_test() {
 
 // random polynomials with nested sqrt-extensions of integers as coefficients
         for(l=0;l<2;l++){
-            root = CGAL::abs(CGAL::CGALi::rand_int<Integer>
+            root = CGAL::abs(CGAL::internal::rand_int<Integer>
                     (my_random.get_int(10,1000)));
             do{
                 f = int_EXT_2_POLY( 
-                        int_EXT_2(CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                        int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), 
-                                CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                                CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), root),
-                        int_EXT_2(CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                        int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), 
-                                CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                                CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), root),
-                        int_EXT_2(CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                        int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), 
-                                CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                                CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), root));
                 g = int_EXT_2_POLY( 
-                        int_EXT_2(CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                        int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), 
-                                CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                                CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), root),
-                        int_EXT_2(CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                        int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), 
-                                CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                                CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), root));
-                result = CGAL::CGALi::gcd_utcf(f, g);    
+                result = CGAL::internal::gcd_utcf(f, g);    
             }
             while(result.degree() != 0); 
               
             d = int_EXT_2_POLY( 
-                    int_EXT_2(CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                    int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                             (my_random.get_int(1,10),root), 
-                            CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                            CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                             (my_random.get_int(1,10),root), root),
-                    int_EXT_2(CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                    int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                             (my_random.get_int(1,10),root), 
-                            CGAL::CGALi::rand_sqrt<int_EXT_1, Integer>
+                            CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                             (my_random.get_int(1,10),root), root));
             int_EXT_2_POLY p1 = f*d;
             int_EXT_2_POLY p2 = g*d;
@@ -418,33 +418,33 @@ void bivariate_polynomial_test() {
         for(l=0;l<2;l++){
             do{
                 f = int_POLY_2(
-                        CGAL::CGALi::rand_Poly_int<Integer>
+                        CGAL::internal::rand_Poly_int<Integer>
                         (my_random.get_int(10,100)),
-                        CGAL::CGALi::rand_Poly_int<Integer>
+                        CGAL::internal::rand_Poly_int<Integer>
                         (my_random.get_int(10,100)),
-                        CGAL::CGALi::rand_Poly_int<Integer>
+                        CGAL::internal::rand_Poly_int<Integer>
                         (my_random.get_int(10,100)));
                 g = int_POLY_2(
-                        CGAL::CGALi::rand_Poly_int<Integer>
+                        CGAL::internal::rand_Poly_int<Integer>
                         (my_random.get_int(10,100)),
-                        CGAL::CGALi::rand_Poly_int<Integer>
+                        CGAL::internal::rand_Poly_int<Integer>
                         (my_random.get_int(10,100)),
-                        CGAL::CGALi::rand_Poly_int<Integer>
+                        CGAL::internal::rand_Poly_int<Integer>
                         (my_random.get_int(10,100)),
-                        CGAL::CGALi::rand_Poly_int<Integer>
+                        CGAL::internal::rand_Poly_int<Integer>
                         (my_random.get_int(10,100)));
                 result = CGAL::gcd(f, g);    
             }
             while(result != int_POLY_2(1)); 
    
             d = int_POLY_2(
-                    CGAL::CGALi::rand_Poly_int<Integer>
+                    CGAL::internal::rand_Poly_int<Integer>
                     (my_random.get_int(10,100)),
-                    CGAL::CGALi::rand_Poly_int<Integer>
+                    CGAL::internal::rand_Poly_int<Integer>
                     (my_random.get_int(10,100)),
-                    CGAL::CGALi::rand_Poly_int<Integer>
+                    CGAL::internal::rand_Poly_int<Integer>
                     (my_random.get_int(10,100)),
-                    CGAL::CGALi::rand_Poly_int<Integer>
+                    CGAL::internal::rand_Poly_int<Integer>
                     (my_random.get_int(10,100)));
             int_POLY_2 p1 = f*d;
             int_POLY_2 p2 = g*d;

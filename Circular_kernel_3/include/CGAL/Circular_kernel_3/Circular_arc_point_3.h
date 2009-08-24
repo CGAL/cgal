@@ -31,7 +31,7 @@
 // appeler fonction de global_functions_on_circular_arcs
 
 namespace CGAL {
-  namespace CGALi {
+  namespace internal {
 
 template <class SK >
 class Circular_arc_point_3
@@ -246,7 +246,7 @@ print(std::ostream & os, const Circular_arc_point_3<SK> &p)
   return os << "CirclArcEndPoint_3(" << p.x() << ", " << p.y() << ')' << std::endl;
 }
 
-  } // namespace CGALi
+  } // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_POINT_3_H

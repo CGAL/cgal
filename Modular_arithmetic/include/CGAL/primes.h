@@ -26,7 +26,7 @@
 #include <CGAL/basic.h>
 
 namespace CGAL { 
-namespace CGALi {
+namespace internal {
 extern int primes[2000];
 
 static inline 

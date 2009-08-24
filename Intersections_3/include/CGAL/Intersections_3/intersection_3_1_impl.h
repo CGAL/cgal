@@ -26,7 +26,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 Object
@@ -143,13 +143,13 @@ intersection(const typename K::Plane_3 &plane1,
 
     // Intersection between plane1 and plane2 can either be
     // a line, a plane, or empty.
-    Object o12 = CGALi::intersection(plane1, plane2, k);
+    Object o12 = internal::intersection(plane1, plane2, k);
 
     if (const Line_3 *l = object_cast<Line_3>(&o12))
-        return CGALi::intersection(plane3, *l, k);
+        return internal::intersection(plane3, *l, k);
 
     if (const Plane_3 *pl = object_cast<Plane_3>(&o12))
-        return CGALi::intersection(plane3, *pl, k);
+        return internal::intersection(plane3, *pl, k);
 
     return Object();
 }
@@ -888,7 +888,7 @@ intersection(
 }
 
 
-} // namespace CGALi
+} // namespace internal
 
 
 

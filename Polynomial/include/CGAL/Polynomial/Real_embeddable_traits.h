@@ -31,7 +31,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 template< class Polynomial , class TAG> class Real_embeddable_traits_poly_base;
 
 template< class NT , class TAG> class Real_embeddable_traits_poly_base< Polynomial<NT>, TAG > 
@@ -108,13 +108,13 @@ public:
         }
     };
 };
-} // namespace CGALi
+} // namespace internal
 
 template <typename NT>
 struct Real_embeddable_traits<Polynomial<NT> > 
-  :public CGALi::Real_embeddable_traits_poly_base<
+  :public internal::Real_embeddable_traits_poly_base<
   Polynomial<NT>,
-  typename Real_embeddable_traits<typename CGALi::Innermost_coefficient_type<NT>::Type>::Is_real_embeddable>
+  typename Real_embeddable_traits<typename internal::Innermost_coefficient_type<NT>::Type>::Is_real_embeddable>
 {};
 
 CGAL_END_NAMESPACE

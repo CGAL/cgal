@@ -28,7 +28,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 // This code is not optimized:
 template <class K>
@@ -67,7 +67,7 @@ do_intersect(const typename K::Tetrahedron_3 &tet,
   return do_intersect(tr, tet, k);
 }
 
-} // namespace CGALi
+} // namespace internal
 
 
 

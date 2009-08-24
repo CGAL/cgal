@@ -34,7 +34,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class GeomTraits, class Dcel, class Tag>
 struct Default_planar_topology_impl {};
@@ -57,17 +57,17 @@ struct Default_planar_topology_impl< GeomTraits, Dcel,
 };
 
 
-} // namespace CGALi
+} // namespace internal
 
 template < class GeomTraits, class Dcel >
 struct Default_planar_topology : 
-  public CGALi::Default_planar_topology_impl < 
+  public internal::Default_planar_topology_impl < 
     GeomTraits, Dcel, 
     typename Arr_are_all_sides_oblivious_tag< 
-      typename CGALi::Arr_complete_left_side_tag< GeomTraits >::Tag,
-      typename CGALi::Arr_complete_bottom_side_tag< GeomTraits> ::Tag,
-      typename CGALi::Arr_complete_top_side_tag< GeomTraits >::Tag,
-      typename CGALi::Arr_complete_right_side_tag< GeomTraits >::Tag >::result 
+      typename internal::Arr_complete_left_side_tag< GeomTraits >::Tag,
+      typename internal::Arr_complete_bottom_side_tag< GeomTraits> ::Tag,
+      typename internal::Arr_complete_top_side_tag< GeomTraits >::Tag,
+      typename internal::Arr_complete_right_side_tag< GeomTraits >::Tag >::result 
 >
 {};
 

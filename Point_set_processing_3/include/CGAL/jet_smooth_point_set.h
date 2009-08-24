@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi {
+namespace internal {
 
 
 /// Smoothes one point position using jet fitting on the k
@@ -96,7 +96,7 @@ jet_smooth_point(
 }
 
 
-} /* namespace CGALi */
+} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -166,7 +166,7 @@ jet_smooth_point_set(
   for(it = first; it != beyond; it++)
   {
     Point& p = get(point_pmap, it);
-    p = CGALi::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge);
+    p = internal::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge);
   }
 }
 

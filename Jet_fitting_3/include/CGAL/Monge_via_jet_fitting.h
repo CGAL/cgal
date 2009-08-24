@@ -357,7 +357,7 @@ compute_PCA(InputIterator begin, InputIterator end)
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
-  CGAL::CGALi::eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
+  CGAL::internal::eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
   //store in m_pca_basis
   for (int i=0; i<3; i++)
     {
@@ -506,7 +506,7 @@ compute_Monge_basis(const FT* A, Monge_form& monge_form)
   FT eval[2];
   FT evec[4];
   //eval in decreasing order
-  CGAL::CGALi::eigen_symmetric<FT>(W,2,evec,eval);
+  CGAL::internal::eigen_symmetric<FT>(W,2,evec,eval);
 
   Vector_3 d_max = evec[0]*Y + evec[1]*Z,
     d_min = evec[2]*Y + evec[3]*Z;

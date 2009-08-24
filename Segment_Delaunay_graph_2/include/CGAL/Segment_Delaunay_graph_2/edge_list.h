@@ -28,7 +28,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-namespace CGALi {
+namespace internal {
 
   template<class Edge_t>
   class Edge_list_item
@@ -184,7 +184,7 @@ namespace CGALi {
   };
 
 
-} // namespace CGALi
+} // namespace internal
 
 
 
@@ -199,10 +199,10 @@ public:
   typedef USE_STL_MAP_Tag   Use_stl_map_tag;
 
 private:
-  typedef CGALi::Edge_list_item<Edge>  List_item;
+  typedef internal::Edge_list_item<Edge>  List_item;
 
   typedef
-  CGALi::Edge_list_which_map<Edge,List_item,Use_stl_map_tag>
+  internal::Edge_list_which_map<Edge,List_item,Use_stl_map_tag>
   Which_map;
 
   typedef typename Which_map::Edge_map  Edge_map;
@@ -210,7 +210,7 @@ private:
   typedef Edge_list<Edge,Use_stl_map_tag>  Self;
 
 public:
-  typedef CGALi::Edge_list_circulator<Self>  circulator;
+  typedef internal::Edge_list_circulator<Self>  circulator;
 
 private:
   // PRIVATE DATA MEMBERS

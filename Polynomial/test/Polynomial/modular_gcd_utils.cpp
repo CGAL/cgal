@@ -56,9 +56,9 @@ void test_modular_gcd_utils() {
         
     // random integers 
     for(int l=0;l<100;l++){
-      f = CGAL::CGALi::rand_int<Integer>(my_random.get_int(10,1000));
-      g = CGAL::CGALi::rand_int<Integer>(my_random.get_int(10,1000));
-      CGAL::CGALi::euclidean_division_obstinate(f, g, q, r);
+      f = CGAL::internal::rand_int<Integer>(my_random.get_int(10,1000));
+      g = CGAL::internal::rand_int<Integer>(my_random.get_int(10,1000));
+      CGAL::internal::euclidean_division_obstinate(f, g, q, r);
       assert(f==g*q+r);
     }
   }
@@ -76,7 +76,7 @@ void test_modular_gcd_utils() {
   
     MPoly ma = CGAL::modular_image(a);
     MPoly mb = CGAL::modular_image(b);
-    CGAL::CGALi::euclidean_division_obstinate(ma, mb, mQ, mR);
+    CGAL::internal::euclidean_division_obstinate(ma, mb, mQ, mR);
     assert(ma==mb*mQ+mR);
         
     // random polynomials with integer coefficients
@@ -85,14 +85,14 @@ void test_modular_gcd_utils() {
 
     // random polynomials with integer coefficients
     for(l=0;l<100;l++){
-      f = CGAL::CGALi::rand_Poly_int<Integer>(my_random.get_int(10,1000),
+      f = CGAL::internal::rand_Poly_int<Integer>(my_random.get_int(10,1000),
           my_random.get_int(1,15));
-      g = CGAL::CGALi::rand_Poly_int<Integer>(my_random.get_int(10,1000), 
+      g = CGAL::internal::rand_Poly_int<Integer>(my_random.get_int(10,1000), 
           my_random.get_int(1,10));
       CGAL::Residue::set_current_prime(4483);
       MPoly mf= CGAL::modular_image(f);
       MPoly mg= CGAL::modular_image(g);
-      CGAL::CGALi::euclidean_division_obstinate(mf, mg, mQ, mR);
+      CGAL::internal::euclidean_division_obstinate(mf, mg, mQ, mR);
 
       assert(mf ==mg*mQ+mR);
     }
@@ -112,7 +112,7 @@ void test_modular_gcd_utils() {
   
     MPoly_Ext ma = CGAL::modular_image(a);
     MPoly_Ext mb = CGAL::modular_image(b);
-    CGAL::CGALi::euclidean_division_obstinate(ma, mb, mQ, mR);
+    CGAL::internal::euclidean_division_obstinate(ma, mb, mQ, mR);
     assert(ma == mb*mQ+mR);
   
     // random polynomials with sqrt coefficients
@@ -122,13 +122,13 @@ void test_modular_gcd_utils() {
 
     CGAL::Residue::set_current_prime(4253);
     for(l=0;l<2;l++){
-      f = CGAL::CGALi::rand_Poly_sqrt<EXT,Integer>
+      f = CGAL::internal::rand_Poly_sqrt<EXT,Integer>
         (my_random.get_int(10,1000),my_random.get_int(1,15),NT(8293));
-      g = CGAL::CGALi::rand_Poly_sqrt<EXT,Integer>
+      g = CGAL::internal::rand_Poly_sqrt<EXT,Integer>
         (my_random.get_int(10,1000),my_random.get_int(1,10),NT(8293));
       MPoly_Ext mf= CGAL::modular_image(f);
       MPoly_Ext mg= CGAL::modular_image(g);
-      CGAL::CGALi::euclidean_division_obstinate(mf, mg, mQ, mR);
+      CGAL::internal::euclidean_division_obstinate(mf, mg, mQ, mR);
       assert(mf == mg*mQ+mR);
     }
   }

@@ -25,7 +25,7 @@
 #define CGAL_KERNEL_GLOBAL_FUNCTIONS_2_H
 
 // Generic functions taking "user classes" as parameters, calling the
-// internal functions (in *_internal*.h, namespace CGALi) taking a kernel as
+// internal functions (in *_internal*.h, namespace internal) taking a kernel as
 // additional parameter, which themselves call the corresponding kernel
 // functors.
 
@@ -56,7 +56,7 @@ angle(const Point_2<K> &p,
       const Point_2<K> &q,
       const Point_2<K> &r)
 {
-  return CGALi::angle(p, q, r, K());
+  return internal::angle(p, q, r, K());
 }
 
 template < class K >
@@ -66,7 +66,7 @@ are_ordered_along_line(const Point_2<K> &p,
                        const Point_2<K> &q,
                        const Point_2<K> &r)
 {
-  return CGALi::are_ordered_along_line(p, q, r, K());
+  return internal::are_ordered_along_line(p, q, r, K());
 }
 
 template < class K >
@@ -76,7 +76,7 @@ are_strictly_ordered_along_line(const Point_2<K> &p,
                                 const Point_2<K> &q,
                                 const Point_2<K> &r)
 {
-  return CGALi::are_strictly_ordered_along_line(p, q, r, K());
+  return internal::are_strictly_ordered_along_line(p, q, r, K());
 }
 
 template < class K >
@@ -84,7 +84,7 @@ inline
 typename K::FT
 area(const Point_2<K> &p, const Point_2<K> &q, const Point_2<K> &r)
 {
-  return CGALi::area(p, q, r, K());
+  return internal::area(p, q, r, K());
 }
 
 template < class K >
@@ -93,7 +93,7 @@ typename K::Point_2
 barycenter(const Point_2<K> &p1, const typename K::FT& w1,
            const Point_2<K> &p2)
 {
-  return CGALi::barycenter(p1, w1, p2, K());
+  return internal::barycenter(p1, w1, p2, K());
 }
 
 template < class K >
@@ -102,7 +102,7 @@ typename K::Point_2
 barycenter(const Point_2<K> &p1, const typename K::FT& w1,
            const Point_2<K> &p2, const typename K::FT& w2)
 {
-  return CGALi::barycenter(p1, w1, p2, w2, K());
+  return internal::barycenter(p1, w1, p2, w2, K());
 }
 
 template < class K >
@@ -112,7 +112,7 @@ barycenter(const Point_2<K> &p1, const typename K::FT& w1,
            const Point_2<K> &p2, const typename K::FT& w2,
            const Point_2<K> &p3)
 {
-  return CGALi::barycenter(p1, w1, p2, w2, p3, K());
+  return internal::barycenter(p1, w1, p2, w2, p3, K());
 }
 
 template < class K >
@@ -122,7 +122,7 @@ barycenter(const Point_2<K> &p1, const typename K::FT& w1,
            const Point_2<K> &p2, const typename K::FT& w2,
            const Point_2<K> &p3, const typename K::FT& w3)
 {
-  return CGALi::barycenter(p1, w1, p2, w2, p3, w3, K());
+  return internal::barycenter(p1, w1, p2, w2, p3, w3, K());
 }
 
 template < class K >
@@ -133,7 +133,7 @@ barycenter(const Point_2<K> &p1, const typename K::FT& w1,
            const Point_2<K> &p3, const typename K::FT& w3,
            const Point_2<K> &p4)
 {
-  return CGALi::barycenter(p1, w1, p2, w2, p3, w3, p4, K());
+  return internal::barycenter(p1, w1, p2, w2, p3, w3, p4, K());
 }
 
 template < class K >
@@ -144,7 +144,7 @@ barycenter(const Point_2<K> &p1, const typename K::FT& w1,
            const Point_2<K> &p3, const typename K::FT& w3,
            const Point_2<K> &p4, const typename K::FT& w4)
 {
-  return CGALi::barycenter(p1, w1, p2, w2, p3, w3, p4, w4, K());
+  return internal::barycenter(p1, w1, p2, w2, p3, w3, p4, w4, K());
 }
 
 template <typename K>
@@ -152,7 +152,7 @@ inline
 typename K::Line_2
 bisector(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::bisector(p, q, K());
+  return internal::bisector(p, q, K());
 }
 
 template <typename K>
@@ -160,7 +160,7 @@ inline
 typename K::Line_2
 bisector(const Line_2<K> &l1, const Line_2<K> &l2)
 {
-  return CGALi::bisector(l1, l2, K());
+  return internal::bisector(l1, l2, K());
 }
 
 template < class K >
@@ -170,7 +170,7 @@ centroid(const Point_2<K> &p,
          const Point_2<K> &q,
          const Point_2<K> &r)
 {
-  return CGALi::centroid(p, q, r, K());
+  return internal::centroid(p, q, r, K());
 }
 
 template < class K >
@@ -178,7 +178,7 @@ inline
 typename K::Point_2
 centroid(const Triangle_2<K> &t)
 {
-  return CGALi::centroid(t, K());
+  return internal::centroid(t, K());
 }
 
 template < class K >
@@ -189,7 +189,7 @@ centroid(const Point_2<K> &p,
          const Point_2<K> &r,
          const Point_2<K> &s)
 {
-  return CGALi::centroid(p, q, r, s, K());
+  return internal::centroid(p, q, r, s, K());
 }
 
 template < class K >
@@ -198,7 +198,7 @@ typename K::Point_2
 circumcenter(const Point_2<K> &p,
              const Point_2<K> &q)
 {
-  return CGALi::circumcenter(p, q, K());
+  return internal::circumcenter(p, q, K());
 }
 
 template < class K >
@@ -208,7 +208,7 @@ circumcenter(const Point_2<K> &p,
              const Point_2<K> &q,
              const Point_2<K> &r)
 {
-  return CGALi::circumcenter(p, q, r, K());
+  return internal::circumcenter(p, q, r, K());
 }
 
 template < class K >
@@ -216,7 +216,7 @@ inline
 typename K::Point_2
 circumcenter(const Triangle_2<K> &t)
 {
-  return CGALi::circumcenter(t, K());
+  return internal::circumcenter(t, K());
 }
 
 template < class K >
@@ -224,7 +224,7 @@ inline
 typename K::Boolean
 collinear(const Point_2<K> &p, const Point_2<K> &q, const Point_2<K> &r)
 {
-  return CGALi::collinear(p, q, r, K());
+  return internal::collinear(p, q, r, K());
 }
 
 template < class K >
@@ -234,7 +234,7 @@ collinear_are_ordered_along_line(const Point_2<K> &p,
                                  const Point_2<K> &q,
                                  const Point_2<K> &r)
 {
-  return CGALi::collinear_are_ordered_along_line(p, q, r, K());
+  return internal::collinear_are_ordered_along_line(p, q, r, K());
 }
 
 template < class K >
@@ -244,7 +244,7 @@ collinear_are_strictly_ordered_along_line(const Point_2<K> &p,
                                           const Point_2<K> &q,
                                           const Point_2<K> &r)
 {
-  return CGALi::collinear_are_strictly_ordered_along_line(p, q, r, K());
+  return internal::collinear_are_strictly_ordered_along_line(p, q, r, K());
 }
 
 template < typename K >
@@ -253,7 +253,7 @@ typename K::Comparison_result
 compare_angle_with_x_axis(const Direction_2<K>& d1,
                           const Direction_2<K>& d2)
 {
-  return CGALi::compare_angle_with_x_axis(d1, d2, K());
+  return internal::compare_angle_with_x_axis(d1, d2, K());
 }
 
 template <class K >
@@ -263,7 +263,7 @@ compare_distance_to_point(const Point_2<K>& p,
                           const Point_2<K>& q,
                           const Point_2<K>& r)
 {
-  return CGALi::compare_distance_to_point(p, q, r, K());
+  return internal::compare_distance_to_point(p, q, r, K());
 }
 
 template <class K >
@@ -273,7 +273,7 @@ compare_squared_distance(const Point_2<K>& p,
                          const Point_2<K>& q,
                          const typename K::FT& d2)
 {
-  return CGALi::compare_squared_distance(p, q, d2, K());
+  return internal::compare_squared_distance(p, q, d2, K());
 }
 
 template <class K>
@@ -284,7 +284,7 @@ compare_signed_distance_to_line(const Point_2<K>& p,
 				const Point_2<K>& r,
 				const Point_2<K>& s)
 {
-  return CGALi::compare_signed_distance_to_line(p, q, r, s, K());
+  return internal::compare_signed_distance_to_line(p, q, r, s, K());
 }
 
 template <class K>
@@ -294,7 +294,7 @@ compare_signed_distance_to_line(const Line_2<K>& l,
 				const Point_2<K>& p,
 				const Point_2<K>& q)
 {
-  return CGALi::compare_signed_distance_to_line(l, p, q, K());
+  return internal::compare_signed_distance_to_line(l, p, q, K());
 }
 
 /* FIXME : Undocumented, obsolete...
@@ -313,7 +313,7 @@ inline
 typename K::Comparison_result
 compare_slopes(const Line_2<K> &l1, const Line_2<K> &l2)
 {
-  return CGALi::compare_slopes(l1, l2, K());
+  return internal::compare_slopes(l1, l2, K());
 }
 
 template < class K >
@@ -321,7 +321,7 @@ inline
 typename K::Comparison_result
 compare_slopes(const Segment_2<K> &s1, const Segment_2<K> &s2)
 {
-  return CGALi::compare_slopes(s1, s2, K());
+  return internal::compare_slopes(s1, s2, K());
 }
 
 template < class K >
@@ -329,7 +329,7 @@ inline
 typename K::Comparison_result
 compare_x(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::compare_x(p, q, K());
+  return internal::compare_x(p, q, K());
 }
 
 template < class K >
@@ -339,7 +339,7 @@ compare_x(const Point_2<K>& p,
           const Line_2<K>& l1,
           const Line_2<K>& l2)
 {
-  return CGALi::compare_x(p, l1, l2, K());
+  return internal::compare_x(p, l1, l2, K());
 }
 
 template < class K >
@@ -349,7 +349,7 @@ compare_x(const Line_2<K> &l,
           const Line_2<K> &h1,
           const Line_2<K> &h2)
 {
-  return CGALi::compare_x(l, h1, h2, K());
+  return internal::compare_x(l, h1, h2, K());
 }
 
 template < class K >
@@ -360,7 +360,7 @@ compare_x(const Line_2<K> &l1,
           const Line_2<K> &l2,
           const Line_2<K> &h2)
 {
-  return CGALi::compare_x(l1, h1, l2, h2, K());
+  return internal::compare_x(l1, h1, l2, h2, K());
 }
 
 template < class K >
@@ -368,7 +368,7 @@ inline
 typename K::Comparison_result
 compare_x_at_y(const Point_2<K>& p, const Line_2<K>& h)
 {
-  return CGALi::compare_x_at_y(p, h, K());
+  return internal::compare_x_at_y(p, h, K());
 }
 
 /* Undocumented
@@ -377,7 +377,7 @@ inline
 typename K::Comparison_result
 compare_x_at_y(const Point_2<K>& p, const Segment_2<K>& s)
 {
-  return CGALi::compare_x_at_y(p, s, K());
+  return internal::compare_x_at_y(p, s, K());
 }
 */
 
@@ -388,7 +388,7 @@ compare_x_at_y(const Point_2<K> &p,
                const Line_2<K> &h1,
                const Line_2<K> &h2)
 {
-  return CGALi::compare_x_at_y(p, h1, h2, K());
+  return internal::compare_x_at_y(p, h1, h2, K());
 }
 
 template < class K >
@@ -398,7 +398,7 @@ compare_x_at_y(const Line_2<K> &l1,
                const Line_2<K> &l2,
                const Line_2<K> &h)
 {
-  return CGALi::compare_x_at_y(l1, l2, h, K());
+  return internal::compare_x_at_y(l1, l2, h, K());
 }
 
 template < class K >
@@ -409,7 +409,7 @@ compare_x_at_y(const Line_2<K> &l1,
                const Line_2<K> &h1,
                const Line_2<K> &h2)
 {
-  return CGALi::compare_x_at_y(l1, l2, h1, h2, K());
+  return internal::compare_x_at_y(l1, l2, h1, h2, K());
 }
 
 template < class K >
@@ -417,7 +417,7 @@ inline
 typename K::Comparison_result
 compare_xy(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::compare_xy(p, q, K());
+  return internal::compare_xy(p, q, K());
 }
 
 template < class K >
@@ -425,7 +425,7 @@ inline
 typename K::Comparison_result
 compare_y(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::compare_y(p, q, K());
+  return internal::compare_y(p, q, K());
 }
 
 template < class K >
@@ -435,7 +435,7 @@ compare_y(const Point_2<K> &p,
           const Line_2<K> &l1,
           const Line_2<K> &l2)
 {
-  return CGALi::compare_y(p, l1, l2, K());
+  return internal::compare_y(p, l1, l2, K());
 }
 
 template < class K >
@@ -446,7 +446,7 @@ compare_y(const Line_2<K> &l1,
           const Line_2<K> &h1,
           const Line_2<K> &h2)
 {
-  return CGALi::compare_y(l1, l2, h1, h2, K());
+  return internal::compare_y(l1, l2, h1, h2, K());
 }
 
 template < class K >
@@ -456,7 +456,7 @@ compare_y(const Line_2<K> &l,
           const Line_2<K> &h1,
           const Line_2<K> &h2)
 {
-  return CGALi::compare_y(l, h1, h2, K());
+  return internal::compare_y(l, h1, h2, K());
 }
 
 template < class K >
@@ -464,7 +464,7 @@ inline
 typename K::Comparison_result
 compare_y_at_x(const Point_2<K> &p, const Segment_2<K> &s)
 {
-  return CGALi::compare_y_at_x(p, s, K());
+  return internal::compare_y_at_x(p, s, K());
 }
 
 template < class K >
@@ -474,7 +474,7 @@ compare_y_at_x(const Point_2<K> &p,
                const Segment_2<K> &s1,
                const Segment_2<K> &s2)
 {
-  return CGALi::compare_y_at_x(p, s1, s2, K());
+  return internal::compare_y_at_x(p, s1, s2, K());
 }
 
 template < class K >
@@ -482,7 +482,7 @@ inline
 typename K::Comparison_result
 compare_y_at_x(const Point_2<K> &p, const Line_2<K> &h)
 {
-  return CGALi::compare_y_at_x(p, h, K());
+  return internal::compare_y_at_x(p, h, K());
 }  
 
 template < class K >
@@ -492,7 +492,7 @@ compare_y_at_x(const Point_2<K> &p,
                const Line_2<K> &h1,
                const Line_2<K> &h2)
 {
-  return CGALi::compare_y_at_x(p, h1, h2, K());
+  return internal::compare_y_at_x(p, h1, h2, K());
 }
 
 template < class K >
@@ -502,7 +502,7 @@ compare_y_at_x(const Line_2<K> &l1,
                const Line_2<K> &l2,
                const Line_2<K> &h)
 {
-  return CGALi::compare_y_at_x(l1, l2, h, K());
+  return internal::compare_y_at_x(l1, l2, h, K());
 }
 
 template < class K >
@@ -513,7 +513,7 @@ compare_y_at_x(const Line_2<K> &l1,
                const Line_2<K> &h1,
                const Line_2<K> &h2)
 {
-  return CGALi::compare_y_at_x(l1, l2, h1, h2, K());
+  return internal::compare_y_at_x(l1, l2, h1, h2, K());
 }
 
 template < class K >
@@ -521,7 +521,7 @@ inline
 typename K::Comparison_result
 compare_yx(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::compare_yx(p, q, K());
+  return internal::compare_yx(p, q, K());
 }
 
 template < class K >
@@ -529,7 +529,7 @@ inline
 typename K::FT
 determinant(const Vector_2<K> &v0, const Vector_2<K> &v1)
 {
-  return CGALi::determinant(v0, v1, K());
+  return internal::determinant(v0, v1, K());
 }
 
 template <class K>
@@ -539,7 +539,7 @@ has_larger_distance_to_point(const Point_2<K>& p,
 			     const Point_2<K>& q,
 			     const Point_2<K>& r)
 {
-  return CGALi::has_larger_distance_to_point(p, q, r, K());
+  return internal::has_larger_distance_to_point(p, q, r, K());
 }
 
 template <class K>
@@ -549,7 +549,7 @@ has_smaller_distance_to_point(const Point_2<K>& p,
                               const Point_2<K>& q,
                               const Point_2<K>& r)
 {
-  return CGALi::has_smaller_distance_to_point(p, q, r, K());
+  return internal::has_smaller_distance_to_point(p, q, r, K());
 }
 
 template <class K>
@@ -559,7 +559,7 @@ has_smaller_signed_distance_to_line(const Line_2<K>& l,
                                     const Point_2<K>& p,
                                     const Point_2<K>& q)
 {
-  return CGALi::has_smaller_signed_distance_to_line(l, p, q, K());
+  return internal::has_smaller_signed_distance_to_line(l, p, q, K());
 }
 
 template <class K>
@@ -569,7 +569,7 @@ has_larger_signed_distance_to_line(const Line_2<K>& l,
 				   const Point_2<K>& p,
 				   const Point_2<K>& q)
 {
-  return CGALi::has_larger_signed_distance_to_line(l, p, q, K());
+  return internal::has_larger_signed_distance_to_line(l, p, q, K());
 }
 
 template <class K>
@@ -580,7 +580,7 @@ has_larger_signed_distance_to_line(const Point_2<K>& p,
 				   const Point_2<K>& r,
 				   const Point_2<K>& s)
 {
-  return CGALi::has_larger_signed_distance_to_line(p, q, r, s, K());
+  return internal::has_larger_signed_distance_to_line(p, q, r, s, K());
 }
 
 template <class K>
@@ -591,7 +591,7 @@ has_smaller_signed_distance_to_line(const Point_2<K>& p,
                                     const Point_2<K>& r,
                                     const Point_2<K>& s)
 {
-  return CGALi::has_smaller_signed_distance_to_line(p, q, r, s, K());
+  return internal::has_smaller_signed_distance_to_line(p, q, r, s, K());
 }
 
 template < class K >
@@ -599,7 +599,7 @@ inline
 typename K::Boolean
 left_turn(const Point_2<K> &p, const Point_2<K> &q, const Point_2<K> &r)
 {
-  return CGALi::left_turn(p, q, r, K());
+  return internal::left_turn(p, q, r, K());
 }
 
 template < class K >
@@ -607,7 +607,7 @@ inline
 typename K::Boolean
 less_x(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::less_x(p, q, K());
+  return internal::less_x(p, q, K());
 }
 
 template < class K >
@@ -615,7 +615,7 @@ inline
 typename K::Boolean
 less_y(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::less_y(p, q, K());
+  return internal::less_y(p, q, K());
 }
 
 template < class K >
@@ -623,7 +623,7 @@ inline
 typename K::Boolean
 lexicographically_xy_larger(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::lexicographically_xy_larger(p, q, K());
+  return internal::lexicographically_xy_larger(p, q, K());
 }
 
 template < class K >
@@ -631,7 +631,7 @@ inline
 typename K::Boolean
 lexicographically_xy_larger_or_equal(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::lexicographically_xy_larger_or_equal(p, q, K());
+  return internal::lexicographically_xy_larger_or_equal(p, q, K());
 }
 
 template < class K >
@@ -639,7 +639,7 @@ inline
 typename K::Boolean
 lexicographically_xy_smaller(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::lexicographically_xy_smaller(p, q, K());
+  return internal::lexicographically_xy_smaller(p, q, K());
 }
 
 template < class K >
@@ -648,7 +648,7 @@ typename K::Boolean
 lexicographically_xy_smaller_or_equal(const Point_2<K> &p,
                                       const Point_2<K> &q)
 {
-  return CGALi::lexicographically_xy_smaller_or_equal(p, q, K());
+  return internal::lexicographically_xy_smaller_or_equal(p, q, K());
 }
 
 template < class K >
@@ -656,7 +656,7 @@ inline
 typename K::Boolean
 lexicographically_yx_smaller(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::lexicographically_yx_smaller(p, q, K());
+  return internal::lexicographically_yx_smaller(p, q, K());
 }
 
 template < class K >
@@ -664,7 +664,7 @@ inline
 typename K::Boolean
 lexicographically_yx_smaller_or_equal(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::lexicographically_yx_smaller_or_equal(p, q, K());
+  return internal::lexicographically_yx_smaller_or_equal(p, q, K());
 }
 
 // FIXME : Undocumented
@@ -673,7 +673,7 @@ inline
 typename K::Boolean
 lexicographically_yx_larger(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::lexicographically_yx_larger(p, q, K());
+  return internal::lexicographically_yx_larger(p, q, K());
 }
 
 // FIXME : Undocumented
@@ -682,7 +682,7 @@ inline
 typename K::Boolean
 lexicographically_yx_larger_or_equal(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::lexicographically_yx_larger_or_equal(p, q, K());
+  return internal::lexicographically_yx_larger_or_equal(p, q, K());
 }
 
 template < class K >
@@ -690,7 +690,7 @@ inline
 typename K::Point_2
 midpoint(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::midpoint(p, q, K());
+  return internal::midpoint(p, q, K());
 }
 
 template < class K >
@@ -698,7 +698,7 @@ inline
 typename K::Point_2
 max_vertex(const Iso_rectangle_2<K> &ir)
 {
-  return CGALi::max_vertex(ir, K());
+  return internal::max_vertex(ir, K());
 }
 
 template < class K >
@@ -706,7 +706,7 @@ inline
 typename K::Point_2
 min_vertex(const Iso_rectangle_2<K> &ir)
 {
-  return CGALi::min_vertex(ir, K());
+  return internal::min_vertex(ir, K());
 }
 
 // FIXME TODO : What do we do with the operators ?
@@ -890,7 +890,7 @@ inline
 typename K::Orientation
 orientation(const Point_2<K> &p, const Point_2<K> &q, const Point_2<K> &r)
 {
-  return CGALi::orientation(p, q, r, K());
+  return internal::orientation(p, q, r, K());
 }
 
 template <typename K>
@@ -898,7 +898,7 @@ inline
 typename K::Orientation
 orientation(const Vector_2<K> &u, const Vector_2<K> &v)
 {
-  return CGALi::orientation(u, v, K());
+  return internal::orientation(u, v, K());
 }
 
 // parallel() functions are in global_functions.h
@@ -917,7 +917,7 @@ inline
 typename K::Boolean
 right_turn(const Point_2<K> &p, const Point_2<K> &q, const Point_2<K> &r)
 {
-  return CGALi::right_turn(p, q, r, K());
+  return internal::right_turn(p, q, r, K());
 }
 
 template <class K>
@@ -928,7 +928,7 @@ side_of_bounded_circle(const Point_2<K> &p,
                        const Point_2<K> &r,
                        const Point_2<K> &t)
 {
-  return CGALi::side_of_bounded_circle(p, q, r, t, K());
+  return internal::side_of_bounded_circle(p, q, r, t, K());
 }
 
 template <class K>
@@ -938,7 +938,7 @@ side_of_bounded_circle(const Point_2<K> &p,
                        const Point_2<K> &q,
                        const Point_2<K> &r)
 {
-  return CGALi::side_of_bounded_circle(p, q, r, K());
+  return internal::side_of_bounded_circle(p, q, r, K());
 }
 
 template <class K>
@@ -949,7 +949,7 @@ side_of_oriented_circle(const Point_2<K> &p,
                         const Point_2<K> &r,
                         const Point_2<K> &t)
 {
-  return CGALi::side_of_oriented_circle(p, q, r, t, K());
+  return internal::side_of_oriented_circle(p, q, r, t, K());
 }
 
 template < class K >
@@ -957,7 +957,7 @@ inline
 typename K::FT
 squared_radius(const Point_2<K> &p)
 {
-  return CGALi::squared_radius(p, K());
+  return internal::squared_radius(p, K());
 }
 
 template < class K >
@@ -965,7 +965,7 @@ inline
 typename K::FT
 squared_radius(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::squared_radius(p, q, K());
+  return internal::squared_radius(p, q, K());
 }
 
 template < class K >
@@ -973,7 +973,7 @@ CGAL_KERNEL_INLINE
 typename K::FT
 squared_radius(const Point_2<K>& p, const Point_2<K>& q, const Point_2<K>& r)
 {
-  return CGALi::squared_radius(p, q, r, K());
+  return internal::squared_radius(p, q, r, K());
 }
 
 template < class K >
@@ -981,7 +981,7 @@ inline
 typename K::Boolean
 x_equal(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::x_equal(p, q, K());
+  return internal::x_equal(p, q, K());
 }
 
 template < class K >
@@ -989,7 +989,7 @@ inline
 typename K::Boolean
 y_equal(const Point_2<K> &p, const Point_2<K> &q)
 {
-  return CGALi::y_equal(p, q, K());
+  return internal::y_equal(p, q, K());
 }
 
 CGAL_END_NAMESPACE

@@ -26,7 +26,7 @@
 
 namespace CGAL{
   
-namespace CGALi{
+namespace internal{
 
 template <class Kernel, class output_iterator>
 class Point_grabber{
@@ -124,6 +124,6 @@ wpoint_grabber(output_iterator it){
   return boost::make_function_output_iterator(Wpoint_grabber<Kernel,output_iterator>(it));
 }
 
-}//CGALi
+}//internal
 }//CGAL
 #endif //CGAL_GRABBER_H

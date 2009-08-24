@@ -70,7 +70,7 @@ public:
   typedef Cartesian_moving_weighted_point_3<Motion_function> Weighted_point_3;
 
   //! A 3d lifted Point
-  // typedef CGALi::Cartesian_moving_lifted_point_3<Motion_function> Moving_lifted_point_3;
+  // typedef internal::Cartesian_moving_lifted_point_3<Motion_function> Moving_lifted_point_3;
 
 
   struct Is_constant {

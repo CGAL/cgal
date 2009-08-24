@@ -29,7 +29,7 @@
 
 
 namespace CGAL {
-  namespace CGALi{
+  namespace internal{
     template < class SK >
     class Circular_arc_3 {
       typedef typename SK::Plane_3              Plane_3;

@@ -1,7 +1,7 @@
 When adding a new function object to the kernel you must:
 
   -- possibly change include/CGAL/Kernel/function_objects.h
-     to add a new function object "builder" in namespace CGALi::
+     to add a new function object "builder" in namespace internal::
   -- change include/CGAL/Kernel/interface_macros.h
      to add the actual function object class and its corresponding 
      member function that returns an object of this class 

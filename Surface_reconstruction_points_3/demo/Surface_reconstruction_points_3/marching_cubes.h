@@ -4,7 +4,7 @@
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
-namespace CGALi
+namespace internal
 {
 
 //************************************************************************
@@ -302,7 +302,7 @@ int msTriTable[256][16] = {
     {0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
     {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
 
-} // end of namespace CGALi
+} // end of namespace internal
 
 namespace CGAL {
 
@@ -457,42 +457,42 @@ class Marching_cubes : public CGAL::Modifier_base<HDS>
               if (grid[cellId+offsets[6]].value <= iso_value) mask |= 64;
               if (grid[cellId+offsets[7]].value <= iso_value) mask |= 128;
 
-              if (::CGALi::msEdgeTable[mask] != 0)
+              if (::internal::msEdgeTable[mask] != 0)
               {
                 Point_3 edges[12];
 
-                if (::CGALi::msEdgeTable[mask] & 1)
+                if (::internal::msEdgeTable[mask] & 1)
                     edges[0] = interpolEdge(grid[cellId+offsets[0]],grid[cellId+offsets[1]]);
-                if (::CGALi::msEdgeTable[mask] & 2)
+                if (::internal::msEdgeTable[mask] & 2)
                     edges[1] = interpolEdge(grid[cellId+offsets[1]],grid[cellId+offsets[2]]);
-                if (::CGALi::msEdgeTable[mask] & 4)
+                if (::internal::msEdgeTable[mask] & 4)
                     edges[2] = interpolEdge(grid[cellId+offsets[2]],grid[cellId+offsets[3]]);
-                if (::CGALi::msEdgeTable[mask] & 8)
+                if (::internal::msEdgeTable[mask] & 8)
                     edges[3] = interpolEdge(grid[cellId+offsets[3]],grid[cellId+offsets[0]]);
-                if (::CGALi::msEdgeTable[mask] & 16)
+                if (::internal::msEdgeTable[mask] & 16)
                     edges[4] = interpolEdge(grid[cellId+offsets[4]],grid[cellId+offsets[5]]);
-                if (::CGALi::msEdgeTable[mask] & 32)
+                if (::internal::msEdgeTable[mask] & 32)
                     edges[5] = interpolEdge(grid[cellId+offsets[5]],grid[cellId+offsets[6]]);
-                if (::CGALi::msEdgeTable[mask] & 64)
+                if (::internal::msEdgeTable[mask] & 64)
                     edges[6] = interpolEdge(grid[cellId+offsets[6]],grid[cellId+offsets[7]]);
-                if (::CGALi::msEdgeTable[mask] & 128)
+                if (::internal::msEdgeTable[mask] & 128)
                     edges[7] = interpolEdge(grid[cellId+offsets[7]],grid[cellId+offsets[4]]);
-                if (::CGALi::msEdgeTable[mask] & 256)
+                if (::internal::msEdgeTable[mask] & 256)
                     edges[8] = interpolEdge(grid[cellId+offsets[0]],grid[cellId+offsets[4]]);
-                if (::CGALi::msEdgeTable[mask] & 512)
+                if (::internal::msEdgeTable[mask] & 512)
                     edges[9] = interpolEdge(grid[cellId+offsets[1]],grid[cellId+offsets[5]]);
-                if (::CGALi::msEdgeTable[mask] & 1024)
+                if (::internal::msEdgeTable[mask] & 1024)
                     edges[10] = interpolEdge(grid[cellId+offsets[2]],grid[cellId+offsets[6]]);
-                if (::CGALi::msEdgeTable[mask] & 2048)
+                if (::internal::msEdgeTable[mask] & 2048)
                     edges[11] = interpolEdge(grid[cellId+offsets[3]],grid[cellId+offsets[7]]);
 
-                for (int i=0 ; ::CGALi::msTriTable[mask][i]!=-1 ; i+=3)
+                for (int i=0 ; ::internal::msTriTable[mask][i]!=-1 ; i+=3)
                 {
                   int auxId[3];
                   int countAddedVertex = 0;
                   for (int j=0;j<3;++j)
                   {
-                    int local_edge_id = ::CGALi::msTriTable[mask][i+j];
+                    int local_edge_id = ::internal::msTriTable[mask][i+j];
                     int v0 = cellId + offsets[edge_to_vertex[local_edge_id][0]];
                     int v1 = cellId + offsets[edge_to_vertex[local_edge_id][1]];
                     if (v0>v1)
@@ -509,7 +509,7 @@ class Marching_cubes : public CGAL::Modifier_base<HDS>
                     }
                     else
                     {
-                      const Point_3& p = edges[::CGALi::msTriTable[mask][i+j]];
+                      const Point_3& p = edges[::internal::msTriTable[mask][i+j]];
                       // add a new vertex
                       auxId[j] = vertex_count;
                       countAddedVertex++;

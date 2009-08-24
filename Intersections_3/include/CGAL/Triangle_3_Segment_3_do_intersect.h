@@ -23,7 +23,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 
 template <class K>
@@ -300,7 +300,7 @@ bool do_intersect(const typename K::Segment_3  &s,
   return do_intersect(t, s, k);
 }
 
-} // namespace CGALi
+} // namespace internal
 
 
 template <class K>
@@ -323,7 +323,7 @@ inline bool do_intersect(const Segment_3<K>  &s,
 			 const Triangle_3<K> &t,
 			 const K & k)
 {
-  return CGALi::do_intersect(t,s,k);
+  return internal::do_intersect(t,s,k);
 }
 */
 

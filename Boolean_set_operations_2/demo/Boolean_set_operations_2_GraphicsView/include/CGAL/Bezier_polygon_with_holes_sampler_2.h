@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-namespace CGALi {
+namespace internal {
 
 template<class TargetNT, class SourceNT>
 inline TargetNT numeric_cast ( SourceNT const& nt )
@@ -126,8 +126,8 @@ void sample_bezier_curve_2( BezierCurve const& aBC, NT aSourceT, NT aTargetT, Ou
   {
     int j = ( lFwd ? i : nc - i - 1 ) ;
     
-    Output_point_type lP ( CGALi::numeric_cast<NT>( aBC.control_point(j).x() )
-                         , CGALi::numeric_cast<NT>( aBC.control_point(j).y() )
+    Output_point_type lP ( internal::numeric_cast<NT>( aBC.control_point(j).x() )
+                         , internal::numeric_cast<NT>( aBC.control_point(j).y() )
                          ) ;
     
     lCtrlPoints.push_back (lP);
@@ -137,7 +137,7 @@ void sample_bezier_curve_2( BezierCurve const& aBC, NT aSourceT, NT aTargetT, Ou
   NT lMaxT = lFwd ? aTargetT : NT(1.0) - aTargetT ;
   
 TRACE("    Sampling from " << lMinT << " to " << lMaxT ) ;
-  CGALi::bezier_recursive_subdivision_2(lCtrlPoints, lMinT, ( lMinT + lMaxT ) / NT(2.0) , lMaxT, aOut ) ;
+  internal::bezier_recursive_subdivision_2(lCtrlPoints, lMinT, ( lMinT + lMaxT ) / NT(2.0) , lMaxT, aOut ) ;
 }
 
 template<class BezierXMonotoneCurve, class OutputPointIterator>
@@ -150,8 +150,8 @@ void sample_bezier_X_monotone_curve_2( BezierXMonotoneCurve const& aBXMC, bool a
   
   Bezier_curve const& lBC = aBXMC.supporting_curve();
   
-  Output_point_FT lFromT = CGALi::get_approximated_bezier_endpoint_parameter_2<Output_point_FT>(aFwd ? aBXMC.source() : aBXMC.target(), lBC, aBXMC.xid() ) ;
-  Output_point_FT lToT   = CGALi::get_approximated_bezier_endpoint_parameter_2<Output_point_FT>(aFwd ? aBXMC.target() : aBXMC.source(), lBC, aBXMC.xid() ) ;
+  Output_point_FT lFromT = internal::get_approximated_bezier_endpoint_parameter_2<Output_point_FT>(aFwd ? aBXMC.source() : aBXMC.target(), lBC, aBXMC.xid() ) ;
+  Output_point_FT lToT   = internal::get_approximated_bezier_endpoint_parameter_2<Output_point_FT>(aFwd ? aBXMC.target() : aBXMC.source(), lBC, aBXMC.xid() ) ;
   
 TRACE("    Sampling bezier X monotone curve " << ( aBXMC.is_vertical() ? "[VERTICAL]":"") << ( aBXMC.is_directed_right() ? "[RIGHT]":"[LEFT]") << ":\n    source T=" << lFromT << " P=" << aBXMC.source() << "\n    target T=" << lToT << " P=" << aBXMC.target() );
   sample_bezier_curve_2(lBC, lFromT, lToT, aOut ); 

@@ -33,7 +33,7 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi {
+namespace internal {
 
 
 /// Functor for operator< that compares iterators address.
@@ -47,7 +47,7 @@ struct Compare_iterator_address
 };
 
 
-} /* namespace CGALi */
+} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -77,12 +77,12 @@ template <class Iter,
 class Index_property_map 
   : public boost::associative_property_map< std::map<Iter,
                                                      unsigned int,
-                                                     CGALi::Compare_iterator_address<Iter> > >
+                                                     internal::Compare_iterator_address<Iter> > >
 {
   // std::map to store indices
   typedef typename std::map<Iter,
                             unsigned int,
-                            CGALi::Compare_iterator_address<Iter> >
+                            internal::Compare_iterator_address<Iter> >
                                             Index_map;
   // base class = property map
   typedef typename boost::associative_property_map<Index_map>

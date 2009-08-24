@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 bool intersection_test_vertex(const typename K::Point_2 *  P1, 
@@ -151,24 +151,24 @@ bool do_intersect(const typename K::Triangle_2 &t1,
   if ( orientation(*p2,*q2,*p1) != NEGATIVE ) {
     if ( orientation(*q2,*r2,*p1) != NEGATIVE ) { 
       if ( orientation(*r2,*p2,*p1) != NEGATIVE ) return true;
-      return CGALi::intersection_test_edge(p1,q1,r1,p2,q2,r2,k);
+      return internal::intersection_test_edge(p1,q1,r1,p2,q2,r2,k);
     } 
     if ( orientation(*r2,*p2,*p1) != NEGATIVE ) 
-      return CGALi::intersection_test_edge(p1,q1,r1,r2,p2,q2,k);
-    return CGALi::intersection_test_vertex(p1,q1,r1,p2,q2,r2,k);
+      return internal::intersection_test_edge(p1,q1,r1,r2,p2,q2,k);
+    return internal::intersection_test_vertex(p1,q1,r1,p2,q2,r2,k);
     
   }
   
   if ( orientation(*q2,*r2,*p1) != NEGATIVE ) {
     if ( orientation(*r2,*p2,*p1) != NEGATIVE ) 
-      return CGALi::intersection_test_edge(p1,q1,r1,q2,r2,p2,k);
-    return CGALi::intersection_test_vertex(p1,q1,r1,q2,r2,p2,k);
+      return internal::intersection_test_edge(p1,q1,r1,q2,r2,p2,k);
+    return internal::intersection_test_vertex(p1,q1,r1,q2,r2,p2,k);
   }
-  return CGALi::intersection_test_vertex(p1,q1,r1,r2,p2,q2,k);
+  return internal::intersection_test_vertex(p1,q1,r1,r2,p2,q2,k);
   
 }
 
-} // namespace CGALi
+} // namespace internal
 
 
 

@@ -42,7 +42,7 @@ struct Arr_use_dummy_tag {};
 //! tag to specify to call the corresponding traits method
 struct Arr_use_traits_tag {};
 
-namespace CGALi {
+namespace internal {
 
 ////////////////
 // left-right //
@@ -617,67 +617,67 @@ public:
 public:
   
   //! tag type for Parameter_space_in_x_2 (curve-end signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Parameter_space_in_x_2::Curve_end< Arr_left_side_tag >::type,
+    internal::Parameter_space_in_x_2::Curve_end< Arr_left_side_tag >::type,
     typename 
-    CGALi::Parameter_space_in_x_2::Curve_end< Arr_right_side_tag >::type 
+    internal::Parameter_space_in_x_2::Curve_end< Arr_right_side_tag >::type 
   >::type
   Parameter_space_in_x_2_curve_end_tag;
 
   //! tag type for Parameter_space_in_x_2 (curve signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Parameter_space_in_x_2::Curve< Arr_left_side_tag >::type,
+    internal::Parameter_space_in_x_2::Curve< Arr_left_side_tag >::type,
     typename 
-    CGALi::Parameter_space_in_x_2::Curve< Arr_right_side_tag >::type 
+    internal::Parameter_space_in_x_2::Curve< Arr_right_side_tag >::type 
   >::type
   Parameter_space_in_x_2_curve_tag;
   
   //! tag type for Parameter_space_in_x_2 (point signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename
-    CGALi::Parameter_space_in_x_2::Point< Arr_left_side_tag >::type,
+    internal::Parameter_space_in_x_2::Point< Arr_left_side_tag >::type,
     typename
-    CGALi::Parameter_space_in_x_2::Point< Arr_right_side_tag >::type >::type
+    internal::Parameter_space_in_x_2::Point< Arr_right_side_tag >::type >::type
   Parameter_space_in_x_2_point_tag;
 
   
   //! tag type for Compare_y_near_boundary_2 (curve-ends signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Compare_y_near_boundary_2::Curve_ends< Arr_left_side_tag >::type,
+    internal::Compare_y_near_boundary_2::Curve_ends< Arr_left_side_tag >::type,
     typename 
-    CGALi::Compare_y_near_boundary_2::Curve_ends< Arr_right_side_tag >::type 
+    internal::Compare_y_near_boundary_2::Curve_ends< Arr_right_side_tag >::type 
   >::type
   Compare_y_near_boundary_2_curve_ends_tag;
 
   // TODO Compare_y_right_of_2 ???
 
   //! tag type for Compare_y_on_boundary_2 (points signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Compare_y_on_boundary_2::Points< Arr_left_side_tag >::type,
+    internal::Compare_y_on_boundary_2::Points< Arr_left_side_tag >::type,
     typename 
-    CGALi::Compare_y_on_boundary_2::Points< Arr_right_side_tag >::type 
+    internal::Compare_y_on_boundary_2::Points< Arr_right_side_tag >::type 
   >::type
   Compare_y_on_boundary_2_points_tag;
 
   //! tag type for Is_on_y_identification_2 (point signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Is_on_y_identification_2::Point< Arr_left_side_tag >::type,
+    internal::Is_on_y_identification_2::Point< Arr_left_side_tag >::type,
     typename 
-    CGALi::Is_on_y_identification_2::Point< Arr_right_side_tag >::type 
+    internal::Is_on_y_identification_2::Point< Arr_right_side_tag >::type 
   >::type
   Is_on_y_identification_2_point_tag;
 
   //! tag type for Is_on_y_identification_2 (curve signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Is_on_y_identification_2::Curve< Arr_left_side_tag >::type,
+    internal::Is_on_y_identification_2::Curve< Arr_left_side_tag >::type,
     typename 
-    CGALi::Is_on_y_identification_2::Curve< Arr_right_side_tag >::type 
+    internal::Is_on_y_identification_2::Curve< Arr_right_side_tag >::type 
   >::type
   Is_on_y_identification_2_curve_tag;
 
@@ -698,80 +698,80 @@ public:
 public:
 
   //! tag type for Parameter_space_in_y_2 (curve-end signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Parameter_space_in_y_2::Curve_end< Arr_bottom_side_tag >::type,
+    internal::Parameter_space_in_y_2::Curve_end< Arr_bottom_side_tag >::type,
     typename 
-    CGALi::Parameter_space_in_y_2::Curve_end< Arr_top_side_tag >::type 
+    internal::Parameter_space_in_y_2::Curve_end< Arr_top_side_tag >::type 
   >::type
   Parameter_space_in_y_2_curve_end_tag;
 
   //! tag type for Parameter_space_in_y_2 (curve signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Parameter_space_in_y_2::Curve< Arr_bottom_side_tag >::type,
+    internal::Parameter_space_in_y_2::Curve< Arr_bottom_side_tag >::type,
     typename 
-    CGALi::Parameter_space_in_y_2::Curve< Arr_top_side_tag >::type 
+    internal::Parameter_space_in_y_2::Curve< Arr_top_side_tag >::type 
   >::type
   Parameter_space_in_y_2_curve_tag;
   
   //! tag type for Parameter_space_in_y_2 (point signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename
-    CGALi::Parameter_space_in_y_2::Point< Arr_bottom_side_tag >::type,
+    internal::Parameter_space_in_y_2::Point< Arr_bottom_side_tag >::type,
     typename
-    CGALi::Parameter_space_in_y_2::Point< Arr_top_side_tag >::type >::type
+    internal::Parameter_space_in_y_2::Point< Arr_top_side_tag >::type >::type
   Parameter_space_in_y_2_point_tag;
   
   //! tag type for Compare_x_near_boundary_2 (point-curve-end signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Compare_x_near_boundary_2::Point_curve_end< Arr_bottom_side_tag >
+    internal::Compare_x_near_boundary_2::Point_curve_end< Arr_bottom_side_tag >
     ::type,
     typename 
-    CGALi::Compare_x_near_boundary_2::Point_curve_end< Arr_top_side_tag >::type 
+    internal::Compare_x_near_boundary_2::Point_curve_end< Arr_top_side_tag >::type 
   >::type
   Compare_x_near_boundary_2_point_curve_end_tag;
 
   //! tag type for Compare_x_near_boundary_2 (curve-ends signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Compare_x_near_boundary_2::Curve_ends< Arr_bottom_side_tag >::type,
+    internal::Compare_x_near_boundary_2::Curve_ends< Arr_bottom_side_tag >::type,
     typename 
-    CGALi::Compare_x_near_boundary_2::Curve_ends< Arr_top_side_tag >::type 
+    internal::Compare_x_near_boundary_2::Curve_ends< Arr_top_side_tag >::type 
   >::type
   Compare_x_near_boundary_2_curve_ends_tag;
 
   //! tag type for Compare_y_on_boundary_2 (points signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Compare_x_on_boundary_2::Points< Arr_bottom_side_tag >::type,
+    internal::Compare_x_on_boundary_2::Points< Arr_bottom_side_tag >::type,
     typename 
-    CGALi::Compare_x_on_boundary_2::Points< Arr_top_side_tag >::type 
+    internal::Compare_x_on_boundary_2::Points< Arr_top_side_tag >::type 
   >::type
   Compare_x_on_boundary_2_points_tag;
 
   //! tag type for Is_on_x_identification_2 (point signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Is_on_x_identification_2::Point< Arr_bottom_side_tag >::type,
+    internal::Is_on_x_identification_2::Point< Arr_bottom_side_tag >::type,
     typename 
-    CGALi::Is_on_x_identification_2::Point< Arr_top_side_tag >::type 
+    internal::Is_on_x_identification_2::Point< Arr_top_side_tag >::type 
   >::type
   Is_on_x_identification_2_point_tag;
 
   //! tag type for Is_on_x_identification_2 (curve signature)
-  typedef typename CGALi::Or_traits<
+  typedef typename internal::Or_traits<
     typename 
-    CGALi::Is_on_x_identification_2::Curve< Arr_bottom_side_tag >::type,
+    internal::Is_on_x_identification_2::Curve< Arr_bottom_side_tag >::type,
     typename 
-    CGALi::Is_on_x_identification_2::Curve< Arr_top_side_tag >::type 
+    internal::Is_on_x_identification_2::Curve< Arr_top_side_tag >::type 
   >::type
   Is_on_x_identification_2_curve_tag;
   
 }; // bottom-top-dispatch
 
-} // namespace CGALi
+} // namespace internal
 
 CGAL_END_NAMESPACE
 

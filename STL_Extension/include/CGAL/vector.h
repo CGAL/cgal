@@ -34,7 +34,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 // We give the vector container class a class based iterator implementation.
 // It ensures that iterator_traits work on compilers not supporting
@@ -591,7 +591,7 @@ void vector<T, Alloc>::insert( iterator position, size_type n, const T& x) {
     }
 }
 
-} // namespace CGALi
+} // namespace internal
 
 CGAL_END_NAMESPACE
 

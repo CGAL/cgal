@@ -37,7 +37,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 inline bool
@@ -304,7 +304,7 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
     if (_known)
         return _result;
     _known = true;
-    if (!CGALi::do_intersect(*_seg1, *_seg2, K())) {
+    if (!internal::do_intersect(*_seg1, *_seg2, K())) {
         _result = NO_INTERSECTION;
         return _result;
     }
@@ -451,7 +451,7 @@ intersection(const typename K::Segment_2 &seg1,
     }
 }
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 inline

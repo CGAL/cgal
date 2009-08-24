@@ -44,7 +44,7 @@ CGAL_BEGIN_NAMESPACE
 class Gmpq;
 
 template<>
-struct Root_of_traits<Gmpz>: public CGALi::Root_of_traits_helper<Gmpz,
+struct Root_of_traits<Gmpz>: public internal::Root_of_traits_helper<Gmpz,
     Euclidean_ring_tag>{
   typedef Gmpq RootOf_1;
   typedef Gmpq Root_of_1;

@@ -99,7 +99,7 @@ void test_CR_for(const NT& f){
     prime_index = 0;
     
     // init chinese remainder
-    q = current_prime = CGAL::CGALi::primes[prime_index];
+    q = current_prime = CGAL::internal::primes[prime_index];
     CGAL::Residue::set_current_prime(current_prime); 
     g_old = modular_image_representative(modular_image(f));
     pq= p = q;
@@ -112,11 +112,11 @@ void test_CR_for(const NT& f){
          
         prime_index++;
         if(prime_index < 1000){
-            current_prime = CGAL::CGALi::primes[prime_index]; 
+            current_prime = CGAL::internal::primes[prime_index]; 
         }
         else{
             std::cerr<<"primes in the array exhausted"<<std::endl;
-            current_prime = CGAL::CGALi::get_next_lower_prime(current_prime);
+            current_prime = CGAL::internal::get_next_lower_prime(current_prime);
         }    
         CGAL::Residue::set_current_prime(current_prime); 
         p = current_prime;

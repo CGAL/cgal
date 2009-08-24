@@ -26,7 +26,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
   template <class K>
   bool do_intersect(const typename K::Ray_3& ray, 
@@ -85,20 +85,20 @@ namespace CGALi {
     return true;
   }
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 bool do_intersect(const CGAL::Ray_3<K>& ray, 
 		  const CGAL::Bbox_3& bbox)
 {
-  return CGALi::do_intersect(ray, bbox, K());
+  return internal::do_intersect(ray, bbox, K());
 }
 
 template <class K>
 bool do_intersect(const CGAL::Bbox_3& bbox, 
 		  const CGAL::Ray_3<K>& ray)
 {
-  return CGALi::do_intersect(ray, bbox, K());
+  return internal::do_intersect(ray, bbox, K());
 }
 
 CGAL_END_NAMESPACE

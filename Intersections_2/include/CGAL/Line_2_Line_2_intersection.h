@@ -34,7 +34,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 class Line_2_Line_2_pair {
@@ -198,7 +198,7 @@ Line_2_Line_2_pair<K>::intersection_line() const
     return *_line1;
 }
 
-} // namespace CGALi
+} // namespace internal
 
 
 template <class K>

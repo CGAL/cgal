@@ -31,7 +31,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 bool
@@ -47,7 +47,7 @@ do_intersect(const typename K::Circle_2 & circ1,
     return !(FT(4)*sr1*sr2 < temp*temp);
 }
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 inline

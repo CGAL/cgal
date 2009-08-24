@@ -56,20 +56,20 @@ public:
   // Tags.
   typedef typename Base::Has_left_category      Has_left_category;
 
-  typedef typename CGALi::Arr_complete_left_side_tag< Base >::Tag 
+  typedef typename internal::Arr_complete_left_side_tag< Base >::Tag 
                                                 Arr_left_side_tag;
-  typedef typename CGALi::Arr_complete_bottom_side_tag< Base >::Tag 
+  typedef typename internal::Arr_complete_bottom_side_tag< Base >::Tag 
                                                 Arr_bottom_side_tag;
-  typedef typename CGALi::Arr_complete_top_side_tag< Base >::Tag 
+  typedef typename internal::Arr_complete_top_side_tag< Base >::Tag 
                                                 Arr_top_side_tag;
-  typedef typename CGALi::Arr_complete_right_side_tag< Base >::Tag 
+  typedef typename internal::Arr_complete_right_side_tag< Base >::Tag 
                                                 Arr_right_side_tag;
 
 protected:
 
   // left-right dispatch
   
-  typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+  typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     Arr_left_side_tag, Arr_right_side_tag > LR;
   
   typedef typename LR::Parameter_space_in_x_2_curve_end_tag 
@@ -85,7 +85,7 @@ protected:
   
   
   // bottom-top dispatch
-  typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+  typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     Arr_bottom_side_tag, Arr_top_side_tag > BT;
   
   typedef typename BT::Parameter_space_in_y_2_curve_end_tag 
@@ -1850,13 +1850,13 @@ public:
   typedef typename Base::Has_left_category               Has_left_category;
   typedef typename Base::Has_merge_category              Has_merge_category;
 
-  typedef typename CGALi::Arr_complete_left_side_tag< Base >::Tag
+  typedef typename internal::Arr_complete_left_side_tag< Base >::Tag
                                                          Arr_left_side_tag;
-  typedef typename CGALi::Arr_complete_bottom_side_tag< Base >::Tag 
+  typedef typename internal::Arr_complete_bottom_side_tag< Base >::Tag 
                                                          Arr_bottom_side_tag;
-  typedef typename CGALi::Arr_complete_top_side_tag< Base >::Tag 
+  typedef typename internal::Arr_complete_top_side_tag< Base >::Tag 
                                                          Arr_top_side_tag;
-  typedef typename CGALi::Arr_complete_right_side_tag< Base >::Tag 
+  typedef typename internal::Arr_complete_right_side_tag< Base >::Tag 
                                                          Arr_right_side_tag;
 
   /// \name Construction.

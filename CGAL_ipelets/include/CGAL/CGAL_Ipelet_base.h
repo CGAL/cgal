@@ -110,8 +110,8 @@ namespace CGAL{
     //grabbers
     
     template <class output_iterator>
-    struct Point_grabber:public CGALi::Point_grabber<Kernel,output_iterator>{
-      Point_grabber(output_iterator it):CGALi::Point_grabber<Kernel,output_iterator>(it){}
+    struct Point_grabber:public internal::Point_grabber<Kernel,output_iterator>{
+      Point_grabber(output_iterator it):internal::Point_grabber<Kernel,output_iterator>(it){}
     };
       
     template<class output_iterator>
@@ -122,8 +122,8 @@ namespace CGAL{
     
 
     template <class output_iterator>
-    struct Segment_grabber:public CGALi::Segment_grabber<Kernel,output_iterator>{
-      Segment_grabber(output_iterator it):CGALi::Segment_grabber<Kernel,output_iterator>(it){}
+    struct Segment_grabber:public internal::Segment_grabber<Kernel,output_iterator>{
+      Segment_grabber(output_iterator it):internal::Segment_grabber<Kernel,output_iterator>(it){}
     };
       
     template<class output_iterator>
@@ -133,8 +133,8 @@ namespace CGAL{
     }
     
     template <class output_iterator>
-    struct Wpoint_grabber:public CGALi::Wpoint_grabber<Kernel,output_iterator>{
-      Wpoint_grabber(output_iterator it):CGALi::Wpoint_grabber<Kernel,output_iterator>(it){}
+    struct Wpoint_grabber:public internal::Wpoint_grabber<Kernel,output_iterator>{
+      Wpoint_grabber(output_iterator it):internal::Wpoint_grabber<Kernel,output_iterator>(it){}
     };
       
     template<class output_iterator>

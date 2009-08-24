@@ -34,7 +34,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 class Line_2_Iso_rectangle_2_pair {
@@ -77,7 +77,7 @@ inline bool do_intersect(const typename K::Iso_rectangle_2 &p2,
 			 const typename K::Line_2 &p1,
 			 const K& k)
 {
-  return CGALi::do_intersect(p1, p2, k);
+  return internal::do_intersect(p1, p2, k);
 }
 
 
@@ -209,10 +209,10 @@ intersection(const typename K::Iso_rectangle_2 &iso,
 	     const typename K::Line_2 &line, 
 	     const K& k)
 {
-  return CGALi::intersection(line, iso, k);
+  return internal::intersection(line, iso, k);
 }
 
-} // namespace CGALi
+} // namespace internal
 
 
 template <class K>

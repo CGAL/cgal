@@ -70,7 +70,7 @@
 // see CGAL/Polynomial/polynomial_gcd_ntl.h
 
 namespace CGAL { 
-namespace CGALi {
+namespace internal {
 
 template <class NT> 
 inline
@@ -79,7 +79,7 @@ Polynomial<NT> gcd_(
         const Polynomial<NT>& p2, 
         Field_tag)
 { 
-    return CGAL::CGALi::gcd_utcf(p1,p2);
+    return CGAL::internal::gcd_utcf(p1,p2);
 }
 
 template <class NT> 
@@ -101,12 +101,12 @@ Polynomial<NT> gcd_(
     POLY p1_ = CGAL::integral_division(p1,ictp(mcont_p1));
     POLY p2_ = CGAL::integral_division(p2,ictp(mcont_p2));
             
-    return CGAL::CGALi::gcd_utcf(p1_, p2_) * ictp(CGAL::gcd(mcont_p1, mcont_p2)); 
+    return CGAL::internal::gcd_utcf(p1_, p2_) * ictp(CGAL::gcd(mcont_p1, mcont_p2)); 
 }
 
 
 
-// name gcd() forwarded to the CGALi::gcd_() dispatch function
+// name gcd() forwarded to the internal::gcd_() dispatch function
 /*! \ingroup CGAL_Polynomial
  *  \relates CGAL::Polynomial
  *  \brief return the greatest common divisor of \c p1 and \c p2
@@ -117,7 +117,7 @@ template <class NT>
 inline
 Polynomial<NT> gcd(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
 { 
-    typedef typename CGALi::Innermost_coefficient_type<Polynomial<NT> >::Type IC;
+    typedef typename internal::Innermost_coefficient_type<Polynomial<NT> >::Type IC;
     typedef typename Algebraic_structure_traits<IC>::Algebraic_category Algebraic_category;
 
     // Filter for zero-polynomials
@@ -125,17 +125,17 @@ Polynomial<NT> gcd(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
     	return p2;
     if( p2 == Polynomial<NT>(0) )
     	return p1;
-    return CGALi::gcd_(p1,p2,Algebraic_category());
+    return internal::gcd_(p1,p2,Algebraic_category());
 }
 
-} // namespace CGALi
+} // namespace internal
 
 // 2) gcd_utcf computation
 //     (gcd up to scalar factors, for non-UFD non-field coefficients)
 //     a) first try to decompose the coefficients
 //     b) second dispatch depends on the algebra type of NT
 
-namespace CGALi {
+namespace internal {
 
 template <class NT> Polynomial<NT> 
 gcd_utcf_(const Polynomial<NT>&, const Polynomial<NT>&);
@@ -195,7 +195,7 @@ gcd_utcf_is_fraction_(
     typename FT::Decompose()(p2,p2i, dummy);
 
     typename Coercion_traits<POLY,typename FT::Numerator_type>::Cast cast;
-    return typename PT::Canonicalize()(cast(CGALi::gcd_utcf(p1i, p2i)));
+    return typename PT::Canonicalize()(cast(internal::gcd_utcf(p1i, p2i)));
 }
 
 template <class NT> Polynomial<NT> inline
@@ -218,7 +218,7 @@ gcd_utcf_modularizable_algebra_(
         const Polynomial<NT>& p2, 
         ::CGAL::Tag_false, 
         Integral_domain_tag){
-    return CGALi::gcd_utcf_Integral_domain(p1, p2);   
+    return internal::gcd_utcf_Integral_domain(p1, p2);   
 }
 template <class NT> Polynomial<NT> inline
 gcd_utcf_modularizable_algebra_( 
@@ -226,7 +226,7 @@ gcd_utcf_modularizable_algebra_(
         const Polynomial<NT>& p2, 
         ::CGAL::Tag_false, 
         Unique_factorization_domain_tag){
-    return CGALi::gcd_utcf_UFD(p1, p2);   
+    return internal::gcd_utcf_UFD(p1, p2);   
 }
 template <class NT> Polynomial<NT> inline
 gcd_utcf_modularizable_algebra_( 
@@ -234,7 +234,7 @@ gcd_utcf_modularizable_algebra_(
         const Polynomial<NT>& p2, 
         ::CGAL::Tag_false, 
         Euclidean_ring_tag){
-    return CGALi::gcd_Euclidean_ring(p1, p2);
+    return internal::gcd_Euclidean_ring(p1, p2);
 }
 
 #if CGAL_USE_INTERNAL_MODULAR_GCD 
@@ -263,7 +263,7 @@ gcd_utcf_modularizable_algebra_(
         const Polynomial<NT>& p2, 
         ::CGAL::Tag_true, 
         Integral_domain_tag){
-    return CGALi::gcd_utcf_Integral_domain(p1, p2);
+    return internal::gcd_utcf_Integral_domain(p1, p2);
 }
 template <class NT> Polynomial<NT> inline
 gcd_utcf_modularizable_algebra_( 
@@ -271,7 +271,7 @@ gcd_utcf_modularizable_algebra_(
         const Polynomial<NT>& p2, 
         ::CGAL::Tag_true, 
         Unique_factorization_domain_tag){
-    return CGALi::gcd_utcf_UFD(p1, p2);   
+    return internal::gcd_utcf_UFD(p1, p2);   
 }
 #endif
 
@@ -282,21 +282,21 @@ gcd_utcf_modularizable_algebra_(
         ::CGAL::Tag_true, 
         Euclidean_ring_tag){
     // No modular algorithm available
-    return CGALi::gcd_Euclidean_ring(p1, p2);
+    return internal::gcd_Euclidean_ring(p1, p2);
 }
 
 template <class NT> Polynomial<NT> inline
 gcd_utcf(const Polynomial<NT>& p1, const Polynomial<NT>& p2){
-    return CGALi::gcd_utcf_(p1,p2);
+    return internal::gcd_utcf_(p1,p2);
 }
 
-} // namespace CGALi 
+} // namespace internal 
 
 
 // 3) extended gcd computation (with cofactors)
 //     with dispatch similar to gcd
 
-namespace CGALi {
+namespace internal {
 
 template <class NT> 
 inline
@@ -429,7 +429,7 @@ Polynomial<NT> gcdex_(
     return v;
 };
 
-} // namespace CGALi
+} // namespace internal
 
 /*! \ingroup CGAL_Polynomial
  *  \relates CGAL::Polynomial
@@ -460,7 +460,7 @@ Polynomial<NT> gcdex(
 ) {
     typedef typename CGAL::Fraction_traits< Polynomial<NT> >
         ::Is_fraction Is_fraction;
-    return CGALi::gcdex_(p1, p2, f1, f2, Is_fraction());
+    return internal::gcdex_(p1, p2, f1, f2, Is_fraction());
 };
 
 
@@ -547,7 +547,7 @@ Polynomial<NT> pseudo_gcdex(
          * gcdex(..., Field_tag) apply analogously.
          */
         g = u.lcoeff();
-        CGAL::CGALi::hgdelta_update(h, g, delta);
+        CGAL::internal::hgdelta_update(h, g, delta);
         if (r.degree() == 0) break;
     }
 

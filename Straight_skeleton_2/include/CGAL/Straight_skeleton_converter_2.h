@@ -26,7 +26,7 @@ CGAL_BEGIN_NAMESPACE
 
 template<class Source_skeleton_
         ,class Target_skeleton_
-        ,class NT_converter = typename CGALi::Default_converter<typename Source_skeleton_::Traits
+        ,class NT_converter = typename internal::Default_converter<typename Source_skeleton_::Traits
                                                                ,typename Target_skeleton_::Traits
                                                                >::Type 
         >

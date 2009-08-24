@@ -29,7 +29,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
   // Accessory traits class to provide min and max value of a type.
   // Specialized for bool and CGAL's enums.
@@ -64,7 +64,7 @@ namespace CGALi {
     static const Angle max = ACUTE;
   };
 
-} // namespace CGALi
+} // namespace internal
 
 
 // Exception type for the automatic conversion.
@@ -211,10 +211,10 @@ inline
 Uncertain<T>
 Uncertain<T>::indeterminate()
 {
-  return Uncertain<T>(CGALi::Minmax_traits<T>::min, CGALi::Minmax_traits<T>::max);
+  return Uncertain<T>(internal::Minmax_traits<T>::min, internal::Minmax_traits<T>::max);
 }
 
-namespace CGALi {
+namespace internal {
 
 	// helper class
 	template < typename T >
@@ -231,14 +231,14 @@ namespace CGALi {
 		{ return Uncertain<T>::indeterminate(); }
 	};
 
-} // namespace CGALi
+} // namespace internal
 
 template < typename T >
 inline
-typename CGALi::Indeterminate_helper<T>::result_type
+typename internal::Indeterminate_helper<T>::result_type
 indeterminate()
 {
-  return CGALi::Indeterminate_helper<T>()();
+  return internal::Indeterminate_helper<T>()();
 }
 
 template < typename T >

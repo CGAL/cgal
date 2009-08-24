@@ -32,7 +32,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
   template <class K>
   inline
@@ -198,7 +198,7 @@ namespace CGALi {
     return true;
   }
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 bool do_intersect(const CGAL::Triangle_3<K>& triangle,

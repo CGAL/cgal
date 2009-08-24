@@ -28,7 +28,7 @@
 #include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
-  namespace CGALi{
+  namespace internal{
     template <class SK> class Line_arc_3 {
 
       typedef typename SK::Plane_3              Plane_3;

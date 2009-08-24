@@ -79,12 +79,12 @@ NT prs_resultant_integral_domain(Polynomial<NT> A, Polynomial<NT> B) {
         B = R / (g * CGAL::ipower(h, delta));
         g = A.lcoeff();
         // h = h^(1-delta) * g^delta
-        CGALi::hgdelta_update(h, g, delta);
+        internal::hgdelta_update(h, g, delta);
     } while (B.degree() > 0);
     // h = h^(1-deg(A)) * lcoeff(B)^deg(A)
     delta = A.degree();
     g = B.lcoeff();
-    CGALi::hgdelta_update(h, g, delta);
+    internal::hgdelta_update(h, g, delta);
     h = signflip ? -(t*h) : t*h;
     typename Algebraic_structure_traits<NT>::Simplify simplify;
     simplify(h);
@@ -126,12 +126,12 @@ NT prs_resultant_ufd(Polynomial<NT> A, Polynomial<NT> B) {
         B = R / (g * CGAL::ipower(h, delta));
         g = A.lcoeff();
         // h = h^(1-delta) * g^delta
-        CGALi::hgdelta_update(h, g, delta);
+        internal::hgdelta_update(h, g, delta);
     } while (B.degree() > 0);
     // h = h^(1-deg(A)) * lcoeff(B)^deg(A)
     delta = A.degree();
     g = B.lcoeff();
-    CGALi::hgdelta_update(h, g, delta);
+    internal::hgdelta_update(h, g, delta);
     h = signflip ? -(t*h) : t*h;
     typename Algebraic_structure_traits<NT>::Simplify simplify;
     simplify(h);
@@ -193,7 +193,7 @@ namespace INTERN_PRS_RESULTANT {
     NT prs_resultant_(Polynomial<NT> A, Polynomial<NT> B, Unique_factorization_domain_tag) {
         return prs_resultant_ufd(A, B);
     }
-} // namespace CGALi
+} // namespace internal
 
 template <class NT> inline
 NT prs_resultant_decompose(Polynomial<NT> A, Polynomial<NT> B){

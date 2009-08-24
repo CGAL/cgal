@@ -49,25 +49,25 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// The main function provided within this file is CGAL::CGALi::resultant(F,G),
+// The main function provided within this file is CGAL::internal::resultant(F,G),
 // all other functions are used for dispatching. 
 // The implementation uses interpolatation for multivariate polynomials
 // Due to the recursive structuture of CGAL::Polynomial<Coeff> it is better 
 // to write the function such that the inner most variabel is eliminated. 
-// However,  CGAL::CGALi::resultant(F,G) eliminates the outer most variabel.
+// However,  CGAL::internal::resultant(F,G) eliminates the outer most variabel.
 // This is due to backward compatibility issues with code base on EXACUS. 
-// In turn CGAL::CGALi::resultant_(F,G) eliminates the innermost variable. 
+// In turn CGAL::internal::resultant_(F,G) eliminates the innermost variable. 
  
 // Dispatching
-// CGAL::CGALi::resultant_decompose applies if Coeff is a Fraction
-// CGAL::CGALi::resultant_modularize applies if Coeff is Modularizable
-// CGAL::CGALi::resultant_interpolate applies for multivairate polynomials
-// CGAL::CGALi::resultant_univariate selects the proper algorithm for IC 
+// CGAL::internal::resultant_decompose applies if Coeff is a Fraction
+// CGAL::internal::resultant_modularize applies if Coeff is Modularizable
+// CGAL::internal::resultant_interpolate applies for multivairate polynomials
+// CGAL::internal::resultant_univariate selects the proper algorithm for IC 
 
 // CGAL_RESULTANT_USE_DECOMPOSE ( default = 1 )
 // CGAL_RESULTANT_USE_MODULAR_ARITHMETIC (default = 0 ) 
 
-namespace CGALi{
+namespace internal{
 
 template <class Coeff> 
 inline Coeff resultant_interpolate( 
@@ -120,9 +120,9 @@ inline Coeff resultant_univariate(
   return prs_resultant_field(A,B);  
 }
 
-} // namespace CGALi
+} // namespace internal
 
-namespace CGALi{
+namespace internal{
 
 
 template <class IC> 
@@ -133,7 +133,7 @@ resultant_interpolate(
   CGAL_precondition(CGAL::Polynomial_traits_d<CGAL::Polynomial<IC> >::d == 1);
     typedef CGAL::Algebraic_structure_traits<IC> AST_IC;
     typedef typename AST_IC::Algebraic_category Algebraic_category;
-    return CGALi::resultant_univariate(F,G,Algebraic_category()); 
+    return internal::resultant_univariate(F,G,Algebraic_category()); 
 }
 
 template <class Coeff_2> 
@@ -199,7 +199,7 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
     }
    
     // timer3.start();
-    CGAL::CGALi::Interpolator<Coeff_1> interpolator(points.begin(),points.end());
+    CGAL::internal::Interpolator<Coeff_1> interpolator(points.begin(),points.end());
     Coeff_1 result = interpolator.get_interpolant();
     // timer3.stop();
 
@@ -219,7 +219,7 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
             points.push_back(Point(IC(i), res_at_i));
         }
     }
-    CGAL::CGALi::Interpolator<Coeff_1> 
+    CGAL::internal::Interpolator<Coeff_1> 
       interpolator_(points.begin(),points.end());
     Coeff_1 result_= interpolator_.get_interpolant();
     
@@ -288,9 +288,9 @@ Coeff resultant_modularize(
             if(prime_index >= 2000){
                 std::cerr<<"primes in the array exhausted"<<std::endl;
                 assert(false);
-                current_prime = CGALi::get_next_lower_prime(current_prime);
+                current_prime = internal::get_next_lower_prime(current_prime);
             } else{
-                current_prime = CGALi::primes[prime_index];
+                current_prime = internal::primes[prime_index];
             }
             CGAL::Residue::set_current_prime(current_prime);
             
@@ -316,7 +316,7 @@ Coeff resultant_modularize(
             R_old  = R ;
 //            chinese_remainder(q,Gs ,p,inv_map(mG_),pq,Gs);             
 //            cached_extended_euclidean_algorithm(q,p,s,t);
-            CGALi::Cached_extended_euclidean_algorithm
+            internal::Cached_extended_euclidean_algorithm
                 <typename CRT::Scalar_type> ceea;
             ceea(q,p,s,t);
             pq =p*q;
@@ -372,7 +372,7 @@ Coeff resultant_decompose(
     Denominator c = CGAL::ipower(a, G.degree()) * CGAL::ipower(b, F.degree());
     typedef Algebraic_structure_traits<RES> AST_RES;
     typedef typename AST_RES::Algebraic_category Algebraic_category;
-    RES res0 =  CGAL::CGALi::resultant_(F0, G0);
+    RES res0 =  CGAL::internal::resultant_(F0, G0);
     typename Fraction_traits<Coeff>::Compose comp_frac;
     Coeff res = comp_frac(res0, c);
     typename Algebraic_structure_traits<Coeff>::Simplify simplify;
@@ -406,10 +406,10 @@ Coeff  resultant(
     typedef CGAL::Polynomial_traits_d<CGAL::Polynomial<Coeff> > PT;
     CGAL::Polynomial<Coeff> F = typename PT::Move()(F_, PT::d-1, 0);
     CGAL::Polynomial<Coeff> G = typename PT::Move()(G_, PT::d-1, 0);
-    return CGALi::resultant_(F,G);
+    return internal::resultant_(F,G);
 }
 
-} // namespace CGALi    
+} // namespace internal    
 CGAL_END_NAMESPACE
 
 

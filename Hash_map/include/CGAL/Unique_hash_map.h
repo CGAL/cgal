@@ -48,7 +48,7 @@ public:
     typedef Unique_hash_map<Key,Data,Hash_function>  Self;
 
 private:
-    typedef CGALi::chained_map<Data>                 Map;
+    typedef internal::chained_map<Data>                 Map;
     typedef typename Map::item                       Item;
 
 private:

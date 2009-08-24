@@ -30,7 +30,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi{
+namespace internal{
 
 template <typename Polynomial > struct Degree;
 
@@ -79,7 +79,7 @@ public:
 
 };
 
-} // namespace CGALi
+} // namespace internal
 CGAL_END_NAMESPACE
 
 #endif //CGAL_POLYNOMIAL_DEGREE_H

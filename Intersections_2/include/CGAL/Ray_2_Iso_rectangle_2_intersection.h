@@ -36,7 +36,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 class Ray_2_Iso_rectangle_2_pair {
@@ -200,7 +200,7 @@ Ray_2_Iso_rectangle_2_pair<K>::intersection_point() const
     return Point_2(translated_point(_ref_point, construct_scaled_vector(_dir, _min)));
 }
 
-} // namespace CGALi
+} // namespace internal
 
 
 template <class K>

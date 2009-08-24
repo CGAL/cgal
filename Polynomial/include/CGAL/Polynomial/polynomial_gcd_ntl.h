@@ -64,7 +64,7 @@ template <class A> class Polynomial; // fwd
 // NTL is not available, the usual strategy is applied. 
 
 namespace CGAL {
-namespace CGALi {
+namespace internal {
 
 // Forward
 template <class NT> 
@@ -111,8 +111,8 @@ modular_NTL_gcd_for_univariate_integer_polynomials
     
     NTL::ZZX q1,q2,h;   
     Polynomial<NT> g;
-    CGALi::polynomial_to_ntl(p1,q1);
-    CGALi::polynomial_to_ntl(p2,q2);
+    internal::polynomial_to_ntl(p1,q1);
+    internal::polynomial_to_ntl(p2,q2);
 #ifdef CGAL_MODULAR_GCD_TIMER
     timer_ntl2.start(); 
 #endif
@@ -120,7 +120,7 @@ modular_NTL_gcd_for_univariate_integer_polynomials
 #ifdef CGAL_MODULAR_GCD_TIMER
     timer_ntl2.stop(); 
 #endif
-    CGALi::ntl_to_polynomial(h,g);
+    internal::ntl_to_polynomial(h,g);
     return g;
 }
 
@@ -135,7 +135,7 @@ CGAL::Polynomial<leda::integer>
 gcd_utcf(const CGAL::Polynomial<leda::integer>& p1,
             const CGAL::Polynomial<leda::integer>& p2) {
     CGAL::Polynomial<leda::integer> gcd = 
-        CGALi::modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
+        internal::modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
     return CGAL::canonicalize(gcd);
 }
 template <> 
@@ -143,7 +143,7 @@ inline
 CGAL::Polynomial<leda::integer>
 gcd(const CGAL::Polynomial<leda::integer>& p1,
         const CGAL::Polynomial<leda::integer>& p2) {
-    return CGALi::modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
+    return internal::modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
 }
 #endif // CGAL_USE_LEDA
 
@@ -168,7 +168,7 @@ gcd(const Polynomial<CORE::BigInt>& p1,
 //#endif //CGAL_USE_INTERNAL_MODULAR_GCD 
 
 
-  } // namespace CGALi
+  } // namespace internal
 
 } // namespace CGAL
 

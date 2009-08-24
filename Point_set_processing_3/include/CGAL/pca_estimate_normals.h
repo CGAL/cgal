@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi {
+namespace internal {
 
 
 /// Estimates normal direction using linear least
@@ -93,7 +93,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 }
 
 
-} /* namespace CGALi */
+} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -173,7 +173,7 @@ pca_estimate_normals(
   // vectors (already normalized)
   for(it = first; it != beyond; it++)
   {
-    Vector normal = CGALi::pca_estimate_normal<Kernel,Tree>(get(point_pmap,it), tree, k);
+    Vector normal = internal::pca_estimate_normal<Kernel,Tree>(get(point_pmap,it), tree, k);
     put(normal_pmap, it, normal); // normal_pmap[it] = normal
   }
 

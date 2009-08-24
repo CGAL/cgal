@@ -25,7 +25,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class FT>
 void eigen_symmetric(const FT *mat, 
@@ -221,7 +221,7 @@ void eigen_symmetric(const FT *mat,
   delete [] index;
 }
 
-} // end namespace CGALi
+} // end namespace internal
 
 CGAL_END_NAMESPACE
 

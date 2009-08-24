@@ -43,7 +43,7 @@
 #include <CGAL/Polynomial/Wang_traits.h>
 
 namespace CGAL {
-namespace CGALi{
+namespace internal{
 
 template <class NT> Polynomial<NT> 
 gcd_utcf_Integral_domain(Polynomial<NT>,Polynomial<NT>);
@@ -54,7 +54,7 @@ Polynomial< Polynomial<NT> > modular_gcd_utcf_with_wang(
         const Polynomial< Polynomial<NT> >& FF1 ,
         const Polynomial< Polynomial<NT> >& FF2 ){
 #ifndef NDEBUG
-    std::cerr << "WARNING: still using CGALi::gcd_utcf_Integral_domain  " 
+    std::cerr << "WARNING: still using internal::gcd_utcf_Integral_domain  " 
               << std::endl;
     std::cerr << "TODO: fix mulitvariate modular_gcd_with_wang  " 
               << std::endl;
@@ -81,7 +81,7 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
 
     typedef Polynomial<NT> Poly;
     typedef Polynomial_traits_d<Poly> PT;
-    typedef CGAL::CGALi::Wang_traits<Poly> WT_POLY;
+    typedef CGAL::internal::Wang_traits<Poly> WT_POLY;
 
     
     typename WT_POLY::Wang wang; 
@@ -175,10 +175,10 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
 		if(prime_index >= 2000){
                     std::cerr<<"primes exhausted"<<std::endl;
                     current_prime = 
-                        CGALi::get_next_lower_prime(current_prime);
+                        internal::get_next_lower_prime(current_prime);
                 }
                 else{
-                    current_prime = CGALi::primes[prime_index];
+                    current_prime = internal::primes[prime_index];
                 }
                 CGAL_assertion(current_prime != -1);
                 CGAL::Residue::set_current_prime(current_prime);
@@ -274,7 +274,7 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
 #ifdef CGAL_MODULAR_GCD_TIMER
             timer_CR.start();
 #endif
-            CGALi::Cached_extended_euclidean_algorithm < Scalar,3 > ceea;
+            internal::Cached_extended_euclidean_algorithm < Scalar,3 > ceea;
             ceea(q,p,s,t);
             pq =p*q; 
             chinese_remainder(q,p,pq,s,t,Gs,inv_map(mG_),Gs);
@@ -392,7 +392,7 @@ Polynomial<NT> modular_gcd_utcf_with_wang(
 }
 //#endif
 
-}///namespace CGALi
+}///namespace internal
 }///namespace CGAL
 
 #endif //#ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_WITH_WANG_H

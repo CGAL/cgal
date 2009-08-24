@@ -35,7 +35,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 class Ray_2_Line_2_pair {
@@ -96,7 +96,7 @@ intersection(const typename K::Line_2 &line,
 	     const typename K::Ray_2 &ray,
 	     const K& k)
 {
-  return CGALi::intersection(ray, line, k);
+  return internal::intersection(ray, line, k);
 }
 
 
@@ -160,7 +160,7 @@ Ray_2_Line_2_pair<K>::intersection_ray() const
     return *_ray;
 }
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 inline bool do_intersect(const Line_2<K> &p1, const Ray_2<K> &p2)

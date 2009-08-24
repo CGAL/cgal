@@ -120,9 +120,9 @@ CGAL_END_NAMESPACE
 #  include<string>
 #  include<iostream>
 #  include<sstream>
-namespace CGALi { namespace  { bool cgal_enable_ecms_trace = false ; } }
+namespace internal { namespace  { bool cgal_enable_ecms_trace = false ; } }
 #  define CGAL_ECMS_TRACE_IMPL(m) \
-     if ( ::CGALi::cgal_enable_ecms_trace ) { \
+     if ( ::internal::cgal_enable_ecms_trace ) { \
        std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
        Surface_simplification_external_trace(s); \
      }

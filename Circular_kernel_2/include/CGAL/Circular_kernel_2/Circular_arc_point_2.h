@@ -31,7 +31,7 @@
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
-namespace CGALi {
+namespace internal {
 
   template <class CK >
   class Circular_arc_point_2
@@ -86,7 +86,7 @@ namespace CGALi {
 	      << p.x() << ", " << p.y() << ')';
   }
 
-} // namespace CGALi
+} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_POINT_2_H

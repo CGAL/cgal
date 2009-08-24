@@ -31,7 +31,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi{
+namespace internal{
 
 template <class Rational, bool > 
 struct Rational_traits_base
@@ -73,12 +73,12 @@ public:
     Rational make_rational(const Rational & n, const Rational & d) const
     { return n/d; } 
 };
-}// namespace CGALi
+}// namespace internal
 
 // use Fraction_traits if Is_fraction && Num and Den are the same 
 template <class T>
 class Rational_traits 
-    : public CGALi::Rational_traits_base<T,
+    : public internal::Rational_traits_base<T,
 ::boost::is_same<typename Fraction_traits<T>::Is_fraction,Tag_true>::value 
 &&
 ::boost::is_same<

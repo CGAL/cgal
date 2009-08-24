@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 // - Generalize to d-dimension.
 // - Maybe the internal code itself could be factorized across dimensions...
 
-namespace CGALi {
+namespace internal {
 
 // internal functions specialized by dimension.
 
@@ -130,7 +130,7 @@ typename Access::Iso_box<K, typename Ambient_dimension<typename std::iterator_tr
 bounding_box(ForwardIterator f, ForwardIterator l, const K& k)
 {
   typedef typename std::iterator_traits< ForwardIterator >::value_type Pt;
-  return CGALi::bounding_box(f, l, k, typename Ambient_dimension<Pt>::type() );
+  return internal::bounding_box(f, l, k, typename Ambient_dimension<Pt>::type() );
 }
 
 template < class ForwardIterator >

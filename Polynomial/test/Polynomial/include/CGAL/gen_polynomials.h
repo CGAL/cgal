@@ -40,7 +40,7 @@
 
 
 namespace CGAL{
-namespace CGALi{
+namespace internal{
 
 // TODO: remove this and make it an argument to all functions
 CGAL::Random my_random(4711);
@@ -133,10 +133,10 @@ CGAL::Polynomial<NT> rand_Poly_int(const int& bits, const int& degree){
         for(int i=0; i<=degree; i++){
             NT coeff = NT(1);
             for(int j=1; j<bits; j++){
-                coeff = coeff*2 + NT(CGALi::my_random.get_int(0,2));
+                coeff = coeff*2 + NT(internal::my_random.get_int(0,2));
             }
             // random sign
-            if(CGALi::my_random.get_int(0,2)==1)  
+            if(internal::my_random.get_int(0,2)==1)  
                 coeff*=NT(-1);
             vec.push_back(coeff);
         }
@@ -146,7 +146,7 @@ CGAL::Polynomial<NT> rand_Poly_int(const int& bits, const int& degree){
         k =0;
         do{
             b=a;
-            a=NT(CGALi::my_random.get_int(-100,100)); 
+            a=NT(internal::my_random.get_int(-100,100)); 
             k++; 
 //            std::cout<<"k "<<k<<std::endl;
 //            std::cout<<"a "<<a<<"sign "<<p.sign_at(a)<<std::endl;
@@ -168,13 +168,13 @@ CGAL::Polynomial<NT1> rand_Poly_sqrt(const int& bits, const int& degree, const N
             NT2 a = NT2(1);
             NT2 b = NT2(1);
             for(int j=1; j<bits; j++){
-                a = a*2 + NT2(CGALi::my_random.get_int(0,2));
-                b = b*2 + NT2(CGALi::my_random.get_int(0,2));
+                a = a*2 + NT2(internal::my_random.get_int(0,2));
+                b = b*2 + NT2(internal::my_random.get_int(0,2));
             }
             // random sign
-            if(CGALi::my_random.get_int(0,2)==1)  
+            if(internal::my_random.get_int(0,2)==1)  
                 a*=NT2(-1);
-            if(CGALi::my_random.get_int(0,2)==1)  
+            if(internal::my_random.get_int(0,2)==1)  
                 b*=NT2(-1);
             vec.push_back(NT1(a, b, root));
         }
@@ -184,7 +184,7 @@ CGAL::Polynomial<NT1> rand_Poly_sqrt(const int& bits, const int& degree, const N
         k = 0;
         do{
             d=c;
-            c=NT2(CGALi::my_random.get_int(-100,100)); 
+            c=NT2(internal::my_random.get_int(-100,100)); 
             k++; 
 //            std::cout<<"k "<<k<<std::endl;
 //            std::cout<<"c "<<c<<"sign "<<p.sign_at(c)<<std::endl;
@@ -195,7 +195,7 @@ CGAL::Polynomial<NT1> rand_Poly_sqrt(const int& bits, const int& degree, const N
 
 }
 
-} //namespace CGALi
+} //namespace internal
 
 }// namespace CGAL
 

@@ -25,7 +25,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 bool  _intersection_test_vertex(const typename K::Point_3 * p, 
@@ -173,22 +173,22 @@ bool do_intersect_coplanar(const typename K::Triangle_3 &t1,
 	  // p is inside triangle abc
 	  return true;
 	// p sees ac
-	return CGALi::_intersection_test_edge(p,q,r,a,b,c,k);
+	return internal::_intersection_test_edge(p,q,r,a,b,c,k);
       }
       if ( coplanar_orientation(*c,*a,*p) != NEGATIVE )//p sees bc 
-	return CGALi::_intersection_test_edge(p,q,r,c,a,b,k);
+	return internal::_intersection_test_edge(p,q,r,c,a,b,k);
       // p sees c
-      return CGALi::_intersection_test_vertex(p,q,r,a,b,c,k);
+      return internal::_intersection_test_vertex(p,q,r,a,b,c,k);
       
     }
     if ( coplanar_orientation(*b,*c,*p) != NEGATIVE ) {
       if ( coplanar_orientation(*c,*a,*p) != NEGATIVE ) //p sees ab
-	return CGALi::_intersection_test_edge(p,q,r,b,c,a,k);
+	return internal::_intersection_test_edge(p,q,r,b,c,a,k);
       // p sees a
-      return CGALi::_intersection_test_vertex(p,q,r,b,c,a,k);
+      return internal::_intersection_test_vertex(p,q,r,b,c,a,k);
     } 
     // p sees b
-    return CGALi::_intersection_test_vertex(p,q,r,c,a,b,k);
+    return internal::_intersection_test_vertex(p,q,r,c,a,b,k);
     
 }
 
@@ -442,7 +442,7 @@ do_intersect(const typename K::Triangle_3 &t1,
       &&  orientation(*s_max1,*t_max1,*t_max2,*s_max2) != POSITIVE;
 }
 
-} // namespace CGALi
+} // namespace internal
 
 
 template <class K>

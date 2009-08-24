@@ -34,10 +34,10 @@
 #define CGAL_POLYNOMIAL_POLYNOMIAL_TYPE_H
 
 #define CGAL_icoeff(T) typename CGAL::First_if_different<       \
-typename CGAL::CGALi::Innermost_coefficient_type<T>::Type, T, 1>::Type  
+typename CGAL::internal::Innermost_coefficient_type<T>::Type, T, 1>::Type  
 
 #define CGAL_int(T) typename CGAL::First_if_different< int,   \
-typename CGAL::CGALi::Innermost_coefficient_type<T>::Type , 2>::Type 
+typename CGAL::internal::Innermost_coefficient_type<T>::Type , 2>::Type 
 
 
 #include <CGAL/ipower.h>
@@ -50,7 +50,7 @@ template <class NT> class Polynomial;
 template <class NT> class Scalar_factor_traits;
 template <class NT> Polynomial<NT> operator - (const Polynomial<NT>& p);
 
-namespace CGALi {
+namespace internal {
 
 template <class NT> class Polynomial_rep;
 
@@ -117,7 +117,7 @@ Polynomial_rep<NT>::Polynomial_rep(size_type n, ...)
   va_end(ap);
 }
 
-}// namespace CGALi
+}// namespace internal
 
 //
 // The actual class Polynomial<NT>
@@ -191,13 +191,13 @@ Polynomial_rep<NT>::Polynomial_rep(size_type n, ...)
 
 template <class NT_>
 class Polynomial 
-  : public Handle_with_policy< CGALi::Polynomial_rep<NT_> >,
+  : public Handle_with_policy< internal::Polynomial_rep<NT_> >,
     public boost::ordered_field_operators1< Polynomial<NT_> , 
            boost::ordered_field_operators2< Polynomial<NT_> , NT_ ,  
            boost::ordered_field_operators2< Polynomial<NT_> , CGAL_icoeff(NT_),
            boost::ordered_field_operators2< Polynomial<NT_> , CGAL_int(NT_)  > > > > 
 {
-  typedef typename CGALi::Innermost_coefficient_type<NT_>::Type Innermost_coefficient_type; 
+  typedef typename internal::Innermost_coefficient_type<NT_>::Type Innermost_coefficient_type; 
 public: 
 
   //! \name Typedefs 
@@ -205,7 +205,7 @@ public:
   //! coefficient type of this instance 
   typedef NT_ NT; 
   //! representation pointed to by this handle 
-  typedef CGALi::Polynomial_rep<NT> Rep;
+  typedef internal::Polynomial_rep<NT> Rep;
   //! base class  
   typedef Handle_with_policy< Rep > Base;
   //! container used to store coefficient sequence
@@ -226,8 +226,8 @@ protected:
   //! const access to the internal coefficient sequence
   const Vector& coeffs() const { return this->ptr()->coeff; }
   //! create an empty polynomial with s coefficients (degree up to s-1)
-  Polynomial(CGALi::Creation_tag f, size_type s)
-    : Base(CGALi::Polynomial_rep<NT>(f,s) )
+  Polynomial(internal::Creation_tag f, size_type s)
+    : Base(internal::Polynomial_rep<NT>(f,s) )
     {}
     //! non-const access to coefficient \c i
     /*! The polynomial's representation must not be shared between
@@ -261,7 +261,7 @@ public:
     //! \name Constructors
     //! default constructor: a new polynomial of undefined value.
     Polynomial() 
-      : Base( Rep(CGALi::Creation_tag(), 1) ) { 
+      : Base( Rep(internal::Creation_tag(), 1) ) { 
       coeff(0) = NT(0); 
     }
       
@@ -272,7 +272,7 @@ public:
     //! construct the constant polynomial a0 from any type convertible to NT
     template <class T>
       explicit Polynomial(const T& a0)
-      : Base(Rep(CGALi::Creation_tag(), 1))
+      : Base(Rep(internal::Creation_tag(), 1))
       { coeff(0) = NT(a0); reduce(); simplify_coefficients(); } 
           
     //! construct the constant polynomial a0
@@ -864,7 +864,7 @@ public:
         Polynomial<NT> p1 = (*this);
         typedef typename Polynomial<NT>::size_type size_type;
         CGAL_precondition(p1.degree()>=0 && p2.degree()>=0);
-        CGALi::Creation_tag TAG;
+        internal::Creation_tag TAG;
         Polynomial<NT>  p(TAG, size_type(p1.degree()+p2.degree()+1) ); 
         // initialized with zeros
         for (int i=0; i <= p1.degree(); ++i)
@@ -982,7 +982,7 @@ Polynomial<NT> operator * (const Polynomial<NT>& p1,
 {
   typedef typename Polynomial<NT>::size_type size_type;
   CGAL_precondition(p1.degree()>=0 && p2.degree()>=0);
-  CGALi::Creation_tag TAG;
+  internal::Creation_tag TAG;
   Polynomial<NT>  p(TAG, size_type(p1.degree()+p2.degree()+1) ); 
   // initialized with zeros
   for (int i=0; i <= p1.degree(); ++i)
@@ -1113,7 +1113,7 @@ void Polynomial<NT>::euclidean_division(
   // now we know fd >= gd 
   int qd = fd-gd, delta = qd+1, rd = fd;
 
-  CGALi::Creation_tag TAG;    
+  internal::Creation_tag TAG;    
   q = Polynomial<NT>(TAG, delta ); 
   r = f; r.copy_on_write();
   while ( qd >= 0 ) {
@@ -1153,7 +1153,7 @@ void Polynomial<NT>::pseudo_division(
   const NT d = B.lcoeff();
   int e = delta + 1;
   D = CGAL::ipower(d, e);
-  CGALi::Creation_tag TAG;
+  internal::Creation_tag TAG;
   Q = Polynomial<NT>(TAG, e);
   R = A; R.copy_on_write(); R.simplify_coefficients();
 
@@ -1197,7 +1197,7 @@ void Polynomial<NT>::pseudo_division(
   }
   // now we know rd >= gd 
   int qd = fd-gd, delta = qd+1, rd = fd;
-  CGALi::Creation_tag TAG;
+  internal::Creation_tag TAG;
   q = Polynomial<NT>(TAG, delta );
   NT G = g[gd]; // highest order coeff of g
   D = CGAL::ipower(G, delta);
@@ -1400,27 +1400,27 @@ public:
 
 // Moved to internal namespace because of name clashes
 // TODO: Is this OK?
-namespace CGALi {
+namespace internal {
 
 inline static void swallow(std::istream &is, char d) {
   char c;
   do c = is.get(); while (isspace(c));
   if (c != d) CGAL_error_msg( "input error: unexpected character in polynomial");
 }
-} // namespace CGALi
+} // namespace internal
 
 template <class NT>
 Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
   char c;
   int degr = -1, i;
 
-  CGALi::swallow(is, 'P');
-  CGALi::swallow(is, '[');
+  internal::swallow(is, 'P');
+  internal::swallow(is, '[');
   is >> CGAL::iformat(degr);
   if (degr < 0) {
     CGAL_error_msg( "input error: negative degree of polynomial specified");
   }
-  CGALi::Creation_tag TAG;
+  internal::Creation_tag TAG;
   Polynomial<NT> p(TAG, degr+1);
 
   do c = is.get(); while (isspace(c));
@@ -1430,9 +1430,9 @@ Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
     if (!(i >= 0 && i <= degr && p[i] == NT(0))) {
       CGAL_error_msg( "input error: invalid exponent in polynomial");
     };
-    CGALi::swallow(is, ',');
+    internal::swallow(is, ',');
     is >> CGAL::iformat(p.coeff(i));
-    CGALi::swallow(is, ')');
+    internal::swallow(is, ')');
     do c = is.get(); while (isspace(c));
   } while (c != ']');
 

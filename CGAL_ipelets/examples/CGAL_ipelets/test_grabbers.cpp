@@ -23,7 +23,7 @@ int main(int, char*[])
   sg_list.push_back(Segment_2(Point_2(0,0),Point_2(1,1)));
   sg_list.push_back(Segment_2(Point_2(0,1),Point_2(1,2)));
   
-  std::copy(sg_list.begin(), sg_list.end(),CGAL::CGALi::point_grabber<Kernel>(std::back_inserter(pt_list)));  
+  std::copy(sg_list.begin(), sg_list.end(),CGAL::internal::point_grabber<Kernel>(std::back_inserter(pt_list)));  
 
   assert (pt_list.size()==4);
   
@@ -31,11 +31,11 @@ int main(int, char*[])
   pol_list.push_back(Polygon_2(pt_list.begin(),pt_list.end()));
   pol_list.push_back(Polygon_2(pt_list.begin(),pt_list.end()));
 
-  std::copy(pol_list.begin(), pol_list.end(),CGAL::CGALi::point_grabber<Kernel>(std::back_inserter(pt_list)));  
+  std::copy(pol_list.begin(), pol_list.end(),CGAL::internal::point_grabber<Kernel>(std::back_inserter(pt_list)));  
   
   assert (pt_list.size()==12);
   
-  std::copy(pol_list.begin(), pol_list.end(),CGAL::CGALi::segment_grabber<Kernel>(std::back_inserter(sg_list)));
+  std::copy(pol_list.begin(), pol_list.end(),CGAL::internal::segment_grabber<Kernel>(std::back_inserter(sg_list)));
             
   assert (sg_list.size()==10);
 
@@ -44,9 +44,9 @@ int main(int, char*[])
   
   std::list<Weighted_point> l_wp;
   
-  std::copy(l_cir.begin(), l_cir.end(),CGAL::CGALi::wpoint_grabber<Kernel>(std::back_inserter(l_wp)));
+  std::copy(l_cir.begin(), l_cir.end(),CGAL::internal::wpoint_grabber<Kernel>(std::back_inserter(l_wp)));
 
-  std::copy(pt_list.begin(), pt_list.end(),CGAL::CGALi::wpoint_grabber<Kernel>(std::back_inserter(l_wp)));
+  std::copy(pt_list.begin(), pt_list.end(),CGAL::internal::wpoint_grabber<Kernel>(std::back_inserter(l_wp)));
 
   assert (l_wp.size()==13);
 

@@ -192,44 +192,44 @@ public:
   typedef CGAL::Line_d<Self>     Line_d;
 
   // construction objects:
-  typedef CGALi::Construct<Point_d> Construct_point_d;
+  typedef internal::Construct<Point_d> Construct_point_d;
   Construct_point_d construct_point_d_object() const
   { return Construct_point_d(); }
 
-  typedef CGALi::Construct<Vector_d> Construct_vector_d;
+  typedef internal::Construct<Vector_d> Construct_vector_d;
   Construct_vector_d construct_vector_d_object() const
   { return Construct_vector_d(); }
 
-  typedef CGALi::Construct<Direction_d> Construct_direction_d;
+  typedef internal::Construct<Direction_d> Construct_direction_d;
   Construct_direction_d construct_direction_d_object() const
   { return Construct_direction_d(); }
 
-  typedef CGALi::Construct<Segment_d> Construct_segment_d;
+  typedef internal::Construct<Segment_d> Construct_segment_d;
   Construct_segment_d construct_segment_d_object() const
   { return Construct_segment_d(); }
 
-  typedef CGALi::Construct<Ray_d> Construct_ray_d;
+  typedef internal::Construct<Ray_d> Construct_ray_d;
   Construct_ray_d construct_ray_d_object() const
   { return Construct_ray_d(); }
 
-  typedef CGALi::Construct<Line_d> Construct_line_d;
+  typedef internal::Construct<Line_d> Construct_line_d;
   Construct_line_d construct_line_d_object() const
   { return Construct_line_d(); }
 
 
-  typedef CGALi::Construct<Iso_box_d> Construct_iso_box_d;
+  typedef internal::Construct<Iso_box_d> Construct_iso_box_d;
   Construct_iso_box_d construct_iso_box_d_object() const
   { return Construct_iso_box_d(); }
 
-  typedef CGALi::Construct<Hyperplane_d> Construct_hyperplane_d;
+  typedef internal::Construct<Hyperplane_d> Construct_hyperplane_d;
   Construct_hyperplane_d construct_hyperplane_d_object() const
   { return Construct_hyperplane_d(); }
 
-  typedef CGALi::Construct<Sphere_d> Construct_sphere_d;
+  typedef internal::Construct<Sphere_d> Construct_sphere_d;
   Construct_sphere_d construct_sphere_d_object() const
   { return Construct_sphere_d(); }
 
-  typedef CGALi::Construct<Aff_transformation_d> 
+  typedef internal::Construct<Aff_transformation_d> 
     Construct_aff_transformation_d;
   Construct_aff_transformation_d 
     construct_aff_transformation_d_object() const
@@ -319,7 +319,7 @@ public:
   typedef CGAL::Ray_d_Hyperplane_d_pair<Self> Ray_d_Hyperplane_d_pair;
   typedef CGAL::Segment_d_Hyperplane_d_pair<Self> Segment_d_Hyperplane_d_pair;
 
-  typedef CGALi::Intersect Intersect_d;
+  typedef internal::Intersect Intersect_d;
   Intersect_d intersect_d_object() const 
   { return Intersect_d(); }
 
@@ -350,11 +350,11 @@ public:
   Component_accessor_d component_accessor_d_object() const
   { return Component_accessor_d(); }
 
-  typedef CGALi::Call_has_on_positive_side Has_on_positive_side_d;
+  typedef internal::Call_has_on_positive_side Has_on_positive_side_d;
   Has_on_positive_side_d has_on_positive_side_d_object() const
   { return Has_on_positive_side_d(); }
 
-  typedef CGALi::Call_oriented_side Oriented_side_d;
+  typedef internal::Call_oriented_side Oriented_side_d;
   Oriented_side_d oriented_side_d_object() const
   { return Oriented_side_d(); }
 

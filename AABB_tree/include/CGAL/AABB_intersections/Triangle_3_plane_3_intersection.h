@@ -29,7 +29,7 @@
 
 namespace CGAL {
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 inline 
@@ -152,7 +152,7 @@ intersection(const typename K::Plane_3  &plane,
       }
     }
   }
-} // end function CGALi::intersection(Plane, Triangle)
+} // end function internal::intersection(Plane, Triangle)
 
 template <class K>
 inline
@@ -164,7 +164,7 @@ intersection(const typename K::Triangle_3 &triangle,
   return intersection(plane, triangle, k);
 }
 
-} // end namespace CGALi
+} // end namespace internal
 
 template <class K>
 inline

@@ -29,7 +29,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 // fits a plane to a 3D point set
 // returns a fitting quality (1 - lambda_min/lambda_max):
 //  1 is best (zero variance orthogonally to the fitting line)
@@ -98,7 +98,7 @@ linear_least_squares_fitting_3(InputIterator first,
   return fitting_line_3(covariance,c,line,k);
 } // end fit line to point set
 
-} // end namespace CGALi
+} // end namespace internal
 
 CGAL_END_NAMESPACE
 

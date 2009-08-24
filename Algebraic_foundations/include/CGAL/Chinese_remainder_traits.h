@@ -31,7 +31,7 @@
 #include <CGAL/extended_euclidean_algorithm.h>
 
 namespace CGAL{
-namespace CGALi{
+namespace internal{
 
 template <class T_, class TAG> 
 class Chinese_remainder_traits_base{
@@ -43,11 +43,11 @@ public:
 }
 
 template <class T> class Chinese_remainder_traits
-    :public CGALi::Chinese_remainder_traits_base<T,
+    :public internal::Chinese_remainder_traits_base<T,
        typename Algebraic_structure_traits<T>::Algebraic_category>{};
 
 
-namespace CGALi {
+namespace internal {
 template <class NT> 
 class  Chinese_remainder_traits_base<NT,Euclidean_ring_tag>{
 public:
@@ -106,7 +106,7 @@ public:
     };
 };
 
-} // namespace CGALi
+} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_CHINESE_REMAINDER_TRAITS_H //

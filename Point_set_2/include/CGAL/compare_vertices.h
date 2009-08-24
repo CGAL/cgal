@@ -22,7 +22,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 // compare function objects for the priority queues used in nearest neighbor search
 template<class VP, class NT,class MAP_TYPE>
@@ -42,7 +42,7 @@ class compare_vertices {
 };
 
 
-} // namespace CGALi
+} // namespace internal
 
 
 CGAL_END_NAMESPACE

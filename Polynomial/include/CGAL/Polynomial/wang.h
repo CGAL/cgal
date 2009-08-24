@@ -37,7 +37,7 @@
 
 namespace CGAL {
 
-namespace CGALi{
+namespace internal{
 
 template<typename Integer>
 inline
@@ -94,11 +94,11 @@ bool wang( const Integer& u, const Integer& m,
     Integer N = sqrt(CGAL::div(m,Integer(2))); 
     Integer D = N-Integer(1);
     
-    return CGALi::wang_general(u, m, n, d, N, D);  
+    return internal::wang_general(u, m, n, d, N, D);  
     
 }// wang
 
-} // namespace CGALi
+} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_WANG_H

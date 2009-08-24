@@ -3564,7 +3564,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
   return os ;
 }
 
-namespace CGALi {
+namespace internal {
 
   /// Internal function used by operator==.
   //TODO: introduce offsets
@@ -3643,7 +3643,7 @@ namespace CGALi {
     return true;
   }
 
-} // namespace CGALi
+} // namespace internal
 
 
 template < class GT, class TDS1, class TDS2  >
@@ -3767,7 +3767,7 @@ operator==(const Periodic_3_triangulation_3<GT,TDS1> &t1,
     return false;
 
   // We now have one cell, we need to propagate recursively.
-  return CGALi::test_next(t1, t2,
+  return internal::test_next(t1, t2,
       Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
 }
 

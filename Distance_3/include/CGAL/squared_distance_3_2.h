@@ -34,7 +34,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 bool
@@ -196,14 +196,14 @@ squared_distance(
 }
 
 
-} // namespace CGALi
+} // namespace internal
 
 
 template <class K>
 bool
 contains_vector(const Plane_3<K> &pl, const Vector_3<K> &vec)
 {
-  return CGALi::contains_vector(pl,vec, K());
+  return internal::contains_vector(pl,vec, K());
 }
 
 
@@ -214,7 +214,7 @@ squared_distance(
     const Point_3<K> & pt,
     const Plane_3<K> & plane)
 {
-  return CGALi::squared_distance(pt, plane, K());
+  return internal::squared_distance(pt, plane, K());
 }
 
 
@@ -226,7 +226,7 @@ squared_distance(
     const Plane_3<K> & plane,
     const Point_3<K> & pt)
 {
-    return CGALi::squared_distance(pt, plane, K());
+    return internal::squared_distance(pt, plane, K());
 }
 
 template <class K>
@@ -236,7 +236,7 @@ squared_distance(
     const Line_3<K> &line,
     const Plane_3<K> &plane)
 {
-    return CGALi::squared_distance(line, plane, K());
+    return internal::squared_distance(line, plane, K());
 }
 
 
@@ -247,7 +247,7 @@ squared_distance(
     const Plane_3<K> & p,
     const Line_3<K> & line)
 {
-    return CGALi::squared_distance(line, p, K());
+    return internal::squared_distance(line, p, K());
 }
 
 template <class K>
@@ -257,7 +257,7 @@ squared_distance(
     const Ray_3<K> &ray,
     const Plane_3<K> &plane)
 {
-  return CGALi::squared_distance(ray, plane, K());
+  return internal::squared_distance(ray, plane, K());
 }
 
 
@@ -269,7 +269,7 @@ squared_distance(
     const Plane_3<K> & plane,
     const Ray_3<K> & ray)
 {
-    return CGALi::squared_distance(ray, plane, K());
+    return internal::squared_distance(ray, plane, K());
 }
 
 template <class K>
@@ -279,7 +279,7 @@ squared_distance(
     const Segment_3<K> &seg,
     const Plane_3<K> &plane)
 {
-  return CGALi::squared_distance(seg, plane, K());
+  return internal::squared_distance(seg, plane, K());
 
 }
 
@@ -291,7 +291,7 @@ squared_distance(
     const Plane_3<K> & plane,
     const Segment_3<K> & seg)
 {
-    return CGALi::squared_distance(seg, plane, K());
+    return internal::squared_distance(seg, plane, K());
 }
 
 

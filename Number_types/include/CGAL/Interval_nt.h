@@ -126,7 +126,7 @@ public:
 
   static IA largest()
   {
-    return IA(-CGALi::infinity, CGALi::infinity);
+    return IA(-internal::infinity, internal::infinity);
   }
 
   static IA smallest()

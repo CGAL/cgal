@@ -38,7 +38,7 @@
 #include <CGAL/Circular_kernel_converter.h>
 
 namespace CGAL{
- namespace CGALi{
+ namespace internal{
 
 using CGAL::CircularFunctors::advanced_make_xy_monotone;
 
@@ -487,7 +487,7 @@ bool do_intersect_hexagons_2(Hex_iterator1 a_begin, Hex_iterator1 a_end, Hex_ite
   }// do_intersect_hexagons_2
 
 
- }//namespace CGALi
+ }//namespace internal
 
 
 //Lazy like functors that there is no use to be included in the kernel
@@ -509,11 +509,11 @@ template < class CK, class Hexagon>
     {
       Conv cnv;
       static const bool Protection = true;
-      try{return CGALi::construct_bounding_hexagons_2<CK2>(cnv(a),res);}
+      try{return internal::construct_bounding_hexagons_2<CK2>(cnv(a),res);}
       catch (Uncertain_conversion_exception)
       {
          CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-         return CGALi::construct_bounding_hexagons_2<CK>(a,res);
+         return internal::construct_bounding_hexagons_2<CK>(a,res);
       }
 
    }
@@ -522,11 +522,11 @@ template < class CK, class Hexagon>
     {
       Conv cnv;
       static const bool Protection = true;
-      try{return CGALi::construct_bounding_hexagon_for_line_arc_2<CK2>(cnv(a));}
+      try{return internal::construct_bounding_hexagon_for_line_arc_2<CK2>(cnv(a));}
       catch (Uncertain_conversion_exception)
       {
          CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-         return CGALi::construct_bounding_hexagon_for_line_arc_2<CK>(a);
+         return internal::construct_bounding_hexagon_for_line_arc_2<CK>(a);
       }
 
    }
@@ -547,11 +547,11 @@ template < class CK, class Hexagon>
   operator()(const Circular_arc_2 &a, OutputIterator res) const
     { 
       static const bool Protection = true;      
-      try{return CGALi::construct_bounding_hexagons_2<typename CK::AK>(a.approx(),res);}
+      try{return internal::construct_bounding_hexagons_2<typename CK::AK>(a.approx(),res);}
       catch (Uncertain_conversion_exception)
       {
          CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-         return CGALi::construct_bounding_hexagons_2<typename CK::EK>(a.exact(),res);
+         return internal::construct_bounding_hexagons_2<typename CK::EK>(a.exact(),res);
       }
 
    }
@@ -559,11 +559,11 @@ template < class CK, class Hexagon>
   Hexagon  operator()(const Line_arc_2 &a) const
     { 
       static const bool Protection = true;
-      try{return CGALi::construct_bounding_hexagon_for_line_arc_2<typename CK::AK>(a.approx());}
+      try{return internal::construct_bounding_hexagon_for_line_arc_2<typename CK::AK>(a.approx());}
       catch (Uncertain_conversion_exception)
       {
          CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-         return CGALi::construct_bounding_hexagon_for_line_arc_2<typename CK::EK>(a.exact());
+         return internal::construct_bounding_hexagon_for_line_arc_2<typename CK::EK>(a.exact());
       }
 
     }

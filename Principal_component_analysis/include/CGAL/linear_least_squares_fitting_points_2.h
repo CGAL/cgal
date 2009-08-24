@@ -29,7 +29,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 // Fits a line to a 2D point set.
 // Returns a fitting quality (1 - lambda_min/lambda_max):
@@ -82,7 +82,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // eigen vectors are sorted in accordance.
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;
-  CGALi::eigen_symmetric_2<K>(covariance, eigen_vectors, eigen_values);
+  internal::eigen_symmetric_2<K>(covariance, eigen_vectors, eigen_values);
 
   // check unicity and build fitting line accordingly
   if(eigen_values.first != eigen_values.second)
@@ -101,7 +101,7 @@ linear_least_squares_fitting_2(InputIterator first,
   } 
 } // end linear_least_squares_fitting_2 for point set
 
-} // end namespace CGALi
+} // end namespace internal
 
 CGAL_END_NAMESPACE
 

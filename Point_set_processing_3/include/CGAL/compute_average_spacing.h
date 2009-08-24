@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi {
+namespace internal {
 
 
 /// Computes average spacing of one query point from K nearest neighbors.
@@ -85,7 +85,7 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 }
 
 
-} /* namespace CGALi */
+} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -154,7 +154,7 @@ compute_average_spacing(
   unsigned int nb_points = 0;
   for(it = first; it != beyond; it++)
   {
-    sum_spacings += CGALi::compute_average_spacing<Kernel,Tree>(get(point_pmap,it),tree,k);
+    sum_spacings += internal::compute_average_spacing<Kernel,Tree>(get(point_pmap,it),tree,k);
     nb_points++;
   }
 

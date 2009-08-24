@@ -112,7 +112,7 @@ CGAL_KERNEL_MEDIUM_INLINE
 typename TriangleC3<R>::FT
 TriangleC3<R>::squared_area() const
 {
-  return CGALi::squared_area(vertex(0), vertex(1), vertex(2), R());
+  return internal::squared_area(vertex(0), vertex(1), vertex(2), R());
 }
 
 template < class R >

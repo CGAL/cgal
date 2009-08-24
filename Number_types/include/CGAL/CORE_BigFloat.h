@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 
 template<> 
 class Interval_traits<CORE::BigFloat> 
-    : public CGALi::Interval_traits_base<CORE::BigFloat>{
+    : public internal::Interval_traits_base<CORE::BigFloat>{
 
 public: 
     

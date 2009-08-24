@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi {
+namespace internal {
 
 
 /// Smoothes one point position using linear least
@@ -93,7 +93,7 @@ pca_smooth_point(
 }
 
 
-} /* namespace CGALi */
+} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -161,7 +161,7 @@ pca_smooth_point_set(
   for(it = first; it != beyond; it++)
   {
     Point& p = get(point_pmap, it);
-    p = CGALi::pca_smooth_point<Kernel>(p,tree,k);
+    p = internal::pca_smooth_point<Kernel>(p,tree,k);
   }
 }
 

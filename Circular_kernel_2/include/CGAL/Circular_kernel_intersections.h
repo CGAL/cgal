@@ -41,7 +41,7 @@ intersection(const A <K> &c1, const B <K> &c2, OutputIterator res) \
 { \
   return typename K::Intersect_2()(c1, c2, res); \
 } \
-namespace CGALi { \
+namespace internal { \
   template <class K> \
   inline \
   bool \

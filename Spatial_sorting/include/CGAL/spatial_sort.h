@@ -29,7 +29,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
     template <class RandomAccessIterator, class Kernel>
     void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
@@ -55,7 +55,7 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
     typedef std::iterator_traits<RandomAccessIterator> ITraits;
     typedef typename ITraits::value_type               value_type;
 
-    CGALi::spatial_sort (begin, end, k, static_cast<value_type *> (0));
+    internal::spatial_sort (begin, end, k, static_cast<value_type *> (0));
 }
 
 template <class RandomAccessIterator>

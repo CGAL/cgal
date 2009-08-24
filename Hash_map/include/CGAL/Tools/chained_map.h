@@ -25,7 +25,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <typename T> class chained_map;
 template <typename T> class chained_map_elem;
@@ -345,7 +345,7 @@ void chained_map<T>::statistics() const
                ((double) (n - used_in_overflow))/table_size<<"\n";
 }
 
-} // namespace CGALi
+} // namespace internal
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CHAINED_MAP_H

@@ -27,7 +27,7 @@
 #include <CGAL/extended_euclidean_algorithm.h>
 
 CGAL_BEGIN_NAMESPACE
-namespace CGALi{
+namespace internal{
 
 template <class UFD, int i = 0 > 
 struct Cached_extended_euclidean_algorithm{
@@ -62,7 +62,7 @@ typename Cached_extended_euclidean_algorithm<UFD,i>::CACHE
 Cached_extended_euclidean_algorithm<UFD,i>::cache;
 
 
-} // namespace CGALi
+} // namespace internal
 CGAL_END_NAMESPACE
 
 #endif//CGAL_POLYNOMIAL_CACHED_EXTENDED_EUCLIDEAN_ALGORITHM_H

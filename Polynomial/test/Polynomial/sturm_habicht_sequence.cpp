@@ -52,7 +52,7 @@ template<typename ArithmeticKernel> void test_routine() {
     
     stha.clear();
     
-    CGAL::CGALi::prs_principal_sturm_habicht_sequence<PNT_1_traits>
+    CGAL::internal::prs_principal_sturm_habicht_sequence<PNT_1_traits>
         (f,std::back_inserter(stha));
         
     assert(stha.size()==8);
@@ -69,7 +69,7 @@ template<typename ArithmeticKernel> void test_routine() {
     
     stha.clear();
     
-    CGAL::CGALi::bezout_principal_sturm_habicht_sequence<PNT_1_traits>
+    CGAL::internal::bezout_principal_sturm_habicht_sequence<PNT_1_traits>
         (f,std::back_inserter(stha));
         
     assert(stha.size()==8);
@@ -126,7 +126,7 @@ template<typename ArithmeticKernel> void test_routine() {
 
     stha.clear();
     
-    CGAL::CGALi::prs_principal_sturm_habicht_sequence<PNT_1_traits> 
+    CGAL::internal::prs_principal_sturm_habicht_sequence<PNT_1_traits> 
         (f,std::back_inserter(stha));
         
     assert(stha.size()==9);
@@ -144,7 +144,7 @@ template<typename ArithmeticKernel> void test_routine() {
 
     stha.clear();
 
-    CGAL::CGALi::bezout_principal_sturm_habicht_sequence<PNT_1_traits> 
+    CGAL::internal::bezout_principal_sturm_habicht_sequence<PNT_1_traits> 
         (f,std::back_inserter(stha));
         
     assert(stha.size()==9);
@@ -276,7 +276,7 @@ template<typename ArithmeticKernel> void test_routine() {
 
     {
       std::vector<PNT_1> stha,costha;
-      CGAL::CGALi::first_two_sturm_habicht_coefficients<PNT_2_traits>
+      CGAL::internal::first_two_sturm_habicht_coefficients<PNT_2_traits>
           (f,std::back_inserter(stha),std::back_inserter(costha));
       
       assert(stha.size()==5);
@@ -303,7 +303,7 @@ template<typename ArithmeticKernel> void test_routine() {
     }
     {
       std::vector<PNT_1> stha,costha;
-      CGAL::CGALi::prs_first_two_sturm_habicht_coefficients<PNT_2_traits>
+      CGAL::internal::prs_first_two_sturm_habicht_coefficients<PNT_2_traits>
           (f,std::back_inserter(stha),std::back_inserter(costha));
       
       assert(stha.size()==5);
@@ -330,7 +330,7 @@ template<typename ArithmeticKernel> void test_routine() {
     }
     {
       std::vector<PNT_1> stha,costha;
-      CGAL::CGALi::bezout_first_two_sturm_habicht_coefficients<PNT_2_traits>
+      CGAL::internal::bezout_first_two_sturm_habicht_coefficients<PNT_2_traits>
         (f,std::back_inserter(stha),
          std::back_inserter(costha));
       

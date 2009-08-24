@@ -37,7 +37,7 @@
 
 
 namespace CGAL {
-namespace CGALi {
+namespace internal {
 
 template <class NT> 
 Polynomial<NT> modular_gcd_utcf(
@@ -53,7 +53,7 @@ Polynomial<NT> modular_gcd_utcf(
     return modular_gcd_utcf_algorithm_M(FF1, FF2);
 }
 
-}// namespace CGALi
+}// namespace internal
 }///namespace CGAL
 
 #endif //#ifndef CGAL_POLYNOMIAL_MODULAR_GCD_H 1

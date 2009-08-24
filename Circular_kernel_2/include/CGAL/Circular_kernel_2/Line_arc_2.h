@@ -34,7 +34,7 @@
 #include <CGAL/Circular_kernel_2/Circular_arc_2.h>
 
 namespace CGAL {
-namespace CGALi {
+namespace internal {
 
   template <class CK >
   class Line_arc_2
@@ -289,7 +289,7 @@ namespace CGALi {
 /*   } */
 
 
- } // namespace CGALi
+ } // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_CIRCULAR_KERNEL_LINE_ARC_2_H

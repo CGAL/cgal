@@ -27,7 +27,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
     template <class K, int x, bool up> struct Hilbert_cmp_3;
 
     template <class K, int x>
@@ -98,8 +98,8 @@ private:
     Kernel _k;
     std::ptrdiff_t _limit;
 
-    template <int x, bool up> struct Cmp : public CGALi::Hilbert_cmp_3<Kernel,x,up>
-    { Cmp (const Kernel &k) : CGALi::Hilbert_cmp_3<Kernel,x,up> (k) {} };
+    template <int x, bool up> struct Cmp : public internal::Hilbert_cmp_3<Kernel,x,up>
+    { Cmp (const Kernel &k) : internal::Hilbert_cmp_3<Kernel,x,up> (k) {} };
 
 public:
     Hilbert_sort_3 (const Kernel &k = Kernel(), std::ptrdiff_t limit = 1)
@@ -114,13 +114,13 @@ public:
 
         RandomAccessIterator m0 = begin, m8 = end;
 
-        RandomAccessIterator m4 = CGALi::hilbert_split (m0, m8, Cmp< x,  upx> (_k));
-        RandomAccessIterator m2 = CGALi::hilbert_split (m0, m4, Cmp< y,  upy> (_k));
-        RandomAccessIterator m1 = CGALi::hilbert_split (m0, m2, Cmp< z,  upz> (_k));
-        RandomAccessIterator m3 = CGALi::hilbert_split (m2, m4, Cmp< z, !upz> (_k));
-        RandomAccessIterator m6 = CGALi::hilbert_split (m4, m8, Cmp< y, !upy> (_k));
-        RandomAccessIterator m5 = CGALi::hilbert_split (m4, m6, Cmp< z,  upz> (_k));
-        RandomAccessIterator m7 = CGALi::hilbert_split (m6, m8, Cmp< z, !upz> (_k));
+        RandomAccessIterator m4 = internal::hilbert_split (m0, m8, Cmp< x,  upx> (_k));
+        RandomAccessIterator m2 = internal::hilbert_split (m0, m4, Cmp< y,  upy> (_k));
+        RandomAccessIterator m1 = internal::hilbert_split (m0, m2, Cmp< z,  upz> (_k));
+        RandomAccessIterator m3 = internal::hilbert_split (m2, m4, Cmp< z, !upz> (_k));
+        RandomAccessIterator m6 = internal::hilbert_split (m4, m8, Cmp< y, !upy> (_k));
+        RandomAccessIterator m5 = internal::hilbert_split (m4, m6, Cmp< z,  upz> (_k));
+        RandomAccessIterator m7 = internal::hilbert_split (m6, m8, Cmp< z, !upz> (_k));
 
         sort<z, upz, upx, upy> (m0, m1);
         sort<y, upy, upz, upx> (m1, m2);

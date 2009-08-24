@@ -33,7 +33,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template < class K >
 inline
@@ -791,7 +791,7 @@ right_turn(const typename K::Point_2 &p,
            const typename K::Point_2 &q,
            const typename K::Point_2 &r, const K &k)
 {
-  return CGALi::orientation(p, q, r, k) == RIGHT_TURN;
+  return internal::orientation(p, q, r, k) == RIGHT_TURN;
 }
 
 template <class K>
@@ -871,7 +871,7 @@ y_equal(const typename K::Point_2 &p,
   return k.equal_y_2_object()(p, q);
 }
 
-} // namespace CGALi
+} // namespace internal
 
 CGAL_END_NAMESPACE
 

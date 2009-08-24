@@ -35,7 +35,7 @@
 
 namespace CGAL{
 
-namespace CGALi { 
+namespace internal { 
 
 template <class NT>
 void euclidean_division_obstinate(const NT& F1, const NT& F2, 
@@ -96,7 +96,7 @@ void euclidean_division_obstinate(const Polynomial<NT>& F1,
     CGAL_postcondition(F1 == F2*Q + R);
 }
 
-} // namespace CGALi
+} // namespace internal
 } // namespace CGAL
 
 #endif //#ifnedef CGAL_POLYNOMIAL_MODULAR_GCD_UTILS_H 1

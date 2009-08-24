@@ -38,7 +38,7 @@ CGAL_BEGIN_NAMESPACE
 // leading coefficient
 //////////////////////
 
-namespace CGALi {
+namespace internal {
 
 template <class NT>
 bool _check_leadcoeff(int x0dm2_degree, int xd_degree,
@@ -61,7 +61,7 @@ bool _check_leadcoeff(int xdmj_inner_degree, int xd_degree,
     return true;
 }
 
-} // namespace CGALi
+} // namespace internal
 
 /*!\brief 
  * check that \c p has a non-zero coefficient
@@ -73,7 +73,7 @@ bool check_leadcoeff(const CGAL::Polynomial< CGAL::Polynomial< NT > > &p) {
         return true;
     }
 
-    return CGALi::_check_leadcoeff(0, p.degree(), p);
+    return internal::_check_leadcoeff(0, p.degree(), p);
 }
 
 // partial substitutions

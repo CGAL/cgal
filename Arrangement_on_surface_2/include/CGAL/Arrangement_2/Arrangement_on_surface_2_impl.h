@@ -54,28 +54,28 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::Arrangement_on_surface_2 () :
 {
   
   typedef has_Arr_left_side_tag<GeomTraits> Cond_left;
-  typedef CGALi::Validate_left_side_tag< GeomTraits, Cond_left::value > 
+  typedef internal::Validate_left_side_tag< GeomTraits, Cond_left::value > 
     Validate_left_side_tag;
   void (Validate_left_side_tag::*pleft)(void) =
     &Validate_left_side_tag::missing__Arr_left_side_tag;
   (void)pleft;
   
  typedef has_Arr_bottom_side_tag<GeomTraits> Cond_bottom;
-  typedef CGALi::Validate_bottom_side_tag< GeomTraits, Cond_bottom::value > 
+  typedef internal::Validate_bottom_side_tag< GeomTraits, Cond_bottom::value > 
     Validate_bottom_side_tag;
   void (Validate_bottom_side_tag::*pbottom)(void) =
     &Validate_bottom_side_tag::missing__Arr_bottom_side_tag;
   (void)pbottom;
 
  typedef has_Arr_top_side_tag<GeomTraits> Cond_top;
-  typedef CGALi::Validate_top_side_tag< GeomTraits, Cond_top::value > 
+  typedef internal::Validate_top_side_tag< GeomTraits, Cond_top::value > 
     Validate_top_side_tag;
   void (Validate_top_side_tag::*ptop)(void) =
     &Validate_top_side_tag::missing__Arr_top_side_tag;
   (void)ptop;
 
  typedef has_Arr_right_side_tag<GeomTraits> Cond_right;
-  typedef CGALi::Validate_right_side_tag< GeomTraits, Cond_right::value > 
+  typedef internal::Validate_right_side_tag< GeomTraits, Cond_right::value > 
     Validate_right_side_tag;
   void (Validate_right_side_tag::*pright)(void) =
     &Validate_right_side_tag::missing__Arr_right_side_tag;
@@ -113,28 +113,28 @@ Arrangement_on_surface_2(const Geometry_traits_2 * geom_traits) :
 {
   
  typedef has_Arr_left_side_tag<GeomTraits> Cond_left;
-  typedef CGALi::Validate_left_side_tag< GeomTraits, Cond_left::value > 
+  typedef internal::Validate_left_side_tag< GeomTraits, Cond_left::value > 
     Validate_left_side_tag;
   void (Validate_left_side_tag::*pleft)(void) =
     &Validate_left_side_tag::missing__Arr_left_side_tag;
   (void)pleft;
   
  typedef has_Arr_bottom_side_tag<GeomTraits> Cond_bottom;
-  typedef CGALi::Validate_bottom_side_tag< GeomTraits, Cond_bottom::value > 
+  typedef internal::Validate_bottom_side_tag< GeomTraits, Cond_bottom::value > 
     Validate_bottom_side_tag;
   void (Validate_bottom_side_tag::*pbottom)(void) =
     &Validate_bottom_side_tag::missing__Arr_bottom_side_tag;
   (void)pbottom;
 
  typedef has_Arr_top_side_tag<GeomTraits> Cond_top;
-  typedef CGALi::Validate_top_side_tag< GeomTraits, Cond_top::value > 
+  typedef internal::Validate_top_side_tag< GeomTraits, Cond_top::value > 
     Validate_top_side_tag;
   void (Validate_top_side_tag::*ptop)(void) =
     &Validate_top_side_tag::missing__Arr_top_side_tag;
   (void)ptop;
 
  typedef has_Arr_right_side_tag<GeomTraits> Cond_right;
-  typedef CGALi::Validate_right_side_tag< GeomTraits, Cond_right::value > 
+  typedef internal::Validate_right_side_tag< GeomTraits, Cond_right::value > 
     Validate_right_side_tag;
   void (Validate_right_side_tag::*pright)(void) =
     &Validate_right_side_tag::missing__Arr_right_side_tag;
@@ -2546,7 +2546,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   DVertex     *v2 = prev2->vertex();
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-  typedef CGALi::Sign_of_path< GeomTraits, TopTraits > Sign_of_path;
+  typedef internal::Sign_of_path< GeomTraits, TopTraits > Sign_of_path;
   
   std::cout << "Aos_2: _insert_at_vertices (internal)" << std::endl;
   

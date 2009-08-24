@@ -40,7 +40,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 /*! \ingroup CGAL_resultant_matrix
  *  \brief construct hybrid Bezout matrix of two polynomials
@@ -72,7 +72,7 @@ namespace CGALi {
  *
  */
 template <typename Polynomial_traits_d>
-typename CGALi::Simple_matrix< typename Polynomial_traits_d::Coefficient_type >
+typename internal::Simple_matrix< typename Polynomial_traits_d::Coefficient_type >
 hybrid_bezout_matrix(typename Polynomial_traits_d::Polynomial_d f, 
                      typename Polynomial_traits_d::Polynomial_d g, 
                      int sub = 0)
@@ -84,7 +84,7 @@ hybrid_bezout_matrix(typename Polynomial_traits_d::Polynomial_d f,
     typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
     typename Polynomial_traits_d::Get_coefficient coeff;
 
-    typedef typename CGALi::Simple_matrix<NT> Matrix;
+    typedef typename internal::Simple_matrix<NT> Matrix;
 
     int n = degree(f);
     int m = degree(g);
@@ -142,7 +142,7 @@ hybrid_bezout_matrix(typename Polynomial_traits_d::Polynomial_d f,
  *
  */
 template <typename Polynomial_traits_d>
-typename CGALi::Simple_matrix<typename Polynomial_traits_d::Coefficient_type>
+typename internal::Simple_matrix<typename Polynomial_traits_d::Coefficient_type>
 symmetric_bezout_matrix
     (typename Polynomial_traits_d::Polynomial_d f, 
      typename Polynomial_traits_d::Polynomial_d g, 
@@ -161,7 +161,7 @@ symmetric_bezout_matrix
     typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
     typename Polynomial_traits_d::Get_coefficient coeff;
 
-    typedef typename CGALi::Simple_matrix<NT> Matrix;
+    typedef typename internal::Simple_matrix<NT> Matrix;
 
     int n = degree(f);
     int m = degree(g);
@@ -253,7 +253,7 @@ typename Polynomial_traits_d::Coefficient_type hybrid_bezout_subresultant(
     typename Polynomial_traits_d::Degree degree;
     typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
     
-    typedef CGALi::Simple_matrix<NT> Matrix;
+    typedef internal::Simple_matrix<NT> Matrix;
 
     CGAL_precondition((degree(f) >= 0));
     CGAL_precondition((degree(g) >= 0));
@@ -265,7 +265,7 @@ typename Polynomial_traits_d::Coefficient_type hybrid_bezout_subresultant(
     if (S.row_dimension() == 0) {
         return NT(1);
     } else {
-        return CGALi::determinant(S);
+        return internal::determinant(S);
     }
 }
 
@@ -318,7 +318,7 @@ OutputIterator symmetric_bezout_subresultants(
     typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
     typename Polynomial_traits_d::Leading_coefficient lcoeff;
 
-    typedef typename CGALi::Simple_matrix<NT> Matrix;
+    typedef typename internal::Simple_matrix<NT> Matrix;
     
     int n = degree(f);
     int m = degree(g);
@@ -340,7 +340,7 @@ OutputIterator symmetric_bezout_subresultants(
     
     std::vector<NT> minors;
     minors_berkowitz(B,std::back_inserter(minors),n,m);
-    CGAL::CGALi::symmetric_minors_to_subresultants(minors.begin(),sres,
+    CGAL::internal::symmetric_minors_to_subresultants(minors.begin(),sres,
                                                    divisor,n,m,swapped);
     
     return sres; 
@@ -351,14 +351,14 @@ OutputIterator symmetric_bezout_subresultants(
  * from the last k rows and columns give the subresultants
  */
 template<class Polynomial_traits_d>
-typename CGALi::Simple_matrix<typename Polynomial_traits_d::Coefficient_type>
+typename internal::Simple_matrix<typename Polynomial_traits_d::Coefficient_type>
 modified_hybrid_bezout_matrix
     (typename Polynomial_traits_d::Polynomial_d f,
      typename Polynomial_traits_d::Polynomial_d g) {
 
     typedef typename Polynomial_traits_d::Coefficient_type NT;
 
-    typedef typename CGALi::Simple_matrix<NT> Matrix;
+    typedef typename internal::Simple_matrix<NT> Matrix;
     
     typename Polynomial_traits_d::Degree degree;
 
@@ -375,7 +375,7 @@ modified_hybrid_bezout_matrix
       swapped=true;
     }
     
-    Matrix B = CGAL::CGALi::hybrid_bezout_matrix<Polynomial_traits_d>(f,g);
+    Matrix B = CGAL::internal::hybrid_bezout_matrix<Polynomial_traits_d>(f,g);
 
 
     // swap columns
@@ -417,12 +417,12 @@ OutputIterator hybrid_bezout_subresultants(
     typedef typename Polynomial_traits_d::Coefficient_type NT;
     typename Polynomial_traits_d::Degree degree;
 
-    typedef typename CGALi::Simple_matrix<NT> Matrix;
+    typedef typename internal::Simple_matrix<NT> Matrix;
     
     int n = degree(f);
     int m = degree(g);
 
-    Matrix B = CGAL::CGALi::modified_hybrid_bezout_matrix<Polynomial_traits_d>
+    Matrix B = CGAL::internal::modified_hybrid_bezout_matrix<Polynomial_traits_d>
         (f,g);
 
     if(n<m) {
@@ -435,7 +435,7 @@ OutputIterator hybrid_bezout_subresultants(
 
   // Swap entry A_ij with A_(n-i)(n-j) for square matrix A of dimension n
   template<class NT>
-    void swap_entries(typename CGALi::Simple_matrix<NT> & A) {
+    void swap_entries(typename internal::Simple_matrix<NT> & A) {
     CGAL_precondition(A.row_dimension()==A.column_dimension());
     int n = A.row_dimension();
     int i=0;
@@ -448,11 +448,11 @@ OutputIterator hybrid_bezout_subresultants(
   
   // Produce S-matrix with the given matrix and integers.
   template<class NT,class InputIterator>
-    typename CGALi::Simple_matrix<NT> s_matrix(
-	      const typename CGALi::Simple_matrix<NT>& B,
+    typename internal::Simple_matrix<NT> s_matrix(
+	      const typename internal::Simple_matrix<NT>& B,
 	      InputIterator num,int size)
     {
-      typename CGALi::Simple_matrix<NT> S(size);
+      typename internal::Simple_matrix<NT> S(size);
       CGAL_precondition_code(int n = B.row_dimension();)
       CGAL_precondition(n==(int)B.column_dimension());
       int curr_num;
@@ -519,7 +519,7 @@ OutputIterator hybrid_bezout_subresultants(
  * See also \c CGAL::minors_berkowitz
  */
 template<typename Polynomial_traits_d>
-typename CGALi::Simple_matrix<typename Polynomial_traits_d::Coefficient_type> 
+typename internal::Simple_matrix<typename Polynomial_traits_d::Coefficient_type> 
 polynomial_subresultant_matrix(typename Polynomial_traits_d::Polynomial_d f,
 			       typename Polynomial_traits_d::Polynomial_d g,
                                int d=0) {
@@ -535,7 +535,7 @@ polynomial_subresultant_matrix(typename Polynomial_traits_d::Polynomial_d f,
     CGAL_precondition(m>=0);
     CGAL_precondition(d>=0);
 
-    typedef CGALi::Simple_matrix<NT> Matrix;
+    typedef internal::Simple_matrix<NT> Matrix;
    
     bool swapped=false;
 
@@ -550,25 +550,25 @@ polynomial_subresultant_matrix(typename Polynomial_traits_d::Polynomial_d f,
     };
 
 
-    Matrix B = CGAL::CGALi::symmetric_bezout_matrix<Polynomial_traits_d>(f,g);
+    Matrix B = CGAL::internal::symmetric_bezout_matrix<Polynomial_traits_d>(f,g);
 
     // For easier notation, we swap all entries:
-    CGALi::swap_entries<NT>(B);
+    internal::swap_entries<NT>(B);
     
     // Compute the S-matrices and collect the minors
     std::vector<Matrix> s_mat(m);
     std::vector<std::vector<NT> > coeffs(d);
     for(int i = 1; i<=d;i++) {
       std::vector<int> intseq;
-      CGALi::s_matrix_integer_sequence(std::back_inserter(intseq),i,d,n);
+      internal::s_matrix_integer_sequence(std::back_inserter(intseq),i,d,n);
 
-      Matrix S = CGALi::s_matrix<NT>(B,intseq.begin(),(int)intseq.size());
-      CGALi::swap_entries<NT>(S);
+      Matrix S = internal::s_matrix<NT>(B,intseq.begin(),(int)intseq.size());
+      internal::swap_entries<NT>(S);
       //std::cout << S << std::endl;
       int Sdim = S.row_dimension();
       int number_of_minors=(Sdim < m) ? Sdim : Sdim; 
       
-      CGALi::minors_berkowitz(S,std::back_inserter(coeffs[i-1]),
+      internal::minors_berkowitz(S,std::back_inserter(coeffs[i-1]),
 			    Sdim,number_of_minors);
 
     }

@@ -66,7 +66,7 @@ extern "C" {
 #  if defined CGAL_CFG_DENORMALS_COMPILE_BUG
      // For compilers crashing when dealing with denormalized values.
      // So we have to generate it at run time instead.
-#    define CGAL_IA_MIN_DOUBLE (CGAL::CGALi::minimin)
+#    define CGAL_IA_MIN_DOUBLE (CGAL::internal::minimin)
 #  else
 #    define CGAL_IA_MIN_DOUBLE (5e-324)
 #  endif
@@ -105,7 +105,7 @@ extern "C" {
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
 extern double minimin;
@@ -117,7 +117,7 @@ const double infinity = std::numeric_limits<double>::infinity();
 const double infinity = HUGE_VAL;
 #endif
 
-} // namespace CGALi
+} // namespace internal
 
 
 // Inline function to stop compiler optimization.

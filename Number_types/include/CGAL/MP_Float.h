@@ -366,10 +366,10 @@ public:
   exponent_type exp;
 };
 
-namespace CGALi{
+namespace internal{
 std::pair<MP_Float, MP_Float> // <quotient, remainder>
 division(const MP_Float & n, const MP_Float & d);
-} // namespace CGALi
+} // namespace internal
 
 inline
 void swap(MP_Float &m, MP_Float &n)
@@ -432,7 +432,7 @@ template <> class Algebraic_structure_traits< MP_Float >
         Type operator()(
                 const Type& x,
                 const Type& y ) const {
-            std::pair<MP_Float, MP_Float> res = CGALi::division(x, y);
+            std::pair<MP_Float, MP_Float> res = internal::division(x, y);
             CGAL_assertion_msg(res.second == 0,
                 "exact_division() called with operands which do not divide");
             return res.first;
@@ -475,11 +475,11 @@ template <> class Algebraic_structure_traits< MP_Float >
     : public std::binary_function<Type,Type,bool>{ 
   public:
     bool operator()( const Type& x,  const Type& y) const {  
-      return CGALi::division(y,x).second == 0 ;
+      return internal::division(y,x).second == 0 ;
     }
     // second operator computing q = x/y 
     bool operator()( const Type& x,  const Type& y, Type& q) const {    
-      std::pair<Type,Type> qr = CGALi::division(y,x);
+      std::pair<Type,Type> qr = internal::division(y,x);
       q=qr.first;
       return qr.second == 0;
       
@@ -531,7 +531,7 @@ template <> class Real_embeddable_traits< MP_Float >
 };
 
 
-namespace CGALi {
+namespace internal {
 // This compares the absolute values of the odd-mantissa.
 // (take the mantissas, get rid of all powers of 2, compare
 // the absolute values)
@@ -666,10 +666,10 @@ inline // Move it to libCGAL once it's stable.
 bool
 divides(const MP_Float & d, const MP_Float & n)
 {
-  return CGALi::division(n, d).second == 0;
+  return internal::division(n, d).second == 0;
 }
 
-} // namespace CGALi
+} // namespace internal
 
 inline
 bool
@@ -684,7 +684,7 @@ inline
 MP_Float
 operator%(const MP_Float& n1, const MP_Float& n2)
 {
-  return CGALi::division(n1, n2).second;
+  return internal::division(n1, n2).second;
 }
 
 
@@ -702,7 +702,7 @@ namespace INTERN_MP_FLOAT {
   MP_Float
   div(const MP_Float& n1, const MP_Float& n2)
   {
-    return CGALi::division(n1, n2).first;
+    return internal::division(n1, n2).first;
   }
 
   inline
@@ -726,7 +726,7 @@ namespace INTERN_MP_FLOAT {
     while (true) {
       x = x % y;
       if (x == 0) {
-        CGAL_postcondition(CGALi::divides(y, a) & CGALi::divides(y, b));
+        CGAL_postcondition(internal::divides(y, a) & internal::divides(y, b));
         y.gcd_normalize();
         return y;
       }
@@ -789,7 +789,7 @@ inline void simplify_root_of_2(MP_Float &/*a*/, MP_Float &/*b*/, MP_Float&/*c*/)
 #endif
 }
 
-namespace CGALi {
+namespace internal {
   inline void simplify_3_exp(int &a, int &b, int &c) {
     int min = (std::min)((std::min)(a,b),c);
     int max = (std::max)((std::max)(a,b),c);

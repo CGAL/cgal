@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi {
+namespace internal {
 
 
 /// Utility function for remove_outliers_wrt_median_knn_sq_distance():
@@ -88,7 +88,7 @@ compute_median_knn_sq_distance_3(
 }
 
 
-} /* namespace CGALi */
+} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -170,7 +170,7 @@ remove_outliers_wrt_median_knn_sq_distance(
   std::multimap<FT,Enriched_point> sorted_points;
   for(it = first; it != beyond; it++)
   {
-    FT sq_distance = CGALi::compute_median_knn_sq_distance_3<Kernel>(get(point_pmap,it), tree, k);
+    FT sq_distance = internal::compute_median_knn_sq_distance_3<Kernel>(get(point_pmap,it), tree, k);
     sorted_points.insert( std::make_pair(sq_distance, *it) );
   }
 

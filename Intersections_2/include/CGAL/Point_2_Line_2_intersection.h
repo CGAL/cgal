@@ -31,7 +31,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 inline bool
@@ -75,7 +75,7 @@ intersection(const typename K::Line_2 &line,
     return Object();
 }
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 inline 

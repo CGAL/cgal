@@ -57,7 +57,7 @@ std::ostream& operator<< ( std::ostream& s, const X& x) {
 
 int main() {
     typedef std::list<X>                      list;
-    typedef CGAL::CGALi::vector<X>            vector;
+    typedef CGAL::internal::vector<X>            vector;
     typedef vector::iterator                  iterator;
     typedef vector::const_iterator            const_iterator;
     typedef vector::reverse_iterator          reverse_iterator;

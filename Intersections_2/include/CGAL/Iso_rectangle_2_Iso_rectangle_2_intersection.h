@@ -30,7 +30,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 Object
@@ -79,7 +79,7 @@ intersection(
 }
 
 
-} // namespace CGALi
+} // namespace internal
 
 
 template <class K>

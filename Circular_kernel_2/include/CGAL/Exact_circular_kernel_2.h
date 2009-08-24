@@ -47,7 +47,7 @@ TODO: CORRECT THE MAKE_ROOT_OF_2 of GMPq GMPz
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 /*
 #ifdef CGAL_USE_GMP
   typedef CGAL::Gmpq                                           NT1;
@@ -69,9 +69,9 @@ namespace CGALi {
 //  typedef CGAL::Lazy_circular_kernel_2<CK1,CK2>
 //  Exact_circular_kernel_2;
 
-} // namespace CGALi
+} // namespace internal
 
-typedef Filtered_bbox_circular_kernel_2<CGALi::CK1>   Exact_circular_kernel_2;
+typedef Filtered_bbox_circular_kernel_2<internal::CK1>   Exact_circular_kernel_2;
 
 CGAL_END_NAMESPACE
 

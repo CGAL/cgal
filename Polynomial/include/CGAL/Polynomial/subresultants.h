@@ -29,7 +29,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-  namespace CGALi {
+  namespace internal {
 
     // Intern function needed for Ducos algorithm
     
@@ -156,7 +156,7 @@ CGAL_BEGIN_NAMESPACE
     typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
 
     if(degree(P) < 1 || degree(Q) < 1) {
-        *out++ = CGAL::CGALi::resultant_for_constant_polynomial
+        *out++ = CGAL::internal::resultant_for_constant_polynomial
                      <Polynomial_traits_d> (P,Q);
       return out;
     }
@@ -201,7 +201,7 @@ CGAL_BEGIN_NAMESPACE
       sres.push_back(B);
       delta=d-e;
       if(delta>1) {
-          CGAL::CGALi::lazard_optimization<Polynomial_traits_d>
+          CGAL::internal::lazard_optimization<Polynomial_traits_d>
               (s,double(delta-1),B,C);
         //C=CGAL::ipower(CGAL::integral_division(lcoeff(B),s),delta-1)*B;
         for(int i=0;i<delta-2;i++) {
@@ -215,7 +215,7 @@ CGAL_BEGIN_NAMESPACE
       if(e==0) {
         break;
       }
-      CGAL::CGALi::lickteig_roy_optimization<Polynomial_traits_d>(A,B,C,s,D);
+      CGAL::internal::lickteig_roy_optimization<Polynomial_traits_d>(A,B,C,s,D);
       B=D;
       //typename Polynomial_traits_d::Pseudo_division() 
       //    (A, -B, dummy_pol, D, dummy_nt);
@@ -260,13 +260,13 @@ CGAL_BEGIN_NAMESPACE
     typename Polynomial_traits_d::Construct_polynomial construct;
    
     if(degree(P) < 1 || degree(Q) < 1) {
-      *out++ = CGAL::CGALi::resultant_for_constant_polynomial
+      *out++ = CGAL::internal::resultant_for_constant_polynomial
                  <Polynomial_traits_d> (P,Q);
       return out;
     }
     
-    typedef CGAL::CGALi::Simple_matrix<NT> Matrix;
-    Matrix M = CGAL::CGALi::polynomial_subresultant_matrix
+    typedef CGAL::internal::Simple_matrix<NT> Matrix;
+    Matrix M = CGAL::internal::polynomial_subresultant_matrix
         <Polynomial_traits_d> (P,Q);
 
     int r =  static_cast<int>(M.row_dimension());
@@ -313,7 +313,7 @@ CGAL_BEGIN_NAMESPACE
     std::vector<Polynomial> sres;
     int q = std::min(degree(Q),degree(P));
     
-    CGAL::CGALi::prs_polynomial_subresultants<Polynomial_traits_d>
+    CGAL::internal::prs_polynomial_subresultants<Polynomial_traits_d>
         (P,Q,std::back_inserter(sres));
     CGAL_assertion(static_cast<int>(sres.size()) == q+1);
     for(int i=0; i <= q; i++) {
@@ -345,13 +345,13 @@ CGAL_BEGIN_NAMESPACE
     typename Polynomial_traits_d::Degree degree;
          
     if(degree(P) < 1 || degree(Q) < 1) {
-        *out++ = CGAL::CGALi::resultant_for_constant_polynomial
+        *out++ = CGAL::internal::resultant_for_constant_polynomial
                      <Polynomial_traits_d> (P,Q);
       return out;
     }
 
-    typedef CGAL::CGALi::Simple_matrix<NT> Matrix;
-    Matrix M = CGAL::CGALi::polynomial_subresultant_matrix
+    typedef CGAL::internal::Simple_matrix<NT> Matrix;
+    Matrix M = CGAL::internal::polynomial_subresultant_matrix
                  <Polynomial_traits_d> (P,Q,1);
 
     int r =  static_cast<int>(M.row_dimension());
@@ -395,7 +395,7 @@ CGAL_BEGIN_NAMESPACE
       typename Polynomial_traits_d::Construct_polynomial construct;
 
       if(degree(P) < 1 || degree(Q) < 1) {
-          *sres_out++ = CGAL::CGALi::resultant_for_constant_polynomial
+          *sres_out++ = CGAL::internal::resultant_for_constant_polynomial
                           <Polynomial_traits_d> (P,Q);
         *coP_out++ = lcoeff(Q);
         *coQ_out++ = lcoeff(P);
@@ -673,7 +673,7 @@ CGAL_BEGIN_NAMESPACE
     (typename Polynomial_traits_d::Polynomial_d p, 
      typename Polynomial_traits_d::Polynomial_d q,
      OutputIterator out) {
-      return CGAL::CGALi::polynomial_subresultants_<Polynomial_traits_d>
+      return CGAL::internal::polynomial_subresultants_<Polynomial_traits_d>
           (p, q, out);
   }   
 
@@ -696,7 +696,7 @@ CGAL_BEGIN_NAMESPACE
     (typename Polynomial_traits_d::Polynomial_d p, 
      typename Polynomial_traits_d::Polynomial_d q,
      OutputIterator out) {
-      return CGAL::CGALi::principal_subresultants_<Polynomial_traits_d>
+      return CGAL::internal::principal_subresultants_<Polynomial_traits_d>
           (p, q, out);
   }   
  
@@ -710,11 +710,11 @@ CGAL_BEGIN_NAMESPACE
        OutputIterator1 sres_out,
        OutputIterator2 coP_out,
        OutputIterator3 coQ_out) {
-      return CGAL::CGALi::polynomial_subresultants_with_cofactors_
+      return CGAL::internal::polynomial_subresultants_with_cofactors_
           <Polynomial_traits_d> (p,q,sres_out,coP_out,coQ_out);
   }
 
-} // namespace CGALi
+} // namespace internal
 
 CGAL_END_NAMESPACE
 

@@ -28,7 +28,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template < class GeometryTraits_2, class TopologyTraits_2 >
 class Sign_of_path {
@@ -333,7 +333,7 @@ protected:
     const Topology_traits_2 *_m_topology_traits;
 };
 
-} // namespace CGALi
+} // namespace internal
 
 CGAL_END_NAMESPACE
 

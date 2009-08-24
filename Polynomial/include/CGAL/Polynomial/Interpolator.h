@@ -21,7 +21,7 @@
 #define CGAL_POLYNOMIAL_INTERPOLATE_H
 
 CGAL_BEGIN_NAMESPACE
-namespace CGALi {
+namespace internal {
 
 // Class for interpolation of univariate or multivariate polynomials. 
 // The template argument must be a model of concept Polynomial_d
@@ -128,7 +128,7 @@ public:
     
 };
 
-} // namespace CGALi
+} // namespace internal
 CGAL_END_NAMESPACE
 
 #endif // CGAL_POLYNOMIAL_INTERPOLATE_H 

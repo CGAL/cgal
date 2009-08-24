@@ -35,7 +35,7 @@ public:
   typedef typename K::Point_2                 Point_2;    
   typedef typename K::Less_xy_2               Less_xy_2;
   typedef typename K::Less_yx_2               Less_yx_2;
-  typedef CGALi::r_Less_dist_to_line<K>       Less_signed_distance_to_line_2;
+  typedef internal::r_Less_dist_to_line<K>       Less_signed_distance_to_line_2;
   typedef typename K::Less_rotate_ccw_2       Less_rotate_ccw_2;
   typedef typename K::Left_turn_2             Left_turn_2;
   typedef typename K::Equal_2                 Equal_2;  

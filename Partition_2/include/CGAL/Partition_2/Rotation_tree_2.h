@@ -41,12 +41,12 @@
 namespace CGAL {
 
 template <class Traits_>
-class Rotation_tree_2 : public CGALi::vector< Rotation_tree_node_2<Traits_> >
+class Rotation_tree_2 : public internal::vector< Rotation_tree_node_2<Traits_> >
 {
 public:
    typedef Traits_                                 Traits;
    typedef Rotation_tree_node_2<Traits>            Node;
-   typedef typename CGALi::vector<Node>::iterator  Self_iterator;
+   typedef typename internal::vector<Node>::iterator  Self_iterator;
    typedef typename Traits::Point_2                Point_2;
 
 

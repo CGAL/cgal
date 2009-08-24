@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace CGALi {
+namespace internal {
 
 
 /// Utility class for grid_simplify_point_set():
@@ -77,7 +77,7 @@ private:
 };
 
 
-} /* namespace CGALi */
+} /* namespace internal */
 
 
 // ----------------------------------------------------------------------------
@@ -95,17 +95,17 @@ private:
 
 template <class Point_3>
 class Epsilon_point_set_3
-  : public std::set<Point_3, CGALi::Less_epsilon_points_3<Point_3> >
+  : public std::set<Point_3, internal::Less_epsilon_points_3<Point_3> >
 {
 private:
 
     // superclass
-    typedef std::set<Point_3, CGALi::Less_epsilon_points_3<Point_3> > Base;
+    typedef std::set<Point_3, internal::Less_epsilon_points_3<Point_3> > Base;
 
 public:
 
     Epsilon_point_set_3 (double epsilon)
-        : Base( CGALi::Less_epsilon_points_3<Point_3>(epsilon) )
+        : Base( internal::Less_epsilon_points_3<Point_3>(epsilon) )
     {
         CGAL_point_set_processing_precondition(epsilon > 0);
     }

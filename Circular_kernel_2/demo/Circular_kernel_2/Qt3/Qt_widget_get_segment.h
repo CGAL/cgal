@@ -25,7 +25,7 @@
 
 namespace CGAL {
 
-namespace CGALi {
+namespace internal {
 
 class Qt_widget_get_segment_helper
   : public CGAL::Qt_widget_layer
@@ -43,11 +43,11 @@ signals:
   void new_object_time();
 };
 
-} // namespace CGALi
+} // namespace internal
 
 
 template <class R>
-class Qt_widget_get_segment : public CGALi::Qt_widget_get_segment_helper
+class Qt_widget_get_segment : public internal::Qt_widget_get_segment_helper
 {
 public:
   typedef typename R::Point_2		Point;
@@ -57,7 +57,7 @@ public:
 
   Qt_widget_get_segment(const QCursor c=QCursor(Qt::crossCursor),
 			QObject* parent = 0, const char* name = 0)
-     : CGALi::Qt_widget_get_segment_helper(parent, name),
+     : internal::Qt_widget_get_segment_helper(parent, name),
     cursor(c), firstpoint(false),
       firsttime(true){};
 

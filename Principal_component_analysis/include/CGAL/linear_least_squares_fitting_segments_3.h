@@ -30,7 +30,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 // fits a plane to a 3D segment set
 template < typename InputIterator, 
@@ -160,7 +160,7 @@ linear_least_squares_fitting_3(InputIterator first,
 
 } // end linear_least_squares_fitting_segments_3
 
-} // end namespace CGALi
+} // end namespace internal
 
 CGAL_END_NAMESPACE
 

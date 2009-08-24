@@ -27,7 +27,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template < typename NT, class Algebraic_category>
 struct Root_of_traits_helper{
@@ -129,16 +129,16 @@ struct Root_of_traits_helper < NT, Field_with_root_of_tag >
     :public Root_of_traits_helper < NT, Field_with_sqrt_tag>{};
 
 
-} // namespace CGALi
+} // namespace internal
 
 
 
 // Default Traits class for NT types
 template < typename NT >
 struct Root_of_traits
-    : public CGALi::Root_of_traits_helper<NT,
+    : public internal::Root_of_traits_helper<NT,
       typename Algebraic_structure_traits<NT>::Algebraic_category> {
-    typedef CGALi::Root_of_traits_helper<NT,
+    typedef internal::Root_of_traits_helper<NT,
       typename Algebraic_structure_traits<NT>::Algebraic_category> Base;
     typedef typename Base::Root_of_1 RootOf_1;
     typedef typename Base::Root_of_2 RootOf_2;

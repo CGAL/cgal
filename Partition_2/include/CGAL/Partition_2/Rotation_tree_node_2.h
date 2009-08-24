@@ -46,7 +46,7 @@ public:
 
    typedef typename Traits::Point_2          Base_point;
    typedef Rotation_tree_node_2<Traits>      Self;
-   typedef CGALi::vector< Self >             Tree;
+   typedef internal::vector< Self >             Tree;
    typedef typename Tree::iterator           Tree_iterator;
    typedef std::pair<Tree_iterator, bool>    Node_ref;
 

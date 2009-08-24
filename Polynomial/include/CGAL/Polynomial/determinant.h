@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE ;
 
 #include <CGAL/basic.h>
 
-namespace CGALi {
+namespace internal {
     
     // TODO: Own simple matrix and vector to avoid importing the whole matrix stuff 
     // from EXACUS.
@@ -145,7 +145,7 @@ namespace CGALi {
      *  (specialisation for CGAL::Matrix_d)
      */
     template <class NT > inline 
-    NT determinant(const CGALi::Simple_matrix<NT>& A)
+    NT determinant(const internal::Simple_matrix<NT>& A)
     {
         CGAL_assertion(A.row_dimension()==A.column_dimension());
         return determinant(A,A.column_dimension());
@@ -164,7 +164,7 @@ namespace CGALi {
         typedef typename Algebraic_structure_traits<NT>::Algebraic_category Algebraic_category;
         typedef typename Algebraic_structure_traits<NT>::Is_exact Is_exact;
     
-        return CGALi::determinant (matrix, n, Algebraic_category(), Is_exact());
+        return internal::determinant (matrix, n, Algebraic_category(), Is_exact());
     }
 
 
@@ -179,12 +179,12 @@ namespace CGALi {
     
         int i, j, l;
     
-        typename CGALi::Simple_vector<NT> r(k-1);
-        typename CGALi::Simple_vector<NT> s(k-1);
-        typename CGALi::Simple_vector<NT> t(k-1);
+        typename internal::Simple_vector<NT> r(k-1);
+        typename internal::Simple_vector<NT> s(k-1);
+        typename internal::Simple_vector<NT> t(k-1);
         std::vector<NT> rMks(k);
     
-        typename CGALi::Simple_matrix<NT> MM(k-1);
+        typename internal::Simple_matrix<NT> MM(k-1);
     
         for (i=n-k+2;i<=n;++i)
             for (j=n-k+2;j<=n;++j)
@@ -227,7 +227,7 @@ namespace CGALi {
      *  Note that this routine is completely free of divisions!
      */
     template <class NT > inline 
-    NT det_berkowitz(const CGALi::Simple_matrix<NT>& A)
+    NT det_berkowitz(const internal::Simple_matrix<NT>& A)
     {
         CGAL_assertion(A.row_dimension()==A.column_dimension());
         return det_berkowitz(A,A.column_dimension());
@@ -251,10 +251,10 @@ namespace CGALi {
         std::vector<NT> rMks;
         NT a;
     
-        typename CGALi::Simple_matrix<NT> B(n+1);  // not square in original
+        typename internal::Simple_matrix<NT> B(n+1);  // not square in original
     
-        typename CGALi::Simple_vector<NT> p(n+1);
-        typename CGALi::Simple_vector<NT> q(n+1);
+        typename internal::Simple_vector<NT> p(n+1);
+        typename internal::Simple_vector<NT> q(n+1);
     
         for (k=1;k<=n;++k)
         {
@@ -277,7 +277,7 @@ namespace CGALi {
         }
             else if (k == n)
         {
-                rMks = CGALi::clow_lengths<M>(A,k,n);
+                rMks = internal::clow_lengths<M>(A,k,n);
                 // Setup for last row of matrix B
                 i = n+1;
                 B[i-1][n-1] = NT(-1);
@@ -292,7 +292,7 @@ namespace CGALi {
         }
             else
             {
-                rMks = CGALi::clow_lengths<M>(A,k,n);
+                rMks = internal::clow_lengths<M>(A,k,n);
     
                 // Setup for matrix B (diagonal after diagonal)
     
@@ -355,7 +355,7 @@ namespace CGALi {
 
     
 
-} // namespace CGALi
+} // namespace internal
 
 
 

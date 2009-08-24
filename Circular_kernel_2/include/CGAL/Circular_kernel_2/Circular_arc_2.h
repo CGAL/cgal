@@ -42,7 +42,7 @@
 #include <CGAL/intersections.h>
 
 namespace CGAL {
-namespace CGALi {
+namespace internal {
 
   template <class CK >
   class Circular_arc_2
@@ -66,7 +66,7 @@ namespace CGALi {
   
 #ifdef CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
   public:
-    typedef CGALi::Intersection_line_2_circle_2_map Table;
+    typedef internal::Intersection_line_2_circle_2_map Table;
 #endif
 
   private:
@@ -657,14 +657,14 @@ public:
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
   template < typename CK >
-  CGALi::Intersection_line_2_circle_2_map Circular_arc_2< CK >::table = 
-    CGALi::Intersection_line_2_circle_2_map();
+  internal::Intersection_line_2_circle_2_map Circular_arc_2< CK >::table = 
+    internal::Intersection_line_2_circle_2_map();
 #endif
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
   template < typename CK >
-  CGALi::Intersection_line_2_circle_2_map Circular_arc_2< CK >::circle_table = 
-    CGALi::Intersection_line_2_circle_2_map();
+  internal::Intersection_line_2_circle_2_map Circular_arc_2< CK >::circle_table = 
+    internal::Intersection_line_2_circle_2_map();
 #endif
 
   template < typename CK >
@@ -719,7 +719,7 @@ public:
     }
   }     
 
-} // namespace CGALi
+} // namespace internal
 } // namespace CGAL
 
 #undef CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL

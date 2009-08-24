@@ -226,7 +226,7 @@ namespace CGAL {
       return res;
     }
 
-   namespace CGALi {
+   namespace internal {
 
     // It just converts when the solution is a Point_3 to Circular_arc_point_3
     
@@ -305,11 +305,11 @@ namespace CGAL {
          return res;
        }
        if(non_oriented_equal<SK>(s1,s2)) {
-         return CGALi::intersect_special<SK>(s1, s3, res);
+         return internal::intersect_special<SK>(s1, s3, res);
        }
        if((non_oriented_equal<SK>(s1,s3)) ||
           (non_oriented_equal<SK>(s2,s3))) {
-         return CGALi::intersect_special<SK>(s1, s2, res);
+         return internal::intersect_special<SK>(s1, s2, res);
        }
        if(SK().collinear_3_object()(s1.center(),s2.center(),s3.center())) {
          Object obj = SK().intersect_3_object()(s1, s2);
@@ -363,11 +363,11 @@ namespace CGAL {
       CGAL_kernel_precondition(!s1.is_degenerate());
       CGAL_kernel_precondition(!s2.is_degenerate());
       if(non_oriented_equal<SK>(s1,s2)) {
-         return CGALi::intersect_special<SK>(p,s1,res);
+         return internal::intersect_special<SK>(p,s1,res);
       }
       Plane_3 radical_p = SK().construct_radical_plane_3_object()(s1,s2);
       if(non_oriented_equal<SK>(p,radical_p)) {
-         return CGALi::intersect_special<SK>(p,s1,res);
+         return internal::intersect_special<SK>(p,s1,res);
       }
       Equation_sphere e1 = get_equation<SK>(s1);
       Equation_sphere e2 = get_equation<SK>(s2);
@@ -400,7 +400,7 @@ namespace CGAL {
       CGAL_kernel_precondition(!p2.is_degenerate());
       CGAL_kernel_precondition(!s.is_degenerate());      
       if(non_oriented_equal<SK>(p1,p2)) {
-         return CGALi::intersect_special<SK>(p1,s,res);
+         return internal::intersect_special<SK>(p1,s,res);
       }
       Equation_plane e1 = get_equation<SK>(p1);
       Equation_plane e2 = get_equation<SK>(p2);

@@ -30,7 +30,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi{
+namespace internal{
 template <typename Polynomial> struct Monomial_representation; 
 
 // Polynomial muss be at least univariate ! 
@@ -85,7 +85,7 @@ public:
   }  
 };
 
-} // namespace CGALi
+} // namespace internal
 CGAL_END_NAMESPACE
 
 #endif //CGAL_POLYNOMIAL_MONOMIAL_REPRESENTAION_H

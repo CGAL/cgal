@@ -42,12 +42,12 @@ int main(){
   // Set wrong rounding mode to test modular arithmetic 
   CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
   #ifdef CGAL_USE_LEDA
-   CGAL::CGALi::test_modular_gcd<CGAL::LEDA_arithmetic_kernel>
+   CGAL::internal::test_modular_gcd<CGAL::LEDA_arithmetic_kernel>
        (CGAL::Unique_factorization_domain_tag());
   #endif // CGAL_USE_LEDA    
 
   #ifdef CGAL_USE_CORE    
-   CGAL::CGALi::test_modular_gcd<CGAL::CORE_arithmetic_kernel>
+   CGAL::internal::test_modular_gcd<CGAL::CORE_arithmetic_kernel>
        (CGAL::Unique_factorization_domain_tag());
   #endif // Lis_HAVE_CORE
      

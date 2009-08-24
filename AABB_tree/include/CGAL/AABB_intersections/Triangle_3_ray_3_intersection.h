@@ -24,7 +24,7 @@
 #include <CGAL/intersections.h>
 
 namespace CGAL {
-namespace CGALi {
+namespace internal {
 
 
 
@@ -143,7 +143,7 @@ intersection(const typename K::Triangle_3  &t,
     return intersection;
 }
 
-} // end namespace CGALi
+} // end namespace internal
 
 template <class K>
 inline

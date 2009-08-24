@@ -25,7 +25,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
     template <class RandomAccessIterator, class Cmp>
     RandomAccessIterator

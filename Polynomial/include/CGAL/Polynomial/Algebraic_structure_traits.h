@@ -35,10 +35,10 @@ CGAL_BEGIN_NAMESPACE
 
 // Extend to a UFDomain as coefficient range
 // Forward declaration for <NiX/polynomial_gcd.h> for NT_traits<Poly...>::Gcd
-namespace CGALi {
+namespace internal {
 template <class NT> inline
 Polynomial<NT> gcd(const Polynomial<NT>&, const Polynomial<NT>&);
-} // namespace CGALi
+} // namespace internal
 
 
 // Now we wrap up all of this in the actual NT_traits
@@ -235,8 +235,8 @@ class Polynomial_algebraic_structure_traits_base< POLY, Unique_factorization_dom
       if (CGAL::is_zero(y))
         return idiv(x,upart(x));
       
-      if (CGALi::may_have_common_factor(x,y))
-        return CGALi::gcd(x,y);
+      if (internal::may_have_common_factor(x,y))
+        return internal::gcd(x,y);
       else{        
         typename Algebraic_structure_traits<ICoeff>::Algebraic_category category;  
         return POLY(gcd_help(Mcontent()(x),Mcontent()(y), category));

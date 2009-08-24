@@ -3433,7 +3433,7 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
 }
 
 
-namespace CGALi {
+namespace internal {
 
 // Internal function used by operator==.
 template < class GT, class Tds1, class Tds2 >
@@ -3515,7 +3515,7 @@ test_next(const Triangulation_3<GT, Tds1> &t1,
     return true;
 }
 
-} // namespace CGALi
+} // namespace internal
 
 
 template < class GT, class Tds1, class Tds2 >
@@ -3629,7 +3629,7 @@ operator==(const Triangulation_3<GT, Tds1> &t1,
 	return false;
 
     // We now have one cell, we need to propagate recursively.
-    return CGALi::test_next(t1, t2,
+    return internal::test_next(t1, t2,
 	             Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
 }
 

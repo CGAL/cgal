@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/fwd.h>
 
 namespace CGAL{
-namespace CGALi{
+namespace internal{
 
 // template meta function Innermost_coefficient_type
 // returns the tpye of the innermost coefficient 
@@ -42,7 +42,7 @@ struct Dimension<Polynomial<Coefficient_type> > {
     static const int value = Dimension<Coefficient_type>::value + 1 ; 
 };
 
-} // namespace CGALi
+} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_MISC_H

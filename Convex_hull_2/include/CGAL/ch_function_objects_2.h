@@ -22,7 +22,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class R>
 class r_Less_dist_to_line
@@ -64,7 +64,7 @@ private:
   mutable Line l_ab;
 };
 
-} // namespace CGALi
+} // namespace internal
 
 CGAL_END_NAMESPACE
 

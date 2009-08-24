@@ -31,7 +31,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template<>
-struct Root_of_traits<CORE::BigInt>: public CGALi::Root_of_traits_helper<CORE::BigInt,
+struct Root_of_traits<CORE::BigInt>: public internal::Root_of_traits_helper<CORE::BigInt,
     Euclidean_ring_tag>{
   typedef CORE::BigRat RootOf_1;
   typedef CORE::BigRat Root_of_1;

@@ -42,7 +42,7 @@ double init_min_double()
 }
 } // anonymous namespace
 
-namespace CGALi {
+namespace internal {
 double minimin = init_min_double();
 }
 #endif

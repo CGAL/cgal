@@ -35,7 +35,7 @@ namespace CGAL{
 template <class A, class B> class Sqrt_extension;
 template <class A > class Polynomial;
 
-namespace CGALi{
+namespace internal{
 
 /*! \nosubgrouping
  *  \brief traits class for rational reconstrcution based on wangs 
@@ -60,7 +60,7 @@ public:
         operator()
             (const NT& u, const Scalar& m, NT& n, Scalar& d) const {
             n = d = NT(0);
-            return CGAL::CGALi::wang(u,m,n,d);
+            return CGAL::internal::wang(u,m,n,d);
         }
     };
 };
@@ -151,7 +151,7 @@ public:
     };
 };
 
-} // namespace CGALi
+} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_WANG_TRAITS_H

@@ -40,7 +40,7 @@ namespace CGAL {
 
 namespace Qt {
 
-  namespace CGALi
+  namespace internal
   {
     template<class General_polygon_set> 
     class Polygon_set_traits 
@@ -93,7 +93,7 @@ namespace Qt {
 template <class General_polygon_set_, class Compute_XM_curve_bbox_, class Draw_XM_curve_>
 class GeneralPolygonSetGraphicsItem : public GraphicsItem
 {
-  typedef CGALi::Polygon_set_traits<General_polygon_set_> GPS_traits ;
+  typedef internal::Polygon_set_traits<General_polygon_set_> GPS_traits ;
     
   typedef Compute_XM_curve_bbox_                    Compute_XM_curve_bbox ;
   typedef Draw_XM_curve_                            Draw_XM_curve ;

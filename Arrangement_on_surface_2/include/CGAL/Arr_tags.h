@@ -48,7 +48,7 @@ BOOST_MPL_HAS_XXX_TRAIT_DEF(Arr_bottom_side_tag);
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Arr_top_side_tag);
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Arr_right_side_tag);
 
-namespace CGALi {
+namespace internal {
 
 //! type to provide left side tag (is oblivious if not existing)
 template < class Traits_, bool B >
@@ -229,7 +229,7 @@ struct Validate_right_side_tag< GeometryTraits_2, false > {
 
 
 
-} // namespace CGALi
+} // namespace internal
   
 struct Arr_all_sides_oblivious_tag {};
 struct Arr_not_all_sides_oblivious_tag {};

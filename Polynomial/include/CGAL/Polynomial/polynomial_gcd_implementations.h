@@ -31,7 +31,7 @@
 
 
 namespace CGAL {  
-namespace CGALi {
+namespace internal {
 
 template <class NT>
 inline
@@ -78,7 +78,7 @@ Polynomial<NT> gcd_utcf_UFD(
         p2 = r / (g * ipower(h, delta));
         g = p1.lcoeff();
         // h = h^(1-delta) * g^delta
-        CGAL::CGALi::hgdelta_update(h, g, delta);
+        CGAL::internal::hgdelta_update(h, g, delta);
     }
 
     p2 /= p2.content() * p2.unit_part();
@@ -129,7 +129,7 @@ NT content_utcf_(const Polynomial<NT>& p)
     NT cont = idiv(*it, upart(*it));
     for( ; it != ite; it++) {
         if (cont == NT(1)) break;
-        if (*it != NT(0)) cont = CGALi::gcd_utcf_(cont, *it);
+        if (*it != NT(0)) cont = internal::gcd_utcf_(cont, *it);
     }
     
     return cont;
@@ -163,12 +163,12 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     p2=CGAL::canonicalize(p2); 
 
     // compute content of p1 and p2
-    NT p1c = CGALi::content_utcf_(p1);
-    NT p2c = CGALi::content_utcf_(p2);
+    NT p1c = internal::content_utcf_(p1);
+    NT p2c = internal::content_utcf_(p2);
     
    
     // compute gcd of content
-    NT gcdcont = CGALi::gcd_utcf_(p1c, p2c);
+    NT gcdcont = internal::gcd_utcf_(p1c, p2c);
 
     // compute gcd of primitive parts
     p1 = integral_division_up_to_constant_factor(p1, POLY(p1c)); 
@@ -196,7 +196,7 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
         p2 = r / (g * ipower(h, delta));
         g = p1.lcoeff();
         // h = h^(1-delta) * g^delta
-        CGAL::CGALi::hgdelta_update(h, g, delta);
+        CGAL::internal::hgdelta_update(h, g, delta);
     }
 #else
     // implentaion using just the 'naive' methode
@@ -226,7 +226,7 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
 }
 
 
-}  // namespace CGALi
+}  // namespace internal
 
 }  // namespace CGAL
 

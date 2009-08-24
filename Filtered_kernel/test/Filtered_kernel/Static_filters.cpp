@@ -120,24 +120,24 @@ test_orientation_2()
   Point_2 q = my_rand_p2();
   Point_2 r = my_rand_p2();
 
-  CGAL::CGALi::orientation(p, q, r, K3());
-  CGAL::CGALi::orientation(q, r, p, K3());
-  CGAL::CGALi::orientation(r, q, p, K3());
+  CGAL::internal::orientation(p, q, r, K3());
+  CGAL::internal::orientation(q, r, p, K3());
+  CGAL::internal::orientation(r, q, p, K3());
 
   // Then with collinear points (up to roundoff errors).
   // r = p+(p-q)*my_rand();
   r = pick_collinear(p, q);
 
-  CGAL::CGALi::orientation(p, q, r, K3());
-  CGAL::CGALi::orientation(q, r, p, K3());
-  CGAL::CGALi::orientation(r, q, p, K3());
+  CGAL::internal::orientation(p, q, r, K3());
+  CGAL::internal::orientation(q, r, p, K3());
+  CGAL::internal::orientation(r, q, p, K3());
 
   // Then with some perturbation.
   perturb(r, 1.0/(1<<25)/(1<<20)); // 2^-45
 
-  CGAL::CGALi::orientation(p, q, r, K3());
-  CGAL::CGALi::orientation(q, r, p, K3());
-  CGAL::CGALi::orientation(r, q, p, K3());
+  CGAL::internal::orientation(p, q, r, K3());
+  CGAL::internal::orientation(q, r, p, K3());
+  CGAL::internal::orientation(r, q, p, K3());
 }
 
 void
@@ -149,27 +149,27 @@ test_orientation_3()
   Point_3 r = my_rand_p3();
   Point_3 s = my_rand_p3();
 
-  CGAL::CGALi::orientation(p, q, r, s, K3());
-  CGAL::CGALi::orientation(q, r, s, p, K3());
-  CGAL::CGALi::orientation(r, s, p, q, K3());
-  CGAL::CGALi::orientation(s, p, q, r, K3());
+  CGAL::internal::orientation(p, q, r, s, K3());
+  CGAL::internal::orientation(q, r, s, p, K3());
+  CGAL::internal::orientation(r, s, p, q, K3());
+  CGAL::internal::orientation(s, p, q, r, K3());
 
   // Then with coplanar points (up to roundoff errors).
   //s = p + (p-q)*my_rand() + (p-r)*my_rand();
   s = pick_coplanar(p, q, r);
 
-  CGAL::CGALi::orientation(p, q, r, s, K3());
-  CGAL::CGALi::orientation(q, r, s, p, K3());
-  CGAL::CGALi::orientation(r, s, p, q, K3());
-  CGAL::CGALi::orientation(s, p, q, r, K3());
+  CGAL::internal::orientation(p, q, r, s, K3());
+  CGAL::internal::orientation(q, r, s, p, K3());
+  CGAL::internal::orientation(r, s, p, q, K3());
+  CGAL::internal::orientation(s, p, q, r, K3());
 
   // Then with some perturbation.
   perturb(s, 1.0/(1<<20)/(1<<20)); // 2^-40
 
-  CGAL::CGALi::orientation(p, q, r, s, K3());
-  CGAL::CGALi::orientation(q, r, s, p, K3());
-  CGAL::CGALi::orientation(r, s, p, q, K3());
-  CGAL::CGALi::orientation(s, p, q, r, K3());
+  CGAL::internal::orientation(p, q, r, s, K3());
+  CGAL::internal::orientation(q, r, s, p, K3());
+  CGAL::internal::orientation(r, s, p, q, K3());
+  CGAL::internal::orientation(s, p, q, r, K3());
 }
 
 void
@@ -181,10 +181,10 @@ test_side_of_oriented_circle_2()
   Point_2 r = my_rand_p2();
   Point_2 s = my_rand_p2();
 
-  CGAL::CGALi::side_of_oriented_circle(p, q, r, s, K3());
-  CGAL::CGALi::side_of_oriented_circle(q, r, s, p, K3());
-  CGAL::CGALi::side_of_oriented_circle(r, s, p, q, K3());
-  CGAL::CGALi::side_of_oriented_circle(s, p, q, r, K3());
+  CGAL::internal::side_of_oriented_circle(p, q, r, s, K3());
+  CGAL::internal::side_of_oriented_circle(q, r, s, p, K3());
+  CGAL::internal::side_of_oriented_circle(r, s, p, q, K3());
+  CGAL::internal::side_of_oriented_circle(s, p, q, r, K3());
 
   // Then with cocircular points (up to roundoff errors).
   p = circle_rand_p2();
@@ -192,18 +192,18 @@ test_side_of_oriented_circle_2()
   r = circle_rand_p2();
   s = circle_rand_p2();
 
-  CGAL::CGALi::side_of_oriented_circle(p, q, r, s, K3());
-  CGAL::CGALi::side_of_oriented_circle(q, r, s, p, K3());
-  CGAL::CGALi::side_of_oriented_circle(r, s, p, q, K3());
-  CGAL::CGALi::side_of_oriented_circle(s, p, q, r, K3());
+  CGAL::internal::side_of_oriented_circle(p, q, r, s, K3());
+  CGAL::internal::side_of_oriented_circle(q, r, s, p, K3());
+  CGAL::internal::side_of_oriented_circle(r, s, p, q, K3());
+  CGAL::internal::side_of_oriented_circle(s, p, q, r, K3());
 
   // Then with some perturbation.
   perturb(r, 1.0/(1<<25)/(1<<20)); // 2^-45
 
-  CGAL::CGALi::side_of_oriented_circle(p, q, r, s, K3());
-  CGAL::CGALi::side_of_oriented_circle(q, r, s, p, K3());
-  CGAL::CGALi::side_of_oriented_circle(r, s, p, q, K3());
-  CGAL::CGALi::side_of_oriented_circle(s, p, q, r, K3());
+  CGAL::internal::side_of_oriented_circle(p, q, r, s, K3());
+  CGAL::internal::side_of_oriented_circle(q, r, s, p, K3());
+  CGAL::internal::side_of_oriented_circle(r, s, p, q, K3());
+  CGAL::internal::side_of_oriented_circle(s, p, q, r, K3());
 }
 
 void
@@ -216,11 +216,11 @@ test_side_of_oriented_sphere_3()
   Point_3 s = my_rand_p3();
   Point_3 t = my_rand_p3();
 
-  CGAL::CGALi::side_of_oriented_sphere(p, q, r, s, t, K3());
-  CGAL::CGALi::side_of_oriented_sphere(q, r, s, t, p, K3());
-  CGAL::CGALi::side_of_oriented_sphere(r, s, t, p, q, K3());
-  CGAL::CGALi::side_of_oriented_sphere(s, t, p, q, r, K3());
-  CGAL::CGALi::side_of_oriented_sphere(t, s, p, q, r, K3());
+  CGAL::internal::side_of_oriented_sphere(p, q, r, s, t, K3());
+  CGAL::internal::side_of_oriented_sphere(q, r, s, t, p, K3());
+  CGAL::internal::side_of_oriented_sphere(r, s, t, p, q, K3());
+  CGAL::internal::side_of_oriented_sphere(s, t, p, q, r, K3());
+  CGAL::internal::side_of_oriented_sphere(t, s, p, q, r, K3());
 
   // Then with cospherical points (up to roundoff errors).
   p = sphere_rand_p3();
@@ -229,20 +229,20 @@ test_side_of_oriented_sphere_3()
   s = sphere_rand_p3();
   t = sphere_rand_p3();
 
-  CGAL::CGALi::side_of_oriented_sphere(p, q, r, s, t, K3());
-  CGAL::CGALi::side_of_oriented_sphere(q, r, s, t, p, K3());
-  CGAL::CGALi::side_of_oriented_sphere(r, s, t, p, q, K3());
-  CGAL::CGALi::side_of_oriented_sphere(s, t, p, q, r, K3());
-  CGAL::CGALi::side_of_oriented_sphere(t, s, p, q, r, K3());
+  CGAL::internal::side_of_oriented_sphere(p, q, r, s, t, K3());
+  CGAL::internal::side_of_oriented_sphere(q, r, s, t, p, K3());
+  CGAL::internal::side_of_oriented_sphere(r, s, t, p, q, K3());
+  CGAL::internal::side_of_oriented_sphere(s, t, p, q, r, K3());
+  CGAL::internal::side_of_oriented_sphere(t, s, p, q, r, K3());
 
   // Then with some perturbation.
   perturb(r, 1.0/(1<<25)/(1<<20)); // 2^-45
 
-  CGAL::CGALi::side_of_oriented_sphere(p, q, r, s, t, K3());
-  CGAL::CGALi::side_of_oriented_sphere(q, r, s, t, p, K3());
-  CGAL::CGALi::side_of_oriented_sphere(r, s, t, p, q, K3());
-  CGAL::CGALi::side_of_oriented_sphere(s, t, p, q, r, K3());
-  CGAL::CGALi::side_of_oriented_sphere(t, s, p, q, r, K3());
+  CGAL::internal::side_of_oriented_sphere(p, q, r, s, t, K3());
+  CGAL::internal::side_of_oriented_sphere(q, r, s, t, p, K3());
+  CGAL::internal::side_of_oriented_sphere(r, s, t, p, q, K3());
+  CGAL::internal::side_of_oriented_sphere(s, t, p, q, r, K3());
+  CGAL::internal::side_of_oriented_sphere(t, s, p, q, r, K3());
 }
 
 void compute_epsilons()

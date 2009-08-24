@@ -42,7 +42,7 @@
 
 namespace CGAL {
 
-namespace CGALi{
+namespace internal{
 template <class NT> Polynomial<NT> gcd_utcf_UFD(Polynomial<NT>,Polynomial<NT>);
 
 
@@ -136,10 +136,10 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
                 prime_index++;
 		if(prime_index >= 2000){
                     std::cerr<<"primes in the array exhausted"<<std::endl;
-                    current_prime = CGALi::get_next_lower_prime(current_prime);
+                    current_prime = internal::get_next_lower_prime(current_prime);
                 }
                 else{
-                    current_prime = CGALi::primes[prime_index];
+                    current_prime = internal::primes[prime_index];
                 }
                 CGAL::Residue::set_current_prime(current_prime);
 #ifdef CGAL_MODULAR_GCD_TIMER
@@ -217,7 +217,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
 #endif
 //            chinese_remainder(q,Gs ,p,inv_map(mG_),pq,Gs);             
 //            cached_extended_euclidean_algorithm(q,p,s,t);
-            CGALi::Cached_extended_euclidean_algorithm
+            internal::Cached_extended_euclidean_algorithm
               <typename CRT::Scalar_type, 1> ceea;
             ceea(q,p,s,t);
             pq =p*q;
@@ -272,7 +272,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
     
 }
 
-}  // namespace CGALi
+}  // namespace internal
 
 }  // namespace CGAL
 

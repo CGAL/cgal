@@ -47,7 +47,7 @@ linear_least_squares_fitting_2(InputIterator first,
 															 const Kernel& kernel)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  return CGALi::linear_least_squares_fitting_2(first, beyond, line,
+  return internal::linear_least_squares_fitting_2(first, beyond, line,
                                                centroid,(Value_type*)NULL,kernel,tag);
 }
 

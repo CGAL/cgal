@@ -20,7 +20,7 @@
 #ifndef CGAL_TESTSUITE_USE_H
 #define CGAL_TESTSUITE_USE_H
 
-namespace CGAL { namespace CGALi {
+namespace CGAL { namespace internal {
 
 template < typename T > inline
 void use(const T&) {}
@@ -29,6 +29,6 @@ void use(const T&) {}
 
 // CGAL_USE() is a macro which aims at removing "variable is unused" warnings.
 
-#define CGAL_USE(x) ::CGAL::CGALi::use(x)
+#define CGAL_USE(x) ::CGAL::internal::use(x)
 
 #endif // CGAL_TESTSUITE_USE_H

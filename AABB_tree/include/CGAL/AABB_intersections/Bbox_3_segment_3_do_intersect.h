@@ -28,7 +28,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
   template <class K>
   bool do_intersect(const typename K::Segment_3& segment, 
@@ -89,20 +89,20 @@ namespace CGALi {
     return true;
   }
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 bool do_intersect(const CGAL::Segment_3<K>& segment, 
 		  const CGAL::Bbox_3& bbox)
 {
-  return CGALi::do_intersect(segment, bbox, K());
+  return internal::do_intersect(segment, bbox, K());
 }
 
 template <class K>
 bool do_intersect(const CGAL::Bbox_3& bbox, 
 		  const CGAL::Segment_3<K>& segment)
 {
-  return CGALi::do_intersect(segment, bbox, K());
+  return internal::do_intersect(segment, bbox, K());
 }
 
 CGAL_END_NAMESPACE

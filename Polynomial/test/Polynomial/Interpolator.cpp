@@ -35,7 +35,7 @@ void test_interpolator(){
         }
 
         
-        typedef CGAL::CGALi::Interpolator<Polynomial_d> Interpolator_d;
+        typedef CGAL::internal::Interpolator<Polynomial_d> Interpolator_d;
         Interpolator_d interpolator_1(points.begin(),points.end());
         assert(F == interpolator_1.get_interpolant());
         

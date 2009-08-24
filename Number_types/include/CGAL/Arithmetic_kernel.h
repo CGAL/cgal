@@ -67,7 +67,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 class Arithmetic_kernel_base{
 public:
@@ -85,7 +85,7 @@ public:
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The LEDA set of exact number types
  */
-class LEDA_arithmetic_kernel : public CGALi::Arithmetic_kernel_base {
+class LEDA_arithmetic_kernel : public internal::Arithmetic_kernel_base {
 public:
     //! exact integers
     typedef leda_integer Integer;
@@ -107,7 +107,7 @@ public:
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The CORE set of exact number types
  */
-class CORE_arithmetic_kernel : public CGALi::Arithmetic_kernel_base {
+class CORE_arithmetic_kernel : public internal::Arithmetic_kernel_base {
 public:
     //! exact integers
     typedef CORE::BigInt Integer;
@@ -128,7 +128,7 @@ public:
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The GMP set of exact number types
  */
-class GMP_arithmetic_kernel : public CGALi::Arithmetic_kernel_base {
+class GMP_arithmetic_kernel : public internal::Arithmetic_kernel_base {
 public:
     //! exact integers
     typedef CGAL::Gmpz Integer;
@@ -147,7 +147,7 @@ public:
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The GMP set of exact number types
  */
-class GMPXX_arithmetic_kernel : public CGALi::Arithmetic_kernel_base {
+class GMPXX_arithmetic_kernel : public internal::Arithmetic_kernel_base {
 public:
     //! exact integers
     typedef mpz_class Integer;

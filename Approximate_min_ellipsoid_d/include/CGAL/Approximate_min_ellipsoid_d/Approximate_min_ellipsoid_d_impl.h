@@ -159,7 +159,7 @@ namespace CGAL {
     
     std::pair<Vector_2, Vector_2> eigenvectors; // Note: not neces. normalized.
     std::pair<double, double>     eigenvalues;  // Note: sorted descendent.
-    CGALi::eigen_symmetric_2<K>(matrix, eigenvectors, eigenvalues);
+    internal::eigen_symmetric_2<K>(matrix, eigenvectors, eigenvalues);
     
     // normalize eigenvectors:
     double l1=1.0/std::sqrt(eigenvectors.first.x()*eigenvectors.first.x()+
@@ -200,7 +200,7 @@ namespace CGAL {
     
     double eigenvectors[3 * 3]; // Note: not necessarily normalized.
     double eigenvalues[3];      // Note: sorted descendent.
-    CGALi::eigen_symmetric<double>(matrix, 3, eigenvectors, eigenvalues);
+    internal::eigen_symmetric<double>(matrix, 3, eigenvectors, eigenvalues);
     
     // normalize eigenvectors:
     double l1 = 1.0/std::sqrt(eigenvectors[0] * eigenvectors[0]+  // x^2

@@ -53,7 +53,7 @@ namespace CGAL {
     if(e1 == e2) {
       if(tangent<AK>(e1,e3)) {
         Polynomial_1_3 p = plane_from_2_spheres<AK>(e1,e3);
-        return CGALi::solve_tangent<AK>(p,e1,res);
+        return internal::solve_tangent<AK>(p,e1,res);
       }
       CGAL_kernel_precondition(!(intersect<AK>(e1,e3)));
       return res;
@@ -61,7 +61,7 @@ namespace CGAL {
     if((e1 == e3) || (e2 == e3)) {
       if(tangent<AK>(e1,e2)) {
         Polynomial_1_3 p = plane_from_2_spheres<AK>(e1,e2);
-        return CGALi::solve_tangent<AK>(p,e1,res);
+        return internal::solve_tangent<AK>(p,e1,res);
       }
       CGAL_kernel_precondition(!(intersect<AK>(e1,e2)));
       return res;

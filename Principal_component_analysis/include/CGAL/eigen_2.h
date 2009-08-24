@@ -23,7 +23,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
   // extract eigenvalues and eigenvectors from a 2x2 symmetric
   // positive definite matrix. 
@@ -110,7 +110,7 @@ namespace CGALi {
       } // end generic case
     } // end non-degenerate case
   } // end eigen_symmetric_2
-} // end namespace CGALi
+} // end namespace internal
 
 CGAL_END_NAMESPACE
 

@@ -293,7 +293,7 @@ namespace CGAL {
     return solve<AK>(p,s,res);
   }
 
-  namespace CGALi {
+  namespace internal {
 
     template < class AK, class OutputIterator >
     inline 
@@ -344,7 +344,7 @@ namespace CGAL {
     // the only case that remains is a plane tangent to a sphere
     if(same_solutions<RT>(e1,e2)) {
       // they are tangent
-      return CGALi::solve_tangent<AK>(e1,e3,res);
+      return internal::solve_tangent<AK>(e1,e3,res);
     }
     if(!intersect<AK>(e1,e2)) return res;
     Polynomials_for_line_3 pl = line_from_2_planes<AK>(e1,e2);
@@ -378,7 +378,7 @@ namespace CGAL {
     // The solve can only be points or nothing
     if(e1 == e2) {
       if(tangent<AK>(e3,e1)) {
-        return CGALi::solve_tangent<AK>(e3,e1,res);
+        return internal::solve_tangent<AK>(e3,e1,res);
       }
       CGAL_kernel_precondition(!(intersect<AK>(e3,e1)));
       return res;

@@ -38,7 +38,7 @@ inline
 Angle
 angle(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
-  return CGALi::angle(p, q, r, K());
+  return internal::angle(p, q, r, K());
 }
 
 template < typename K >
@@ -47,7 +47,7 @@ typename K::Boolean
 are_negative_oriented(const Point_3<K>& p, const Point_3<K>& q,
                       const Point_3<K>& r, const Point_3<K>& s)
 {
-  return CGALi::are_negative_oriented(p, q, r, s, K());
+  return internal::are_negative_oriented(p, q, r, s, K());
 }
 
 template < class K >
@@ -57,7 +57,7 @@ are_ordered_along_line(const Point_3<K> &p,
                        const Point_3<K> &q,
                        const Point_3<K> &r)
 {
-  return CGALi::are_ordered_along_line(p, q, r, K());
+  return internal::are_ordered_along_line(p, q, r, K());
 }
 
 template < typename K >
@@ -66,7 +66,7 @@ typename K::Boolean
 are_positive_oriented(const Point_3<K>& p, const Point_3<K>& q,
                       const Point_3<K>& r, const Point_3<K>& s)
 {
-  return CGALi::are_positive_oriented(p, q, r, s, K());
+  return internal::are_positive_oriented(p, q, r, s, K());
 }
 
 template < class K >
@@ -76,7 +76,7 @@ are_strictly_ordered_along_line(const Point_3<K> &p,
                                 const Point_3<K> &q,
                                 const Point_3<K> &r)
 {
-  return CGALi::are_strictly_ordered_along_line(p, q, r, K());
+  return internal::are_strictly_ordered_along_line(p, q, r, K());
 }
 
 template < class K >
@@ -85,7 +85,7 @@ typename K::Point_3
 barycenter(const Point_3<K> &p1, const typename K::FT& w1,
            const Point_3<K> &p2)
 {
-  return CGALi::barycenter(p1, w1, p2, K());
+  return internal::barycenter(p1, w1, p2, K());
 }
 
 template < class K >
@@ -94,7 +94,7 @@ typename K::Point_3
 barycenter(const Point_3<K> &p1, const typename K::FT& w1,
            const Point_3<K> &p2, const typename K::FT& w2)
 {
-  return CGALi::barycenter(p1, w1, p2, w2, K());
+  return internal::barycenter(p1, w1, p2, w2, K());
 }
 
 template < class K >
@@ -104,7 +104,7 @@ barycenter(const Point_3<K> &p1, const typename K::FT& w1,
            const Point_3<K> &p2, const typename K::FT& w2,
            const Point_3<K> &p3)
 {
-  return CGALi::barycenter(p1, w1, p2, w2, p3, K());
+  return internal::barycenter(p1, w1, p2, w2, p3, K());
 }
 
 template < class K >
@@ -114,7 +114,7 @@ barycenter(const Point_3<K> &p1, const typename K::FT& w1,
            const Point_3<K> &p2, const typename K::FT& w2,
            const Point_3<K> &p3, const typename K::FT& w3)
 {
-  return CGALi::barycenter(p1, w1, p2, w2, p3, w3, K());
+  return internal::barycenter(p1, w1, p2, w2, p3, w3, K());
 }
 
 template < class K >
@@ -125,7 +125,7 @@ barycenter(const Point_3<K> &p1, const typename K::FT& w1,
            const Point_3<K> &p3, const typename K::FT& w3,
            const Point_3<K> &p4)
 {
-  return CGALi::barycenter(p1, w1, p2, w2, p3, w3, p4, K());
+  return internal::barycenter(p1, w1, p2, w2, p3, w3, p4, K());
 }
 
 template < class K >
@@ -136,7 +136,7 @@ barycenter(const Point_3<K> &p1, const typename K::FT& w1,
            const Point_3<K> &p3, const typename K::FT& w3,
            const Point_3<K> &p4, const typename K::FT& w4)
 {
-  return CGALi::barycenter(p1, w1, p2, w2, p3, w3, p4, w4, K());
+  return internal::barycenter(p1, w1, p2, w2, p3, w3, p4, w4, K());
 }
 
 template <typename K>
@@ -144,7 +144,7 @@ inline
 typename K::Plane_3
 bisector(const Point_3<K> &p, const Point_3<K> &q)
 {
-  return CGALi::bisector(p, q, K());
+  return internal::bisector(p, q, K());
 }
 
 template <typename K>
@@ -152,7 +152,7 @@ inline
 typename K::Plane_3
 bisector(const Plane_3<K> &h1, const Plane_3<K> &h2)
 {
-  return CGALi::bisector(h1, h2, K());
+  return internal::bisector(h1, h2, K());
 }
 
 template < class K >
@@ -161,7 +161,7 @@ Point_3<K>
 centroid(const Point_3<K> &p, const Point_3<K> &q,
          const Point_3<K> &r, const Point_3<K> &s)
 {
-  return CGALi::centroid(p, q, r, s, K());
+  return internal::centroid(p, q, r, s, K());
 }
 
 template < class K >
@@ -169,7 +169,7 @@ inline
 Point_3<K>
 centroid(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
-  return CGALi::centroid(p, q, r, K());
+  return internal::centroid(p, q, r, K());
 }
 
 template < class K >
@@ -177,7 +177,7 @@ inline
 Point_3<K>
 centroid(const Tetrahedron_3<K> &t)
 {
-  return CGALi::centroid(t, K());
+  return internal::centroid(t, K());
 }
 
 template < class K >
@@ -185,7 +185,7 @@ inline
 Point_3<K>
 centroid(const Triangle_3<K> &t)
 {
-  return CGALi::centroid(t, K());
+  return internal::centroid(t, K());
 }
 
 template < class K >
@@ -194,7 +194,7 @@ typename K::Point_3
 circumcenter(const Point_3<K> &p,
              const Point_3<K> &q)
 {
-  return CGALi::circumcenter(p, q, K());
+  return internal::circumcenter(p, q, K());
 }
 
 template < class K >
@@ -204,7 +204,7 @@ circumcenter(const Point_3<K> &p,
              const Point_3<K> &q,
              const Point_3<K> &r)
 {
-  return CGALi::circumcenter(p, q, r, K());
+  return internal::circumcenter(p, q, r, K());
 }
 
 template < class K >
@@ -213,7 +213,7 @@ typename K::Point_3
 circumcenter(const Point_3<K> &p, const Point_3<K> &q,
              const Point_3<K> &r, const Point_3<K> &s)
 {
-  return CGALi::circumcenter(p, q, r, s, K());
+  return internal::circumcenter(p, q, r, s, K());
 }
 
 template < class K >
@@ -221,7 +221,7 @@ inline
 typename K::Point_3
 circumcenter(const Tetrahedron_3<K> &t)
 {
-  return CGALi::circumcenter(t, K());
+  return internal::circumcenter(t, K());
 }
 
 template < class K >
@@ -229,7 +229,7 @@ inline
 typename K::Point_3
 circumcenter(const Triangle_3<K> &t)
 {
-  return CGALi::circumcenter(t, K());
+  return internal::circumcenter(t, K());
 }
 
 template < class K >
@@ -237,7 +237,7 @@ inline
 typename K::Boolean
 collinear(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
-  return CGALi::collinear(p, q, r, K());
+  return internal::collinear(p, q, r, K());
 }
 
 template < class K >
@@ -247,7 +247,7 @@ collinear_are_ordered_along_line(const Point_3<K> &p,
                                  const Point_3<K> &q,
                                  const Point_3<K> &r)
 {
-  return CGALi::collinear_are_ordered_along_line(p, q, r, K());
+  return internal::collinear_are_ordered_along_line(p, q, r, K());
 }
 
 template < class K >
@@ -257,7 +257,7 @@ collinear_are_strictly_ordered_along_line(const Point_3<K> &p,
                                           const Point_3<K> &q,
                                           const Point_3<K> &r)
 {
-  return CGALi::collinear_are_strictly_ordered_along_line(p, q, r, K());
+  return internal::collinear_are_strictly_ordered_along_line(p, q, r, K());
 }
 
 template < class K >
@@ -267,7 +267,7 @@ compare_distance_to_point(const Point_3<K> &p,
                           const Point_3<K> &q,
                           const Point_3<K> &r)
 {
-  return CGALi::compare_distance_to_point(p, q, r, K());
+  return internal::compare_distance_to_point(p, q, r, K());
 }
 
 template < class K >
@@ -277,7 +277,7 @@ compare_squared_distance(const Point_3<K> &p,
                          const Point_3<K> &q,
                          const typename K::FT &d2)
 {
-  return CGALi::compare_squared_distance(p, q, d2, K());
+  return internal::compare_squared_distance(p, q, d2, K());
 }
 
 template < class K >
@@ -287,7 +287,7 @@ compare_squared_radius(const Point_3<K> &p,
 		       const Point_3<K> &q,
 		       const typename K::FT &sr)
 {
-  return CGALi::compare_squared_radius(p, q, sr, K());
+  return internal::compare_squared_radius(p, q, sr, K());
 }
 
 template < class K >
@@ -298,7 +298,7 @@ compare_squared_radius(const Point_3<K> &p,
 		       const Point_3<K> &r,
 		       const typename K::FT &sr)
 {
-  return CGALi::compare_squared_radius(p, q, r, sr, K());
+  return internal::compare_squared_radius(p, q, r, sr, K());
 }
 
 template < class K >
@@ -310,7 +310,7 @@ compare_squared_radius(const Point_3<K> &p,
 		       const Point_3<K> &s,
 		       const typename K::FT &sr)
 {
-  return CGALi::compare_squared_radius(p, q, r, s, sr, K());
+  return internal::compare_squared_radius(p, q, r, s, sr, K());
 }
 
 template < class K >
@@ -319,7 +319,7 @@ typename K::Comparison_result
 compare_lexicographically_xyz(const Point_3<K> &p,
                               const Point_3<K> &q)
 {
-  return CGALi::compare_lexicographically_xyz(p, q, K());
+  return internal::compare_lexicographically_xyz(p, q, K());
 }
 
 template < class K >
@@ -329,7 +329,7 @@ compare_signed_distance_to_plane(const Plane_3<K> &h,
 				 const Point_3<K> &p,
 				 const Point_3<K> &q)
 { 
-  return CGALi::compare_signed_distance_to_plane(h, p, q, K());
+  return internal::compare_signed_distance_to_plane(h, p, q, K());
 }
 
 template < class K >
@@ -341,7 +341,7 @@ compare_signed_distance_to_plane(const Point_3<K> &hp,
 				 const Point_3<K> &p,
 				 const Point_3<K> &q)
 { 
-  return CGALi::compare_signed_distance_to_plane(hp, hq, hr, p, q, K());
+  return internal::compare_signed_distance_to_plane(hp, hq, hr, p, q, K());
 }
 
 template < class K >
@@ -349,7 +349,7 @@ inline
 typename K::Comparison_result
 compare_x(const Point_3<K> &p, const Point_3<K> &q)
 { 
-  return CGALi::compare_x(p, q, K());
+  return internal::compare_x(p, q, K());
 }
 
 template < class K >
@@ -357,7 +357,7 @@ inline
 typename K::Comparison_result
 compare_y(const Point_3<K> &p, const Point_3<K> &q)
 { 
-  return CGALi::compare_y(p, q, K());
+  return internal::compare_y(p, q, K());
 }
 
 template < class K >
@@ -365,7 +365,7 @@ inline
 typename K::Comparison_result
 compare_z(const Point_3<K> &p, const Point_3<K> &q)
 { 
-  return CGALi::compare_z(p, q, K());
+  return internal::compare_z(p, q, K());
 }
 
 template < class K >
@@ -373,7 +373,7 @@ inline
 typename K::Comparison_result
 compare_xyz(const Point_3<K> &p, const Point_3<K> &q)
 { 
-  return CGALi::compare_xyz(p, q, K());
+  return internal::compare_xyz(p, q, K());
 }
 
 template < class K >
@@ -382,7 +382,7 @@ typename K::Boolean
 coplanar(const Point_3<K> &p, const Point_3<K> &q,
          const Point_3<K> &r, const Point_3<K> &s)
 {
-  return CGALi::coplanar(p, q, r, s, K());
+  return internal::coplanar(p, q, r, s, K());
 }
 
 
@@ -394,7 +394,7 @@ coplanar_orientation(const Point_3<K> &p,
                      const Point_3<K> &r,
                      const Point_3<K> &s)
 {
-  return CGALi::coplanar_orientation(p, q, r, s, K());
+  return internal::coplanar_orientation(p, q, r, s, K());
 }
 
 template < class K >
@@ -404,7 +404,7 @@ coplanar_orientation(const Point_3<K> &p,
                      const Point_3<K> &q,
                      const Point_3<K> &r)
 {
-  return CGALi::coplanar_orientation(p, q, r, K());
+  return internal::coplanar_orientation(p, q, r, K());
 }
 
 template < class K >
@@ -415,7 +415,7 @@ coplanar_side_of_bounded_circle(const Point_3<K> &p,
                                 const Point_3<K> &r,
                                 const Point_3<K> &t)
 {
-  return CGALi::coplanar_side_of_bounded_circle(p, q, r, t, K());
+  return internal::coplanar_side_of_bounded_circle(p, q, r, t, K());
 }
 
 template < class K >
@@ -423,7 +423,7 @@ inline
 typename K::Vector_3
 cross_product(const Vector_3<K> &v, const Vector_3<K> &w)
 {
-  return CGALi::cross_product(v, w, K());
+  return internal::cross_product(v, w, K());
 }
 
 template < class K >
@@ -432,7 +432,7 @@ typename K::FT
 determinant(const Vector_3<K> &v0, const Vector_3<K> &v1,
             const Vector_3<K> &v2)
 {
-  return CGALi::determinant(v0, v1, v2, K());
+  return internal::determinant(v0, v1, v2, K());
 }
 
 template < class K >
@@ -440,7 +440,7 @@ inline
 typename K::Line_3
 equidistant_line(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
-  return CGALi::equidistant_line(p, q, r, K());
+  return internal::equidistant_line(p, q, r, K());
 }
 
 template < class K >
@@ -450,7 +450,7 @@ has_larger_distance_to_point(const Point_3<K> &p,
 			     const Point_3<K> &q,
 			     const Point_3<K> &r)
 {
-  return CGALi::has_larger_distance_to_point(p, q, r, K());
+  return internal::has_larger_distance_to_point(p, q, r, K());
 }
 
 template < class K >
@@ -462,7 +462,7 @@ has_larger_signed_distance_to_plane(const Point_3<K> &hp,
 				    const Point_3<K> &p,
 				    const Point_3<K> &q)
 { 
-  return CGALi::has_larger_signed_distance_to_plane(hp, hq, hr, p, q, K());
+  return internal::has_larger_signed_distance_to_plane(hp, hq, hr, p, q, K());
 }
 
 template < class K >
@@ -472,7 +472,7 @@ has_larger_signed_distance_to_plane(const Plane_3<K> &h,
 				    const Point_3<K> &p,
 				    const Point_3<K> &q)
 { 
-  return CGALi::has_larger_signed_distance_to_plane(h, p, q, K());
+  return internal::has_larger_signed_distance_to_plane(h, p, q, K());
 }
 
 template < class K >
@@ -482,7 +482,7 @@ has_smaller_distance_to_point(const Point_3<K> &p,
                               const Point_3<K> &q,
                               const Point_3<K> &r)
 {
-  return CGALi::has_smaller_distance_to_point(p, q, r, K());
+  return internal::has_smaller_distance_to_point(p, q, r, K());
 }
 
 template < class K >
@@ -494,7 +494,7 @@ has_smaller_signed_distance_to_plane(const Point_3<K> &hp,
                                      const Point_3<K> &p,
                                      const Point_3<K> &q)
 { 
-  return CGALi::has_smaller_signed_distance_to_plane(hp, hq, hr, p, q, K());
+  return internal::has_smaller_signed_distance_to_plane(hp, hq, hr, p, q, K());
 }
 
 template < class K >
@@ -504,7 +504,7 @@ has_smaller_signed_distance_to_plane(const Plane_3<K> &h,
                                      const Point_3<K> &p,
                                      const Point_3<K> &q)
 { 
-  return CGALi::has_smaller_signed_distance_to_plane(h, p, q, K());
+  return internal::has_smaller_signed_distance_to_plane(h, p, q, K());
 }
 
 template < class K >
@@ -512,7 +512,7 @@ inline
 typename K::Boolean
 less_x(const Point_3<K> &p, const Point_3<K> &q)
 { 
-  return CGALi::less_x(p, q, K());
+  return internal::less_x(p, q, K());
 }
 
 template < class K >
@@ -520,7 +520,7 @@ inline
 typename K::Boolean
 less_y(const Point_3<K> &p, const Point_3<K> &q)
 { 
-  return CGALi::less_y(p, q, K());
+  return internal::less_y(p, q, K());
 }
 
 template < class K >
@@ -528,7 +528,7 @@ inline
 typename K::Boolean
 less_z(const Point_3<K> &p, const Point_3<K> &q)
 { 
-  return CGALi::less_z(p, q, K());
+  return internal::less_z(p, q, K());
 }
 
 template < class K >
@@ -536,7 +536,7 @@ inline
 typename K::Boolean
 lexicographically_xyz_smaller(const Point_3<K> &p, const Point_3<K> &q)
 {
-  return CGALi::lexicographically_xyz_smaller(p, q, K());
+  return internal::lexicographically_xyz_smaller(p, q, K());
 }
 
 template < class K >
@@ -545,7 +545,7 @@ typename K::Boolean
 lexicographically_xyz_smaller_or_equal(const Point_3<K> &p,
                                        const Point_3<K> &q)
 {
-  return CGALi::lexicographically_xyz_smaller_or_equal(p, q, K());
+  return internal::lexicographically_xyz_smaller_or_equal(p, q, K());
 }
 
 template < class K >
@@ -553,7 +553,7 @@ inline
 typename K::Point_3
 midpoint(const Point_3<K> &p, const Point_3<K> &q)
 {
-  return CGALi::midpoint(p, q, K());
+  return internal::midpoint(p, q, K());
 }
 
 template < class K >
@@ -561,7 +561,7 @@ inline
 typename K::Point_3
 max_vertex(const Iso_cuboid_3<K> &ic)
 {
-  return CGALi::max_vertex(ic, K());
+  return internal::max_vertex(ic, K());
 }
 
 template < class K >
@@ -569,7 +569,7 @@ inline
 typename K::Point_3
 min_vertex(const Iso_cuboid_3<K> &ic)
 {
-  return CGALi::min_vertex(ic, K());
+  return internal::min_vertex(ic, K());
 }
 
 template < class K >
@@ -577,7 +577,7 @@ inline
 typename K::Vector_3
 normal(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
-  return CGALi::normal(p, q, r, K());
+  return internal::normal(p, q, r, K());
 }
 
 // FIXME TODO : what to do with the operators ?
@@ -873,7 +873,7 @@ orientation(const Point_3<K> &p,
             const Point_3<K> &r,
             const Point_3<K> &s)
 {
-  return CGALi::orientation(p, q, r, s, K());
+  return internal::orientation(p, q, r, s, K());
 }
 
 template <class K >
@@ -881,7 +881,7 @@ inline
 typename K::Orientation
 orientation(const Vector_3<K> &u, const Vector_3<K> &v, const Vector_3<K> &w)
 {
-  return CGALi::orientation(u, v, w, K());
+  return internal::orientation(u, v, w, K());
 }
 
 template <class K >
@@ -891,7 +891,7 @@ orthogonal_vector(const Point_3<K>& p,
 		  const Point_3<K>& q,
 		  const Point_3<K>& r)
 {
-  return CGALi::orthogonal_vector(p, q, r, K());
+  return internal::orthogonal_vector(p, q, r, K());
 }
 
 template <class K >
@@ -899,7 +899,7 @@ inline
 typename K::Vector_3
 orthogonal_vector(const Plane_3<K>& p)
 {
-  return CGALi::orthogonal_vector(p, K());
+  return internal::orthogonal_vector(p, K());
 }
 
 // parallel() functions are in Kernel/global_functions.h
@@ -920,7 +920,7 @@ side_of_bounded_sphere(const Point_3<K> &p,
                        const Point_3<K> &q,
                        const Point_3<K> &test)
 {
-  return CGALi::side_of_bounded_sphere(p, q, test, K());
+  return internal::side_of_bounded_sphere(p, q, test, K());
 }
 
 template <class K >
@@ -931,7 +931,7 @@ side_of_bounded_sphere(const Point_3<K> &p,
                        const Point_3<K> &r,
                        const Point_3<K> &test)
 {
-  return CGALi::side_of_bounded_sphere(p, q, r, test, K());
+  return internal::side_of_bounded_sphere(p, q, r, test, K());
 }
 
 template <class K >
@@ -943,7 +943,7 @@ side_of_bounded_sphere(const Point_3<K> &p,
                        const Point_3<K> &s,
                        const Point_3<K> &test)
 {
-  return CGALi::side_of_bounded_sphere(p, q, r, s, test, K());
+  return internal::side_of_bounded_sphere(p, q, r, s, test, K());
 }
 
 template <class K >
@@ -955,7 +955,7 @@ side_of_oriented_sphere(const Point_3<K> &p,
                         const Point_3<K> &s,
                         const Point_3<K> &test)
 {
-  return CGALi::side_of_oriented_sphere(p, q, r, s, test, K());
+  return internal::side_of_oriented_sphere(p, q, r, s, test, K());
 }
 
 template <typename K>
@@ -963,7 +963,7 @@ inline
 typename K::FT
 squared_area(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
-  return CGALi::squared_area(p, q, r, K());
+  return internal::squared_area(p, q, r, K());
 }
 
 template < class K >
@@ -972,7 +972,7 @@ typename K::FT
 squared_radius(const Point_3<K> &p, const Point_3<K> &q,
 	       const Point_3<K> &r, const Point_3<K> &s)
 {
-  return CGALi::squared_radius(p, q, r, s, K());
+  return internal::squared_radius(p, q, r, s, K());
 }
 
 template < class K >
@@ -980,7 +980,7 @@ inline
 typename K::FT
 squared_radius(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
-  return CGALi::squared_radius(p, q, r, K());
+  return internal::squared_radius(p, q, r, K());
 }
 
 template < class K >
@@ -988,7 +988,7 @@ inline
 typename K::FT
 squared_radius(const Point_3<K> &p, const Point_3<K> &q)
 {
-  return CGALi::squared_radius(p, q, K());
+  return internal::squared_radius(p, q, K());
 }
 
 template < class K >
@@ -996,7 +996,7 @@ inline
 typename K::FT
 squared_radius(const Point_3<K> &p)
 {
-  return CGALi::squared_radius(p, K());
+  return internal::squared_radius(p, K());
 }
 
 template < class K >
@@ -1004,7 +1004,7 @@ inline
 typename K::Vector_3
 unit_normal(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
-  return CGALi::unit_normal(p, q, r, K());
+  return internal::unit_normal(p, q, r, K());
 }
 
 template < class K >
@@ -1013,7 +1013,7 @@ typename K::FT
 volume(const Point_3<K> &p, const Point_3<K> &q,
        const Point_3<K> &r, const Point_3<K> &s)
 {
-  return CGALi::volume(p, q, r, s, K());
+  return internal::volume(p, q, r, s, K());
 }
 
 template < class K >
@@ -1021,7 +1021,7 @@ inline
 typename K::Boolean
 x_equal(const Point_3<K> &p, const Point_3<K> &q)
 {
-  return CGALi::x_equal(p, q, K());
+  return internal::x_equal(p, q, K());
 }
 
 template < class K >
@@ -1029,7 +1029,7 @@ inline
 typename K::Boolean
 y_equal(const Point_3<K> &p, const Point_3<K> &q)
 {
-  return CGALi::y_equal(p, q, K());
+  return internal::y_equal(p, q, K());
 }
 
 template < class K >
@@ -1037,7 +1037,7 @@ inline
 typename K::Boolean
 z_equal(const Point_3<K> &p, const Point_3<K> &q)
 {
-  return CGALi::z_equal(p, q, K());
+  return internal::z_equal(p, q, K());
 }
 
 CGAL_END_NAMESPACE

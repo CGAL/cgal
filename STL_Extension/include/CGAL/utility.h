@@ -34,7 +34,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <int i, typename T>
 struct Tuple_get;
@@ -112,17 +112,17 @@ public:
   }
 
   template < int i >
-  typename CGALi::Tuple_get<i, Self>::result_type const &
+  typename internal::Tuple_get<i, Self>::result_type const &
   get() const
   {
-    return CGALi::Tuple_get<i, Self>::get(*this);
+    return internal::Tuple_get<i, Self>::get(*this);
   }
 
   template < int i >
-  typename CGALi::Tuple_get<i, Self>::result_type &
+  typename internal::Tuple_get<i, Self>::result_type &
   get()
   {
-    return CGALi::Tuple_get<i, Self>::get(*this);
+    return internal::Tuple_get<i, Self>::get(*this);
   }
 
 };
@@ -209,17 +209,17 @@ public:
   }
 
   template < int i >
-  typename CGALi::Tuple_get<i, Self>::result_type const &
+  typename internal::Tuple_get<i, Self>::result_type const &
   get() const
   {
-    return CGALi::Tuple_get<i, Self>::get(*this);
+    return internal::Tuple_get<i, Self>::get(*this);
   }
 
   template < int i >
-  typename CGALi::Tuple_get<i, Self>::result_type &
+  typename internal::Tuple_get<i, Self>::result_type &
   get()
   {
-    return CGALi::Tuple_get<i, Self>::get(*this);
+    return internal::Tuple_get<i, Self>::get(*this);
   }
 };
 

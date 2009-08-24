@@ -196,7 +196,7 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
-    { return CGALi::squared_distance(t1, t2, K()); }
+    { return internal::squared_distance(t1, t2, K()); }
   };
 
   template <typename K>
@@ -211,7 +211,7 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
-    { return CGALi::squared_distance(t1, t2, K()); }
+    { return internal::squared_distance(t1, t2, K()); }
 
     FT
     operator()( const Point_3& pt1, const Point_3& pt2) const
@@ -1853,7 +1853,7 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
-    { return CGALi::do_intersect(t1, t2, K()); }
+    { return internal::do_intersect(t1, t2, K()); }
   };
 
   template <typename K>
@@ -1866,7 +1866,7 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
-    { return CGALi::do_intersect(t1, t2, K()); }
+    { return internal::do_intersect(t1, t2, K()); }
   };
 
   template <typename K>
@@ -2342,7 +2342,7 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     Object_2
     operator()(const T1& t1, const T2& t2) const
-    { return CGALi::intersection(t1, t2, K()); }
+    { return internal::intersection(t1, t2, K()); }
   };
 
   template <typename K>
@@ -2357,11 +2357,11 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     Object_3
     operator()(const T1& t1, const T2& t2) const
-    { return CGALi::intersection(t1, t2, K() ); }
+    { return internal::intersection(t1, t2, K() ); }
 
     Object_3
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
-    { return CGALi::intersection(pl1, pl2, pl3, K() ); }
+    { return internal::intersection(pl1, pl2, pl3, K() ); }
   };
 
   template <typename K>

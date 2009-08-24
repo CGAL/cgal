@@ -34,7 +34,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
     template <class NT> inline
     bool
     may_have_common_factor_(
@@ -114,7 +114,7 @@ bool may_have_common_factor(const Polynomial<NT>& P,
     typedef Polynomial<NT> POLY;
     typedef Modular_traits<POLY> Mtr;
     typename Mtr::Is_modularizable is_modularizable;
-    return CGALi::may_have_common_factor_(P,Q,is_modularizable);   
+    return internal::may_have_common_factor_(P,Q,is_modularizable);   
 }
 
 /*! \ingroup CGAL_polynomial_utils
@@ -176,10 +176,10 @@ bool may_have_multiple_factor( const Polynomial<NT>& P ) {
     typedef Polynomial<NT> POLY;
     typedef Modular_traits<POLY> Mtr;
     typename Mtr::Is_modularizable is_modularizable;
-    return CGALi::may_have_multiple_factor_(P, is_modularizable);       
+    return internal::may_have_multiple_factor_(P, is_modularizable);       
 }
 
-} //namespace CGALi
+} //namespace internal
 CGAL_END_NAMESPACE
 
 #endif //CGAL_MODULAR_FILTER_H

@@ -26,7 +26,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 // Algebraic structure traits
 template< class Type, class Algebraic_type >
@@ -193,12 +193,12 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
   // Nothing new
 };
 
-} // namespace CGALi
+} // namespace internal
 
 
 template< class COEFF_, class ROOT_>
 class Algebraic_structure_traits< Sqrt_extension< COEFF_, ROOT_ > >
-    : public CGALi::Sqrt_extension_algebraic_structure_traits_base<
+    : public internal::Sqrt_extension_algebraic_structure_traits_base<
       Sqrt_extension< COEFF_, ROOT_ >,
       typename Algebraic_structure_traits< COEFF_ >::Algebraic_category > {
 public:

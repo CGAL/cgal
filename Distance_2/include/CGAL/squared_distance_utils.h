@@ -30,7 +30,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 bool is_null(const  typename K::Vector_2 &v, const K&)
@@ -302,7 +302,7 @@ same_direction(const typename K::Vector_2 &u,
 }
 
 
-} // namespace CGALi
+} // namespace internal
 
 CGAL_END_NAMESPACE
 

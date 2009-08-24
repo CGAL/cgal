@@ -41,7 +41,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 //:::::::::: 2D Objects :::::::::::::::::::
 
@@ -793,7 +793,7 @@ centroid(InputIterator begin,
   return ORIGIN + v / sum_volumes;
 } // end centroid of a 3D Tetrahedron set with 3D tag
 
-} // namespace CGALi
+} // namespace internal
 
 
 // We have 4 documented overloads of centroid():
@@ -803,7 +803,7 @@ centroid(InputIterator begin,
 // centroid(begin, end, kernel, dim_tag)
 
 // One issue is that it is difficult to separate the 2 overloads with 3 arguments.
-// So we have to resort to an internal CGALi dispatcher hack.
+// So we have to resort to an internal internal dispatcher hack.
 // ( Note : Dynamic_dimension_tag is not yet supported, but shouldn't be too hard. )
 
 // computes the centroid of a set of kernel objects
@@ -819,10 +819,10 @@ centroid(InputIterator begin,
          Dim_tag tag)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  return CGALi::centroid(begin, end, k,(Value_type*) NULL, tag);
+  return internal::centroid(begin, end, k,(Value_type*) NULL, tag);
 }
 
-namespace CGALi {
+namespace internal {
 
 // computes the centroid of a set of kernel objects
 // takes an iterator range over kernel objects, and a feature dimension tag.
@@ -873,16 +873,16 @@ struct Dispatch_centroid <InputIterator, Dynamic_dimension_tag>
   }
 };
 
-} // namespace CGALi
+} // namespace internal
 
 
 // The 3 argument overload calls the internal dispatcher.
 template < typename InputIterator, typename Kernel_or_dim >
 inline
-typename CGALi::Dispatch_centroid<InputIterator, Kernel_or_dim>::result_type
+typename internal::Dispatch_centroid<InputIterator, Kernel_or_dim>::result_type
 centroid(InputIterator begin, InputIterator end, const Kernel_or_dim& k_or_d)
 {
-  CGALi::Dispatch_centroid<InputIterator, Kernel_or_dim> dispatch_centroid;
+  internal::Dispatch_centroid<InputIterator, Kernel_or_dim> dispatch_centroid;
   return dispatch_centroid(begin, end, k_or_d);
 }
 

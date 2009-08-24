@@ -26,7 +26,7 @@ namespace CGAL {
 
 namespace Qt {
 
-  namespace CGALi
+  namespace internal
   {
     template<class Piecewise_set> 
     struct Piecewise_set_traits 
@@ -46,12 +46,12 @@ namespace Qt {
   }
 
 template <class Piecewise_set_, class Draw_piece_>
-class Piecewise_set_graphics_item : public Piecewise_region_graphics_item< typename CGALi::Piecewise_set_traits<Piecewise_set_>::Region, Draw_piece_ > 
+class Piecewise_set_graphics_item : public Piecewise_region_graphics_item< typename internal::Piecewise_set_traits<Piecewise_set_>::Region, Draw_piece_ > 
 {
   typedef Piecewise_set_ Piecewise_set ;
   typedef Draw_piece_    Draw_piece ;
   
-  typedef typename CGALi::Piecewise_set_traits<Piecewise_set_>::Region Region ;
+  typedef typename internal::Piecewise_set_traits<Piecewise_set_>::Region Region ;
   
   typedef Piecewise_region_graphics_item<Region, Draw_piece> Base ;
  

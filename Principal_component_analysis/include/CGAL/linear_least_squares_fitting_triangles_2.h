@@ -34,7 +34,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 // Fits a line to a 2D triangle set.
 // Returns a fitting quality (1 - lambda_min/lambda_max):
 //  1 is best  (zero variance orthogonally to the fitting line);
@@ -218,7 +218,7 @@ linear_least_squares_fitting_2(InputIterator first,
   
 } // end linear_least_squares_fitting_2 for triangle set with 0D tag
 
-} // end namespace CGALi
+} // end namespace internal
 
 CGAL_END_NAMESPACE
 

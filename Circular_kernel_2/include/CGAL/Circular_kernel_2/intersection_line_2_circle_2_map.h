@@ -30,7 +30,7 @@
 #include <CGAL/Object.h>
 
 namespace CGAL {
-namespace CGALi {
+namespace internal {
 
 class Intersection_line_2_circle_2_map {
 

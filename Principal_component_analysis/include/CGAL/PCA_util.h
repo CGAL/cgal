@@ -26,7 +26,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 // Initialize a matrix in n dimension by an array or numbers
 template <typename K>
@@ -765,7 +765,7 @@ fitting_line_3(const typename K::FT covariance[6], // covariance matrix
   } 
 }
 
-} // end namespace CGALi
+} // end namespace internal
 
 CGAL_END_NAMESPACE
 

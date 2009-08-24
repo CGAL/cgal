@@ -33,7 +33,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 // Fits a line to a 2D segment set.
 // Returns a fitting quality (1 - lambda_min/lambda_max):
 //  1 is best  (zero variance orthogonally to the fitting line);
@@ -116,7 +116,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // eigen vectors are sorted in accordance.
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;
-  //  CGALi::eigen_symmetric_2<K>(covariance, eigen_vectors, eigen_values);
+  //  internal::eigen_symmetric_2<K>(covariance, eigen_vectors, eigen_values);
     FT eigen_vectors1[4];
     FT eigen_values1[2];
     eigen_symmetric<FT>(covariance,2, eigen_vectors1, eigen_values1);
@@ -169,7 +169,7 @@ linear_least_squares_fitting_2(InputIterator first,
 
 } // end linear_least_squares_fitting_2 for segment set with 1D tag
 
-} // end namespace CGALi
+} // end namespace internal
 
 CGAL_END_NAMESPACE
 

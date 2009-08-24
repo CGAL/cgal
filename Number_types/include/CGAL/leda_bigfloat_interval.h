@@ -46,7 +46,7 @@
 #include <CGAL/Bigfloat_interval_traits.h>
 
 CGAL_BEGIN_NAMESPACE
-namespace CGALi {
+namespace internal {
 
 struct Rounding_for_leda_bigfloat {
 private:  typedef leda::bigfloat T;
@@ -138,7 +138,7 @@ public:
     }
 };
 
-} // namespace CGALi
+} // namespace internal
 CGAL_END_NAMESPACE
 
 namespace boost {
@@ -164,8 +164,8 @@ CGAL_BEGIN_NAMESPACE
 typedef boost::numeric::interval
 < leda::bigfloat,
     boost::numeric::interval_lib::policies
-      < CGALi::Rounding_for_leda_bigfloat,
-        CGALi::Checking_for_leda_bigfloat > > 
+      < internal::Rounding_for_leda_bigfloat,
+        internal::Checking_for_leda_bigfloat > > 
 leda_bigfloat_interval;
 
 template <> class Algebraic_structure_traits< leda_bigfloat_interval >

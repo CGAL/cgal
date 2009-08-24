@@ -33,7 +33,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template < typename Rep_Tag > struct wmult_tag;
 
@@ -213,7 +213,7 @@ template < typename K >
 struct wcross_functor_3
   : public wcross_tag_3<typename K::Rep_tag> {};
 
-} // end namespace CGALi
+} // end namespace internal
 
 
 // wmult_hw() is like wmult(), except it calls .hw() on its last argument.
@@ -225,7 +225,7 @@ typename K::RT
 wmult_hw(K*, const typename K::RT &a,
              const T &t)
 {
-    return CGALi::wmult_hw_functor<K>()(a, t);
+    return internal::wmult_hw_functor<K>()(a, t);
 }
 
 template < typename K, typename T >
@@ -235,7 +235,7 @@ wmult_hw(K*, const typename K::RT &a,
              const typename K::RT &w1,
              const T &t)
 {
-    return CGALi::wmult_hw_functor<K>()(a, w1, t);
+    return internal::wmult_hw_functor<K>()(a, w1, t);
 }
 
 template < typename K, typename T >
@@ -246,7 +246,7 @@ wmult_hw(K*, const typename K::RT &a,
              const typename K::RT &w2,
              const T &t)
 {
-    return CGALi::wmult_hw_functor<K>()(a, w1, w2, t);
+    return internal::wmult_hw_functor<K>()(a, w1, w2, t);
 }
 
 template < typename K, typename T >
@@ -258,7 +258,7 @@ wmult_hw(K*, const typename K::RT &a,
              const typename K::RT &w3,
              const T &t)
 {
-    return CGALi::wmult_hw_functor<K>()(a, w1, w2, w3, t);
+    return internal::wmult_hw_functor<K>()(a, w1, w2, w3, t);
 }
 
 
@@ -268,7 +268,7 @@ typename K::RT
 wmult(K*, const typename K::RT &a,
           const typename K::RT &w)
 {
-    return CGALi::wmult_functor<K>()(a, w);
+    return internal::wmult_functor<K>()(a, w);
 }
 
 template < typename K >
@@ -278,7 +278,7 @@ wmult(K*, const typename K::RT &a,
           const typename K::RT &w1,
           const typename K::RT &w2)
 {
-    return CGALi::wmult_functor<K>()(a, w1, w2);
+    return internal::wmult_functor<K>()(a, w1, w2);
 }
 
 template < typename K >
@@ -289,7 +289,7 @@ wmult(K*, const typename K::RT &a,
           const typename K::RT &w2,
           const typename K::RT &w3)
 {
-    return CGALi::wmult_functor<K>()(a, w1, w2, w3);
+    return internal::wmult_functor<K>()(a, w1, w2, w3);
 }
 
 template < typename K >
@@ -301,7 +301,7 @@ wmult(K*, const typename K::RT &a,
           const typename K::RT &w3,
           const typename K::RT &w4)
 {
-    return CGALi::wmult_functor<K>()(a, w1, w2, w3, w4);
+    return internal::wmult_functor<K>()(a, w1, w2, w3, w4);
 }
 
 template < typename K >
@@ -311,7 +311,7 @@ wcross(K*, const Point_2<K> &p,
            const Point_2<K> &q,
            const Point_2<K> &r)
 {
-    return CGALi::wcross_functor_2<K>()(p, q, r);
+    return internal::wcross_functor_2<K>()(p, q, r);
 }
 
 template < typename K >
@@ -321,7 +321,7 @@ wcross(const Point_3<K> &p,
        const Point_3<K> &q,
        const Point_3<K> &r)
 {
-    return CGALi::wcross_functor_3<K>()(p, q, r);
+    return internal::wcross_functor_3<K>()(p, q, r);
 }
 
 CGAL_END_NAMESPACE

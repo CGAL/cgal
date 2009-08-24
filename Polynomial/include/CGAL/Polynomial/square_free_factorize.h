@@ -27,7 +27,7 @@
 #include <CGAL/Polynomial/Polynomial.h>
 
 CGAL_BEGIN_NAMESPACE
-namespace CGALi {
+namespace internal {
 
 // square-free factorization
 // 
@@ -180,7 +180,7 @@ inline int square_free_factorize_for_regular_polynomial_
 
     POLY a = CGAL::canonicalize(p);
     POLY b = diff(a);
-    POLY c = CGAL::CGALi::gcd_utcf(a, b);
+    POLY c = CGAL::internal::gcd_utcf(a, b);
 
     if (c == Coeff(1)) {
         *factors = a;
@@ -209,7 +209,7 @@ inline int square_free_factorize_for_regular_polynomial_
     POLY g;
 
     while (!z.is_zero()) {
-        g = CGAL::CGALi::gcd_utcf(w, z);
+        g = CGAL::internal::gcd_utcf(w, z);
         if (g.degree() > 0) {
             *factors++ = g;
             *multiplicities++ = i;
@@ -329,8 +329,8 @@ int filtered_square_free_factorize(
                                        OutputIterator1 factors,
                                        OutputIterator2 multiplicities)
 {
-  if(CGAL::CGALi::may_have_multiple_factor(p)){
-      return CGALi::square_free_factorize(p, factors, multiplicities);
+  if(CGAL::internal::may_have_multiple_factor(p)){
+      return internal::square_free_factorize(p, factors, multiplicities);
   }else{
       *factors++        = CGAL::canonicalize(p);
       *multiplicities++ = 1;
@@ -352,7 +352,7 @@ int filtered_square_free_factorize_utcf( const Polynomial<Coeff>& p,
     return filtered_square_free_factorize(p,factors,multiplicities);
 }
 
-} // namespace CGALi
+} // namespace internal
 CGAL_END_NAMESPACE
 
 #endif // CGAL_POLYNOMIAL_SQUARE_FREE_FACTORIZATION_H

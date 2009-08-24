@@ -41,7 +41,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
   
   template <class K>
   inline typename K::FT
@@ -103,7 +103,7 @@ namespace CGALi {
 		   const typename K::Point_2 &pt,
 		   const K& k)
   {
-    return CGALi::squared_distance(pt, line, k);
+    return internal::squared_distance(pt, line, k);
   }
   
   template <class K>
@@ -118,7 +118,7 @@ namespace CGALi {
     const Vector_2 &dir = ray.direction().vector();
     if (!is_acute_angle(dir,diff, k) )
       return (typename K::FT)k.compute_squared_length_2_object()(diff);
-    return CGALi::squared_distance(pt, ray.supporting_line(), k);
+    return internal::squared_distance(pt, ray.supporting_line(), k);
   }
 
   template <class K>
@@ -127,7 +127,7 @@ namespace CGALi {
 		   const typename K::Point_2 &pt,
 		   const K& k)
   {
-    return CGALi::squared_distance(pt, ray, k);
+    return internal::squared_distance(pt, ray, k);
   }
 
   template <class K>
@@ -147,8 +147,8 @@ namespace CGALi {
       return (typename K::FT)k.compute_squared_length_2_object()(diff);
     RT e = wdot(segvec,segvec, k);
     if (wmult((K*)0 ,d, segvec.hw()) > wmult((K*)0, e, diff.hw()))
-      return CGALi::squared_distance(pt, seg.target(), k);
-    return CGALi::squared_distance(pt, seg.supporting_line(), k);
+      return internal::squared_distance(pt, seg.target(), k);
+    return internal::squared_distance(pt, seg.supporting_line(), k);
   }
 
   template <class K>
@@ -157,7 +157,7 @@ namespace CGALi {
 		   const typename K::Point_2 &pt,
 		   const K& k)
   {
-    return CGALi::squared_distance(pt, seg, k);
+    return internal::squared_distance(pt, seg, k);
   }
 
   template <class K>
@@ -171,16 +171,16 @@ namespace CGALi {
     const Vector_2 &dir2 = seg2.direction().vector();
     if (same_direction(dir1, dir2, k)) {
       if (!is_acute_angle(seg1.source(), seg1.target(), seg2.source(), k))
-	return CGALi::squared_distance(seg1.target(), seg2.source(), k);
+	return internal::squared_distance(seg1.target(), seg2.source(), k);
       if (!is_acute_angle(seg1.target(), seg1.source(), seg2.target(), k))
-	return CGALi::squared_distance(seg1.source(), seg2.target(), k);
+	return internal::squared_distance(seg1.source(), seg2.target(), k);
     } else {
       if (!is_acute_angle(seg1.source(), seg1.target(), seg2.target(), k))
-	return CGALi::squared_distance(seg1.target(), seg2.target(), k);
+	return internal::squared_distance(seg1.target(), seg2.target(), k);
       if (!is_acute_angle(seg1.target(), seg1.source(), seg2.source(), k))
-	return CGALi::squared_distance(seg1.source(), seg2.source(), k);
+	return internal::squared_distance(seg1.source(), seg2.source(), k);
     }
-    return CGALi::squared_distance(seg2.source(), seg1.supporting_line(), k);
+    return internal::squared_distance(seg2.source(), seg1.supporting_line(), k);
   }
 
   template <class K>
@@ -205,9 +205,9 @@ namespace CGALi {
     bool crossing1, crossing2;
     RT c1s, c1e, c2s, c2e;
     if (seg1.source() == seg1.target())
-      return CGALi::squared_distance(seg1.source(), seg2, k);
+      return internal::squared_distance(seg1.source(), seg2, k);
     if (seg2.source() == seg2.target())
-      return CGALi::squared_distance(seg2.source(), seg1, k);
+      return internal::squared_distance(seg2.source(), seg1, k);
     c1s = wcross(seg2.source(), seg2.target(), seg1.source(), k);
     c1e = wcross(seg2.source(), seg2.target(), seg1.target(), k);
     c2s = wcross(seg1.source(), seg1.target(), seg2.source(), k);
@@ -217,7 +217,7 @@ namespace CGALi {
     } else {
       if (c1e <= RT(0)) {
 	if (c1s == RT(0) && c1e == RT(0))
-	  return CGALi::squared_distance_parallel(seg1, seg2, k);
+	  return internal::squared_distance_parallel(seg1, seg2, k);
 	crossing1 = true;
       } else {
 	crossing1 = (c1s == RT(0));
@@ -228,7 +228,7 @@ namespace CGALi {
     } else {
       if (c2e <= RT(0)) {
 	if (c2s == RT(0) && c2e == RT(0))
-	  return CGALi::squared_distance_parallel(seg1, seg2, k);
+	  return internal::squared_distance_parallel(seg1, seg2, k);
 	crossing2 = true;
       } else {
 	crossing2 = (c2s == RT(0));
@@ -241,13 +241,13 @@ namespace CGALi {
       RT dm;
       dm = _distance_measure_sub<K>(c2s,c2e, seg2.source(), seg2.target());
       if (dm < RT(0)) {
-	return CGALi::squared_distance(seg2.source(), seg1, k);
+	return internal::squared_distance(seg2.source(), seg1, k);
       } else {
 	if (dm > RT(0)) {
-	  return CGALi::squared_distance(seg2.target(), seg1, k);
+	  return internal::squared_distance(seg2.target(), seg1, k);
 	} else {
 	  // parallel, should not happen (no crossing)
-	  return CGALi::squared_distance_parallel(seg1, seg2, k);
+	  return internal::squared_distance_parallel(seg1, seg2, k);
 	}
       }
     } else {
@@ -256,13 +256,13 @@ namespace CGALi {
 	dm =
 	  _distance_measure_sub<K>(c1s, c1e,seg1.source(),seg1.target());
 	if (dm < RT(0)) {
-	  return CGALi::squared_distance(seg1.source(), seg2, k);
+	  return internal::squared_distance(seg1.source(), seg2, k);
 	} else {
 	  if (dm > RT(0)) {
-	    return CGALi::squared_distance(seg1.target(), seg2, k);
+	    return internal::squared_distance(seg1.target(), seg2, k);
 	  } else {
 	    // parallel, should not happen (no crossing)
-	    return CGALi::squared_distance_parallel(seg1, seg2, k);
+	    return internal::squared_distance_parallel(seg1, seg2, k);
 	  }
 	}
       } else {
@@ -271,17 +271,17 @@ namespace CGALi {
 	RT dm = _distance_measure_sub<K>(
 				      c1s, c1e, seg1.source(), seg1.target());
 	if (dm == RT(0))
-	  return CGALi::squared_distance_parallel(seg1, seg2, k);
+	  return internal::squared_distance_parallel(seg1, seg2, k);
 	min1 = (dm < RT(0)) ?
-	  CGALi::squared_distance(seg1.source(), seg2, k):
-	  CGALi::squared_distance(seg1.target(), seg2, k);
+	  internal::squared_distance(seg1.source(), seg2, k):
+	  internal::squared_distance(seg1.target(), seg2, k);
 	dm = _distance_measure_sub<K>(
 				   c2s, c2e, seg2.source(), seg2.target());
 	if (dm == RT(0))  // should not happen.
-	  return CGALi::squared_distance_parallel(seg1, seg2, k);
+	  return internal::squared_distance_parallel(seg1, seg2, k);
 	min2 = (dm < RT(0)) ?
-	  CGALi::squared_distance(seg2.source(), seg1, k):
-	  CGALi::squared_distance(seg2.target(), seg1, k);
+	  internal::squared_distance(seg2.source(), seg1, k):
+	  internal::squared_distance(seg2.target(), seg1, k);
 	return (min1 < min2) ? min1 : min2;
       }
     }
@@ -310,12 +310,12 @@ namespace CGALi {
 
     if (same_direction(dir1, dir2, k)) {
       if (!is_acute_angle(seg.source(), seg.target(), ray.source(), k))
-	return CGALi::squared_distance(seg.target(), ray.source(), k);
+	return internal::squared_distance(seg.target(), ray.source(), k);
     } else {
       if (!is_acute_angle(seg.target(), seg.source(), ray.source(), k))
-	return CGALi::squared_distance(seg.source(), ray.source(), k);
+	return internal::squared_distance(seg.source(), ray.source(), k);
     }
-    return CGALi::squared_distance(ray.source(), seg.supporting_line(), k);
+    return internal::squared_distance(ray.source(), seg.supporting_line(), k);
   }
 
   template <class K>
@@ -336,7 +336,7 @@ namespace CGALi {
     bool crossing1, crossing2;
     RT c1s, c1e;
     if (seg.source() == seg.target())
-      return CGALi::squared_distance(seg.source(), ray, k);
+      return internal::squared_distance(seg.source(), ray, k);
     c1s = wcross(raydir, startvec, k);
     c1e = wcross(raydir, endvec, k);
     if (c1s < RT(0)) {
@@ -344,7 +344,7 @@ namespace CGALi {
     } else {
       if (c1e <= RT(0)) {
 	if (c1s == RT(0) && c1e == RT(0))
-	  return CGALi::squared_distance_parallel(seg, ray, k);
+	  return internal::squared_distance_parallel(seg, ray, k);
 	crossing1 = true;
       } else {
 	crossing1 = (c1s == RT(0));
@@ -365,30 +365,30 @@ namespace CGALi {
     if (crossing1) {
       if (crossing2)
 	return FT(0);
-      return CGALi::squared_distance(ray.source(), seg, k);
+      return internal::squared_distance(ray.source(), seg, k);
     } else {
       if (crossing2) {
 	RT dm;
 	dm = _distance_measure_sub<K>(c1s, c1e, startvec, endvec);
 	if (dm < RT(0)) {
-	  return CGALi::squared_distance(seg.source(), ray, k);
+	  return internal::squared_distance(seg.source(), ray, k);
 	} else {
 	  if (dm > RT(0)) {
-	    return CGALi::squared_distance(seg.target(), ray, k);
+	    return internal::squared_distance(seg.target(), ray, k);
 	  } else {
 	    // parallel, should not happen (no crossing)
-	    return CGALi::squared_distance_parallel(seg, ray, k);
+	    return internal::squared_distance_parallel(seg, ray, k);
 	  }
 	}
       } else {
 	FT min1, min2;
 	RT dm = _distance_measure_sub<K>(c1s, c1e, startvec, endvec);
 	if (dm == RT(0))
-	  return CGALi::squared_distance_parallel(seg, ray, k);
+	  return internal::squared_distance_parallel(seg, ray, k);
 	min1 = (dm < RT(0))
-	  ? CGALi::squared_distance(seg.source(), ray, k)
-	  : CGALi::squared_distance(seg.target(), ray, k);
-	min2 = CGALi::squared_distance(ray.source(), seg, k);
+	  ? internal::squared_distance(seg.source(), ray, k)
+	  : internal::squared_distance(seg.target(), ray, k);
+	min2 = internal::squared_distance(ray.source(), seg, k);
 	return (min1 < min2) ? min1 : min2;
       }
     }
@@ -400,7 +400,7 @@ namespace CGALi {
 		   const typename K::Segment_2 &seg,
 		   const K& k)
   {
-    return CGALi::squared_distance(seg, ray, k);
+    return internal::squared_distance(seg, ray, k);
   }
 
   template <class K>
@@ -436,7 +436,7 @@ namespace CGALi {
     bool crossing1;
     RT c1s, c1e;
     if (seg.source() == seg.target())
-      return CGALi::squared_distance(seg.source(), line, k);
+      return internal::squared_distance(seg.source(), line, k);
     c1s = wcross(linedir, startvec, k);
     c1e = wcross(linedir, endvec, k);
     if (c1s < RT(0)) {
@@ -468,7 +468,7 @@ namespace CGALi {
 		   const typename K::Segment_2 &seg,
 		   const K& k)
   {
-    return CGALi::squared_distance(seg, line, k);
+    return internal::squared_distance(seg, line, k);
   }
 
   template <class K>
@@ -522,15 +522,15 @@ namespace CGALi {
     if (crossing1) {
       if (crossing2)
 	return (FT)0;
-      return CGALi::squared_distance(ray2.source(), ray1, k);
+      return internal::squared_distance(ray2.source(), ray1, k);
     } else {
       if (crossing2) {
-	return CGALi::squared_distance(ray1.source(), ray2, k);
+	return internal::squared_distance(ray1.source(), ray2, k);
       } else {
 
 	FT min1, min2;
-	min1 = CGALi::squared_distance(ray1.source(), ray2, k);
-	min2 = CGALi::squared_distance(ray2.source(), ray1, k);
+	min1 = internal::squared_distance(ray1.source(), ray2, k);
+	min2 = internal::squared_distance(ray2.source(), ray1, k);
 	return (min1 < min2) ? min1 : min2;
       }
     }
@@ -564,7 +564,7 @@ namespace CGALi {
 		   const typename K::Line_2 &line,
 		   const K& k)
   {
-    return CGALi::squared_distance(line, ray, k);
+    return internal::squared_distance(line, ray, k);
   }
 
   template <class K>
@@ -574,8 +574,8 @@ namespace CGALi {
 		   const K& k)
   {
     typedef typename K::FT FT;
-    if (CGALi::parallel(line1, line2, k))
-      return CGALi::squared_distance(line1.point(), line2, k);
+    if (internal::parallel(line1, line2, k))
+      return internal::squared_distance(line1.point(), line2, k);
     else
       return (FT)0;
   }
@@ -621,8 +621,8 @@ namespace CGALi {
 			   const K& k)
   {
     if (ind == 0)
-      return CGALi::squared_distance(pt, ray.source(), k);
-    return CGALi::squared_distance(pt, ray.supporting_line(), k);
+      return internal::squared_distance(pt, ray.source(), k);
+    return internal::squared_distance(pt, ray.supporting_line(), k);
   }
 
   template <class K>
@@ -633,19 +633,19 @@ namespace CGALi {
 			   const K& k)
   {
     if (ind == 0)
-      return CGALi::squared_distance(pt, seg.source(), k);
+      return internal::squared_distance(pt, seg.source(), k);
     if (ind == 1)
-      return CGALi::squared_distance(pt, seg.target(), k);
-    return CGALi::squared_distance(pt, seg.supporting_line(), k);
+      return internal::squared_distance(pt, seg.target(), k);
+    return internal::squared_distance(pt, seg.supporting_line(), k);
   }
   
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 inline typename K::FT
 squared_distance(const Point_2<K> & pt1, const Point_2<K> & pt2)
 {
-  return CGALi::squared_distance(pt1, pt2, K());
+  return internal::squared_distance(pt1, pt2, K());
 }
 
 
@@ -653,7 +653,7 @@ template <class K>
 inline typename K::FT
 squared_distance(const Point_2<K> &pt, const Line_2<K> &line)
 {
-  return CGALi::squared_distance(pt, line, K());
+  return internal::squared_distance(pt, line, K());
 }
 
 
@@ -669,7 +669,7 @@ template <class K>
 inline typename K::FT
 squared_distance(const Point_2<K> &pt, const Ray_2<K> &ray)
 {
-  return CGALi::squared_distance(pt, ray, K());
+  return internal::squared_distance(pt, ray, K());
 }
 
 template <class K>
@@ -684,7 +684,7 @@ template <class K>
 inline typename K::FT
 squared_distance(const Point_2<K> &pt, const Segment_2<K> &seg)
 {
-  return CGALi::squared_distance(pt, seg, K());
+  return internal::squared_distance(pt, seg, K());
 }
 
 
@@ -692,7 +692,7 @@ template <class K>
 inline typename K::FT
 squared_distance(const Segment_2<K> & seg, const Point_2<K> & pt)
 {
-  return CGALi::squared_distance(pt, seg, K());
+  return internal::squared_distance(pt, seg, K());
 }
 
 
@@ -700,63 +700,63 @@ template <class K>
 inline typename K::FT
 squared_distance(const Segment_2<K> &seg1, const Segment_2<K> &seg2)
 {
-  return CGALi::squared_distance(seg1, seg2, K());
+  return internal::squared_distance(seg1, seg2, K());
 }
 
 template <class K>
 inline typename K::FT
 squared_distance(const Segment_2<K> &seg, const Ray_2<K> &ray)
 {
-  return CGALi::squared_distance(seg, ray, K());
+  return internal::squared_distance(seg, ray, K());
 }
 
 template <class K>
 inline typename K::FT
 squared_distance(const Ray_2<K> & ray, const Segment_2<K> & seg)
 {
-  return CGALi::squared_distance(seg, ray, K());
+  return internal::squared_distance(seg, ray, K());
 }
 
 template <class K>
 inline typename K::FT
 squared_distance(const Segment_2<K> &seg, const Line_2<K> &line)
 {
-  return CGALi::squared_distance(seg, line, K());
+  return internal::squared_distance(seg, line, K());
 }
 
 template <class K>
 inline typename K::FT
 squared_distance(const Line_2<K> & line, const Segment_2<K> & seg)
 {
-  return CGALi::squared_distance(seg, line, K());
+  return internal::squared_distance(seg, line, K());
 }
 
 template <class K>
 inline typename K::FT
 squared_distance(const Ray_2<K> &ray1, const Ray_2<K> &ray2)
 {
-  return CGALi::squared_distance(ray1, ray2, K());
+  return internal::squared_distance(ray1, ray2, K());
 }
 
 template <class K>
 inline typename K::FT
 squared_distance(const Line_2<K> &line, const Ray_2<K> &ray)
 {
-  return CGALi::squared_distance(line, ray, K());
+  return internal::squared_distance(line, ray, K());
 }
 
 template <class K>
 inline typename K::FT
 squared_distance(const Ray_2<K> & ray, const Line_2<K> & line)
 {
-  return CGALi::squared_distance(line, ray, K());
+  return internal::squared_distance(line, ray, K());
 }
 
 template <class K>
 inline typename K::FT
 squared_distance(const Line_2<K> &line1, const Line_2<K> &line2)
 {
-  return CGALi::squared_distance(line1, line2, K());
+  return internal::squared_distance(line1, line2, K());
 }
 
 CGAL_END_NAMESPACE

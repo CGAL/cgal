@@ -282,7 +282,7 @@ class Compare_y_at_x_2
               {
 		rel_pos=EQUAL;
 		Hexagon hxgn= *hips;
-		if(CGALi::_do_intersect_hexagon_2(hxgn,pnt_vec))
+		if(internal::_do_intersect_hexagon_2(hxgn,pnt_vec))
                    return CK().compare_y_at_x_2_object()(p,a.arc());
                   
 
@@ -423,7 +423,7 @@ class Do_overlap_2
       if(b.has_no_hexagons())
         b.construct_hexagons();
 
-      if(CGALi::do_intersect_hexagons_2( a.hexagons_begin(),a.hexagons_end(),b.hexagons_begin(),b.hexagons_end() ) )
+      if(internal::do_intersect_hexagons_2( a.hexagons_begin(),a.hexagons_end(),b.hexagons_begin(),b.hexagons_end() ) )
         return CK().do_overlap_2_object()(a.arc(),b.arc());
 
       return false;
@@ -554,7 +554,7 @@ class Do_overlap_2
         if(c2.has_no_hexagons())
           c2.construct_hexagons();
 
-        if(!CGALi::do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),
+        if(!internal::do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),
 	                                   c2.hexagons_begin(),c2.hexagons_end()) )
          return res;
 
@@ -588,7 +588,7 @@ class Do_overlap_2
         if(c2.has_no_hexagons())
           c2.construct_hexagons();
 
-        if(!CGALi::do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),c2.hexagons_begin(),c2.hexagons_end()) )
+        if(!internal::do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),c2.hexagons_begin(),c2.hexagons_end()) )
          return res;
 
 
@@ -620,7 +620,7 @@ class Do_overlap_2
         if(c2.has_no_hexagons())
           c2.construct_hexagons();
 
-        if(!CGALi::do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),c2.hexagons_begin(),c2.hexagons_end()) )
+        if(!internal::do_intersect_hexagons_2(c1.hexagons_begin(),c1.hexagons_end(),c2.hexagons_begin(),c2.hexagons_end()) )
          return res;
 
 

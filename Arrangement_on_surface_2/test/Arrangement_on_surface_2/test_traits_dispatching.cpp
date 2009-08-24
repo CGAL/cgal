@@ -28,7 +28,7 @@ int main ()
   
   // Arr_left_right_implementation_dispatch oblivious-oblivious
   {
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_oblivious_side_tag, CGAL::Arr_oblivious_side_tag > LR;
     
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -51,7 +51,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch oblivious-open
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_oblivious_side_tag, CGAL::Arr_open_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -74,7 +74,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch oblivious-contracted
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_oblivious_side_tag, CGAL::Arr_contracted_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -97,7 +97,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch oblivious-closed
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_oblivious_side_tag, CGAL::Arr_closed_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -126,7 +126,7 @@ int main ()
   
   // Arr_left_right_implementation_dispatch open-oblivious
   {
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_open_side_tag, CGAL::Arr_oblivious_side_tag > LR;
     
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -149,7 +149,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch open-open
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_open_side_tag, CGAL::Arr_open_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -172,7 +172,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch open-contracted
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_open_side_tag, CGAL::Arr_contracted_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -195,7 +195,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch open-closed
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_open_side_tag, CGAL::Arr_closed_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -223,7 +223,7 @@ int main ()
   // contracted-closed
   // Arr_left_right_implementation_dispatch contracted-oblivious
   {
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_contracted_side_tag, CGAL::Arr_oblivious_side_tag > LR;
     
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -246,7 +246,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch contracted-open
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_contracted_side_tag, CGAL::Arr_open_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -269,7 +269,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch contracted-contracted
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_contracted_side_tag, CGAL::Arr_contracted_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -292,7 +292,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch contracted-closed
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_contracted_side_tag, CGAL::Arr_closed_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -320,7 +320,7 @@ int main ()
   // closed-closed
   // Arr_left_right_implementation_dispatch closed-oblivious
   {
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_closed_side_tag, CGAL::Arr_oblivious_side_tag > LR;
     
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -343,7 +343,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch closed-open
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_closed_side_tag, CGAL::Arr_open_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -366,7 +366,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch closed-contracted
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_closed_side_tag, CGAL::Arr_contracted_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -389,7 +389,7 @@ int main ()
   }
   {
     // Arr_left_right_implementation_dispatch closed-closed
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_closed_side_tag, CGAL::Arr_closed_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -415,7 +415,7 @@ int main ()
   // identified-identified
   {
     // Arr_left_right_implementation_dispatch identified-identified
-    typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+    typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
     CGAL::Arr_oblivious_side_tag, CGAL::Arr_identified_side_tag > LR;
 
     typedef LR::Parameter_space_in_x_2_curve_end_tag Psx_2_curve_end;
@@ -448,7 +448,7 @@ int main ()
   // oblivious-closed
   {
     // Arr_bottom_top_implementation_dispatch oblivious-oblivious
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_oblivious_side_tag, CGAL::Arr_oblivious_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -474,7 +474,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch oblivious-open
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_oblivious_side_tag, CGAL::Arr_open_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -500,7 +500,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch oblivious-contracted
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_oblivious_side_tag, CGAL::Arr_contracted_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -526,7 +526,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch oblivious-closed
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_oblivious_side_tag, CGAL::Arr_closed_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -557,7 +557,7 @@ int main ()
   // open-closed
   {
     // Arr_bottom_top_implementation_dispatch open-oblivious
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_open_side_tag, CGAL::Arr_oblivious_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -583,7 +583,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch open-open
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_open_side_tag, CGAL::Arr_open_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -609,7 +609,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch open-contracted
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_open_side_tag, CGAL::Arr_contracted_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -635,7 +635,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch open-closed
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_open_side_tag, CGAL::Arr_closed_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -666,7 +666,7 @@ int main ()
   // contracted-closed
   {
     // Arr_bottom_top_implementation_dispatch contracted-oblivious
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_contracted_side_tag, CGAL::Arr_oblivious_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -692,7 +692,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch contracted-open
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_contracted_side_tag, CGAL::Arr_open_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -718,7 +718,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch contracted-contracted
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_contracted_side_tag, CGAL::Arr_contracted_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -744,7 +744,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch contracted-closed
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_contracted_side_tag, CGAL::Arr_closed_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -775,7 +775,7 @@ int main ()
   // closed-closed
   {
     // Arr_bottom_top_implementation_dispatch closed-oblivious
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_closed_side_tag, CGAL::Arr_oblivious_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -801,7 +801,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch closed-open
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_closed_side_tag, CGAL::Arr_open_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -827,7 +827,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch closed-contracted
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_closed_side_tag, CGAL::Arr_contracted_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -853,7 +853,7 @@ int main ()
   }
   {
     // Arr_bottom_top_implementation_dispatch closed-closed
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_closed_side_tag, CGAL::Arr_closed_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;
@@ -881,7 +881,7 @@ int main ()
   // identified-identified
   {
     // Arr_bottom_top_implementation_dispatch identified-identified
-    typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+    typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     CGAL::Arr_identified_side_tag, CGAL::Arr_identified_side_tag > BT;
     
     typedef BT::Parameter_space_in_y_2_curve_end_tag Psy_2_curve_end;

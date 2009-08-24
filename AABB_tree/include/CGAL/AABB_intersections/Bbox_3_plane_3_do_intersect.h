@@ -28,7 +28,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
   template <class K>
   void get_min_max(const typename K::Vector_3& p,
@@ -77,7 +77,7 @@ namespace CGALi {
       plane.oriented_side(p_min) == ON_POSITIVE_SIDE);
   }
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 bool do_intersect(const CGAL::Plane_3<K>& plane, 

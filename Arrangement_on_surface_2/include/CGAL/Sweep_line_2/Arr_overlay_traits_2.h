@@ -77,13 +77,13 @@ public:
   typedef typename Traits_2::Split_2                Base_split_2;
   typedef typename Traits_2::Equal_2                Base_equal_2;
 
-  typedef typename CGALi::Arr_complete_left_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_left_side_tag< Traits_2 >::Tag
                                                     Arr_left_side_tag;
-  typedef typename CGALi::Arr_complete_bottom_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_bottom_side_tag< Traits_2 >::Tag
                                                     Arr_bottom_side_tag;
-  typedef typename CGALi::Arr_complete_top_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_top_side_tag< Traits_2 >::Tag
                                                     Arr_top_side_tag;
-  typedef typename CGALi::Arr_complete_right_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_right_side_tag< Traits_2 >::Tag
                                                     Arr_right_side_tag;
 
   /* Overlay is implemented as sweep-line visitor. The sweep-line algorithm

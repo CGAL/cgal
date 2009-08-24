@@ -32,7 +32,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template < class FilteredBboxKernel, class CircularKernel >
 struct Filtered_bbox_circular_kernel_base_ref_count : public CircularKernel
@@ -68,7 +68,7 @@ struct Filtered_bbox_circular_kernel_base_ref_count : public CircularKernel
 
 };
 
-} // namespace CGALi
+} // namespace internal
 
 template < typename K_base, typename FbcKernel >
 struct Filtered_bbox_circular_kernel_type_equality_wrapper
@@ -83,7 +83,7 @@ struct Filtered_bbox_circular_kernel_type_equality_wrapper
 template < class CircularKernel >
 struct Filtered_bbox_circular_kernel_2
   : public Filtered_bbox_circular_kernel_type_equality_wrapper
-     < CGALi::Filtered_bbox_circular_kernel_base_ref_count
+     < internal::Filtered_bbox_circular_kernel_base_ref_count
          < Filtered_bbox_circular_kernel_2< CircularKernel >,
            typename CircularKernel:: template 
            Base<Filtered_bbox_circular_kernel_2< CircularKernel > >::Type

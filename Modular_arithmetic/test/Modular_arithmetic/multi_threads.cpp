@@ -20,8 +20,8 @@ int main ()  {
     // Enforce IEEE double precision and rounding mode to nearest
     CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
     tid = omp_get_thread_num();
-    int old_prime = CGAL::CGALi::primes[0];
-    int new_prime = CGAL::CGALi::primes[tid+1];
+    int old_prime = CGAL::internal::primes[0];
+    int new_prime = CGAL::internal::primes[tid+1];
     assert(CGAL::Residue::get_current_prime() == old_prime);
     CGAL::Residue::set_current_prime(new_prime);
     assert(CGAL::Residue::get_current_prime() == new_prime);

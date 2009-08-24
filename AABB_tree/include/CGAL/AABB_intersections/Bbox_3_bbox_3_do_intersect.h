@@ -27,7 +27,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
   template <class K>
   bool do_intersect(const CGAL::Bbox_3& c1, 
@@ -40,7 +40,7 @@ namespace CGALi {
     return true;
   }
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 bool do_intersect(const CGAL::Bbox_3& c, 

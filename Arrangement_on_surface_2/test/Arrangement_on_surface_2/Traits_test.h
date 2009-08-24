@@ -773,12 +773,12 @@ template <class T_Traits>
 bool Traits_test<T_Traits>::
 parameter_space_in_x_curve_end_wrapper(std::istringstream & str_stream)
 {
-  typedef typename CGAL::CGALi::Arr_complete_left_side_tag< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_left_side_tag< T_Traits >::Tag
     Arr_left_side_tag;
-  typedef typename CGAL::CGALi::Arr_complete_right_side_tag< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_right_side_tag< T_Traits >::Tag
     Arr_right_side_tag;
 
-  typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+  typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
   Arr_left_side_tag, Arr_right_side_tag > LR;
   
   typedef typename LR::Parameter_space_in_x_2_curve_end_tag 
@@ -847,12 +847,12 @@ template <class T_Traits>
 bool Traits_test<T_Traits>::
 compare_y_near_boundary_curve_ends_wrapper(std::istringstream & str_stream)
 {
-  typedef typename CGAL::CGALi::Arr_complete_left_side_tag< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_left_side_tag< T_Traits >::Tag
     Arr_left_side_tag;
-  typedef typename CGAL::CGALi::Arr_complete_right_side_tag< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_right_side_tag< T_Traits >::Tag
     Arr_right_side_tag;
 
-  typedef CGAL::CGALi::Arr_left_right_implementation_dispatch< 
+  typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
   Arr_left_side_tag, Arr_right_side_tag > LR;
   
   typedef typename LR::Compare_y_near_boundary_2_curve_ends_tag 
@@ -914,12 +914,12 @@ template <class T_Traits>
 bool Traits_test<T_Traits>::
 parameter_space_in_y_curve_end_wrapper(std::istringstream & str_stream)
 {
-  typedef typename CGAL::CGALi::Arr_complete_bottom_side_tag< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_bottom_side_tag< T_Traits >::Tag
     Arr_bottom_side_tag;
-  typedef typename CGAL::CGALi::Arr_complete_top_side_tag< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_top_side_tag< T_Traits >::Tag
     Arr_top_side_tag;
 
-  typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+  typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
   Arr_bottom_side_tag, Arr_top_side_tag > BT;
   
   typedef typename BT::Parameter_space_in_y_2_curve_end_tag
@@ -989,12 +989,12 @@ bool Traits_test<T_Traits>::
 compare_x_near_boundary_point_curve_end_wrapper (
     std::istringstream & str_stream)
 {
-  typedef typename CGAL::CGALi::Arr_complete_bottom_side_tag< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_bottom_side_tag< T_Traits >::Tag
     Arr_bottom_side_tag;
-  typedef typename CGAL::CGALi::Arr_complete_top_side_tag< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_top_side_tag< T_Traits >::Tag
     Arr_top_side_tag;
 
-  typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+  typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
   Arr_bottom_side_tag, Arr_top_side_tag > BT;
   
   typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag
@@ -1074,12 +1074,12 @@ template <class T_Traits>
 bool Traits_test<T_Traits>::
 compare_x_near_boundary_curve_ends_wrapper (std::istringstream & str_stream)
 {
-  typedef typename CGAL::CGALi::Arr_complete_bottom_side_tag< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_bottom_side_tag< T_Traits >::Tag
     Arr_bottom_side_tag;
-  typedef typename CGAL::CGALi::Arr_complete_top_side_tag< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_top_side_tag< T_Traits >::Tag
     Arr_top_side_tag;
 
-  typedef CGAL::CGALi::Arr_bottom_top_implementation_dispatch< 
+  typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
   Arr_bottom_side_tag, Arr_top_side_tag > BT;
   
   typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag

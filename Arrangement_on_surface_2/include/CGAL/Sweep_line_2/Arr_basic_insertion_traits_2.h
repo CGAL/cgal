@@ -61,13 +61,13 @@ public:
   typedef typename Traits_2::Is_vertical_2          Base_is_vertical_2;
 
   
-  typedef typename CGALi::Arr_complete_left_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_left_side_tag< Traits_2 >::Tag
                                                     Arr_left_side_tag;
-  typedef typename CGALi::Arr_complete_bottom_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_bottom_side_tag< Traits_2 >::Tag
                                                     Arr_bottom_side_tag;
-  typedef typename CGALi::Arr_complete_top_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_top_side_tag< Traits_2 >::Tag
                                                     Arr_top_side_tag;
-  typedef typename CGALi::Arr_complete_right_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_right_side_tag< Traits_2 >::Tag
                                                     Arr_right_side_tag;
 
   /* Insertion is implemented as sweep-line visitor. The sweep-line algorithm

@@ -43,7 +43,7 @@
 
 namespace CGAL {
 
-namespace CGALi{
+namespace internal{
 
 template <class NT> Polynomial<NT> 
 gcd_utcf_Integral_domain(Polynomial<NT>,Polynomial<NT>);
@@ -53,7 +53,7 @@ template <class NT>
 Polynomial< Polynomial<NT> > modular_gcd_utcf_dfai(
         const Polynomial< Polynomial<NT> >& FF1 ,
         const Polynomial< Polynomial<NT> >& FF2 ){
-    return CGALi::gcd_utcf_Integral_domain(FF1, FF2);
+    return internal::gcd_utcf_Integral_domain(FF1, FF2);
 }
 
 // algorithm just computes Gs using the denominator for
@@ -166,11 +166,11 @@ Polynomial<NT> modular_gcd_utcf_dfai(
                 prime_index++;
                 if(prime_index >= 2000){
                     std::cerr<<"primes exhausted"<<std::endl;
-//                    return CGAL::CGALi::gcd_utcf_Integral_domain(FF1,FF2);
-                    current_prime = CGALi::get_next_lower_prime(current_prime);
+//                    return CGAL::internal::gcd_utcf_Integral_domain(FF1,FF2);
+                    current_prime = internal::get_next_lower_prime(current_prime);
                 }
                 else{
-                    current_prime = CGALi::primes[prime_index];
+                    current_prime = internal::primes[prime_index];
                 }
                 CGAL_assertion(current_prime != -1);
                 CGAL::Residue::set_current_prime(current_prime);
@@ -230,7 +230,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
             if (mG_ == MPoly(1)) return Poly(1);
             // use ordinary algorithm if prs sequence is too short 
             //  if (prs_degrees_new.size() <= 2) 
-            //    return CGALi::gcd_utcf_Integral_domain(F1, F2);
+            //    return internal::gcd_utcf_Integral_domain(F1, F2);
             // --------------------------------------
         }
         // repeat until mG_ degree is less equal the known bound
@@ -263,7 +263,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
 #ifdef CGAL_MODULAR_GCD_TIMER
             timer_CR.start();
 #endif
-            CGALi::Cached_extended_euclidean_algorithm <Scalar, 2> ceea;
+            internal::Cached_extended_euclidean_algorithm <Scalar, 2> ceea;
             ceea(q,p,s,t);
             pq =p*q; 
             chinese_remainder(q,p,pq,s,t,Gs,inv_map(mG_),Gs);
@@ -316,7 +316,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
 
 }
 
-} // namespace CGALi
+} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_DFAI_H

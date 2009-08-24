@@ -35,7 +35,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 typename K::FT
@@ -48,7 +48,7 @@ squared_distance(
   typename K::Construct_vector_3 construct_vector;
   Vector_3 dir(line.direction().vector());
   Vector_3 diff = construct_vector(line.point(), pt);
-  return CGALi::squared_distance_to_line(dir, diff, k);
+  return internal::squared_distance_to_line(dir, diff, k);
 }
 
 template <class K>
@@ -703,7 +703,7 @@ squared_distance(
 
 
 
-} // namespace CGALi
+} // namespace internal
 
 
 
@@ -713,7 +713,7 @@ typename K::FT
 squared_distance(const Point_3<K> &pt,
 		 const Line_3<K> &line)
 {
-  return CGALi::squared_distance(pt, line, K());
+  return internal::squared_distance(pt, line, K());
 }
 
 
@@ -724,7 +724,7 @@ squared_distance(
     const Line_3<K> & line,
     const Point_3<K> & pt)
 {
-  return CGALi::squared_distance(pt, line, K());
+  return internal::squared_distance(pt, line, K());
 }
 
 
@@ -735,7 +735,7 @@ squared_distance(
     const Point_3<K> &pt,
     const Ray_3<K> &ray)
 {
-    return CGALi::squared_distance(pt, ray, K());
+    return internal::squared_distance(pt, ray, K());
 }
 
 
@@ -746,7 +746,7 @@ squared_distance(
     const Ray_3<K> & ray,
     const Point_3<K> & pt)
 {
-    return CGALi::squared_distance(pt, ray, K());
+    return internal::squared_distance(pt, ray, K());
 }
 
 
@@ -757,7 +757,7 @@ squared_distance(
     const Point_3<K> &pt,
     const Segment_3<K> &seg)
 {
-  return CGALi::squared_distance(pt, seg, K());
+  return internal::squared_distance(pt, seg, K());
 }
 
 
@@ -768,7 +768,7 @@ squared_distance(
     const Segment_3<K> & seg,
     const Point_3<K> & pt)
 {
-    return CGALi::squared_distance(pt, seg, K());
+    return internal::squared_distance(pt, seg, K());
 }
 
 
@@ -781,7 +781,7 @@ squared_distance_parallel(
     const Segment_3<K> &seg1,
     const Segment_3<K> &seg2)
 {
-  return CGALi::squared_distance_parallel(seg1, seg2, K());
+  return internal::squared_distance_parallel(seg1, seg2, K());
 }
 
 
@@ -793,7 +793,7 @@ typename K::FT
 squared_distance(const Segment_3<K> &seg1,
 		 const Segment_3<K> &seg2)
 {
-  return CGALi::squared_distance(seg1, seg2, K());
+  return internal::squared_distance(seg1, seg2, K());
 }
 
 
@@ -808,7 +808,7 @@ squared_distance_parallel(
     const Segment_3<K> &seg,
     const Ray_3<K> &ray)
 {
-  return CGALi::squared_distance_parallel(ray,seg, K());
+  return internal::squared_distance_parallel(ray,seg, K());
 }
 
 
@@ -819,7 +819,7 @@ squared_distance(
     const Segment_3<K> &seg,
     const Ray_3<K> &ray)
 {
-  return CGALi::squared_distance(ray, seg, K());
+  return internal::squared_distance(ray, seg, K());
 }
 
 
@@ -831,7 +831,7 @@ squared_distance(
     const Ray_3<K> & ray,
     const Segment_3<K> & seg)
 {
-    return CGALi::squared_distance(seg, ray, K());
+    return internal::squared_distance(seg, ray, K());
 }
 
 
@@ -842,7 +842,7 @@ squared_distance(
     const Segment_3<K> &seg,
     const Line_3<K> &line)
 {
-  return CGALi::squared_distance(seg, line, K());
+  return internal::squared_distance(seg, line, K());
 }
 
 
@@ -853,7 +853,7 @@ squared_distance(
     const Line_3<K> & line,
     const Segment_3<K> & seg)
 {
-    return CGALi::squared_distance(seg, line, K());
+    return internal::squared_distance(seg, line, K());
 }
 
 
@@ -867,7 +867,7 @@ ray_ray_squared_distance_parallel(
     const Vector_3<K> &ray2dir,
     const Vector_3<K> &s1_min_s2)
 {
-  return CGALi::ray_ray_squared_distance_parallel(ray1dir, ray2dir, 
+  return internal::ray_ray_squared_distance_parallel(ray1dir, ray2dir, 
 						  s1_min_s2, K());
 }
 
@@ -878,7 +878,7 @@ squared_distance(
     const Ray_3<K> &ray1,
     const Ray_3<K> &ray2)
 {
-  return CGALi::squared_distance(ray1, ray2, K());
+  return internal::squared_distance(ray1, ray2, K());
 }
 
 
@@ -892,7 +892,7 @@ squared_distance(
     const Line_3<K> &line,
     const Ray_3<K> &ray)
 {
-  return CGALi::squared_distance(line, ray, K());
+  return internal::squared_distance(line, ray, K());
 }
 
 
@@ -903,7 +903,7 @@ squared_distance(
     const Ray_3<K> & ray,
     const Line_3<K> & line)
 {
-    return CGALi::squared_distance(line, ray, K());
+    return internal::squared_distance(line, ray, K());
 }
 
 
@@ -916,7 +916,7 @@ squared_distance(
     const Line_3<K> &line1,
     const Line_3<K> &line2)
 {  
-    return CGALi::squared_distance(line1, line2, K());
+    return internal::squared_distance(line1, line2, K());
 }
 
 

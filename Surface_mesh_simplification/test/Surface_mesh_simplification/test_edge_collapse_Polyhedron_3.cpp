@@ -284,7 +284,7 @@ public :
   Visitor( string aTestCase ) : mTestCase(aTestCase) 
   {
 #ifdef CGAL_ECMS_TRACE_IMPL  
-    ::CGALi::cgal_enable_ecms_trace = true ;
+    ::internal::cgal_enable_ecms_trace = true ;
 #endif    
     mStep = 0 ; 
   }

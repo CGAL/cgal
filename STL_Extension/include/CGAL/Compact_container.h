@@ -104,7 +104,7 @@ struct Compact_container_traits {
   static void * & pointer(T &t)       { return t.for_compact_container(); }
 };
 
-namespace CGALi {
+namespace internal {
   template < class DSC, bool Const >
   class CC_iterator;
 }
@@ -125,13 +125,13 @@ public:
   typedef typename Allocator::const_pointer         const_pointer;
   typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
-  typedef CGALi::CC_iterator<Self, false>           iterator;
-  typedef CGALi::CC_iterator<Self, true>            const_iterator;
+  typedef internal::CC_iterator<Self, false>           iterator;
+  typedef internal::CC_iterator<Self, true>            const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
-  friend class CGALi::CC_iterator<Self, false>;
-  friend class CGALi::CC_iterator<Self, true>;
+  friend class internal::CC_iterator<Self, false>;
+  friend class internal::CC_iterator<Self, true>;
 
   explicit Compact_container(const Allocator &a = Allocator())
   : alloc(a)
@@ -662,7 +662,7 @@ bool operator>=(const Compact_container<T, Allocator> &lhs,
   return ! (lhs < rhs);
 }
 
-namespace CGALi {
+namespace internal {
 
   template < class DSC, bool Const >
   class CC_iterator
@@ -833,7 +833,7 @@ namespace CGALi {
     return &*rhs != NULL;
   }
 
-} // namespace CGALi
+} // namespace internal
 
 CGAL_END_NAMESPACE
 

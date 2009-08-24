@@ -32,7 +32,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 struct Pointlist_2_rec_ {
@@ -345,6 +345,6 @@ intersection(const typename K::Triangle_2 &tr1,
     }
 }
 
-} // namespace CGALi
+} // namespace internal
 
 CGAL_END_NAMESPACE

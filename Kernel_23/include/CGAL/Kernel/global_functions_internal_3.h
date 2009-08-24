@@ -29,7 +29,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 template <typename K>
 inline
@@ -836,7 +836,7 @@ are_negative_oriented(const typename K::Point_3 &p,
                       const typename K::Point_3 &r,
                       const typename K::Point_3 &s, const K &k)
 {
-  return CGALi::orientation(p, q, r, s, k) == NEGATIVE;
+  return internal::orientation(p, q, r, s, k) == NEGATIVE;
 }
 
 template <typename K>
@@ -847,7 +847,7 @@ are_positive_oriented(const typename K::Point_3 &p,
                       const typename K::Point_3 &r,
                       const typename K::Point_3 &s, const K &k)
 {
-  return CGALi::orientation(p, q, r, s, k) == POSITIVE;
+  return internal::orientation(p, q, r, s, k) == POSITIVE;
 }
 
 template < class K >
@@ -857,10 +857,10 @@ lexicographically_xyz_smaller_or_equal(const typename K::Point_3 &p,
                                        const typename K::Point_3 &q,
                                        const K&k)
 {
-  return CGALi::compare_lexicographically_xyz(p, q, k) != LARGER;
+  return internal::compare_lexicographically_xyz(p, q, k) != LARGER;
 }
 
-} // namespace CGALi
+} // namespace internal
 
 CGAL_END_NAMESPACE
 

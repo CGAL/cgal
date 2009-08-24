@@ -11,7 +11,7 @@
 
 
 namespace CGAL { 
-namespace CGALi { 
+namespace internal { 
 
 //fwd 
 template<class AT>
@@ -19,7 +19,7 @@ void test_special_polynomials(Integral_domain_tag);
 
 template<class NT>
 void gcd_utcf_test(const NT& f, const NT& g, const NT& d) {
-    NT tmp = CGAL::CGALi::MY_FUNCTION_CALL(f, g);
+    NT tmp = CGAL::internal::MY_FUNCTION_CALL(f, g);
 #ifdef WITH_OUTPUT
     std::cout << "\nf(x) = " << f;
     std::cout << "\ng(x) = " << g;
@@ -137,7 +137,7 @@ void test_modular_gcd(Integral_domain_tag) {
                 g = rand_Poly_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000), root);
                 //      std::cout<<"f "<<f<<std::endl;
                 //      std::cout<<"g "<<g<<std::endl;
-                result = CGAL::CGALi::gcd_utcf(f, g);    
+                result = CGAL::internal::gcd_utcf(f, g);    
                 result = CGAL::canonicalize(result);
             }
             while(result != int_EXT_1_POLY(1)); 
@@ -199,7 +199,7 @@ void test_modular_gcd(Integral_domain_tag) {
                         int_EXT_2(rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root), 
                                 rand_sqrt<int_EXT_1, Integer>(my_random.get_int(10,1000),root), 
                                 root));
-                result = CGAL::CGALi::gcd_utcf(f, g);  
+                result = CGAL::internal::gcd_utcf(f, g);  
                 result = CGAL::canonicalize(result);
             }
             while(result != int_EXT_2_POLY(1)); 
@@ -269,7 +269,7 @@ void test_special_polynomials(Integral_domain_tag) {
 //  std::cout<<"test poly2"<<std::endl;
         is_p1 >> P1;  
         is_p2 >> P2;   
-        G=CGAL::CGALi::gcd_utcf_Integral_domain(P1,P2);;  
+        G=CGAL::internal::gcd_utcf_Integral_domain(P1,P2);;  
         gcd_utcf_test(P1, P2, G);
 //  std::cout<<"poly 2 tested"<<std::endl;
     }
@@ -318,7 +318,7 @@ std::string(
 //  std::cout<<" test special poly 3"<<std::endl;
         is_p1 >> P1;  
         is_p2 >> P2;   
-        G=CGAL::CGALi::gcd_utcf_Integral_domain(P1,P2);;  
+        G=CGAL::internal::gcd_utcf_Integral_domain(P1,P2);;  
         gcd_utcf_test(P1, P2, G);
 //    std::cout<<" after test special poly 3"<<std::endl;    
     }
@@ -326,7 +326,7 @@ std::string(
 }
 
 
-} // namespace CGALi
+} // namespace internal
 } // namespace CGAL
 
 

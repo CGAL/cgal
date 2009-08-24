@@ -32,7 +32,7 @@
 namespace CGAL {
 
 
-    namespace CGALi {
+    namespace internal {
 
         /**
         * @brief returns true if p is inside segment s. If p is not inside s,
@@ -124,7 +124,7 @@ namespace CGAL {
             return closest_point_on_segment;
         }
 
-    }  // end namespace CGALi
+    }  // end namespace internal
 
 
     template <class K>
@@ -134,7 +134,7 @@ namespace CGAL {
         const Segment_3<K>& segment,
         const Point_3<K>& bound)
     {
-        return CGALi::nearest_point_3(origin, segment, bound, K());
+        return internal::nearest_point_3(origin, segment, bound, K());
     }
 
 }  // end namespace CGAL

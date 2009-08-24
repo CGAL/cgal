@@ -45,7 +45,7 @@ struct Nested_iterator_traits
   Iterator end(It it) const { return it->end(); }
 };
 
-namespace CGALi {
+namespace internal {
 
   template<class Tr>
   struct Emptyness_predicate : public Tr
@@ -98,8 +98,8 @@ bool operator==(const Nested_iterator<Base_it,Tr>&,
 template <typename Base_it,
 	  typename Tr = Nested_iterator_traits<Base_it> >
 class Nested_iterator
-  : private CGALi::FI_w_begin_end<
-  Filter_iterator<Base_it, CGALi::Emptyness_predicate<Tr> > >
+  : private internal::FI_w_begin_end<
+  Filter_iterator<Base_it, internal::Emptyness_predicate<Tr> > >
 {
   typedef Nested_iterator<Base_it,Tr>           Self;
 public:
@@ -108,9 +108,9 @@ public:
   typedef typename Tr::Iterator                 Iterator;
 
 protected:
-  typedef CGALi::
+  typedef internal::
   FI_w_begin_end< Filter_iterator<Base_iterator,
-				  CGALi::Emptyness_predicate<Tr> > >
+				  internal::Emptyness_predicate<Tr> > >
   Filter_base_iterator;
 
 private:

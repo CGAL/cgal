@@ -42,7 +42,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi{
+namespace internal{
 
 // A has less variables than B
 template <typename A, typename B, bool less >
@@ -106,19 +106,19 @@ class Coercion_traits_for_polynomial
   : public Coercion_traits_for_polynomial_equal_d
    < A , B , Dimension<A>::value, Dimension<B>::value >{};
 
-}// namespace CGALi 
+}// namespace internal 
 
 template <class A,class B>
 class Coercion_traits_for_level< Polynomial<A> , Polynomial<B>, CTL_POLYNOMIAL >
-  :public CGALi::Coercion_traits_for_polynomial< Polynomial<A>, Polynomial<B> >
+  :public internal::Coercion_traits_for_polynomial< Polynomial<A>, Polynomial<B> >
 {};
 template <class A,class B>
 class Coercion_traits_for_level< Polynomial<A> , B , CTL_POLYNOMIAL >
-  :public CGALi::Coercion_traits_for_polynomial< Polynomial<A>, B >
+  :public internal::Coercion_traits_for_polynomial< Polynomial<A>, B >
 {};
 template <class A,class B>
 class Coercion_traits_for_level< A , Polynomial<B> , CTL_POLYNOMIAL >
-  :public CGALi::Coercion_traits_for_polynomial< A , Polynomial<B> >
+  :public internal::Coercion_traits_for_polynomial< A , Polynomial<B> >
 {};
 
 

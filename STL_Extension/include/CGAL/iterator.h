@@ -1178,7 +1178,7 @@ filter_output_iterator(I e, const P& p)
 
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
-namespace CGALi {
+namespace internal {
 
 template < typename D, typename V = cpp0x::tuple<>, typename O = cpp0x::tuple<> >
 struct Derivator
@@ -1209,7 +1209,7 @@ struct Derivator<D, cpp0x::tuple<V1, V...>, cpp0x::tuple<O1, O...> >
   }
 };
 
-} // CGALi
+} // internal
 
 
 // OutputIterator which accepts several types in *o++= and dispatches,
@@ -1219,7 +1219,7 @@ class Dispatch_output_iterator;
 
 template < typename... V, typename... O >
 class Dispatch_output_iterator < cpp0x::tuple<V...>, cpp0x::tuple<O...> >
- : private CGALi::Derivator<Dispatch_output_iterator< cpp0x::tuple<V...>, cpp0x::tuple<O...> >, cpp0x::tuple<V...>, cpp0x::tuple<O...> >
+ : private internal::Derivator<Dispatch_output_iterator< cpp0x::tuple<V...>, cpp0x::tuple<O...> >, cpp0x::tuple<V...>, cpp0x::tuple<O...> >
  , public cpp0x::tuple<O...>
 {
   static_assert(sizeof...(V) == sizeof...(O),
@@ -1228,7 +1228,7 @@ class Dispatch_output_iterator < cpp0x::tuple<V...>, cpp0x::tuple<O...> >
   static const int size = sizeof...(V);
 
   template <typename D, typename V_, typename O_>
-  friend class CGALi::Derivator;
+  friend class internal::Derivator;
 
 public:
 
@@ -1244,7 +1244,7 @@ public:
 private:
 
   typedef Dispatch_output_iterator Self;
-  typedef CGALi::Derivator<Self, Value_type_tuple, Iterator_tuple > Base;
+  typedef internal::Derivator<Self, Value_type_tuple, Iterator_tuple > Base;
 
 public:
 
@@ -1287,7 +1287,7 @@ class Dispatch_or_drop_output_iterator < cpp0x::tuple<V...>, cpp0x::tuple<O...> 
   typedef Dispatch_output_iterator< cpp0x::tuple<V...>, cpp0x::tuple<O...> > Base;
 
   template <typename D, typename V_, typename O_>
-  friend class CGALi::Derivator;
+  friend class internal::Derivator;
 
 public:
 

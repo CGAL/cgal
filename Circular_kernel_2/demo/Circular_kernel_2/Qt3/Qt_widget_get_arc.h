@@ -27,7 +27,7 @@
 
 namespace CGAL {
 
-namespace CGALi {
+namespace internal {
 
 class Qt_widget_get_arc_helper
   : public CGAL::Qt_widget_layer
@@ -45,11 +45,11 @@ signals:
   void new_object_time();
 };
 
-} // namespace CGALi
+} // namespace internal
 
 template <class R>
 class Qt_widget_get_arc
-  : public CGALi::Qt_widget_get_arc_helper
+  : public internal::Qt_widget_get_arc_helper
 {
   typedef typename R::FT                         FT;
   typedef typename R::Circle_2                   Circle;
@@ -62,7 +62,7 @@ public:
 
   Qt_widget_get_arc(const QCursor c=QCursor(Qt::crossCursor),
 		       QObject* parent = 0, const char* name = 0)
-     : CGALi::Qt_widget_get_arc_helper(parent, name),
+     : internal::Qt_widget_get_arc_helper(parent, name),
        cursor(c), firstpoint(false),
        firsttime(true), secondpoint(false), thirdpoint(false),
        clockwise(false)

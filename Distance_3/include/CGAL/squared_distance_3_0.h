@@ -36,7 +36,7 @@
 CGAL_BEGIN_NAMESPACE
 
 
-namespace CGALi {
+namespace internal {
 
 template <class K>
 bool is_null(const typename K::Vector_3 &v, const K&)
@@ -294,7 +294,7 @@ same_direction(const typename K::Vector_3 &u,
 }
 
 
-} // namespace CGALi
+} // namespace internal
 
 template <class K>
 inline 
@@ -302,7 +302,7 @@ typename K::FT
 squared_distance(const Point_3<K> & pt1,
 		 const Point_3<K> & pt2)
 {
-  return CGALi::squared_distance(pt1,pt2, K());
+  return internal::squared_distance(pt1,pt2, K());
 }
 
 
@@ -312,7 +312,7 @@ typename K::FT
 squared_distance_to_plane(const Vector_3<K> & normal,
 			  const Vector_3<K> & diff)
 {
-  return CGALi::squared_distance_to_plane(normal, diff, K());
+  return internal::squared_distance_to_plane(normal, diff, K());
 }
 
 
@@ -322,7 +322,7 @@ typename K::FT
 squared_distance_to_line(const Vector_3<K> & dir,
 			 const Vector_3<K> & diff)
 {
-  return CGALi::squared_distance_to_line(dir, diff, K());
+  return internal::squared_distance_to_line(dir, diff, K());
 }
 
 

@@ -166,7 +166,7 @@ static char const* trisegment_collinearity_to_string( Trisegment_collinearity c 
   
   return "!!UNKNOWN COLLINEARITY!!" ;
 }
-namespace CGALi 
+namespace internal 
 {
 
 template <>

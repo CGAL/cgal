@@ -36,7 +36,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace CGALi {
+namespace internal {
 
 // std::equal_to<T> sticks things to one type, so I define my own.
 struct Equal_to
@@ -46,10 +46,10 @@ struct Equal_to
   { return a == b; }
 };
 
-} // namespace CGALi
+} // namespace internal
 
 
-template < typename NT1, typename NT2, typename Cmp = CGALi::Equal_to >
+template < typename NT1, typename NT2, typename Cmp = internal::Equal_to >
 class Number_type_checker
 {
   NT1 _n1;
