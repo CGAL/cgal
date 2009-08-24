@@ -87,6 +87,27 @@ added to namespace \ccc{CGAL}.  (Some people use the macros
 in place of the \texttt{namespace CGAL \{} and
 \texttt{\} // namespace CGAL}, respectively, for better readability.)
 
+\section{Namespace {\tt internal}}
+\ccIndexSubitem{namespace}{\ccFont internal}
+All names introduced by \cgal\ which are not documented to the user
+should be under an \ccc{internal} subnamespace of \ccc{CGAL}, \eg:
+\begin{verbatim}
+namespace CGAL { namespace internal {
+
+class My_undocumented_class {};
+
+void my_new_function( My_undocumented_class& );
+
+}} // namespace CGAL::internal
+
+namespace CGAL { namespace Package { namespace internal { namespace tags {
+
+class Some_further_class_local_to_Package;
+
+}}}} // namespace CGAL::Package::internal::tags
+\end{verbatim}
+
+
 \section{Name lookup}
 The process of searching for a definition of a name detected in
 some scope is called name lookup.\ccIndexMainItemDef{name lookup}

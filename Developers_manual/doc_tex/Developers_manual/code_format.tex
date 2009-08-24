@@ -264,10 +264,13 @@ For example, the function that retuns an instance of the
       where file names are not case sensitive.  A package that contains
       file names that are the same as files already in the release will be
       rejected by the submission script.
-
 \item The names of files should not contain any characters not allowed by
       all the platforms the library supports.  In particular, it should not
       contain the characters `:', `*', or `\ '.
+\item Internal header files -- which are not documented to the user -- should
+      have {\tt /internal/} as a directory higher up in their hierarchy.
+      For example {\tt CGAL/internal/foo.h} or
+      {\tt CGAL/Package/internal/predicates/my\_pred.h}.
 \end{itemize}
 \ccIndexSubitemEnd{source files}{naming scheme}
 \ccIndexSubitemEnd{naming scheme}{source files}
