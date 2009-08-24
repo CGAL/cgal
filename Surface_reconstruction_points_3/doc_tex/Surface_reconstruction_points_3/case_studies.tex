@@ -13,9 +13,8 @@ Ideally the current implementation of the Poisson surface reconstruction method 
 
 % Insert image bimba.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-bimba}
     \begin{ccTexOnly}
-  \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/bimba}
+        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/bimba}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./bimba.jpg"><P>
@@ -24,14 +23,14 @@ Ideally the current implementation of the Poisson surface reconstruction method 
         \caption{Poisson reconstruction.
                  Left: 120K points sampled on a statue (Minolta laser scanner).
                  Right: reconstructed surface mesh.}
+        \label{Surface_reconstruction_points_3-fig-bimba}
     \end{figure}
 \end{center}
 
 % Insert image eros.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-eros}
     \begin{ccTexOnly}
-\includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/eros}
+        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/eros}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./eros.jpg"><P>
@@ -39,6 +38,7 @@ Ideally the current implementation of the Poisson surface reconstruction method 
     \begin{figure}[h]
         \caption{Left: 120K points sampled on a statue (Minolta laser scanner).
                  Right: reconstructed surface mesh.}
+        \label{Surface_reconstruction_points_3-fig-eros}
     \end{figure}
 \end{center}
 
@@ -46,9 +46,8 @@ The algorithm is fairly robust to anisotropic sampling and to noise. It is also 
 
 % Insert image holes_good.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-holes_good}
     \begin{ccTexOnly}
-\includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/holes_good}
+        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/holes_good} % omit .eps suffix
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./holes_good.jpg"><P>
@@ -59,6 +58,7 @@ The algorithm is fairly robust to anisotropic sampling and to noise. It is also 
                  to the scanning technology.
                  Right: reconstructed surface mesh and closeup.
                  The holes are properly closed.}
+        \label{Surface_reconstruction_points_3-fig-holes_good}
     \end{figure}
 \end{center}
 
@@ -66,17 +66,17 @@ The algorithm is in general not robust to outliers, although a few outliers do n
 
 % Insert image outliers.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-outliers}
     \begin{ccTexOnly}
-\includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/outliers}    \end{ccTexOnly}
+        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/outliers} % omit .eps suffix
+    \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./outliers.jpg"><P>
     \end{ccHtmlOnly}
     \begin{figure}[h]
         \caption{Left: 70K points sampled on an elephant with few
-                 outliers emphasized with circles.
-                 % careful: show circles not disks
+                 outliers emphasized with disks.
                  Right: reconstructed surface mesh.}
+        \label{Surface_reconstruction_points_3-fig-outliers}
     \end{figure}
 \end{center}
 
@@ -86,7 +86,8 @@ The algorithm works well even when the inferred surface is composed of several c
 
 \subsubsection{Contouring Parameters}
 
-Our implementation of the Poisson surface reconstruction algorithm computes an implicit function represented as a piecewise linear function over the tetrahedra of a 3D Delaunay triangulation constructed from the input points then refined through Delaunay refinement. For this reason any iso-surface is also piecewise linear and hence may contain sharp creases. As the contouring algorithm \ccc{CGAL::make_surface_mesh()} expects a smooth implicit function these sharp creases may create spurious clusters of vertices in the final reconstructed surface mesh when setting a small mesh sizing or surface approximation error parameter (see Figure~\ref{Surface_reconstruction_points_3-fig-contouring_bad}). One way to avoid these spurious clusters consists of adjusting the mesh sizing and surface approximation parameters large enough compared to the average sampling density (obtained through \ccc{CGAL::compute_average_spacing()}) so that the contouring algorithm ``perceives'' a smooth iso-surface. We recommend to use the following contouring parameters:
+Our implementation of the Poisson surface reconstruction algorithm computes an implicit function represented as a piecewise linear function over the tetrahedra of a 3D Delaunay triangulation constructed from the input points then refined through Delaunay refinement. For this reason, any iso-surface is also piecewise linear and hence may contain sharp creases. As the contouring algorithm \ccc{CGAL::make_surface_mesh()} expects a smooth implicit function these sharp creases may create spurious clusters of vertices in the final reconstructed surface mesh when setting a small mesh sizing or surface approximation error parameter (see Figure~\ref{Surface_reconstruction_points_3-fig-contouring_bad}).\\
+One way to avoid these spurious clusters consists of adjusting the mesh sizing and surface approximation parameters large enough compared to the average sampling density (obtained through \ccc{CGAL::compute_average_spacing()}) so that the contouring algorithm ``perceives'' a smooth iso-surface. We recommend to use the following contouring parameters:
 \begin{itemize}
 \item Max triangle radius: at least 100 times the average spacing.
 \item Approximation distance: at least 0.25 times the average spacing.
@@ -95,9 +96,8 @@ Our implementation of the Poisson surface reconstruction algorithm computes an i
 % PA: we are missing the number of input points here.
 % Insert image contouring_bad.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-contouring_bad}
     \begin{ccTexOnly}
-\includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/contouring_bad}
+        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/contouring_bad}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./contouring_bad.jpg"><P>
@@ -108,6 +108,7 @@ Our implementation of the Poisson surface reconstruction algorithm computes an i
                  Right: surface reconstructed with approximation
                  distance = 0.15 * average spacing.
                  Notice the spurious cluster on the chick.}
+        \label{Surface_reconstruction_points_3-fig-contouring_bad}
     \end{figure}
 \end{center}
 
@@ -122,9 +123,8 @@ The reconstruction algorithm expects a sufficiently dense point set. Although th
 
 % Insert image sampling.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-sampling}
     \begin{ccTexOnly}
-\includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/sampling}     \end{ccTexOnly}
+        \includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/sampling}     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./sampling.jpg"><P>
     \end{ccHtmlOnly}
@@ -135,6 +135,7 @@ The reconstruction algorithm expects a sufficiently dense point set. Although th
                  Right: point set simplified to 1K points then reconstructed
                  (all input points are depicted with normals). The thin
                  feature is not reconstructed.}
+        \label{Surface_reconstruction_points_3-fig-sampling}
     \end{figure}
 \end{center}
 
@@ -145,9 +146,8 @@ The reconstruction is devised to solve for an implicit function which is an appr
 
 % Insert image holes_bad.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-holes_bad}
     \begin{ccTexOnly}
-\includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/holes_bad}
+        \includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/holes_bad}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./holes_bad.jpg"><P>
@@ -158,19 +158,19 @@ The reconstruction is devised to solve for an implicit function which is an appr
                  Right: reconstructed surface mesh. The surface is
                  properly closed on the fingers and also closed
                  at the wrist but in a less plausible manner.}
+        \label{Surface_reconstruction_points_3-fig-holes_bad}
     \end{figure}
 \end{center}
 
 
 \subsubsection{Wrongly Oriented Normals}
 
-The Poisson surface reconstruction approaches solves for an implicit function whose gradient best matches a set of input normals. Because it solves this problem in the least squares sense it is robust to few isolated wrongly oriented (flipped) normals. Nevertheless a cluster of wrongly oriented normals leads to an incorrect implicit function and hence to spurious geometric or even topological distortion (see Figure~\ref{Surface_reconstruction_points_3-fig-flipped_normals}).
+The Poisson surface reconstruction approaches solves for an implicit function whose gradient best matches a set of input normals. Because it solves this problem in the least squares sense, it is robust to few isolated wrongly oriented (flipped) normals. Nevertheless a cluster of wrongly oriented normals leads to an incorrect implicit function and hence to spurious geometric or even topological distortion (see Figure~\ref{Surface_reconstruction_points_3-fig-flipped_normals}).
 
 % Insert image flipped_normals.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-flipped_normals}
     \begin{ccTexOnly}
-\includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/flipped_normals}
+        \includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/flipped_normals}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./flipped_normals.jpg"><P>
@@ -179,6 +179,7 @@ The Poisson surface reconstruction approaches solves for an implicit function wh
         \caption{Left: points sampled on a sphere with a cluster
                  of wrongly oriented normals.
                  Right: reconstructed surface mesh with a spurious bump.}
+        \label{Surface_reconstruction_points_3-fig-flipped_normals}
     \end{figure}
 \end{center}
 
@@ -186,13 +187,12 @@ The Poisson surface reconstruction approaches solves for an implicit function wh
 \subsubsection{Noise and Outliers}
 
 A large amount of noise inevitably impacts on the reconstruction (see Figure~\ref{Surface_reconstruction_points_3-fig-noise}, top) and the current implementation does not provide any mean to trade data fitting for smoothness. Nevertheless if the signal-to-noise ratio is sufficiently high and/or the
-surface approximation and sizing parameters set for contouring the iso-surface is large with respect to the noise level the output surface mesh will appear smooth (not shown). If the user wants to produce a smooth and detailed output surface mesh we recommend to apply smoothing through \ccc{CGAL::jet_smooth_point_set()} ((see Figure~\ref{Surface_reconstruction_points_3-fig-noise}, bottom).
+surface approximation and sizing parameters set for contouring the iso-surface is large with respect to the noise level the output surface mesh will appear smooth (not shown). If the user wants to produce a smooth and detailed output surface mesh, we recommend to apply smoothing through \ccc{CGAL::jet_smooth_point_set()} ((see Figure~\ref{Surface_reconstruction_points_3-fig-noise}, bottom).
 
 % Insert image noise.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-noise}
     \begin{ccTexOnly}
-\includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/noise}
+        \includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/noise}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./noise.jpg"><P>
@@ -203,6 +203,7 @@ surface approximation and sizing parameters set for contouring the iso-surface i
                  Top-right: reconstructed surface mesh.
                  Bottom-left: smoothed point set.
                  Bottom-right: reconstructed surface mesh.}
+        \label{Surface_reconstruction_points_3-fig-noise}
     \end{figure}
 \end{center}
 
@@ -215,9 +216,8 @@ The current reconstruction algorithm is not able to recover the sharp creases an
 
 % Insert image sharp_features.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-sharp_features}
     \begin{ccTexOnly}
-\includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/sharp_features}
+        \includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/sharp_features}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
         <img width="80%" border=0 src="./sharp_features.jpg"><P>
@@ -227,16 +227,7 @@ The current reconstruction algorithm is not able to recover the sharp creases an
                  sharp features (creases, darts and corners).
                  Right: reconstructed surface mesh with smoothed
                  creases.}
+        \label{Surface_reconstruction_points_3-fig-sharp_features}
     \end{figure}
 \end{center}
-
-
-
-%====================================================
-% PA: I propose to comment this: this is rather the
-% failure of the mst stuff - we can have users which
-% provide oriented normals
-%====================================================
-%\subsubsection{Several Connected Components}
-%This package does not support point sets with several clusters of points. The main limitation is that \ccc{CGAL::mst_orient_normals()} cannot orient coherently the normals of several clusters of points. The contouring phase (i.e. the call to \ccc{make_surface_mesh()}) also requires a different initialization to handle several connected components.
 
