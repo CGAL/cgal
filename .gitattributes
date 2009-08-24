@@ -866,12 +866,9 @@ Arrangement_on_surface_2/test/Sweep_line_2/test_sweep_conic.cpp eol=lf
 Arrangement_on_surface_2/todo -text
 BGL/doc_tex/BGL/fig/emst-detail.png -text
 BGL/doc_tex/BGL/fig/emst.jpg -text
-BGL/doc_tex/BGL/fig/ex_bgl.eps -text svneol=unset#application/postscript
 BGL/doc_tex/BGL/fig/ex_bgl.fig -text svneol=unset#application/octet-stream
 BGL/doc_tex/BGL/fig/ex_bgl.gif -text svneol=unset#image/gif
 BGL/doc_tex/BGL/fig/ex_bgl.pdf -text svneol=unset#application/pdf
-BGL/doc_tex/BGL/fig/ex_bgl.pstex -text svneol=unset#application/postscript
-BGL/doc_tex/BGL/fig/ex_bgl.pstex_t -text svneol=unset#application/postscript
 BGL/examples/BGL_polyhedron_3/cube.off -text
 BGL/test/BGL/data/7_faces_traingle.off -text svneol=unset#application/octet-stream
 BGL/test/BGL/data/genus3.off -text svneol=unset#application/octet-stream
