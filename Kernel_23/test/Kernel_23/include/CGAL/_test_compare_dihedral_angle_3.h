@@ -81,7 +81,7 @@ _test_compare_dihedral_angle_3(const R& rep)
         const Vector_3 w2 = q4 - q1;
         const Vector_3 uv2 = cross_product(u2, v2);
         const Vector_3 uw2 = cross_product(u2, w2);
-        std::cerr << "Squared cosinus and signs are: \n"
+        std::cerr << "Squared cosine and signs are: \n"
                   << CGAL::to_double((uv1 * uw1) * (uv1 * uw1) / 
                                      ((uv1*uv1) * ( uw1*uw1))) << " " 
                   << CGAL::sign(uv1*uw1) << "\n"

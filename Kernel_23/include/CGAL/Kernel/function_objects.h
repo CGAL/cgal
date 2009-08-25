@@ -216,7 +216,7 @@ namespace CommonKernelFunctors {
 
       if(sc_prod_1 >= 0 ) {
         if(sc_prod_2 >= 0) {
-          // the two cosinus are >= 0, cosinus is decreasing on [0,1]
+          // the two cosine are >= 0, cosine is decreasing on [0,1]
           return compare(CGAL::square(sc_prod_2)*
                          (abac1*abac1)*(abad1*abad1),
                          CGAL::square(sc_prod_1)*
@@ -228,7 +228,7 @@ namespace CommonKernelFunctors {
       }
       else {
         if(sc_prod_2 < 0) {
-          // the two cosinus are < 0, cosinus is increasing on [-1,0]
+          // the two cosine are < 0, cosine is increasing on [-1,0]
           return compare(CGAL::square(sc_prod_1)*
                          (abac2*abac2)*(abad2*abad2),
                          CGAL::square(sc_prod_2)*
