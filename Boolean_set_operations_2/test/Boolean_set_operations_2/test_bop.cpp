@@ -367,12 +367,11 @@ bool test_one_file(std::ifstream & inp)
   else
     inp >> pwh2;
 
-  bool success = false;
-
   if (type1 == 0 && type2 == 0) return test(inp, p1 ,p2);
   if (type1 == 0 && type2 == 1) return test(inp, p1 ,pwh2);
   if (type1 == 1 && type2 == 0) return test(inp, pwh1, p2);
   if (type1 == 1 && type2 == 1) return test(inp, pwh1, pwh2);
+  return false;
 }
 
 
