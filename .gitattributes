@@ -1080,6 +1080,7 @@ CGAL_ipelets/demo/CGAL_ipelets/CMakeLists.txt -text
 CGAL_ipelets/demo/CGAL_ipelets/alpha_shapes.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/arrangement.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/bbox_restriction.cpp -text
+CGAL_ipelets/demo/CGAL_ipelets/cgal_test_with_cmake eol=lf
 CGAL_ipelets/demo/CGAL_ipelets/diagrams.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/generator.cpp -text
 CGAL_ipelets/demo/CGAL_ipelets/hilbert_sort.cpp -text
