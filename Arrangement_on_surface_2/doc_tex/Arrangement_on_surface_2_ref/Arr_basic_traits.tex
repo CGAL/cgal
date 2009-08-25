@@ -51,8 +51,18 @@ overlap.
   {indicates whether the nested functor \ccc{Compare_at_x_left_2} is
   provided.} 
 
-\ccNestedType{Has_boundary_category}
-  {indicates whether the traits class supports unbounded curves.}
+\ccNestedType{Arr_left_side_category}
+  {indicates the type of the left boundary-side. Must be either
+  \ccc{Arr_oblivious_side_tag} or \ccc{Arr_open_side_tag}.}
+\ccNestedType{Arr_bottom_side_category}
+  {indicates the type of the bottom boundary-side. Must be either
+  \ccc{Arr_oblivious_side_tag} or \ccc{Arr_open_side_tag}.}
+\ccNestedType{Arr_top_side_category}
+  {indicates the type of the top boundary-side. Must be either
+  \ccc{Arr_oblivious_side_tag} or \ccc{Arr_open_side_tag}.}
+\ccNestedType{Arr_right_side_category}
+  {indicates the type of the right boundary-side. Must be either
+  \ccc{Arr_oblivious_side_tag} or \ccc{Arr_open_side_tag}.}
 
 \ccHeading{Functor Types}
 % =======================
