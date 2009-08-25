@@ -164,6 +164,7 @@ public:
         reinterpret_cast<Sweep_line*>(this->m_sweep_line)->stop_sweep();
       }
     }
+    return true;
   }
 
   bool is_valid() const { return m_is_valid; }
