@@ -258,6 +258,37 @@ collinear_are_strictly_ordered_along_line(
   return k.collinear_are_strictly_ordered_along_line_3_object()(p, q, r);
 }
 
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_dihedral_angle(const typename K::Point_3& a1,
+                       const typename K::Point_3& b1, 
+                       const typename K::Point_3& c1,
+                       const typename K::Point_3& d1, 
+                       const typename K::Point_3& a2, 
+                       const typename K::Point_3& b2, 
+                       const typename K::Point_3& c2,
+                       const typename K::Point_3& d2,
+                       const K& k)
+{
+  return k.compare_dihedral_angle_3_object()(a1, b1, c1, d1, a2, b2, c2, d2);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_dihedral_angle(const typename K::Vector_3& ab1, 
+                       const typename K::Vector_3& ac1,
+                       const typename K::Vector_3& ad1,
+                       const typename K::Vector_3& ab2,
+                       const typename K::Vector_3& ac2,
+                       const typename K::Vector_3& ad2,
+                       const K& k)
+{
+  return k.compare_dihedral_angle_3_object()(ab1, ac1, ad1, ab2, ac2, ad2);
+}
+
 template < class K >
 inline
 typename K::Comparison_result

@@ -25,6 +25,7 @@
 
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/_test_compare_dihedral_angle_3.h>
 
 #include <CGAL/use.h>
 
@@ -558,6 +559,11 @@ test_new_3(const R& rep)
         = rep.less_signed_distance_to_plane_3_object();
   bool tmp28a = less_signed_distance_to_plane(tmp8,p2,p3);
   (void) tmp28a;
+
+  {
+    bool tmp = _test_compare_dihedral_angle_3(rep);
+    assert(tmp);
+  }
 
   typename R::Compare_distance_3 compare_dist
         = rep.compare_distance_3_object();

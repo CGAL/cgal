@@ -105,6 +105,8 @@ CGAL_Kernel_pred(Collinear_3,
 		 collinear_3_object)
 CGAL_Kernel_pred(Compare_angle_with_x_axis_2,
 		 compare_angle_with_x_axis_2_object)
+CGAL_Kernel_pred(Compare_dihedral_angle_3,
+		 compare_dihedral_angle_3_object)
 CGAL_Kernel_pred(Compare_distance_2,
 		 compare_distance_2_object)
 CGAL_Kernel_pred(Compare_distance_3,

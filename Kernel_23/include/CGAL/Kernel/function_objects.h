@@ -3,6 +3,7 @@
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
 // and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2009 GeometryFactory (France)
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -161,6 +162,89 @@ namespace CommonKernelFunctors {
     result_type
     operator()(T& t, const Object_3& o) const
     { return assign(t, o); }
+  };
+
+  template <typename K>
+  class Compare_dihedral_angle_3
+  {
+    typedef typename K::Point_3            Point_3;
+    typedef typename K::Vector_3           Vector_3;
+  public:
+    typedef typename K::Comparison_result  result_type;
+
+    result_type
+    operator()(const Point_3& a1, const Point_3& b1, 
+               const Point_3& c1, const Point_3& d1, 
+               const Point_3& a2, const Point_3& b2, 
+               const Point_3& c2, const Point_3& d2) const
+    {
+      const Vector_3 ab1 = b1 - a1;
+      const Vector_3 ac1 = c1 - a1;
+      const Vector_3 ad1 = d1 - a1;
+
+      const Vector_3 ab2 = b2 - a2;
+      const Vector_3 ac2 = c2 - a2;
+      const Vector_3 ad2 = d2 - a2;
+      return this->operator()(ab1, ac1, ad1, ab2, ac2, ad2);
+    }
+
+    result_type
+    operator()(const Vector_3& ab1, const Vector_3& ac1, const Vector_3& ad1,
+               const Vector_3& ab2, const Vector_3& ac2, const Vector_3& ad2)
+      const
+    {
+      typedef typename K::FT                                 FT;
+      typedef typename K::Construct_cross_product_vector_3   Cross_product;
+      Cross_product xproduct = K().construct_cross_product_vector_3_object();
+
+      const Vector_3 abac1 = xproduct(ab1, ac1);
+      const Vector_3 abad1 = xproduct(ab1, ad1);
+      const FT sc_prod_1 = abac1 * abad1;
+
+      const Vector_3 abac2 = xproduct(ab2, ac2);
+      const Vector_3 abad2 = xproduct(ab2, ad2);
+      const FT sc_prod_2 = abac2 * abad2;
+
+      CGAL_kernel_assertion_msg( abac1 != NULL_VECTOR,
+                                 "ab1 and ac1 are collinear" );
+      CGAL_kernel_assertion_msg( abad1 != NULL_VECTOR,
+                                 "ab1 and ad1 are collinear" );
+      CGAL_kernel_assertion_msg( abac2 != NULL_VECTOR,
+                                 "ab2 and ac2 are collinear" );
+      CGAL_kernel_assertion_msg( abad2 != NULL_VECTOR,
+                                 "ab2 and ad2 are collinear" );
+
+      if(sc_prod_1 >= 0 ) {
+        if(sc_prod_2 >= 0) {
+          // the two cosinus are >= 0, cosinus is decreasing on [0,1]
+          return compare(CGAL::square(sc_prod_2)*
+                         (abac1*abac1)*(abad1*abad1),
+                         CGAL::square(sc_prod_1)*
+                         (abac2*abac2)*(abad2*abad2));
+        }
+        else {
+          return SMALLER;
+        }
+      }
+      else {
+        if(sc_prod_2 < 0) {
+          // the two cosinus are < 0, cosinus is increasing on [-1,0]
+          return compare(CGAL::square(sc_prod_1)*
+                         (abac2*abac2)*(abad2*abad2),
+                         CGAL::square(sc_prod_2)*
+                         (abac1*abac1)*(abad1*abad1));
+        }
+        else
+          return LARGER;
+        }
+    }
+
+    // result_type
+    // operator()(const Tetrahedron_3& t1, const Tetrahedron_3& t2) const
+    // {
+    //   return this->operator(t1[0], t1[1], t1[2], t1[3],
+    //                         t2[0], t2[1], t2[2], t2[3]);
+    // }
   };
 
   template <typename K>
