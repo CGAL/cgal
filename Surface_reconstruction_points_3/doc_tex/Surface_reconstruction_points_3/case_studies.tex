@@ -1,247 +1,233 @@
 \section{Case Studies}
 \label{surface_reconstruction_section_case_studies}
 
+The surface reconstruction problem being inherently ill-posed, the proposed algorithm does not pretend to reconstruct all kinds of surfaces with arbitrary sampling conditions. This section provides the user with some hints about the ideal sampling and contouring conditions, and depicts some failure cases when these conditions are not matched.
+
 \subsection{Ideal Conditions}
+
+The user must keep in mind that the poisson surface reconstruction algorithm comprises two phases (computing the implicit function from the input point set and contouring an iso-surface of this function). Both require some care in terms of sampling conditions and parameter tuning.
 
 \subsubsection{Point Set}
 
-This implementation of the Poisson surface reconstruction method expects a dense point set (respecting the epsilon-sampling condition), sampled over a smooth surface, with only one connected component. 3D points must come with an oriented normal.\\
-The point set can be anisotropic and contain holes. This reconstruction method supports noise and a limited amount of outliers.
+Ideally the current implementation of the Poisson surface reconstruction method expects a dense 3D oriented point set (typically matching the epsilon-sampling condition~\cite{cgal:bo-pgsms-05}) and sampled over a closed, smooth surface. Oriented herein means that all 3D points must come with consistently oriented normals to the inferred surface. Figures \ref{Surface_reconstruction_points_3-fig-bimba} and \ref{Surface_reconstruction_points_3-fig-eros} illustrate cases where these ideal conditions are met.
 
-% Insert image bimba.png/.eps
+% Insert image bimba.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-bimba}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/bimba} % omit .eps suffix
+        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/bimba}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="80%" border=0 src="./bimba.png"><P>
+        <img width="80%" border=0 src="./bimba.jpg"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
         \caption{Poisson reconstruction.
                  Left: 120K points sampled on a statue (Minolta laser scanner).
                  Right: reconstructed surface mesh.}
+        \label{Surface_reconstruction_points_3-fig-bimba}
     \end{figure}
 \end{center}
 
-% Insert image eros.png/.eps
+% Insert image eros.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-eros}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/eros} % omit .eps suffix
+        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/eros}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="80%" border=0 src="./eros.png"><P>
+        <img width="80%" border=0 src="./eros.jpg"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
         \caption{Left: 120K points sampled on a statue (Minolta laser scanner).
                  Right: reconstructed surface mesh.}
+        \label{Surface_reconstruction_points_3-fig-eros}
     \end{figure}
 \end{center}
 
-% Insert image holes_good.png/.eps
+The algorithm is fairly robust to anisotropic sampling and to noise. It is also robust to missing data through filling the corresponding holes as the algorithm is designed to reconstruct the indicator function of an inferred solid (see Figure~\ref{Surface_reconstruction_points_3-fig-holes_good}).
+
+% Insert image holes_good.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-holes_good}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/holes_good} % omit .eps suffix
+        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/holes_good} % omit .eps suffix
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="80%" border=0 src="./holes_good.png"><P>
+        <img width="80%" border=0 src="./holes_good.jpg"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Left: 65K points sampled on hand (Kreon laser scanner).
-                 Bottom-left: notice that the point set is highly anisotropic.
-                 Right: reconstructed surface mesh. Notice that the hole on the fingers is properly closed.}
+        \caption{Top left: 65K points sampled on a hand (Kreon laser scanner).
+                 Bottom left: the point set is highly anisotropic due
+                 to the scanning technology.
+                 Right: reconstructed surface mesh and closeup.
+                 The holes are properly closed.}
+        \label{Surface_reconstruction_points_3-fig-holes_good}
     \end{figure}
 \end{center}
 
-% Insert image outliers.png/.eps
+The algorithm is in general not robust to outliers, although a few outliers do not always create a failure, see Figure~\ref{Surface_reconstruction_points_3-fig-outliers}.
+
+% Insert image outliers.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-outliers}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/outliers} % omit .eps suffix
+        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/outliers} % omit .eps suffix
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="80%" border=0 src="./outliers.png"><P>
+        <img width="80%" border=0 src="./outliers.jpg"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Left: 70K points sampled on an elephant with outliers (emphasized with circles).
+        \caption{Left: 70K points sampled on an elephant with few
+                 outliers emphasized with disks.
                  Right: reconstructed surface mesh.}
+        \label{Surface_reconstruction_points_3-fig-outliers}
     \end{figure}
 \end{center}
+
+
+The algorithm works well even when the inferred surface is composed of several connected components, provided that both all normals are properly estimated and oriented (the current CGAL normal orienter algorithm may fail in some cases, see \ccc{CGAL::mst_orient_normals()}), and that the final contouring algorithm is properly seeded for each component. When the inferred surface is composed of several nested connected components care should be taken to orient the normals of each component in alternation (inward/outward) so that the final contouring stage picks a proper contouring value.
 
 
 \subsubsection{Contouring Parameters}
 
-This implementation of the Poisson surface reconstruction method computes a Poisson implicit function
-piecewise linear in the tetrahedra of a 3D triangulation of the input points.
-On the other hand, the contouring algorithm \ccc{make_surface_mesh()} expects a smooth implicit function.
-In order for the Poisson function to appear smooth, we should reconstruct meshes with edges longer than 10 input vertices.\\
-\\
-For this purpose, we recommend to use the next contouring parameters:
+Our implementation of the Poisson surface reconstruction algorithm computes an implicit function represented as a piecewise linear function over the tetrahedra of a 3D Delaunay triangulation constructed from the input points then refined through Delaunay refinement. For this reason, any iso-surface is also piecewise linear and hence may contain sharp creases. As the contouring algorithm \ccc{CGAL::make_surface_mesh()} expects a smooth implicit function these sharp creases may create spurious clusters of vertices in the final reconstructed surface mesh when setting a small mesh sizing or surface approximation error parameter (see Figure~\ref{Surface_reconstruction_points_3-fig-contouring_bad}).\\
+One way to avoid these spurious clusters consists of adjusting the mesh sizing and surface approximation parameters large enough compared to the average sampling density (obtained through \ccc{CGAL::compute_average_spacing()}) so that the contouring algorithm ``perceives'' a smooth iso-surface. We recommend to use the following contouring parameters:
 \begin{itemize}
-\item Min triangle angle: 30 degrees, or less.
-\item Max triangle radius: 100 * the input point set's average spacing, or more.
-\item Approximation distance: 0.25 * the input point set's average spacing, or more.
+\item Max triangle radius: at least 100 times the average spacing.
+\item Approximation distance: at least 0.25 times the average spacing.
 \end{itemize}
 
-% Insert image contouring_bad.png/.eps
+% PA: we are missing the number of input points here.
+% Insert image contouring_bad.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-contouring_bad}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/contouring_bad} % omit .eps suffix
+        \includegraphics[width=1.0\textwidth]{Surface_reconstruction_points_3/contouring_bad}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="80%" border=0 src="./contouring_bad.png"><P>
+        <img width="80%" border=0 src="./contouring_bad.jpg"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Left: surface reconstructed with approximation distance = 0.25 * average spacing.
-                 Right: surface reconstructed with approximation distance = 0.15 * average spacing.
-                 Notice the small triangles on the girl's chick at the frontier between two underlying tetrahedra.}
+        \caption{Left: surface reconstructed with approximation
+                 distance = 0.25 * average spacing.
+                 Right: surface reconstructed with approximation
+                 distance = 0.15 * average spacing.
+                 Notice the spurious cluster on the chick.}
+        \label{Surface_reconstruction_points_3-fig-contouring_bad}
     \end{figure}
 \end{center}
-
-
 
 
 \subsection{Degraded Conditions}
 
-\subsubsection{Holes}
+The conditions listed above are rather restrictive and in practice not all of them are met in the applications. We now illustrates the behavior of the algorithm when the conditions are not met in terms of sampling, wrongly oriented normals, noise and sharp creases.
 
-By construction, this method contours the zero level set of an implicit function and reconstructs a closed mesh.\\
-For small holes, this is probably what you expect. \\
-In case of large holes that you do not want to close or that you want to close with a plane, you will need a postprocessing stage.
+\subsubsection{Sparse Sampling}
 
-% Insert image holes_bad.png/.eps
+The reconstruction algorithm expects a sufficiently dense point set. Although there is no formal proof of correctness of the algorithm under certain density conditions due to its variational nature, our experiments show that the algorithm reconstructs well all thin features when the local spacing is at most one tenth of the local feature size (the distance to the medial axis, which captures altogether curvature, thickness and separation). When this condition is not met the reconstruction does not reconstruct the thin undersampled features (see Figure~\ref{Surface_reconstruction_points_3-fig-sampling}).
+
+% Insert image sampling.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-holes_bad}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/holes_bad} % omit .eps suffix
-    \end{ccTexOnly}
+        \includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/sampling}     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./holes_bad.png"><P>
+        <img width="80%" border=0 src="./sampling.jpg"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Left: 65K points sampled on hand with no data captured at the wrist base.
-                 Right: reconstructed surface mesh. Notice that surface is properly closed on the fingers
-                 but also closed at the wrist in a non-natural way.}
+        \caption{Left: 50K points sampled on the Neptune trident.
+                 The reconstruction (not shown) is successful in this case.
+                 % PA: better to show it... this may confuse the reader.
+                 Right: point set simplified to 1K points then reconstructed
+                 (all input points are depicted with normals). The thin
+                 feature is not reconstructed.}
+        \label{Surface_reconstruction_points_3-fig-sampling}
     \end{figure}
 \end{center}
 
 
-\subsubsection{Noise}
+\subsubsection{Large Holes}
 
-Poisson reconstruction method supports noise if the approximation distance requested at the contouring stage is large w.r.t. the noise.\\
-If you wish to use a small approximation distance, you may remove noise as a preprocessing step using \ccc{CGAL::jet_smooth_point_set()}.
+The reconstruction is devised to solve for an implicit function which is an approximate indicator function of an inferred solid. For this reason the contouring algorithm always extracts a closed surface mesh and hence is able to fill the small holes where data are missing due, e.g., to occlusions during acquisition. In case of large holes the algorithm still closes them all but sometimes in an unexpected manner. In addition the resulting piecewise linear implicit function may exhibit large triangle patches and sharp creases as the 3D Delaunay triangulation used for solving is very coarse where the holes are filled (see Figure~\ref{Surface_reconstruction_points_3-fig-holes_bad}).
 
-% Insert image noise.png/.eps
+% Insert image holes_bad.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-noise}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/noise} % omit .eps suffix
+        \includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/holes_bad}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./noise.png"><P>
+        <img width="80%" border=0 src="./holes_bad.jpg"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Top-left: points sampled on sphere with a lot of noise.
-                 Top-right: reconstructed surface mesh. Notice the bumps.
+        \caption{Left: 65K points sampled on a hand with no data
+                 captured at the wrist base.
+                 Right: reconstructed surface mesh. The surface is
+                 properly closed on the fingers and also closed
+                 at the wrist but in a less plausible manner.}
+        \label{Surface_reconstruction_points_3-fig-holes_bad}
+    \end{figure}
+\end{center}
+
+
+\subsubsection{Wrongly Oriented Normals}
+
+The Poisson surface reconstruction approaches solves for an implicit function whose gradient best matches a set of input normals. Because it solves this problem in the least squares sense, it is robust to few isolated wrongly oriented (flipped) normals. Nevertheless a cluster of wrongly oriented normals leads to an incorrect implicit function and hence to spurious geometric or even topological distortion (see Figure~\ref{Surface_reconstruction_points_3-fig-flipped_normals}).
+
+% Insert image flipped_normals.jpg/.eps
+\begin{center}
+    \begin{ccTexOnly}
+        \includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/flipped_normals}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="80%" border=0 src="./flipped_normals.jpg"><P>
+    \end{ccHtmlOnly}
+    \begin{figure}[h]
+        \caption{Left: points sampled on a sphere with a cluster
+                 of wrongly oriented normals.
+                 Right: reconstructed surface mesh with a spurious bump.}
+        \label{Surface_reconstruction_points_3-fig-flipped_normals}
+    \end{figure}
+\end{center}
+
+
+\subsubsection{Noise and Outliers}
+
+A large amount of noise inevitably impacts on the reconstruction (see Figure~\ref{Surface_reconstruction_points_3-fig-noise}, top) and the current implementation does not provide any mean to trade data fitting for smoothness. Nevertheless if the signal-to-noise ratio is sufficiently high and/or the
+surface approximation and sizing parameters set for contouring the iso-surface is large with respect to the noise level the output surface mesh will appear smooth (not shown). If the user wants to produce a smooth and detailed output surface mesh, we recommend to apply smoothing through \ccc{CGAL::jet_smooth_point_set()} ((see Figure~\ref{Surface_reconstruction_points_3-fig-noise}, bottom).
+
+% Insert image noise.jpg/.eps
+\begin{center}
+    \begin{ccTexOnly}
+        \includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/noise}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img width="80%" border=0 src="./noise.jpg"><P>
+    \end{ccHtmlOnly}
+    \begin{figure}[h]
+        \caption{Top-left: points sampled on a sphere and corrupted with a
+                 lot of noise.
+                 Top-right: reconstructed surface mesh.
                  Bottom-left: smoothed point set.
                  Bottom-right: reconstructed surface mesh.}
+        \label{Surface_reconstruction_points_3-fig-noise}
     \end{figure}
 \end{center}
 
-
-\subsubsection{Outliers}
-
-Poisson reconstruction method supports a small amount of outliers (see elephant example above).\\
-Large clusters of outliers should be removed as a preprocessing step using \ccc{CGAL::remove_outliers()}.
+For a large number of outliers the failure cases (not shown) translate into spurious small connected components and massive distortion near the inferred surface. In this case the outliers must be removed through \ccc{CGAL::remove_outliers()}.
 
 
-\subsubsection{Sampling}
+\subsubsection{Sharp Creases}
 
-Poisson surface reconstruction method expects a dense point set, respecting the epsilon-sampling condition:
-the input points spacing must be 10 times smaller than the local feature size. When this condition is not respected, the reconstruction may miss thin undersampled regions.
+The current reconstruction algorithm is not able to recover the sharp creases and corners present in the inferred surface. This translates into smoothed sharp creases.
 
-% Insert image sampling.png/.eps
+% Insert image sharp_features.jpg/.eps
 \begin{center}
-    \label{Surface_reconstruction_points_3-fig-sampling}
-    % Image
     \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/sampling} % omit .eps suffix
+        \includegraphics[width=0.8\textwidth]{Surface_reconstruction_points_3/sharp_features}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./sampling.png"><P>
+        <img width="80%" border=0 src="./sharp_features.jpg"><P>
     \end{ccHtmlOnly}
-    % Title
     \begin{figure}[h]
-        \caption{Left: 50K points sampled on a Neptune trident.
-                 Right: point set simplified to 1K and then reconstructed
-                 (input points are drawn with normals to show the missed region).}
+        \caption{Left: 5K points sampled on a mechanical piece with
+                 sharp features (creases, darts and corners).
+                 Right: reconstructed surface mesh with smoothed
+                 creases.}
+        \label{Surface_reconstruction_points_3-fig-sharp_features}
     \end{figure}
 \end{center}
-
-
-\subsubsection{Normals}
-
-As Poisson surface reconstruction solves a global linear system in the least square sense, it supports isolated flipped normals.
-On the other hand, a cluster of wrong normals will lead to an incorrect implicit function.
-
-% Insert image flipped_normals.png/.eps
-\begin{center}
-    \label{Surface_reconstruction_points_3-fig-flipped_normals}
-    % Image
-    \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/flipped_normals} % omit .eps suffix
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./flipped_normals.png"><P>
-    \end{ccHtmlOnly}
-    % Title
-    \begin{figure}[h]
-        \caption{Left: points sampled on a sphere with a cluster of flipped normals.
-                 Right: reconstructed surface mesh. Notice the bump in the surface.}
-    \end{figure}
-\end{center}
-
-
-\subsubsection{Sharp Features}
-
-Poisson surface reconstruction does not support sharp features.
-
-% Insert image sharp_features.png/.eps
-\begin{center}
-    \label{Surface_reconstruction_points_3-fig-sharp_features}
-    % Image
-    \begin{ccTexOnly}
-      \includegraphics[width=0.5\textwidth]{Surface_reconstruction_points_3/sharp_features} % omit .eps suffix
-    \end{ccTexOnly}
-    \begin{ccHtmlOnly}
-        <img width="50%" border=0 src="./sharp_features.png"><P>
-    \end{ccHtmlOnly}
-    % Title
-    \begin{figure}[h]
-        \caption{Left: 5K points sampled on a mechanical piece.
-                 Right: reconstructed surface mesh. Notice that sharp edges are smoothed.}
-    \end{figure}
-\end{center}
-
-
-\subsubsection{Several Connected Components}
-
-This package does not support point sets with several clusters of points. The main limitation is that \ccc{CGAL::mst_orient_normals()} cannot orient coherently the normals of several clusters of points. The contouring phase (i.e. the call to \ccc{make_surface_mesh()}) also requires a different initialization to handle several connected components.
 

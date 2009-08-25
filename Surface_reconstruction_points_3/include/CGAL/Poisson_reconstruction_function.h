@@ -360,10 +360,15 @@ private:
 
     // Prints peak memory (Windows only)
     long max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
-    if (max_memory > old_max_memory)
-      CGAL_TRACE("  Max allocation in Choleschy factorization = %ld Mb\n", max_memory>>20);
-    else
-      CGAL_TRACE("  Sorry. Failed to get Choleschy factorization max allocation.\n");
+    if (max_memory <= 0) { // if peak_virtual_size() not implemented
+        CGAL_TRACE("  Sorry. Cannot get Choleschy factorization max allocation on this system.\n");
+    } else {
+      if (max_memory > old_max_memory)
+        CGAL_TRACE("  Max allocation in Choleschy factorization = %ld Mb\n", max_memory>>20);
+      else
+        CGAL_TRACE("  Sorry. Failed to get Choleschy factorization max allocation.\n");
+        CGAL_TRACE("  Max allocation since application start = %ld Mb\n", max_memory>>20);
+    }
 
     CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
     CGAL_TRACE("  Direct solve...\n");

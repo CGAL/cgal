@@ -50,8 +50,7 @@ if ( CGAL_FOUND )
   endif()
 
   # Temporary debugging stuff
-  ADD_DEFINITIONS( "-DDEBUG_TRACE" )
-  #ADD_DEFINITIONS( "-DCGAL_PROFILE" )
+  ADD_DEFINITIONS( "-DDEBUG_TRACE=2" )
 
   # Link with BLAS, LAPACK and TAUCS (optional)
   find_package(TAUCS)
