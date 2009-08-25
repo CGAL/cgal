@@ -1,4 +1,4 @@
-make/comdef.mak
+include $(ROOT)/make/comdef.mak
 
 TARGET_GIFS = compare_over_curve.gif
 TARGET_GIFS+= compare_over_point.gif
@@ -11,9 +11,15 @@ TARGET_PDFS = $(TARGET_GIFS:.gif=.pdf)
 TARGET0 = $(TARGET_GIFS)
 TARGET1 = $(TARGET_PDFS)
 
-include $(MAKEINCDIR)/comrul.mak
+include $(MAKEDIR)/comrul.mak
 
-%.dvi : %.pstex_t
+%.pstex_t : %.fig
+	fig2dev -L pstex_t -p $(basename $@).pstex $< > $@
+
+%.pstex : %.fig
+	fig2dev -L pstex $< > $@
+
+%.dvi : %.pstex_t %.pstex
 	sed -e s/Envelope_3\\/fig\\/// $< > tmp.pstex_t
 	latex tmp.tex
 	mv tmp.dvi $@
@@ -31,7 +37,7 @@ endef
 	convert -interlace Line -transparent White $(basename $@).eps2 $@;
 
 %.ps : %.dvi
-	dvips -P cmz $< -o
+	dvips -E -P cmz $< -o
 
 %.eps : %.ps
 	$(toeps) > $(basename $@).eps
