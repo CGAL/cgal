@@ -1996,6 +1996,7 @@ Manual_tools/src/latex_converter_config/html/style/Advanced.gif -text svneol=uns
 Manual_tools/src/latex_converter_config/html/style/Class.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/html/style/Concept.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/html/style/Constant.gif -text svneol=unset#image/gif
+Manual_tools/src/latex_converter_config/html/style/Deprecated.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/html/style/Enum.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/html/style/Function.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/html/style/FunctionObjectClass.gif -text svneol=unset#image/gif

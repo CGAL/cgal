@@ -114,6 +114,16 @@ div.AdvancedBlock      {
     background-repeat: no-repeat;
 }
 
+div.DeprecatedBlock      {
+    border: solid thin;
+    padding: 1.5em 0em 0em 5px;
+    margin: 1em 0;
+    background-color: #FFE4B5;
+    background-image: url(style/Deprecated.gif);
+    background-position: top left;
+    background-repeat: no-repeat;
+}
+
 /* ----------------------------------------------------------------------- */
 /* verbatim and example code environments                                  */
 /* ----------------------------------------------------------------------- */
