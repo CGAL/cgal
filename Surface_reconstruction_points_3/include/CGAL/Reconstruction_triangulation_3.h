@@ -188,14 +188,14 @@ struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 
 template <class BaseGt,
           class Gt = Reconstruction_triangulation_default_geom_traits_3<BaseGt>,
-          class Tds = Triangulation_data_structure_3<Reconstruction_vertex_base_3<Gt> > >
-class Reconstruction_triangulation_3 : public Delaunay_triangulation_3<Gt,Tds>
+          class Tds_ = Triangulation_data_structure_3<Reconstruction_vertex_base_3<Gt> > >
+class Reconstruction_triangulation_3 : public Delaunay_triangulation_3<Gt,Tds_>
 {
 // Private types
 private:
 
   // Base class
-  typedef Delaunay_triangulation_3<Gt,Tds>  Base;
+  typedef Delaunay_triangulation_3<Gt,Tds_>  Base;
 
   // Auxiliary class to build an iterator over input points.
   class Is_steiner_point
@@ -217,7 +217,7 @@ public:
 
   // Repeat base class' types
   /// @cond SKIP_IN_MANUAL
-  typedef Tds Triangulation_data_structure;
+  typedef Tds_ Triangulation_data_structure;
   typedef typename Base::Segment      Segment;
   typedef typename Base::Triangle     Triangle;
   typedef typename Base::Tetrahedron  Tetrahedron;
