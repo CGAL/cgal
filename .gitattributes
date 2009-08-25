@@ -204,8 +204,6 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.eps -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.pstex -text svneol=unset#application/postscript
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.pstex_t -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/connect_comp.eps -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/connect_comp.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/connect_comp.gif -text svneol=unset#image/gif
@@ -307,14 +305,10 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb1.eps -text 
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb1.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb1.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb1.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb1.pstex -text svneol=unset#application/postscript
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb1.pstex_t -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb_rat.eps -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb_rat.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb_rat.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb_rat.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb_rat.pstex -text svneol=unset#application/postscript
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_unb_rat.pstex_t -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/fan_grids.eps -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/fan_grids.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/fan_grids.gif -text svneol=unset#image/gif
@@ -338,13 +332,9 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_at_vertices
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_from_vertex.eps -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_from_vertex.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_from_vertex.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_from_vertex.pstex -text svneol=unset#application/postscript
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_from_vertex.pstex_t -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_in_face.eps -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_in_face.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_in_face.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_in_face.pstex -text svneol=unset#application/postscript
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/insert_in_face.pstex_t -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/pred_around_vertex.eps -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/pred_around_vertex.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/pred_around_vertex.gif -text svneol=unset#image/gif
@@ -361,8 +351,6 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.eps -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.pstex -text svneol=unset#application/postscript
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.pstex_t -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_halfedge_direction.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_do_intersect.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_zone.tex -text
