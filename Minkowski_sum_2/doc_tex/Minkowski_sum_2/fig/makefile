@@ -1,4 +1,4 @@
-include $(ROOT)/include/make/comdef.mak
+include $(ROOT)/make/comdef.mak
 
 TARGET_EPSS = approx_offset.eps
 TARGET_EPSS+= sum_triangles.eps
@@ -19,9 +19,15 @@ TARGET2 = $(TARGET_EPSS)
 
 default:: $(TARGET0) $(TARGET1) $(TARGET2)
 
-include $(MAKEINCDIR)/comrul.mak
+include $(MAKEDIR)/comrul.mak
 
-%.dvi : %.pstex_t
+%.pstex_t : %.fig
+	fig2dev -L pstex_t -p $(basename $@).pstex $< > $@
+
+%.pstex : %.fig
+	fig2dev -L pstex $< > $@
+
+%.dvi : %.pstex_t %.pstex
 	sed -e s/Minkowski_sum_2\\/fig\\/// $< > tmp.pstex_t
 	latex tmp.tex
 	mv tmp.dvi $@
@@ -43,10 +49,10 @@ endef
 	convert -interlace Line -transparent White $(basename $@).eps2 $@;
 
 %.ps : %.dvi
-	dvips -P cmz $< -o
+	dvips -E -P cmz $< -o
 
 %.eps : %.ps
-	$(toeps) > $(basename $@).eps
+	$(toeps) > $@
 
 %.pdf : %.eps
 	epstopdf --hires $<
