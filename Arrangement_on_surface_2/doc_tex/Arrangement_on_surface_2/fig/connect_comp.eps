@@ -1,18 +1,21 @@
 %!PS-Adobe-2.0
-%%Creator: dvips(k) 5.92b Copyright 2002 Radical Eye Software
+%%Creator: dvips(k) 5.96.1 Copyright 2007 Radical Eye Software
 %%Title: connect_comp.dvi
+%%CreationDate: Tue Aug 25 16:49:53 2009
 %%Pages: 1
 %%PageOrder: Ascend
-%%BoundingBox: 159 607 265 713
-%%HiResBoundingBox: 159.232693 607.828688 264.127685 712.723276
+%%BoundingBox: 246 445 457 656
+%%HiResBoundingBox: 246.536641 445.814565 456.327408 655.605332
 
 %%DocumentFonts: rtxmi Times-Italic Times-Roman
+%%DocumentPaperSizes: a4
 %%EndComments
 %DVIPSWebPage: (www.radicaleye.com)
-%DVIPSCommandLine: dvips -P cmz connect_comp.dvi -o
-%DVIPSParameters: dpi=600, compressed
-%DVIPSSource:  TeX output 2005.12.15:1304
-%%BeginProcSet: texc.pro
+%DVIPSCommandLine: dvips -x 2000 -y 2000 -D4000 -P cmz connect_comp.dvi
+%+ -o
+%DVIPSParameters: dpi=4000
+%DVIPSSource:  TeX output 2009.08.25:1649
+%%BeginProcSet: tex.pro 0 0
 %!
 /TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
 N}B/A{dup}B/TR{translate}N/isls false N/vsize 11 72 mul N/hsize 8.5 72
@@ -31,22 +34,10 @@ df-tail}B/dfs{div/sf X/fntrx[sf 0 0 sf neg 0 0]N df-tail}B/E{pop nn A
 definefont setfont}B/Cw{Cd A length 5 sub get}B/Ch{Cd A length 4 sub get
 }B/Cx{128 Cd A length 3 sub get sub}B/Cy{Cd A length 2 sub get 127 sub}
 B/Cdx{Cd A length 1 sub get}B/Ci{Cd A type/stringtype ne{ctr get/ctr ctr
-1 add N}if}B/id 0 N/rw 0 N/rc 0 N/gp 0 N/cp 0 N/G 0 N/CharBuilder{save 3
-1 roll S A/base get 2 index get S/BitMaps get S get/Cd X pop/ctr 0 N Cdx
-0 Cx Cy Ch sub Cx Cw add Cy setcachedevice Cw Ch true[1 0 0 -1 -.1 Cx
-sub Cy .1 sub]/id Ci N/rw Cw 7 add 8 idiv string N/rc 0 N/gp 0 N/cp 0 N{
-rc 0 ne{rc 1 sub/rc X rw}{G}ifelse}imagemask restore}B/G{{id gp get/gp
-gp 1 add N A 18 mod S 18 idiv pl S get exec}loop}B/adv{cp add/cp X}B
-/chg{rw cp id gp 4 index getinterval putinterval A gp add/gp X adv}B/nd{
-/cp 0 N rw exit}B/lsh{rw cp 2 copy get A 0 eq{pop 1}{A 255 eq{pop 254}{
-A A add 255 and S 1 and or}ifelse}ifelse put 1 adv}B/rsh{rw cp 2 copy
-get A 0 eq{pop 128}{A 255 eq{pop 127}{A 2 idiv S 128 and or}ifelse}
-ifelse put 1 adv}B/clr{rw cp 2 index string putinterval adv}B/set{rw cp
-fillstr 0 4 index getinterval putinterval adv}B/fillstr 18 string 0 1 17
-{2 copy 255 put pop}for N/pl[{adv 1 chg}{adv 1 chg nd}{1 add chg}{1 add
-chg nd}{adv lsh}{adv lsh nd}{adv rsh}{adv rsh nd}{1 add adv}{/rc X nd}{
-1 add set}{1 add clr}{adv 2 chg}{adv 2 chg nd}{pop nd}]A{bind pop}
-forall N/D{/cc X A type/stringtype ne{]}if nn/base get cc ctr put nn
+1 add N}if}B/CharBuilder{save 3 1 roll S A/base get 2 index get S
+/BitMaps get S get/Cd X pop/ctr 0 N Cdx 0 Cx Cy Ch sub Cx Cw add Cy
+setcachedevice Cw Ch true[1 0 0 -1 -.1 Cx sub Cy .1 sub]{Ci}imagemask
+restore}B/D{/cc X A type/stringtype ne{]}if nn/base get cc ctr put nn
 /BitMaps get S ctr S sf 1 ne{A A length 1 sub A 2 index S get sf div put
 }if put/ctr ctr 1 add N}B/I{cc 1 add D}B/bop{userdict/bop-hook known{
 bop-hook}if/SI save N @rigin 0 0 moveto/V matrix currentmatrix A 1 get A
@@ -70,10 +61,10 @@ p -2 w}B/o{p -1 w}B/q{p 1 w}B/r{p 2 w}B/s{p 3 w}B/t{p 4 w}B/x{0 S
 rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
 
 %%EndProcSet
-%%BeginProcSet: pstricks.pro
+%%BeginProcSet: pstricks.pro 0 0
 %!
 % PostScript prologue for pstricks.tex.
-% Version 97 patch 3, 98/06/01
+% Version 1.01, 2006/01/11
 % For distribution, see pstricks.tex.
 %
 /tx@Dict 200 dict def tx@Dict begin
@@ -87,42 +78,114 @@ rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
 /T /translate load def
 /TMatrix { } def
 /RAngle { 0 } def
-/Atan { /atan load stopped { pop pop 0 } if } def
-/Div { dup 0 eq { pop } { div } ifelse } def
-/NET { neg exch neg exch T } def
-/Pyth { dup mul exch dup mul add sqrt } def
-/PtoC { 2 copy cos mul 3 1 roll sin mul } def
-/PathLength@ { /z z y y1 sub x x1 sub Pyth add def /y1 y def /x1 x def }
-def
-/PathLength { flattenpath /z 0 def { /y1 ED /x1 ED /y2 y1 def /x2 x1 def
-} { /y ED /x ED PathLength@ } {} { /y y2 def /x x2 def PathLength@ }
-/pathforall load stopped { pop pop pop pop } if z } def
+/Sqrt { dup 0 lt { pop 0 } { sqrt } ifelse } def  % return 0 for negative arguments 
+/Atan { /atan load stopped { pop pop 0 } if } def % return 0 if atan not known
+/ATAN1 {neg -1 atan 180 sub } def		% atan(x) (only one parameter)
+/Div { dup 0 eq { pop } { div } ifelse } def  	% control the division
+/NET { neg exch neg exch T } def	      	% change coordinate system to the negative one		
+/Pyth { dup mul exch dup mul add sqrt } def   	% Pythagoras, epects 2 parameter
+/PtoC { 2 copy cos mul 3 1 roll sin mul } def 	% Polar to Cartesian
+%----------------- hv added 20050516 ---------------
+/Pi 3.14159265359 def 
+/TwoPi 6.28318530718 def
+/Euler 2.71828182846 def 
+/RadtoDeg { 180 mul Pi div } bind def % convert from radian to degrees
+/DegtoRad { Pi mul 180 div } bind def % viceversa
+%----------------- hv end---------------------------
+/PathLength@ { /z z y y1 sub x x1 sub Pyth add def /y1 y def /x1 x def } def
+/PathLength { flattenpath /z 0 def 
+  { /y1 ED /x1 ED /y2 y1 def /x2 x1 def
+  }{ /y ED /x ED PathLength@ } {} { /y y2 def /x x2 def PathLength@ }
+  /pathforall load stopped { pop pop pop pop } if z } def
 /STP { .996264 dup scale } def
 /STV { SDict begin normalscale end STP  } def
-/DashLine { dup 0 gt { /a .5 def PathLength exch div } { pop /a 1 def
-PathLength } ifelse /b ED /x ED /y ED /z y x add def b a .5 sub 2 mul y
-mul sub z Div round z mul a .5 sub 2 mul y mul add b exch Div dup y mul
-/y ED x mul /x ED x 0 gt y 0 gt and { [ y x ] 1 a sub y mul } { [ 1 0 ]
-0 } ifelse setdash stroke } def
-/DotLine { /b PathLength def /a ED /z ED /y CLW def /z y z add def a 0 gt
-{ /b b a div def } { a 0 eq { /b b y sub def } { a -3 eq { /b b y add
-def } if } ifelse } ifelse [ 0 b b z Div round Div dup 0 le { pop 1 } if
-] a 0 gt { 0 } { y 2 div a -2 gt { neg } if } ifelse setdash 1
-setlinecap stroke } def
-/LineFill { gsave abs CLW add /a ED a 0 dtransform round exch round exch
-2 copy idtransform exch Atan rotate idtransform pop /a ED .25 .25
-% DG/SR modification begin - Dec. 12, 1997 - Patch 2
-%itransform translate pathbbox /y2 ED a Div ceiling cvi /x2 ED /y1 ED a
-itransform pathbbox /y2 ED a Div ceiling cvi /x2 ED /y1 ED a
-% DG/SR modification end
-Div cvi /x1 ED /y2 y2 y1 sub def clip newpath 2 setlinecap systemdict
-/setstrokeadjust known { true setstrokeadjust } if x2 x1 sub 1 add { x1
-% DG/SR modification begin - Jun.  1, 1998 - Patch 3 (from Michael Vulis)
-% a mul y1 moveto 0 y2 rlineto stroke /x1 x1 1 add def } repeat grestore }
-% def
-a mul y1 moveto 0 y2 rlineto stroke /x1 x1 1 add def } repeat grestore
-pop pop } def
-% DG/SR modification end
+%
+%%-------------- DG begin patch 15 ---------------%%
+%/DashLine { dup 0 gt { /a .5 def PathLength exch div } { pop /a 1 def
+%PathLength } ifelse /b ED /x ED /y ED /z y x add def b a .5 sub 2 mul y
+%mul sub z Div round z mul a .5 sub 2 mul y mul add b exch Div dup y mul
+%/y ED x mul /x ED x 0 gt y 0 gt and { [ y x ] 1 a sub y mul } { [ 1 0 ]
+%0 } ifelse setdash stroke } def
+/DashLine {
+  dup 0 gt { /a .5 def PathLength exch div } { pop /a 1 def PathLength } ifelse
+  /b ED /x1 ED /y1 ED /x ED /y ED 
+  /z y x add y1 add x1 add def
+  /Coef b a .5 sub 2 mul y mul sub z Div round 
+    z mul a .5 sub 2 mul y mul add b exch Div def 
+  /y y Coef mul def 
+  /x x Coef mul def 
+  /y1 y1 Coef mul def 
+  /x1 x1 Coef mul def
+  x1 0 gt y1 0 gt or x 0 gt or y 0 gt and 
+    { [ y x y1 x1 ] 1 a sub y mul }
+    { [ 1 0 ] 0 } ifelse 
+  setdash stroke
+} def
+%%-------------- DG end patch 15 ---------------%%
+/DotLine { 
+  /b PathLength def 
+  /a ED /z ED /y CLW def 
+  /z y z add def 
+  a 0 gt { 
+    /b b a div def 
+  }{ 
+    a 0 eq { 
+      /b b y sub def 
+    }{ a -3 eq { 
+      /b b y add def } if 
+    } ifelse 
+  } ifelse 
+  [ 0 b b z Div round Div dup 0 le { pop 1 } if ] 
+  a 0 gt { 0 }{ y 2 div a -2 gt { neg }if } ifelse 
+  setdash 1 setlinecap stroke 
+} def
+%
+/LineFill { % hv ------------ patch 7 -------------
+  gsave 
+  abs /hatchWidthInc ED
+  abs /hatchSepInc ED
+  abs CLW add /a ED 
+  a 0 dtransform round exch round exch
+  2 copy idtransform 
+  exch Atan rotate 
+  idtransform pop /a ED 
+  .25 .25 itransform pathbbox 
+  /y2 ED 
+  a Div ceiling cvi /x2 ED /y1 ED 
+  a Div cvi /x1 ED /y2 y2 y1 sub def 
+  clip 
+  newpath 
+  2 setlinecap 
+  systemdict
+  /setstrokeadjust known { true setstrokeadjust } if 
+  x2 x1 sub 1 add { 
+    x1 a mul y1 moveto 0 y2 rlineto stroke 
+    /x1 x1 1 add 
+      hatchWidthInc 0 gt { CLW add } if 
+    def 
+    hatchSepInc 0 gt hatchWidthInc 0 gt or { 
+      /a a hatchSepInc add def
+      CLW hatchWidthInc add SLW 
+    } if
+  } repeat 
+  grestore 
+  pop pop } def
+%
+%gsave abs CLW add /a ED a 0 dtransform round exch round exch
+%2 copy idtransform exch Atan rotate idtransform pop /a ED .25 .25
+%% DG/SR modification begin - Dec. 12, 1997 - Patch 2
+%%itransform translate pathbbox /y2 ED a Div ceiling cvi /x2 ED /y1 ED a
+%itransform pathbbox /y2 ED a Div ceiling cvi /x2 ED /y1 ED a
+%% DG/SR modification end
+%Div cvi /x1 ED /y2 y2 y1 sub def clip newpath 2 setlinecap systemdict
+%/setstrokeadjust known { true setstrokeadjust } if x2 x1 sub 1 add { x1
+%% DG/SR modification begin - Jun.  1, 1998 - Patch 3 (from Michael Vulis)
+%% a mul y1 moveto 0 y2 rlineto stroke /x1 x1 1 add def } repeat grestore }
+%% def
+%a mul y1 moveto 0 y2 rlineto stroke /x1 x1 1 add def } repeat grestore
+%pop pop } def
+%% DG/SR modification end
+%
 /BeginArrow { ADict begin /@mtrx CM def gsave 2 copy T 2 index sub neg
 exch 3 index sub exch Atan rotate newpath } def
 /EndArrow { @mtrx setmatrix CP grestore end } def
@@ -139,31 +202,54 @@ CLW moveto } def
 curveto -.35 0 -.85 .5 -1 1 curveto mtrx setmatrix stroke 0 CLW moveto }
 def
 /SD { 0 360 arc fill } def
-/EndDot { { /z DS def } { /z 0 def } ifelse /b ED 0 z DS SD b { 0 z DS
-CLW sub SD } if 0 DS z add CLW 4 div sub moveto } def
+/EndDot { % DS is the dot size 
+  { /z DS def } { /z 0 def } ifelse 
+  /b ED 0 z DS SD b { 0 z DS CLW sub SD } if 
+  0 DS z add CLW 4 div sub moveto } def
+%
 /Shadow { [ { /moveto load } { /lineto load } { /curveto load } {
-/closepath load } /pathforall load stopped { pop pop pop pop CP /moveto
-load } if ] cvx newpath 3 1 roll T exec } def
+  /closepath load } /pathforall load stopped { pop pop pop pop CP /moveto
+  load } if ] cvx newpath 3 1 roll T exec } def
+%
 /NArray { aload length 2 div dup dup cvi eq not { exch pop } if /n exch
 cvi def } def
-/NArray { /f ED counttomark 2 div dup cvi /n ED n eq not { exch pop } if
-f { ] aload /Points ED } { n 2 mul 1 add -1 roll pop } ifelse } def
-/Line { NArray n 0 eq not { n 1 eq { 0 0 /n 2 def } if ArrowA /n n 2 sub
-def n { Lineto } repeat CP 4 2 roll ArrowB L pop pop } if } def
+/NArray { % holds the coordinates and on top of stack the showpoints boolean
+  /f ED 
+  counttomark 2 div dup cvi /n ED 
+  n eq not { exch pop } if
+  f { ] aload /Points ED } { n 2 mul 1 add -1 roll pop } ifelse 
+} def
+/Line { 
+  NArray n 0 eq not 
+    { n 1 eq { 0 0 /n 2 def } if ArrowA /n n 2 sub def 
+      n { Lineto } repeat 
+      CP 4 2 roll ArrowB L pop pop 
+    } if 
+} def
 /Arcto { /a [ 6 -2 roll ] cvx def a r /arcto load stopped { 5 } { 4 }
-ifelse { pop } repeat a } def
+  ifelse { pop } repeat a } def
 /CheckClosed { dup n 2 mul 1 sub index eq 2 index n 2 mul 1 add index eq
-and { pop pop /n n 1 sub def } if } def
+  and { pop pop /n n 1 sub def } if } def
 /Polygon { NArray n 2 eq { 0 0 /n 3 def } if n 3 lt { n { pop pop }
-repeat } { n 3 gt { CheckClosed } if n 2 mul -2 roll /y0 ED /x0 ED /y1
-ED /x1 ED x1 y1 /x1 x0 x1 add 2 div def /y1 y0 y1 add 2 div def x1 y1
-moveto /n n 2 sub def n { Lineto } repeat x1 y1 x0 y0 6 4 roll Lineto
-Lineto pop pop closepath } ifelse } def
-/Diamond { /mtrx CM def T rotate /h ED /w ED dup 0 eq { pop } { CLW mul
-neg /d ED /a w h Atan def /h d a sin Div h add def /w d a cos Div w add
-def } ifelse mark w 2 div h 2 div w 0 0 h neg w neg 0 0 h w 2 div h 2
-div /ArrowA { moveto } def /ArrowB { } def false Line closepath mtrx
-setmatrix } def
+  repeat } { n 3 gt { CheckClosed } if n 2 mul -2 roll /y0 ED /x0 ED /y1
+  ED /x1 ED x1 y1 /x1 x0 x1 add 2 div def /y1 y0 y1 add 2 div def x1 y1
+  moveto /n n 2 sub def n { Lineto } repeat x1 y1 x0 y0 6 4 roll Lineto
+  Lineto pop pop closepath } ifelse } def
+/Diamond { 
+  /mtrx CM def 
+  T rotate 
+  /h ED 
+  /w ED 
+  dup 0 eq { pop } { CLW mul neg 
+    /d ED 
+    /a w h Atan def 
+    /h d a sin Div h add def 
+    /w d a cos Div w add def } ifelse 
+  mark w 2 div h 2 div w 0 0 h neg w neg 0 0 h w 2 div h 2 div 
+  /ArrowA { moveto } def 
+  /ArrowB { } def 
+  false Line 
+  closepath mtrx setmatrix } def
 % DG modification begin - Jan. 15, 1997
 %/Triangle { /mtrx CM def translate rotate /h ED 2 div /w ED dup 0 eq {
 %pop } { CLW mul /d ED /h h d w h Atan sin Div sub def /w w d h w Atan 2
@@ -197,8 +283,11 @@ def
 /BAC { IC CC x y moveto CC x1 y1 CP ArrowA } def
 /NAC { x2 y2 x y curveto CC x1 y1 } def
 /EAC { x2 y2 x y ArrowB curveto pop pop } def
-/OpenCurve { NArray n 3 lt { n { pop pop } repeat } { BOC /n n 3 sub def
-n { NC } repeat EOC } ifelse } def
+/OpenCurve { 
+  NArray n 3 lt 
+    { n { pop pop } repeat } 
+    { BOC /n n 3 sub def n { NC } repeat EOC } ifelse 
+} def
 /AltCurve { { false NArray n 2 mul 2 roll [ n 2 mul 3 sub 1 roll ] aload
 /Points ED n 2 mul -2 roll } { false NArray } ifelse n 4 lt { n { pop
 pop } repeat } { BAC /n n 4 sub def n { NAC } repeat EAC } ifelse } def
@@ -270,6 +359,107 @@ exch t L stroke /i i h add def } repeat grestore } def
 exch r a PtoC y add exch x add exch b pop pop pop pop a e d CLW 8 div c
 mul neg d } def
 /Ellipse { /mtrx CM def T scale 0 0 1 5 3 roll arc mtrx setmatrix } def
+%
+/ArcAdjust { %%%% Vincent Guirardel
+% given a target length (targetLength) and an initial angle (angle0) [in the stack],
+% let  M(angle0)=(rx*cos(angle0),ry*sin(angle0))=(x0,y0).
+% This computes an angle t such that (x0,y0) is at distance 
+% targetLength from the point M(t)=(rx*cos(t),ry*sin(t)).
+% NOTE: this an absolute angle, it does not have to be added or substracted to angle0
+% contrary to TvZ's code.
+% To achieve, this, one iterates the following process: start with some angle t,
+% compute the point M' at distance targetLength of (x0,y0) on the semi-line [(x0,y0) M(t)].
+% Now take t' (= new angle) so that (0,0) M(t') and M' are aligned.
+%
+% Another difference with TvZ's code is that we need d (=add/sub) to be defined.
+% the value of d = add/sub is used to know on which side we have to move.
+% It is only used in the initialisation of the angle before the iteration.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Input stack:  1: target length 2: initial angle
+% variables used : rx, ry, d (=add/sub)
+%
+  /targetLength ED /angle0 ED
+  /x0 rx angle0 cos mul def
+  /y0 ry angle0 sin mul def
+% we are looking for an angle t such that (x0,y0) is at distance targetLength 
+% from the point M(t)=(rx*cos(t),ry*sin(t)))
+%initialisation of angle (using 1st order approx = TvZ's code)
+  targetLength 57.2958 mul
+  angle0 sin rx mul dup mul
+  angle0 cos ry mul dup mul
+  add sqrt div 
+% if initialisation angle is two large (more than 90 degrees) set it to 90 degrees
+% (if the ellipse is very curved at the point where we draw the arrow, %
+% the value can be much more than 360 degrees !)
+% this should avoid going on the wrong side (more than 180 degrees) or go near
+% a bad attractive point (at 180 degrees)
+  dup 90 ge { pop 90 } if 
+  angle0 exch d % add or sub
+% maximum number of times to iterate the iterative procedure:
+% iterative procedure: takes an angle t on top of stack, computes a 
+% better angle (and put it on top of stack)
+  30 { dup
+% compute distance D between (x0,y0) and M(t)
+    dup cos rx mul x0 sub dup mul exch sin ry mul y0 sub dup mul add sqrt
+% if D almost equals targetLength, we stop
+    dup targetLength sub abs 1e-5 le { pop exit } if
+% stack now contains D t
+% compute the point M(t') at distance targetLength of (x0,y0) on the semi-line [(x0,y0) M(t)]:
+% M(t')= ( (x(t)-x0)*targetLength/d+x0 , (y(t)-y0)*targetLength/d+y0 )
+    exch dup cos rx mul x0 sub  exch sin ry mul y0 sub
+% stack contains:  y(t)-y0, x(t)-x0, d
+    2 index Div targetLength mul y0 add ry Div exch
+    2 index Div targetLength mul x0 add rx Div
+% stack contains x(t')/rx , y(t')/ry , d
+% now compute t', and remove D from stack
+    atan exch pop
+  } repeat
+% we don't look at what happened... in particular, if targetLength is greater 
+% than the diameter of the ellipse...
+% the final angle will be around /angle0 + 180. maybe we should treat this pathological case...
+% after iteration, stack contains an angle t such that M(t) is the tail of the arrow
+% to give back the result as a an angle relative to angle0 we could add the following line:
+% angle0 sub 0 exch d
+%
+% begin bug fix 2006-01-11
+% we want to adjust the new angle t' by a multiple of 360 so that  | t'-angle0 | <= 180
+%(we don't want to make the ellipse turn more or less than it should)...
+dup angle0 sub dup abs 180 gt { 180 add 360 div floor 360 mul sub } { pop } ifelse
+% end bug fix
+} def
+%
+/EllipticArcArrow {
+  /d ED      % add/sub
+  /b ED      % arrow procedure
+  /a1 ED     % angle
+  gsave
+  newpath
+  0 -1000 moveto
+  clip                  % Set clippath far from arrow.
+  newpath
+  0 1 0 0 b             % Draw arrow to determine length.
+  grestore
+% Length of arrow is on top of stack. Next 3 numbers are junk.
+%
+  a1 exch ArcAdjust   % Angular position of base of arrow.
+  /a2 ED
+  pop pop pop
+  a2 cos rx mul x add
+  a2 sin ry mul y add
+  a1 cos rx mul x add
+  a1 sin ry mul y add
+% Now arrow tip coor and base coor are on stack.
+  b pop pop pop pop       % Draw arrow, and discard coordinates.
+  a2 CLW 8 div
+% change value of d (test it by looking if  `` 1 1 d '' gives 2 or not )
+  1 1 d 2 eq { /d { sub } def } { /d { add } def } ifelse
+  ArcAdjust
+% resets original value of d
+  1 1 d 2 eq { /d { sub } def } { /d { add } def } ifelse  % Adjust angle to give overlap.
+} def
+%%------------------ tvz/DG/hv (2004-05-10) end -------------------%%
+%
 /Rot { CP CP translate 3 -1 roll neg rotate NET  } def
 /RotBegin { tx@Dict /TMatrix known not { /TMatrix { } def /RAngle { 0 }
 def } if /TMatrix [ TMatrix CM ] cvx def /a ED a Rot /RAngle [ RAngle
@@ -298,20 +488,27 @@ end
 % END pstricks.pro
 
 %%EndProcSet
-%%BeginProcSet: pst-dots.pro
-%!PS-Adobe-2.0
-%%Title: Dot Font for PSTricks
-%%Creator: Timothy Van Zandt <tvz@Princeton.EDU>
-%%Creation Date: May 7, 1993
-%% Version 97 patch 1, 99/12/16
-%% Modified by Etienne Riga <etienne.riga@skynet.be> - Dec. 16, 1999
+%%BeginProcSet: pst-dots.pro 0 0
+%!
+%% PostScript prologue for pstricks.tex.
+%% Version 2.00,                                    Suggestion of 2006/12/19
+%% For distribution, see pstricks.tex.
+%%
+%% Timothy Van Zandt <tvz@Princeton.EDU>
+%%
+%% Modified by Etienne Riga  - Dec. 16, 1999
+%% Modified by Herbert Voss (hv) - 2004/12/27 
+%% Modified by Etienne Riga  - 2005/01/01 (er)
 %% to add /Diamond, /SolidDiamond and /BoldDiamond
+%
 10 dict dup begin
   /FontType 3 def
-  /FontMatrix [ .001 0 0 .001 0 0 ] def
-  /FontBBox [ 0 0 0 0 ] def
+  /FontMatrix [.001 0 0 .001 0 0] def
+  /FontBBox [-571.5 -742.5 571.5 742.5] def
+%  /FontBBox [-1000 -1000 1000 1000] def
+%                See end of file in /BuildGlyph
   /Encoding 256 array def
-  0 1 255 { Encoding exch /.notdef put } for
+  0 1 255 {Encoding exch/.notdef put} for
   Encoding
     dup (b) 0 get /Bullet put
     dup (c) 0 get /Circle put
@@ -325,101 +522,111 @@ end
     dup (q) 0 get /SolidPentagon put
     dup (p) 0 get /Pentagon put
     dup (P) 0 get /BoldPentagon put
-% DG/SR modification begin - Dec. 16, 1999 - From Etienne Riga
+%%%		  
+    dup (k) 0 get /Asterisk put
+    dup (K) 0 get /BoldAsterisk put
+    dup (J) 0 get /SolidAsterisk put
+    dup (h) 0 get /Hexagon put
+    dup (H) 0 get /BoldHexagon put
+    dup (G) 0 get /SolidHexagon put
+    dup (a) 0 get /Add put
+    dup (A) 0 get /BoldAdd put
+    dup (x) 0 get /Mul put
+    dup (X) 0 get /BoldMul put
+    dup (m) 0 get /Oplus put
+    dup (M) 0 get /BOplus put
+    dup (e) 0 get /SolidOplus put
+    dup (n) 0 get /Otimes put
+    dup (N) 0 get /BOtimes put
+    dup (E) 0 get /SolidOtimes put
+    dup (i) 0 get /Bar put
+    dup (I) 0 get /BoldBar put
     dup (l) 0 get /SolidDiamond put
     dup (d) 0 get /Diamond put
         (D) 0 get /BoldDiamond put
-% DG/SR modification end
-  /Metrics 13 dict def
-  Metrics begin
-    /Bullet        1000   def
-    /Circle        1000   def
-    /BoldCircle    1000   def
-    /SolidTriangle 1344   def
-    /Triangle      1344   def
-    /BoldTriangle  1344   def
-    /SolidSquare    886   def
-    /Square         886   def
-    /BoldSquare     886   def
-    /SolidPentagon 1093.2 def
-    /Pentagon      1093.2 def
-    /BoldPentagon  1093.2 def
-% DG/SR modification begin - Dec. 16, 1999 - From Etienne Riga
-    /SolidDiamond  1008   def
-    /Diamond       1008   def
-    /BoldDiamond   1008   def
-% DG/SR modification end
-    /.notdef 0 def
-  end
-  /BBoxes 13 dict def
-  BBoxes begin
-    /Circle        { -550 -550 550 550 } def
-    /BoldCircle    /Circle load def
-    /Bullet        /Circle load def
-    /Triangle      { -571.5 -330 571.5 660 } def
-    /BoldTriangle  /Triangle load def
-    /SolidTriangle /Triangle load def
-    /Square        { -450 -450 450 450 } def
-    /BoldSquare    /Square load def
-    /SolidSquare   /Square load def
-    /Pentagon      { -546.6 -465 546.6 574.7 } def
-    /BoldPentagon  /Pentagon load def
-    /SolidPentagon /Pentagon load def
-% DG/SR modification begin - Dec. 16, 1999 - From Etienne Riga
-    /Diamond       { -428.5 -742.5 428.5 742.5 } def
-    /BoldDiamond   /Diamond load def
-    /SolidDiamond  /Diamond load def
-% DG/SR modification end
-    /.notdef { 0 0 0 0 } def
-  end
-  /CharProcs 20 dict def
+%%%  
+/CharProcs 47 dict def
   CharProcs begin
-    /Adjust {
-      2 copy dtransform floor .5 add exch floor .5 add exch idtransform
-      3 -1 roll div 3 1 roll exch div exch scale
-    } def
-    /CirclePath    { 0 0 500 0 360 arc closepath } def
-    /Bullet        { 500 500 Adjust CirclePath fill } def
-    /Circle        { 500 500 Adjust CirclePath .9 .9 scale CirclePath
-                     eofill } def
-    /BoldCircle    { 500 500 Adjust CirclePath .8 .8 scale CirclePath
-                     eofill } def
-    /BoldCircle    { CirclePath .8 .8 scale CirclePath eofill } def
-    /TrianglePath  { 0  660 moveto -571.5 -330 lineto 571.5 -330 lineto
-                     closepath } def
-    /SolidTriangle { TrianglePath fill } def
-    /Triangle      { TrianglePath .85 .85 scale TrianglePath eofill } def
-    /BoldTriangle  { TrianglePath .7 .7 scale TrianglePath eofill } def
-    /SquarePath    { -450 450 moveto 450 450 lineto 450 -450 lineto
-                     -450 -450 lineto closepath } def
-    /SolidSquare   { SquarePath fill } def
-    /Square        { SquarePath .89 .89 scale SquarePath eofill } def
-    /BoldSquare    { SquarePath .78 .78 scale SquarePath eofill } def
-    /PentagonPath  {
-      -337.8 -465   moveto
-       337.8 -465   lineto
-       546.6  177.6 lineto
-         0    574.7 lineto
-      -546.6  177.6 lineto
-      closepath
-    } def
-    /SolidPentagon { PentagonPath fill } def
-    /Pentagon      { PentagonPath .89 .89 scale PentagonPath eofill } def
-    /BoldPentagon  { PentagonPath .78 .78 scale PentagonPath eofill } def
-% DG/SR modification begin - Dec. 16, 1999 - From Etienne Riga
-    /DiamondPath   { 0 742.5 moveto -428.5 0 lineto 0 -742.5 lineto
-                     428.5 0 lineto closepath } def
-    /SolidDiamond  { DiamondPath fill } def
-    /Diamond       { DiamondPath .85 .85 scale DiamondPath eofill } def
-    /BoldDiamond   { DiamondPath .7 .7 scale DiamondPath eofill } def
-% DG/SR modification end
+    /CirclePath {0 0 500 0 360 arc closepath} def
+      /Bullet {CirclePath fill} def
+	  /Circle {CirclePath .9 .9 scale CirclePath eofill} def
+	  /BoldCircle {CirclePath .8 .8 scale CirclePath eofill} def
+    /TrianglePath {0 660 moveto -571.5 -330 lineto 571.5 -330 lineto
+		closepath} def
+	  /SolidTriangle {TrianglePath fill} def
+      /Triangle {TrianglePath .85 .85 scale TrianglePath eofill} def
+      /BoldTriangle {TrianglePath .7 .7 scale TrianglePath eofill} def
+    /SquarePath {-450 450 moveto 450 450 lineto 450 -450 lineto -450 -450 lineto
+		closepath} def
+      /SolidSquare {SquarePath fill} def
+      /Square {SquarePath .89 .89 scale SquarePath eofill} def
+      /BoldSquare {SquarePath .78 .78 scale SquarePath eofill} def
+    /PentagonPath {-337.8 -465 moveto 337.8 -465 lineto 546.6 177.6 lineto
+		0 574.7 lineto -546.6 177.6 lineto closepath} def
+      /SolidPentagon {PentagonPath fill} def
+      /Pentagon {PentagonPath .89 .89 scale PentagonPath eofill} def
+      /BoldPentagon {PentagonPath .78 .78 scale PentagonPath eofill} def
+%-------------- hv begin 2004/07/25   from: er 2003/03/24
+    /HexagonPath {0 550 moveto -476 275 lineto -476 -275 lineto
+		0 -550 lineto 476 -275 lineto 476 275 lineto closepath} def
+      /SolidHexagon {HexagonPath fill} def
+      /Hexagon {HexagonPath .89 .89 scale HexagonPath eofill} def
+      /BoldHexagon {HexagonPath .79 .79 scale HexagonPath eofill} def
+	/AsteriskPath {20 0 moveto 10 250 180 500 0 500 curveto
+		-180 500 -10 250 -20 0 curveto closepath} def
+      /Asterisk {AsteriskPath 60 rotate AsteriskPath 60 rotate AsteriskPath
+	    60 rotate AsteriskPath 60 rotate AsteriskPath 60 rotate AsteriskPath 
+		fill} def
+	/Basterp {50 250 220 500 0 500 curveto
+        -220 500 -50 250 -50 30 cos 100 mul curveto} def
+	/BoldAsteriskPath {50 30 cos 100 mul moveto  Basterp
+                     60 rotate Basterp 60 rotate Basterp
+                     60 rotate Basterp 60 rotate Basterp
+                     60 rotate Basterp closepath} def
+      /BoldAsterisk {BoldAsteriskPath fill} def
+	  /SolidAsterisk {CirclePath .9 .9 scale BoldAsteriskPath eofill} def
+    /CrossPath {40 550 moveto -40 550 lineto -40 40 lineto -550 40 lineto
+        -550 -40 lineto -40 -40 lineto -40 -550 lineto 40 -550 lineto 
+		40 -40 lineto 550 -40 lineto 550 40 lineto 40 40 lineto closepath} def
+    /BoldCrossPath {80 550 moveto -80 550 lineto -80 80 lineto -550 80 lineto
+        -550 -80 lineto -80 -80 lineto -80 -550 lineto 80 -550 lineto 
+		80 -80 lineto 550 -80 lineto 550 80 lineto 80 80 lineto closepath} def
+      /Add {CrossPath fill} def
+      /Mul {45 rotate CrossPath fill} def
+      /BoldAdd {BoldCrossPath fill} def
+      /BoldMul {45 rotate BoldCrossPath fill} def
+	  /Oplus {CirclePath .9 .9 scale CirclePath eofill
+		.775 .775 scale CrossPath  fill} def 
+	  /SolidOplus {CirclePath .775 .775 scale BoldCrossPath eofill} def 
+	  /BOplus {CirclePath .8 .8 scale CirclePath eofill
+		.775 .775 scale BoldCrossPath fill} def 
+	  /Otimes {CirclePath .9 .9 scale CirclePath eofill
+		45 rotate .775 .775 scale CrossPath fill} def 
+	  /BOtimes {CirclePath .8 .8 scale CirclePath eofill
+		45 rotate .775 .775 scale BoldCrossPath  fill } def 
+	  /SolidOtimes {CirclePath 45 rotate .775 .775 scale BoldCrossPath eofill} def 
+    /BarPath {40 660 moveto -40 660 lineto -40 -660 lineto 40 -660 lineto
+		closepath} def
+      /Bar {BarPath fill} def
+    /BoldBarPath {80 660 moveto -80 660 lineto -80 -660 lineto 80 -660 lineto
+		closepath} def
+      /BoldBar {BoldBarPath fill} def
+    /DiamondPath {0 742.5 moveto -428.5 0 lineto 0 -742.5 lineto 
+		428.5 0 lineto closepath} def
+      /SolidDiamond {DiamondPath fill} def
+      /Diamond {DiamondPath .865 .865 scale DiamondPath eofill} def
+      /BoldDiamond {DiamondPath .73 .73 scale DiamondPath eofill} def
+%%%
     /.notdef { } def
   end
   /BuildGlyph {
     exch
     begin
-      Metrics 1 index get exec 0
-      BBoxes 3 index get exec
+%      Metrics 1 index get exec 0
+       0 0
+%      BBoxes 3 index get exec
+      -1000 -1000 1000 1000
+%     -571.5 -742.5 571.5 742.5
       setcachedevice
       CharProcs begin load exec end
     end
@@ -430,10 +637,10 @@ end
   } bind def
 end
 /PSTricksDotFont exch definefont pop
-%END pst-dots.pro
+
 
 %%EndProcSet
-%%BeginProcSet: pst-node.pro
+%%BeginProcSet: pst-node.pro 0 0
 %!
 % PostScript prologue for pst-node.tex.
 % Version 97 patch 1, 97/05/09.
@@ -646,17 +853,25 @@ end
 % END pst-node.pro
 
 %%EndProcSet
-%%BeginProcSet: 8r.enc
-% File  8r.enc as of 2002-03-12 for PSNFSS 9
+%%BeginProcSet: 8r.enc 0 0
+% File 8r.enc  TeX Base 1 Encoding  Revision 2.0  2002-10-30
 %
-% This is the encoding vector for Type1 and TrueType fonts to be used
-% with TeX.  This file is part of the PSNFSS bundle, version 9
+% @@psencodingfile@{
+%   author    = "S. Rahtz, P. MacKay, Alan Jeffrey, B. Horn, K. Berry,
+%                W. Schmidt, P. Lehman",
+%   version   = "2.0",
+%   date      = "27nov06",
+%   filename  = "8r.enc",
+%   email     = "tex-fonts@@tug.org",
+%   docstring = "This is the encoding vector for Type1 and TrueType
+%                fonts to be used with TeX.  This file is part of the
+%                PSNFSS bundle, version 9"
+% @}
 % 
-% Authors: S. Rahtz, P. MacKay, Alan Jeffrey, B. Horn, K. Berry, W. Schmidt
-%
-% Idea is to have all the characters normally included in Type 1 fonts
+% The idea is to have all the characters normally included in Type 1 fonts
 % available for typesetting. This is effectively the characters in Adobe
-% Standard Encoding + ISO Latin 1 + extra characters from Lucida + Euro.
+% Standard encoding, ISO Latin 1, Windows ANSI including the euro symbol,
+% MacRoman, and some extra characters from Lucida.
 % 
 % Character code assignments were made as follows:
 % 
@@ -674,77 +889,95 @@ end
 % (3) Y&Y Lucida Bright includes some extra text characters; in the
 % hopes that other PostScript fonts, perhaps created for public
 % consumption, will include them, they are included starting at 0x12.
+% These are /dotlessj /ff /ffi /ffl.
 % 
-% (4) Remaining positions left undefined are for use in (hopefully)
-% upward-compatible revisions, if someday more characters are generally
-% available.
-% 
-% (5) hyphen appears twice for compatibility with both ASCII and Windows.
+% (4) hyphen appears twice for compatibility with both ASCII and Windows.
 %
-% (6) /Euro is assigned to 128, as in Windows ANSI
-% 
+% (5) /Euro was assigned to 128, as in Windows ANSI
+%
+% (6) Missing characters from MacRoman encoding incorporated as follows:
+%
+%     PostScript      MacRoman        TeXBase1
+%     --------------  --------------  --------------
+%     /notequal       173             0x16
+%     /infinity       176             0x17
+%     /lessequal      178             0x18
+%     /greaterequal   179             0x19
+%     /partialdiff    182             0x1A
+%     /summation      183             0x1B
+%     /product        184             0x1C
+%     /pi             185             0x1D
+%     /integral       186             0x81
+%     /Omega          189             0x8D
+%     /radical        195             0x8E
+%     /approxequal    197             0x8F
+%     /Delta          198             0x9D
+%     /lozenge        215             0x9E
+%
 /TeXBase1Encoding [
-% 0x00 (encoded characters from Adobe Standard not in Windows 3.1)
-  /.notdef /dotaccent /fi /fl
-  /fraction /hungarumlaut /Lslash /lslash
-  /ogonek /ring /.notdef
-  /breve /minus /.notdef 
-% These are the only two remaining unencoded characters, so may as
-% well include them.
-  /Zcaron /zcaron 
+% 0x00
+ /.notdef /dotaccent /fi /fl
+ /fraction /hungarumlaut /Lslash /lslash
+ /ogonek /ring /.notdef /breve
+ /minus /.notdef /Zcaron /zcaron
 % 0x10
- /caron /dotlessi 
-% (unusual TeX characters available in, e.g., Lucida Bright)
- /dotlessj /ff /ffi /ffl 
- /.notdef /.notdef /.notdef /.notdef
- /.notdef /.notdef /.notdef /.notdef
- % very contentious; it's so painful not having quoteleft and quoteright
- % at 96 and 145 that we move the things normally found there down to here.
- /grave /quotesingle 
-% 0x20 (ASCII begins)
+ /caron /dotlessi /dotlessj /ff
+ /ffi /ffl /notequal /infinity
+ /lessequal /greaterequal /partialdiff /summation
+ /product /pi /grave /quotesingle
+% 0x20
  /space /exclam /quotedbl /numbersign
  /dollar /percent /ampersand /quoteright
- /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash
+ /parenleft /parenright /asterisk /plus
+ /comma /hyphen /period /slash
 % 0x30
- /zero /one /two /three /four /five /six /seven
- /eight /nine /colon /semicolon /less /equal /greater /question
+ /zero /one /two /three
+ /four /five /six /seven
+ /eight /nine /colon /semicolon
+ /less /equal /greater /question
 % 0x40
- /at /A /B /C /D /E /F /G /H /I /J /K /L /M /N /O
+ /at /A /B /C
+ /D /E /F /G
+ /H /I /J /K
+ /L /M /N /O
 % 0x50
- /P /Q /R /S /T /U /V /W
- /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
+ /P /Q /R /S
+ /T /U /V /W
+ /X /Y /Z /bracketleft
+ /backslash /bracketright /asciicircum /underscore
 % 0x60
- /quoteleft /a /b /c /d /e /f /g /h /i /j /k /l /m /n /o
+ /quoteleft /a /b /c
+ /d /e /f /g
+ /h /i /j /k
+ /l /m /n /o
 % 0x70
- /p /q /r /s /t /u /v /w
- /x /y /z /braceleft /bar /braceright /asciitilde
- /.notdef % rubout; ASCII ends
+ /p /q /r /s
+ /t /u /v /w
+ /x /y /z /braceleft
+ /bar /braceright /asciitilde /.notdef
 % 0x80
- /Euro /.notdef /quotesinglbase /florin
+ /Euro /integral /quotesinglbase /florin
  /quotedblbase /ellipsis /dagger /daggerdbl
  /circumflex /perthousand /Scaron /guilsinglleft
- /OE /.notdef /.notdef /.notdef
+ /OE /Omega /radical /approxequal
 % 0x90
  /.notdef /.notdef /.notdef /quotedblleft
  /quotedblright /bullet /endash /emdash
  /tilde /trademark /scaron /guilsinglright
- /oe /.notdef /.notdef /Ydieresis
+ /oe /Delta /lozenge /Ydieresis
 % 0xA0
- /.notdef % nobreakspace
- /exclamdown /cent /sterling
+ /.notdef /exclamdown /cent /sterling
  /currency /yen /brokenbar /section
  /dieresis /copyright /ordfeminine /guillemotleft
- /logicalnot
- /hyphen % Y&Y (also at 45); Windows' softhyphen
- /registered
- /macron
-% 0xD0
+ /logicalnot /hyphen /registered /macron
+% 0xB0
  /degree /plusminus /twosuperior /threesuperior
  /acute /mu /paragraph /periodcentered
  /cedilla /onesuperior /ordmasculine /guillemotright
  /onequarter /onehalf /threequarters /questiondown
 % 0xC0
- /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
+ /Agrave /Aacute /Acircumflex /Atilde
+ /Adieresis /Aring /AE /Ccedilla
  /Egrave /Eacute /Ecircumflex /Edieresis
  /Igrave /Iacute /Icircumflex /Idieresis
 % 0xD0
@@ -764,8 +997,9 @@ end
  /udieresis /yacute /thorn /ydieresis
 ] def
 
+
 %%EndProcSet
-%%BeginProcSet: texps.pro
+%%BeginProcSet: texps.pro 0 0
 %!
 TeXDict begin/rf{findfont dup length 1 add dict begin{1 index/FID ne 2
 index/UniqueID ne and{def}{pop pop}ifelse}forall[1 index 0 6 -1 roll
@@ -782,7 +1016,7 @@ forall Encoding{]exch pop}{cleartomark}ifelse}if/Encoding exch def}def
 end
 
 %%EndProcSet
-%%BeginProcSet: special.pro
+%%BeginProcSet: special.pro 0 0
 %!
 TeXDict begin/SDict 200 dict N SDict begin/@SpecialDefaults{/hs 612 N
 /vs 792 N/ho 0 N/vo 0 N/hsc 1 N/vsc 1 N/ang 0 N/CLIP 0 N/rwiSeen false N
@@ -841,7 +1075,7 @@ matrix currentmatrix N TR xrad yrad scale 0 0 1 startangle endangle arc
 savematrix setmatrix}N end
 
 %%EndProcSet
-%%BeginProcSet: color.pro
+%%BeginProcSet: color.pro 0 0
 %!
 TeXDict begin/setcmykcolor where{pop}{/setcmykcolor{dup 10 eq{pop
 setrgbcolor}{1 sub 4 1 roll 3{3 index add neg dup 0 lt{pop 0}if 3 1 roll
@@ -890,28 +1124,34 @@ setcmykcolor}DC/Gray{0 0 0 0.50 setcmykcolor}DC/Black{0 0 0 1
 setcmykcolor}DC/White{0 0 0 0 setcmykcolor}DC end
 
 %%EndProcSet
-TeXDict begin 39158280 55380996 1000 600 600 (connect_comp.dvi)
-@start /Fa 205[32 32 49[{ TeXBase1Encoding ReEncodeFont }2
-63.9267 /Times-Roman rf /Fb 140[36 115[{ TeXBase1Encoding ReEncodeFont }
-1 91.3242 /Times-Italic rf end
+TeXDict begin 39158280 55380996 2000 4000 4000 (connect_comp.dvi)
+@start /Fa 205[426 426 49[{TeXBase1Encoding ReEncodeFont}2
+852.355 /Times-Roman rf /Fb 140[474 115[{TeXBase1Encoding ReEncodeFont}
+1 1217.66 /Times-Italic rf end
 %%EndProlog
 %%BeginSetup
-%%Feature: *Resolution 600dpi
+%%Feature: *Resolution 4000dpi
 TeXDict begin
-%%PaperSize: A4
+%%BeginPaperSize: a4
+/setpagedevice where
+{ pop << /PageSize [595 842] >> setpagedevice }
+{ /a4 where { pop a4 } if }
+ifelse
+%%EndPaperSize
  end
 %%EndSetup
 %%Page: 1 1
-TeXDict begin 1 0 bop Black Black 639 1386 a @beginspecial
-0 @llx 0 @lly 127 @urx 114 @ury 1270 @rwi @setspecial
+TeXDict begin 1 0 bop 0 TeXcolorgray Black 0 TeXcolorgray
+8524 18477 a @beginspecial 0 @llx 0 @lly 127 @urx 114
+@ury 1270 @rwi @setspecial
 %%BeginDocument: connect_comp.pstex
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: connect_comp.pstex
 %%Creator: fig2dev Version 3.2 Patchlevel 3d
 %%CreationDate: Tue Dec 13 11:38:00 2005
 %%For: wein@localhost.localdomain (Ron Wein)
-%%BoundingBox: 159 607 265 713
-%%HiResBoundingBox: 159.232693 607.828688 264.127685 712.723276
+%%BoundingBox: 246 445 457 656
+%%HiResBoundingBox: 246.536641 445.814565 456.327408 655.605332
 
 %%Magnification: 0.7000
 %%EndComments
@@ -1074,9 +1314,10 @@ $F2psEnd
 rs
 
 %%EndDocument
- @endspecial 0 0 0 TeXcolorrgb 1091 1333 a Fb(s)1127
-1347 y Fa(2)p Black 0 0 0 TeXcolorrgb 1196 939 a Fb(s)1232
-953 y Fa(1)p Black Black Black eop end
+ @endspecial 0 0 0 TeXcolorrgb 14540 17772 a Fb(s)15014
+17955 y Fa(2)p 0 TeXcolorgray 0 0 0 TeXcolorrgb 15940
+12522 a Fb(s)16414 12705 y Fa(1)p 0 TeXcolorgray 0 TeXcolorgray
+0 TeXcolorgray eop end
 %%Trailer
 
 userdict /end-hook known{end-hook}if

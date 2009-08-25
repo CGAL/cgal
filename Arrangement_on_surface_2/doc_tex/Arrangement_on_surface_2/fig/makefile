@@ -1,4 +1,4 @@
-include $(ROOT)/include/make/comdef.mak
+include $(ROOT)/make/comdef.mak
 
 TARGET_GIFS = triangle.gif
 TARGET_GIFS+= connect_comp.gif
@@ -37,10 +37,16 @@ TARGET_PDFS+= unb_dcel.pdf
 TARGET0 = $(TARGET_GIFS)
 TARGET1 = $(TARGET_PDFS)
 
-include $(MAKEINCDIR)/comrul.mak
+include $(MAKEDIR)/comrul.mak
 
-%.dvi : %.pstex_t
-	sed -e s/Arrangement_2\\/fig\\/// $< > tmp.pstex_t
+%.pstex_t : %.fig
+	fig2dev -L pstex_t -p $(basename $@).pstex $< > $@
+
+%.pstex : %.fig
+	fig2dev -L pstex $< > $@
+
+%.dvi : %.pstex_t %.pstex
+	sed -e s/Arrangement_on_surface_2\\/fig\\/// $< > tmp.pstex_t
 	latex tmp.tex
 	mv tmp.dvi $@
 
@@ -57,7 +63,7 @@ endef
 	convert -interlace Line -transparent White $(basename $@).eps2 $@;
 
 %.ps : %.dvi
-	dvips -P cmz $< -o
+	dvips -E -P cmz $< -o
 
 %.eps : %.ps
 	$(toeps) > $(basename $@).eps
