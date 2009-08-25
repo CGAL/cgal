@@ -8,7 +8,6 @@ Function \ccc{CGAL::pca_estimate_normals()} estimates the normal direction at ea
 
 % % Insert image pca_estimate_normals.jpg/eps
 % \begin{center}
-%     \label{Point_set_processing_3-fig-pca_estimate_normals}
 %     % Image
 %     \begin{ccTexOnly}
 %         \includegraphics[width=0.9\textwidth]{Point_set_processing_3/pca_estimate_normals} % omit .eps suffix
@@ -19,16 +18,16 @@ Function \ccc{CGAL::pca_estimate_normals()} estimates the normal direction at ea
 %     % Title
 %     \begin{figure}[h]
 %         \caption{Normal estimation by Principal Components Analysis}
+%         \label{Point_set_processing_3-fig-pca_estimate_normals}
 %     \end{figure}
 % \end{center}
 
 \section{Normal Orientation}
 
-Function \ccc{CGAL::mst_orient_normals()} orients the normals of a set of points with unoriented normals using the method described by Hoppe et al. in \emph{Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}. More specifically, this method constructs a Riemannian graph over the input points (the graph of the $K$ nearest neighbor points) and propagates a seed normal orientation within a minimum spanning tree computed over this graph. The result is an oriented normal vector for each input unoriented normal, except for the normals which could not be successfully oriented. 
+Function \ccc{CGAL::mst_orient_normals()} orients the normals of a set of points with unoriented normals using the method described by Hoppe et al. in \emph{Surface reconstruction from unorganized points} \cite{cgal:hddms-srup-92}. More specifically, this method constructs a Riemannian graph over the input points (the graph of the $K$ nearest neighbor points) and propagates a seed normal orientation within a minimum spanning tree computed over this graph. The result is an oriented normal vector for each input unoriented normal, except for the normals which could not be successfully oriented.
 
 % Insert image mst_orient_normals.jpg/eps
 \begin{center}
-    \label{Point_set_processing_3-fig-mst_orient_normals}
     % Image
     \begin{ccTexOnly}
         \includegraphics[width=1.0\textwidth]{Point_set_processing_3/mst_orient_normals} % omit .eps suffix
@@ -41,6 +40,7 @@ Function \ccc{CGAL::mst_orient_normals()} orients the normals of a set of points
         \caption{Normal orientation of a sampled cube surface.
                  Left: unoriented normals.
                  Right: orientation of right face normals is propagated to bottom face.}
+        \label{Point_set_processing_3-fig-mst_orient_normals}
     \end{figure}
 \end{center}
 
