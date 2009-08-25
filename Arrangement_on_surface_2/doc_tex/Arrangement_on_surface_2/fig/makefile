@@ -66,7 +66,7 @@ endef
 	dvips -E -P cmz $< -o
 
 %.eps : %.ps
-	$(toeps) > $(basename $@).eps
+	$(toeps) > $@
 
 %.pdf : %.eps
 	epstopdf --hires $<
