@@ -28,7 +28,7 @@
 #include <vector>
 
 #include <CGAL/Triangulation_3.h>
-#include <CGAL/Delaunay_remove_tds_3.h>
+#include <CGAL/internal/Delaunay_remove_tds_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Default.h>
 
@@ -1239,7 +1239,7 @@ void
 Delaunay_triangulation_3<Gt,Tds>::
 fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 {
-  typedef Delaunay_remove_tds_3_2<Delaunay_triangulation_3> Surface;
+  typedef internal::Delaunay_remove_tds_3_2<Delaunay_triangulation_3> Surface;
   typedef typename Surface::Face_3_2          Face_3_2;
   typedef typename Surface::Face_handle_3_2   Face_handle_3_2;
   typedef typename Surface::Vertex_handle_3_2 Vertex_handle_3_2;

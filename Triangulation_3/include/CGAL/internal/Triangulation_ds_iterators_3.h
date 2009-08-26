@@ -16,15 +16,15 @@
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
-#ifndef CGAL_TRIANGULATION_DS_ITERATORS_3_H
-#define CGAL_TRIANGULATION_DS_ITERATORS_3_H
+#ifndef CGAL_INTERNAL_TRIANGULATION_DS_ITERATORS_3_H
+#define CGAL_INTERNAL_TRIANGULATION_DS_ITERATORS_3_H
 
 #include <utility>
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_ds_circulators_3.h>
+#include <CGAL/internal/Triangulation_ds_circulators_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal {
 
 template < class Tds >
 class Triangulation_ds_facet_iterator_3
@@ -195,7 +195,7 @@ public:
   typedef Triangulation_ds_edge_iterator_3<Tds>   Edge_iterator;
   typedef typename Tds::Cell_iterator             Cell_iterator;
   typedef typename Tds::Cell_handle               Cell_handle;
-  typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
+  typedef internal::Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
 
   Triangulation_ds_edge_iterator_3()
     : _tds(NULL)
@@ -453,6 +453,6 @@ private:
   }
 };
 
-CGAL_END_NAMESPACE
+}} // namespace CGAL::internal
 
-#endif // CGAL_TRIANGULATION_DS_ITERATORS_3_H
+#endif // CGAL_INTERNAL_TRIANGULATION_DS_ITERATORS_3_H

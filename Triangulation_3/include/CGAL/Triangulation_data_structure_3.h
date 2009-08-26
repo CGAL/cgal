@@ -44,8 +44,8 @@
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
-#include <CGAL/Triangulation_ds_iterators_3.h>
-#include <CGAL/Triangulation_ds_circulators_3.h>
+#include <CGAL/internal/Triangulation_ds_iterators_3.h>
+#include <CGAL/internal/Triangulation_ds_circulators_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -91,11 +91,11 @@ public:
 
 private:
 
-  friend class Triangulation_ds_facet_iterator_3<Tds>;
-  friend class Triangulation_ds_edge_iterator_3<Tds>;
+  friend class internal::Triangulation_ds_facet_iterator_3<Tds>;
+  friend class internal::Triangulation_ds_edge_iterator_3<Tds>;
 
-  friend class Triangulation_ds_cell_circulator_3<Tds>;
-  friend class Triangulation_ds_facet_circulator_3<Tds>;
+  friend class internal::Triangulation_ds_cell_circulator_3<Tds>;
+  friend class internal::Triangulation_ds_facet_circulator_3<Tds>;
 
 public:
 
@@ -108,14 +108,14 @@ public:
   typedef typename Cell_container::iterator        Cell_iterator;
   typedef typename Vertex_container::iterator      Vertex_iterator;
 
-  typedef Triangulation_ds_facet_iterator_3<Tds>   Facet_iterator;
-  typedef Triangulation_ds_edge_iterator_3<Tds>    Edge_iterator;
+  typedef internal::Triangulation_ds_facet_iterator_3<Tds>   Facet_iterator;
+  typedef internal::Triangulation_ds_edge_iterator_3<Tds>    Edge_iterator;
 
-  typedef Triangulation_ds_cell_circulator_3<Tds>  Cell_circulator;
-  typedef Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
+  typedef internal::Triangulation_ds_cell_circulator_3<Tds>  Cell_circulator;
+  typedef internal::Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
 
 //private: // In 2D only :
-  typedef Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
+  typedef internal::Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
 
   typedef Vertex_iterator                          Vertex_handle;
   typedef Cell_iterator                            Cell_handle;

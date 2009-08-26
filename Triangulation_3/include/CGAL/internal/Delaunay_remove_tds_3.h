@@ -18,8 +18,8 @@
 // Author(s)     :  Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
 //                  Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
-#ifndef CGAL_DELAUNAY_REMOVE_TDS_3_H
-#define CGAL_DELAUNAY_REMOVE_TDS_3_H
+#ifndef CGAL_INTERNAL_DELAUNAY_REMOVE_TDS_3_H
+#define CGAL_INTERNAL_DELAUNAY_REMOVE_TDS_3_H
 
 #include <CGAL/basic.h>
 
@@ -28,7 +28,7 @@
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal {
 
 // Should this be documented as a Triangulation_ds_vertex_base_with_info_2 ?
 template < class I, class Vb = Triangulation_ds_vertex_base_2<> >
@@ -376,6 +376,6 @@ Delaunay_remove_tds_3_2(const std::vector<Facet> & boundhole)
     first->set_p(f);
 }
 
-CGAL_END_NAMESPACE
+}} // namespace CGAL::internal
 
-#endif // CGAL_DELAUNAY_REMOVE_TDS_3_H
+#endif // CGAL_INTERNAL_DELAUNAY_REMOVE_TDS_3_H

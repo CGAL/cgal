@@ -16,14 +16,14 @@
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 
-#ifndef CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
-#define CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
+#ifndef CGAL_INTERNAL_TRIANGULATION_DS_CIRCULATORS_3_H
+#define CGAL_INTERNAL_TRIANGULATION_DS_CIRCULATORS_3_H
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/circulator_bases.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal {
 
 template < class Tds_ >
 class Triangulation_ds_cell_circulator_3
@@ -492,6 +492,6 @@ private:
   }
 };
 
-CGAL_END_NAMESPACE
+}} // namespace CGAL::internal
 
-#endif // CGAL_TRIANGULATION_DS_CIRCULATORS_3_H
+#endif // CGAL_INTERNAL_TRIANGULATION_DS_CIRCULATORS_3_H

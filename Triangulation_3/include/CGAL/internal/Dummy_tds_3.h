@@ -17,12 +17,10 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_TRIANGULATION_DUMMY_TDS_3_H
-#define CGAL_TRIANGULATION_DUMMY_TDS_3_H
+#ifndef CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_3_H
+#define CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_3_H
 
-#include <CGAL/basic.h>
-
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal {
 
 // Dummy TDS which provides all types that a vertex_base or cell_base can use.
 struct Dummy_tds_3 {
@@ -43,6 +41,6 @@ struct Dummy_tds_3 {
   struct Facet_circulator {};
 };
 
-CGAL_END_NAMESPACE
+}} // namespace CGAL::internal
 
-#endif // CGAL_TRIANGULATION_DUMMY_TDS_3_H
+#endif // CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_3_H
