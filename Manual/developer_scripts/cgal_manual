@@ -1418,10 +1418,9 @@ make_manual_prime() {
     touch $LogFile
 
     #---------------------------------------------------------------------#
-    # run LaTeX, either brief or full,
-    # skip only if no PS output but PDF output is selected
+    # run LaTeX, either brief or full
     $BeforeLatex ${WrapperRootName%__*}
-    if [[ ${MakePS} -eq 1 ||  ${MakePDF} -eq 0 ]]; then
+    if [ ${MakePS} -eq 1 ]; then
       try_command "${MakeName} ${WrapperRootName} LaTeX" run_latex ${WrapperRootName}
       if [ $ExitCode -ne 0 ] ; then ReturnStatus=$ExitCode; fi
     fi
@@ -1429,7 +1428,7 @@ make_manual_prime() {
     #---------------------------------------------------------------------#
     # run PDFLaTeX
     $BeforePDF ${WrapperRootName%__*}
-    if [ ${MakePDF} -eq 1 ]; then
+    if [[ ${MakePDF} -eq 1 || ${MakeHTML} -eq 1 ]]; then
       if [[ -r ${WrapperRootName}.log ]] ; then
         mv ${WrapperRootName}.log ${WrapperRootName}.texlg
       fi
