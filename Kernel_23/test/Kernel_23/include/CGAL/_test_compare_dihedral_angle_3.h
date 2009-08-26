@@ -24,6 +24,8 @@ _test_compare_dihedral_angle_3(const R& rep)
 {
   typedef typename R::Point_3 Point_3;
   typedef typename R::Vector_3 Vector_3;
+  typedef typename R::RT RT;
+  typedef typename R::FT FT;
   typename R::Compare_dihedral_angle_3 compare_dih_angle
     = rep.compare_dihedral_angle_3_object();
 
@@ -46,9 +48,11 @@ _test_compare_dihedral_angle_3(const R& rep)
       if(theta2 == 180) {
         q4 = Point_3(0, 0, -1);
       }
+      const FT approx_cosine2 = FT((int)(std::cos(angle2)*1000))/FT(1000);
       const typename R::Comparison_result 
         comp_result = compare_dih_angle(p1, p2, p3, p4, q1, q2, q3, q4),
-        global_fct_call = CGAL::compare_dihedral_angle(p1, p2, p3, p4, q1, q2, q3, q4),
+        global_fct_call = CGAL::compare_dihedral_angle(p1, p2, p3, p4,
+                                                       q1, q2, q3, q4),
         call_with_vectors = compare_dih_angle(p2 - p1,
                                               p3 - p1,
                                               p4 - p1,
@@ -61,16 +65,36 @@ _test_compare_dihedral_angle_3(const R& rep)
                                                              q2 - q1,
                                                              q3 - q1,
                                                              q4 - q1),
-        theorical_result = CGAL::compare(std::abs(theta1),std::abs(theta2));
+        theorical_result = CGAL::compare(std::abs(theta1),std::abs(theta2)),
+        compare_with_cosine = compare_dih_angle(p1, p2, p3, p4,
+                                                approx_cosine2),
+        compare_with_cosine_with_vectors = compare_dih_angle(p2 - p1,
+                                                             p3 - p1,
+                                                             p4 - p1,
+                                                             approx_cosine2),
+        compare_with_cosine_fct = CGAL::compare_dihedral_angle(p1, p2, p3, p4,
+                                                               approx_cosine2),
+        compare_with_cosine_with_vectors_fct = 
+        CGAL::compare_dihedral_angle(p2 - p1,
+                                     p3 - p1,
+                                     p4 - p1,
+                                     approx_cosine2);
       if(comp_result != theorical_result || 
          comp_result != global_fct_call ||
          comp_result != call_with_vectors ||
-         comp_result != call_fct_with_vectors) {
+         comp_result != call_fct_with_vectors ||
+         comp_result != compare_with_cosine || 
+         comp_result != compare_with_cosine_fct ||
+         comp_result != compare_with_cosine_with_vectors ||
+         comp_result != compare_with_cosine_with_vectors_fct) {
         std::cerr << "Error compare_dihedral_angle_3, with angles "
                   << theta1 << " and " << theta2 << std::endl;
         std::cerr << "Results are: "
                   << comp_result << " " << global_fct_call << " "
-                  << call_with_vectors << " " << call_fct_with_vectors << "\n";
+                  << call_with_vectors << " " << call_fct_with_vectors << " "
+                  << compare_with_cosine << " " << compare_with_cosine_fct << " "
+                  << compare_with_cosine_with_vectors << " " 
+                  << compare_with_cosine_with_vectors_fct << "\n";
         const Vector_3 u1 = p2 - p1;
         const Vector_3 v1 = p3 - p1;
         const Vector_3 w1 = p4 - p1;
@@ -90,8 +114,8 @@ _test_compare_dihedral_angle_3(const R& rep)
                   << CGAL::sign(uv2*uw2) << "\n";
         return false;
       }
-    }
-  }
+    } // end loop on theta2
+  } // end loop and theta1
   return true;
 }
 

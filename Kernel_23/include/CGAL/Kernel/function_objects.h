@@ -169,6 +169,7 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_3            Point_3;
     typedef typename K::Vector_3           Vector_3;
+    typedef typename K::FT                 FT;
   public:
     typedef typename K::Comparison_result  result_type;
 
@@ -186,6 +187,59 @@ namespace CommonKernelFunctors {
       const Vector_3 ac2 = c2 - a2;
       const Vector_3 ad2 = d2 - a2;
       return this->operator()(ab1, ac1, ad1, ab2, ac2, ad2);
+    }
+
+    result_type
+    operator()(const Point_3& a1, const Point_3& b1, 
+               const Point_3& c1, const Point_3& d1, 
+               const FT& cosine) const
+    {
+      const Vector_3 ab1 = b1 - a1;
+      const Vector_3 ac1 = c1 - a1;
+      const Vector_3 ad1 = d1 - a1;
+
+      return this->operator()(ab1, ac1, ad1, cosine);
+    }
+
+    result_type
+    operator()(const Vector_3& ab1, const Vector_3& ac1, const Vector_3& ad1,
+               const FT& cosine)
+      const
+    {
+      typedef typename K::FT                                 FT;
+      typedef typename K::Construct_cross_product_vector_3   Cross_product;
+      Cross_product xproduct = K().construct_cross_product_vector_3_object();
+
+      const Vector_3 abac1 = xproduct(ab1, ac1);
+      const Vector_3 abad1 = xproduct(ab1, ad1);
+      const FT sc_prod_1 = abac1 * abad1;
+
+      CGAL_kernel_assertion_msg( abac1 != NULL_VECTOR,
+                                 "ab1 and ac1 are collinear" );
+      CGAL_kernel_assertion_msg( abad1 != NULL_VECTOR,
+                                 "ab1 and ad1 are collinear" );
+
+      if(sc_prod_1 >= 0 ) {
+        if(cosine >= 0) {
+          // the two cosine are >= 0, cosine is decreasing on [0,1]
+          return compare(CGAL::square(cosine)*
+                         abac1.squared_length()*abad1.squared_length(),
+                         CGAL::square(sc_prod_1));
+        }
+        else {
+          return SMALLER;
+        }
+      }
+      else {
+        if(cosine < 0) {
+          // the two cosine are < 0, cosine is increasing on [-1,0]
+          return compare(CGAL::square(sc_prod_1),
+                         CGAL::square(cosine)*
+                         abac1.squared_length()*abad1.squared_length());
+        }
+        else
+          return LARGER;
+        }
     }
 
     result_type

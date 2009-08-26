@@ -274,6 +274,16 @@ compare_dihedral_angle(const Point_3<K>& a1, const Point_3<K>& b1,
 template < class K >
 inline
 typename K::Comparison_result
+compare_dihedral_angle(const Point_3<K>& a1, const Point_3<K>& b1, 
+                       const Point_3<K>& c1, const Point_3<K>& d1, 
+                       const typename K::FT& cosine)
+{
+  return internal::compare_dihedral_angle(a1, b1, c1, d1, cosine, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_dihedral_angle(const Vector_3<K>& ab1, 
                        const Vector_3<K>& ac1,
                        const Vector_3<K>& ad1,
@@ -282,6 +292,17 @@ compare_dihedral_angle(const Vector_3<K>& ab1,
                        const Vector_3<K>& ad2)
 {
   return internal::compare_dihedral_angle(ab1, ac1, ad1, ab2, ac2, ad2, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_dihedral_angle(const Vector_3<K>& ab1, 
+                       const Vector_3<K>& ac1,
+                       const Vector_3<K>& ad1,
+                       const typename K::FT& cosine)
+{
+  return internal::compare_dihedral_angle(ab1, ac1, ad1, cosine, K());
 }
 
 template < class K >
