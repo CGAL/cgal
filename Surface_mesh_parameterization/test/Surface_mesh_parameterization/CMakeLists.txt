@@ -1,5 +1,4 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
+# This is the CMake script for compiling this folder.
 
 
 project( Surface_mesh_parameterization_test )
@@ -11,7 +10,13 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )
 endif()
- 
+
+# Require packages new or improved since CGAL 3.4
+include_directories (BEFORE ../../../Installation/include/)
+
+# Include this package's headers first
+include_directories (BEFORE . include ../../include)
+
 # Find CGAL
 find_package(CGAL QUIET COMPONENTS Core )
 
@@ -25,6 +30,9 @@ if ( CGAL_FOUND )
     # Use /EHa option to catch stack overflows.
     # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
     string(REGEX REPLACE "/EH[asc]*" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
+    # Use /FR to turn on IntelliSense
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
 
     # Allow Windows applications to use up to 3GB of RAM
     SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
@@ -45,14 +53,11 @@ if ( CGAL_FOUND )
     SET (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-strict-aliasing")
     SET (CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -fno-strict-aliasing")
 
-    # Print compilation options
+    # Print new compilation options
     string( TOUPPER "${CMAKE_BUILD_TYPE}" CGAL_BUILD_TYPE_UPPER )
     message( STATUS "USING CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CGAL_BUILD_TYPE_UPPER}}'" )
     message( STATUS "USING EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${CGAL_BUILD_TYPE_UPPER}}'" )
   endif()
-
-  include_directories (BEFORE ../../include)
-  include_directories (BEFORE include)
 
   # Link with BLAS, LAPACK and TAUCS (optional)
   find_package(TAUCS)

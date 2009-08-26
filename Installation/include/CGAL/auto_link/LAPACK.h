@@ -23,20 +23,19 @@
 #ifndef CGAL_AUTO_LINK_LAPACK_H
 #define CGAL_AUTO_LINK_LAPACK_H
 
-// Skip the whole file (e.g. do not define CGAL_USE_F2C) if auto-link is off
+// Skip the whole file if auto-link is off
 #if !defined(CGAL_NO_AUTOLINK_LAPACK) && !defined(CGAL_NO_AUTOLINK)
 
 
 #if defined(_WIN32) && !defined(_WIN64) // if Windows 32 bits
 
-// CGAL ships with ATLAS for Windows 32 bits, i.e this set of libraries (e.g. for /MD):
-// liblapack.lib libf77blas.lib libcblas.lib libatlas.lib vcf2c-vc71-mt.lib
+// CGAL ships with ATLAS for Windows 32 bits, i.e this set of libraries (e.g. for VC++ 8 /MD):
+// liblapack.lib libf77blas.lib libcblas.lib libatlas.lib vcf2c-vc80-mt.lib
 //
 // Notes: - Order matters.
-//        - VC++ 7.1 libraries work with VC++ 8.0.
-//        - Libraries with no "vc71" toolset are compiled by gcc/g77. They are
-//          compatible with VC++ 7.1 and 8.0, and with all VC++ runtimes.
-//        - Tested with VC++ 7.1 and 8.0 only.
+//        - Libraries with no "vc" toolset are compiled by gcc/g77. They are
+//          compatible with VC++ 7.1, 8.0 and 9.0, and with all VC++ runtimes.
+//        - Tested with 7.1, 8.0 and 9.0.
 
 #define CGAL_LIB_NAME liblapack
 #define CGAL_AUTO_LINK_NOMANGLE
@@ -55,7 +54,6 @@
 #include <CGAL/auto_link/auto_link.h>
 
 #define CGAL_LIB_NAME vcf2c
-#define CGAL_LIB_TOOLSET "vc71"
 #include <CGAL/auto_link/auto_link.h>
 
 // ATLAS provides BLAS and LAPACK standard Fortran interface
@@ -66,26 +64,23 @@
 #endif // Win32
 
 
-#ifdef _WIN64
+#ifdef _WIN64 // if Windows 64 bits
 
 // ATLAS is not compatible with Win64, thus CGAL ships with CLAPACK and CBLAS.
 // VC++ >= 8.0 is compatible with Windows 64 bits.
-// The set set of libraries is (e.g. for /MD):
+// The set set of libraries is (e.g. for VC++ 8 /MD):
 // clapack-vc80-mt.lib blas-vc80-mt.lib vcf2c-vc80-mt.lib
 //
 // Notes: - Order matters.
-//        - Tested with VC++ 8.0 only.
+//        - Tested with VC++ 8.0 and 9.0.
 
 #define CGAL_LIB_NAME clapack
-#define CGAL_LIB_TOOLSET "vc80"
 #include <CGAL/auto_link/auto_link.h>
 
 #define CGAL_LIB_NAME blas
-#define CGAL_LIB_TOOLSET "vc80"
 #include <CGAL/auto_link/auto_link.h>
 
 #define CGAL_LIB_NAME vcf2c
-#define CGAL_LIB_TOOLSET "vc80"
 #include <CGAL/auto_link/auto_link.h>
 
 // CLAPACK provides LAPACK standard Fortran interface.
