@@ -10,6 +10,9 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )
 endif(COMMAND cmake_policy)
 
+# Require packages new or improved since CGAL 3.4
+include_directories (BEFORE ../../../Installation/include/)
+
 # Include this package's headers first
 include_directories (BEFORE . include ../../include)
 

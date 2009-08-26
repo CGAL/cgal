@@ -24,6 +24,7 @@ foreach(DEP_PKG STL_Extension GraphicsView Filtered_kernel Profiling_tools Mesh_
 endforeach()
 
 # Require packages new or improved since CGAL 3.4
+include_directories (BEFORE ../../../Installation/include/)
 include_directories (BEFORE ../../../AABB_tree/include)
 include_directories (BEFORE ../../../Surface_mesher/include)
 include_directories (BEFORE ../../../Polyhedron/include/)
