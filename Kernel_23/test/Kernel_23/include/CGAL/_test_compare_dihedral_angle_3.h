@@ -83,10 +83,16 @@ _test_compare_dihedral_angle_3(const R& rep)
          comp_result != global_fct_call ||
          comp_result != call_with_vectors ||
          comp_result != call_fct_with_vectors ||
-         comp_result != compare_with_cosine || 
-         comp_result != compare_with_cosine_fct ||
-         comp_result != compare_with_cosine_with_vectors ||
-         comp_result != compare_with_cosine_with_vectors_fct) {
+         ( (theta1 != theta2) && (theta1 != -theta2)
+           && (
+               comp_result != compare_with_cosine || 
+               comp_result != compare_with_cosine_fct ||
+               comp_result != compare_with_cosine_with_vectors ||
+               comp_result != compare_with_cosine_with_vectors_fct
+               ) 
+           )
+         )
+      {
         std::cerr << "Error compare_dihedral_angle_3, with angles "
                   << theta1 << " and " << theta2 << std::endl;
         std::cerr << "Results are: "
@@ -115,6 +121,15 @@ _test_compare_dihedral_angle_3(const R& rep)
         return false;
       }
     } // end loop on theta2
+    // if(CGAL::compare_dihedral_angle(p1, p2, p3, p4, FT(-1)/FT(2)) != 
+    //    CGAL::compare(std::abs(theta1), 120) ||
+    //    CGAL::compare_dihedral_angle(p1, p2, p3, p4, FT(1)/FT(2)) != 
+    //    CGAL::compare(std::abs(theta1), 60))
+    // {
+    //   std::cerr << "Error compare_dihedral_angle_3, with angle "
+    //             << theta1 << " and cosine" << std::endl;
+    //   return false;
+    // }
   } // end loop and theta1
   return true;
 }
