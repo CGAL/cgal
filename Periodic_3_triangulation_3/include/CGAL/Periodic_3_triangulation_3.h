@@ -280,8 +280,17 @@ public:
   const Geometric_traits& geom_traits() const { return _gt; }
   const TDS & tds() const { return _tds; }
   TDS & tds() { return _tds; }
-  
+
   const Iso_cuboid & domain() const { return _domain; }
+  // TODO: Documentation and tests
+//   void set_domain(const Iso_cuboid & domain) {
+//     clear();
+//     _domain = domain;
+//     _gt.set_domain(domain);
+//     edge_length_threshold = FT(0.166) * (_domain.xmax()-_domain.xmin())
+//                                       * (_domain.xmax()-_domain.xmin());
+//   }
+
   const Covering_sheets & number_of_sheets() const { return _cover; }
 
   bool is_extensible_triangulation_in_1_sheet_h1() const;

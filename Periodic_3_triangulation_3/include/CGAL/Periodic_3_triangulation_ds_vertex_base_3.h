@@ -22,7 +22,7 @@
 #define CGAL_PERIODIC_3_TRIANGULATION_DS_VERTEX_BASE_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Dummy_tds_3.h>
+#include <CGAL/internal/Dummy_tds_3.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -111,7 +111,7 @@ template <>
 class Periodic_3_triangulation_ds_vertex_base_3<void>
 {
 public:
-  typedef Dummy_tds_3             Triangulation_data_structure;
+  typedef internal::Dummy_tds_3             Triangulation_data_structure;
   typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
   typedef Triangulation_data_structure::Cell_handle     Cell_handle;
   template <typename TDS2>

@@ -324,7 +324,7 @@ private:
     return (cumm_off == Offset(0,0,0));
   }
   //@}
-
+public:
   Periodic_point periodic_circumcenter(Cell_handle c) const {
     CGAL_triangulation_precondition(c != Cell_handle());
     Point v = geom_traits().construct_circumcenter_3_object()(
@@ -378,6 +378,7 @@ private:
     return ppv;
   }
 
+private:
 bool is_canonical(const Facet &f) const {
   if (number_of_sheets() == make_array(1,1,1)) return true;
   Offset cell_off0 = int_to_off(f.first->offset((f.second+1)&3));

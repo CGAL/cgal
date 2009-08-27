@@ -27,7 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Dummy_tds_3.h>
+#include <CGAL/internal/Dummy_tds_3.h>
 
 
 #define _off0() (off&7)
@@ -309,7 +309,7 @@ template <>
 class Periodic_3_triangulation_ds_cell_base_3<void>
 {
 public:
-  typedef Dummy_tds_3                   Triangulation_data_structure;
+  typedef internal::Dummy_tds_3                  Triangulation_data_structure;
   typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
   typedef Triangulation_data_structure::Cell_handle     Cell_handle;
   template <typename TDS2>
