@@ -6,10 +6,10 @@
 # Example: test.sh lscm 2pts taucs eps sphere966
 
 # Find executable name (different on Windows and Unix)
-[ -f ./VC/debug/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./VC/debug/polyhedron_ex_parameterization.exe"
-[ -f ./VC/release/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./VC/release/polyhedron_ex_parameterization.exe"
-[ -f ./VC/x64/debug/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./VC/x64/debug/polyhedron_ex_parameterization.exe"
-[ -f ./VC/x64/release/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./VC/x64/release/polyhedron_ex_parameterization.exe"
+[ -f ./debug/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./debug/polyhedron_ex_parameterization.exe"
+[ -f ./release/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./release/polyhedron_ex_parameterization.exe"
+[ -f ./x64/debug/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./x64/debug/polyhedron_ex_parameterization.exe"
+[ -f ./x64/release/polyhedron_ex_parameterization.exe ] && PARAM_APPLICATION="./x64/release/polyhedron_ex_parameterization.exe"
 [ -x ./polyhedron_ex_parameterization ] && PARAM_APPLICATION="./polyhedron_ex_parameterization"
 if [ -z "$PARAM_APPLICATION" ]; then
     echo "Cannot find polyhedron_ex_parameterization application"
