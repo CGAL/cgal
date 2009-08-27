@@ -47,7 +47,7 @@ public:
     // Data generation
     //-------------------------------------------------------
     Image image;
-    image.read("data/liver_kidney_gallbladder.inr");
+    image.read("data/liver.inr.gz");
     Mesh_domain domain(image,1e-9);
     
     // Set mesh criteria
