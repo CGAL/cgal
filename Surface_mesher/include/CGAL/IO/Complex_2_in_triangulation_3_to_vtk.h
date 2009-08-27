@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef CGAL_COMPLEX_3_IN_TRIANGULATION_3_TO_VTK
-#define CGAL_COMPLEX_3_IN_TRIANGULATION_3_TO_VTK
+#ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_3_TO_VTK
+#define CGAL_COMPLEX_2_IN_TRIANGULATION_3_TO_VTK
 
 #include <map>
 
@@ -88,4 +88,4 @@ vtkPolyData* output_c2t3_to_vtk_polydata(const C2T3& c2t3,
 
 } // end namespace CGAL
 
-#endif // CGAL_COMPLEX_3_IN_TRIANGULATION_3_TO_VTK
+#endif // CGAL_COMPLEX_2_IN_TRIANGULATION_3_TO_VTK
