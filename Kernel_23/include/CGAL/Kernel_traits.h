@@ -24,7 +24,7 @@
 #ifndef CGAL_KERNEL_TRAITS_H
 #define CGAL_KERNEL_TRAITS_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class T>
 struct Kernel_traits
@@ -32,6 +32,6 @@ struct Kernel_traits
   typedef typename T::R Kernel;
 };
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_KERNEL_TRAITS_H
