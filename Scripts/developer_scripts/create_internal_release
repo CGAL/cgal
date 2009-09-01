@@ -16,6 +16,7 @@ usage:
   $0 (-h|-r) 
              [-n version number]
              [-d releasedir] [-a allpackagesdir] 
+	     [-c candidatesdir]
              [-l lockfile]
 
 Exactly one of the options -h or -r must be present.
@@ -25,6 +26,7 @@ Exactly one of the options -h or -r must be present.
     -n version number (CGAL_VERSION_NR)
     -d releasedir, default releasedir is the current dir
     -a allpackagesdir, default is releasedir/trunk
+    -c candidatesdir, default is releasedir/branches/candidate-packages
     -l lockfile, default is releasedir/release_creation.lock
 
    The version number is stored in VERSION and include/CGAL/version.h.
@@ -60,7 +62,6 @@ my (
     $SCRIPTSDIR,
     $DEVELSCRIPTSDIR,
     $LOCKCMD,
-    $packages_file,
     %files
 );
 
@@ -97,23 +98,9 @@ sub unlock()
 }
 
 sub install_packages() {
-  my ($filename, $direc, %is_permited_package, $package_name, $tmp_package_name);
+  my ($filename, $direc, $package_name, $tmp_package_name);
   print "Installing packages ...\n";
   chdir $RELEASEDIR or die;
-  if (! -f $packages_file){
-    print STDERR "$packages_file file does not exist\n";
-    unlock;
-    die "\n";
-  }
-
-  open PACKAGES_TO_INCLUDE, "$packages_file" or die;
-  while (<PACKAGES_TO_INCLUDE>){
-    chomp;
-    s/\s*//g;
-    next if /^$/;
-    $is_permitted_package{$_}=1;
-  }
-  close PACKAGES_TO_INCLUDE;
 
   if( ! open(LOG_CONFLICTS, ">>&=3") ) {
       open(LOG_CONFLICTS, ">&", STDOUT);
@@ -121,7 +108,8 @@ sub install_packages() {
 
   opendir ALLPACKAGESDIR, $ALLPACKAGESDIR or die;
   while (defined($package_name = readdir(ALLPACKAGESDIR))) {
-    next unless $is_permitted_package{$package_name};
+      next if $package_name =~ /^\.\.?$/;
+      next if (! -d File::Spec->catdir($ALLPACKAGESDIR, $package_name));
     $dont_submit="$ALLPACKAGESDIR/$package_name/dont_submit";
     chdir "$ALLPACKAGESDIR" or die;
     @command = ('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn');
@@ -139,7 +127,12 @@ sub install_packages() {
     
 
     chdir "$RELEASEDIR/$VERSION" or die;
-    my $tar = Archive::Tar->new("temppack.tar") or die;
+    my $tar = Archive::Tar->new;
+    open my $TARFILL, "$RELEASEDIR/$VERSION/temppack.tar" or die;
+    if(! $tar->read($TARFILL)) {
+        unlink 'temppack.tar';
+        next;
+    }
     if( (-e "/proc/self/fd/3") ) {
 	open(LOG_CONFLICTS, ">&=", 3);
     }
@@ -492,7 +485,7 @@ sub generate_cgal_test_with_cmake
         $_ = $DIR;
         my $options = (/_Demo$/) ? '--no-run' : '' ;
        
-        system("$DEVELSCRIPTSDIR/create_cgal_test_with_cmake", $options) == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test_with_cmake $options failed";
+        system("$DEVELSCRIPTSDIR/create_cgal_test_with_cmake", $options) == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test_with_cmake $options failed in directory $DIR";
       }
       chdir '..';
     }
@@ -571,7 +564,6 @@ if ($::opt_l){
 }
   $SCRIPTSDIR="$ALLPACKAGESDIR/Scripts/scripts";
   $DEVELSCRIPTSDIR="$ALLPACKAGESDIR/Scripts/developer_scripts";
-  $packages_file="$ALLPACKAGESDIR/Maintenance/release_building/include_in_release";
   $global_dont_submit="$ALLPACKAGESDIR/Maintenance/release_building/global_dont_submit";
   @global_dont_submit_tar_options = ();
   open(GLOBAL_DONT_SUBMIT, "<", $global_dont_submit);
@@ -586,7 +578,6 @@ if ($::opt_l){
   print "  Scripts dir: $SCRIPTSDIR\n";
   print "  Developer Scripts dir: $DEVELSCRIPTSDIR\n";
   print "  Lockfile: $LOCKFILE\n";
-  print "  Packages file : $packages_file\n";
   umask(002);
   chdir $RELEASEDIR or die;
   if (! -d $VERSION){
