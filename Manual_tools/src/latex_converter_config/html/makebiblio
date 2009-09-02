@@ -5,7 +5,7 @@ rm -f index.html
 bibtex2html $1
 perl -ni.bak -e '/^   OPT[A-Z]/ or print;' Biblio/how_to_cite_cgal.bib
 perl -pi.bak -e "s/All publications/CGAL Manual Chapters/g" Biblio/how_to_cite_cgal.html
-perl -pi.bak -e 's|-09]|-09 - <a href="./how_to_cite_cgal.bib">bibtex file</a>]|g' Biblio/how_to_cite_cgal.html
+perl -pi.bak -e 's|-([0-9]{1,2})]|-$1 - <a href="./how_to_cite_cgal.bib">bibtex file</a>]|g' Biblio/how_to_cite_cgal.html
 perl -pi.bak -e "s/#669999/#C0C0D0/g" Biblio/how_to_cite_cgal.html
 perl -pi.bak -e "s/#badfe1/#C0C0D0/g" Biblio/how_to_cite_cgal.html
 perl -pi.bak -e "s/CGAL /{CGAL} /g" Biblio/how_to_cite_cgal.bib
