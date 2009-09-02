@@ -405,21 +405,21 @@ namespace boost {
 
   template <class Gt, class Tds>
   class T2_edge_weight_map
-    : public put_get_helper<double, T2_edge_weight_map<Gt, Tds> >
+    : public put_get_helper<typename Gt::FT, T2_edge_weight_map<Gt, Tds> >
   {
   private:
     const CGAL::Triangulation_2<Gt,Tds>& tr;
   public:
     typedef readable_property_map_tag category;
-    typedef double value_type;
-    typedef double reference;
+    typedef typename Gt::FT value_type;
+    typedef value_type reference;
     typedef typename CGAL::Triangulation_2<Gt,Tds>::Edge key_type;
 
     T2_edge_weight_map(const CGAL::Triangulation_2<Gt,Tds>& tr_) 
       : tr(tr_) 
     { }
 
-    double operator[](key_type e) const {
+    value_type operator[](key_type e) const {
       return tr.segment(e).squared_length();
     }
   };
