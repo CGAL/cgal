@@ -23,8 +23,6 @@ find_executable()
     PARAM_APPLICATION=""
     [ -f ./debug/$1.exe ] && PARAM_APPLICATION="./debug/$1.exe"
     [ -f ./release/$1.exe ] && PARAM_APPLICATION="./release/$1.exe"
-    [ -f ./x64/debug/$1.exe ] && PARAM_APPLICATION="./x64/debug/$1.exe"
-    [ -f ./x64/release/$1.exe ] && PARAM_APPLICATION="./x64/release/$1.exe"
     [ -x ./$1 ] && PARAM_APPLICATION="./$1"
     echo "$PARAM_APPLICATION"
 }
