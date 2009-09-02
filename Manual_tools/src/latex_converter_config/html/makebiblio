@@ -1,0 +1,20 @@
+#!/bin/sh
+
+rm -f Biblio/how_to_cite_*.*
+rm -f index.html
+bibtex2html $1
+perl -ni.bak -e '/^   OPT[A-Z]/ or print;' Biblio/how_to_cite_cgal.bib
+perl -pi.bak -e "s/All publications/CGAL Manual Chapters/g" Biblio/how_to_cite_cgal.html
+perl -pi.bak -e 's|-09]|-09 - <a href="./how_to_cite_cgal.bib">bibtex file</a>]|g' Biblio/how_to_cite_cgal.html
+perl -pi.bak -e "s/#669999/#C0C0D0/g" Biblio/how_to_cite_cgal.html
+perl -pi.bak -e "s/#badfe1/#C0C0D0/g" Biblio/how_to_cite_cgal.html
+perl -pi.bak -e "s/CGAL /{CGAL} /g" Biblio/how_to_cite_cgal.bib
+perl -pi.bak -e "s/{CGAL} Editorial Board/{CGAL Editorial Board}/g" Biblio/how_to_cite_cgal.bib
+perl -pi.bak -e "s/Delaunay /{Delaunay} /g" Biblio/how_to_cite_cgal.bib
+perl -pi.bak -e "s/Voronoi /{Voronoi} /g" Biblio/how_to_cite_cgal.bib
+perl -pi.bak -e "s/Minkowski /{Minkowski} /g" Biblio/how_to_cite_cgal.bib
+perl -pi.bak -e "s/Nef /{Nef} /g" Biblio/how_to_cite_cgal.bib
+perl -pi.bak -e "s/Apollonius /{Apollonius} /g" Biblio/how_to_cite_cgal.bib
+perl -pi.bak -e "s/Boolean /{Boolean} /g" Biblio/how_to_cite_cgal.bib
+perl -pi.bak -e "s|http://www.cgal.org/Manual/[0-9.]*/doc_html/cgal_manual/|../|g" Biblio/how_to_cite_cgal.html
+rm -f index.html
