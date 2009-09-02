@@ -1989,6 +1989,7 @@ Manual_tools/src/latex_converter_config/gif/cc_wr.gif -text svneol=unset#image/g
 Manual_tools/src/latex_converter_config/gif/cc_zeta.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/html/Biblio/how_to_cite_cgal.html svneol=native#text/html
 Manual_tools/src/latex_converter_config/html/images.html svneol=native#text/html
+Manual_tools/src/latex_converter_config/html/makebiblio -text
 Manual_tools/src/latex_converter_config/html/modern.css svneol=native#text/css
 Manual_tools/src/latex_converter_config/html/style/Advanced.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/html/style/Class.gif -text svneol=unset#image/gif
