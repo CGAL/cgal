@@ -13,22 +13,8 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-# Use packages improved since CGAL 3.4, if checked out
-foreach(DEP_PKG STL_Extension GraphicsView Filtered_kernel Profiling_tools Mesh_3)
-  foreach(CGAL_SVN_TRUNK ../../../ ../../trunk ..)
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
-      include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
-      break()
-    endif()
-  endforeach()
-endforeach()
-
-# Require packages new or improved since CGAL 3.4
+# Require packages new or improved since CGAL 3.5 beta 1
 include_directories (BEFORE ../../../Installation/include/)
-include_directories (BEFORE ../../../AABB_tree/include)
-include_directories (BEFORE ../../../Surface_mesher/include)
-include_directories (BEFORE ../../../Polyhedron/include/)
-include_directories (BEFORE ../../../HalfedgeDS/include/)
 include_directories (BEFORE ../../../Point_set_processing_3/include)
 
 # Include this package's headers first
