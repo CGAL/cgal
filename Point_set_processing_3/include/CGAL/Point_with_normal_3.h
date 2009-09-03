@@ -25,7 +25,12 @@
 #include <CGAL/Origin.h>
 #include <CGAL/value_type_traits.h>
 
-#include <boost/property_map.hpp>
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 103800
+  #include <boost/property_map/property_map.hpp>
+#else
+  #include <boost/property_map.hpp>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
