@@ -26,22 +26,22 @@ SOURCES_DIR_HAS_BEEN_SET=
 CANDIDATES_DIR_HAS_BEEN_SET=
 
 usage() {
-    echo "Usage : $0 [--help] [--rpm] [--public] [--do-it] <packages directory> [<candidates directory>]"
+    echo "Usage : $0 [--help] [--rpm] [--public] [--do-it] <packages dir> [<candidates dir>]"
     echo
-    echo '  --help         : prints this usage help'
-    echo '  --rpm          : also build the corresponding SRPMs'
-    echo '  --public       : also build the corresponding public versions'
-    echo '  --do-it        : the real thing (NOT for local tests!  Only for the release'
-    echo '                   master! Does write operations (updating the version_number,'
-    echo '                   svn tag, copying on the web server...)'
-    echo '  --do-not-tag   : when used with --do-it, the tag is not created.'
-    echo '  --tag          : when used without --do-it, the tag is created, but files'
-    echo '                   are not published'
-    echo '  --no-testsuite : when used with --do-it, the tag is made, files are published,'
-    echo '                   but the LATEST file is not updated.'
-    echo '  --verbose      : print log to standard output, instead of the log file'
-    echo '  <packages directory> : the directory containing the packages [default is trunk]'
-    echo '  <candidates directory> : the directory containing the candidate packages [no default]'
+    echo '  --help           : prints this usage help'
+    echo '  --rpm            : also build the corresponding SRPMs'
+    echo '  --public         : also build the corresponding public versions'
+    echo '  --do-it          : the real thing (NOT for local tests!  Only for the release'
+    echo '                     master! Does write operations (updating the version_number,'
+    echo '                     svn tag, copying on the web server...)'
+    echo '  --do-not-tag     : when used with --do-it, the tag is not created.'
+    echo '  --tag            : when used without --do-it, the tag is created, but files'
+    echo '                     are not published'
+    echo '  --no-testsuite   : when used with --do-it, the tag is made, files are published,'
+    echo '                     but the LATEST file is not updated.'
+    echo '  --verbose        : print log to standard output, instead of the log file'
+    echo '  <packages dir>   : the directory containing the packages [default is trunk]'
+    echo '  <candidates dir> : the directory containing the candidate packages [no default]'
 }
 
 
