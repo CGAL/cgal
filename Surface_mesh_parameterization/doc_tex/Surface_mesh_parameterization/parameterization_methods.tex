@@ -38,10 +38,10 @@ this method does not minimize angles nor areas distortion.
     \label{Surface_mesh_parameterization-fig-uniform}
     % Image
     \begin{ccTexOnly}
-      \includegraphics[width=0.9\textwidth]{Surface_mesh_parameterization/uniform}
+      \includegraphics[width=1.0\textwidth]{Surface_mesh_parameterization/uniform}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="90%" border=0 src="./uniform.png"><P>
+        <img style="max-width: 90%;" border=0 src="./uniform.png"><P>
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[ht]
@@ -74,10 +74,10 @@ thus can be efficiently solved using dedicated linear solvers.
     \label{Surface_mesh_parameterization-fig-conformal}
     % Image
     \begin{ccTexOnly}
-        \includegraphics[width=0.9\textwidth]{Surface_mesh_parameterization/conformal}
+        \includegraphics[width=1.0\textwidth]{Surface_mesh_parameterization/conformal}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="90%" border=0 src="./conformal.png"><P>
+        <img style="max-width: 90%;" border=0 src="./conformal.png"><P>
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[ht]
@@ -104,10 +104,10 @@ same for both systems) is asymmetric.
     \label{Surface_mesh_parameterization-fig-floater}
     % Image
     \begin{ccTexOnly}
-      \includegraphics[width=0.9\textwidth]{Surface_mesh_parameterization/floater}
+      \includegraphics[width=1.0\textwidth]{Surface_mesh_parameterization/floater}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="90%" border=0 src="./floater.png"><P>
+        <img style="max-width: 90%;" border=0 src="./floater.png"><P>
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[ht]
@@ -133,10 +133,10 @@ for both systems) is asymmetric.
     \label{Surface_mesh_parameterization-fig-authalic}
     % Image
     \begin{ccTexOnly}
-        \includegraphics[width=0.9\textwidth]{Surface_mesh_parameterization/authalic}
+        \includegraphics[width=1.0\textwidth]{Surface_mesh_parameterization/authalic}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="90%" border=0 src="./authalic.png"><P>
+        <img style="max-width: 90%;" border=0 src="./authalic.png"><P>
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[ht]
@@ -189,10 +189,10 @@ $u,v$ coordinates for each vertex along the border.
     \label{Surface_mesh_parameterization-fig-circular_border}
     % Image
     \begin{ccTexOnly}
-        \includegraphics[width=0.80\textwidth]{Surface_mesh_parameterization/border}
+        \includegraphics[width=1.0\textwidth]{Surface_mesh_parameterization/border}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="80%" border=0 src="./border.png"><P>
+        <img style="max-width: 80%;" border=0 src="./border.png"><P>
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[ht]
@@ -224,10 +224,10 @@ which implies solving a symmetric matrix.
     \label{Surface_mesh_parameterization-fig-LSCM}
     % Image
     \begin{ccTexOnly}
-        \includegraphics[width=0.9\textwidth]{Surface_mesh_parameterization/LSCM}
+        \includegraphics[width=1.0\textwidth]{Surface_mesh_parameterization/LSCM}
     \end{ccTexOnly}
     \begin{ccHtmlOnly}
-        <img width="90%" border=0 src="./LSCM.png"><P>
+        <img style="max-width: 90%;" border=0 src="./LSCM.png"><P>
     \end{ccHtmlOnly}
     % Title
     \begin{figure}[ht]
@@ -262,8 +262,8 @@ parameterization methods define only two constraints: the pinned vertices.
 \subsection{Discrete Authalic Parameterization Example}
 
 \ccc{Authalic_parameterization.cpp} computes a Discrete Authalic parameterization
-over a \ccc{CGAL::Polyhedron_3<Traits>} mesh. Specifying a specific surface parameterization 
-instead of the default one means using the second parameter of \ccc{CGAL::parameterize()}. The 
+over a \ccc{CGAL::Polyhedron_3<Traits>} mesh. Specifying a specific surface parameterization
+instead of the default one means using the second parameter of \ccc{CGAL::parameterize()}. The
 differences with the first example \ccc{Simple_parameterization.cpp} are:
 
 \begin{ccExampleCode}
@@ -292,7 +292,7 @@ Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer()
 parameterization with a square border arc length parameterization.
 Specifying a specific border parameterization
 instead of the default one means using the second parameter of
-\ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}. 
+\ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}.
 The differences with the first example \ccc{Simple_parameterization.cpp} are:
 
 \begin{ccExampleCode}

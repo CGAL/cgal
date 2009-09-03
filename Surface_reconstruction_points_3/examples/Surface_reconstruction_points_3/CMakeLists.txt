@@ -10,12 +10,9 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )
 endif(COMMAND cmake_policy)
 
-# Require packages new or improved since CGAL 3.4
+# Require packages new or improved since CGAL 3.5 beta 1
 include_directories (BEFORE ../../../Installation/include/)
-include_directories (BEFORE ../../../Surface_mesher/include/)
-include_directories (BEFORE ../../../Polyhedron/include/)
-include_directories (BEFORE ../../../HalfedgeDS/include/)
-include_directories (BEFORE ../../../Point_set_processing_3/include/)
+include_directories (BEFORE ../../../Point_set_processing_3/include)
 
 # Include this package's headers first
 include_directories (BEFORE . include ../../include)
