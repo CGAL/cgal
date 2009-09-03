@@ -189,7 +189,7 @@ sub install_packages() {
       else { # is_dir() returned true
         next if ($filename !~ /^\.\/?$/) and ($filename =~ /^\.\.?\/?$/);
         my $package_from_from = $LISTOFALLPACKAGES{$package_name};
-        mkpath($filename, { verbose => 0});
+        mkpath($filename);
         system("svn info $package_comes_from/$package_name/$filename | grep URL >> $filename/.scm-urls\n");
       }
     }
