@@ -1,6 +1,8 @@
 #!/usr/bin/env perl
 #this script generates the internal release
 
+use warnings;
+
 use Cwd;
 use File::Find;
 use Getopt::Std;
@@ -9,6 +11,16 @@ use Archive::Tar;
 use Archive::Tar::File;
 use File::Copy;
 use File::Copy::Recursive qw(dircopy);
+use File::Path qw(mkpath);
+
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+
+package main;
+local $VERSION='$Id$';
+
+sub HELP_MESSAGE() {
+    usage()
+}
 
 sub usage() {
     print STDERR<<"EOF";
@@ -26,7 +38,7 @@ Exactly one of the options -h or -r must be present.
     -n version number (CGAL_VERSION_NR)
     -d releasedir, default releasedir is the current dir
     -a allpackagesdir, default is releasedir/trunk
-    -c candidatesdir, default is releasedir/branches/candidate-packages
+    -c candidatesdir
     -l lockfile, default is releasedir/release_creation.lock
 
    The version number is stored in VERSION and include/CGAL/version.h.
@@ -53,20 +65,26 @@ my $TEMPFILE="TEMPFILE.$$";
 #----------------------------------------------------#
 
 my (
-    $VERSION,
-    $VERSION_NR,
-    $LOCKFILE,
-    $ALLPACKAGESDIR,
-    $RELEASEDIR,
-    $MAINDIR,
-    $SCRIPTSDIR,
-    $DEVELSCRIPTSDIR,
-    $LOCKCMD,
-    %files
+  $VERSION,
+  $VERSION_NR,
+  $LOCKFILE,
+  $ALLPACKAGESDIR,
+  $CANDIDATESDIR,
+  $RELEASEDIR,
+  $MAINDIR,
+  $SCRIPTSDIR,
+  $DEVELSCRIPTSDIR,
+  $LOCKCMD,
+# 'files' is an associative array (hash table in perl language) that maps
+# from files names (relative to CGAL_DIR) to the name of the package that
+# provided it.
+  %files,
+# 'LISTOFALLPACKAGES' is an associative array that maps from packages names
+# to the full path of the working copy that provided it.
+  %LISTOFALLPACKAGES
 );
 
-
-
+%LISTOFALLPACKAGES = ();
 
 sub termination_signal_handler {
     unlink $LOCKFILE;
@@ -82,7 +100,7 @@ it could not acquire the needed lock on file $LOCKFILE.
 TOTHIER
 	exit 1;
     }
-    $SIG{EXIT} = \&termination_signal_handler;
+    $SIG{QUIT} = \&termination_signal_handler;
     $SIG{HUP} = \&termination_signal_handler;
     $SIG{INT} = \&termination_signal_handler;
     $SIG{TERM} = \&termination_signal_handler;
@@ -91,33 +109,47 @@ TOTHIER
 sub unlock()
 {
     unlink $LOCKFILE;
-    $SIG{EXIT} = 'DEFAULT';
+    $SIG{QUIT} = 'DEFAULT';
     $SIG{HUP} = 'DEFAULT';
     $SIG{INT} = 'DEFAULT';
     $SIG{TERM} = 'DEFAULT';
 }
 
+sub add_one_package($) {
+  my ($package) = @_;
+}
+
+sub list_packages($) {
+  my ($packages_directory) = @_;
+  opendir PACKAGESDIR, $packages_directory or die;
+  while (defined($package_name = readdir(PACKAGESDIR))) {
+    my $package_full_path = File::Spec->catdir($packages_directory, $package_name);
+    next if $package_name =~ /^\..*$/;
+    next if (! -d $package_full_path );
+    $LISTOFALLPACKAGES{$package_name} = $packages_directory;
+  }
+  closedir(PACKAGESDIR);
+}
+
 sub install_packages() {
-  my ($filename, $direc, $package_name, $tmp_package_name);
+  my ($filename, $direc, $tmp_package_name);
   print "Installing packages ...\n";
   chdir $RELEASEDIR or die;
 
   if( ! open(LOG_CONFLICTS, ">>&=3") ) {
       open(LOG_CONFLICTS, ">&", STDOUT);
   }
-
-  opendir ALLPACKAGESDIR, $ALLPACKAGESDIR or die;
-  while (defined($package_name = readdir(ALLPACKAGESDIR))) {
-      next if $package_name =~ /^\.\.?$/;
-      next if (! -d File::Spec->catdir($ALLPACKAGESDIR, $package_name));
-    $dont_submit="$ALLPACKAGESDIR/$package_name/dont_submit";
-    chdir "$ALLPACKAGESDIR" or die;
+  foreach my $package_name (keys(%LISTOFALLPACKAGES)) {
+    my $package_comes_from = $LISTOFALLPACKAGES{$package_name};
+    my $package_full_path = File::Spec->catdir($package_comes_from, $package_name);
+    $dont_submit="$package_full_path/dont_submit";
+    chdir "$package_comes_from" or die;
     @command = ('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn');
     if( -f $dont_submit ) {
 	@command = (@command, "--exclude-from=$dont_submit");
     }
     @command = (@command, @global_dont_submit_tar_options);
-    @command = (@command, '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=dont_submit', '--exclude=*.dxy', '--exclude=Doxyfile', "-C", "$package_name", ".");
+    @command = (@command, "-C", "$package_name", ".");
     foreach( @command ) {
 	print "$_ ";
     }
@@ -141,21 +173,27 @@ sub install_packages() {
     }
     for( $tar->get_files() )
     {
+      my $filename = $_->name();
       if( ! $_->is_dir() )
       {
-	if(exists($files{$_->name}))
+	if(exists($files{$_->name()}))
         {
 	    print LOG_CONFLICTS "File ", $_->name(), " from package ", $package_name;
 	    print LOG_CONFLICTS " conflicts with one from package ", $files{$_->name()}. "\n";
 	}
 	else
 	{
-	    $files{$_->name} = $package_name;
+	    $files{$_->name()} = $package_name;
 	}
+      }
+      else { # is_dir() returned true
+        next if ($filename !~ /^\.\/?$/) and ($filename =~ /^\.\.?\/?$/);
+        my $package_from_from = $LISTOFALLPACKAGES{$package_name};
+        mkpath($filename, { verbose => 0});
+        system("svn info $package_comes_from/$package_name/$filename | grep URL >> $filename/.scm-urls\n");
       }
     }
     close(LOG_CONFLICTS);
-    $size = scalar keys %files;
     system('tar', '-xf', "temppack.tar");
 #    $tmp_package_name = "temp_${package_name}";
 #    system("mv", "$package_name", "$tmp_package_name");
@@ -171,7 +209,6 @@ sub install_packages() {
 #    system('rm', '-rf', "$tmp_package_name");
   }
   close(LOG_CONFLICTS);
-  closedir ALLPACKAGESDIR;
   unlink 'temppack.tar';
 }
 
@@ -534,47 +571,55 @@ sub main(){
   $LOCKFILE="$RELEASEDIR/release_creation.lock";
   $LOCKCMD='lockfile';
 
-getopts('hr:a:d:l:p:s:n:');
-if ($::opt_h ) {
-  usage();
-  die "\n";
-}
-if ($::opt_d){
-  $RELEASEDIR = $::opt_d;
-  $ALLPACKAGESDIR = "$RELEASEDIR/trunk";
-  $LOCKFILE="$RELEASEDIR/release_creation.lock";
-}
+  our ($opt_h,  $opt_r, $opt_a, $opt_c, $opt_d, $opt_l,  $opt_p, $opt_s, $opt_n);
 
-if ($::opt_r){
-  $VERSION = $::opt_r;
-  if ($::opt_n){
-    $VERSION_NR = $::opt_n;
-  } else {
-    $VERSION_NR = $VERSION;
+  if(! getopts('hr:a:c:d:l:p:s:n:') || $::opt_h ) {
+    usage();
+    die "\n";
   }
-} else {
-  usage();
-  die "\n";
-}
-if ($::opt_a){
-  $ALLPACKAGESDIR = File::Spec->rel2abs( $::opt_a ) ;
-}
-if ($::opt_l){
-  $LOCKFILE = $::opt_l;
-}
+  if ($::opt_d){
+    $RELEASEDIR = $::opt_d;
+    $ALLPACKAGESDIR = "$RELEASEDIR/trunk";
+    $LOCKFILE="$RELEASEDIR/release_creation.lock";
+  }
+
+  if ($::opt_r){
+    $VERSION = $::opt_r;
+    if ($::opt_n){
+      $VERSION_NR = $::opt_n;
+    } else {
+      $VERSION_NR = $VERSION;
+    }
+  } else {
+    usage();
+    die "\n";
+  }
+  if ($::opt_a){
+    $ALLPACKAGESDIR = File::Spec->rel2abs( $::opt_a ) ;
+  }
+  if ($::opt_c){
+    $CANDIDATESDIR = File::Spec->rel2abs( $::opt_c ) ;
+  }
+  if ($::opt_l){
+    $LOCKFILE = $::opt_l;
+  }
   $SCRIPTSDIR="$ALLPACKAGESDIR/Scripts/scripts";
   $DEVELSCRIPTSDIR="$ALLPACKAGESDIR/Scripts/developer_scripts";
   $global_dont_submit="$ALLPACKAGESDIR/Maintenance/release_building/global_dont_submit";
   @global_dont_submit_tar_options = ();
-  open(GLOBAL_DONT_SUBMIT, "<", $global_dont_submit);
-  while(<GLOBAL_DONT_SUBMIT>) {
+  if (open(GLOBAL_DONT_SUBMIT, "<", $global_dont_submit) ) {
+    while(<GLOBAL_DONT_SUBMIT>) {
       chomp;
       @global_dont_submit_tar_options = (@global_dont_submit_tar_options, "--exclude=$_");
+    }
+    close(GLOBAL_DONT_SUBMIT);
   }
-  close(GLOBAL_DONT_SUBMIT);
   print "Initializing variables ...\n";
   print "  Release dir: $RELEASEDIR\n";
   print "  All packages dir: $ALLPACKAGESDIR\n";
+  if($CANDIDATESDIR) {
+    print "  Candidates packages dir: $CANDIDATESDIR\n";
+  }
   print "  Scripts dir: $SCRIPTSDIR\n";
   print "  Developer Scripts dir: $DEVELSCRIPTSDIR\n";
   print "  Lockfile: $LOCKFILE\n";
@@ -588,19 +633,32 @@ if ($::opt_l){
     print "Please remove it first\n";
     exit 1;
   }
-lock;
-
-install_packages();
-CreateDemoTestDirs();
-CreateExampleTestDirs();
-create_version_file();
-create_version_tex_file();
-#make_testscripts();
-make_testscripts_for_cmake();
-
-unlock;
+  lock;
+  
+  list_packages($ALLPACKAGESDIR);
+  if($CANDIDATESDIR) {
+    list_packages($CANDIDATESDIR);
+  }
+  install_packages();
+  
+  CreateDemoTestDirs();
+  CreateExampleTestDirs();
+  create_version_file();
+  create_version_tex_file();
+  #make_testscripts();
+  make_testscripts_for_cmake();
+  
+  unlock;
 }
 
 main();
 
+# TODO:
+#  - avoid all those calls to svn info
+#  - "perlify" the system(svn info...) (see also <h7oscs$jk4$1@clipper.ens.fr>)
 
+# Set the indent level of perl-mode, in Emacs.
+# For that file it is mostly 2, so let's choose 2.
+### Local Variables:
+### perl-indent-level: 2
+### End:
