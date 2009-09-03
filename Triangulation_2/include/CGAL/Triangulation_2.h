@@ -267,9 +267,6 @@ public:
   void remove_second(Vertex_handle v);
   void remove(Vertex_handle  v);
 
-  // MOVE
-  bool move(Vertex_handle v, const Point &p);
-
   // POINT LOCATION
   Face_handle
   march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
@@ -448,25 +445,6 @@ int insert(InputIterator first, InputIterator last)
       f = insert (*p, f)->face();
 
   return number_of_vertices() - n;
-}
-
-template < class InputIterator >
-bool move(InputIterator first, InputIterator last)
-{
-  bool blocked = false;
-  std::map<Vertex_handle, int> hash;
-  std::list< std::pair<Vertex_handle, Point> > to_move(first, last);
-  while(!to_move.empty()) {
-    std::pair<Vertex_handle, Point> pp = to_move.front();
-    to_move.pop_front();
-    if(!move(pp.first, pp.second)) {
-      if(hash[pp.first] == 3) break;
-      else if(hash[pp.first] == 2) blocked = true;
-      hash[pp.first]++;
-      to_move.push_back(pp);
-    }
-  }
-  return !blocked;
 }
 
 bool well_oriented(Vertex_handle v)
@@ -1534,105 +1512,6 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
     }
 }
 
-template <class Gt, class Tds >
-bool
-Triangulation_2<Gt, Tds>::
-move(Vertex_handle v, const Point &p) {
-  CGAL_triangulation_precondition(!is_infinite(v));
-  const int dim = dimension();
-
-  if(dim == 2) {
-    Point ant = v->point();
-    v->set_point(p);
-    if(well_oriented(v)) {
-      if(!from_convex_hull(v)) {
-        return true;
-      }
-    }
-    v->set_point(ant);
-  }
-
-  Locate_type lt;
-  int li;
-  Vertex_handle inserted;
-  Face_handle loc = locate(p, lt, li);
-
-  if(lt == VERTEX) return false;
-
-  if(dim < 0) return true;
-
-  if(dim == 0) {
-    v->point() = p;
-    return true;
-  }
-
-  if((loc != NULL) && (dim == 1)) {
-    if(loc->has_vertex(v)) {
-      v->point() = p;
-    } else {
-      inserted = insert(p, lt, loc, li);
-      Face_handle f = v->face();
-      int i = f->index(v);
-      if (i==0) {f = f->neighbor(1);}
-      CGAL_triangulation_assertion(f->index(v) == 1);
-      Face_handle g= f->neighbor(0);
-      f->set_vertex(1, g->vertex(1));
-      f->set_neighbor(0, g->neighbor(0));
-      g->neighbor(0)->set_neighbor(1,f);
-      g->vertex(1)->set_face(f);
-      delete_face(g);
-      Face_handle f_ins = inserted->face();
-      i = f_ins->index(inserted);
-      if (i==0) {f_ins = f_ins->neighbor(1);}
-      CGAL_triangulation_assertion(f_ins->index(inserted) == 1);
-      Face_handle g_ins = f_ins->neighbor(0);
-      f_ins->set_vertex(1, v);
-      g_ins->set_vertex(0, v);
-      std::swap(*v, *inserted);
-      delete_vertex(inserted);
-    }
-    return true;
-  }
-
-  if((loc != NULL) && test_dim_down(v)) {
-    v->point() = p;
-    int i = loc->index(v);
-    Face_handle locl;
-    int i_locl;
-    if(is_infinite(loc)) {
-      int i_inf = loc->index(infinite_vertex());
-      locl = loc->neighbor(i_inf);
-      i_locl = locl->index(v);
-    } else { locl = loc; i_locl = i; }
-    if(orientation(p, locl->vertex(ccw(i_locl))->point(),
-                      locl->vertex(cw(i_locl))->point()) == COLLINEAR) {
-      _tds.dim_2D_1D(loc, i);
-    }
-    return true;
-  }
-
-  inserted = insert(p, lt, loc, li);
-
-  std::list<Edge> hole;
-  make_hole(v, hole);
-  fill_hole(v, hole);
-
-  // fixing pointer
-  Face_circulator fc = incident_faces(inserted), done(fc);
-  std::list<Face_handle> faces_pt;
-  do { faces_pt.push_back(fc); } while(++fc != done);
-  while(!faces_pt.empty()) {
-    Face_handle f = faces_pt.front();
-    faces_pt.pop_front();
-    int i = f->index(inserted);
-    f->set_vertex(i, v);
-  }
-  std::swap(*v, *inserted);
-  delete_vertex(inserted);
-
-  return true;
-}
-  
 template <class Gt, class Tds >    
 inline
 typename Triangulation_2<Gt, Tds>::Face_handle
