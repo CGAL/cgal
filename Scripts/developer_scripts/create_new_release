@@ -265,9 +265,9 @@ if [ -n "$DO_PUBLIC" ]; then
     mv ${release_name} $public_release_name
 
     cd ${public_release_name}
-    rm -rf test package_info developer_scripts doc_tex winutils include/CGAL/Test include/CGAL/Testsuite/
+    rm -rf bench* Bench* test package_info developer_scripts doc_tex winutils include/CGAL/Test include/CGAL/Testsuite/
     rm -f examples/*/cgal_test* demo/*/cgal_test*
-    find . -name .scm-urls -exec rm '{}+'
+    find . -name .scm-urls -exec rm '{}' '+'
     sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
     echo -n $public_release_version > VERSION 2>&1
     cd ..
