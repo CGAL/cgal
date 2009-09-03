@@ -1,3 +1,10 @@
+3 septembre 2009
+fix the demo of Deaunay :
+for every button, the drawing should follow the mouse,
+be it circumcircle, conflict zone of updated triangulation
+and insertion take place on the click.
+
+
 8 avril 2004\- fix the incidence-adjacence stuff
 
 
