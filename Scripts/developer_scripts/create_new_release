@@ -22,26 +22,35 @@ NO_TESTUITE=""           # If set, the LATEST file is not updated
 SOURCES_DIR="$PWD/trunk" # SVN working copy directory, default is "$PWD/trunk"
 VERBOSE=""               # Verbose mode (displays log to standard err)
 
+SOURCES_DIR_HAS_BEEN_SET=
+CANDIDATES_DIR_HAS_BEEN_SET=
+
+usage() {
+    echo "Usage : $0 [--help] [--rpm] [--public] [--do-it] <packages directory> [<candidates directory>]"
+    echo
+    echo '  --help         : prints this usage help'
+    echo '  --rpm          : also build the corresponding SRPMs'
+    echo '  --public       : also build the corresponding public versions'
+    echo '  --do-it        : the real thing (NOT for local tests!  Only for the release'
+    echo '                   master! Does write operations (updating the version_number,'
+    echo '                   svn tag, copying on the web server...)'
+    echo '  --do-not-tag   : when used with --do-it, the tag is not created.'
+    echo '  --tag          : when used without --do-it, the tag is created, but files'
+    echo '                   are not published'
+    echo '  --no-testsuite : when used with --do-it, the tag is made, files are published,'
+    echo '                   but the LATEST file is not updated.'
+    echo '  --verbose      : print log to standard output, instead of the log file'
+    echo '  <packages directory> : the directory containing the packages [default is trunk]'
+    echo '  <candidates directory> : the directory containing the candidate packages [no default]'
+}
+
+
 # Parsing command-line
 while [ $1 ]; do
     case "$1" in
         -h|-help|--h|--help)
-            echo 'Usage : create_new_release [--help] [--rpm] [--public] [--do-it] <packages directory>'
-            echo
-            echo '  --help         : prints this usage help'
-            echo '  --rpm          : also build the corresponding SRPMs'
-            echo '  --public       : also build the corresponding public versions'
-            echo '  --do-it        : the real thing (NOT for local tests!  Only for the release'
-            echo '                   master! Does write operations (updating the version_number,'
-            echo '                   svn tag, copying on the web server...)'
-            echo '  --do-not-tag   : when used with --do-it, the tag is not created.'
-            echo '  --tag          : when used without --do-it, the tag is created, but files'
-	    echo '                   are not published'
-            echo '  --no-testsuite : when used with --do-it, the tag is made, files are published,'
-	    echo '                   but the LATEST file is not updated.'
-	    echo '  --verbose      : print log to standard output, instead of the log file'
-            echo '  <packages directory> : the directory containing the packages [default is trunk]'
-            exit
+            usage;
+            exit;
         ;;
         --rpm)
             DO_RPM="y"
@@ -75,9 +84,19 @@ while [ $1 ]; do
             echo "Unrecognized option : $1"
             exit
         ;;
-        *)
-            SOURCES_DIR="$1"
-            shift; continue
+        *) 
+            if [ -z "$SOURCES_DIR_HAS_BEEN_SET" ]; then
+                SOURCES_DIR="$1"
+                SOURCES_DIR_HAS_BEEN_SET=y
+                shift; continue
+            elif [ -z "$CANDIDATES_DIR_HAS_BEEN_SET" ]; then
+                CANDIDATES_DIR="$1"
+                CANDIDATES_DIR_HAS_BEEN_SET=y
+                shift; continue
+            else
+                echo "Unrecognized option : $1"
+                usage
+            fi
         ;;
     esac
 done
@@ -134,6 +153,9 @@ cd ${TMPDIR} || return
 
 # Update the working copy
 svn update ${SOURCES_DIR}
+if [ -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then  
+    svn update ${CANDIDATES_DIR}
+fi
 CGAL_SVN_REVISION=`svn info ${SOURCES_DIR} | grep Revision | cut -d' ' -f2`
 
 # Set the major/minor/bugfix release numbers
@@ -180,7 +202,11 @@ if [ -n "$DO_IT" -a -e "${HTML_DIR}/${release_name}.tar.gz" ]; then
 fi
 
 # Create the release
-${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${SOURCES_DIR} -r ${release_name} -n ${release_number}
+if [ -n "$CANDIDATES_DIR_HAS_BEEN_SET" ]; then
+    ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${SOURCES_DIR} -c ${CANDIDATES_DIR} -r ${release_name} -n ${release_number}
+else
+    ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${SOURCES_DIR} -r ${release_name} -n ${release_number}
+fi
 # Add the SVN revision to version.h
 cd "${release_name}"
 sed -i -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVISION/" include/CGAL/version.h
@@ -236,6 +262,7 @@ if [ -n "$DO_PUBLIC" ]; then
     cd ${public_release_name}
     rm -rf test package_info developer_scripts doc_tex winutils include/CGAL/Test include/CGAL/Testsuite/
     rm -f examples/*/cgal_test* demo/*/cgal_test*
+    find . -name .scm-urls -exec rm '{}+'
     sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
     echo -n $public_release_version > VERSION 2>&1
     cd ..
