@@ -11,3 +11,4 @@ dont_submit
 *.dxy
 Doxyfile
 *~
+*.o
