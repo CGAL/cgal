@@ -181,7 +181,12 @@ fi
 if [ -z "$INTERNAL_NUMBER" ]; then
   INTERNAL_NUMBER=1
 fi
+
 INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
+if [ -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then
+    INTERNAL_STRING=-candidates${INTERNAL_STRING}
+fi
+
 internal_nr=`printf "%4s" "${INTERNAL_NUMBER}" | sed "y/ /0/"`
 
 if [ -r "${NUMBERS_DIR}/release_name" ]; then
