@@ -182,9 +182,10 @@ if [ -z "$INTERNAL_NUMBER" ]; then
   INTERNAL_NUMBER=1
 fi
 
-INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
 if [ -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then
-    INTERNAL_STRING=-candidates${INTERNAL_STRING}
+    INTERNAL_STRING="-Ic-${INTERNAL_NUMBER}"
+else
+    INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
 fi
 
 internal_nr=`printf "%4s" "${INTERNAL_NUMBER}" | sed "y/ /0/"`
