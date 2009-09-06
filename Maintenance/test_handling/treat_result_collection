@@ -138,10 +138,10 @@ chdir($currentdir) || die("Could not chdir to $currentdir");
 opendir($dir_h, $ftp_results_dir) || die("The ftp directory could no be opened");
 while( $i=readdir($dir_h)){
   $is_good=1;
-  if ( $i =~ m/^(CGAL-\d+\.\d+-I-\d+)[-_]/ ) {
+  if ( $i =~ m/^(CGAL-\d+\.\d+-Ic?-\d+)[-_]/ ) {
     $cgal_version=$1;
   } else {
-    if ( $i =~ m/^(CGAL-\d+\.\d+\.\d+-I-\d+)[-_]/ ) {
+    if ( $i =~ m/^(CGAL-\d+\.\d+\.\d+-Ic?-\d+)[-_]/ ) {
       $cgal_version=$1;
     } else {
       if ( $i =~ m/^(CGAL-\d+\.\d+\.\d+)[-_]/ ) {

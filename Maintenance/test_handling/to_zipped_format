@@ -166,7 +166,7 @@ EOF
     $final_version="CGAL-$CGAL_VERSION";
     if ($version
         && $version ne "CGAL-$CGAL_VERSION"
-        && ($version !~ /^CGAL-${CGAL_VERSION}-I-[\d]+$/)) {
+        && ($version !~ /^CGAL-${CGAL_VERSION}-Ic?-[\d]+$/)) {
 	die "Wrong version in $platform: $CGAL_VERSION instead of $version.\n";
     }
 }

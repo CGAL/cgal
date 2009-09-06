@@ -37,10 +37,10 @@ sub write_select()
   print OUTPUTV '<td><select id="sel" onchange="sel=document.getElementById(\'sel\'); top.location.href=sel.options[sel.selectedIndex].value">'."\n";
 
   print OUTPUTV '<option value="">', "</option>\n";
-  foreach $_ (sort { $a =~ /results-([^I]*)(|-I-(.*))\.shtml/;
+  foreach $_ (sort { $a =~ /results-([^I]*)(|-Ic?-(.*))\.shtml/;
                      my ($maj_a, $min_a) = ($1, $2 ? $3 : "9999");
 		     # public releases are given minor 9999.
-		     $b =~ /results-([^I]*)(|-I-(.*))\.shtml/;
+		     $b =~ /results-([^I]*)(|-Ic?-(.*))\.shtml/;
                      my ($maj_b, $min_b) = ($1, $2 ? $3 : "9999");
 		     # We sort major numbers alphabetically,
 		     # and minors numerically.
@@ -442,7 +442,7 @@ sub print_platforms()
 sub result_filename($)
 {
     return "results".substr($_[0],4).".shtml";
-#	$name =~ s/-I-/-/;
+#	$name =~ s/-Ic?-/-/;
 }
 
 
