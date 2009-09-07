@@ -89,20 +89,28 @@ namespace CGALi {
     return true;
   }
 
+  template <class K>
+  bool do_intersect(const CGAL::Bbox_3& bbox,
+                    const typename K::Segment_3& segment, 
+                    const K& k)
+  {
+    return do_intersect(segment, bbox, k);
+  }
+
 } // namespace CGALi
 
 template <class K>
 bool do_intersect(const CGAL::Segment_3<K>& segment, 
 		  const CGAL::Bbox_3& bbox)
 {
-  return CGALi::do_intersect(segment, bbox, K());
+  return typename K::Do_intersect_3()(segment, bbox);
 }
 
 template <class K>
 bool do_intersect(const CGAL::Bbox_3& bbox, 
 		  const CGAL::Segment_3<K>& segment)
 {
-  return CGALi::do_intersect(segment, bbox, K());
+  return typename K::Do_intersect_3()(segment, bbox);
 }
 
 CGAL_END_NAMESPACE

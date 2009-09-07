@@ -164,7 +164,7 @@ operator()(const Query& query, const typename AT::Primitive& primitive) const
 {
   typedef boost::optional<Object_and_primitive_id> Intersection;
 
-  CGAL::Object object = CGAL::intersection(primitive.datum(),query);
+  CGAL::Object object = GeomTraits().intersect_3_object()(primitive.datum(),query);
   if ( object.empty() )
     return Intersection();
   else
