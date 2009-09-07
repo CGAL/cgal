@@ -27,9 +27,11 @@
 #include <CGAL/surface_reconstruction_points_assertions.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Min_sphere_d.h>
-#include <CGAL/Optimisation_d_traits_3.h>
+#include <CGAL/Min_sphere_of_spheres_d.h>
+#include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
 #include <CGAL/centroid.h>
+
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -312,17 +314,43 @@ public:
   /// Gets the bounding sphere of all points.
   Sphere bounding_sphere() const
   {
-    Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> >
-      ms3(points_begin(), points_end()); // for all points
-    return Sphere(ms3.center(), ms3.squared_radius());
+    typedef Min_sphere_of_spheres_d_traits_3<Gt,FT> Traits;
+    typedef Min_sphere_of_spheres_d<Traits> Min_sphere;
+    typedef typename Traits::Sphere Traits_sphere;
+
+    // Represents *all* points by a set of spheres with 0 radius
+    std::vector<Traits_sphere> spheres;
+    for (Point_iterator it=points_begin(); it!=points_end(); it++)
+      spheres.push_back(Traits_sphere(*it,0));
+
+    // Computes min sphere
+    Min_sphere ms(spheres.begin(),spheres.end());
+    typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
+    FT cx = *coord++;
+    FT cy = *coord++;
+    FT cz = *coord++;
+    return Sphere(Point(cx,cy,cz), ms.radius()*ms.radius());
   }
 
   /// Gets the bounding sphere of input points.
   Sphere input_points_bounding_sphere() const
   {
-    Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> >
-      input_points_ms3(input_points_begin(), input_points_end()); // for input points
-    return Sphere(input_points_ms3.center(), input_points_ms3.squared_radius());
+    typedef Min_sphere_of_spheres_d_traits_3<Gt,FT> Traits;
+    typedef Min_sphere_of_spheres_d<Traits> Min_sphere;
+    typedef typename Traits::Sphere Traits_sphere;
+
+    // Represents *input* points by a set of spheres with 0 radius
+    std::vector<Traits_sphere> spheres;
+    for (Input_point_iterator it=input_points_begin(); it!=input_points_end(); it++)
+      spheres.push_back(Traits_sphere(*it,0));
+
+    // Computes min sphere
+    Min_sphere ms(spheres.begin(),spheres.end());
+    typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
+    FT cx = *coord++;
+    FT cy = *coord++;
+    FT cz = *coord++;
+    return Sphere(Point(cx,cy,cz), ms.radius()*ms.radius());
   }
 
   /// Insert point in the triangulation.
@@ -368,7 +396,7 @@ public:
         Point_with_normal pwn(get(point_pmap,it), get(normal_pmap,it));
         points.push_back(pwn);
     }
-    
+
     // Spatial sorting
     std::random_shuffle (points.begin(), points.end());
     spatial_sort (points.begin(), points.end(), geom_traits());
@@ -402,7 +430,7 @@ public:
       normal_pmap,
       type);
   }
-  
+
   /// Delaunay refinement callback:
   /// insert STEINER point in the triangulation.
   template <class CellIt>

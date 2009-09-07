@@ -26,8 +26,8 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Fast_orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
-#include <CGAL/Min_sphere_d.h>
-#include <CGAL/Optimisation_d_traits_3.h>
+#include <CGAL/Min_sphere_of_spheres_d.h>
+#include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 
@@ -184,11 +184,25 @@ private:
       }
     }
 
-    // Compute bounding sphere
-    Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > ms3(first, beyond);
-    m->bounding_sphere = Sphere(ms3.center(), ms3.squared_radius());
+    // Computes bounding sphere
+    typedef Min_sphere_of_spheres_d_traits_3<Gt,FT> Traits;
+    typedef Min_sphere_of_spheres_d<Traits> Min_sphere;
+    typedef typename Traits::Sphere Traits_sphere;
+    //
+    // Represents points by a set of spheres with 0 radius
+    std::vector<Traits_sphere> spheres;
+    for (InputIterator it=first ; it != beyond ; ++it)
+      spheres.push_back(Traits_sphere(*it,0));
+    //
+    // Computes min sphere
+    Min_sphere ms(spheres.begin(),spheres.end());
+    typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
+    FT cx = *coord++;
+    FT cy = *coord++;
+    FT cz = *coord++;
+    m->bounding_sphere = Sphere(Point(cx,cy,cz), ms.radius()*ms.radius());
 
-    // Compute axis aligned bounding box
+    // Computes axis aligned bounding box
     // FIXME: I cannot believe there is nothing better to compute the bbox:
     {
       Point p = get(point_pmap,first);
