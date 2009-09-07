@@ -82,8 +82,9 @@ void trace( std::string s )
   #include <CGAL/Quotient.h>
 #endif
 
-#include <CGAL/Qt/Piecewise_set_graphics_item.h>
-//#include <CGAL/Qt/GraphicsViewPolygonWithHolesInput.h>
+#include <CGAL/Qt/BezierCurves.h>
+#include <CGAL/Qt/CircularPolygons.h>
+#include <CGAL/Qt/GraphicsViewBezierBoundaryInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Qt/utility.h>
@@ -439,11 +440,11 @@ class MainWindow :
   
 private:  
 
-  QGraphicsScene                                              mScene;
-  bool                                                        mCircular_active ;
-  bool                                                        mBlue_active ;
-  Curve_set_vector                                            mCurve_sets ;
-//  CGAL::Qt::GraphicsViewPolygonWithHolesInput<Linear_kernel>* mPWHI ;
+  QGraphicsScene                                            mScene;
+  bool                                                      mCircular_active ;
+  bool                                                      mBlue_active ;
+  Curve_set_vector                                          mCurve_sets ;
+  CGAL::Qt::GraphicsViewBezierBoundaryInput<Bezier_traits>* mBezierInput ;
     
 public:
 
@@ -592,9 +593,9 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   
-//  mPWHI = new CGAL::Qt::GraphicsViewPolygonWithHolesInput<Linear_kernel>(this, &mScene);
+  mBezierInput = new CGAL::Qt::GraphicsViewBezierBoundaryInput<Bezier_traits>(this, &mScene);
   
-//  QObject::connect(mPWHI, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
+  QObject::connect(mBezierInput, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
 
   QObject::connect(this->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   QObject::connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
@@ -992,18 +993,18 @@ void MainWindow::open( QString fileName )
 
 void MainWindow::on_actionInsertPWH_toggled(bool aChecked)
 {
-//  if(aChecked)
-//       mScene.installEventFilter(mPWHI);
-//  else mScene.removeEventFilter (mPWHI);
+  if(aChecked)
+       mScene.installEventFilter(mBezierInput);
+  else mScene.removeEventFilter (mBezierInput);
 }
 
 void MainWindow::processInput(CGAL::Object o )
 {
-  Linear_polygon_with_holes lPWH ;
-  if(CGAL::assign(lPWH, o))
+  Bezier_polygon lBP ;
+  if(CGAL::assign(lBP, o))
   {
-    if ( ensure_circular_mode() )
-      active_set().circular().join( linear_2_circ(lPWH) ) ;  
+    if ( ensure_bezier_mode() )
+      active_set().bezier().join( lBP ) ;  
   }
   modelChanged();
 }

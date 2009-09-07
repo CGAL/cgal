@@ -40,10 +40,7 @@ class Piecewise_graphics_item_base : public GraphicsItem
 {
 protected:
 
-  Piecewise_graphics_item_base()
-  {
-    updateBoundingBox();
-  }
+  Piecewise_graphics_item_base() {}
   
 public:
 

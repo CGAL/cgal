@@ -20,7 +20,7 @@
 #ifndef CGAL_QT_PIECEWISE_SET_GRAPHICS_ITEM_H
 #define CGAL_QT_PIECEWISE_SET_GRAPHICS_ITEM_H
 
-#include <CGAL/Qt/Piecewise_region_graphics_item.h>
+#include <CGAL/Qt/PiecewiseRegionGraphicsItem.h>
 
 namespace CGAL {
 
@@ -45,15 +45,16 @@ namespace Qt {
     } ;
   }
 
-template <class Piecewise_set_, class Draw_piece_>
-class Piecewise_set_graphics_item : public Piecewise_region_graphics_item< typename internal::Piecewise_set_traits<Piecewise_set_>::Region, Draw_piece_ > 
+template <class Piecewise_set_, class Draw_piece_, class Piece_bbox_>
+class Piecewise_set_graphics_item : public Piecewise_region_graphics_item< typename internal::Piecewise_set_traits<Piecewise_set_>::Region, Draw_piece_, Piece_bbox_ > 
 {
   typedef Piecewise_set_ Piecewise_set ;
   typedef Draw_piece_    Draw_piece ;
+  typedef Piece_bbox_    Piece_bbox ;
   
   typedef typename internal::Piecewise_set_traits<Piecewise_set_>::Region Region ;
   
-  typedef Piecewise_region_graphics_item<Region, Draw_piece> Base ;
+  typedef Piecewise_region_graphics_item<Region, Draw_piece, Piece_bbox> Base ;
  
   typedef std::vector<Region> Region_vector ;
 
@@ -61,9 +62,9 @@ class Piecewise_set_graphics_item : public Piecewise_region_graphics_item< typen
   
 public:
 
-  Piecewise_set_graphics_item( Piecewise_set* aSet, Draw_piece const& aPieceDrawer = Draw_piece() )
+  Piecewise_set_graphics_item( Piecewise_set* aSet, Draw_piece const& aPieceDrawer = Draw_piece(), Piece_bbox const& aPieceBBox = Piece_bbox() )
     :
-     Base(aPieceDrawer)
+     Base(aPieceDrawer,aPieceBBox)
     ,mSet(aSet)
   {}  
 
@@ -93,8 +94,8 @@ protected:
   Piecewise_set* mSet;
 };
 
-template <class S, class D>
-void Piecewise_set_graphics_item<S,D>::update_set_bbox( Piecewise_set const& aSet, Bbox_builder& aBBoxBuilder )
+template <class S, class D, class P>
+void Piecewise_set_graphics_item<S,D,P>::update_set_bbox( Piecewise_set const& aSet, Bbox_builder& aBBoxBuilder )
 {
   Region_vector vec ;
   
@@ -104,8 +105,8 @@ void Piecewise_set_graphics_item<S,D>::update_set_bbox( Piecewise_set const& aSe
     update_region_bbox(*rit,aBBoxBuilder);
 }
 
-template <class S, class D>
-void Piecewise_set_graphics_item<S,D>::draw_set( Piecewise_set const& aSet, QPainterPath& aPath )
+template <class S, class D, class P>
+void Piecewise_set_graphics_item<S,D,P>::draw_set( Piecewise_set const& aSet, QPainterPath& aPath )
 {
   Region_vector vec ;
   
@@ -114,7 +115,6 @@ void Piecewise_set_graphics_item<S,D>::draw_set( Piecewise_set const& aSet, QPai
   for( Region_const_iterator rit = vec.begin(); rit != vec.end() ; ++ rit )
     draw_region(*rit,aPath);
 }
-
 
 } // namespace Qt
 } // namespace CGAL
