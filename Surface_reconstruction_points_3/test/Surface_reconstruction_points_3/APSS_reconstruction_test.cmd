@@ -1,1 +1,1 @@
-data/ChineseDragon-10kv.off
+data/*.off data/*.xyz data/*.pwn

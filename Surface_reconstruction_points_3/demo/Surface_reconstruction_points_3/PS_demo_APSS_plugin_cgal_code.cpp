@@ -39,8 +39,8 @@ typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 // APSS reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
 Polyhedron* APSS_reconstruct(const Point_set& points,
-                             FT sm_angle, // Min triangle angle (degrees). 
-                             FT sm_radius, // Max triangle size w.r.t. point set average spacing. 
+                             FT sm_angle, // Min triangle angle (degrees).
+                             FT sm_radius, // Max triangle size w.r.t. point set average spacing.
                              FT sm_distance, // Approximation error w.r.t. point set average spacing.
                              FT smoothness = 2) // smoothness factor
 {
@@ -109,7 +109,7 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
 
     // Defines the implicit surface: requires defining a
     // conservative bounding sphere centered at inner point.
-    FT sm_sphere_radius = 2.01 * radius;
+    FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/10.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,
                       Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
@@ -126,15 +126,15 @@ Polyhedron* APSS_reconstruct(const Point_set& points,
                       << "                    triangle size="<<sm_radius<<" * average spacing="<<sm_radius*average_spacing<<",\n"
                       << "                    distance="<<sm_distance<<" * average spacing="<<sm_distance*average_spacing<<",\n"
                       << "                    dichotomy error=distance/"<<sm_distance*average_spacing/sm_dichotomy_error<<",\n"
-                      << "                    Manifold_tag)\n";
+                      << "                    Manifold_with_boundary_tag)\n";
 
     // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
     C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                  // reconstructed mesh
-                            surface,               // implicit surface
-                            criteria,              // meshing criteria
-                            CGAL::Manifold_tag()); // require manifold mesh with no boundary
+    CGAL::make_surface_mesh(c2t3,                                 // reconstructed mesh
+                            surface,                              // implicit surface
+                            criteria,                             // meshing criteria
+                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
 
     // Prints status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "

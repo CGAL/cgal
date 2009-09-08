@@ -32,7 +32,7 @@ int main(void)
     // APSS options
     FT sm_angle = 20.0; // Min triangle angle in degrees.
     FT sm_radius = 100; // Max triangle size w.r.t. point set average spacing.
-    FT sm_distance = 0.5; // Approximation error w.r.t. point set average spacing. 
+    FT sm_distance = 0.5; // Approximation error w.r.t. point set average spacing.
     const FT smoothness = (FT)4.0;
                     	// Smoothness factor: ranges from 2 for clean datasets to 8 for noisy datasets.
 
@@ -73,7 +73,7 @@ int main(void)
 
     // Defines the implicit surface: requires defining a
     // conservative bounding sphere centered at inner point.
-    FT sm_sphere_radius = 2.01 * radius;
+    FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/10.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,
                       Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
@@ -87,10 +87,10 @@ int main(void)
     // Generates surface mesh with manifold option
     STr tr; // 3D Delaunay triangulation for surface mesh generation
     C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                  // reconstructed mesh
-                            surface,               // implicit surface
-                            criteria,              // meshing criteria
-                            CGAL::Manifold_tag()); // require manifold mesh with no boundary
+    CGAL::make_surface_mesh(c2t3,                                 // reconstructed mesh
+                            surface,                              // implicit surface
+                            criteria,                             // meshing criteria
+                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
 
     if(tr.number_of_vertices() == 0)
       return EXIT_FAILURE;
