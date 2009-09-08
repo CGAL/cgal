@@ -464,16 +464,12 @@ private:
     const Point& pb = cell->vertex(1)->point();
     const Point& pc = cell->vertex(2)->point();
     const Point& pd = cell->vertex(3)->point();
-    Tetrahedron ta(pb,pc,pd,p);
-    Tetrahedron tb(pa,pc,pd,p);
-    Tetrahedron tc(pb,pa,pd,p);
-    Tetrahedron td(pb,pc,pa,p);
-    Tetrahedron tet(pa,pb,pc,pd);
-    FT v = tet.volume();
-    a = std::fabs(ta.volume() / v);
-    b = std::fabs(tb.volume() / v);
-    c = std::fabs(tc.volume() / v);
-    d = std::fabs(td.volume() / v);
+
+    FT v = volume(pa,pb,pc,pd);
+    a = std::fabs(volume(pb,pc,pd,p) / v);
+    b = std::fabs(volume(pa,pc,pd,p) / v);
+    c = std::fabs(volume(pb,pa,pd,p) / v);
+    d = std::fabs(volume(pb,pc,pa,p) / v);
   }
 
   FT find_sink()
