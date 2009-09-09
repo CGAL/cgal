@@ -17,7 +17,6 @@
 #ifndef BOOST_TRAITS_HPP_INCLUDED
 #define BOOST_TRAITS_HPP_INCLUDED
 
-//#include <boost/mpl/aux_/has_xxx.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/if.hpp>
 
