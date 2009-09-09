@@ -20,6 +20,7 @@
 #ifndef CGAL_QT_BEZIER_CURVES_H
 #define CGAL_QT_BEZIER_CURVES_H
 
+#include <CGAL/value_type_traits.h>
 #include <CGAL/Qt/PiecewiseSetGraphicsItem.h>
 #include <CGAL/Qt/BoundaryPiecesGraphicsItem.h>
 
@@ -30,40 +31,40 @@ namespace Qt {
 struct Bezier_helper
 {
   template<class Bezier_point, class Bezier_curve>
-  static double get_approximated_endpoint_parameter( Bezier_point const& p, Bezier_curve const& curve, unsigned int xid  )
+  static double get_approximated_endpoint_parameter( Bezier_point const& aP, Bezier_curve const& aCurve, unsigned int aXID, double aError = 1e-3 )
   {
     typedef typename Bezier_point::Originator_iterator Originator_iterator ;
     
-    Originator_iterator org = p.get_originator (curve, xid);
+    Originator_iterator lOrg = aP.get_originator(aCurve, aXID);
 
-    double threshold(0.001);
-     
-    double t_min = CGAL::to_double(org->point_bound().t_min) ;
-    double t_max = CGAL::to_double(org->point_bound().t_max) ;
+    double t_min = CGAL::to_double(lOrg->point_bound().t_min) ;
+    double t_max = CGAL::to_double(lOrg->point_bound().t_max) ;
     
-    bool can_refine = !p.is_exact();
+    bool lCanRefine = !aP.is_exact();
     
     do
     {
-      if ( std::abs(t_max - t_min) <= threshold )
+      if ( std::abs(t_max - t_min) <= aError )
         break ;
       
-      if ( can_refine )
+      if ( lCanRefine )
       {
-        can_refine = p.refine();
+        lCanRefine = aP.refine();
         
-        t_min = CGAL::to_double(org->point_bound().t_min) ;
-        t_max = CGAL::to_double(org->point_bound().t_max) ;
+        t_min = CGAL::to_double(lOrg->point_bound().t_min) ;
+        t_max = CGAL::to_double(lOrg->point_bound().t_max) ;
       }  
     }
-    while ( can_refine ) ;
+    while ( lCanRefine ) ;
     
     return ( t_min + t_max) / 2.0 ;
   }
 
-  template<class Output_point, class Bezier_curve, class OutputIterator>
-  static void get_control_points ( Bezier_curve const& aCurve, bool aFwd, OutputIterator aOut )
+  template<class Bezier_curve, class Output_iterator>
+  static void get_approximated_control_points ( Bezier_curve const& aCurve, bool aFwd, Output_iterator aOut )
   {
+    typedef typename value_type_traits<Output_iterator>::type Output_point ;
+
     int nc = aCurve.number_of_control_points() ;
     
     for ( int i = aFwd ? 0 : nc - 1 ; aFwd ? i < nc : i >= 0 ; aFwd ? ++ i : -- i )
@@ -74,12 +75,14 @@ struct Bezier_helper
     }
   }  
   
-  template<class Output_point, class Bezier_curve, class OutputIterator>
-  static void clip ( Bezier_curve const& aCurve, double aS, double aT, bool aFwd, OutputIterator aOut )
+  template<class Bezier_curve, class Output_iterator>
+  static void approximated_clip ( Bezier_curve const& aCurve, double aS, double aT, bool aFwd, Output_iterator aOut )
   {
+    typedef typename value_type_traits<Output_iterator>::type Output_point ;
+
     std::vector<Output_point> lQ ;
     
-    get_control_points<Output_point>(aCurve, aFwd, std::back_inserter(lQ) ) ;
+    get_approximated_control_points(aCurve, aFwd, std::back_inserter(lQ) ) ;
     
     if ( aS >= 0.0 || aT <= 1.0 )
     {
@@ -103,23 +106,91 @@ struct Bezier_helper
     
   }
   
-  template<class Output_point, class Bezier_X_monotone_curve, class OutputIterator>
-  static void clip ( Bezier_X_monotone_curve const& aBXMC, OutputIterator aOut )
+  template<class Bezier_X_monotone_curve, class Output_iterator>
+  static void approximated_clip ( Bezier_X_monotone_curve const& aXMCurve, Output_iterator aOut, double aApproxError = 1e-3 )
   {
+    typedef typename value_type_traits<Output_iterator>::type Output_point ;
+
     typedef typename Bezier_X_monotone_curve::Curve_2 Bezier_curve ;
     
-    Bezier_curve const& lBC = aBXMC.supporting_curve();
+    Bezier_curve const& lBC = aXMCurve.supporting_curve();
   
-    double lS = get_approximated_endpoint_parameter(aBXMC.source(), lBC, aBXMC.xid());
-    double lT = get_approximated_endpoint_parameter(aBXMC.target(), lBC, aBXMC.xid());
+    double lS = get_approximated_endpoint_parameter(aXMCurve.source(), lBC, aXMCurve.xid(), aApproxError);
+    double lT = get_approximated_endpoint_parameter(aXMCurve.target(), lBC, aXMCurve.xid(), aApproxError);
     
     bool lFwd = lS <= lT ;
     
     double lMin = lFwd ? lS : 1.0 - lS ;
     double lMax = lFwd ? lT : 1.0 - lT ;
     
-    clip<Output_point>(lBC, lMin, lMax, lFwd, aOut ); 
+    approximated_clip(lBC, lMin, lMax, lFwd, aOut ); 
   }
+  
+  template<class Control_point_in_iterator, class NT, class Control_point_out_iterator> 
+  static void approximated_recursive_subdivision( Control_point_in_iterator aBeginCtrlPts
+                                                , Control_point_in_iterator aEndCtrlPts
+                                                , NT aMin
+                                                , NT aMid
+                                                , NT aMax
+                                                , Control_point_out_iterator aOut
+                                                , NT aFlatness = 1e-5
+                                                )
+  {
+    typedef typename value_type_traits<Control_point_in_iterator>::type Control_point ;
+
+    Control_point lMinP = point_on_Bezier_curve_2(aBeginCtrlPts, aEndCtrlPts, aMin);
+    Control_point lMidP = point_on_Bezier_curve_2(aBeginCtrlPts, aEndCtrlPts, aMid);
+    Control_point lMaxP = point_on_Bezier_curve_2(aBeginCtrlPts, aEndCtrlPts, aMax);
+    
+    NT lB = squared_distance(lMinP, lMaxP);    
+    NT lH = squared_distance(lMidP, typename Kernel_traits<Control_point>::Kernel::Line_2(lMinP, lMaxP));    
+    
+    if ( lH > lB * aFlatness ) 
+    {
+      approximated_recursive_subdivision(aBeginCtrlPts,aEndCtrlPts,aMin,(aMin+aMid)/NT(2.0),aMid,aOut,aFlatness);
+      
+      *aOut ++ = lMidP ;
+      
+      approximated_recursive_subdivision(aBeginCtrlPts,aEndCtrlPts,aMid,(aMid+aMax)/NT(2.0),aMax,aOut,aFlatness);
+    }
+    else
+    {
+      *aOut ++ = lMaxP ;
+    }
+    
+  }
+
+  template<class Bezier_curve, class NT, class Output_iterator>
+  static void sample_curve( Bezier_curve const& aCurve, NT aSourceT, NT aTargetT, Output_iterator aOut, double aFlatness = 1e-5 )
+  {
+    typedef typename value_type_traits<Output_iterator>::type Output_point ;
+    
+    typedef std::vector<Output_point> Control_points ;
+    
+    Control_points lControlPoints ;
+    
+    bool lFwd = aSourceT < aTargetT ;
+    
+    get_approximated_control_points(aCurve, lFwd, std::back_inserter(lControlPoints) ) ;
+    
+    NT lMinT = lFwd ? aSourceT : NT(1.0) - aSourceT ;
+    NT lMaxT = lFwd ? aTargetT : NT(1.0) - aTargetT ;
+    
+    approximated_recursive_subdivision(lControlPoints.begin(), lControlPoints.end(), lMinT, ( lMinT + lMaxT ) / NT(2.0) , lMaxT, aOut, aFlatness ) ;
+  }
+
+  template<class Bezier_curve, class Output_iterator>
+  static void sample_curve( Bezier_curve const& aCurve, Output_iterator aOut, double aFlatness = 1e-5 ) { sample_curve(aCurve, 0.0, 1.0, aOut, aFlatness); }
+
+  template<class Bezier_X_monotone_curve, class Output_iterator>
+  static void sample_X_monotone_curve( Bezier_X_monotone_curve const& aXMCurve, bool aFwd, Output_iterator aOut, double aFlatness = 1e-5, double aEPApproxError = 1e-3 )
+  {
+    double lFromT = get_approximated_endpoint_parameter(aFwd ? aXMCurve.source() : aXMCurve.target(), aXMCurve.supporting_curve(), aXMCurve.xid(), aEPApproxError ) ;
+    double lToT   = get_approximated_endpoint_parameter(aFwd ? aXMCurve.target() : aXMCurve.source(), aXMCurve.supporting_curve(), aXMCurve.xid(), aEPApproxError ) ;
+    
+    sample_curve(aXMCurve.supporting_curve(), lFromT, lToT, aOut, aFlatness ); 
+  }
+  
 } ;
 
 struct Bezier_bbox
@@ -129,7 +200,7 @@ struct Bezier_bbox
   {
     typedef Point_2< Simple_cartesian<double> > Linear_point ;
     std::vector<Linear_point> lQ ;
-    Bezier_helper::get_control_points<Linear_point>(aBC,true,std::back_inserter(lQ));
+    Bezier_helper::get_approximated_control_points(aBC,true,std::back_inserter(lQ));
     return CGAL::bbox_2(lQ.begin(), lQ.end());
   }
 } ;
@@ -141,7 +212,7 @@ struct Bezier_X_monotone_bbox
   {
     typedef Point_2< Simple_cartesian<double> > Linear_point ;
     std::vector<Linear_point> lQ ;
-    Bezier_helper::clip<Linear_point>(aBXMC,std::back_inserter(lQ));
+    Bezier_helper::approximated_clip(aBXMC,std::back_inserter(lQ));
     return CGAL::bbox_2(lQ.begin(), lQ.end());
   }
 } ;
@@ -152,9 +223,13 @@ struct Draw_bezier_curve
   void operator()( Bezier_curve const& aBC, Path& aPath, Converter aConvert, int aIdx ) const 
   {
     typedef Point_2< Simple_cartesian<double> > Linear_point ;
-
-    std::vector<Linear_point> lQ ;
-    Bezier_helper::get_control_points<Linear_point>(aBC,true,std::back_inserter(lQ));
+    
+    typedef std::vector<Linear_point> Linear_point_vector ;
+    
+    Linear_point_vector lQ ;
+    
+    Bezier_helper::get_approximated_control_points(aBC,true,std::back_inserter(lQ));
+    
     if ( lQ.size() == 2 )
     {
       if ( aIdx == 0 )
@@ -181,14 +256,13 @@ struct Draw_bezier_curve
     }
     else
     {
-      typedef std::pair<double,double> XY ;
-      typedef std::vector<XY> XY_vector ;
-      XY_vector lSample ;
-      aBC.sample(0.0,1.0,100, std::back_inserter(lSample) );
+      Linear_point_vector lSample ;
       
-      for( typename XY_vector::const_iterator it = lSample.begin() ;  it != lSample.end() ; ++ it )
+      Bezier_helper::sample_curve(aBC,std::back_inserter(lSample) );
+      
+      for( typename Linear_point_vector::const_iterator it = lSample.begin() ;  it != lSample.end() ; ++ it )
       {
-        QPointF lP = aConvert( Linear_point(it->first,it->second) ) ;
+        QPointF lP = aConvert(*it) ;
         
         if ( aIdx == 0 && it == lSample.begin() ) 
              aPath.moveTo(lP) ;
@@ -204,11 +278,14 @@ struct Draw_bezier_X_monotone_curve
   void operator()( Bezier_X_monotone_curve const& aBXMC, Path& aPath, Converter aConvert, int aIdx ) const 
   {
     typedef Point_2< Simple_cartesian<double> > Linear_point ;
-
+    typedef std::vector<Linear_point> Linear_point_vector ;
+    
     typedef typename Bezier_X_monotone_curve::Curve_2 Bezier_curve ;
     
-    std::vector<Linear_point> lQ ;
-    Bezier_helper::clip<Linear_point>(aBXMC,std::back_inserter(lQ));
+    Linear_point_vector lQ ;
+
+    Bezier_helper::approximated_clip(aBXMC,std::back_inserter(lQ));
+    
     if ( lQ.size() == 2 )
     {
       if ( aIdx == 0 )
@@ -235,20 +312,14 @@ struct Draw_bezier_X_monotone_curve
     }
     else
     {
-      Bezier_curve const& lBC = aBXMC.supporting_curve();
       
-      typedef std::pair<double,double> XY ;
-      typedef std::vector<XY> XY_vector ;
-      XY_vector lSample ;
+      Linear_point_vector lSample ;
       
-      double lS = Bezier_helper::get_approximated_endpoint_parameter(aBXMC.source(), lBC, aBXMC.xid());
-      double lT = Bezier_helper::get_approximated_endpoint_parameter(aBXMC.target(), lBC, aBXMC.xid());
-    
-      lBC.sample(lS,lT,100, std::back_inserter(lSample) );
+      Bezier_helper::sample_X_monotone_curve(aBXMC,true,std::back_inserter(lSample) );
       
-      for( typename XY_vector::const_iterator it = lSample.begin() ;  it != lSample.end() ; ++ it )
+      for( typename Linear_point_vector::const_iterator it = lSample.begin() ;  it != lSample.end() ; ++ it )
       {
-        QPointF lP = aConvert( Linear_point(it->first,it->second) ) ;
+        QPointF lP = aConvert(*it) ;
         
         if ( aIdx == 0 && it == lSample.begin() ) 
              aPath.moveTo(lP) ;
