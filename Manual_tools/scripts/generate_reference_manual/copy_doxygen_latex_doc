@@ -165,7 +165,7 @@ sub latex_unmangle
     $buf =~ s/ +\n/\n/g;
 
     # Convert buffer back to Doxygen 1.5.5 format
-    $buf =~ s/\\paragraph\[\{.*?\}\]/\\paragraph/g; # remove \paragraph[...] -> \paragraph
+    $buf =~ s/\\paragraph\[.*?\]/\\paragraph/g; # remove \paragraph[...] -> \paragraph
 
     # Unmangle comma (,), _, ~, <, >, *, &, [] characters mangled for Latex
     # to get regular C++ code (mangled back at end of script)
@@ -1037,7 +1037,7 @@ sub insert_manual_section
                 }
             } else { # if not \ccInclude
                 # If section's title exists, *append* %START-AUTO..%END-AUTO section after it.
-                if ($cgal_buf =~ s/^(\s*\Q$title\E.*?)(\s*$all_titles_pattern(\s|\b))/$1\n\n$section$2/sm) {
+                if ($cgal_buf =~ s/^(\s*\Q$title\E\b.*?)(\s*$all_titles_pattern(\s|\b))/$1\n\n$section$2/sm) {
                     $success = 1;
                 }
             }
