@@ -27,14 +27,7 @@ to the library, so you should be careful to follow our coding conventions
 programs.  In particular:
 
 \begin{itemize}
-   \item Include a comment that gives the name of the file relative to
-         the \texttt{CGALROOT} directory, such as:
-         \begin{verbatim}
-         //
-         // file : examples/Generator/random_polygon_ex.cpp
-         //
-         \end{verbatim} 
-   \item Do \textbf{not} use the commands 
+   \item Do \textbf{not} use the statements 
          \begin{verbatim}
          using namespace CGAL;
          using namespace std;
@@ -129,6 +122,10 @@ and \texttt{demo} directory should be included in the documentation,
 is not necessarily true.  Ideally the programs included in the documentation
 will be a proper (non-empty) subset of the programs included in the 
 distribution.
+
+Please make sure that your example programs do not have too lengthy lines
+as they are copied verbatim in the manual, which can trigger overflows
+in the PDF manual.
 
 \section{Demo programs on the web\label{sec:demos_web_page}}
 \ccIndexSubitem{demo programs}{on the web}
