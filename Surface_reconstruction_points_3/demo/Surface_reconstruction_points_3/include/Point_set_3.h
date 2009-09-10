@@ -5,8 +5,8 @@
 
 //#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Min_sphere_d.h>
-#include <CGAL/Optimisation_d_traits_3.h>
+#include <CGAL/Min_sphere_of_spheres_d.h>
+#include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
 
 #include <UI_point_3.h>
 
@@ -340,9 +340,23 @@ private:
     //
     m_barycenter = CGAL::ORIGIN + v / norm;
 
-    // bounding sphere
-    CGAL::Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > ms3(begin(), end());
-    m_bounding_sphere = Sphere(ms3.center(), ms3.squared_radius());
+    // Computes bounding sphere
+    typedef CGAL::Min_sphere_of_spheres_d_traits_3<Gt,FT> Traits;
+    typedef CGAL::Min_sphere_of_spheres_d<Traits> Min_sphere;
+    typedef typename Traits::Sphere Traits_sphere;
+    //
+    // Represents points by a set of spheres with 0 radius
+    std::vector<Traits_sphere> spheres;
+    for (Point_const_iterator it = begin(); it != end(); it++)
+      spheres.push_back(Traits_sphere(*it,0));
+    //
+    // Computes min sphere
+    Min_sphere ms(spheres.begin(),spheres.end());
+    typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
+    FT cx = *coord++;
+    FT cy = *coord++;
+    FT cz = *coord++;
+    m_bounding_sphere = Sphere(Point(cx,cy,cz), ms.radius()*ms.radius());
 
     // Computes standard deviation of the distance to barycenter
     typename Geom_traits::Compute_squared_distance_3 sqd;
