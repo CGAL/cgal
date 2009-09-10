@@ -74,7 +74,7 @@ int main(void)
     // Defines the implicit surface: requires defining a
     // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
-    FT sm_dichotomy_error = sm_distance*average_spacing/10.0; // Dichotomy error must be << sm_distance
+    FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,
                       Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
                       sm_dichotomy_error/sm_sphere_radius);
