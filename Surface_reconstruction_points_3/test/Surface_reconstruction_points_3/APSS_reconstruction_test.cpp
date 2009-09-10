@@ -93,7 +93,7 @@ int main(int argc, char * argv[])
   FT sm_angle = 20.0; // Min triangle angle (degrees).
   FT sm_radius = 100; // Max triangle size w.r.t. point set average spacing.
   FT sm_distance = 0.5; // Approximation error w.r.t. point set average spacing.
-  FT smoothness = 2; // Smoothness factor. In the range 2 (clean datasets) to 8 (noisy datasets).
+  FT smoothness = 6; // Smoothness factor. In the range 2 (clean datasets) to 8 (noisy datasets).
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
