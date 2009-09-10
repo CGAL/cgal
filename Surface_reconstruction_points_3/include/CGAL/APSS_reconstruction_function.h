@@ -682,20 +682,19 @@ private:
     }
   };
 
-  /// Find a random point inside the surface.
+  /// Find a point inside the surface
   void find_inner_point()
   {
-    m->inner_point = CGAL::ORIGIN;
-    FT min_f = 1e38;
+    m->inner_point = CGAL::ORIGIN; // security
 
-    // Try random points until we find a point / value < 0
+    // Try random points and keep point with minimal value
+    FT min_f = 1e38;
     Point center = m->bounding_sphere.center();
     FT radius = sqrt(m->bounding_sphere.squared_radius());
     CGAL::Random_points_in_sphere_3<Point> rnd(radius);
-    while (min_f > 0)
+    for (int i=0; i < 10000 ; i++)
     {
-      // Creates random point in bounding sphere
-      Point p = center + (*rnd++ - CGAL::ORIGIN);
+      Point p = center + (*rnd++ - CGAL::ORIGIN); // random point in bounding sphere
       FT value = (*this)(p);
       if(value < min_f)
       {
