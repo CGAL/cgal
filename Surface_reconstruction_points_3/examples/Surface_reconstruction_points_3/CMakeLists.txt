@@ -13,6 +13,7 @@ endif(COMMAND cmake_policy)
 # Require packages new or improved since CGAL 3.5 beta 1
 include_directories (BEFORE ../../../Installation/include/)
 include_directories (BEFORE ../../../Point_set_processing_3/include)
+include_directories (BEFORE ../../../Surface_mesher/include)
 
 # Include this package's headers first
 include_directories (BEFORE . include ../../include)
@@ -48,7 +49,7 @@ if ( CGAL_FOUND )
   endif()
 
   # Temporary debugging stuff
-  ADD_DEFINITIONS( "-DDEBUG_TRACE=2" ) # turn on traces
+  ADD_DEFINITIONS( "-DDEBUG_TRACE" ) # turn on traces
   string(REGEX REPLACE "-DCGAL_NDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}") # turn on assertions
 
   # Executables that do *not* require BLAS, LAPACK nor TAUCS

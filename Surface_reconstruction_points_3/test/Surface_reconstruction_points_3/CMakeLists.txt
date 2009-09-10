@@ -13,6 +13,7 @@ endif(COMMAND cmake_policy)
 # Require packages new or improved since CGAL 3.5 beta 1
 include_directories (BEFORE ../../../Installation/include/)
 include_directories (BEFORE ../../../Point_set_processing_3/include)
+include_directories (BEFORE ../../../Surface_mesher/include)
 
 # Include this package's headers first
 include_directories (BEFORE . include ../../include)
