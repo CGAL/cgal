@@ -704,9 +704,8 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
   FT eigen_vectors[9];
   eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
 
-  // degenerate case (three similar eigenvalues)
-  if(eigen_values[0] == eigen_values[1] &&
-     eigen_values[0] == eigen_values[2])
+  // degenerate case (two similar eigenvalues)
+  if(eigen_values[1] == eigen_values[2])
   {
     // assemble a default horizontal plane that goes
     // through the centroid.
