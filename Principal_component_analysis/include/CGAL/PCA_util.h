@@ -26,7 +26,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace internal {
+namespace CGALi {
 
 // Initialize a matrix in n dimension by an array or numbers
 template <typename K>
@@ -704,17 +704,17 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
   FT eigen_vectors[9];
   eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
 
-  // degenerate case (two similar eigenvalues)
-  if(eigen_values[1] == eigen_values[2])
+  // degenerate case 
+  if(eigen_values[0] == eigen_values[1] && 
+     eigen_values[1] == eigen_values[2])
   {
     // assemble a default horizontal plane that goes
     // through the centroid.
     plane = Plane(c,Vector(0.0,0.0,1.0));
     return (FT)0.0;
   } 
-  else
+  else // regular and line case
   {
-    // regular case
     Vector normal(eigen_vectors[6],
                   eigen_vectors[7],
                   eigen_vectors[8]);
@@ -764,7 +764,7 @@ fitting_line_3(const typename K::FT covariance[6], // covariance matrix
   } 
 }
 
-} // end namespace internal
+} // end namespace CGALi
 
 CGAL_END_NAMESPACE
 
