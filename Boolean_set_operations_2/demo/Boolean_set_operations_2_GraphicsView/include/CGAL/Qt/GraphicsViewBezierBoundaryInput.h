@@ -22,20 +22,14 @@
 #define CGAL_QT_GRAPHICS_VIEW_BEZIER_BOUNDARY_INPUT_H
 
 #include <CGAL/auto_link/Qt4.h>
+
 #include <QPolygonF>
 #include <QPointF>
+#include <QGraphicsLineItem> 
 
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/BezierCurves.h>
-
-class QGraphicsScene;
-class QGraphicsSceneMouseEvent;
-class QGraphicsItem;
-class QGraphicsPathItem;
-class QKeyEvent;
-class QEvent;
-class QObject;
 
 namespace CGAL {
 
@@ -69,9 +63,20 @@ namespace Qt {
       , mState(Start)
       , mBezierPhase(None)
       , mOngoingPieceAdded(false)
+      , mHandle0Item(NULL)
+      , mHandle1Item(NULL)
+      , mBezierPen( QColor(255,0,0) )
+      , mHandlePen( QColor(0,0,255) )
     {
-      mGI = boost::shared_ptr<GI>( new GI(&mPieces)  ) ;
-      mScene->addItem(mGI.get());
+      mGI = new GI(&mPieces) ;
+      mScene->addItem(mGI);
+    }
+    
+    ~GraphicsViewBezierBoundaryInput()
+    {
+      //mScene->removeItem(mGI);
+      //delete mGI ;
+      //RemoveHandleItems();      
     }
     
     bool eventFilter(QObject *obj, QEvent *event)
@@ -128,8 +133,7 @@ namespace Qt {
         switch (mState)
         {
           case Start: 
-            mState = CurveStarted;
-            mP1 = lP;
+            mP1     = lP;
             mPrevP1 = mP1;
             rHandled = true;
             break;
@@ -164,6 +168,11 @@ namespace Qt {
       {
         switch (mState)
         {
+          case Start:
+            mState = PieceStarted;
+            rHandled = true;
+            break;
+            
           case CurveStarted: 
             mState = PieceStarted;
             rHandled = true;
@@ -208,17 +217,21 @@ namespace Qt {
         case PieceProceeding: 
           mState = PieceProceeding;
           mP1 = lP;
+          TakebackOngoingPiece();
+          AddPiece(Automatic);
           rHandled = true ;
           break;
 
         case PieceEnded:
-          if ( squared_distance(mP1, lP) > 4 )
+        
+          if ( squared_distance(mP1, lP) > 1 )
           {
             mState = HandleProceeding;
             mBezierPhase = Manual;
             mPieces.pop_back();
             mH0 = lP;
             mH1 = mP1 - (mH0 - mP1);
+            
             rHandled = true ;
           }
           break;
@@ -227,12 +240,31 @@ namespace Qt {
           mState = HandleProceeding;
           mH0 = lP;
           mH1 = mP1 - (mH0 - mP1);
+          
+          if ( !mHandle0Item )
+          {
+            mHandle0Item = new QGraphicsLineItem();
+            mHandle0Item->setPen(mHandlePen);
+            mScene->addItem(mHandle0Item);
+          }
+          
+          if ( !mHandle1Item )
+          {
+            mHandle1Item = new QGraphicsLineItem();
+            mHandle1Item->setPen(mHandlePen);
+            mScene->addItem(mHandle1Item);
+          }
+          
+          mHandle0Item->setLine( to_double(mP1.x()), to_double(mP1.y()), to_double(mH0.x()), to_double(mH0.y()));
+          mHandle1Item->setLine( to_double(mP1.x()), to_double(mP1.y()), to_double(mH1.x()), to_double(mH1.y()));
           rHandled = true ;
           break;
 
         case HandleEnded: 
+          RemoveHandleItems();
           mState = PieceStarted;
           mBezierPhase = Automatic;
+          
           rHandled = true ;
           break;
       }
@@ -272,7 +304,24 @@ namespace Qt {
     }
     
   private:
-  
+
+    void RemoveHandleItems()
+    {
+      if ( mHandle0Item )
+      {
+        mScene->removeItem(mHandle0Item);
+        delete mHandle0Item ;
+        mHandle0Item = NULL ;
+      }
+      
+      if ( mHandle1Item )
+      {
+        mScene->removeItem(mHandle1Item);
+        delete mHandle1Item ;
+        mHandle1Item = NULL ;
+      }
+    }  
+    
     void TakebackOngoingPiece()
     {
       if (mOngoingPieceAdded)
@@ -316,7 +365,7 @@ namespace Qt {
         {
           // The piece is a straight-line
           lControlPoints[1] = ORIGIN + ( ( 2.0 * ( mP0 - ORIGIN ) ) + ( mP1 - ORIGIN )           ) / 3.0;
-          lControlPoints[1] = ORIGIN + ( ( mP0 - ORIGIN )           + ( 2.0 * ( mP1 - ORIGIN ) ) ) / 3.0;
+          lControlPoints[2] = ORIGIN + ( ( mP0 - ORIGIN )           + ( 2.0 * ( mP1 - ORIGIN ) ) ) / 3.0;
         }  
       }
       else // aType == Cubic
@@ -345,8 +394,14 @@ namespace Qt {
 
   private:
   
-    QGraphicsScene*       mScene ;
-    boost::shared_ptr<GI> mGI ;           
+    QGraphicsScene*    mScene ;
+    GI*                mGI ; 
+    QGraphicsLineItem* mHandle0Item ;          
+    QGraphicsLineItem* mHandle1Item ;          
+    
+
+    QPen mBezierPen ;
+    QPen mHandlePen ;    
     
     Curve_vector mPieces ;  
     bool         mIsClosed;

@@ -72,8 +72,6 @@ void trace( std::string s )
 #include <CGAL/approximated_offset_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
-#include <CGAL/Circular_polygon_with_holes_sampler_2.h>
-#include <CGAL/Bezier_polygon_with_holes_sampler_2.h>
 
 #ifdef CGAL_USE_GMP
   #include <CGAL/Gmpq.h>
