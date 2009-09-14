@@ -84,14 +84,14 @@ template <class K>
 bool do_intersect(const CGAL::Line_3<K>& line, 
 		  const CGAL::Bbox_3& bbox)
 {
-  return CGALi::do_intersect(line, bbox, K());
+  return typename K::Do_intersect_3()(line, bbox);
 }
 
 template <class K>
 bool do_intersect(const CGAL::Bbox_3& bbox, 
 		  const CGAL::Line_3<K>& line)
 {
-  return CGALi::do_intersect(line, bbox, K());
+  return typename K::Do_intersect_3()(line, bbox);
 }
 
 CGAL_END_NAMESPACE
