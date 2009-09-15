@@ -42,17 +42,17 @@ bool test_aux(const T& t,
     std::cout << "ERROR: do_intersect(" << name
               << ") did not answer the expected result !" << std::endl;
   
-  return (b != expected);
+  return (b == expected);
 }
 
 template <class K>
 bool test()
 {
 	// types
-	typedef typename K::FT FT;
-	typedef typename K::Line_3 Line;
-	typedef typename K::Point_3 Point;
-	typedef typename K::Segment_3 Segment;
+  typedef typename K::FT FT;
+  typedef typename K::Line_3 Line;
+  typedef typename K::Point_3 Point;
+  typedef typename K::Segment_3 Segment;
   typedef typename K::Ray_3 Ray;
   typedef typename K::Line_3 Line;
 
@@ -162,7 +162,7 @@ bool test()
 int main()
 {
   std::cout << "Testing with Simple_cartesian<float>..." << std::endl ;
-	bool b = test<CGAL::Simple_cartesian<float> >();
+  bool b = test<CGAL::Simple_cartesian<float> >();
   
   std::cout << "Testing with Simple_cartesian<double>..." << std::endl ;
 	b &= test<CGAL::Simple_cartesian<double> >();
