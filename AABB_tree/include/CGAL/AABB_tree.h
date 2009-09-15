@@ -58,6 +58,14 @@ namespace CGAL {
 
 	public:
 		/**
+		* @brief Default Constructor
+		*
+		* Builds an empty tree datastructure. 
+		*/
+		template<typename ConstPrimitiveIterator>
+		AABB_tree();
+
+		/**
 		* @brief Constructor
 		* @param first iterator over first primitive to insert
 		* @param beyond past-the-end iterator
@@ -435,6 +443,17 @@ namespace CGAL {
 		Self& operator=(const Self& src);
 
 	};  // end class AABB_tree
+
+	template<typename Tr>
+	template<typename ConstPrimitiveIterator>
+	AABB_tree<Tr>::AABB_tree(ConstPrimitiveIterator first,
+		ConstPrimitiveIterator beyond)
+		: m_primitives()
+		, m_p_root_node(NULL)
+		, m_p_search_tree(NULL)
+		, m_search_tree_constructed(false)
+	{
+  }
 
 	template<typename Tr>
 	template<typename ConstPrimitiveIterator>
