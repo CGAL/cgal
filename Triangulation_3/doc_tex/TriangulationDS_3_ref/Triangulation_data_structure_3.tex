@@ -52,22 +52,22 @@ following types and functions.
 
 \ccTypes
 
-\ccTypedef{typedef CGAL::Compact_container<Vertex> Vertex_container;}{Vertex container type.}
+\ccTypedef{typedef CGAL::Compact_container<Vertex> Vertex_range;}{Vertex container type.}
 \ccGlue
-\ccTypedef{typedef CGAL::Compact_container<Cell>   Cell_container;}{Cell container type.}
+\ccTypedef{typedef CGAL::Compact_container<Cell>   Cell_range;}{Cell container type.}
 
 \ccOperations
 
-\ccMethod{Cell_container & cells() const;}
+\ccMethod{Cell_range & cells() const;}
 {Returns a reference to the container of cells.}
 \ccGlue
-\ccMethod{Cell_container & cells();}
+\ccMethod{Cell_range & cells();}
 {Returns a reference to the container of cells.}
 \ccGlue
-\ccMethod{Vertex_container & vertices() const;}
+\ccMethod{Vertex_range & vertices() const;}
 {Returns a reference to the container of vertices.}
 \ccGlue
-\ccMethod{Vertex_container & vertices();}
+\ccMethod{Vertex_range & vertices();}
 {Returns a reference to the container of vertices.}
 
 \end{ccAdvanced}

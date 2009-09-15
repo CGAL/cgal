@@ -42,22 +42,22 @@ following types and functions.
 
 \ccTypes
 
-\ccTypedef{typedef CGAL::Compact_container<Vertex> Vertex_container;}{Vertex container type.}
+\ccTypedef{typedef CGAL::Compact_container<Vertex> Vertex_range;}{Vertex container type.}
 \ccGlue
-\ccTypedef{typedef CGAL::Compact_container<Face>   Face_container;}{Face container type.}
+\ccTypedef{typedef CGAL::Compact_container<Face>   Face_range;}{Face container type.}
 
 \ccOperations
 
-\ccMethod{Face_container & faces() const;}
+\ccMethod{Face_range & faces() const;}
 {Returns a reference to the container of faces.}
 \ccGlue
-\ccMethod{Face_container & faces();}
+\ccMethod{Face_range & faces();}
 {Returns a reference to the container of faces.}
 \ccGlue
-\ccMethod{Vertex_container & vertices() const;}
+\ccMethod{Vertex_range & vertices() const;}
 {Returns a reference to the container of vertices.}
 \ccGlue
-\ccMethod{Vertex_container & vertices();}
+\ccMethod{Vertex_range & vertices();}
 {Returns a reference to the container of vertices.}
 
 \end{ccAdvanced}

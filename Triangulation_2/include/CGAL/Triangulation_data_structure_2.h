@@ -64,14 +64,14 @@ public:
   typedef Vertex_base                                Vertex;
   typedef Face_base                                  Face;
   
-  typedef Compact_container<Face>                    Face_container;
-  typedef Compact_container<Vertex>                  Vertex_container;
+  typedef Compact_container<Face>                    Face_range;
+  typedef Compact_container<Vertex>                  Vertex_range;
 
-  typedef typename Face_container::size_type         size_type;
-  typedef typename Face_container::difference_type   difference_type;
+  typedef typename Face_range::size_type             size_type;
+  typedef typename Face_range::difference_type       difference_type;
 
-  typedef typename Face_container::iterator          Face_iterator;
-  typedef typename Vertex_container::iterator        Vertex_iterator;
+  typedef typename Face_range::iterator              Face_iterator;
+  typedef typename Vertex_range::iterator            Vertex_iterator;
 
   typedef Triangulation_ds_edge_iterator_2<Tds>      Edge_iterator;
 
@@ -87,8 +87,8 @@ public:
 
 protected:
   int _dimension;
-  Face_container   _faces;
-  Vertex_container _vertices;
+  Face_range   _faces;
+  Vertex_range _vertices;
 
   //CREATORS - DESTRUCTORS
 public:
@@ -100,11 +100,11 @@ public:
 
   //ACCESS FUNCTIONS
   // We need the const_cast<>s because TDS is not const-correct.
-  Face_container& faces()             { return _faces;}
-  Face_container& faces() const 
+  Face_range& faces()             { return _faces;}
+  Face_range& faces() const 
     { return  const_cast<Tds*>(this)->_faces;}
-  Vertex_container& vertices()         {return _vertices;}
-  Vertex_container& vertices() const
+  Vertex_range& vertices()         {return _vertices;}
+  Vertex_range& vertices() const
     {return  const_cast<Tds*>(this)->_vertices;}
 
   int  dimension() const { return _dimension;  }

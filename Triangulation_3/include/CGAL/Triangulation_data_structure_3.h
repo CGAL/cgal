@@ -99,14 +99,14 @@ private:
 
 public:
 
-  typedef Compact_container<Cell>                  Cell_container;
-  typedef Compact_container<Vertex>                Vertex_container;
+  typedef Compact_container<Cell>                  Cell_range;
+  typedef Compact_container<Vertex>                Vertex_range;
 
-  typedef typename Cell_container::size_type       size_type;
-  typedef typename Cell_container::difference_type difference_type;
+  typedef typename Cell_range::size_type       size_type;
+  typedef typename Cell_range::difference_type difference_type;
 
-  typedef typename Cell_container::iterator        Cell_iterator;
-  typedef typename Vertex_container::iterator      Vertex_iterator;
+  typedef typename Cell_range::iterator        Cell_iterator;
+  typedef typename Vertex_range::iterator      Vertex_iterator;
 
   typedef internal::Triangulation_ds_facet_iterator_3<Tds>   Facet_iterator;
   typedef internal::Triangulation_ds_edge_iterator_3<Tds>    Edge_iterator;
@@ -993,12 +993,12 @@ public:
   }
 
   // We need the const_cast<>s because TDS is not const-correct.
-  Cell_container & cells() { return _cells; }
-  Cell_container & cells() const
+  Cell_range & cells() { return _cells; }
+  Cell_range & cells() const
   { return const_cast<Tds*>(this)->_cells; }
 
-  Vertex_container & vertices() {return _vertices;}
-  Vertex_container & vertices() const
+  Vertex_range & vertices() {return _vertices;}
+  Vertex_range & vertices() const
   { return const_cast<Tds*>(this)->_vertices; }
 
 private:
@@ -1018,8 +1018,8 @@ private:
   // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
   int _dimension;
 
-  Cell_container   _cells;
-  Vertex_container _vertices;
+  Cell_range   _cells;
+  Vertex_range _vertices;
 
   // used by is-valid :
   bool count_vertices(size_type &i, bool verbose = false, int level = 0) const;

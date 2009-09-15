@@ -32,8 +32,8 @@ template <class Tds>
 void
 _test_cls_tds_3( const Tds &)
 {
-  typedef typename Tds::Vertex_container  Vertex_container;
-  typedef typename Tds::Cell_container    Cell_container;
+  typedef typename Tds::Vertex_range      Vertex_range;
+  typedef typename Tds::Cell_range        Cell_range;
 
   typedef typename Tds::Vertex            Vertex;
   typedef typename Tds::Cell              Cell;
@@ -131,8 +131,8 @@ _test_cls_tds_3( const Tds &)
   assert(tds3.number_of_vertices()==2);
 
   // Containers
-  Vertex_container & vertex_c = tds3.vertices();
-  Cell_container & cell_c = tds3.cells();
+  Vertex_range & vertex_c = tds3.vertices();
+  Cell_range & cell_c = tds3.cells();
 
   assert(vertex_c.size() == 2);
   assert(cell_c.size() == 2);
