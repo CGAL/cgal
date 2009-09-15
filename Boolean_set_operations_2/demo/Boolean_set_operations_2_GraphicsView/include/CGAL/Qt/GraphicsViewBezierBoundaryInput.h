@@ -61,7 +61,6 @@ namespace Qt {
       , mScene(s)
       , mIsClosed(false)
       , mState(Start)
-      , mBezierPhase(None)
       , mOngoingPieceAdded(false)
       , mHandle0Item(NULL)
       , mHandle1Item(NULL)
@@ -69,6 +68,7 @@ namespace Qt {
       , mHandlePen( QColor(0,0,255) )
     {
       mGI = new GI(&mPieces) ;
+      mGI->setPen(mBezierPen);
       mScene->addItem(mGI);
     }
     
@@ -113,12 +113,8 @@ namespace Qt {
       Start,
       CurveStarted,
       PieceStarted, PieceProceeding, PieceEnded,
-      HandleProceeding, HandleEnded
+      HandleStarted, HandleProceeding, HandleEnded
     } ;
-    
-    enum BezierPhase { None, Manual, Automatic } ;
-    
-    enum PieceType   { Unknown, Cubic } ;
     
     Point cvt ( QPointF const& aP ) const { return Point(aP.x(),aP.y()) ; }
 
@@ -133,8 +129,8 @@ namespace Qt {
         switch (mState)
         {
           case Start: 
+            mState  = HandleStarted;
             mP1     = lP;
-            mPrevP1 = mP1;
             rHandled = true;
             break;
 
@@ -142,14 +138,6 @@ namespace Qt {
 
             mState = PieceEnded;
             mP1 = lP;
-            bool lAutoClose = false;
-            if (!mPrevP1 || (!!mPrevP1 && (*mPrevP1 != mP1)) )
-            {
-              mPrevP1 = mP1;
-
-              AddPiece(Automatic);
-            }
-
             rHandled = true;
             break;
         }
@@ -168,7 +156,7 @@ namespace Qt {
       {
         switch (mState)
         {
-          case Start:
+          case HandleStarted:
             mState = PieceStarted;
             rHandled = true;
             break;
@@ -179,15 +167,14 @@ namespace Qt {
             break;
 
           case PieceEnded:
-          
+            CommitOngoingPiece();
             mState = PieceStarted;
-            mBezierPhase = None;
             rHandled = true;
             break;
 
           case HandleProceeding: 
+            CommitOngoingPiece();
             mState = HandleEnded;
-            AddPiece(Cubic);
             rHandled = true;
             break;
         }
@@ -208,6 +195,12 @@ namespace Qt {
       
       switch (mState)
       {
+        case HandleStarted:
+          mState = HandleProceeding ;
+          mP0 = mP1;
+          rHandled = true ;
+          break;
+          
         case PieceStarted: 
           mState = PieceProceeding;
           mP0 = mP1;
@@ -215,56 +208,58 @@ namespace Qt {
           break;
 
         case PieceProceeding: 
-          mState = PieceProceeding;
           mP1 = lP;
-          TakebackOngoingPiece();
-          AddPiece(Automatic);
+          UpdateOngoingPiece();
           rHandled = true ;
           break;
 
-        case PieceEnded:
+        case HandleProceeding:
         
-          if ( squared_distance(mP1, lP) > 1 )
-          {
-            mState = HandleProceeding;
-            mBezierPhase = Manual;
-            mPieces.pop_back();
-            mH0 = lP;
-            mH1 = mP1 - (mH0 - mP1);
-            
-            rHandled = true ;
-          }
-          break;
-
-        case HandleProceeding: 
           mState = HandleProceeding;
-          mH0 = lP;
-          mH1 = mP1 - (mH0 - mP1);
           
-          if ( !mHandle0Item )
+          if ( mPieces.size() > 0 )
           {
-            mHandle0Item = new QGraphicsLineItem();
-            mHandle0Item->setPen(mHandlePen);
-            mScene->addItem(mHandle0Item);
+            mH0 = lP ;
+            mH1 = mP1 - (lP - mP1);
+            
+            if ( !mHandle0Item )
+            {
+              mHandle0Item = new QGraphicsLineItem();
+              mHandle0Item->setPen(mHandlePen);
+              mScene->addItem(mHandle0Item);
+            }
+            
+            if ( !mHandle1Item )
+            {
+              mHandle1Item = new QGraphicsLineItem();
+              mHandle1Item->setPen(mHandlePen);
+              mScene->addItem(mHandle1Item);
+            }
+            
+            mHandle0Item->setLine( to_double(mP1.x()), to_double(mP1.y()), to_double(mH0->x()), to_double(mH0->y()));
+            mHandle1Item->setLine( to_double(mP1.x()), to_double(mP1.y()), to_double(mH1->x()), to_double(mH1->y()));
           }
-          
-          if ( !mHandle1Item )
+          else
           {
-            mHandle1Item = new QGraphicsLineItem();
-            mHandle1Item->setPen(mHandlePen);
-            mScene->addItem(mHandle1Item);
+            mH1 = lP ;
+            
+            if ( !mHandle0Item )
+            {
+              mHandle0Item = new QGraphicsLineItem();
+              mHandle0Item->setPen(mHandlePen);
+              mScene->addItem(mHandle0Item);
+            }
+            
+            mHandle0Item->setLine( to_double(mP0.x()), to_double(mP0.y()), to_double(mH1->x()), to_double(mH1->y()));
           }
-          
-          mHandle0Item->setLine( to_double(mP1.x()), to_double(mP1.y()), to_double(mH0.x()), to_double(mH0.y()));
-          mHandle1Item->setLine( to_double(mP1.x()), to_double(mP1.y()), to_double(mH1.x()), to_double(mH1.y()));
+          UpdateOngoingPiece();
           rHandled = true ;
           break;
 
         case HandleEnded: 
+          mPrevH0 = mH0 ;
           RemoveHandleItems();
           mState = PieceStarted;
-          mBezierPhase = Automatic;
-          
           rHandled = true ;
           break;
       }
@@ -321,84 +316,72 @@ namespace Qt {
         mHandle1Item = NULL ;
       }
     }  
+
+    Curve CreatePiece()
+    {
+      if ( mPrevH0 && mH1 )
+      {
+        Point lControlPoints[4] = { mP0
+                                  , midpoint(mP0,*mPrevH0)
+                                  , midpoint(*mH1,mP1)
+                                  , mP1 
+                                  } ;
+        return Curve( lControlPoints, lControlPoints + 4 ) ;
+      }
+      else if ( mPrevH0 && !mH1 )
+      {
+        Point lControlPoints[3] = { mP0
+                                  , *mPrevH0
+                                  , mP1 
+                                  } ;
+        return Curve( lControlPoints, lControlPoints + 3 ) ;
+      }
+      else if ( !mPrevH0 && mH1 )
+      {
+        Point lControlPoints[3] = { mP0
+                                  , *mH1
+                                  , mP1 
+                                  } ;
+        return Curve( lControlPoints, lControlPoints + 3 ) ;
+      }
+      else
+      {
+        Point lControlPoints[2] = { mP0
+                                  , mP1 
+                                  } ;
+        return Curve( lControlPoints, lControlPoints + 2 ) ;
+      }
+    }
     
-    void TakebackOngoingPiece()
+    void AddPiece()
     {
-      if (mOngoingPieceAdded)
-      {
+      if ( mOngoingPieceAdded && mPieces.size() > 0 )
         mPieces.pop_back();
-        mOngoingPieceAdded = false;
-        mGI->modelChanged();
-      }
-    }
-
-    // The end-points of the user-visible handles are not directly the knots of a bezier.
-    void CalculateK(Point const& aP0, Point const& aP1, Point const& aP2, Point const& aP3,Point& aK0, Point& aK1 )
-    {
-      aK0 = midpoint(aP0, aP1);
-      aK1 = midpoint(aP2, aP3);
-    }
-
-    // Adds a new piece.
-    void AddPiece(int aType)
-    {
-      Point lControlPoints[4] = { mP0, mP0, mP1, mP1 } ;
-
-      // This is null if the previous piece is not a bezier
-      Curve const* lPreviousPiece = mPieces.size() > 0 ? & mPieces.back() : NULL ;
-
-      // If "automatic" the piece is a bezier of degree 2 whenever 
-      //   (a) the previous piece is also a bezier
-      //   (b) and it is a manual bezier (so the current Bezier Phase is automatic)
-      if (aType == Automatic)
-      {
-        bool lCurrIsCubic = !!lPreviousPiece && mBezierPhase == Automatic ;
-        if (lCurrIsCubic)
-        {
-          // For an automatic degree 2 bezier the kont is taken as the reflexion
-          // of the previous second knot around the current piece starting-point (mP0)
-          Vector lV = (lPreviousPiece->control_point(2) - mP0);
-          Point lH0 = mP0 - lV - lV;
-          CalculateK(mP0, lH0, lH0, mP1, lControlPoints[1], lControlPoints[2]);
-        }
-        else
-        {
-          // The piece is a straight-line
-          lControlPoints[1] = ORIGIN + ( ( 2.0 * ( mP0 - ORIGIN ) ) + ( mP1 - ORIGIN )           ) / 3.0;
-          lControlPoints[2] = ORIGIN + ( ( mP0 - ORIGIN )           + ( 2.0 * ( mP1 - ORIGIN ) ) ) / 3.0;
-        }  
-      }
-      else // aType == Cubic
-      {
-        // If the previous piece is a bezier this one is of degree 3.
-        if ( !!lPreviousPiece)
-        {
-          // For a manual bezier of degree 3 the first kont is taken as the reflexion
-          // of the previous second knot around the current piece starting-point (mP0)
-          Vector lU = (lPreviousPiece->control_point(2) - mP0);
-          Point lH0 = mP0 - lU - lU;
-          CalculateK(mP0, lH0, mH1, mP1, lControlPoints[1], lControlPoints[2]);
-        }
-        else
-        {
-          CalculateK(mP0, mH1, mH1, mP1, lControlPoints[1], lControlPoints[2]);
-        }
-      }
-
-      TakebackOngoingPiece();
-      
-      mPieces.push_back( Curve( lControlPoints, lControlPoints + 4 ) ) ;
+        
+      mPieces.push_back( CreatePiece() ) ;
       
       mGI->modelChanged();
+      
     }
-
+    
+    void UpdateOngoingPiece()
+    {
+      AddPiece();
+      mOngoingPieceAdded = true ;
+    }      
+    
+    void CommitOngoingPiece()
+    {
+      AddPiece();
+      mOngoingPieceAdded = false ;
+    }      
+    
   private:
   
     QGraphicsScene*    mScene ;
     GI*                mGI ; 
     QGraphicsLineItem* mHandle0Item ;          
     QGraphicsLineItem* mHandle1Item ;          
-    
 
     QPen mBezierPen ;
     QPen mHandlePen ;    
@@ -406,15 +389,13 @@ namespace Qt {
     Curve_vector mPieces ;  
     bool         mIsClosed;
     int          mState;
-    int          mBezierPhase;
     bool         mOngoingPieceAdded;
     Point        mP0;
     Point        mP1;
-    Point        mH0;
-    Point        mH1;
     
-    boost::optional<Point>  mPrevP1;
-    
+    boost::optional<Point>  mPrevH0;
+    boost::optional<Point>  mH0;
+    boost::optional<Point>  mH1;
   
   }; // end class GraphicsViewBezierBoundaryInput
 
