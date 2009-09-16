@@ -232,13 +232,6 @@ private:
   static bool less_z(const Primitive& pr1, const Primitive& pr2)
   { return pr1.reference_point().z() < pr2.reference_point().z(); }
 
-
-private:
-  // Disabled copy constructor & assignment operator
-  typedef AABB_traits<GeomTraits, Primitive> Self;
-  AABB_traits(const Self& src);
-  Self& operator=(const Self& src);
-
 };  // end class AABB_traits
 
 
