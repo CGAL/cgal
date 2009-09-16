@@ -2041,6 +2041,16 @@ Mesh_2/stylesheet.css svneol=native#text/css
 Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text svneol=unset#application/octet-stream
 Mesh_2/test/Mesh_2/fish.edg -text
 Mesh_2/test/Mesh_2/fish.poly -text svneol=unset#application/octet-stream
+Mesh_3/demo/Mesh_3/MainWindow.ui -text
+Mesh_3/demo/Mesh_3/Mesh_3.qrc -text
+Mesh_3/demo/Mesh_3/resources/about.html svneol=native#text/html
+Mesh_3/demo/Mesh_3/resources/check-off.png -text svneol=unset#image/png
+Mesh_3/demo/Mesh_3/resources/check-off.svg -text
+Mesh_3/demo/Mesh_3/resources/check-on.png -text svneol=unset#image/png
+Mesh_3/demo/Mesh_3/resources/check.svg -text
+Mesh_3/demo/Mesh_3/resources/editcopy.png -text svneol=unset#image/png
+Mesh_3/demo/Mesh_3/resources/minus.png -text svneol=unset#image/png
+Mesh_3/demo/Mesh_3/resources/plus.png -text svneol=unset#image/png
 Mesh_3/doc_tex/Mesh_3/PkgDescription.tex -text
 Mesh_3/doc_tex/Mesh_3/main.tex -text
 Mesh_3/doc_tex/Mesh_3/mesh_3_user.tex -text
