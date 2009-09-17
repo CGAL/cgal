@@ -29,7 +29,7 @@
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Exact_type_selecter.h>
+#include <CGAL/internal/Exact_type_selector.h>
 
 #ifndef CGAL_NO_STATIC_FILTERS
 #  include <CGAL/Static_filters.h>
@@ -55,7 +55,7 @@ template < typename CK >
 struct Filtered_kernel_base
   : public CK
 {
-    typedef typename Exact_type_selecter<typename CK::RT>::Type  Exact_nt;
+    typedef typename internal::Exact_type_selector<typename CK::RT>::Type  Exact_nt;
     typedef Simple_cartesian<Exact_nt>                           Exact_kernel;
     typedef Simple_cartesian<Interval_nt_advanced>               Approximate_kernel;
     typedef Cartesian_converter<CK, Exact_kernel>                C2E;

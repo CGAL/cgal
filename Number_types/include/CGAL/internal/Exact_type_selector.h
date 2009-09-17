@@ -21,8 +21,8 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_EXACT_TYPE_SELECTER_H
-#define CGAL_EXACT_TYPE_SELECTER_H
+#ifndef CGAL_INTERNAL_EXACT_TYPE_SELECTOR_H
+#define CGAL_INTERNAL_EXACT_TYPE_SELECTOR_H
 
 // This is an undocumented private helper for Filtered_kernel.
 
@@ -50,14 +50,14 @@ class Expr;
 }
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal {
 
 // A class which tells the prefered "exact number type" corresponding to a type.
 
 // The default template chooses Gmpq or Quotient<MP_Float>.
 // It should support the built-in types.
 template < typename >
-struct Exact_type_selecter
+struct Exact_type_selector
 #ifdef CGAL_USE_GMP
 { typedef Gmpq Type; };
 #else
@@ -65,56 +65,56 @@ struct Exact_type_selecter
 #endif
 
 template <>
-struct Exact_type_selecter<MP_Float>
+struct Exact_type_selector<MP_Float>
 { typedef Quotient<MP_Float> Type; };
 
 template <>
-struct Exact_type_selecter<Quotient<MP_Float> >
+struct Exact_type_selector<Quotient<MP_Float> >
 { typedef Quotient<MP_Float> Type; };
 
 // And we specialize for the following types :
 #ifdef CGAL_USE_GMP
 template <>
-struct Exact_type_selecter<Gmpz>
+struct Exact_type_selector<Gmpz>
 { typedef Gmpq  Type; };
 
 template <>
-struct Exact_type_selecter<Gmpq>
+struct Exact_type_selector<Gmpq>
 { typedef Gmpq  Type; };
 #endif
 
 #ifdef CGAL_USE_GMPXX
 template <>
-struct Exact_type_selecter< ::mpz_class>
+struct Exact_type_selector< ::mpz_class>
 { typedef ::mpq_class  Type; };
 
 template <>
-struct Exact_type_selecter< ::mpq_class>
+struct Exact_type_selector< ::mpq_class>
 { typedef ::mpq_class  Type; };
 #endif
 
 #ifdef CGAL_USE_LEDA
 template <>
-struct Exact_type_selecter<leda_integer>
+struct Exact_type_selector<leda_integer>
 { typedef leda_rational  Type; };
 
 template <>
-struct Exact_type_selecter<leda_rational>
+struct Exact_type_selector<leda_rational>
 { typedef leda_rational  Type; };
 
 template <>
-struct Exact_type_selecter<leda_real>
+struct Exact_type_selector<leda_real>
 { typedef leda_real  Type; };
 #endif
 
 #ifdef CGAL_USE_CORE
 template <>
-struct Exact_type_selecter<CORE::Expr>
+struct Exact_type_selector<CORE::Expr>
 { typedef CORE::Expr  Type; };
 #endif
 
 template < typename ET >
-struct Exact_type_selecter<Lazy_exact_nt<ET> >
+struct Exact_type_selector<Lazy_exact_nt<ET> >
 {
   // We have a choice here :
   // - using ET gets rid of the DAG computation as well as redoing the interval
@@ -123,6 +123,6 @@ struct Exact_type_selecter<Lazy_exact_nt<ET> >
   // typedef Lazy_exact_nt<ET>  Type;
 };
 
-CGAL_END_NAMESPACE
+} } // namespace CGAL::internal
 
-#endif // CGAL_EXACT_TYPE_SELECTER_H
+#endif // CGAL_INTERNAL_EXACT_TYPE_SELECTOR_H
