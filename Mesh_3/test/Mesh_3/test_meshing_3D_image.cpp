@@ -56,7 +56,7 @@ public:
     Mesh_criteria criteria(facet_criteria, cell_criteria);
     
     // Mesh generation
-    C3t3 c3t3 = make_mesh_3<C3t3>(domain,criteria,false);
+    C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain,criteria,false);
     
     // Verify
     verify(c3t3,domain,criteria);

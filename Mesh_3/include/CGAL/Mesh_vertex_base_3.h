@@ -30,8 +30,6 @@
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Surface_mesh_vertex_base_3.h>
 
-using namespace CGAL;
-
 
 namespace CGAL {
 

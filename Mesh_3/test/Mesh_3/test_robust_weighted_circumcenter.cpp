@@ -41,7 +41,7 @@ struct Tester
   typedef typename Gt::Point_3 Point;
   typedef CGAL::Mesh_3::Creator_weighted_point_3<FT, Point> Point_creator;
 
-  typedef Regular_triangulation_3<Gt> Triangulation;
+  typedef CGAL::Regular_triangulation_3<Gt> Triangulation;
 
   void operator()() const
   {
