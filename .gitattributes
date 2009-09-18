@@ -3187,13 +3187,10 @@ Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_types.h -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cmd -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cpp -text
 Stream_lines_2/doc_tex/Stream_lines_2/1.gif -text svneol=unset#image/gif
-Stream_lines_2/doc_tex/Stream_lines_2/1.jpeg -text svneol=unset#image/jpeg
 Stream_lines_2/doc_tex/Stream_lines_2/1.pdf -text svneol=unset#application/pdf
 Stream_lines_2/doc_tex/Stream_lines_2/2.gif -text svneol=unset#image/gif
-Stream_lines_2/doc_tex/Stream_lines_2/2.jpeg -text svneol=unset#image/jpeg
 Stream_lines_2/doc_tex/Stream_lines_2/2.pdf -text svneol=unset#application/pdf
 Stream_lines_2/doc_tex/Stream_lines_2/3.gif -text svneol=unset#image/gif
-Stream_lines_2/doc_tex/Stream_lines_2/3.jpeg -text svneol=unset#image/jpeg
 Stream_lines_2/doc_tex/Stream_lines_2/3.pdf -text svneol=unset#application/pdf
 Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.gif -text svneol=unset#image/gif
 Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.pdf -text svneol=unset#application/pdf
