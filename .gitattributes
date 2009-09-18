@@ -99,12 +99,10 @@ Algebraic_foundations/test/Algebraic_foundations/ipower.cpp -text
 Alpha_shapes_2/demo/Alpha_shapes_2/data/m30f.jpg -text svneol=unset#image/jpeg
 Alpha_shapes_2/demo/Alpha_shapes_2/help/index.html svneol=native#text/html
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alpha-detail.png -text
-Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.eps -text svneol=unset#application/postscript
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.pdf -text svneol=unset#application/pdf
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.png -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alpha_shapes_3_large.png -text
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alpha_shapes_3_small.png -text
-Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.eps -text svneol=unset#application/postscript
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.gif -text svneol=unset#image/gif
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.pdf -text svneol=unset#application/pdf
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices.eps -text svneol=unset#application/postscript
@@ -890,48 +888,34 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/typedefs.h -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/bso_def.tex -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/Boolean_set_operations_2.png -text
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/circles_rects.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/conic_arcs.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/conic_arcs.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/conic_arcs.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/disks.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/disks.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/disks.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon_with_holes.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon_with_holes.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/general_polygon_with_holes.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/non_strictly_simple.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/non_strictly_simple.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/non_strictly_simple.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/sequence.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/sequence.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/sequence.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simple.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simple.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simple.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simpleDefsExamples.eps -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simpleDefsExamples.gif -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simpleDefsExamples.pdf -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/simpleDefsExamples.tex -text
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.fig -text svneol=unset#application/octet-stream
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/symm_diff.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/teaser.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/teaser.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/teaser.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/tnr_m_g.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/tnr_m_g.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/tnr_m_g.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/triangles.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/triangles.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/triangles.pdf -text svneol=unset#application/pdf
-Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.eps -text svneol=unset#application/postscript
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.pdf -text svneol=unset#application/pdf
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2_ref/GpsTraitsGeneralPolygonWithHoles_2.tex -text
@@ -1078,7 +1062,6 @@ Convex_decomposition_3/test/Convex_decomposition_3/reflex_sedge.cpp -text
 Convex_decomposition_3/test/Convex_decomposition_3/star.nef3 -text
 Convex_hull_2/demo/Convex_hull_2/help/index.html svneol=native#text/html
 Convex_hull_2/doc_tex/Convex_hull_2/convex_hull.png -text
-Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text svneol=unset#application/postscript
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#image/gif
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#application/pdf
 Convex_hull_3/demo/Convex_hull_3/CMakeLists.txt -text
@@ -1113,14 +1096,11 @@ Developers_manual/doc_tex/Developers_manual/fig/use_real.eps -text svneol=unset#
 Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#application/pdf
 Envelope_2/doc_tex/Envelope_2/fig/Envelope_2.png -text
-Envelope_2/doc_tex/Envelope_2/fig/ex_circle.eps -text svneol=unset#application/postscript
 Envelope_2/doc_tex/Envelope_2/fig/ex_circle.fig -text svneol=unset#application/octet-stream
 Envelope_2/doc_tex/Envelope_2/fig/ex_circle.gif -text svneol=unset#image/gif
 Envelope_2/doc_tex/Envelope_2/fig/ex_circle.pdf -text svneol=unset#application/pdf
-Envelope_2/doc_tex/Envelope_2/fig/lwrenv.eps -text svneol=unset#application/postscript
 Envelope_2/doc_tex/Envelope_2/fig/lwrenv.gif -text svneol=unset#image/gif
 Envelope_2/doc_tex/Envelope_2/fig/lwrenv.pdf -text svneol=unset#application/pdf
-Envelope_2/doc_tex/Envelope_2/fig/min_diag.eps -text svneol=unset#application/postscript
 Envelope_2/doc_tex/Envelope_2/fig/min_diag.fig -text svneol=unset#application/octet-stream
 Envelope_2/doc_tex/Envelope_2/fig/min_diag.gif -text svneol=unset#image/gif
 Envelope_2/doc_tex/Envelope_2/fig/min_diag.pdf -text svneol=unset#application/pdf
@@ -2001,21 +1981,13 @@ Mesh_2/demo/Mesh_2/data/fish.poly -text svneol=unset#application/octet-stream
 Mesh_2/demo/Mesh_2/data/trivial.poly -text svneol=unset#application/octet-stream
 Mesh_2/doc_tex/Mesh_2/delaunaymesh-small.png -text svneol=unset#image/png
 Mesh_2/doc_tex/Mesh_2/delaunaymesh-teaser.png -text svneol=unset#image/png
-Mesh_2/doc_tex/Mesh_2/domain-mesh.eps -text svneol=unset#application/postscript
 Mesh_2/doc_tex/Mesh_2/domain-mesh.png -text svneol=unset#image/png
-Mesh_2/doc_tex/Mesh_2/domain-seeds-mesh.eps -text svneol=unset#application/postscript
 Mesh_2/doc_tex/Mesh_2/domain-seeds-mesh.png -text svneol=unset#image/png
-Mesh_2/doc_tex/Mesh_2/domain-seeds.eps -text svneol=unset#application/postscript
 Mesh_2/doc_tex/Mesh_2/domain-seeds.png -text svneol=unset#image/png
-Mesh_2/doc_tex/Mesh_2/domain.eps -text svneol=unset#application/postscript
 Mesh_2/doc_tex/Mesh_2/domain.png -text svneol=unset#image/png
-Mesh_2/doc_tex/Mesh_2/example-conform-Delaunay.eps -text svneol=unset#application/postscript
 Mesh_2/doc_tex/Mesh_2/example-conform-Delaunay.png -text svneol=unset#image/png
-Mesh_2/doc_tex/Mesh_2/example-conform-Gabriel.eps -text svneol=unset#application/postscript
 Mesh_2/doc_tex/Mesh_2/example-conform-Gabriel.png -text svneol=unset#image/png
-Mesh_2/doc_tex/Mesh_2/example-conform.eps -text svneol=unset#application/postscript
 Mesh_2/doc_tex/Mesh_2/example-conform.png -text svneol=unset#image/png
-Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.eps -text svneol=unset#application/postscript
 Mesh_2/doc_tex/Mesh_2_ref/part_of_a_cluster.gif -text svneol=unset#image/gif
 Mesh_2/stylesheet.css svneol=native#text/css
 Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text svneol=unset#application/octet-stream
@@ -2155,13 +2127,10 @@ Minkowski_sum_2/test/Minkowski_sum_2/test_Minkowski_sum.cmd -text
 Minkowski_sum_2/test/Minkowski_sum_2/test_approx_offset.cmd -text
 Minkowski_sum_2/test/Minkowski_sum_2/test_exact_offset.cmd -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/PkgDescription.tex -text
-Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/decomposition_method.eps -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/decomposition_method.gif -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/decomposition_method.pdf -text
-Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/glide.eps -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/glide.gif -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/glide.pdf -text
-Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/motion_planning.eps -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/motion_planning.gif -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/motion_planning.pdf -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/spoon_star.gif -text
@@ -2318,15 +2287,12 @@ Nef_S2/doc_tex/Nef_S2/fig/complex.ps -text svneol=unset#application/postscript
 Nef_S2/doc_tex/Nef_S2/fig/halfspace.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2/fig/halfspace.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2/fig/halfspace.ps -text svneol=unset#application/postscript
-Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.eps -text svneol=unset#application/postscript
 Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2/fig/teaser-small.png -text svneol=unset#image/png
 Nef_S2/doc_tex/Nef_S2/fig/teaser.png -text svneol=unset#image/png
-Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.eps -text svneol=unset#application/postscript
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
-Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#application/postscript
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Nef_S2/include/CGAL/IO/Nef_polyhedron_iostream_S2.h -text
@@ -2343,20 +2309,15 @@ Number_types/include/CGAL/Sqrt_extension/Real_embeddable_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Scalar_factor_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Sqrt_extension_type.h -text
 Number_types/include/CGAL/Sqrt_extension/io.h -text
-Optimisation_doc/doc_tex/Bounding_volumes/annulus.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Bounding_volumes/ball.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Bounding_volumes/ball.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Bounding_volumes/ball.pdf -text svneol=unset#application/pdf
 Optimisation_doc/doc_tex/Bounding_volumes/minCircle.png -text
-Optimisation_doc/doc_tex/Bounding_volumes/pcenter.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Bounding_volumes/pcenter.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Bounding_volumes/pcenter.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Inscribed_areas/largestEmptyRect.pdf -text svneol=unset#application/pdf
-Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.pdf -text svneol=unset#application/pdf
 PDB/demo/PDB/pdb_cat.cpp -text
@@ -2846,7 +2807,6 @@ Principal_component_analysis/demo/Principal_component_analysis/data/cylinder_loc
 Principal_component_analysis/demo/Principal_component_analysis/data/ellipsoid.off -text
 Principal_component_analysis/demo/Principal_component_analysis/resources/about.html svneol=native#text/html
 Principal_component_analysis/doc_tex/Principal_component_analysis/examples.tex -text
-Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text svneol=unset#application/postscript
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.jpg -text
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text svneol=unset#image/png
 Principal_component_analysis/doc_tex/Principal_component_analysis/teaserLeastSquaresFitting-large.png -text
@@ -2977,11 +2937,9 @@ QP_solver/test/QP_solver/test_random_qp.cpp -text
 QP_solver/test/QP_solver/test_random_qp2.cpp -text
 QP_solver/test/QP_solver/test_solver.cout -text
 QP_solver/test/QP_solver/test_solver_data/masters/additional/QSCORPIO.QPS -text
-Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text svneol=unset#application/postscript
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#application/pdf
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#image/png
-Qt_widget/doc_tex/Qt_widget/triangulation.eps -text svneol=unset#application/postscript
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
 Qt_widget/src/CGALQt/CMakeLists.txt -text
@@ -3143,37 +3101,26 @@ Straight_skeleton_2/dll/Straight_skeleton_2/ex1.poly -text svneol=unset#applicat
 Straight_skeleton_2/dll/Straight_skeleton_2/input.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/StraightSkeleton.png -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/StraightSkeletonTeaser.png -text
-Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.png -text svneol=unset#image/png
-Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_skeleton.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_skeleton.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_skeleton.png -text svneol=unset#image/png
-Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_offset.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_offset.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_offset.png -text svneol=unset#image/png
-Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_skeleton.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_skeleton.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/exterior_skeleton.png -text svneol=unset#image/png
-Straight_skeleton_2/doc_tex/Straight_skeleton_2/fig6.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/fig6.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/fig6.png -text svneol=unset#image/png
-Straight_skeleton_2/doc_tex/Straight_skeleton_2/invalid_polygons.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/invalid_polygons.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/invalid_polygons.png -text svneol=unset#image/png
-Straight_skeleton_2/doc_tex/Straight_skeleton_2/poly_hole_skeleton.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/poly_hole_skeleton.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/poly_hole_skeleton.png -text svneol=unset#image/png
-Straight_skeleton_2/doc_tex/Straight_skeleton_2/simple_skeleton_0.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/simple_skeleton_0.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/simple_skeleton_0.png -text svneol=unset#image/png
-Straight_skeleton_2/doc_tex/Straight_skeleton_2/simple_skeleton_1.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/simple_skeleton_1.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/simple_skeleton_1.png -text svneol=unset#image/png
-Straight_skeleton_2/doc_tex/Straight_skeleton_2/valid_polygons.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/valid_polygons.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/valid_polygons.png -text svneol=unset#image/png
-Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/validly_touching.png -text svneol=unset#image/png
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Arrange_offset_polygons_2.tex -text
@@ -3702,20 +3649,16 @@ Triangulation_2/doc_tex/TDS_2/Flip.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/Three.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/flip.ltex -text svneol=unset#application/octet-stream
 Triangulation_2/doc_tex/TDS_2/insert.ltex -text svneol=unset#application/octet-stream
-Triangulation_2/doc_tex/TDS_2/rep_bis.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/TDS_2/rep_bis.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/rep_bis.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/TDS_2/tds_small.png -text
-Triangulation_2/doc_tex/TDS_2/threelevels2.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/TDS_2/threelevels2.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/threelevels2.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/TDS_2_ref/Flip.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2_ref/Three.gif -text svneol=unset#image/gif
-Triangulation_2/doc_tex/TDS_2_ref/join_split.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/TDS_2_ref/join_split.fig -text svneol=unset#application/octet-stream
 Triangulation_2/doc_tex/TDS_2_ref/join_split.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2_ref/join_split.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc_tex/TDS_2_ref/tds-insert_degree_2.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/TDS_2_ref/tds-insert_degree_2.fig -text svneol=unset#application/octet-stream
 Triangulation_2/doc_tex/TDS_2_ref/tds-insert_degree_2.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2_ref/tds-insert_degree_2.pdf -text svneol=unset#application/pdf
@@ -3731,7 +3674,6 @@ Triangulation_2/doc_tex/Triangulation_2/Three.ipe -text svneol=unset#application
 Triangulation_2/doc_tex/Triangulation_2/Two.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/cdt2d-big.png -text
 Triangulation_2/doc_tex/Triangulation_2/cdt2d-small.png -text
-Triangulation_2/doc_tex/Triangulation_2/constraints.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/constraints.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/constraints.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/constraints.pdf -text svneol=unset#application/pdf
@@ -3739,37 +3681,30 @@ Triangulation_2/doc_tex/Triangulation_2/constraints.xml svneol=native#text/xml
 Triangulation_2/doc_tex/Triangulation_2/degenerate.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/del_poisson.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc_tex/Triangulation_2/derivation_tree.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/derivation_tree.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/derivation_tree.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/dt1.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/dt1.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/dt2.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/empty.ipe -text svneol=unset#application/postscript
-Triangulation_2/doc_tex/Triangulation_2/flip.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/flip.ltex -text svneol=unset#application/octet-stream
 Triangulation_2/doc_tex/Triangulation_2/flip.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/incident_fc.gif -text svneol=unset#image/gif
-Triangulation_2/doc_tex/Triangulation_2/infinite.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/infinite.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/infinite.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/insert.ltex -text svneol=unset#application/octet-stream
-Triangulation_2/doc_tex/Triangulation_2/insert1.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/insert1.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/insert1.ltex -text svneol=unset#application/octet-stream
 Triangulation_2/doc_tex/Triangulation_2/insert1.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc_tex/Triangulation_2/insert2.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/insert2.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/insert2.ltex -text svneol=unset#application/octet-stream
 Triangulation_2/doc_tex/Triangulation_2/insert2.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc_tex/Triangulation_2/insert3.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/insert3.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/insert3.ltex -text svneol=unset#application/octet-stream
 Triangulation_2/doc_tex/Triangulation_2/insert3.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/map.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/neighbor.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/neighbor2.ipe -text svneol=unset#application/postscript
-Triangulation_2/doc_tex/Triangulation_2/neighbors.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/neighbors.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/neighbors.ltex -text svneol=unset#application/octet-stream
 Triangulation_2/doc_tex/Triangulation_2/neighbors.pdf -text svneol=unset#application/pdf
@@ -3777,17 +3712,13 @@ Triangulation_2/doc_tex/Triangulation_2/point.ipe -text svneol=unset#application
 Triangulation_2/doc_tex/Triangulation_2/poisson.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/poisson.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/polygon.ipe -text svneol=unset#application/postscript
-Triangulation_2/doc_tex/Triangulation_2/remove.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/remove.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/remove.ltex -text svneol=unset#application/octet-stream
 Triangulation_2/doc_tex/Triangulation_2/remove.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc_tex/Triangulation_2/rep_bis.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/rep_bis.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/rep_bis.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc_tex/Triangulation_2/threelevels.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/threelevels.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/threelevels.pdf -text svneol=unset#application/pdf
-Triangulation_2/doc_tex/Triangulation_2/threelevels2.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/threelevels2.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/threelevels2.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/tr1.gif -text svneol=unset#image/gif
@@ -3798,14 +3729,12 @@ Triangulation_2/doc_tex/Triangulation_2/valid1.ipe -text svneol=unset#applicatio
 Triangulation_2/doc_tex/Triangulation_2/valid2.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/valid3.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/vertical.ipe -text svneol=unset#application/postscript
-Triangulation_2/doc_tex/Triangulation_2/walk.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/walk.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2/walk.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2/walk.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/walk.xml svneol=native#text/xml
 Triangulation_2/doc_tex/Triangulation_2/walls.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2_ref/constraints.gif -text svneol=unset#image/gif
-Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.eps -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.ipe -text svneol=unset#application/postscript
 Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.pdf -text svneol=unset#application/pdf
