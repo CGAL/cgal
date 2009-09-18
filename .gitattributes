@@ -1287,7 +1287,6 @@ GraphicsView/demo/resources/cgal_large_FAF8E8.gif -text svneol=unset#image/gif
 GraphicsView/demo/resources/cgal_logo.xpm -text
 GraphicsView/doc_tex/GraphicsView/detail.png -text
 GraphicsView/doc_tex/GraphicsView/full.png -text
-GraphicsView/doc_tex/GraphicsView/uml-design.eps -text
 GraphicsView/doc_tex/GraphicsView/uml-design.graphml -text
 GraphicsView/doc_tex/GraphicsView/uml-design.pdf -text
 GraphicsView/doc_tex/GraphicsView/uml-design.png -text
@@ -2035,22 +2034,14 @@ Mesh_3/demo/Mesh_3/resources/plus.png -text svneol=unset#image/png
 Mesh_3/doc_tex/Mesh_3/PkgDescription.tex -text
 Mesh_3/doc_tex/Mesh_3/main.tex -text
 Mesh_3/doc_tex/Mesh_3/mesh_3_user.tex -text
-Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain.eps -text svneol=unset#application/postscript
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_3.eps -text svneol=unset#application/postscript
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_3.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_4.eps -text svneol=unset#application/postscript
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_4.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_5.eps -text svneol=unset#application/postscript
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_5.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc_tex/Mesh_3/pictures/liver.eps -text svneol=unset#application/postscript
 Mesh_3/doc_tex/Mesh_3/pictures/liver.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher.eps -text svneol=unset#application/postscript
 Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher_small.jpg -text
-Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.eps -text svneol=unset#application/postscript
 Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain_2.eps -text svneol=unset#application/postscript
 Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain_2.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3_ref/BisectionGeometricTraits_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/Implicit_mesh_domain_3.tex -text
@@ -2256,25 +2247,19 @@ Nef_3/demo/Nef_3/CMakeLists.txt -text
 Nef_3/demo/Nef_3/cube.off -text svneol=unset#application/octet-stream
 Nef_3/demo/Nef_3/makefile -text
 Nef_3/demo/Nef_3/mpi.vsh -text
-Nef_3/doc_tex/Nef_3/fig/closeup.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3/fig/closeup.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/closeup.pdf -text svneol=unset#application/pdf
-Nef_3/doc_tex/Nef_3/fig/nef_example.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3/fig/nef_example.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/nef_example.pdf -text svneol=unset#application/pdf
 Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.pdf -text svneol=unset#application/pdf
 Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.ps -text svneol=unset#application/postscript
-Nef_3/doc_tex/Nef_3/fig/nef_pyramids.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3/fig/nef_pyramids.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/nef_pyramids.pdf -text svneol=unset#application/pdf
-Nef_3/doc_tex/Nef_3/fig/shells.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3/fig/shells.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/shells.pdf -text svneol=unset#application/pdf
-Nef_3/doc_tex/Nef_3/fig/snc.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3/fig/snc.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/snc.pdf -text svneol=unset#application/pdf
-Nef_3/doc_tex/Nef_3/fig/sphere_map.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3/fig/sphere_map.pdf -text svneol=unset#application/pdf
 Nef_3/doc_tex/Nef_3/fig/sphere_map.png -text svneol=unset#image/png
 Nef_3/doc_tex/Nef_3/fig/teaser.png -text
@@ -2284,13 +2269,10 @@ Nef_3/doc_tex/Nef_3/fig/visualization_SNC.png -text svneol=unset#image/png
 Nef_3/doc_tex/Nef_3/fig/visualization_SNC.ps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3_ref/Nef_nary_intersection_3.tex -text
 Nef_3/doc_tex/Nef_3_ref/Nef_nary_union_3.tex -text
-Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
-Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
-Nef_3/doc_tex/Nef_3_ref/fig/snc.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3_ref/fig/snc.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3_ref/fig/snc.pdf -text svneol=unset#application/pdf
 Nef_3/examples/Nef_3/complex_construction.cin -text
@@ -2590,15 +2572,11 @@ Point_set_processing_3/doc_tex/Point_set_processing_3/Point_set_processing_image
 Point_set_processing_3/doc_tex/Point_set_processing_3/analysis.tex -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/fig/point_set_processing.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/fig/point_set_processing_detail.png -text svneol=unset#image/png
-Point_set_processing_3/doc_tex/Point_set_processing_3/grid_simplification.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/grid_simplification.jpg -text svneol=unset#image/jpeg
-Point_set_processing_3/doc_tex/Point_set_processing_3/introduction.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/introduction.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/io.tex -text
-Point_set_processing_3/doc_tex/Point_set_processing_3/mst_orient_normals.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/mst_orient_normals.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/outliers.tex -text
-Point_set_processing_3/doc_tex/Point_set_processing_3/pipeline.eps -text svneol=unset#application/postscript
 Point_set_processing_3/doc_tex/Point_set_processing_3/pipeline.jpg -text svneol=unset#image/jpeg
 Point_set_processing_3/doc_tex/Point_set_processing_3/simplification.tex -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/smoothing.tex -text
@@ -3008,24 +2986,15 @@ Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
 Qt_widget/src/CGALQt/CMakeLists.txt -text
 Ridges_3/doc_tex/Ridges_3/RidgesMechPartDetail.png -text
-Ridges_3/doc_tex/Ridges_3/david_crest.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/david_crest.jpg -text
 Ridges_3/doc_tex/Ridges_3/david_crest_small.png -text svneol=unset#image/png
-Ridges_3/doc_tex/Ridges_3/david_eye_crest.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/david_eye_crest.png -text svneol=unset#image/png
-Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.png -text svneol=unset#image/png
-Ridges_3/doc_tex/Ridges_3/index_umbilic.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/index_umbilic.png -text svneol=unset#image/png
-Ridges_3/doc_tex/Ridges_3/lemon.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/lemon.png -text svneol=unset#image/png
-Ridges_3/doc_tex/Ridges_3/mecanic-sub1_crest-jpg.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/mecanic-sub1_crest-jpg.png -text svneol=unset#image/png
-Ridges_3/doc_tex/Ridges_3/mecanic-sub1_crestTweight1-jpg.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/mecanic-sub1_crestTweight1-jpg.png -text svneol=unset#image/png
-Ridges_3/doc_tex/Ridges_3/mecanic-sub1_crestTweight1Tsharp7-jpg.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/mecanic-sub1_crestTweight1Tsharp7-jpg.png -text svneol=unset#image/png
-Ridges_3/doc_tex/Ridges_3/star.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/star.png -text svneol=unset#image/png
 Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics.sln eol=crlf
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#application/octet-stream
@@ -3114,14 +3083,10 @@ Segment_Delaunay_graph_2/test/Segment_Delaunay_graph_2/data/sitesx.Gmpq.cin -tex
 Segment_Delaunay_graph_2/test/Segment_Delaunay_graph_2/data/sitesx.cin -text
 Segment_Delaunay_graph_2/test/Segment_Delaunay_graph_2/data/sitesxx.Gmpq.cin -text
 Segment_Delaunay_graph_2/test/Segment_Delaunay_graph_2/data/sitesxx.cin -text
-Skin_surface_3/doc_tex/Skin_surface_3/convexTwoPoints.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/convexTwoPoints.png -text svneol=unset#image/png
 Skin_surface_3/doc_tex/Skin_surface_3/large.png -text
-Skin_surface_3/doc_tex/Skin_surface_3/marching.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/marching.png -text svneol=unset#image/png
-Skin_surface_3/doc_tex/Skin_surface_3/molecule.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.png -text svneol=unset#image/png
-Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text svneol=unset#image/png
 Skin_surface_3/doc_tex/Skin_surface_3/small.png -text
 Skin_surface_3/examples/Skin_surface_3/data/1IYE.pdb -text
@@ -3410,22 +3375,17 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/wiggly_03_cgal.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_types.h -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cmd -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cpp -text
-Stream_lines_2/doc_tex/Stream_lines_2/1.eps -text svneol=unset#application/postscript
 Stream_lines_2/doc_tex/Stream_lines_2/1.gif -text svneol=unset#image/gif
 Stream_lines_2/doc_tex/Stream_lines_2/1.jpeg -text svneol=unset#image/jpeg
 Stream_lines_2/doc_tex/Stream_lines_2/1.pdf -text svneol=unset#application/pdf
-Stream_lines_2/doc_tex/Stream_lines_2/2.eps -text svneol=unset#application/postscript
 Stream_lines_2/doc_tex/Stream_lines_2/2.gif -text svneol=unset#image/gif
 Stream_lines_2/doc_tex/Stream_lines_2/2.jpeg -text svneol=unset#image/jpeg
 Stream_lines_2/doc_tex/Stream_lines_2/2.pdf -text svneol=unset#application/pdf
-Stream_lines_2/doc_tex/Stream_lines_2/3.eps -text svneol=unset#application/postscript
 Stream_lines_2/doc_tex/Stream_lines_2/3.gif -text svneol=unset#image/gif
 Stream_lines_2/doc_tex/Stream_lines_2/3.jpeg -text svneol=unset#image/jpeg
 Stream_lines_2/doc_tex/Stream_lines_2/3.pdf -text svneol=unset#application/pdf
-Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.eps -text svneol=unset#application/postscript
 Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.gif -text svneol=unset#image/gif
 Stream_lines_2/doc_tex/Stream_lines_2/euler_integrator.pdf -text svneol=unset#application/pdf
-Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.eps -text svneol=unset#application/postscript
 Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.gif -text svneol=unset#image/gif
 Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.pdf -text svneol=unset#application/pdf
 Stream_lines_2/doc_tex/Stream_lines_2/streamlines-small.jpg -text svneol=unset#image/jpeg
