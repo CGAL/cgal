@@ -273,7 +273,6 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_zone.tex -text
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/fig/Curve_intersections_2.png -text
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/sl_simple.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/sl_simple.pdf -text svneol=unset#application/pdf
-Arrangement_on_surface_2/doc_tex/Sweep_line_2/sl_simple.ps -text svneol=unset#application/postscript
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/BasicSweepLineVisitor_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/Basic_sweep_line_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/SweepLineVisitor_2.tex eol=lf
@@ -1022,14 +1021,11 @@ Convex_decomposition_3/doc_tex/Convex_decomposition_3/PkgDescription.tex -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/teaser.png -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes.gif -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes.pdf -text
-Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes.ps -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes2.png -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_cylindrical.gif -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_cylindrical.pdf -text
-Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_cylindrical.ps -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_vertical.gif -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_vertical.pdf -text
-Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_vertical.ps -text
 Convex_decomposition_3/examples/Convex_decomposition_3/list_of_convex_parts.cin -text
 Convex_decomposition_3/test/Convex_decomposition_3/check_decomposition.cin -text
 Convex_decomposition_3/test/Convex_decomposition_3/reflex_sedge.cpp -text
@@ -1163,20 +1159,16 @@ Filtered_kernel/developer_scripts/profile_cleanup -text
 Generator/demo/Generator/help/index.html svneol=native#text/html
 Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/Segment_generator_prog1.pdf -text svneol=unset#application/pdf
-Generator/doc_tex/Generator/Segment_generator_prog1.ps -text svneol=unset#application/postscript
 Generator/doc_tex/Generator/Segment_generator_prog1_small.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/Segment_generator_prog2.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/Segment_generator_prog2.pdf -text svneol=unset#application/pdf
-Generator/doc_tex/Generator/Segment_generator_prog2.ps -text svneol=unset#application/postscript
 Generator/doc_tex/Generator/Segment_generator_prog2_small.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/dice.png -text
 Generator/doc_tex/Generator/generators_prog1.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/generators_prog1.pdf -text svneol=unset#application/pdf
-Generator/doc_tex/Generator/generators_prog1.ps -text svneol=unset#application/postscript
 Generator/doc_tex/Generator/generators_prog1_small.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/generators_prog2.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/generators_prog2.pdf -text svneol=unset#application/pdf
-Generator/doc_tex/Generator/generators_prog2.ps -text svneol=unset#application/postscript
 Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#image/gif
 Geomview/demo/Geomview/CMakeLists.txt -text
 Geomview/doc_tex/Geomview/geomview.gif -text
@@ -1418,7 +1410,6 @@ Kinetic_data_structures/doc_tex/Kinetic_data_structures/qt_widget_marked_pct.gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/qt_widget_marked_pct.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.ps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_framework/sort_usage_pct.gif -text svneol=unset#image/gif
@@ -2054,7 +2045,6 @@ Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/motion_planning.gif -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/motion_planning.pdf -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/spoon_star.gif -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/spoon_star.png -text
-Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/spoon_star.ps -text
 Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/teaser.png -text
 Minkowski_sum_3/examples/Minkowski_sum_3/cube.nef3 -text
 Minkowski_sum_3/examples/Minkowski_sum_3/cube_offset.cin -text
@@ -2117,10 +2107,8 @@ Nef_2/demo/Nef_2/xpms/union.xpm svneol=native#unset
 Nef_2/doc_tex/Nef_2/complex-teaser.png -text
 Nef_2/doc_tex/Nef_2/complex.gif -text svneol=unset#image/gif
 Nef_2/doc_tex/Nef_2/complex.pdf -text svneol=unset#application/pdf
-Nef_2/doc_tex/Nef_2/complex.ps -text svneol=unset#application/postscript
 Nef_2/doc_tex/Nef_2/halfplane.gif -text svneol=unset#image/gif
 Nef_2/doc_tex/Nef_2/halfplane.pdf -text svneol=unset#application/pdf
-Nef_2/doc_tex/Nef_2/halfplane.ps -text svneol=unset#application/postscript
 Nef_2/doc_tex/Nef_2_ref/Bounded_kernel.tex -text
 Nef_2/doc_tex/Nef_2_ref/extsegs.gif -text svneol=unset#image/gif
 Nef_2/doc_tex/Nef_2_ref/extsegs.pdf -text svneol=unset#application/pdf
@@ -2139,7 +2127,6 @@ Nef_3/doc_tex/Nef_3/fig/nef_example.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/nef_example.pdf -text svneol=unset#application/pdf
 Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.pdf -text svneol=unset#application/pdf
-Nef_3/doc_tex/Nef_3/fig/nef_non_manifold3a.ps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3/fig/nef_pyramids.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/nef_pyramids.pdf -text svneol=unset#application/pdf
 Nef_3/doc_tex/Nef_3/fig/shells.gif -text svneol=unset#image/gif
@@ -2152,7 +2139,6 @@ Nef_3/doc_tex/Nef_3/fig/teaser.png -text
 Nef_3/doc_tex/Nef_3/fig/visualization_SNC.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/visualization_SNC.pdf -text svneol=unset#application/pdf
 Nef_3/doc_tex/Nef_3/fig/visualization_SNC.png -text svneol=unset#image/png
-Nef_3/doc_tex/Nef_3/fig/visualization_SNC.ps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3_ref/Nef_nary_intersection_3.tex -text
 Nef_3/doc_tex/Nef_3_ref/Nef_nary_union_3.tex -text
 Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.gif -text svneol=unset#image/gif
@@ -2200,10 +2186,8 @@ Nef_3/test/Nef_3/data/wrongly_oriented_cube.off -text
 Nef_3/test/Nef_3/nary.cpp -text
 Nef_S2/doc_tex/Nef_S2/fig/complex.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2/fig/complex.pdf -text svneol=unset#application/pdf
-Nef_S2/doc_tex/Nef_S2/fig/complex.ps -text svneol=unset#application/postscript
 Nef_S2/doc_tex/Nef_S2/fig/halfspace.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2/fig/halfspace.pdf -text svneol=unset#application/pdf
-Nef_S2/doc_tex/Nef_S2/fig/halfspace.ps -text svneol=unset#application/postscript
 Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2/fig/teaser-small.png -text svneol=unset#image/png
@@ -2356,10 +2340,8 @@ PDB/todo -text
 Partition_2/demo/Partition_2/Qt3/help/index.html svneol=native#text/html
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.gif -text svneol=unset#image/gif
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.pdf -text svneol=unset#application/pdf
-Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.ps -text svneol=unset#application/postscript
 Partition_2/doc_tex/Partition_2/Trier_opt_cvx.gif -text svneol=unset#image/gif
 Partition_2/doc_tex/Partition_2/Trier_opt_cvx.pdf -text svneol=unset#application/pdf
-Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text svneol=unset#application/postscript
 Partition_2/doc_tex/Partition_2/teaser-small.png -text svneol=unset#image/png
 Partition_2/doc_tex/Partition_2/teaser.png -text svneol=unset#image/png
 Periodic_3_triangulation_3/benchmark/Periodic_3_triangulation_3/.cdtproject -text
@@ -2597,11 +2579,8 @@ Polyhedron/doc_tex/Polyhedron/fig/make_cube.pdf -text svneol=unset#application/p
 Polyhedron/doc_tex/Polyhedron/fig/poly_optional.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/shark.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron/fig/shark.pdf -text svneol=unset#application/pdf
-Polyhedron/doc_tex/Polyhedron/fig/shark.ps -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/subdiv.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron/fig/subdiv.pdf -text svneol=unset#application/pdf
-Polyhedron/doc_tex/Polyhedron/fig/subdiv.ppm -text svneol=unset#application/octet-stream
-Polyhedron/doc_tex/Polyhedron/fig/subdiv.ps -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/subdiv_small.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron/fig/teaser-small.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron/fig/teaser.gif -text svneol=unset#image/gif
@@ -2612,7 +2591,6 @@ Polyhedron/doc_tex/Polyhedron/idraw/halfedge.ips -text svneol=unset#application/
 Polyhedron/doc_tex/Polyhedron/idraw/halfedge_methods.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/idraw/poly_optional.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/idraw/polyhedron.ips -text svneol=unset#application/postscript
-Polyhedron/doc_tex/Polyhedron/idraw/shark.ps -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet.pdf -text svneol=unset#application/pdf
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet1.gif -text svneol=unset#image/gif
 Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet2.gif -text svneol=unset#image/gif
@@ -2959,18 +2937,15 @@ Skin_surface_3/test/Skin_surface_3/data/test9.cin -text
 Snap_rounding_2/demo/Snap_rounding_2/help/index.html svneol=native#text/html
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.gif -text svneol=unset#image/gif
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.pdf -text svneol=unset#application/pdf
-Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.ps -text svneol=unset#application/postscript
 Snap_rounding_2/doc_tex/Snap_rounding_2/snap-detail.png -text
 Snap_rounding_2/doc_tex/Snap_rounding_2/snap.png -text
 Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.gif -text svneol=unset#image/gif
 Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.pdf -text svneol=unset#application/pdf
-Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.ps -text svneol=unset#application/postscript
 Snap_rounding_2/test/Snap_rounding_2/cgal_test eol=lf
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_base -text
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_with_cmake eol=lf
 Spatial_searching/demo/Spatial_searching/help/index.html svneol=native#text/html
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#image/gif
-Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text svneol=unset#application/postscript
 Spatial_searching/doc_tex/Spatial_searching/windowQuery.png -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbert.png -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbertLarge.jpg -text
