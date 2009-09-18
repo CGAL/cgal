@@ -31,7 +31,8 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program("aabb_naive_vs_tree_distance_triangle_test.cpp")
   create_single_source_cgal_program("aabb_naive_vs_tree_distance_segment_test.cpp")
   create_single_source_cgal_program("aabb_correctness_triangle_test.cpp")
-  
+  create_single_source_cgal_program("aabb_do_intersect_test.cpp")
+
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

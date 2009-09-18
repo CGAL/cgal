@@ -48,45 +48,84 @@ namespace internal {
     const Point target = segment.target();
 
     const Vector direction = target - source;
-    // CAREFUL, when 1.0/0.0, this works only with doubles, not with filtered kernels
-    const Vector inv_direction((FT)1.0/direction.x(),
-      (FT)1.0/direction.y(),
-      (FT)1.0/direction.z()); 
-    const int sign_x = inv_direction.x() < (FT)0.0;
-    const int sign_y = inv_direction.y() < (FT)0.0;
-    const int sign_z = inv_direction.z() < (FT)0.0;
+    FT tmin(0.0);
+    FT tmax(1.0);
+    
+    if ( ! CGAL_NTS is_zero(direction.x()) )
+    {
+      FT inv_direction_x = (FT)1.0/direction.x();
+      const int sign_x = inv_direction_x < (FT)0.0;
+      
+      tmin = (parameters[sign_x].x() - source.x()) * inv_direction_x;
+      tmax = (parameters[1-sign_x].x() - source.x()) * inv_direction_x;
+      
+      // premature exit
+      if(tmax < (FT)0.0 || tmin > (FT)1.0)
+        return false;
+      
+      if(tmin < (FT)0.0)
+        tmin = (FT)0.0;
+      if(tmax > (FT)1.0)
+        tmax = (FT)1.0;
+    }
+    else
+    {
+      // premature exit if x value of segment is outside bbox
+      if ( source.x() < parameters[0].x() || source.x() > parameters[1].x() )
+        return false;
+    }
+    
+    if ( ! CGAL_NTS is_zero(direction.y()) )
+    {
+      FT inv_direction_y = (FT)1.0/direction.y();
+      const int sign_y = inv_direction_y < (FT)0.0;
+      
+      const FT tymin = (parameters[sign_y].y() - source.y()) * inv_direction_y;
+      const FT tymax = (parameters[1-sign_y].y() - source.y()) * inv_direction_y;
+      
+      if(tmin > tymax || tymin > tmax) 
+        return false;
+      
+      if(tymin > tmin)
+        tmin = tymin;
+      
+      if(tymax < tmax)
+        tmax = tymax;
+    }
+    else
+    {
+      // premature exit if y value of segment is outside bbox
+      if ( source.y() < parameters[0].y() || source.y() > parameters[1].y() )
+        return false;
+    }
+    
+    if ( ! CGAL_NTS is_zero(direction.z()) )
+    {
+      FT inv_direction_z = (FT)1.0/direction.z();
+      const int sign_z = inv_direction_z < (FT)0.0;
+      
+      FT tzmin = (parameters[sign_z].z() - source.z()) * inv_direction_z;
+      FT tzmax = (parameters[1-sign_z].z() - source.z()) * inv_direction_z;
+      
+      if(tmin > tzmax || tzmin > tmax) 
+        return false;
+    }
+    else
+    {
+      // premature exit if z value of segment is outside bbox
+      if ( source.z() < parameters[0].z() || source.z() > parameters[1].z() )
+        return false;
+    }
+    
+  return true;
+  }
 
-    FT tmin = (parameters[sign_x].x() - source.x()) * inv_direction.x();
-    FT tmax = (parameters[1-sign_x].x() - source.x()) * inv_direction.x();
-
-    // premature exit
-    if(tmax < (FT)0.0 || tmin > (FT)1.0)
-      return false;
-
-    if(tmin < (FT)0.0)
-      tmin = (FT)0.0;
-    if(tmax > (FT)1.0)
-      tmax = (FT)1.0;
-
-    const FT tymin = (parameters[sign_y].y() - source.y()) * inv_direction.y();
-    const FT tymax = (parameters[1-sign_y].y() - source.y()) * inv_direction.y();
-
-    if(tmin > tymax || tymin > tmax) 
-      return false;
-
-    if(tymin > tmin)
-      tmin = tymin;
-
-    if(tymax < tmax)
-      tmax = tymax;
-
-    FT tzmin = (parameters[sign_z].z() - source.z()) * inv_direction.z();
-    FT tzmax = (parameters[1-sign_z].z() - source.z()) * inv_direction.z();
-
-    if(tmin > tzmax || tzmin > tmax) 
-      return false;
-
-    return true;
+  template <class K>
+  bool do_intersect(const CGAL::Bbox_3& bbox,
+                    const typename K::Segment_3& segment, 
+                    const K& k)
+  {
+    return do_intersect(segment, bbox, k);
   }
 
 } // namespace internal
@@ -95,14 +134,14 @@ template <class K>
 bool do_intersect(const CGAL::Segment_3<K>& segment, 
 		  const CGAL::Bbox_3& bbox)
 {
-  return internal::do_intersect(segment, bbox, K());
+  return typename K::Do_intersect_3()(segment, bbox);
 }
 
 template <class K>
 bool do_intersect(const CGAL::Bbox_3& bbox, 
 		  const CGAL::Segment_3<K>& segment)
 {
-  return internal::do_intersect(segment, bbox, K());
+  return typename K::Do_intersect_3()(segment, bbox);
 }
 
 CGAL_END_NAMESPACE

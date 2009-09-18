@@ -41,10 +41,10 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 \ccCreation
 \ccCreationVariable{tree}
 
-\ccConstructor{AABB_tree(AT at = AT());}{Constructs an empty tree.}
+\ccConstructor{AABB_tree();}{Constructs an empty tree.}
 \ccConstructor{template < class InputIterator>
        AABB_tree( InputIterator begin, 
-                  InputIterator beyond, AT at = AT());}{Builds the AABB tree data structure. Type \ccc{InputIterator} can be any const iterator such that \ccc{Primitive} has a constructor taking a \ccc{InputIterator} as argument. The tree stays empty if the memory allocation is not successful.}
+                  InputIterator beyond);}{Builds the AABB tree data structure. Type \ccc{InputIterator} can be any const iterator such that \ccc{Primitive} has a constructor taking a \ccc{InputIterator} as argument. The tree stays empty if the memory allocation is not successful.}
 
 \ccOperations
 

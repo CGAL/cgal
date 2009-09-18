@@ -57,12 +57,12 @@ namespace CGAL {
 		typedef typename Primitives::size_type size_type; 
 
 	public:
-		/**
-		* @brief Default Constructor
-		*
-		* Builds an empty tree datastructure. 
-		*/
-		AABB_tree();
+    /**
+     * @brief Default Constructor
+     *
+     * Builds an empty tree datastructure. 
+     */
+    AABB_tree();
 
 		/**
 		* @brief Constructor
@@ -443,14 +443,13 @@ namespace CGAL {
 
 	};  // end class AABB_tree
 
-	template<typename Tr>
-	AABB_tree<Tr>::AABB_tree()
-		: m_primitives()
-		, m_p_root_node(NULL)
-		, m_p_search_tree(NULL)
-		, m_search_tree_constructed(false)
-	{
-  }
+  template<typename Tr>
+  AABB_tree<Tr>::AABB_tree()
+    : m_primitives()
+    , m_p_root_node(NULL)
+    , m_p_search_tree(NULL)
+    , m_search_tree_constructed(false)
+  { }
 
 	template<typename Tr>
 	template<typename ConstPrimitiveIterator>
