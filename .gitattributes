@@ -23,9 +23,7 @@ AABB_tree/demo/AABB_tree/types.h -text
 AABB_tree/doc_tex/AABB_tree/PkgDescription.tex -text
 AABB_tree/doc_tex/AABB_tree/details.tex -text
 AABB_tree/doc_tex/AABB_tree/examples.tex -text
-AABB_tree/doc_tex/AABB_tree/figs/anchor.eps -text
 AABB_tree/doc_tex/AABB_tree/figs/anchor.png -text
-AABB_tree/doc_tex/AABB_tree/figs/bench.eps -text
 AABB_tree/doc_tex/AABB_tree/figs/bench.png -text svneol=unset#image/png
 AABB_tree/doc_tex/AABB_tree/figs/bench.xls -text
 AABB_tree/doc_tex/AABB_tree/figs/teaser-thumb.png -text svneol=unset#image/png
@@ -994,7 +992,6 @@ CGAL_ipelets/demo/CGAL_ipelets/triangulation.cpp -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/PkgDescription.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/cgal_ipelets.tex -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/cgal_ipelets_def.tex -text
-CGAL_ipelets/doc_tex/CGAL_ipelets/fig/example.eps -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/fig/example.png -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/fig/ipeico.jpg -text
 CGAL_ipelets/doc_tex/CGAL_ipelets/fig/ipelarge.jpg -text
@@ -1400,16 +1397,12 @@ Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#applica
 Jet_fitting_3/doc_tex/AIDE -text
 Jet_fitting_3/doc_tex/Jet_fitting_3/DavidDetail.png -text
 Jet_fitting_3/doc_tex/Jet_fitting_3/Maple_formula.mw -text svneol=unset#application/octet-stream
-Jet_fitting_3/doc_tex/Jet_fitting_3/david-dirmaxkmin-jpg-white-back.eps -text svneol=unset#application/postscript
 Jet_fitting_3/doc_tex/Jet_fitting_3/david-dirmaxkmin-jpg-white-back.png -text svneol=unset#image/png
 Jet_fitting_3/doc_tex/Jet_fitting_3/david-dirmaxkmin-small.png -text svneol=unset#image/png
 Jet_fitting_3/doc_tex/Jet_fitting_3/david-dirmaxkmin-white-back.jpg -text svneol=unset#image/jpeg
-Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.eps -text svneol=unset#application/postscript
 Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.gif -text svneol=unset#image/gif
 Jet_fitting_3/doc_tex/Jet_fitting_3/jet_fitting_basis.pdf -text svneol=unset#application/pdf
-Jet_fitting_3/doc_tex/Jet_fitting_3/ppal_curv_poly2x2+y2.eps -text svneol=unset#application/postscript
 Jet_fitting_3/doc_tex/Jet_fitting_3/ppal_curv_poly2x2+y2.jpg -text svneol=unset#image/jpeg
-Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.eps -text svneol=unset#application/postscript
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.jpg -text svneol=unset#image/jpeg
 Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text svneol=unset#application/pdf
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
@@ -1458,52 +1451,40 @@ Kinetic_data_structures/demo/Kinetic_data_structures/data/before103 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/before106 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/before107 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/include/control_coin.h -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_0.png -text svneol=unset#image/png
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_1.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_1.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_1.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_1.png -text svneol=unset#image/png
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_2.png -text svneol=unset#image/png
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_3.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_3.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_3.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_3.png -text svneol=unset#image/png
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_4.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_4.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_4.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_4.png -text svneol=unset#image/png
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_5.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_5.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_5.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_5.png -text svneol=unset#image/png
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_6.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_6.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_6.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_6.png -text svneol=unset#image/png
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_7.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_7.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_7.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_7.png -text svneol=unset#image/png
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/delaunay_8.png -text svneol=unset#image/png
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/kds.jpg -text
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/kdsDetail.png -text
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/qt_widget_marked_pct.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/qt_widget_marked_pct.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/qt_widget_marked_pct.pdf -text svneol=unset#application/pdf
-Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_data_structures/sort_usage_pct.ps -text svneol=unset#application/postscript
-Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.eps -text svneol=unset#application/postscript
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_framework/sort_usage_pct.gif -text svneol=unset#image/gif
@@ -3452,37 +3433,29 @@ Stream_lines_2/doc_tex/Stream_lines_2/streamlines-teaser.jpg -text svneol=unset#
 Stream_lines_2/test/Stream_lines_2/data/datap.tri.cin -text
 Stream_lines_2/test/Stream_lines_2/data/datav.tri.cin -text
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/CCSubdivision.png -text svneol=unset#image/png
-Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.eps -text svneol=unset#application/postscript
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.fig -text svneol=unset#application/octet-stream
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.gif -text svneol=unset#image/gif
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.pdf -text svneol=unset#application/pdf
-Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/RefSchemes.eps -text svneol=unset#application/postscript
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/RefSchemes.fig -text svneol=unset#application/octet-stream
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/RefSchemes.gif -text svneol=unset#image/gif
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/RefSchemes.pdf -text svneol=unset#application/pdf
-Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/cc_mask.eps -text svneol=unset#application/postscript
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/cc_mask.fig -text svneol=unset#application/octet-stream
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/cc_mask.gif -text svneol=unset#image/gif
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/cc_mask.pdf -text svneol=unset#application/pdf
-Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/teaser.eps -text svneol=unset#application/postscript
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/teaser.fig -text svneol=unset#application/octet-stream
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/teaser.jpg -text svneol=unset#image/jpeg
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/teaser.pdf -text svneol=unset#application/pdf
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/twoheads-detail.png -text
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/twoheads.png -text
-Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/CCBorderMask.eps -text svneol=unset#application/postscript
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/CCBorderMask.fig -text svneol=unset#application/octet-stream
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/CCBorderMask.pdf -text svneol=unset#application/pdf
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/CCBorderMask.png -text svneol=unset#image/png
-Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/DSCornerMask.eps -text svneol=unset#application/postscript
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/DSCornerMask.fig -text svneol=unset#application/octet-stream
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/DSCornerMask.pdf -text svneol=unset#application/pdf
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/DSCornerMask.png -text svneol=unset#image/png
-Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/LoopBorderMask.eps -text svneol=unset#application/postscript
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/LoopBorderMask.fig -text svneol=unset#application/octet-stream
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/LoopBorderMask.pdf -text svneol=unset#application/pdf
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/LoopBorderMask.png -text svneol=unset#image/png
-Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/RefSchemes.eps -text svneol=unset#application/postscript
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/RefSchemes.fig -text svneol=unset#application/octet-stream
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/RefSchemes.gif -text svneol=unset#image/gif
 Subdivision_method_3/doc_tex/Subdivision_method_3_ref/FIG/RefSchemes.pdf -text svneol=unset#application/pdf
@@ -3499,29 +3472,18 @@ Subdivision_method_3/test/Subdivision_method_3/data/corner_with_sharp_edge.off -
 Subdivision_method_3/test/Subdivision_method_3/data/cross.off -text svneol=unset#application/octet-stream
 Subdivision_method_3/test/Subdivision_method_3/data/quint_tris.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/doc/specification/param.pdf -text svneol=unset#application/pdf
-Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/LSCM.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/LSCM.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/authalic.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/authalic.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/border.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/border.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/conformal.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/conformal.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/cut.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/cut.png -text svneol=unset#image/png
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/fig/bimba.jpg -text
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/fig/bimbaDetail.png -text
-Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/floater.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/floater.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/introduction.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/introduction.jpg -text
-Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterizer_class_diagram.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterizer_class_diagram.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterizer_class_diagram_simplified.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterizer_class_diagram_simplified.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterizers_class_hierarchy.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterizers_class_hierarchy.png -text svneol=unset#image/png
-Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/uniform.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/uniform.png -text svneol=unset#image/png
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/Authalic_parameterization.cmd eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/CMakeLists.txt -text
@@ -3554,7 +3516,6 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_param
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suite.bat eol=crlf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/quick_test_suite.sh eol=lf
 Surface_mesh_simplification/doc_tex/OLD[!!-~]Surface_mesh_simplification.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.eps -text svneol=unset#application/postscript
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.jpg -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#application/pdf
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/detail.png -text
@@ -3682,14 +3643,10 @@ Surface_mesher/demo/Surface_mesher/windows/res/idb5.bmp -text svneol=unset#image
 Surface_mesher/demo/Surface_mesher/windows/res/idb6.bmp -text svneol=unset#image/bmp
 Surface_mesher/demo/Surface_mesher/windows/res/idb7.bmp -text svneol=unset#image/bmp
 Surface_mesher/demo/Surface_mesher/windows/res/idb8.bmp -text svneol=unset#image/bmp
-Surface_mesher/doc_tex/Surface_mesher/segmented_head-small.eps -text svneol=unset#application/postscript
 Surface_mesher/doc_tex/Surface_mesher/segmented_head-small.png -text svneol=unset#image/png
-Surface_mesher/doc_tex/Surface_mesher/segmented_head.eps -text svneol=unset#application/postscript
 Surface_mesher/doc_tex/Surface_mesher/segmented_head.png -text svneol=unset#image/png
 Surface_mesher/doc_tex/Surface_mesher/skull-surface-small.png -text svneol=unset#image/png
-Surface_mesher/doc_tex/Surface_mesher/skull-surface.eps -text svneol=unset#application/postscript
 Surface_mesher/doc_tex/Surface_mesher/skull-surface.png -text svneol=unset#image/png
-Surface_mesher/doc_tex/Surface_mesher/sphere-surface.eps -text svneol=unset#application/postscript
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text svneol=unset#image/png
 Surface_mesher/examples/Surface_mesher/data/skull_2.9.inr -text
 Surface_mesher/examples/Surface_mesher/data/triceratops.off -text svneol=unset#application/octet-stream
@@ -3728,46 +3685,29 @@ Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/resources/m
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/resources/plus.png -text svneol=unset#image/png
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/resources/simplification.png -text svneol=unset#image/png
 Surface_reconstruction_points_3/doc/reconstruction.pdf -text svneol=unset#application/pdf
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/APSS.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/APSS.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/Surface_reconstruction_images.ppt -text svneol=unset#application/vnd.ms-powerpoint
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/Surface_reconstruction_statistics.xls -text
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/apss.tex -text
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/bimba.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/bimba.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/contouring.tex -text
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/contouring_bad.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/contouring_bad.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/contouring_bench.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/contouring_bench.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/eros.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/eros.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/fig/surface_reconstruction_points.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/fig/surface_reconstruction_points_detail.png -text svneol=unset#image/png
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/flipped_normals.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/flipped_normals.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/holes_bad.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/holes_bad.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/holes_good.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/holes_good.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/introduction.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/introduction.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/memory_bench.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/memory_bench.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/noise.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/noise.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/outliers.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/outliers.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/output.tex -text
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/pipeline.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/pipeline.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/poisson_bench.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/poisson_bench.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/sampling.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/sampling.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/sharp_features.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/sharp_features.jpg -text svneol=unset#image/jpeg
-Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/simplification_bench.eps -text svneol=unset#application/postscript
 Surface_reconstruction_points_3/doc_tex/Surface_reconstruction_points_3/simplification_bench.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/APSS_reconstruction.cmd eol=lf
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/APSS_reconstruction_example.cpp -text
