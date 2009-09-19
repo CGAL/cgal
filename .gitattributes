@@ -1448,8 +1448,8 @@ Maintenance/MacOSX_Installer/Resources/cgal_very_small.gif -text svneol=unset#im
 Maintenance/MacOSX_Installer/Resources/postflight -text
 Maintenance/MacOSX_Installer/Resources/postupgrade -text
 Maintenance/Third_party/GMP/create_mangled_versions.bat eol=crlf
-Maintenance/Third_party/GMP/gmp-4.2.4.patch -text svneol=unset#text/x-diff
-Maintenance/Third_party/GMP/mpfr-2.3.2.patch -text svneol=unset#text/x-diff
+Maintenance/Third_party/GMP/gmp-4.2.4.patch.gz -text svneol=unset#application/gzip
+Maintenance/Third_party/GMP/mpfr-2.3.2.patch.gz -text svneol=unset#application/gzip
 Maintenance/deb/etch/debian/README.Debian -text
 Maintenance/deb/etch/debian/changelog -text
 Maintenance/deb/etch/debian/compat -text
