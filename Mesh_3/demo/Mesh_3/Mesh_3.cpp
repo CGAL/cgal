@@ -6,7 +6,7 @@ int main(int argc, char **argv)
   QApplication app(argc, argv);
   app.setOrganizationDomain("geometryfactory.com");
   app.setOrganizationName("GeometryFactory");
-  app.setApplicationName("Polyhedron_3 demo");
+  app.setApplicationName("Mesh_3 demo");
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE

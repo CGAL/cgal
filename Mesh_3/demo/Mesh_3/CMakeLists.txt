@@ -24,12 +24,13 @@ foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_ker
 endforeach()
 
 include_directories(../../../Polyhedron/demo/Polyhedron)
+link_directories(../../../Polyhedron/demo/Polyhedron)
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
 
 # Find CGAL and CGAL Qt4
-find_package(CGAL COMPONENTS Qt4)
+find_package(CGAL COMPONENTS Qt4 ImageIO)
 include( ${CGAL_USE_FILE} )
 
 # Find Qt4 itself
@@ -70,6 +71,13 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   qt4_add_resources ( RESOURCE_FILES Mesh_3.qrc )
 
+  qt4_automoc( Scene_segmented_image_item.cpp )
+
+  # AUXILIARY LIBRARIES
+  add_library(scene_segmented_image_item SHARED
+    Scene_segmented_image_item.cpp Scene_segmented_image_item.moc)
+  target_link_libraries(scene_segmented_image_item scene_item)
+
   add_definitions(-DUSE_FORWARD_DECL)
   add_definitions(-DQT_STATICPLUGIN)
     add_executable  ( Mesh_3 MainWindow.cpp
@@ -95,6 +103,43 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #  target_link_libraries( Mesh_3 scene_item )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Mesh_3 )
+
+
+  ###########
+  # PLUGINS #
+  ###########
+  remove_definitions(-DQT_STATICPLUGIN)
+
+  # polyhedron_demo_plugin is a macro copied from demo/Polyhedron/CMakeLists.txt
+  macro(polyhedron_demo_plugin plugin_name plugin_implementation_base_name)
+    list_split(option ARGN_TAIL ${ARGN} )
+    if(NOT ${option} STREQUAL "EXCLUDE_FROM_ALL")
+      set(other_sources ${ARGN})
+      set(option "")
+    else()
+      set(other_sources ${ARGN_TAIL})
+    endif()
+    qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" ${plugin_implementation_base_name}.moc )
+    add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
+
+    add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
+    # Link with Qt
+    target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
+    # Link with scene_item
+    target_link_libraries( ${plugin_name} scene_item)
+    # Link with CGAL
+    target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  endmacro(polyhedron_demo_plugin)
+
+  polyhedron_demo_plugin(image_loader_plugin Mesh_3_image_loader_plugin)
+  target_link_libraries(image_loader_plugin scene_segmented_image_item)
+
+  qt4_generate_moc("${CMAKE_CURRENT_SOURCE_DIR}/Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" Scene_c3t3_item.moc )
+
+  polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
+    Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Scene_c3t3_item.moc)
+  target_link_libraries(mesh_3_plugin scene_polyhedron_item scene_segmented_image_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 

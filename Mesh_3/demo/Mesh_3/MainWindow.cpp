@@ -134,6 +134,8 @@ MainWindow::MainWindow(QWidget* parent)
   loadPlugins();
 
   readSettings(); // Among other things, the column widths are stored.
+
+  this->dumpObjectTree();
 }
 
 void MainWindow::loadPlugins()
