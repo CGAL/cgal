@@ -61,10 +61,10 @@ public:
   // Traits types:
   typedef typename Base::Has_left_category      Has_left_category;
 
-  typedef typename Base::Arr_left_side_tag      Arr_left_side_tag;
-  typedef typename Base::Arr_bottom_side_tag    Arr_bottom_side_tag;
-  typedef typename Base::Arr_top_side_tag       Arr_top_side_tag;
-  typedef typename Base::Arr_right_side_tag     Arr_right_side_tag;
+  typedef typename Base::Arr_left_side_category      Arr_left_side_category;
+  typedef typename Base::Arr_bottom_side_category    Arr_bottom_side_category;
+  typedef typename Base::Arr_top_side_category       Arr_top_side_category;
+  typedef typename Base::Arr_right_side_category     Arr_right_side_category;
 
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;

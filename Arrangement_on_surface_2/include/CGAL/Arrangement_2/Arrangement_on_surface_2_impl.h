@@ -53,32 +53,32 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::Arrangement_on_surface_2 () :
   m_topol_traits()
 {
   
-  typedef has_Arr_left_side_tag<GeomTraits> Cond_left;
+  typedef has_Arr_left_side_category<GeomTraits> Cond_left;
   typedef internal::Validate_left_side_tag< GeomTraits, Cond_left::value > 
     Validate_left_side_tag;
   void (Validate_left_side_tag::*pleft)(void) =
-    &Validate_left_side_tag::missing__Arr_left_side_tag;
+    &Validate_left_side_tag::missing__Arr_left_side_category;
   (void)pleft;
   
- typedef has_Arr_bottom_side_tag<GeomTraits> Cond_bottom;
+ typedef has_Arr_bottom_side_category<GeomTraits> Cond_bottom;
   typedef internal::Validate_bottom_side_tag< GeomTraits, Cond_bottom::value > 
     Validate_bottom_side_tag;
   void (Validate_bottom_side_tag::*pbottom)(void) =
-    &Validate_bottom_side_tag::missing__Arr_bottom_side_tag;
+    &Validate_bottom_side_tag::missing__Arr_bottom_side_category;
   (void)pbottom;
 
- typedef has_Arr_top_side_tag<GeomTraits> Cond_top;
+ typedef has_Arr_top_side_category<GeomTraits> Cond_top;
   typedef internal::Validate_top_side_tag< GeomTraits, Cond_top::value > 
     Validate_top_side_tag;
   void (Validate_top_side_tag::*ptop)(void) =
-    &Validate_top_side_tag::missing__Arr_top_side_tag;
+    &Validate_top_side_tag::missing__Arr_top_side_category;
   (void)ptop;
 
- typedef has_Arr_right_side_tag<GeomTraits> Cond_right;
+ typedef has_Arr_right_side_category<GeomTraits> Cond_right;
   typedef internal::Validate_right_side_tag< GeomTraits, Cond_right::value > 
     Validate_right_side_tag;
   void (Validate_right_side_tag::*pright)(void) =
-    &Validate_right_side_tag::missing__Arr_right_side_tag;
+    &Validate_right_side_tag::missing__Arr_right_side_category;
   (void)pright;
 
   // Initialize the DCEL structure to represent an empty arrangement.
@@ -112,32 +112,32 @@ Arrangement_on_surface_2(const Geometry_traits_2 * geom_traits) :
   m_topol_traits (geom_traits)
 {
   
- typedef has_Arr_left_side_tag<GeomTraits> Cond_left;
+ typedef has_Arr_left_side_category<GeomTraits> Cond_left;
   typedef internal::Validate_left_side_tag< GeomTraits, Cond_left::value > 
     Validate_left_side_tag;
   void (Validate_left_side_tag::*pleft)(void) =
-    &Validate_left_side_tag::missing__Arr_left_side_tag;
+    &Validate_left_side_tag::missing__Arr_left_side_category;
   (void)pleft;
   
- typedef has_Arr_bottom_side_tag<GeomTraits> Cond_bottom;
+ typedef has_Arr_bottom_side_category<GeomTraits> Cond_bottom;
   typedef internal::Validate_bottom_side_tag< GeomTraits, Cond_bottom::value > 
     Validate_bottom_side_tag;
   void (Validate_bottom_side_tag::*pbottom)(void) =
-    &Validate_bottom_side_tag::missing__Arr_bottom_side_tag;
+    &Validate_bottom_side_tag::missing__Arr_bottom_side_category;
   (void)pbottom;
 
- typedef has_Arr_top_side_tag<GeomTraits> Cond_top;
+ typedef has_Arr_top_side_category<GeomTraits> Cond_top;
   typedef internal::Validate_top_side_tag< GeomTraits, Cond_top::value > 
     Validate_top_side_tag;
   void (Validate_top_side_tag::*ptop)(void) =
-    &Validate_top_side_tag::missing__Arr_top_side_tag;
+    &Validate_top_side_tag::missing__Arr_top_side_category;
   (void)ptop;
 
- typedef has_Arr_right_side_tag<GeomTraits> Cond_right;
+ typedef has_Arr_right_side_category<GeomTraits> Cond_right;
   typedef internal::Validate_right_side_tag< GeomTraits, Cond_right::value > 
     Validate_right_side_tag;
   void (Validate_right_side_tag::*pright)(void) =
-    &Validate_right_side_tag::missing__Arr_right_side_tag;
+    &Validate_right_side_tag::missing__Arr_right_side_category;
   (void)pright;
 
   // Initialize the DCEL structure to represent an empty arrangement.

@@ -80,10 +80,10 @@ public:
 
   // Base_traits_2 is Arr_curve_data_traits that already completes
   // incomplete tags
-  typedef typename Base_traits_2::Arr_left_side_tag   Arr_left_side_tag;
-  typedef typename Base_traits_2::Arr_bottom_side_tag Arr_bottom_side_tag;
-  typedef typename Base_traits_2::Arr_top_side_tag    Arr_top_side_tag;
-  typedef typename Base_traits_2::Arr_right_side_tag  Arr_right_side_tag;
+  typedef typename Base_traits_2::Arr_left_side_category   Arr_left_side_category;
+  typedef typename Base_traits_2::Arr_bottom_side_category Arr_bottom_side_category;
+  typedef typename Base_traits_2::Arr_top_side_category    Arr_top_side_category;
+  typedef typename Base_traits_2::Arr_right_side_category  Arr_right_side_category;
 };
 
 CGAL_END_NAMESPACE

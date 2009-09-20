@@ -57,20 +57,20 @@ public:
   typedef typename Base::Has_left_category      Has_left_category;
 
   typedef typename internal::Arr_complete_left_side_tag< Base >::Tag 
-                                                Arr_left_side_tag;
+                                                Arr_left_side_category;
   typedef typename internal::Arr_complete_bottom_side_tag< Base >::Tag 
-                                                Arr_bottom_side_tag;
+                                                Arr_bottom_side_category;
   typedef typename internal::Arr_complete_top_side_tag< Base >::Tag 
-                                                Arr_top_side_tag;
+                                                Arr_top_side_category;
   typedef typename internal::Arr_complete_right_side_tag< Base >::Tag 
-                                                Arr_right_side_tag;
+                                                Arr_right_side_category;
 
 protected:
 
   // left-right dispatch
   
   typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
-    Arr_left_side_tag, Arr_right_side_tag > LR;
+    Arr_left_side_category, Arr_right_side_category > LR;
   
   typedef typename LR::Parameter_space_in_x_2_curve_end_tag 
   Psx_2_curve_end_tag;
@@ -86,7 +86,7 @@ protected:
   
   // bottom-top dispatch
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
-    Arr_bottom_side_tag, Arr_top_side_tag > BT;
+    Arr_bottom_side_category, Arr_top_side_category > BT;
   
   typedef typename BT::Parameter_space_in_y_2_curve_end_tag 
   Psy_2_curve_end_tag;
@@ -1023,16 +1023,16 @@ public:
       switch (ps) {
         
       case ARR_LEFT_BOUNDARY:
-        return _is_closed(Arr_left_side_tag());
+        return _is_closed(Arr_left_side_category());
         
       case ARR_BOTTOM_BOUNDARY:
-        return _is_closed(Arr_bottom_side_tag());
+        return _is_closed(Arr_bottom_side_category());
         
       case ARR_TOP_BOUNDARY:
-        return _is_closed(Arr_top_side_tag());
+        return _is_closed(Arr_top_side_category());
         
       case ARR_RIGHT_BOUNDARY:
-        return _is_closed(Arr_right_side_tag());
+        return _is_closed(Arr_right_side_category());
         
       case ARR_INTERIOR:
         // fall-through
@@ -1851,13 +1851,13 @@ public:
   typedef typename Base::Has_merge_category              Has_merge_category;
 
   typedef typename internal::Arr_complete_left_side_tag< Base >::Tag
-                                                         Arr_left_side_tag;
+                                                         Arr_left_side_category;
   typedef typename internal::Arr_complete_bottom_side_tag< Base >::Tag 
-                                                         Arr_bottom_side_tag;
+                                                         Arr_bottom_side_category;
   typedef typename internal::Arr_complete_top_side_tag< Base >::Tag 
-                                                         Arr_top_side_tag;
+                                                         Arr_top_side_category;
   typedef typename internal::Arr_complete_right_side_tag< Base >::Tag 
-                                                         Arr_right_side_tag;
+                                                         Arr_right_side_category;
 
   /// \name Construction.
   //@{

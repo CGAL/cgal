@@ -57,10 +57,10 @@ public:
   typedef Tag_true                                      Has_left_category;
   typedef Tag_true                                      Has_merge_category;
 
-  typedef Arr_open_side_tag                             Arr_left_side_tag;
-  typedef Arr_open_side_tag                             Arr_bottom_side_tag;
-  typedef Arr_open_side_tag                             Arr_top_side_tag;
-  typedef Arr_open_side_tag                             Arr_right_side_tag;
+  typedef Arr_open_side_tag                             Arr_left_side_category;
+  typedef Arr_open_side_tag                             Arr_bottom_side_category;
+  typedef Arr_open_side_tag                             Arr_top_side_category;
+  typedef Arr_open_side_tag                             Arr_right_side_category;
 
   // Traits objects:
   typedef _Rational_arc_2<Alg_kernel, Nt_traits>        Curve_2;

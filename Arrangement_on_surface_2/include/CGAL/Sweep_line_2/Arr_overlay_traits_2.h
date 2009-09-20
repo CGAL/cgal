@@ -78,13 +78,13 @@ public:
   typedef typename Traits_2::Equal_2                Base_equal_2;
 
   typedef typename internal::Arr_complete_left_side_tag< Traits_2 >::Tag
-                                                    Arr_left_side_tag;
+                                                    Arr_left_side_category;
   typedef typename internal::Arr_complete_bottom_side_tag< Traits_2 >::Tag
-                                                    Arr_bottom_side_tag;
+                                                    Arr_bottom_side_category;
   typedef typename internal::Arr_complete_top_side_tag< Traits_2 >::Tag
-                                                    Arr_top_side_tag;
+                                                    Arr_top_side_category;
   typedef typename internal::Arr_complete_right_side_tag< Traits_2 >::Tag
-                                                    Arr_right_side_tag;
+                                                    Arr_right_side_category;
 
   /* Overlay is implemented as sweep-line visitor. The sweep-line algorithm
    * never uses Compare_y_at_x_left_2, and it never performs merging of curves.

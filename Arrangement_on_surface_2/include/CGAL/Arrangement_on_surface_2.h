@@ -73,15 +73,15 @@ public:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
   
   // .. as it completes (potentially) missing side tags
-  typedef typename Traits_adaptor_2::Arr_left_side_tag    Arr_left_side_tag;
-  typedef typename Traits_adaptor_2::Arr_bottom_side_tag  Arr_bottom_side_tag;
-  typedef typename Traits_adaptor_2::Arr_top_side_tag     Arr_top_side_tag;
-  typedef typename Traits_adaptor_2::Arr_right_side_tag   Arr_right_side_tag;
+  typedef typename Traits_adaptor_2::Arr_left_side_category    Arr_left_side_category;
+  typedef typename Traits_adaptor_2::Arr_bottom_side_category  Arr_bottom_side_category;
+  typedef typename Traits_adaptor_2::Arr_top_side_category     Arr_top_side_category;
+  typedef typename Traits_adaptor_2::Arr_right_side_category   Arr_right_side_category;
   
   BOOST_MPL_ASSERT(
       (typename 
-       Arr_sane_identified_tagging< Arr_left_side_tag, Arr_bottom_side_tag, 
-       Arr_top_side_tag, Arr_right_side_tag >::result)
+       Arr_sane_identified_tagging< Arr_left_side_category, Arr_bottom_side_category, 
+       Arr_top_side_category, Arr_right_side_category >::result)
   );
 
 public:
@@ -95,8 +95,8 @@ public:
   // maybe remove this in a future version (that supports complete handling
   // of all sides)
   typedef typename Arr_are_all_sides_oblivious_tag< 
-    Arr_left_side_tag, Arr_bottom_side_tag, 
-    Arr_top_side_tag, Arr_right_side_tag >::result
+    Arr_left_side_category, Arr_bottom_side_category, 
+    Arr_top_side_category, Arr_right_side_category >::result
   Are_all_sides_oblivious_tag;
   
 public:
@@ -1651,10 +1651,10 @@ protected:
   /*! Initialize the boundary_types array */
   inline void init_boundary_types()
   {
-    init_boundary_side(ARR_LEFT_BOUNDARY, Arr_left_side_tag());
-    init_boundary_side(ARR_BOTTOM_BOUNDARY, Arr_bottom_side_tag());
-    init_boundary_side(ARR_TOP_BOUNDARY, Arr_top_side_tag());
-    init_boundary_side(ARR_RIGHT_BOUNDARY, Arr_right_side_tag());
+    init_boundary_side(ARR_LEFT_BOUNDARY, Arr_left_side_category());
+    init_boundary_side(ARR_BOTTOM_BOUNDARY, Arr_bottom_side_category());
+    init_boundary_side(ARR_TOP_BOUNDARY, Arr_top_side_category());
+    init_boundary_side(ARR_RIGHT_BOUNDARY, Arr_right_side_category());
   }
 
   /*! Initialize the boundary_types array */

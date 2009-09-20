@@ -51,10 +51,10 @@ public:
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
 
   // should be ok, as Traits_2 is supposed to be the adaptor
-  typedef typename Traits_2::Arr_left_side_tag          Arr_left_side_tag;
-  typedef typename Traits_2::Arr_bottom_side_tag        Arr_bottom_side_tag;
-  typedef typename Traits_2::Arr_top_side_tag           Arr_top_side_tag;
-  typedef typename Traits_2::Arr_right_side_tag         Arr_right_side_tag;
+  typedef typename Traits_2::Arr_left_side_category          Arr_left_side_category;
+  typedef typename Traits_2::Arr_bottom_side_category        Arr_bottom_side_category;
+  typedef typename Traits_2::Arr_top_side_category           Arr_top_side_category;
+  typedef typename Traits_2::Arr_right_side_category         Arr_right_side_category;
 
 private:
 

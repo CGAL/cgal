@@ -68,10 +68,10 @@ public:
   // Categories:
   typedef Tag_true                              Has_left_category;
  
-  typedef Arr_oblivious_side_tag                Arr_left_side_tag;
-  typedef Arr_oblivious_side_tag                Arr_bottom_side_tag;
-  typedef Arr_oblivious_side_tag                Arr_top_side_tag;
-  typedef Arr_oblivious_side_tag                Arr_right_side_tag;
+  typedef Arr_oblivious_side_tag                Arr_left_side_category;
+  typedef Arr_oblivious_side_tag                Arr_bottom_side_category;
+  typedef Arr_oblivious_side_tag                Arr_top_side_category;
+  typedef Arr_oblivious_side_tag                Arr_right_side_category;
     
   /*! Default Constructor */
   Arr_non_caching_segment_basic_traits_2()
