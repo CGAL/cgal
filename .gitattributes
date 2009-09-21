@@ -1937,7 +1937,7 @@ Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_4.jpg -text svneol=unset#image/jp
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_5.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/liver.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher.jpg -text svneol=unset#image/jpeg
-Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher_small.jpg -text
+Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher_small.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain_2.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3_ref/BisectionGeometricTraits_3.tex -text

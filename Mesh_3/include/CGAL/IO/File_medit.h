@@ -362,7 +362,7 @@ get(const No_rebind_facet_pmap<C3T3,Cell_pmap>& fmap,
 {
 return fmap.surface_index(f);
 }
-
+    
 // -----------------------------------
 // No_rebind_facet_pmap_first
 // -----------------------------------
