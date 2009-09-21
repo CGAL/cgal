@@ -270,6 +270,7 @@ Mesh_3/demo/Mesh_3/*.sln
 Mesh_3/demo/Mesh_3/*.vcproj
 Mesh_3/demo/Mesh_3/Makefile
 Mesh_3/demo/Mesh_3/Mesh_3
+Mesh_3/demo/Mesh_3/out.mesh
 Mesh_3/doc_tex/Mesh_3_ref/auto
 Mesh_3/doxygen
 Mesh_3/examples/Mesh_3/*.cgal
