@@ -2155,10 +2155,10 @@ protected:
     typedef typename Minimization_diagram_2::Ccb_halfedge_circulator
      Ccb_halfedge_circulator;
 
-    typedef typename Traits::Arr_left_side_tag             Arr_left_side_tag;
-    typedef typename Traits::Arr_right_side_tag            Arr_right_side_tag;
-    typedef typename Traits::Arr_top_side_tag              Arr_top_side_tag;
-    typedef typename Traits::Arr_bottom_side_tag           Arr_bottom_side_tag;
+    typedef typename Traits::Arr_left_side_category             Arr_left_side_category;
+    typedef typename Traits::Arr_right_side_category            Arr_right_side_category;
+    typedef typename Traits::Arr_top_side_category              Arr_top_side_category;
+    typedef typename Traits::Arr_bottom_side_category           Arr_bottom_side_category;
     
     Copy_observer(Minimization_diagram_2& small_,
                   Minimization_diagram_2& big,
@@ -2211,17 +2211,17 @@ protected:
       // This is the case of create boundary vertex.
       CGAL_assertion((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
       
-      if (ps_x == ARR_LEFT_BOUNDARY && !is_bounded_impl(Arr_left_side_tag()))
+      if (ps_x == ARR_LEFT_BOUNDARY && !is_bounded_impl(Arr_left_side_category()))
         return false;
       
-      if (ps_x == ARR_RIGHT_BOUNDARY && !is_bounded_impl(Arr_right_side_tag()))
+      if (ps_x == ARR_RIGHT_BOUNDARY && !is_bounded_impl(Arr_right_side_category()))
         return false;
 
-      if (ps_y == ARR_TOP_BOUNDARY && !is_bounded_impl(Arr_top_side_tag()))
+      if (ps_y == ARR_TOP_BOUNDARY && !is_bounded_impl(Arr_top_side_category()))
         return false;
       
       if (ps_y == ARR_BOTTOM_BOUNDARY && 
-          !is_bounded_impl(Arr_bottom_side_tag()))
+          !is_bounded_impl(Arr_bottom_side_category()))
         return false;
       
       return true;
