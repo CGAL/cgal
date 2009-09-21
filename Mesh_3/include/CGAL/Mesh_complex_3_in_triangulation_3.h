@@ -231,10 +231,12 @@ public:
   Index index(const Vertex_handle& v) const { return v->index(); }
   
   /// Outputs the mesh to medit
-  void output_to_medit(std::ofstream& os) const
+  void output_to_medit(std::ofstream& os,
+                       bool rebind = true,
+                       bool show_patches = false) const
   {
     // Call global function
-    CGAL::output_to_medit(os,*this);
+    CGAL::output_to_medit(os,*this,rebind,show_patches);
   }
 
   //-------------------------------------------------------

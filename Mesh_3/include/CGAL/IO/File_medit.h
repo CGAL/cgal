@@ -1,4 +1,5 @@
 // Copyright (c) 2004-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Laurent RINEAU
+// Author(s)     : Laurent RINEAU, Stephane Tayeb
 
 #ifndef CGAL_IO_FILE_MEDIT_H
 #define CGAL_IO_FILE_MEDIT_H
@@ -28,13 +29,12 @@
 
 namespace CGAL {
 
-namespace {
+namespace Mesh_3 {
 
 
 //-------------------------------------------------------
-// Default property map implementation
+// Needed in verbose mode
 //-------------------------------------------------------
-
 #ifdef CGAL_MESH_3_IO_VERBOSE
 template<class T>
 inline
@@ -44,95 +44,12 @@ operator<<(std::ostream &os, const std::pair<T,T>& pair)
   return os << "<" << pair.first << "," << pair.second << ">";
 }
 #endif
-
-
-/**
- *
- */
+  
+// -----------------------------------
+// Rebin_cell_pmap
+// -----------------------------------
 template <typename C3T3>
-class Default_facet_index_pmap
-{
-  typedef typename C3T3::Surface_index Surface_index;
-  typedef std::map<Surface_index,int> Surface_map;
-  typedef typename C3T3::Facet Facet;
-  typedef unsigned int size_type;
-
-public:
-  Default_facet_index_pmap(const C3T3& c3t3, const int first_index = 0)
-    : r_c3t3_(c3t3)
-  {
-    typedef typename C3T3::Facet_iterator Facet_iterator;
-
-    int index_counter = first_index + 1;
-
-    for( Facet_iterator facet_it = r_c3t3_.facets_begin();
-         facet_it != r_c3t3_.facets_end();
-         ++facet_it)
-    {
-      // Add surface index in internal map if needed
-      if ( surface_map_.end() ==
-               surface_map_.find(c3t3.surface_index((*facet_it).first,
-                                                    (*facet_it).second)) )
-      {
-        surface_map_.insert(std::make_pair(r_c3t3_.surface_index(*facet_it),
-                                           index_counter));
-        ++index_counter;
-      }
-    }
-    
-    // Rebind indices in alphanumeric order
-    index_counter = first_index + 1;
-    for ( typename Surface_map::iterator mit = surface_map_.begin() ;
-          mit != surface_map_.end() ;
-          ++mit )
-    {
-      mit->second = index_counter++;
-    }
-
-#ifdef CGAL_MESH_3_IO_VERBOSE
-    std::cerr << "Nb of surface patches: " << surface_map_.size() << "\n";
-    std::cerr << "Surface mapping:\n\t" ;
-
-    typedef typename Surface_map::iterator Surface_map_iterator;
-    for ( Surface_map_iterator surf_it = surface_map_.begin() ;
-          surf_it != surface_map_.end() ;
-          ++surf_it )
-    {
-      std::cerr << "[" << (*surf_it).first
-                << ":" << (*surf_it).second << "] ";
-    }
-    std::cerr << "\n";
-#endif
-  }
-
-  int surface_index(const Facet& f) const
-  {
-    return surface_index(r_c3t3_.surface_index(f));
-  }
-
-  int surface_index(const Surface_index& index) const
-  {
-    typedef typename Surface_map::const_iterator Smi;
-    Smi elt_it = surface_map_.find(index);
-    if ( elt_it != surface_map_.end() )
-      return elt_it->second;
-    else
-      return -1;
-  }
-
-  size_type surface_number() const
-  {
-    return surface_map_.size();
-  }
-
-private:
-  const C3T3& r_c3t3_;
-  Surface_map surface_map_;
-};
-
-
-template <typename C3T3>
-class Default_cell_index_pmap
+class Rebind_cell_pmap
 {
   typedef typename C3T3::Subdomain_index Subdomain_index;
   typedef std::map<Subdomain_index,int> Subdomain_map;
@@ -140,11 +57,12 @@ class Default_cell_index_pmap
   typedef unsigned int size_type;
 
 public:
-  Default_cell_index_pmap(const C3T3& c3t3, const int first_index = 0)
+  Rebind_cell_pmap(const C3T3& c3t3)
     : r_c3t3_(c3t3)
   {
     typedef typename C3T3::Cell_iterator Cell_iterator;
 
+    int first_index = 0;
     int index_counter = first_index + 1;
 
     for( Cell_iterator cell_it = r_c3t3_.cells_begin();
@@ -190,6 +108,12 @@ public:
     return subdomain_index(r_c3t3_.subdomain_index(ch));
   }
 
+  size_type subdomain_number() const
+  {
+    return subdomain_map_.size();
+  }
+
+private:
   int subdomain_index(const Subdomain_index& index) const
   {
     typedef typename Subdomain_map::const_iterator Smi;
@@ -199,20 +123,407 @@ public:
     else
       return -1;
   }
-
-  size_type subdomain_number() const
-  {
-    return subdomain_map_.size();
-  }
-
+  
 private:
   const C3T3& r_c3t3_;
   Subdomain_map subdomain_map_;
 };
-
+  
+// Accessor  
+template <typename C3T3>
+int
+get(const Rebind_cell_pmap<C3T3>& cmap,
+    const typename C3T3::Cell_handle& ch)
+{
+  return cmap.subdomain_index(ch);
+}
 
 template <typename C3T3>
-class Default_vertex_index_pmap
+unsigned int get_size(const Rebind_cell_pmap<C3T3>& cmap)
+{
+  return cmap.subdomain_number();
+}
+  
+
+// -----------------------------------
+// No_rebind_cell_pmap
+// -----------------------------------
+template <typename C3T3>
+class No_rebind_cell_pmap
+{
+  typedef typename C3T3::Subdomain_index Subdomain_index;
+  typedef typename C3T3::Cell_handle Cell_handle;
+  typedef unsigned int size_type;
+  
+public:
+  No_rebind_cell_pmap(const C3T3& c3t3)
+    : r_c3t3_(c3t3) {}
+  
+  int subdomain_index(const Cell_handle& ch) const
+  {
+    return static_cast<int>(r_c3t3_.subdomain_index(ch));
+  }
+  
+  size_type subdomain_number() const
+  {
+    typedef typename C3T3::Cell_iterator Cell_iterator;
+    std::set<Subdomain_index> subdomain_set;
+    
+    for( Cell_iterator cell_it = r_c3t3_.cells_begin();
+        cell_it != r_c3t3_.cells_end();
+        ++cell_it)
+    {
+      // Add subdomain index in set if new
+      if ( subdomain_set.end() == subdomain_set.find(subdomain_index(cell_it)) )
+      {
+        subdomain_set.insert(subdomain_index(cell_it));
+      }
+    }
+    
+    return subdomain_set.size();
+  }
+  
+private:
+  const C3T3& r_c3t3_;
+};
+  
+// Accessor  
+template <typename C3T3>
+int
+get(const No_rebind_cell_pmap<C3T3>& cmap,
+    const typename C3T3::Cell_handle& ch)
+{
+  return cmap.subdomain_index(ch);
+}
+  
+  
+// -----------------------------------
+// Rebind_facet_pmap
+// -----------------------------------
+template <typename C3T3, typename Cell_pmap>
+class Rebind_facet_pmap
+{
+  typedef typename C3T3::Surface_index Surface_index;
+  typedef std::map<Surface_index,int> Surface_map;
+  typedef typename C3T3::Facet Facet;
+  typedef unsigned int size_type;
+  
+public:
+  Rebind_facet_pmap(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+    : r_c3t3_(c3t3)
+    , cell_pmap_(cell_pmap)
+  {
+    typedef typename C3T3::Facet_iterator Facet_iterator;
+    
+    int first_index = 1;
+    int index_counter = first_index;
+    
+    for( Facet_iterator facet_it = r_c3t3_.facets_begin();
+        facet_it != r_c3t3_.facets_end();
+        ++facet_it)
+    {
+      // Add surface index in internal map if needed
+      if ( surface_map_.end() ==
+          surface_map_.find(c3t3.surface_index((*facet_it).first,
+                                               (*facet_it).second)) )
+      {
+        surface_map_.insert(std::make_pair(r_c3t3_.surface_index(*facet_it),
+                                           index_counter));
+        ++index_counter;
+      }
+    }
+    
+    // Find cell_pmap_ unused indices
+    typedef typename C3T3::Cell_iterator Cell_iterator;
+    std::set<int> cell_label_set;
+    
+    for( Cell_iterator cell_it = r_c3t3_.cells_begin();
+        cell_it != r_c3t3_.cells_end();
+        ++cell_it)
+    {
+      // Add subdomain index in set if new
+      if ( cell_label_set.end()
+          == cell_label_set.find(get(cell_pmap_,cell_it)) )
+      {
+        cell_label_set.insert(get(cell_pmap_,cell_it));
+      }
+    }
+    
+    // Rebind indices
+    index_counter = get_first_unused_label(cell_label_set,first_index);
+    for ( typename Surface_map::iterator mit = surface_map_.begin() ;
+         mit != surface_map_.end() ;
+         ++mit )
+    {
+      mit->second = index_counter++;
+      index_counter = get_first_unused_label(cell_label_set,index_counter);
+    }
+    
+#ifdef CGAL_MESH_3_IO_VERBOSE
+    std::cerr << "Nb of surface patches: " << surface_map_.size() << "\n";
+    std::cerr << "Surface mapping:\n\t" ;
+    
+    typedef typename Surface_map::iterator Surface_map_iterator;
+    for ( Surface_map_iterator surf_it = surface_map_.begin() ;
+         surf_it != surface_map_.end() ;
+         ++surf_it )
+    {
+      std::cerr << "[" << (*surf_it).first
+      << ":" << (*surf_it).second << "] ";
+    }
+    std::cerr << "\n";
+#endif
+  }
+  
+  int surface_index(const Facet& f) const
+  {
+    return surface_index(r_c3t3_.surface_index(f));
+  }
+  
+  size_type surface_number() const
+  {
+    return surface_map_.size();
+  }
+  
+private:
+  int surface_index(const Surface_index& index) const
+  {
+    typedef typename Surface_map::const_iterator Smi;
+    Smi elt_it = surface_map_.find(index);
+    if ( elt_it != surface_map_.end() )
+      return elt_it->second;
+    else
+      return -1;
+  }
+  
+  int get_first_unused_label(const std::set<int>& label_set,
+                             int search_start) const
+  {
+    while ( label_set.end() != label_set.find(search_start) )
+      ++search_start;
+    
+    return search_start;
+  }
+  
+private:
+  const C3T3& r_c3t3_;
+  const Cell_pmap& cell_pmap_;
+  Surface_map surface_map_;
+};
+
+  
+// Accessors
+template <typename C3T3, typename Cell_pmap>
+int
+get(const Rebind_facet_pmap<C3T3,Cell_pmap>& fmap,
+    const typename C3T3::Facet& f)
+{
+  return fmap.surface_index(f);
+}
+  
+template <typename C3T3, typename Cell_pmap>
+unsigned int
+get_size(const Rebind_facet_pmap<C3T3,Cell_pmap>& fmap,
+         const typename C3T3::Facet& f)
+{
+  return fmap.surface_number(f);
+}
+
+  
+// -----------------------------------
+// No_rebind_facet_pmap
+// -----------------------------------
+template <typename C3T3, typename Cell_pmap>
+class No_rebind_facet_pmap
+{
+  typedef typename C3T3::Surface_index Surface_index;
+  typedef typename C3T3::Facet Facet;
+  typedef unsigned int size_type;
+  
+public:
+  No_rebind_facet_pmap(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+    : r_c3t3_(c3t3) {}
+
+  int surface_index(const Facet& f) const
+  {
+    return static_cast<int>(r_c3t3_.surface_index(f));
+  }
+  
+private:
+  const C3T3& r_c3t3_;
+};
+
+
+// Accessors
+template <typename C3T3, typename Cell_pmap>
+int
+get(const No_rebind_facet_pmap<C3T3,Cell_pmap>& fmap,
+    const typename C3T3::Facet& f)
+{
+return fmap.surface_index(f);
+}
+
+// -----------------------------------
+// No_rebind_facet_pmap_first
+// -----------------------------------
+template <typename C3T3, typename Cell_pmap>
+class No_rebind_facet_pmap_first
+{
+  typedef typename C3T3::Surface_index Surface_index;
+  typedef typename C3T3::Facet Facet;
+  typedef unsigned int size_type;
+  
+public:
+  No_rebind_facet_pmap_first(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+    : r_c3t3_(c3t3) {}
+  
+  int surface_index(const Facet& f) const
+  {
+    return static_cast<int>(r_c3t3_.surface_index(f).first);
+  }
+  
+private:
+  const C3T3& r_c3t3_;
+};
+
+
+// Accessors
+template <typename C3T3, typename Cell_pmap>
+int
+get(const No_rebind_facet_pmap_first<C3T3,Cell_pmap>& fmap,
+  const typename C3T3::Facet& f)
+{
+  return fmap.surface_index(f);
+}
+  
+  
+// -----------------------------------
+// No_rebind_facet_pmap_second
+// -----------------------------------
+template <typename C3T3, typename Cell_pmap>
+class No_rebind_facet_pmap_second
+{
+  typedef typename C3T3::Surface_index Surface_index;
+  typedef typename C3T3::Facet Facet;
+  typedef unsigned int size_type;
+  
+public:
+  No_rebind_facet_pmap_second(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+  : r_c3t3_(c3t3) {}
+  
+  int surface_index(const Facet& f) const
+  {
+    return static_cast<int>(r_c3t3_.surface_index(f).second);
+  }
+  
+private:
+  const C3T3& r_c3t3_;
+};
+
+
+// Accessors
+template <typename C3T3, typename Cell_pmap>
+int
+get(const No_rebind_facet_pmap_second<C3T3,Cell_pmap>& fmap,
+    const typename C3T3::Facet& f)
+{
+  return fmap.surface_index(f);
+}
+  
+  
+  
+// -----------------------------------
+// No_patch_facet_pmap_first
+// -----------------------------------
+template <typename C3T3, typename Cell_pmap>
+class No_patch_facet_pmap_first
+{
+  typedef typename C3T3::Surface_index Surface_index;
+  typedef typename C3T3::Facet Facet;
+  typedef typename C3T3::Cell_handle Cell_handle;
+  
+public:
+  No_patch_facet_pmap_first(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+    : cell_pmap_(cell_pmap) { }
+  
+  int surface_index(const Facet& f) const
+  {
+    Cell_handle c1 = f.first;
+    Cell_handle c2 = c1->neighbor(f.second);
+    
+    int label1 = get(cell_pmap_,c1);
+    int label2 = get(cell_pmap_,c2);
+    
+    if ( 0 == label1 || -1 == label1 )
+      label1 = label2;
+    if ( 0 == label2 || -1 == label2 )
+      label2 = label1;
+    
+    return (std::min)(label1,label2);
+  }
+  
+private:
+  const Cell_pmap& cell_pmap_;
+};
+
+// Accessors 
+template <typename C3T3, typename Cell_pmap>
+int
+get(const No_patch_facet_pmap_first<C3T3,Cell_pmap>& fmap,
+    const typename C3T3::Facet& f)
+{
+  return fmap.surface_index(f);
+}
+
+// -----------------------------------
+// No_patch_facet_pmap_second
+// -----------------------------------
+template <typename C3T3, typename Cell_pmap>
+class No_patch_facet_pmap_second
+{
+  typedef typename C3T3::Surface_index Surface_index;
+  typedef typename C3T3::Facet Facet;
+  typedef typename C3T3::Cell_handle Cell_handle;
+  
+public:
+  No_patch_facet_pmap_second(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+    : cell_pmap_(cell_pmap) { }
+  
+  int surface_index(const Facet& f) const
+  {
+    Cell_handle c1 = f.first;
+    Cell_handle c2 = c1->neighbor(f.second);
+    
+    int label1 = get(cell_pmap_,c1);
+    int label2 = get(cell_pmap_,c2);
+    
+    if ( 0 == label1 || -1 == label1 )
+      label1 = label2;
+    if ( 0 == label2 || -1 == label2 )
+      label2 = label1;
+    
+    return (std::max)(label1,label2);
+  }
+  
+private:
+  const Cell_pmap& cell_pmap_;
+};
+
+// Accessors 
+template <typename C3T3, typename Cell_pmap>
+int
+get(const No_patch_facet_pmap_second<C3T3,Cell_pmap>& fmap,
+    const typename C3T3::Facet& f)
+{
+  return fmap.surface_index(f);
+}
+  
+  
+// -----------------------------------
+// Default_vertex_index_pmap
+// ----------------------------------- 
+template <typename C3T3, typename Cell_pmap, typename Facet_pmap>
+class Default_vertex_pmap
 {
   typedef typename C3T3::Surface_index Surface_index;
   typedef typename C3T3::Subdomain_index Subdomain_index;
@@ -222,13 +533,13 @@ class Default_vertex_index_pmap
   typedef typename C3T3::Facet Facet;
 
 public:
-  Default_vertex_index_pmap(const Default_facet_index_pmap<C3T3>& f_pmap,
-                            const Default_cell_index_pmap<C3T3>& c_pmap,
-                            const C3T3& c3t3)
-    : f_pmap_(f_pmap)
-    , c_pmap_(c_pmap)
+  Default_vertex_pmap(const C3T3& c3t3,
+                      const Cell_pmap& c_pmap,
+                      const Facet_pmap& f_pmap)
+    : c_pmap_(c_pmap)
+    , f_pmap_(f_pmap)
     , r_c3t3_(c3t3)
-    , edge_index_(1 + f_pmap_.surface_number() + c_pmap_.subdomain_number()) {}
+    , edge_index_(0) {}
 
   int index(const Vertex_handle& vh) const
   {
@@ -253,6 +564,7 @@ public:
         }
 
         Surface_index facet_index = r_c3t3_.surface_index(*it_facet);
+        Facet facet = *it_facet;
         ++it_facet;
 
         for( ; it_facet != facets.end() ; ++it_facet)
@@ -263,7 +575,7 @@ public:
             return edge_index_;
         }
 
-        return f_pmap_.surface_index(facet_index);
+        return get(f_pmap_,facet);
       }
       break;
 
@@ -275,7 +587,7 @@ public:
             vh,std::back_inserter(cells));
 
         if ( cells.begin() != cells.end() )
-          return c_pmap_.subdomain_index(r_c3t3_.subdomain_index(*cells.begin()));
+          return get(c_pmap_, *cells.begin());
         else
           return -1;
       }
@@ -289,81 +601,112 @@ public:
   }
 
 private:
-  Default_facet_index_pmap<C3T3> f_pmap_;
-  Default_cell_index_pmap<C3T3> c_pmap_;
+  const Cell_pmap& c_pmap_;
+  const Facet_pmap& f_pmap_;
   const C3T3& r_c3t3_;
   const unsigned int edge_index_;
 };
 
-
-//template <typename C3T3>
-//class Vertex_index_pmap
-//{
-//  typedef typename C3T3::Surface_index Surface_index;
-//  typedef typename C3T3::Subdomain_index Subdomain_index;
-//  typedef typename C3T3::Index Index;
-//  typedef typename C3T3::Vertex_handle Vertex_handle;
-//
-//public:
-//  Vertex_index_pmap(const Default_facet_index_pmap<C3T3>& f_pmap,
-//                    const Default_cell_index_pmap<C3T3>& c_pmap,
-//                    const C3T3& c3t3)
-//    : f_pmap_(f_pmap)
-//    , c_pmap_(c_pmap)
-//    , r_c3t3_(c3t3)       { }
-//
-//  int index(const Vertex_handle& vh) const
-//  {
-//    switch ( r_c3t3_.in_dimension(vh) )
-//    {
-//    case 2:
-//      return f_pmap_.surface_index(r_c3t3_.index(vh).surface_index());
-//      break;
-//    case 3:
-//      return c_pmap_.subdomain_index(r_c3t3_.index(vh).subdomain_index());
-//      break;
-//    default:
-//      // should not happen
-//      return -1;
-//      break;
-//    }
-//  }
-//
-//private:
-//  Default_facet_index_pmap<C3T3> f_pmap_;
-//  Default_cell_index_pmap<C3T3> c_pmap_;
-//  const C3T3& r_c3t3_;
-//};
-
-//-------------------------------------------------------
-// Property map access methods
-//-------------------------------------------------------
-template <typename C3T3>
-int get(const Default_vertex_index_pmap<C3T3>& vmap,
-        const typename C3T3::Vertex_handle& vh)
+template <typename C3T3, typename Cell_pmap, typename Facet_pmap>
+int
+get(const Default_vertex_pmap<C3T3,Cell_pmap,Facet_pmap>& vmap,
+    const typename C3T3::Vertex_handle& vh)
 {
   return vmap.index(vh);
 }
 
-template <typename C3T3>
-int get(const Default_facet_index_pmap<C3T3>& fmap,
-        const typename C3T3::Facet& f)
+
+// -----------------------------------
+// Null pmap
+// -----------------------------------  
+template <typename C3T3, typename Cell_pmap>
+struct Null_facet_pmap
 {
-  return fmap.surface_index(f);
+  Null_facet_pmap(const C3T3&, const Cell_pmap&) {}
+};
+  
+template <typename C3T3, typename Cell_pmap>
+int get(const Null_facet_pmap<C3T3,Cell_pmap>&,
+        const typename C3T3::Facet&)
+{
+  return 0;
+}
+  
+template <typename C3T3, typename Cell_pmap, typename Facet_pmap>
+struct Null_vertex_pmap
+{
+  Null_vertex_pmap(const C3T3&, const Cell_pmap&, const Facet_pmap&) {}
+};
+  
+template <typename C3T3, typename Cell_pmap, typename Facet_pmap>
+int get(const Null_vertex_pmap<C3T3, Cell_pmap, Facet_pmap>&,
+        const typename C3T3::Vertex_handle&)
+{
+  return 0;
 }
 
-template <typename C3T3>
-int get(const Default_cell_index_pmap<C3T3>& fmap,
-        const typename C3T3::Cell_handle& ch)
-{
-  return fmap.subdomain_index(ch);
-}
 
+// -----------------------------------
+// Generator
+// -----------------------------------
+template <typename C3T3, bool rebind, bool no_patch>
+struct Medit_pmap_generator{};
+
+  
+template <typename C3T3>
+struct Medit_pmap_generator<C3T3, true, false>
+{
+  typedef Rebind_cell_pmap<C3T3>                            Cell_pmap;
+  typedef Rebind_facet_pmap<C3T3, Cell_pmap>                Facet_pmap;
+  typedef Null_facet_pmap<C3T3, Cell_pmap>                  Facet_pmap_twice;
+  typedef Default_vertex_pmap<C3T3, Cell_pmap, Facet_pmap>  Vertex_pmap;
+  
+  bool print_twice() { return false; }
+};
+  
+  
+template <typename C3T3>
+struct Medit_pmap_generator<C3T3, true, true>
+{
+  typedef Rebind_cell_pmap<C3T3>                            Cell_pmap;
+  typedef No_patch_facet_pmap_first<C3T3,Cell_pmap>         Facet_pmap;
+  typedef No_patch_facet_pmap_second<C3T3,Cell_pmap>        Facet_pmap_twice;
+  typedef Default_vertex_pmap<C3T3, Cell_pmap, Facet_pmap>  Vertex_pmap;
+  
+  bool print_twice() { return true; }
+};
+
+
+template <typename C3T3>
+struct Medit_pmap_generator<C3T3, false, true>
+{
+  typedef No_rebind_cell_pmap<C3T3>                         Cell_pmap;
+  typedef No_patch_facet_pmap_first<C3T3,Cell_pmap>         Facet_pmap;
+  typedef No_patch_facet_pmap_second<C3T3,Cell_pmap>        Facet_pmap_twice;
+  typedef Default_vertex_pmap<C3T3, Cell_pmap, Facet_pmap>  Vertex_pmap;
+  
+  bool print_twice() { return true; }
+};
+  
+template <typename C3T3>
+struct Medit_pmap_generator<C3T3, false, false>
+{
+  typedef No_rebind_cell_pmap<C3T3>                         Cell_pmap;
+  typedef Rebind_facet_pmap<C3T3,Cell_pmap>                 Facet_pmap;
+  typedef Null_facet_pmap<C3T3, Cell_pmap>                  Facet_pmap_twice;
+  typedef Null_vertex_pmap<C3T3, Cell_pmap, Facet_pmap>     Vertex_pmap;
+  
+  bool print_twice() { return false; }
+};
+
+  
 //-------------------------------------------------------
 // IO functions
 //-------------------------------------------------------
 
-template <class C3T3>
+
+  
+template <class C3T3, bool rebind, bool no_patch>
 void
 output_to_medit(std::ostream& os,
                 const C3T3& c3t3)
@@ -371,49 +714,46 @@ output_to_medit(std::ostream& os,
 #ifdef CGAL_MESH_3_IO_VERBOSE
   std::cerr << "Output to medit:\n";
 #endif
+  
+  typedef Medit_pmap_generator<C3T3,rebind,no_patch> Generator;
+  typedef typename Generator::Cell_pmap Cell_pmap;
+  typedef typename Generator::Facet_pmap Facet_pmap;
+  typedef typename Generator::Facet_pmap_twice Facet_pmap_twice;
+  typedef typename Generator::Vertex_pmap Vertex_pmap;
+  
+  Cell_pmap cell_pmap(c3t3);
+  Facet_pmap facet_pmap(c3t3,cell_pmap);
+  Facet_pmap_twice facet_pmap_twice(c3t3,cell_pmap);
+  Vertex_pmap vertex_pmap(c3t3,cell_pmap,facet_pmap);
+  
   output_to_medit(os,
                   c3t3,
-                  Default_cell_index_pmap<C3T3>(c3t3));
+                  vertex_pmap,
+                  facet_pmap,
+                  cell_pmap,
+                  facet_pmap_twice,
+                  Generator().print_twice());
+  
+#ifdef CGAL_MESH_3_IO_VERBOSE
+  std::cerr << "done.\n";
+#endif
 }
 
-template <class C3T3>
-void
-output_to_medit(std::ostream& os,
-                const C3T3& c3t3,
-                const Default_cell_index_pmap<C3T3>& cell_pmap)
-{
-  output_to_medit(
-      os,
-      c3t3,
-      Default_facet_index_pmap<C3T3>(c3t3, cell_pmap.subdomain_number()),
-      cell_pmap);
-}
 
-template <class C3T3>
-void
-output_to_medit(std::ostream& os,
-                const C3T3& c3t3,
-                const Default_facet_index_pmap<C3T3>& facet_pmap,
-                const Default_cell_index_pmap<C3T3>& cell_pmap)
-{
-  output_to_medit(
-      os,
-      c3t3,
-      Default_vertex_index_pmap<C3T3>(facet_pmap, cell_pmap, c3t3),
-      facet_pmap,
-      cell_pmap);
-}
-
+  
 template <class C3T3,
           class Vertex_index_property_map,
           class Facet_index_property_map,
+          class Facet_index_property_map_twice,
           class Cell_index_property_map>
 void
 output_to_medit(std::ostream& os,
                 const C3T3& c3t3,
                 const Vertex_index_property_map& vertex_pmap,
                 const Facet_index_property_map& facet_pmap,
-                const Cell_index_property_map& cell_pmap)
+                const Cell_index_property_map& cell_pmap,
+                const Facet_index_property_map_twice& facet_twice_pmap = Facet_index_property_map_twice(),
+                const bool print_each_facet_twice = false)
 {
   typedef typename C3T3::Triangulation Tr;
   typedef typename C3T3::Facet_iterator Facet_iterator;
@@ -455,15 +795,19 @@ output_to_medit(std::ostream& os,
     os << CGAL::to_double(p.x()) << " "
        << CGAL::to_double(p.y()) << " "
        << CGAL::to_double(p.z()) << " "
-       << get(vertex_pmap,vit)
+       << get(vertex_pmap, vit)
        << std::endl;
   }
 
   //-------------------------------------------------------
   // Facets
   //-------------------------------------------------------
+  int number_of_triangles = c3t3.number_of_facets();
+  if ( print_each_facet_twice )
+    number_of_triangles += number_of_triangles;
+  
   os << "Triangles" << std::endl
-     << c3t3.number_of_facets() << std::endl;
+     << number_of_triangles << std::endl;
 
   for( Facet_iterator fit = c3t3.facets_begin();
        fit != c3t3.facets_end();
@@ -477,8 +821,21 @@ output_to_medit(std::ostream& os,
         os << V[vh] << " ";
       }
     }
-    os << get(facet_pmap, *fit) //ref
-       << std::endl;
+    os << get(facet_pmap, *fit) << std::endl;
+    
+    // Print triangle again if needed
+    if ( print_each_facet_twice )
+    {
+      for (int i=0; i<4; i++)
+      {
+        if (i != fit->second)
+        {
+          const Vertex_handle& vh = (*fit).first->vertex(i);
+          os << V[vh] << " ";
+        }
+      }
+      os << get(facet_twice_pmap, *fit) << std::endl;
+    }
   }
 
   //-------------------------------------------------------
@@ -494,8 +851,7 @@ output_to_medit(std::ostream& os,
     for (int i=0; i<4; i++)
       os << V[cit->vertex(i)] << " ";
 
-    os << get(cell_pmap, cit)
-       << std::endl;
+    os << get(cell_pmap, cit) << std::endl;
   }
 
   //-------------------------------------------------------
@@ -505,87 +861,42 @@ output_to_medit(std::ostream& os,
 
 } // end output_to_medit(...)
 
-} // end of anomymous namespace for output_to_medit(..)
-
-
-
-
-namespace Mesh_3 {
-
-namespace details {
-
-  class Debug {
-    bool active;
-    std::ostream* out;
-    const std::string header;
-
-    class Debug_aux {
-      Debug* debug;
-    public:
-      Debug_aux() : debug(0) {}
-      Debug_aux(Debug* d) : debug(d) {}
-
-      template <typename T>
-      Debug_aux& operator<<(const T& t)
-      {
-        if ( debug )
-          debug->apply(t, false);
-        return *this;
-      }
-      
-      void set_debug(Debug* d) { debug = d; }
-
-      operator bool() const
-      {
-        return false;
-      }
-    };
-
-    Debug_aux aux;
-
-  public:
-    Debug(bool debug,
-          std::ostream* debug_str = &std::cout,
-          const std::string header_string = "")
-      : active(debug), out(debug_str), header(header_string),
-        aux()
-    {
-      aux.set_debug(this);
-    }
-
-    template <class T>
-    void apply(T& t, bool with_header = true)
-    {
-      if(active)
-      {
-        if(with_header)
-          *out << header;
-        *out << t;
-      }
-    }
-
-    template <typename T>
-    Debug_aux& operator<<(const T& t)
-    {
-      apply(t);
-      return aux;
-    }
-
-    operator bool() const
-    {
-      return false;
-    }
-  }; // end internal class Debug
-
-//   template <typename T>
-//   Debug_aux& operator<<(Debug& d, const T& t)
-//   {
-//     d.apply(t);
-//     return aux;
-//   }
-} // end namespace details
 } // end namespace Mesh_3
 
+  
+
+  
+/**
+ * @brief outputs mesh to medit format
+ * @param os the stream
+ * @param c3t3 the mesh
+ * @param rebind if true, labels of cells are rebinded into [1..nb_of_labels]
+ * @param show_patches if true, patches are labeled with different labels than
+ * cells. If false, each surface facet is written twice, using label of
+ * each adjacent cell.
+ */
+template <class C3T3>
+void
+output_to_medit(std::ostream& os,
+                const C3T3& c3t3,
+                bool rebind = false,
+                bool show_patches = false) 
+{
+  if ( rebind )
+  {
+    if ( show_patches )
+      Mesh_3::output_to_medit<C3T3,true,false>(os,c3t3);
+    else
+      Mesh_3::output_to_medit<C3T3,true,true>(os,c3t3);
+  }
+  else
+  {
+    if ( show_patches )
+      Mesh_3::output_to_medit<C3T3,false,false>(os,c3t3);
+    else
+      Mesh_3::output_to_medit<C3T3,false,true>(os,c3t3);
+  }
+}
 
 } // end namespace CGAL
 
