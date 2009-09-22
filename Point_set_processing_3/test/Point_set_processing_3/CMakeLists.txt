@@ -46,9 +46,6 @@ if ( CGAL_FOUND )
     message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
   endif()
 
-  # Temporary debugging stuff
-  ADD_DEFINITIONS( "-DDEBUG_TRACE" )
-
   # Executables that do *not* require LAPACK
   create_single_source_cgal_program( "analysis_test.cpp" )
   create_single_source_cgal_program( "remove_outliers_test.cpp" )

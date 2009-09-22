@@ -100,10 +100,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
   endif()
 
-  # Temporary debugging stuff
-  ADD_DEFINITIONS( "-DDEBUG_TRACE" ) # turn on traces
-  string(REGEX REPLACE "-DCGAL_NDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}") # turn on assertions
-
   qt4_wrap_ui( UI_FILES MainWindow.ui)
 
   include(AddFileDependencies)

@@ -48,10 +48,6 @@ if ( CGAL_FOUND )
     message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
   endif()
 
-  # Temporary debugging stuff
-  ADD_DEFINITIONS( "-DDEBUG_TRACE=2" ) # turn on traces
-  string(REGEX REPLACE "-DCGAL_NDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}") # turn on assertions
-
   # Link with BLAS, LAPACK and TAUCS (optional)
   find_package(TAUCS)
   if(TAUCS_FOUND)
