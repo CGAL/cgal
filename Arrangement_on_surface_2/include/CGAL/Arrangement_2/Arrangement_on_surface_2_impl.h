@@ -604,7 +604,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
     std::cout << "Aos_2: insert_from_left_vertex (interface)" << std::endl;
     std::cout << "cv   : " << cv << std::endl;
-    if (!prev->has_null_curve()) {
+    if (!prev->is_fictitious()) {
         std::cout << "prev : " << prev ->curve() << std::endl;
     } else {
       std::cout << "prev : fictitious" << std::endl;
@@ -835,7 +835,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
     std::cout << "Aos_2: insert_from_right_vertexs (interface)" << std::endl;
     std::cout << "cv   : " << cv << std::endl;
-    if (!prev->has_null_curve()) {
+    if (!prev->is_fictitious()) {
       std::cout << "prev : " << prev ->curve() << std::endl;
   } else {
       std::cout << "prev : fictitious" << std::endl;
