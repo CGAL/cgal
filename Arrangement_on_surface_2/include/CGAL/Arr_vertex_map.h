@@ -26,7 +26,7 @@
  */
 
 #include <CGAL/Unique_hash_map.h>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/graph/properties.hpp>
 
 CGAL_BEGIN_NAMESPACE
