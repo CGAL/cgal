@@ -68,7 +68,7 @@ int main ()
   // Check the validity more thoroughly.
   valid = is_valid(arr);
   std::cout << "Arrangement is "
-              << (valid ? "valid." : "NOT valid!") << std::endl;
+            << (valid ? "valid." : "NOT valid!") << std::endl;
     
   return (0);
 }
