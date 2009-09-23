@@ -44,9 +44,9 @@ typedef SMS::Edge_profile<Surface> Profile ;
 // In this example the progress is printed real-time and a few statistics are
 // recorded (and printed in the end).
 //
-struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
+struct Stats
 {
-  My_visitor() 
+  Stats() 
     : collected(0)
     , processed(0)
     , collapsed(0)
@@ -54,25 +54,37 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
     , cost_uncomputable(0) 
     , placement_uncomputable(0) 
   {} 
+  
+  std::size_t collected ;
+  std::size_t processed ;
+  std::size_t collapsed ;
+  std::size_t non_collapsable ;
+  std::size_t cost_uncomputable  ;
+  std::size_t placement_uncomputable ; 
+} ;
+
+struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
+{
+  My_visitor( Stats* s) : stats(s){} 
 
   // Called during the collecting phase for each edge collected.
-  virtual void OnCollected( Profile const&, boost::optional<double> const& ) const
+  void OnCollected( Profile const&, boost::optional<double> const& )
   {
-    ++ collected ;
-    std::cerr << "\rEdges collected: " << collected << std::flush ;
+    ++ stats->collected ;
+    std::cerr << "\rEdges collected: " << stats->collected << std::flush ;
   }                
   
   // Called during the processing phase for each edge selected.
   // If cost is absent the edge won't be collapsed.
-  virtual void OnSelected(Profile const&          
-                         ,boost::optional<double> cost
-                         ,std::size_t             initial
-                         ,std::size_t             current
-                         ) const
+  void OnSelected(Profile const&          
+                 ,boost::optional<double> cost
+                 ,std::size_t             initial
+                 ,std::size_t             current
+                 )
   {
-    ++ processed ;
+    ++ stats->processed ;
     if ( !cost )
-      ++ cost_uncomputable ;
+      ++ stats->cost_uncomputable ;
       
     if ( current == initial )
       std::cerr << "\n" << std::flush ;
@@ -81,34 +93,29 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   
   // Called during the processing phase for each edge being collapsed.
   // If placement is absent the edge is left uncollapsed.
-  virtual void OnCollapsing(Profile const&          
-                           ,boost::optional<Point>  placement
-                           ) const
+  void OnCollapsing(Profile const&          
+                   ,boost::optional<Point>  placement
+                   )
   {
     if ( !placement )
-      ++ placement_uncomputable ;
+      ++ stats->placement_uncomputable ;
   }                
   
   // Called for each edge which failed the so called link-condition,
   // that is, which cannot be collapsed because doing so would
   // turn the surface into a non-manifold.
-  virtual void OnNonCollapsable( Profile const& ) const
+  void OnNonCollapsable( Profile const& )
   {
-    ++ non_collapsable;
+    ++ stats->non_collapsable;
   }                
   
   // Called AFTER each edge has been collapsed
-  virtual void OnCollapsed( Profile const&, Vertex_handle hv ) const
+  void OnCollapsed( Profile const&, Vertex_handle hv )
   {
-    ++ collapsed;
+    ++ stats->collapsed;
   }                
   
-  mutable std::size_t collected ;
-  mutable std::size_t processed ;
-  mutable std::size_t collapsed ;
-  mutable std::size_t non_collapsable ;
-  mutable std::size_t cost_uncomputable  ;
-  mutable std::size_t placement_uncomputable ; 
+  Stats* stats ;
 } ;
 
 
@@ -143,8 +150,10 @@ int main( int argc, char** argv )
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
   SMS::Count_ratio_stop_predicate<Surface> stop(0.1);
-
-  My_visitor vis ;
+ 
+  Stats stats ;
+  
+  My_visitor vis(&stats) ;
     
   // The index maps are not explicitelty passed as in the previous
   // example because the surface items have a proper id() field.
@@ -159,16 +168,13 @@ int main( int argc, char** argv )
                  .visitor      (vis)
            );
   
-  std::cout << "\nEdges collected: " << vis.collected
-            << "\nEdges proccessed: " << vis.processed
-            << "\nEdges collapsed: " << vis.collapsed
+  std::cout << "\nEdges collected: "  << stats.collected
+            << "\nEdges proccessed: " << stats.processed
+            << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
-            << "\nEdges not collapsed due to topological constrians: " 
-            << vis.non_collapsable
-            << "\nEdge not collapsed due to cost computation constrians: " 
-            << vis.cost_uncomputable 
-            << "\nEdge not collapsed due to placement computation constrians: " 
-            << vis.placement_uncomputable 
+            << "\nEdges not collapsed due to topological constrians: "  << stats.non_collapsable
+            << "\nEdge not collapsed due to cost computation constrians: "  << stats.cost_uncomputable 
+            << "\nEdge not collapsed due to placement computation constrians: " << stats.placement_uncomputable 
             << std::endl ; 
             
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 

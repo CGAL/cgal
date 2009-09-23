@@ -31,7 +31,7 @@ EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::EdgeCollapse( ECM&                    aS
                                                     , EdgeIsBorderMap  const& aEdge_is_border_map 
                                                     , GetCost          const& aGet_cost
                                                     , GetPlacement     const& aGet_placement
-                                                    , VisitorT         const& aVisitor
+                                                    , VisitorT                aVisitor
                                                     )
   : 
    mSurface           (aSurface)

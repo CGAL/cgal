@@ -42,21 +42,21 @@ struct Edge_collapse_visitor_base
   typedef typename Kernel_traits<Point>::Kernel   Kernel ;
   typedef typename Kernel::FT                     FT ;
   
-  virtual void OnStarted( ECM& ) const {} 
+  void OnStarted( ECM& ) {}
   
-  virtual void OnFinished ( ECM& ) const {} 
+  void OnFinished ( ECM& ) {}
   
-  virtual void OnStopConditionReached( Profile const& ) const {} 
+  void OnStopConditionReached( Profile const& ) {}
   
-  virtual void OnCollected( Profile const&, boost::optional<FT> const& ) const {}                
+  void OnCollected( Profile const&, boost::optional<FT> const& ) {}
   
-  virtual void OnSelected( Profile const&, boost::optional<FT> const&, size_type, size_type ) const {}                
+  void OnSelected( Profile const&, boost::optional<FT> const&, size_type, size_type ) {}
   
-  virtual void OnCollapsing(Profile const&, boost::optional<Point> const& ) const {}                
+  void OnCollapsing(Profile const&, boost::optional<Point> const& ) {}
   
-  virtual void OnCollapsed( Profile const&, vertex_descriptor const& ) const {}
+  void OnCollapsed( Profile const&, vertex_descriptor const& ) {}
 
-  virtual void OnNonCollapsable(Profile const& ) const {}                
+   void OnNonCollapsable(Profile const& ) {}                
 } ;
 
 } // namespace Surface_mesh_simplification

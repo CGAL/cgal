@@ -50,7 +50,7 @@ int edge_collapse ( ECM&                    aSurface
                   , GetCost          const& aGet_cost 
                   , GetPlacement     const& aGet_placement
                   
-                  , Visitor const&          aVisitor 
+                  , Visitor                 aVisitor 
                   ) 
 {
   typedef EdgeCollapse< ECM

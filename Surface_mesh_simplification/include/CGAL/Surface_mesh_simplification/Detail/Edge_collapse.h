@@ -174,7 +174,7 @@ public:
               , EdgeIsBorderMap  const& aEdge_is_border_map 
               , GetCost          const& aGetCost
               , GetPlacement     const& aGetPlacement
-              , VisitorT         const& aVisitor
+              , VisitorT                aVisitor
               ) ;
   
   int run() ;
@@ -331,7 +331,7 @@ private:
   EdgeIsBorderMap const& Edge_is_border_map ;
   GetCost         const& Get_cost ;
   GetPlacement    const& Get_placement ;
-  VisitorT        const& Visitor ; 
+  VisitorT               Visitor ; 
   
   
 private:
