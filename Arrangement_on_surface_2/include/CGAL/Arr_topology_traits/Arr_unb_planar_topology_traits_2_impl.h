@@ -851,14 +851,27 @@ _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
     {
       const X_monotone_curve_2  *v_cv1 = _curve (v1, v_ind);
 
-      CGAL_assertion (v_cv1 != NULL);
-      res1 = this->traits->compare_x_near_boundary_2_object() (cv, ind,
-                                                               *v_cv1, v_ind);
-      
-      if (res1 == EQUAL)
+      // Note that v1 is a non-fictitious vertex, therefore we expect it to
+      // be associated with a valid curve end. If this is not the case, we
+      // can assume that v1 has been created in order to represent the other
+      // curve-end of cv, the curve that is currently being insrted into the
+      // arrangement, but it hasn't been associated with a valid halfedge
+      // yet, as the insertion process is still ongoing.
+      // The comparison result in this case is trivial.
+      if (v_cv1 != NULL)
       {
-        eq_source = true;
-        return (true);
+        res1 = this->traits->compare_x_near_boundary_2_object() (cv, ind,
+                                                                 *v_cv1, v_ind);
+      
+        if (res1 == EQUAL)
+        {
+          eq_source = true;
+          return (true);
+        }
+      }
+      else
+      {
+        res1 = (ind == ARR_MIN_END) ? SMALLER : LARGER;
       }
     }
 
@@ -877,15 +890,28 @@ _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
     {
       const X_monotone_curve_2  *v_cv2 = _curve (v2, v_ind);
 
-      CGAL_assertion (v_cv2 != NULL);
-      res2 = this->traits->compare_x_near_boundary_2_object() (cv, ind,
-                                                               *v_cv2, v_ind);
-
-      if (res2 == EQUAL)
+      // Note that v2 is a non-fictitious vertex, therefore we expect it to
+      // be associated with a valid curve end. If this is not the case, we
+      // can assume that v2 has been created in order to represent the other
+      // curve-end of cv, the curve that is currently being insrted into the
+      // arrangement, but it hasn't been associated with a valid halfedge
+      // yet, as the insertion process is still ongoing.
+      // The comparison result in this case is trivial.
+      if (v_cv2 != NULL)
       {
-        eq_target = true;
-        return (true);
+        res2 = this->traits->compare_x_near_boundary_2_object() (cv, ind,
+                                                                 *v_cv2, v_ind);
+
+        if (res2 == EQUAL)
+        {
+          eq_target = true;
+          return (true);
+        }        
       }
+      else
+      {
+        res2 = (ind == ARR_MIN_END) ? SMALLER : LARGER;
+      } 
     }
   }
 
