@@ -120,7 +120,6 @@ public:
     : Tr_Base(gt), hidden_point_visitor(this)
   {}
 
-  // copy constructor duplicates vertices and cells
   Regular_triangulation_3(const Regular_triangulation_3 & rt)
     : Tr_Base(rt), hidden_point_visitor(this)
   {
