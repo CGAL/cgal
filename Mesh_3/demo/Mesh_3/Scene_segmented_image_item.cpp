@@ -22,16 +22,16 @@ QString Scene_segmented_image_item::toolTip() const
 {
   return tr("<p>Image <b>%1</b></p>"
             "<p>Word type: %2</p>"
-            "<p>Dimensions: %3x%4x%5</p>"
-            "<p>Spacings: %6x%7x%8</p>")
+            "<p>Dimensions: %3 x %4 x %5</p>"
+            "<p>Spacings: ( %6 , %7 , %8 )</p>")
     .arg(this->name())
     .arg("...")
-    .arg(m_image->xdim(), 
-         m_image->ydim(),
-         m_image->zdim())
-    .arg(m_image->vx(), 
-         m_image->vy(),
-         m_image->vz());
+    .arg(m_image->xdim()) 
+    .arg(m_image->ydim())
+    .arg(m_image->zdim())
+    .arg(m_image->vx())
+    .arg(m_image->vy())
+    .arg(m_image->vz());
 }
 
 #include "Scene_segmented_image_item.moc"
