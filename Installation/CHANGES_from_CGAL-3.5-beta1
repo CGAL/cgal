@@ -1,0 +1,92 @@
+Here are the list of detailled changes between CGAL-3.5-beta1 and CGAL-3.5
+finale version, at a high level of details.
+
+The file CHANGES describes the changes between
+CGAL-3.4 and CGAL-3.5.
+
+
+The following has been changed since the release of CGAL-3.5-beta1:
+
+1 Documentation 
+
+  - Updates in the page "Acknowledging CGAL".
+
+  - Minors fix in the installation documentation, about the CMake variable
+    BUILD_SHARED_LIBS.
+
+
+2 3D Spherical Geometry Kernel
+
+  - Minor fixes in the documentation.
+
+
+5 Triangulations
+
+  - Renaming of internal types, for forward compatibility, in
+    <CGAL/Triangulation_data_structure_2.h> and
+    <CGAL/Triangulation_data_structure_3.h>:
+       Vertex_container -> Vertex_range
+       Face_container   -> Face_range
+       Cell_container   -> Cell_range
+
+
+6 3D Periodic Triangulations
+
+  - In CGAL::Periodic_triangulation_3<PT,TDS>, the function
+    convert_to_needed_covering() is renamed
+    convert_to_27_sheeted_covering().
+
+
+7 3D Surface Mesh Generation
+
+  - Cleanup in the introduction, that was talking about experimental
+    features which have not been merged into the trunk of CGAL.
+
+
+8 3D Mesh Generation
+
+  - Fix the naming of header inclusion protection macros.
+
+  - Fix the output to Medit file format: surface indices are now sorted in
+    a deterministic order.
+
+  - The meshing of a polyhedral domain now uses robust intersection
+    constructions, using an exact number type for internal computations.
+
+  - Minor fixes in the documentation.
+
+
+7 Point Set Processing
+
+  - Fix a warning about the location of property_map.hpp with recent Boost
+    versions.
+
+  - Minor fixes in documentation.
+
+
+8 Surface Reconstruction from Point Sets 
+
+  - Remove of several debug traces in the code.
+
+  - Add two sections about performances and case studies in the user manual
+    of this chapter.
+
+
+9 AABB tree
+
+  - Bug fix: use filtered predicates when the geometric traits class
+    is a filtered kernel.
+
+  - Add the default constructor, that is documented but was not
+    implemented so far. The ability to pass a non-default-constructed AABB
+    traits is removed for the moment, and will be reintroduced in CGAL-3.6.
+
+
+10 Planar Parameterization of Triangulated Surface Meshes 
+
+  - Minor fixes in documentation.
+
+
+11 Linking
+
+  - Fix the way LAPACK and BLAS are (auto-)linked with, under MSVS.
