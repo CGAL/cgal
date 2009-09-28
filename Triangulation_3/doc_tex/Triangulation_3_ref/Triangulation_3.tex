@@ -1025,13 +1025,13 @@ of the vertex and cell types.  Assigns the resulting triangulation to
 {Writes the triangulation \ccc{t} into \ccc{os}.}
 
 The information in the \ccc{iostream} is: the dimension, the number of
-finite vertices, the non-combinatorial information about vertices (point,
-etc), the number of cells, the indices of the vertices of each cell,
-plus the non-combinatorial information about each cell, 
-then the indices of the neighbors of each cell, where the index
-corresponds to the preceding list of cells. When dimension $<$ 3, the
-same information is stored for faces of maximal dimension instead of
-cells. 
+finite vertices, the non-combinatorial information about vertices
+(point, etc; note that the infinite vertex is numbered 0), the number
+of cells, the indices of the vertices of each cell, plus the
+non-combinatorial information about each cell, then the indices of the
+neighbors of each cell, where the index corresponds to the preceding
+list of cells. When dimension $<$ 3, the same information is stored
+for faces of maximal dimension instead of cells.
 
 \ccSeeAlso
 
