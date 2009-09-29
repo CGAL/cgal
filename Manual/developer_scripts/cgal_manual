@@ -1459,7 +1459,10 @@ make_manual_prime() {
           mv ${WrapperRootName}.hlg testsuite/${WrapperRootName}.hlg.txt
           if which linklint >& /dev/null ; then
               mkdir testsuite/${WrapperRootName}-linklintresults
+              # linklint, Local Site Checking
               linklint -doc testsuite/${WrapperRootName}-linklintresults -index contents.html -no_anchors /testsuite/${WrapperRootName}/@  >& /dev/null
+              # linklint, Remote URL Checking
+              linklint @@ -doc testsuite/${WrapperRootName}-linklintresults
               #REPLACEPATH="`pwd | sed -e 's/[/]/\\\//g'`"
               search_and_replace testsuite/${WrapperRootName}-linklintresults/ "*.html" "file:\/\/.\+\/doc_tex\/testsuite\/" '..\/'
 
