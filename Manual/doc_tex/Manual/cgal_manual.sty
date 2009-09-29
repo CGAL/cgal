@@ -40,9 +40,10 @@
 \lcTex{\catcode`@=11}
 \lcTex{\@input{version.tex}%
   \ifx\cgalversion\@ClearUndefdMacro
+    \gdef\cgalversionnumber{x.y}
     \gdef\cgalversion{Separate Build}
   \else
-    \xdef\cgalrawversion{\cgalversion}
+    \xdef\cgalversionnumber{\cgalversion}
     \xdef\cgalversion{Release \cgalversion}
   \fi
   \ifx\cgalinternalversion\@ClearUndefdMacro
@@ -57,9 +58,11 @@
   \lciIfFileExists{version.tex}{\input{version.tex}}{}%
   \lciIfDefined{\cgalversion}%
     {\xdef\cgalTmpVersion{\cgalversion}%
-     \xdef\cgalrawversion{\cgalversion}
+     \xdef\cgalversionnumber{\cgalversion}
      \gdef\cgalversion{Release \cgalTmpVersion}}%
-    {\gdef\cgalversion{Separate Build}}%
+    {\gdef\cgalversion{Separate Build}%
+     \gdef\cgalversionnumber{x.y}%
+    }%
   \lciIfDefined{\cgalinternalversion}%
     {\xdef\cgalTmpInternalVersion{\cgalinternalversion}%
      \gdef\cgalinternalversion{Built from \cgalTmpInternalVersion}}%
