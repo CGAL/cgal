@@ -148,7 +148,7 @@ HtmlManualAuthor='<a href="http://www.cgal.org" target="_top">CGAL Open Source P
 #---------------------------------------------------------------------#
 
 # Selects the different output formats supported
-MakePS=1
+MakePS=0
 MakePDF=1
 MakeHTML=1
 
@@ -862,7 +862,9 @@ run_latex() {
         if check_bibtex_warn $1 ; then BibtexExit=2; fi
     fi
     if [ $MakeTestSuiteResult -eq 1 ]; then
-        testsuite_entry $LatexExit  $1.log.txt >  testsuite/index_row
+        if [ $MakePS -eq 1 ]; then 
+            testsuite_entry $LatexExit  $1.log.txt >  testsuite/index_row
+        fi
         testsuite_entry $BibtexExit $1.blg.txt >> testsuite/index_row
         testsuite_entry $IndexExit  $1.ilg.txt >> testsuite/index_row
         if [ ${MakePDF} -eq 0 ] ; then
@@ -1037,8 +1039,6 @@ run_pdflatex() {
     if [ $MakeTestSuiteResult -eq 1 ]; then
         # Report bibtex and index errors here only if regular LaTeX was not run
         if [ ${MakePS} -eq 0 ] ; then
-            # one empty entry for LaTeX run
-            testsuite_entry 4           $1.log.txt > testsuite/index_row
             testsuite_entry $BibtexExit $1.blg.txt >> testsuite/index_row
             testsuite_entry $IndexExit  $1.ilg.txt >> testsuite/index_row
         fi
@@ -1450,6 +1450,7 @@ make_manual_prime() {
     $BeforeHTML ${WrapperRootName%__*}
     local HtmlExit=3
     local LinklintExit=3
+    local LinklintRemoteCheckExit=3
     if [ ${MakeHTML} -eq 1 ]; then
       try_command "${MakeName} ${WrapperRootName} HTML " run_html ${WrapperRootName}
       HtmlExit=$ExitCode
@@ -1460,7 +1461,9 @@ make_manual_prime() {
           mv ${WrapperRootName}.hlg testsuite/${WrapperRootName}.hlg.txt
           if which linklint >& /dev/null ; then
               mkdir testsuite/${WrapperRootName}-linklintresults
-              linklint -doc testsuite/${WrapperRootName}-linklintresults -index contents.html -no_anchors /testsuite/${WrapperRootName}/@  >& /dev/null
+              linklint -limit 5000 -doc testsuite/${WrapperRootName}-linklintresults -index contents.html -no_anchors /testsuite/${WrapperRootName}/@  >& /dev/null
+              # linklint, Remote URL Checking
+              linklint -limit 5000 @@ -doc testsuite/${WrapperRootName}-linklintresults >& /dev/null
               #REPLACEPATH="`pwd | sed -e 's/[/]/\\\//g'`"
               search_and_replace testsuite/${WrapperRootName}-linklintresults/ "*.html" "file:\/\/.\+\/doc_tex\/testsuite\/" '..\/'
 
@@ -1472,12 +1475,22 @@ make_manual_prime() {
               else
                   LinklintExit=1
               fi
+              if grep 'ERROR' testsuite/${WrapperRootName}-linklintresults/urlindex.html >& /dev/null; then
+                  LinklintRemoteCheckExit=1
+              else
+                  if grep 'warn' testsuite/${WrapperRootName}-linklintresults/urlindex.html >& /dev/null; then
+                     LinklintRemoteCheckExit=2
+                  else
+                      LinklintRemoteCheckExit=0
+                  fi
+              fi
           fi
       fi
     fi
     if [ $MakeTestSuiteResult -eq 1 ]; then
         testsuite_entry $HtmlExit ${WrapperRootName}.hlg.txt >> testsuite/index_row
         testsuite_entry $LinklintExit ${WrapperRootName}-linklintresults/index.html >> testsuite/index_row
+        testsuite_entry $LinklintRemoteCheckExit ${WrapperRootName}-linklintresults/urlindex.html >> testsuite/index_row
     fi
 
     #---------------------------------------------------------------------#
@@ -1530,7 +1543,9 @@ make_manual_prime() {
         fi
         cat testsuite/index_row >> testsuite/index.html
         rm testsuite/index_row
-        echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}.ps.gz\">PS</a></td>" >> testsuite/index.html
+        if [ $MakePS -eq 1 ]; then
+            echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}.ps.gz\">PS</a></td>" >> testsuite/index.html
+        fi
         echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}.pdf\">PDF</a></td>" >> testsuite/index.html
         echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}/contents.html\">HTML</a></td>" >> testsuite/index.html
         echo "  <td align=\"center\" class=\"manual\"><a href=\"${WrapperRootName}.tgz\">tgz</a></td>" >> testsuite/index.html
@@ -1675,13 +1690,19 @@ problems to Andreas Meyer.</b></p>
 </tr>
 <tr align="center">
   <td><b>Sum-<br>mary</b></td>
+EOF
+if [ $MakePS -eq 1 ]; then
+    cat  >> testsuite/index.html <<EOF
   <td><b>La-<br>TeX</b></td>
+EOF
+fi
+cat  >> testsuite/index.html <<EOF
   <td><b>Bib-<br>TeX</b></td>
   <td><b>make_-<br>index</b></td>
   <td><b>Pdf-<br>LaTeX</b></td>
   <td><b>latex_-<br>to_html</b></td>
   <td><b>linklint</b></td>
-  <td><b>PS</b></td>
+  <td><b>linklint<br>remote<br>urls</b></td>
   <td><b>PDF</b></td>
   <td><b>HTML</b></td>
   <td><b>HTML<br>tgz</b></td>
@@ -1711,13 +1732,19 @@ testsuite_middle () {
 </tr>
 <tr align="center">
   <td><b>Sum-<br>mary</b></td>
+EOF
+if [ $MakePS -eq 1 ]; then
+    cat  >> testsuite/index.html <<EOF
   <td><b>La-<br>TeX</b></td>
+EOF
+fi
+cat  >> testsuite/index.html <<EOF
   <td><b>Bib-<br>TeX</b></td>
   <td><b>make_-<br>index</b></td>
   <td><b>Pdf-<br>LaTeX</b></td>
   <td><b>latex_-<br>to_html</b></td>
   <td><b>linklint</b></td>
-  <td><b>PS</b></td>
+  <td><b>linklint<br>remote<br>urls</b></td>
   <td><b>PDF</b></td>
   <td><b>HTML</b></td>
   <td><b>HTML<br>tgz</b></td>
