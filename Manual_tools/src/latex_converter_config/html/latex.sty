@@ -270,11 +270,13 @@
       \lciTocNewLayout{
         \lcRawHtml{<div class="NavTOC"><h2>Parts</h2></div>}
         \lcRawHtml{<br><table border="0">}
-        \lciSavestreamUse{parttoc}
-        \lcRawHtmlExpanded{\lciSavestreamBufferparttoc}
-        \lcRawHtml{</table><br>}
-        \lcRawHtml{<div class="NavTOC"><h2>Packages</h2></div>}
-        \lcRawHtml{<table border="0">}
+        \lciTocNewLayout{
+          \lciSavestreamUse{parttoc}
+          \lcRawHtmlExpanded{\lciSavestreamBufferparttoc}
+          \lcRawHtml{</table><br>}
+          \lcRawHtml{<div class="NavTOC"><h2>Packages</h2></div>}
+          \lcRawHtml{<table border="0">}
+        }{}
         \lciSavestreamUse{pkgtoc}
         \lcRawHtmlExpanded{\lciSavestreamBufferpkgtoc}
         \lcRawHtml{</table>}
@@ -289,10 +291,12 @@
     \lciOpenTmpFile{\lciIndexHeader}\lciIndexFileHeader\lciCloseFile
     \lciOpenTmpFile{\lciIndexFooter}\lciIndexFileFooter\lciCloseFile
     \lciPushOutput{packages}%
-      \lciSavestreamUse{parttoc}
-      \lcRawHtmlExpanded{\lciSavestreamBufferparttoc}
-      \lcRawHtml{</table>}
-      \lcRawHtml{<table cellpadding="2" cellspacing="0">}
+      \lciTocNewLayout{
+        \lciSavestreamUse{parttoc}
+        \lcRawHtmlExpanded{\lciSavestreamBufferparttoc}
+        \lcRawHtml{</table>}
+        \lcRawHtml{<table cellpadding="2" cellspacing="0">}
+      }{}
       \lciSavestreamUse[lciSavestreamBufferpackage]{packages.html}
       \lcRawHtmlExpanded{\lciSavestreamBufferpackage}
       \lcRawHtml{</table>}
