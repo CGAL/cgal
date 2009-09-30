@@ -1039,10 +1039,13 @@ run_pdflatex() {
     if [ $MakeTestSuiteResult -eq 1 ]; then
         # Report bibtex and index errors here only if regular LaTeX was not run
         if [ ${MakePS} -eq 0 ] ; then
+            testsuite_entry $LatexExit  $1.pdflg.txt >> testsuite/index_row
             testsuite_entry $BibtexExit $1.blg.txt >> testsuite/index_row
             testsuite_entry $IndexExit  $1.ilg.txt >> testsuite/index_row
+        else
+            testsuite_entry $LatexExit  $1.pdflg.txt >> testsuite/index_row
         fi
-        testsuite_entry $LatexExit  $1.pdflg.txt >> testsuite/index_row
+
     fi
     if [ ${MakePS} -eq 1 ] ; then
         # do error and warn reporting restricted to PdfLaTeX
@@ -1460,7 +1463,7 @@ make_manual_prime() {
       if [ $MakeTestSuiteResult -eq 1 ]; then
           mv ${WrapperRootName}.hlg testsuite/${WrapperRootName}.hlg.txt
           if which linklint >& /dev/null ; then
-              mkdir testsuite/${WrapperRootName}-linklintresults
+              [ -d "testsuite/${WrapperRootName}-linklintresults" ] || mkdir "testsuite/${WrapperRootName}-linklintresults"
               linklint -limit 5000 -doc testsuite/${WrapperRootName}-linklintresults -index contents.html -no_anchors /testsuite/${WrapperRootName}/@  >& /dev/null
               # linklint, Remote URL Checking
               linklint -limit 5000 @@ -doc testsuite/${WrapperRootName}-linklintresults >& /dev/null
@@ -1571,6 +1574,56 @@ make_manual_prime() {
 # make_manual <package or module name> [<package_ref name>]
 make_manual() {
   make_manual_prime null_function null_function null_function $@
+}
+
+#---------------------------------------------------------------------#
+# testsuite_print_header
+#     - Writes an intermediate table header
+#
+#---------------------------------------------------------------------#
+
+testsuite_print_header ()  {
+    cat  >> testsuite/index.html <<EOF
+<tr align="center">
+  <td><b>Sum-<br>mary</b></td>
+EOF
+    if [ $MakePS -eq 1 ]; then
+        cat  >> testsuite/index.html <<EOF
+  <td><b>La-<br>TeX</b></td>
+EOF
+    else
+        cat  >> testsuite/index.html <<EOF
+  <td><b>Pdf-<br>LaTeX</b></td>
+EOF
+    fi
+
+    cat  >> testsuite/index.html <<EOF
+  <td><b>Bib-<br>TeX</b></td>
+  <td><b>make_-<br>index</b></td>
+EOF
+
+    if [ $MakePS -eq 1 ]; then
+        cat  >> testsuite/index.html <<EOF
+  <td><b>Pdf-<br>LaTeX</b></td>
+EOF
+    fi
+    cat  >> testsuite/index.html <<EOF
+  <td><b>latex_-<br>to_html</b></td>
+  <td><b>linklint</b></td>
+  <td><b>linklint<br>remote<br>urls</b></td>
+EOF
+    if [ $MakePS -eq 1 ]; then
+        cat  >> testsuite/index.html <<EOF
+  <td><b>PS</b></td>
+EOF
+    fi
+    cat  >> testsuite/index.html <<EOF
+  <td><b>PDF</b></td>
+  <td><b>HTML</b></td>
+  <td><b>HTML<br>tgz</b></td>
+</tr>
+EOF
+
 }
 
 #---------------------------------------------------------------------#
@@ -1688,26 +1741,8 @@ problems to Andreas Meyer.</b></p>
   <td colspan="7" align="center"><b>Click to see Logfile</b></td>
   <td colspan="4" align="center"><b>Manuals</b></td>
 </tr>
-<tr align="center">
-  <td><b>Sum-<br>mary</b></td>
 EOF
-if [ $MakePS -eq 1 ]; then
-    cat  >> testsuite/index.html <<EOF
-  <td><b>La-<br>TeX</b></td>
-EOF
-fi
-cat  >> testsuite/index.html <<EOF
-  <td><b>Bib-<br>TeX</b></td>
-  <td><b>make_-<br>index</b></td>
-  <td><b>Pdf-<br>LaTeX</b></td>
-  <td><b>latex_-<br>to_html</b></td>
-  <td><b>linklint</b></td>
-  <td><b>linklint<br>remote<br>urls</b></td>
-  <td><b>PDF</b></td>
-  <td><b>HTML</b></td>
-  <td><b>HTML<br>tgz</b></td>
-</tr>
-EOF
+    testsuite_print_header
 }
 
 #---------------------------------------------------------------------#
@@ -1730,26 +1765,8 @@ testsuite_middle () {
   <td colspan="7" align="center"><b>Click to see Logfile</b></td>
   <td colspan="4" align="center"><b>Manuals</b></td>
 </tr>
-<tr align="center">
-  <td><b>Sum-<br>mary</b></td>
 EOF
-if [ $MakePS -eq 1 ]; then
-    cat  >> testsuite/index.html <<EOF
-  <td><b>La-<br>TeX</b></td>
-EOF
-fi
-cat  >> testsuite/index.html <<EOF
-  <td><b>Bib-<br>TeX</b></td>
-  <td><b>make_-<br>index</b></td>
-  <td><b>Pdf-<br>LaTeX</b></td>
-  <td><b>latex_-<br>to_html</b></td>
-  <td><b>linklint</b></td>
-  <td><b>linklint<br>remote<br>urls</b></td>
-  <td><b>PDF</b></td>
-  <td><b>HTML</b></td>
-  <td><b>HTML<br>tgz</b></td>
-</tr>
-EOF
+    testsuite_print_header
 }
 
 #---------------------------------------------------------------------#
@@ -1766,21 +1783,7 @@ testsuite_middle_header () {
   else
       TestSuiteTableHeight=0
       # write intermediate table header for better overview
-      cat >> testsuite/index.html <<EOF
-<tr align="center">
-  <td>&nbsp;</td>
-  <td><b>Sum-<br>mary</b></td>
-  <td><b>Bib-<br>TeX</b></td>
-  <td><b>make_-<br>index</b></td>
-  <td><b>Pdf-<br>LaTeX</b></td>
-  <td><b>latex_-<br>to_html</b></td>
-  <td><b>linklint</b></td>
-  <td><b>linklint<br>remote<br>urls</b></td>
-  <td><b>PDF</b></td>
-  <td><b>HTML</b></td>
-  <td><b>HTML<br>tgz</b></td>
-</tr>
-EOF
+      testsuite_print_header
   fi
 }
 
