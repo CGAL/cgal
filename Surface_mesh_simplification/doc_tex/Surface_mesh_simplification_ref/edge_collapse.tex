@@ -78,7 +78,7 @@ Maps each vertex in the surface into an unsigned integer number
 in the range \ccc{[0,num_vertices(surface))}.
 
 \ccc{VertexIndexMap} must be a
-\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+\ccAnchor{http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html}{ReadablePropertyMap} 
 whose \ccc{key_type} is
 \ccc{boost::graph_traits<EdgeCollapsableMesh const>::vertex_descriptor}
 and whose \ccc{value_type} is 
@@ -98,7 +98,7 @@ Maps each {\em directed} edge in the surface into an unsigned integer number
 in the range \ccc{[0,num_edges(surface))}.
 
 \ccc{EdgeIndexMap} must be a
-\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+\ccAnchor{http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html}{ReadablePropertyMap} 
 whose \ccc{key_type} is
 \ccc{boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor}
 and whose \ccc{value_type} is 
@@ -118,7 +118,7 @@ Maps each {\em directed} edge in the surface into a Boolean value
 which indicates if the edge belongs to the boundary of the surface
 (facing the outside).
 \ccc{EdgeIsBorderMap} must be a 
-\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+\ccAnchor{http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html}{ReadablePropertyMap} 
 whose \ccc{key_type} is
 \ccc{boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor}
 and whose \ccc{value_type} is \ccc{bool}.
