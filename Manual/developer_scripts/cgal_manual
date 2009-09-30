@@ -1770,13 +1770,12 @@ testsuite_middle_header () {
 <tr align="center">
   <td>&nbsp;</td>
   <td><b>Sum-<br>mary</b></td>
-  <td><b>La-<br>TeX</b></td>
   <td><b>Bib-<br>TeX</b></td>
   <td><b>make_-<br>index</b></td>
   <td><b>Pdf-<br>LaTeX</b></td>
   <td><b>latex_-<br>to_html</b></td>
   <td><b>linklint</b></td>
-  <td><b>PS</b></td>
+  <td><b>linklint<br>remote<br>urls</b></td>
   <td><b>PDF</b></td>
   <td><b>HTML</b></td>
   <td><b>HTML<br>tgz</b></td>
