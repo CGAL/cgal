@@ -1272,6 +1272,7 @@ Installation/cmake/modules/CGAL_SetupGMPXX.cmake -text
 Installation/cmake/modules/CGAL_SetupLEDA.cmake -text
 Installation/cmake/modules/CGAL_UseBLAS.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
+Installation/cmake/modules/CGAL_UseMKL.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CGAL_VersionUtils.cmake -text
 Installation/cmake/modules/FindBLAS.cmake -text
@@ -1285,6 +1286,7 @@ Installation/cmake/modules/FindGMPXX.cmake -text
 Installation/cmake/modules/FindIPE.cmake -text
 Installation/cmake/modules/FindLAPACK.cmake -text
 Installation/cmake/modules/FindLEDA.cmake -text
+Installation/cmake/modules/FindMKL.cmake -text
 Installation/cmake/modules/FindMPFR.cmake -text
 Installation/cmake/modules/FindOpenGL.cmake -text
 Installation/cmake/modules/FindPackageMessage.cmake -text
