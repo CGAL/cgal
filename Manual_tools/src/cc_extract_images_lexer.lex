@@ -39,7 +39,8 @@ src{ws}*={ws}*{unquotedfilename} {
                  std::cerr << "WARNING: unquoted images not allowed in XHTML"
                            << std::endl; }
 src{ws}*={ws}*                  { BEGIN(FilenameMode); break; }
-href{ws}*={ws}*                  { BEGIN(FilenameMode); break; }
+href{ws}*={ws}*                 { BEGIN(FilenameMode); break; }
+body{ws}*background{ws}*={ws}*  { BEGIN(FilenameMode); break; }
 <FilenameMode>{filename}        { report_filename(yytext);
                                   BEGIN(INITIAL); }
 <*>{ws}                         /* ignore whitespace */
