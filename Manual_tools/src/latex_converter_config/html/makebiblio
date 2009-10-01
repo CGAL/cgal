@@ -1,5 +1,16 @@
 #!/bin/sh
 
+if [ ! -x "`which bibtex2html`" ]; then
+    echo "You need to install bibtex2html first!"
+    exit 1
+fi
+
+if [ ! -f "$1" ]; then
+    echo "Usage: makebiblio path/to/manual-x.y.bib"
+    echo "Note that the file manual-x.y.bib, with x.y equal to the current version of CGAL"
+    echo "should be in the 'Manual' package, in Manual/doc_tex/Manual/..."
+    exit 1
+fi
 rm -f Biblio/how_to_cite_*.*
 rm -f index.html
 bibtex2html $1
@@ -18,3 +29,6 @@ perl -pi.bak -e "s/Apollonius /{Apollonius} /g" Biblio/how_to_cite_cgal.bib
 perl -pi.bak -e "s/Boolean /{Boolean} /g" Biblio/how_to_cite_cgal.bib
 perl -pi.bak -e "s|http://www.cgal.org/Manual/[0-9.]*/doc_html/cgal_manual/|../|g" Biblio/how_to_cite_cgal.html
 rm -f index.html
+
+echo 
+echo "Do not forget to commit, now!"
