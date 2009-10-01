@@ -33,6 +33,7 @@
 include(CheckFunctionExists)
 
 include(CGAL_GeneratorSpecificSettings)
+include(CGAL_Macros)
 
 
 # This macro checks for the existence of the combination of fortran libraries
@@ -80,6 +81,7 @@ macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _
                     PATHS /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV LD_LIBRARY_PATH
                     )
       endif()
+      #message("DEBUG: find_library(${_library}) = ${${_prefix}_${_library}_LIBRARY}")
       mark_as_advanced(${_prefix}_${_library}_LIBRARY)
       set(${LIBRARIES} ${${LIBRARIES}} ${${_prefix}_${_library}_LIBRARY})
       set(_libraries_found ${${_prefix}_${_library}_LIBRARY})
@@ -107,6 +109,7 @@ macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _
     #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
     # Check if function exists with f2c calling convention (ie a trailing underscore)
     check_function_exists(${_name}_ ${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
+    #message("DEBUG: check_function_exists(${_name}_) = ${${_prefix}_${_name}_${_combined_name}_f2c_WORKS}")
     set(CMAKE_REQUIRED_DEFINITIONS} "")
     set(CMAKE_REQUIRED_LIBRARIES    "")
     mark_as_advanced(${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
@@ -122,6 +125,7 @@ macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _
     set(CMAKE_REQUIRED_LIBRARIES   ${_flags} ${${LIBRARIES}})
     #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
     check_function_exists(${_name} ${_prefix}_${_name}${_combined_name}_WORKS)
+    #message("DEBUG: check_function_exists(${_name}) = ${${_prefix}_${_name}${_combined_name}_WORKS}")
     set(CMAKE_REQUIRED_LIBRARIES "")
     mark_as_advanced(${_prefix}_${_name}${_combined_name}_WORKS)
     set(_libraries_work ${${_prefix}_${_name}${_combined_name}_WORKS})
@@ -159,19 +163,24 @@ else()
   # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
   include(CGAL_Locate_CGAL_TAUCS)
 
-  # Search for BLAS in CGAL_TAUCS_INCLUDE_DIR/CGAL_TAUCS_LIBRARIES_DIR (TAUCS shipped with CGAL),
-  # else in $BLAS_INC_DIR/$BLAS_LIB_DIR environment variables.
+  # Search for BLAS in CGAL_TAUCS_INCLUDE_DIR/CGAL_TAUCS_LIBRARIES_DIR (TAUCS shipped with CGAL)...
   if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
     set( BLAS_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}" )
     set( BLAS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}" )
 
+  # ...else search for BLAS in $BLAS_LIB_DIR environment variable
   else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     #
-    # If Unix, search for BLAS function in possible libraries
+    # Search for BLAS in possible libraries
+    # in $BLAS_LIB_DIR environment variable and in usual places.
     #
+
+    # Read environment variables
+    fetch_env_var(BLAS_LIB_DIR)
+    fetch_env_var(MKL_LIB_DIR)
 
     # BLAS in ATLAS library? (http://math-atlas.sourceforge.net/)
     if(NOT BLAS_LIBRARIES)
@@ -182,7 +191,7 @@ else()
       sgemm
       ""
       "cblas;f77blas;atlas"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
     endif()
 
@@ -195,7 +204,7 @@ else()
       sgemm
       ""
       "sgemm;dgemm;blas"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
     endif()
 
@@ -208,7 +217,7 @@ else()
       sgemm
       ""
       "cxml"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
     endif()
 
@@ -221,7 +230,7 @@ else()
       sgemm
       ""
       "dxml"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
     endif()
 
@@ -234,7 +243,7 @@ else()
       sgemm
       "-xlic_lib=sunperf"
       "sunperf;sunmath"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
       if(BLAS_LIBRARIES)
         # Extra linker flag
@@ -251,7 +260,7 @@ else()
       sgemm
       ""
       "scsl"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
     endif()
 
@@ -264,7 +273,7 @@ else()
       sgemm
       ""
       "complib.sgimath"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
     endif()
 
@@ -277,39 +286,69 @@ else()
       sgemm
       ""
       "essl;blas"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
     endif()
 
-    #BLAS in intel mkl 10 library? (em64t 64bit)
-    if(NOT BLAS_LIBRARIES)
-      check_fortran_libraries(
-      BLAS_DEFINITIONS
-      BLAS_LIBRARIES
-      BLAS
-      sgemm
-      ""
-      "mkl_intel_lp64;mkl_intel_thread;mkl_core;guide;pthread"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
-      )
-    endif()
+    # intel mkl 10 library?
+  # TODO: add shared variants
+    if (WIN32)
+      # intel mkl library? (static, 32bit)
+      if(NOT BLAS_LIBRARIES)
+        check_fortran_libraries(
+        BLAS_DEFINITIONS
+        BLAS_LIBRARIES
+        BLAS
+        SGEMM
+        ""
+        "mkl_intel_c;mkl_intel_thread;mkl_core;libiomp5md"
+        "${MKL_LIB_DIR} ${BLAS_LIB_DIR}"
+        )
+      endif()
 
-    ### windows version of intel mkl 10?
-    if(NOT BLAS_LIBRARIES)
-      check_fortran_libraries(
-      BLAS_DEFINITIONS
-      BLAS_LIBRARIES
-      BLAS
-      SGEMM
-      ""
-      "mkl_c_dll;mkl_intel_thread_dll;mkl_core_dll;libguide40"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
-      )
-    endif()
+    # intel mkl library? (static, ia64 and em64t 64 bit)
+      if(NOT BLAS_LIBRARIES)
+        check_fortran_libraries(
+        BLAS_DEFINITIONS
+        BLAS_LIBRARIES
+        BLAS
+        SGEMM
+        ""
+        "mkl_intel_lp64;mkl_intel_thread_lp64;mkl_core;libiomp5md"
+        "${MKL_LIB_DIR} ${BLAS_LIB_DIR}"
+        )
+      endif()
+    else(WIN32)
+      # intel mkl library? (static, 32bit)
+      if(NOT BLAS_LIBRARIES)
+        check_fortran_libraries(
+        BLAS_DEFINITIONS
+        BLAS_LIBRARIES
+        BLAS
+        sgemm
+        ""
+        "mkl_intel;mkl_intel_thread;mkl_core;libiomp5;pthread"
+        "${MKL_LIB_DIR} ${BLAS_LIB_DIR}"
+        )
+      endif()
+      
+    # intel mkl library? (static, ia64 and em64t 64 bit)
+      if(NOT BLAS_LIBRARIES)
+        check_fortran_libraries(
+        BLAS_DEFINITIONS
+        BLAS_LIBRARIES
+        BLAS
+        sgemm
+        ""
+        "mkl_intel_lp64;mkl_intel_thread_lp64;mkl_core;libiomp5;pthread"
+        "${MKL_LIB_DIR} ${BLAS_LIB_DIR}"
+        )
+      endif()
+    endif (WIN32)
 
-    #older versions of intel mkl libs
+    # older versions of intel mkl libs
 
-    # BLAS in intel mkl library? (shared)
+    # intel mkl library? (shared)
     if(NOT BLAS_LIBRARIES)
       check_fortran_libraries(
       BLAS_DEFINITIONS
@@ -318,11 +357,11 @@ else()
       sgemm
       ""
       "mkl;guide;pthread"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${MKL_LIB_DIR} ${BLAS_LIB_DIR}"
       )
     endif()
 
-    #BLAS in intel mkl library? (static, 32bit)
+    # intel mkl library? (static, 32bit)
     if(NOT BLAS_LIBRARIES)
       check_fortran_libraries(
       BLAS_DEFINITIONS
@@ -331,11 +370,24 @@ else()
       sgemm
       ""
       "mkl_ia32;guide;pthread"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${MKL_LIB_DIR} ${BLAS_LIB_DIR}"
       )
     endif()
 
-    #BLAS in intel mkl library? (static, em64t 64bit)
+  # intel mkl library? (static, ia64 64bit)
+    if(NOT BLAS_LIBRARIES)
+      check_fortran_libraries(
+      BLAS_DEFINITIONS
+      BLAS_LIBRARIES
+      BLAS
+      sgemm
+      ""
+      "mkl_ipf;guide;pthread"
+      "${MKL_LIB_DIR} ${BLAS_LIB_DIR}"
+      )
+    endif()
+
+    # intel mkl library? (static, em64t 64bit)
     if(NOT BLAS_LIBRARIES)
       check_fortran_libraries(
       BLAS_DEFINITIONS
@@ -344,7 +396,7 @@ else()
       sgemm
       ""
       "mkl_em64t;guide;pthread"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${MKL_LIB_DIR} ${BLAS_LIB_DIR}"
       )
     endif()
 
@@ -357,7 +409,7 @@ else()
       sgemm
       ""
       "acml"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
     endif()
 
@@ -370,7 +422,7 @@ else()
       sgemm
       ""
       "Accelerate"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
     endif()
 
@@ -382,7 +434,7 @@ else()
       sgemm
       ""
       "vecLib"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
     endif ( NOT BLAS_LIBRARIES )
 
@@ -396,7 +448,7 @@ else()
       sgemm
       ""
       "blas"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV BLAS_LIB_DIR"
+      "${BLAS_LIB_DIR}"
       )
     endif()
 

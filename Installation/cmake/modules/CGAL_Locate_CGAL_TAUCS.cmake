@@ -12,6 +12,8 @@
 #  CGAL_TAUCS_LIBRARIES_DIR -list of folders (using full path name) containing
 #    TAUCS (and optionaly BLAS and LAPACK) libraries
 
+include(CGAL_Macros)
+
 if ( NOT CGAL_TAUCS_FOUND )
 
   #

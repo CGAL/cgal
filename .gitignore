@@ -113,6 +113,7 @@ GraphicsView/src/CGALQt4/*.so
 GraphicsView/src/CGALQt4/Makefile
 GraphicsView/src/CGALQt4/moc_*.cxx
 GraphicsView/src/CGALQt4/qrc_*.cxx
+Installation/cmake/modules/*.tmp
 Jet_fitting_3/examples/Jet_fitting_3/*.exe
 Jet_fitting_3/examples/Jet_fitting_3/*.sln
 Jet_fitting_3/examples/Jet_fitting_3/*.vcproj

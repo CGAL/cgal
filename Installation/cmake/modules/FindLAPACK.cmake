@@ -32,6 +32,7 @@
 include(CheckFunctionExists)
 
 include(CGAL_GeneratorSpecificSettings)
+include(CGAL_Macros)
 
 
 # This macro checks for the existence of the combination of fortran libraries
@@ -79,6 +80,7 @@ macro(check_lapack_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _b
                     PATHS /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV LD_LIBRARY_PATH
                     )
       endif()
+      #message("DEBUG: find_library(${_library}) = ${${_prefix}_${_library}_LIBRARY}")
       mark_as_advanced(${_prefix}_${_library}_LIBRARY)
       set(${LIBRARIES} ${${LIBRARIES}} ${${_prefix}_${_library}_LIBRARY})
       set(_libraries_found ${${_prefix}_${_library}_LIBRARY})
@@ -106,6 +108,7 @@ macro(check_lapack_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _b
     #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
     # Check if function exists with f2c calling convention (ie a trailing underscore)
     check_function_exists(${_name}_ ${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
+    #message("DEBUG: check_function_exists(${_name}_) = ${${_prefix}_${_name}_${_combined_name}_f2c_WORKS}")
     set(CMAKE_REQUIRED_DEFINITIONS} "")
     set(CMAKE_REQUIRED_LIBRARIES    "")
     mark_as_advanced(${_prefix}_${_name}_${_combined_name}_f2c_WORKS)
@@ -121,6 +124,7 @@ macro(check_lapack_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _b
     set(CMAKE_REQUIRED_LIBRARIES   ${_flags} ${${LIBRARIES}} ${_blas})
     #message("DEBUG: CMAKE_REQUIRED_LIBRARIES = ${CMAKE_REQUIRED_LIBRARIES}")
     check_function_exists(${_name} ${_prefix}_${_name}${_combined_name}_WORKS)
+    #message("DEBUG: check_function_exists(${_name}) = ${${_prefix}_${_name}${_combined_name}_WORKS}")
     set(CMAKE_REQUIRED_LIBRARIES "")
     mark_as_advanced(${_prefix}_${_name}${_combined_name}_WORKS)
     set(_libraries_work ${${_prefix}_${_name}${_combined_name}_WORKS})
@@ -170,21 +174,40 @@ else()
   # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
   include(CGAL_Locate_CGAL_TAUCS)
 
-  # Search for LAPACK in CGAL_TAUCS_INCLUDE_DIR/CGAL_TAUCS_LIBRARIES_DIR (TAUCS shipped with CGAL),
-  # else in $LAPACK_INC_DIR/$LAPACK_LIB_DIR environment variables.
+  # Search for LAPACK in CGAL_TAUCS_INCLUDE_DIR/CGAL_TAUCS_LIBRARIES_DIR (TAUCS shipped with CGAL)...
   if(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     # if VC++: done
     set( LAPACK_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}" )
     set( LAPACK_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}" )
 
+  # ...else in $LAPACK_LIB_DIR environment variable
   else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
     #
-    # If Unix, search for LAPACK function in possible libraries
+    # Search for LAPACK in possible libraries
+    # in $LAPACK_LIB_DIR environment variable and in usual places.
     #
 
-    #intel mkl lapack?
+    # Read environment variables
+    fetch_env_var(LAPACK_LIB_DIR)
+    fetch_env_var(MKL_LIB_DIR)
+
+    #intel mkl 10 lapack?
+    if(NOT LAPACK_LIBRARIES)
+      check_lapack_libraries(
+      LAPACK_DEFINITIONS
+      LAPACK_LIBRARIES
+      LAPACK
+      cheev
+      ""
+      "mkl_core"
+      "${BLAS_LIBRARIES}"
+      "${MKL_LIB_DIR} ${LAPACK_LIB_DIR}"
+      )
+    endif()
+
+    # older versions of intel mkl lapack?
     if(NOT LAPACK_LIBRARIES)
       check_lapack_libraries(
       LAPACK_DEFINITIONS
@@ -194,9 +217,10 @@ else()
       ""
       "mkl_lapack"
       "${BLAS_LIBRARIES}"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
+      "${MKL_LIB_DIR} ${LAPACK_LIB_DIR}"
       )
     endif()
+
 
     #acml lapack?
     if(NOT LAPACK_LIBRARIES)
@@ -208,7 +232,7 @@ else()
       ""
       "acml"
       "${BLAS_LIBRARIES}"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
+      "${LAPACK_LIB_DIR}"
       )
     endif()
 
@@ -222,7 +246,7 @@ else()
       ""
       "Accelerate"
       "${BLAS_LIBRARIES}"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
+      "${LAPACK_LIB_DIR}"
       )
     endif()
 
@@ -235,7 +259,7 @@ else()
       ""
       "vecLib"
       "${BLAS_LIBRARIES}"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
+      "${LAPACK_LIB_DIR}"
       )
     endif ( NOT LAPACK_LIBRARIES )
 
@@ -250,7 +274,7 @@ else()
       ""
       "lapack"
       "${BLAS_LIBRARIES}"
-      "${CGAL_TAUCS_LIBRARIES_DIR} ENV LAPACK_LIB_DIR"
+      "${LAPACK_LIB_DIR}"
       )
     endif()
 
