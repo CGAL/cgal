@@ -18,6 +18,7 @@ extern "C" {
 #include <unistd.h>
 }
 
+#include <cstdio>
 
 // Own assertion macro
 // ================================================
