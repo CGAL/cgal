@@ -24,6 +24,8 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/compute_average_spacing.h>
+#include <CGAL/Taucs_solver_traits.h>
+#include <CGAL/ARAP/mkl_solver_traits.h>
 
 #include "compute_normal.h"
 
@@ -89,6 +91,7 @@ int main(int argc, char * argv[])
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=100 * average spacing)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.25 * average spacing)\n";
+      std::cerr << "  -solver taucs|mkl      Sparse linear solver (default=TAUCS)\n";
       return EXIT_FAILURE;
     }
 
@@ -96,6 +99,7 @@ int main(int argc, char * argv[])
     FT sm_angle = 20.0; // Min triangle angle (degrees).
     FT sm_radius = 100; // Max triangle size w.r.t. point set average spacing.
     FT sm_distance = 0.25; // Approximation error w.r.t. point set average spacing.
+    std::string solver_name = "taucs"; // Sparse linear solver name.
 
     // decode parameters
     std::string input_filename  = argv[1];
@@ -106,8 +110,12 @@ int main(int argc, char * argv[])
         sm_radius = atof(argv[++i]);
       else if (std::string(argv[i])=="-sm_distance")
         sm_distance = atof(argv[++i]);
-      else
-        std::cerr << "invalid option " << argv[i] << "\n";
+      else if (std::string(argv[i])=="-solver")
+        solver_name = argv[++i];
+      else {
+        std::cerr << "Error: invalid option " << argv[i] << "\n";
+        return EXIT_FAILURE;
+      }
     }
 
     CGAL::Timer task_timer; task_timer.start();
@@ -199,7 +207,7 @@ int main(int argc, char * argv[])
     //***************************************
 
     std::cerr << "Computes Poisson implicit function...\n";
-
+    
     // Creates implicit function from the read points.
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
@@ -208,11 +216,50 @@ int main(int argc, char * argv[])
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
 
-    // Computes the Poisson indicator function f()
-    // at each vertex of the triangulation.
-    if ( ! function.compute_implicit_function() )
+    if (solver_name == "taucs")
     {
-      std::cerr << "Error: cannot compute implicit function" << std::endl;
+      std::cerr << "Using TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization...\n";
+
+      // Creates sparse linear solver: 
+      // TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization
+      const char* OOC_SUPERNODAL_CHOLESKY_FACTORIZATION[] = 
+      {
+        "taucs.factor.LLT=true",
+        "taucs.factor.mf=true",
+        "taucs.factor.ordering=metis",
+        "taucs.ooc=true", "taucs.ooc.basename=taucs-ooc",
+        NULL
+      };
+      unlink("taucs-ooc.0"); // make sure TAUCS ooc file does not exist
+      CGAL::Taucs_symmetric_solver_traits<double> solver(OOC_SUPERNODAL_CHOLESKY_FACTORIZATION);
+
+      // Computes the Poisson indicator function f()
+      // at each vertex of the triangulation.
+      if ( ! function.compute_implicit_function(solver) )
+      {
+        std::cerr << "Error: cannot compute implicit function" << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+    else if (solver_name == "mkl")
+    {
+      std::cerr << "Using MKL Pardiso...\n";
+
+      // Creates sparse linear solver: MKL Pardiso
+      //CGAL::MKL_symmetric_solver_traits<double> solver;
+      CGAL::MKL_solver_traits<double> solver;
+
+      // Computes the Poisson indicator function f()
+      // at each vertex of the triangulation.
+      if ( ! function.compute_implicit_function(solver) )
+      {
+        std::cerr << "Error: cannot compute implicit function" << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+    else 
+    {
+      std::cerr << "Error: invalid solver " << solver_name << "\n";
       return EXIT_FAILURE;
     }
 

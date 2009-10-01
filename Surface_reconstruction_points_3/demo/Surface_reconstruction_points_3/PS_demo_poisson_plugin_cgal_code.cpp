@@ -13,6 +13,7 @@
 #include <CGAL/Implicit_surface_3.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/Poisson_reconstruction_function.h>
+#include <CGAL/Taucs_solver_traits.h>
 #include <CGAL/compute_average_spacing.h>
 
 #include <math.h>
@@ -69,8 +70,9 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     // Computes implicit function
     //***************************************
 
-    std::cerr << "Computes Poisson implicit function...\n";
-
+    std::cerr << "Computes Poisson implicit function "
+              << "using TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization...\n";
+    
     // Creates implicit function from the point set.
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
@@ -79,9 +81,22 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                               points.begin(), points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
 
+    // Creates sparse linear solver: 
+    // TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization
+    const char* OOC_SUPERNODAL_CHOLESKY_FACTORIZATION[] = 
+    {
+      "taucs.factor.LLT=true",
+      "taucs.factor.mf=true",
+      "taucs.factor.ordering=metis",
+      "taucs.ooc=true", "taucs.ooc.basename=taucs-ooc",
+      NULL
+    };
+    unlink("taucs-ooc.0"); // make sure TAUCS ooc file does not exist
+    CGAL::Taucs_symmetric_solver_traits<double> solver(OOC_SUPERNODAL_CHOLESKY_FACTORIZATION);
+
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
-    if ( ! function.compute_implicit_function() )
+    if ( ! function.compute_implicit_function(solver) )
     {
       std::cerr << "Error: cannot compute implicit function" << std::endl;
       return NULL;

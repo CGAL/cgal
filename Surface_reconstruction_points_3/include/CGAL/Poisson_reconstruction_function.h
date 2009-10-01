@@ -26,7 +26,7 @@
 
 #include <CGAL/Reconstruction_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
-#include <CGAL/taucs_solver.h>
+#include <CGAL/Taucs_solver_traits.h>
 #include <CGAL/centroid.h>
 #include <CGAL/property_map.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
@@ -47,8 +47,7 @@ CGAL_BEGIN_NAMESPACE
 /// using an adaptive marching cubes.
 ///
 /// Poisson_reconstruction_function implements a variant of this algorithm which solves
-/// for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree
-/// and uses the TAUCS sparse linear solver.
+/// for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree.
 ///
 /// @heading Is Model for the Concepts:
 /// Model of the 'ImplicitFunction' concept.
@@ -104,10 +103,6 @@ private:
   typedef typename Triangulation::Finite_edges_iterator    Finite_edges_iterator;
   typedef typename Triangulation::All_cells_iterator       All_cells_iterator;
   typedef typename Triangulation::Locate_type Locate_type;
-
-  // TAUCS solver
-  typedef Taucs_solver<double>  Solver;
-  typedef std::vector<double>   Sparse_vector;
 
 // Data members.
 // Warning: the Surface Mesh Generation package makes copies of implicit functions,
@@ -193,14 +188,22 @@ public:
   }
 
   /// The function compute_implicit_function() must be called
-  /// after each insertion of oriented points.
+  /// after the insertion of oriented points.
   /// It computes the piecewise linear scalar function operator() by:
   /// - applying Delaunay refinement,
   /// - solving for operator() at each vertex of the triangulation with a sparse linear solver,
   /// - and shifting and orienting operator() such that it is 0 at all input points and negative inside the inferred surface.
   ///
-  /// Returns false if the linear solver fails.
-  bool compute_implicit_function()
+  /// @heading Parameters:
+  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  /// The default solver is TAUCS Multifrontal Supernodal Cholesky Factorization.
+  ///
+  /// @return false if the linear solver fails.
+
+  // This variant requires all parameters.
+  template <class SparseLinearAlgebraTraits_d>
+  bool compute_implicit_function(
+    SparseLinearAlgebraTraits_d solver = SparseLinearAlgebraTraits_d()) ///< sparse linear solver
   {
     CGAL::Timer task_timer; task_timer.start();
     CGAL_TRACE_STREAM << "Delaunay refinement...\n";
@@ -225,7 +228,7 @@ public:
     // Computes the Poisson indicator function operator()
     // at each vertex of the triangulation.
     double lambda = 0.1;
-    if ( ! solve_poisson(lambda) )
+    if ( ! solve_poisson(solver, lambda) )
     {
       std::cerr << "Error: cannot solve Poisson equation" << std::endl;
       return false;
@@ -244,6 +247,14 @@ public:
 
     return true;
   }
+
+  /// @cond SKIP_IN_MANUAL
+  // This variant provides the default sparse linear traits class = Taucs_symmetric_solver_traits.
+  bool compute_implicit_function()
+  {
+    return compute_implicit_function< Taucs_symmetric_solver_traits<double> >();
+  }
+  /// @endcond
 
   /// 'ImplicitFunction' interface: evaluates the implicit function at a given 3D query point.
   FT operator()(const Point& p) const
@@ -296,14 +307,19 @@ private:
 
   /// Poisson reconstruction.
   /// Returns false on error.
-  bool solve_poisson(double lambda)
+  ///
+  /// @heading Parameters:
+  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  template <class SparseLinearAlgebraTraits_d>
+  bool solve_poisson(
+    SparseLinearAlgebraTraits_d solver, ///< sparse linear solver
+    double lambda)
   {
     CGAL_TRACE("Calls solve_poisson()\n");
 
     double time_init = clock();
 
     double duration_assembly = 0.0;
-    double duration_factorization = 0.0;
     double duration_solve = 0.0;
 
     long old_max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
@@ -322,9 +338,8 @@ private:
     }
 
     // Assemble linear system A*X=B
-    Solver solver(nb_variables, 9); // average non null elements per line = 8.3
-    Sparse_vector X(nb_variables);
-    Sparse_vector B(nb_variables);
+    typename SparseLinearAlgebraTraits_d::Matrix A(nb_variables); // matrix is symmetric definite positive
+    typename SparseLinearAlgebraTraits_d::Vector X(nb_variables), B(nb_variables);
 
     Finite_vertices_iterator v;
     for(v = m_tr->finite_vertices_begin();
@@ -334,68 +349,38 @@ private:
       if(!v->constrained())
       {
         B[v->index()] = div_normalized(v); // rhs -> divergent
-        assemble_poisson_row(solver,v,B,lambda);
+        assemble_poisson_row<SparseLinearAlgebraTraits_d>(A,v,B,lambda);
       }
     }
-
+    
     duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
     CGAL_TRACE("  Creates matrix: done (%.2lf s)\n", duration_assembly);
 
-    /*
-    time_init = clock();
-    if(!solver.solve_conjugate_gradient(B,X,10000,1e-15))
-      return false;
-    duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
-    */
-
     CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
-    CGAL_TRACE("  Choleschy factorization...\n");
+    CGAL_TRACE("  Solve sparse linear system...\n");
 
-    // Choleschy factorization M = L L^T
+    // Solve "A*X = B". On success, solution is (1/D) * X.
     time_init = clock();
-    if(!solver.factorize_ooc())
+    double D;
+    if(!solver.linear_solver(A, B, X, D))
       return false;
-    duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
-    CGAL_TRACE("  Choleschy factorization: done (%.2lf s)\n", duration_factorization);
+    CGAL_surface_reconstruction_points_assertion(D == 1.0);
+    duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
 
     // Prints peak memory (Windows only)
     long max_memory = CGAL::Peak_memory_sizer().peak_virtual_size();
     if (max_memory <= 0) { // if peak_virtual_size() not implemented
-        CGAL_TRACE("  Sorry. Cannot get Choleschy factorization max allocation on this system.\n");
+        CGAL_TRACE("  Sorry. Cannot get solver max allocation on this system.\n");
     } else {
       if (max_memory > old_max_memory) {
-        CGAL_TRACE("  Max allocation in Choleschy factorization = %ld Mb\n", max_memory>>20);
+        CGAL_TRACE("  Max allocation in solver = %ld Mb\n", max_memory>>20);
       } else {
-        CGAL_TRACE("  Sorry. Failed to get Choleschy factorization max allocation.\n");
+        CGAL_TRACE("  Sorry. Failed to get solver max allocation.\n");
         CGAL_TRACE("  Max allocation since application start = %ld Mb\n", max_memory>>20);
       }
     }
 
-    CGAL_TRACE("  %ld Mb allocated\n", long(CGAL::Memory_sizer().virtual_size()>>20));
-    CGAL_TRACE("  Direct solve...\n");
-
-    // Direct solve by forward and backward substitution
-    time_init = clock();
-    if(!solver.solve_ooc(B,X))
-      return false;
-    duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
-    CGAL_TRACE("  Direct solve: done (%.2lf s)\n", duration_solve);
-
-    /*
-    // Choleschy factorization M = L L^T
-    time_init = clock();
-    if(!solver.factorize(true))
-      return false;
-    duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
-
-    // Direct solve by forward and backward substitution
-    time_init = clock();
-    if(!solver.solve(B,X,1))
-      return false;
-    duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
-    */
-
-    CGAL_TRACE("  Choleschy factorization + solve: done (%.2lf s)\n", duration_factorization + duration_solve);
+    CGAL_TRACE("  Solve sparse linear system: done (%.2lf s)\n", duration_solve);
 
     // copy function's values to vertices
     unsigned int index = 0;
@@ -725,15 +710,16 @@ private:
     CGAL_surface_reconstruction_points_assertion(l_done);
   }
 
-  // Assemble vi's row of the linear system A*X=B
-  void assemble_poisson_row(Solver& solver,
+  /// Assemble vi's row of the linear system A*X=B
+  ///
+  /// @heading Parameters:
+  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  template <class SparseLinearAlgebraTraits_d>
+  void assemble_poisson_row(typename SparseLinearAlgebraTraits_d::Matrix& A,
                             Vertex_handle vi,
-                            Sparse_vector& B,
+                            typename SparseLinearAlgebraTraits_d::Vector& B,
                             double lambda)
   {
-    // assemble new row
-    solver.begin_row();
-
     // for each vertex vj neighbor of vi
     std::vector<Vertex_handle> vertices;
     m_tr->incident_vertices(vi,std::back_inserter(vertices));
@@ -753,19 +739,16 @@ private:
       if(vj->constrained())
         B[vi->index()] -= cij * vj->f(); // change rhs
       else
-        solver.add_value(vj->index(),-cij); // off-diagonal coefficient
+        A.set_coef(vi->index(),vj->index(), -cij, true /*new*/); // off-diagonal coefficient
 
       diagonal += cij;
     }
 
     // diagonal coefficient
     if (vi->type() == Triangulation::INPUT)
-      solver.add_value(vi->index(),diagonal + lambda) ;
+      A.set_coef(vi->index(),vi->index(), diagonal + lambda, true /*new*/) ;
     else
-      solver.add_value(vi->index(),diagonal);
-
-    // end matrix row
-    solver.end_row();
+      A.set_coef(vi->index(),vi->index(), diagonal, true /*new*/);
   }
 
   Edge sorted_edge(Vertex_handle vi,

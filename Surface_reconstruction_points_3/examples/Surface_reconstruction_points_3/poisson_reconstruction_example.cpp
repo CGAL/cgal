@@ -50,7 +50,7 @@ int main(void)
       return EXIT_FAILURE;
     }
 
-    // Creates implicit function from the read points.
+    // Creates implicit function from the read points using the default solver (TAUCS).
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
@@ -74,7 +74,7 @@ int main(void)
     FT radius = std::sqrt(bsphere.squared_radius());
 
     // Defines the implicit surface: requires defining a
-  	// conservative bounding sphere centered at inner point.
+    // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,
