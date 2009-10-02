@@ -54,7 +54,6 @@ if ( CGAL_FOUND )
 
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" ) # turn on traces
-  string(REGEX REPLACE "-DCGAL_NDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}") # turn on assertions
 
   # Executables that do *not* require BLAS, LAPACK nor TAUCS
   create_single_source_cgal_program( "APSS_reconstruction.cpp" )
