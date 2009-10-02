@@ -1579,12 +1579,16 @@ make_manual() {
 #---------------------------------------------------------------------#
 # testsuite_print_header
 #     - Writes an intermediate table header
-#
+#     - If $1 is not empty, then add an empty cell at the beginning of the
+#       row.
 #---------------------------------------------------------------------#
 
 testsuite_print_header ()  {
+    echo '<tr align="center">' >> testsuite/index.html
+    if [ -n "$1" ]; then
+        echo '  <td>&nbsp;</td>' >> testsuite/index.html
+    fi
     cat  >> testsuite/index.html <<EOF
-<tr align="center">
   <td><b>Sum-<br>mary</b></td>
 EOF
     if [ $MakePS -eq 1 ]; then
@@ -1784,7 +1788,7 @@ testsuite_middle_header () {
   else
       TestSuiteTableHeight=0
       # write intermediate table header for better overview
-      testsuite_print_header
+      testsuite_print_header y
   fi
 }
 
