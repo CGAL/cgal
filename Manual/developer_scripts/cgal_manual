@@ -1680,6 +1680,7 @@ EOF
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en-US">
 <head><title>CGAL Manual Test-Suite Results</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
 <link href="testresult.css" rel="stylesheet"></head>
 <body>
 
@@ -1803,7 +1804,7 @@ testsuite_end () {
 <div class="contact">
 Last modified on <!--#echo var="LAST_MODIFIED" -->.
 See <a href="http://www.cgal.org/">http://www.cgal.org/</a> and
-<a HREF="mailto:infoATcgal.org" subject="Mail from cgal.org web page">info at cgal dot org</a>
+<a HREF="mailto:infoATcgal.org?subject=Mail%20from%20cgal.org%20web%20page">info at cgal dot org</a>
 </div>
 </body></html>
 EOF
