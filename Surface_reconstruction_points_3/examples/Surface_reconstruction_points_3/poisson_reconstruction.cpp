@@ -207,7 +207,7 @@ int main(int argc, char * argv[])
     //***************************************
 
     std::cerr << "Computes Poisson implicit function...\n";
-    
+
     // Creates implicit function from the read points.
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
@@ -218,11 +218,11 @@ int main(int argc, char * argv[])
 
     if (solver_name == "taucs")
     {
-      std::cerr << "Using TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization...\n";
+      std::cerr << "Use TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization\n";
 
-      // Creates sparse linear solver: 
+      // Creates sparse linear solver:
       // TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization
-      const char* OOC_SUPERNODAL_CHOLESKY_FACTORIZATION[] = 
+      const char* OOC_SUPERNODAL_CHOLESKY_FACTORIZATION[] =
       {
         "taucs.factor.LLT=true",
         "taucs.factor.mf=true",
@@ -243,7 +243,7 @@ int main(int argc, char * argv[])
     }
     else if (solver_name == "mkl")
     {
-      std::cerr << "Using MKL Pardiso...\n";
+      std::cerr << "Use MKL Pardiso\n";
 
       // Creates sparse linear solver: MKL Pardiso
       //CGAL::MKL_symmetric_solver_traits<double> solver;
@@ -257,7 +257,7 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
       }
     }
-    else 
+    else
     {
       std::cerr << "Error: invalid solver " << solver_name << "\n";
       return EXIT_FAILURE;

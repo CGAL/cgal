@@ -327,7 +327,7 @@ else()
         BLAS
         sgemm
         ""
-        "mkl_intel;mkl_intel_thread;mkl_core;libiomp5;pthread"
+        "mkl_intel;mkl_intel_thread;mkl_core;iomp5;pthread"
         "${MKL_LIB_DIR} ${BLAS_LIB_DIR}"
         )
       endif()
@@ -340,7 +340,7 @@ else()
         BLAS
         sgemm
         ""
-        "mkl_intel_lp64;mkl_intel_thread_lp64;mkl_core;libiomp5;pthread"
+        "mkl_intel_lp64;mkl_intel_thread_lp64;mkl_core;iomp5;pthread"
         "${MKL_LIB_DIR} ${BLAS_LIB_DIR}"
         )
       endif()

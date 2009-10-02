@@ -140,12 +140,15 @@ else()
   #set( MKL_DEFINITIONS "" )
   #set( MKL_LIBRARIES "" )
 
-  # Search for MKL headers 
+  # Search for MKL headers
   # in $MKL_INC_DIR environment variable and in usual places.
   find_path(MKL_INCLUDE_DIR
             NAMES mkl.h
-            HINTS ENV MKL_INC_DIR
-            )
+            PATHS ENV MKL_INC_DIR NO_DEFAULT_PATH
+           )
+  find_path(MKL_INCLUDE_DIR
+            NAMES mkl.h
+           )
 
   #
   # Search for MKL in possible libraries
@@ -171,7 +174,7 @@ else()
       "${MKL_LIB_DIR}"
       )
     endif()
-    
+
     # intel mkl library? (static, ia64 and em64t 64 bit)
     if(NOT MKL_LIBRARIES)
       check_fortran_libraries(
@@ -194,11 +197,11 @@ else()
       MKL
       sgemm
       ""
-      "mkl_solver;mkl_intel;mkl_intel_thread;mkl_core;libiomp5;pthread"
+      "mkl_solver;mkl_intel;mkl_intel_thread;mkl_core;iomp5;pthread"
       "${MKL_LIB_DIR}"
       )
     endif()
-    
+
     # intel mkl library? (static, ia64 and em64t 64 bit)
     if(NOT MKL_LIBRARIES)
       check_fortran_libraries(
@@ -207,7 +210,7 @@ else()
       MKL
       sgemm
       ""
-      "mkl_solver_lp64;mkl_intel_lp64;mkl_intel_thread_lp64;mkl_core;libiomp5;pthread"
+      "mkl_solver_lp64;mkl_intel_lp64;mkl_intel_thread_lp64;mkl_core;iomp5;pthread"
       "${MKL_LIB_DIR}"
       )
     endif()
@@ -286,11 +289,11 @@ else()
   endif(NOT MKL_FIND_QUIETLY)
 
   # Add variables to cache
-  set( MKL_INCLUDE_DIR   "${MKL_INCLUDE_DIR}" 
+  set( MKL_INCLUDE_DIR   "${MKL_INCLUDE_DIR}"
                           CACHE PATH "Directories containing the MKL header files" FORCE )
-  set( MKL_DEFINITIONS   "${MKL_DEFINITIONS}" 
+  set( MKL_DEFINITIONS   "${MKL_DEFINITIONS}"
                           CACHE STRING "Compilation options to use MKL" FORCE )
-  set( MKL_LIBRARIES     "${MKL_LIBRARIES}" 
+  set( MKL_LIBRARIES     "${MKL_LIBRARIES}"
                           CACHE FILEPATH "MKL libraries name" FORCE )
 
   #message("DEBUG: MKL_INCLUDE_DIR = ${MKL_INCLUDE_DIR}")
