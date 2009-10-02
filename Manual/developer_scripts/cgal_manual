@@ -1806,6 +1806,11 @@ Last modified on <!--#echo var="LAST_MODIFIED" -->.
 See <a href="http://www.cgal.org/">http://www.cgal.org/</a> and
 <a HREF="mailto:infoATcgal.org?subject=Mail%20from%20cgal.org%20web%20page">info at cgal dot org</a>
 </div>
+<p>
+  <a href="http://validator.w3.org/check?uri=referer"><img
+     src="http://www.w3.org/Icons/valid-html401-blue"
+     alt="Valid HTML 4.01 Transitional" height="31" width="88"></a>
+</p>
 </body></html>
 EOF
     if [ ! -d ${TestSuiteResultPath} ]; then
