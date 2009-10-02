@@ -247,7 +247,7 @@ int main(int argc, char * argv[])
 
       // Creates sparse linear solver: MKL Pardiso
       //CGAL::MKL_symmetric_solver_traits<double> solver;
-      CGAL::MKL_solver_traits<double> solver;
+      CGAL::MKL_symmetric_solver_traits<double> solver;
 
       // Computes the Poisson indicator function f()
       // at each vertex of the triangulation.
