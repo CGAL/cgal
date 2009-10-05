@@ -7,9 +7,9 @@ and discuss lists.
 
 Mailing lists:
 
-cgal-develop-l@lists-sop.inria.fr (best sent as blind carbon copy)
-cgal-discuss-l@lists-sop.inria.fr
-cgal-announce-l@lists-sop.inria.fr
+cgal-develop@lists-sop.inria.fr (best sent as blind carbon copy)
+cgal-discuss@lists-sop.inria.fr
+cgal-announce@lists-sop.inria.fr
 compgeom-announce@lists-sop.inria.fr
 mesh@sandia.gov
 
@@ -18,17 +18,13 @@ newsgroups:
 ( Better send as small cross-post blocks,
   otherwise it gets filtered out somewhere... )
 
-sci.engr, sci.image.processing, sci.math, sci.math.num-analysis
-
+sci.image.processing,
 comp.graphics.algorithms,
-comp.graphics.visualization,
-comp.graphics.animation, comp.graphics.api.opengl
-
-comp.programming,
 comp.robotics.misc,
-
 comp.infosystems.gis
+
 
 Moderated newsgroups:
 
-comp.simulation, comp.robotics.research
+comp.simulation,
+comp.robotics.research
