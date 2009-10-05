@@ -1742,6 +1742,7 @@ is_valid(bool verbose, int level) const
     ++vertex_count;
   }
   result = result && (number_of_vertices() == vertex_count);
+  result = result && (vit == vit->face()->vertex( vit->face()->index(vit)));
   CGAL_triangulation_assertion( number_of_vertices() == vertex_count );
     
   //edge count
