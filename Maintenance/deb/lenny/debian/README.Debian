@@ -22,6 +22,27 @@ Tarballs with demos and examples can be found in /usr/share/doc/libcgal-demo.
 Extract the tarballs somewhere and call "cmake ." to configure the
 demos/examples. Call "make" to build them, either in the top-level directory
 to build all demos/examples (which takes some time and needs quite some disk
-space), or in the subdirectory of the desired demo/exmaple.
+space), or in the subdirectory of the desired demo/exmaple. The cmake option
+-DCMAKE_VERBOSE_MAKEFILE=ON is useful to generate verbose makefiles that show
+each executed command.
 
- -- Joachim Reichel <reichel@debian.org>  Sat, 20 Dec 2008 19:09:13 +0100
+
+Demos using libQGLViewer
+------------------------
+
+Due to #522659 the build system does not detect libQGLViewer, even if
+libqglviewer-qt4-dev is installed. You can work around this problem by
+creating an include directory with the expected name "QGLViewer", e.g.,
+
+  mkdir -p /some/dir
+  ln -s /usr/include/qglviewer-qt4 /some/dir/QGLViewer
+
+Then pass the options
+
+  -DQGLVIEWER_INCLUDE_DIR=/some/dir \
+  -DQGLVIEWER_LIBRARY_RELEASE=/usr/lib/libqglviewer-qt4.so \
+  -DQGLVIEWER_LIBRARY_DEBUG=/usr/lib/libqglviewer-qt4.so
+
+to cmake.
+
+ -- Joachim Reichel <reichel@debian.org>  Sat, 18 Apr 2009 11:46:19 +0200

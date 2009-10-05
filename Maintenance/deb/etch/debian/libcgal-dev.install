@@ -1,6 +1,0 @@
-usr/bin/*
-usr/include/*
-usr/lib/lib*.a
-usr/lib/lib*.so
-usr/lib/CGAL/*
-usr/share/cmake-2.4/Modules/*

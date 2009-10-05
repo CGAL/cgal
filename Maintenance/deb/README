@@ -1,22 +1,31 @@
 README
 ======
 
+backport for squeeze:
+- debian/changelog:
+  * adjust version suffix from -X to -X~squeeze1
+  * adjust suite from unstable to testing
+
 backport for lenny:
 - debian/changelog:
   * adjust version suffix from -X to -X~lenny1
-  * adjust suite from unstable to testing
+  * adjust suite from unstable to stable
+- debian/control:
+  * adjust Standards-Version from 3.8.3 to 3.8.0
+  * add boost version 1.35 (several times)
 
 backport for etch:
 - debian/changelog:
   * adjust version suffix from -X to -X~etch1
-  * adjust suite from unstable to stable
+  * adjust suite from unstable to oldstable
 - debian/compat
   * adjust from 7 to 5
 - debian/control
   * adjust debhelper version from >= 7 to >= 5
-  * adjust Standards-Version from 3.8.0 to 3.7.2
+  * adjust Standards-Version from 3.8.3 to 3.7.2
   * remove libqt4-opengl-dev from Build-Depends
   * remove Homepage field
+  * add boost version 1.35 (several times)
 - debian/rules
   * replace dh_prep by dh_clean -k (twice)
   * replace cmake-2.6 by cmake-2.4 (twice)
@@ -24,11 +33,11 @@ backport for etch:
   * replace cmake-2.6 by cmake-2.4
 
 tagging:
-svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.4-1
-svn copy $SVNROOT/trunk/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.4-1~lenny1
-svn copy $SVNROOT/trunk/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.4-1~etch1
+svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.5-1
+svn copy $SVNROOT/trunk/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/3.5-1~squeeze1
+svn copy $SVNROOT/trunk/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.5-1~lenny1
 
 or:
-svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.4-1
-svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.4-1~lenny1
-svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.4-1~etch1
+svn copy $SVNROOT/branches/CGAL-3.5-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.5-1
+svn copy $SVNROOT/branches/CGAL-3.5-branch/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/3.5-1~squeeze1
+svn copy $SVNROOT/branches/CGAL-3.5-branch/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.5-1~lenny1

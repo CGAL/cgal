@@ -13,16 +13,20 @@ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
 
+ifeq ($(DEB_BUILD_ARCH),alpha)
+IEEE_FPU_OPTION = -mieee -mfp-rounding-mode=d
+endif
+
 configure-stamp: patch-stamp
 	dh_testdir
 	mkdir -p static
 	cd static && cmake .. \
-	  -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
+	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_SKIP_RPATH=TRUE -DCGAL_CXX_FLAGS=-D_REENTRANT \
 	  -DBUILD_SHARED_LIBS=FALSE -DWITH_demo=OFF -DWITH_examples=OFF
 	mkdir -p shared
 	cd shared && cmake .. \
-	  -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
+	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_SKIP_RPATH=TRUE -DCGAL_CXX_FLAGS=-D_REENTRANT \
 	  -DBUILD_SHARED_LIBS=TRUE -DWITH_demo=OFF -DWITH_examples=OFF
 	touch configure-stamp
@@ -30,13 +34,15 @@ configure-stamp: patch-stamp
 build: build-stamp
 build-stamp: configure-stamp
 	dh_testdir
-	dh_clean -k
+	dh_prep
 	$(MAKE) -C static
 	$(MAKE) -C shared
-	$(MAKE) -C debian/tests rounding_modes1
+ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+	$(MAKE) -C debian/tests IEEE_FPU_OPTION="$(IEEE_FPU_OPTION)" rounding_modes1
 	LD_LIBRARY_PATH=shared/lib debian/tests/rounding_modes1
-	$(MAKE) -C debian/tests rounding_modes2
+	$(MAKE) -C debian/tests IEEE_FPU_OPTION="$(IEEE_FPU_OPTION)" rounding_modes2
 	LD_LIBRARY_PATH=shared/lib debian/tests/rounding_modes2
+endif
 	touch build-stamp
 
 clean: clean-patched unpatch
@@ -51,17 +57,17 @@ clean-patched: patch
 install: build
 	dh_testdir
 	dh_testroot
-#	dh_clean -k
+#	dh_prep
 	dh_installdirs
 
 	$(MAKE) -C static DESTDIR=$(CURDIR)/debian/tmp install
 	$(MAKE) -C shared DESTDIR=$(CURDIR)/debian/tmp install
 
 #	$(MAKE) -C shared DESTDIR=$(CURDIR)/debian/tmp install_FindCGAL
-	mkdir -p debian/tmp/usr/share/cmake-2.4/Modules
-	cp cmake/modules/FindCGAL.cmake debian/tmp/usr/share/cmake-2.4/Modules
+	mkdir -p debian/tmp/usr/share/cmake-2.6/Modules
+	cp cmake/modules/FindCGAL.cmake debian/tmp/usr/share/cmake-2.6/Modules
 
-	mv debian/tmp/usr/share/doc/CGAL-3.4 debian/tmp/usr/share/doc/cgal
+	mv debian/tmp/usr/share/doc/CGAL-`cat VERSION` debian/tmp/usr/share/doc/cgal
 	mv debian/tmp/usr/share/doc/cgal/CHANGES debian/tmp/usr/share/doc/cgal/changelog
 	rm debian/tmp/usr/share/doc/cgal/LICENSE*
 	rm debian/tmp/usr/share/doc/cgal/AUTHORS
@@ -73,12 +79,12 @@ install: build
 
 	dh_install --sourcedir=debian/tmp --list-missing
 
-	ln -s libcgal3 debian/libcgal-demo/usr/share/doc/libcgal-demo
+	ln -s libcgal4 debian/libcgal-demo/usr/share/doc/libcgal-demo
 	mkdir -p debian/libcgal-dev/usr/share/doc
-	ln -s libcgal3 debian/libcgal-dev/usr/share/doc/libcgal-dev
+	ln -s libcgal4 debian/libcgal-dev/usr/share/doc/libcgal-dev
 
-	#install -d debian/libcgal3/DEBIAN
-	#install -m644 debian/libcgal3.shlibs debian/libcgal3/DEBIAN/shlibs
+	#install -d debian/libcgal4/DEBIAN
+	#install -m644 debian/libcgal4.shlibs debian/libcgal4/DEBIAN/shlibs
 
 binary-indep: build install
 	dh_testdir -i
@@ -94,16 +100,16 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir -a
 	dh_testroot -a
-	dh_installdocs -plibcgal3 debian/copyright
-	dh_installchangelogs -plibcgal3
-	dh_installman -plibcgal-dev auxiliary/cgal_create_cmake_script.1
+	dh_installdocs -plibcgal4 debian/copyright
+	dh_installchangelogs -plibcgal4
+	dh_installman -a
 	dh_link -a
 	dh_strip -a
 	dh_compress -a
 	dh_fixperms -a
 	dh_makeshlibs -a
 	dh_installdeb -a
-	dh_shlibdeps -a -ldebian/libcgal3/usr/lib
+	dh_shlibdeps -a -ldebian/libcgal4/usr/lib
 	dh_gencontrol -a
 	dh_md5sums -a
 	dh_builddeb -a
