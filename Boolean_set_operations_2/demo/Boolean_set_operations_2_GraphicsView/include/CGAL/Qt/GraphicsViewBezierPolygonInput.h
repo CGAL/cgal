@@ -18,8 +18,8 @@
 // Author(s)     : Fernando Cacciola <Fernando.Cacciola@geometryfactory.com>
 //
 
-#ifndef CGAL_QT_GRAPHICS_VIEW_BEZIER_REGION_INPUT_H
-#define CGAL_QT_GRAPHICS_VIEW_BEZIER_REGION_INPUT_H
+#ifndef CGAL_QT_GRAPHICS_VIEW_BEZIER_POLYGON_INPUT_H
+#define CGAL_QT_GRAPHICS_VIEW_BEZIER_POLYGON_INPUT_H
 
 #include <CGAL/auto_link/Qt4.h>
 
@@ -36,7 +36,7 @@ namespace CGAL {
 namespace Qt {
 
   template <class Traits_>
-  class GraphicsViewBezierRegionInput : public GraphicsViewInput
+  class GraphicsViewBezierPolygonInput : public GraphicsViewInput
   {
   public:
 
@@ -44,42 +44,27 @@ namespace Qt {
     
     typedef CGAL::Gps_traits_2<Traits> Bezier_gps_traits;
     
-    typedef typename Traits::Curve_2                                 Curve;
-    typedef typename Traits::X_monotone_curve_2                      Output_X_monotone_curve;
-    typedef typename Bezier_gps_traits::General_polygon_2            Output_boundary;
-    typedef typename Bezier_gps_traits::General_polygon_with_holes_2 Output_region;
-    typedef typename Traits::Rat_kernel::Vector_2                    Vector ;
-    typedef typename Traits::Rat_kernel::Point_2                     Point ;
+    typedef typename Traits::Curve_2                      Bezier_curve;
+    typedef typename Traits::X_monotone_curve_2           Bezier_X_monotone_curve;
+    typedef typename Bezier_gps_traits::General_polygon_2 Bezier_polygon;
+    typedef typename Traits::Rat_kernel::Vector_2         Vector ;
+    typedef typename Traits::Rat_kernel::Point_2          Point ;
     
-    typedef std::vector<Curve> Curve_vector ;
+    typedef std::vector<Bezier_curve> Bezier_curve_vector ;
     
-    struct Boundary
-    {
-      Boundary() : mIsClosed(false) {}
-      
-      Curve_vector mPieces ;
-      bool         mIsClosed ; 
-    } ;
+    typedef typename Bezier_curve_vector::const_iterator const_bezier_curve_iterator ;
+    
+    typedef Bezier_boundary_pieces_graphics_item<Bezier_curve_vector> GI ;
 
-    typedef boost::shared_ptr<Boundary> Boundary_ptr ;
-    
-    typedef std::vector<Boundary_ptr> Boundary_vector ;
-    
-    typedef typename Curve_vector::const_iterator    const_curve_terator ;
-    typedef typename Boundary_vector::const_iterator const_boundary_terator ;
-    
-    typedef Bezier_boundary_pieces_graphics_item<Curve_vector> GI ;
-
-    GraphicsViewBezierRegionInput(QObject* aParent, QGraphicsScene* aScene)
+    GraphicsViewBezierPolygonInput(QObject* aParent, QGraphicsScene* aScene)
       :
         GraphicsViewInput( aParent         )
       , mScene           ( aScene          )
       , mState           ( Start           )
-      , mBoundaryPen     ( QColor(0,255,0) )
+      , mBezierPolygonPen( QColor(0,255,0) )
       , mOngoingCurvePen ( QColor(255,0,0) )
       , mHandlePen       ( QColor(0,0,255) )
-      , mCurrBoundary    ( new Boundary()  ) 
-      , mCurrBoundaryGI  ( 0               )
+      , mBezierGI        ( 0               )
     {
       mOngoingPieceGI = new GI(&mOngoingPieceCtr) ;
       mHandle0GI      = new QGraphicsLineItem();
@@ -94,14 +79,17 @@ namespace Qt {
       mHandle0GI->hide();
       mHandle1GI->hide();
       
+      mBezierGI = new GI(&mBezierPolygonPieces) ;
+      
+      mBezierGI->setPen(mBezierPolygonPen);
+      
       mScene->addItem(mOngoingPieceGI);
       mScene->addItem(mHandle0GI);
       mScene->addItem(mHandle1GI);
-      
-      SetupCurrBoundary();
+      mScene->addItem(mBezierGI);
     }
     
-    ~GraphicsViewBezierRegionInput()
+    ~GraphicsViewBezierPolygonInput()
     {
       //mScene->removeItem(mGI);
       //delete mGI ;
@@ -247,7 +235,7 @@ namespace Qt {
         {
           case PieceOngoing: 
             CloseCurrBundary();
-            CommitCurrBoundary();
+            CommitCurrBezierPolygon();
             mPrevH0 = mH0 = mH1 = boost::optional<Point>();
             mState = Start ;     
             rHandled = true;
@@ -267,52 +255,10 @@ namespace Qt {
     }
 
     
-    virtual void generate_boundary() 
-    {
-      Output_region* lRegion = NULL;
-      
-      for ( const_boundary_terator bit = mComittedBoundaries.begin() ; bit != mComittedBoundaries.end();  ++ bit )
-      {
-        Boundary const& lBoundary = **bit ;
-            
-        Traits traits ;
-        Traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
-        
-        std::vector<Output_X_monotone_curve> xcvs;
-
-        for ( const_curve_terator it = lBoundary.mPieces.begin() ; it != lBoundary.mPieces.end() ; ++ it )
-        {       
-          std::vector<CGAL::Object>                 x_objs;
-          std::vector<CGAL::Object>::const_iterator xoit;
-          
-          make_x_monotone ( *it, std::back_inserter (x_objs));
-          
-          for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
-          {
-            Output_X_monotone_curve xcv;
-            if (CGAL::assign (xcv, *xoit))
-              xcvs.push_back (xcv);
-          }    
-        }
-        
-        Output_boundary lOB(xcvs.begin(), xcvs.begin());
-        
-        if ( !lRegion )
-             lRegion = new Output_region(lOB) ;
-        else lRegion->add_hole(lOB); 
-      }
-      
-      if ( lRegion )
-        emit(generate(CGAL::make_object( *lRegion )));
-        
-      Clear();
-      SetupCurrBoundary();
-      mState = Start ;  
-    }
     
   private:
 
-    Curve const* ongoing_piece() const { return mOngoingPieceCtr.size() == 1 ? &mOngoingPieceCtr[0] : NULL ; }
+    Bezier_curve const* ongoing_piece() const { return mOngoingPieceCtr.size() == 1 ? &mOngoingPieceCtr[0] : NULL ; }
     
     void HideHandles()
     {
@@ -320,7 +266,7 @@ namespace Qt {
       mHandle1GI->hide();
     }  
 
-    Curve CreatePiece()
+    Bezier_curve CreatePiece()
     {
       if ( mPrevH0 && mH1 && *mPrevH0 != *mH1 && *mPrevH0 != mP0 && *mH1 != mP1 )
       {
@@ -329,7 +275,7 @@ namespace Qt {
                                   , *mH1
                                   , mP1 
                                   } ;
-        return Curve( lControlPoints, lControlPoints + 4 ) ;
+        return Bezier_curve( lControlPoints, lControlPoints + 4 ) ;
       }
       else if ( mPrevH0 && !mH1 && *mPrevH0 != mP0 && *mPrevH0 != mP1 )
       {
@@ -337,7 +283,7 @@ namespace Qt {
                                   , *mPrevH0
                                   , mP1 
                                   } ;
-        return Curve( lControlPoints, lControlPoints + 3 ) ;
+        return Bezier_curve( lControlPoints, lControlPoints + 3 ) ;
       }
       else if ( !mPrevH0 && mH1 && *mH1 != mP0 && *mH1 != mP1 )
       {
@@ -345,14 +291,14 @@ namespace Qt {
                                   , *mH1
                                   , mP1 
                                   } ;
-        return Curve( lControlPoints, lControlPoints + 3 ) ;
+        return Bezier_curve( lControlPoints, lControlPoints + 3 ) ;
       }
       else
       {
         Point lControlPoints[2] = { mP0
                                   , mP1 
                                   } ;
-        return Curve( lControlPoints, lControlPoints + 2 ) ;
+        return Bezier_curve( lControlPoints, lControlPoints + 2 ) ;
       }
     }
     
@@ -368,8 +314,8 @@ namespace Qt {
     {
       if ( ongoing_piece() ) 
       {
-        mCurrBoundary->mPieces.push_back( *ongoing_piece() ) ;
-        mCurrBoundaryGI->modelChanged();
+        mBezierPolygonPieces.push_back( *ongoing_piece() ) ;
+        mBezierGI->modelChanged();
         mOngoingPieceCtr.clear();
         mOngoingPieceGI->modelChanged();
         mP0 = mP1 ;
@@ -419,76 +365,73 @@ namespace Qt {
 
     void CloseCurrBundary()
     {
-      if ( mCurrBoundary->mPieces.size() > 0 && ongoing_piece()!= NULL )
+      if ( mBezierPolygonPieces.size() > 0 && ongoing_piece()!= NULL )
       {
         std::vector<Point> lControlPoints(ongoing_piece()->control_points_begin(),ongoing_piece()->control_points_end());
         
-        lControlPoints.back() = mCurrBoundary->mPieces.front().control_point(0);
+        lControlPoints.back() = mBezierPolygonPieces.front().control_point(0);
               
-        mCurrBoundary->mPieces.push_back( Curve( lControlPoints.begin(), lControlPoints.end() ) ) ;
+        mBezierPolygonPieces.push_back( Bezier_curve( lControlPoints.begin(), lControlPoints.end() ) ) ;
         
-        mCurrBoundary->mIsClosed = true ;
-        
-        mCurrBoundaryGI->modelChanged() ;
+        mBezierGI->modelChanged() ;
       }
     }
         
-    void CommitCurrBoundary()
+    void CommitCurrBezierPolygon()
     {
+      GenerateBezierPolygon();
+
       mOngoingPieceCtr.clear();
       mOngoingPieceGI->modelChanged();
       
-      if ( mCurrBoundary->mPieces.size() > 0 )
-      {
-        mComittedBoundaries.push_back(mCurrBoundary) ;
-        
-        mCommittedBoundariesGI.push_back(mCurrBoundaryGI);
-      }
+      mBezierPolygonPieces.clear();
+      mBezierGI->modelChanged() ;
       
-      SetupCurrBoundary();
+      mPrevH0 = mH0 = mH1 = boost::optional<Point>();
       
       HideHandles();
     }
     
-    void SetupCurrBoundary()
+    void GenerateBezierPolygon() 
     {
-      mCurrBoundary = Boundary_ptr( new Boundary() ) ;
+      Traits traits ;
+      Traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
       
-      mCurrBoundaryGI = new GI(&mCurrBoundary->mPieces) ;
+      std::vector<Bezier_X_monotone_curve> xcvs;
+
+      for ( const_bezier_curve_iterator it = mBezierPolygonPieces.begin() ; it != mBezierPolygonPieces.end() ; ++ it )
+      {       
+        std::vector<CGAL::Object>                 x_objs;
+        std::vector<CGAL::Object>::const_iterator xoit;
+        
+        make_x_monotone ( *it, std::back_inserter (x_objs));
+        
+        for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
+        {
+          Bezier_X_monotone_curve xcv;
+          if (CGAL::assign (xcv, *xoit))
+            xcvs.push_back (xcv);
+        }    
+      }
       
-      mCurrBoundaryGI->setPen(mBoundaryPen);
-      
-      mScene->addItem(mCurrBoundaryGI);
-    }
-    
-    void Clear()
-    {
-      mOngoingPieceCtr.clear();
-      mOngoingPieceGI->modelChanged();
-      mScene->removeItem(mCurrBoundaryGI);
-      for ( std::vector<GI*>::iterator it = mCommittedBoundariesGI.begin() ; it != mCommittedBoundariesGI.end(); ++ it )
-        mScene->removeItem(*it);
-      mCommittedBoundariesGI.clear();  
-      mComittedBoundaries   .clear();
-      mPrevH0 = mH0 = mH1 = boost::optional<Point>();
+      if ( xcvs.size() > 0 )
+        emit(generate(CGAL::make_object( Bezier_polygon(xcvs.begin(), xcvs.end()))));
     }
     
   private:
   
     QGraphicsScene*    mScene ;
-    std::vector<GI*>   mCommittedBoundariesGI ;
-    GI*                mCurrBoundaryGI ; 
+    GI*                mBezierGI ; 
     GI*                mOngoingPieceGI ; 
     QGraphicsLineItem* mHandle0GI ;          
     QGraphicsLineItem* mHandle1GI ;          
 
-    QPen mBoundaryPen ;
+    QPen mBezierPolygonPen ;
     QPen mOngoingCurvePen ;
     QPen mHandlePen ;    
     
-    Boundary_vector mComittedBoundaries ;  
-    Boundary_ptr    mCurrBoundary ;  
-    Curve_vector    mOngoingPieceCtr ;  
+    Bezier_curve_vector mBezierPolygonPieces ;
+    Bezier_curve_vector mOngoingPieceCtr ;  
 
     int mState;
     
@@ -499,7 +442,7 @@ namespace Qt {
     boost::optional<Point> mH0;
     boost::optional<Point> mH1;
   
-  }; // end class GraphicsViewBezierRegionInput
+  }; // end class GraphicsViewBezierPolygonInput
 
 } // namespace Qt
 } // namespace CGAL

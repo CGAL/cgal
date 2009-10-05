@@ -861,7 +861,6 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/union.
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/union.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL/Qt/BezierCurves.h -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL/Qt/CircularPolygons.h -text
-Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL/Qt/GeneralPolygonSetGraphicsItem.h -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/typedefs.h -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/bso_def.tex -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/Boolean_set_operations_2.png -text

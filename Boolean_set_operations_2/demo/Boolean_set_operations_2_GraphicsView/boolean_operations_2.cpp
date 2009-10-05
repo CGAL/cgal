@@ -82,7 +82,7 @@ void trace( std::string s )
 
 #include <CGAL/Qt/BezierCurves.h>
 #include <CGAL/Qt/CircularPolygons.h>
-#include <CGAL/Qt/GraphicsViewBezierRegionInput.h>
+#include <CGAL/Qt/GraphicsViewBezierPolygonInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Qt/utility.h>
@@ -438,11 +438,11 @@ class MainWindow :
   
 private:  
 
-  QGraphicsScene                                          mScene;
-  bool                                                    mCircular_active ;
-  bool                                                    mBlue_active ;
-  Curve_set_vector                                        mCurve_sets ;
-  CGAL::Qt::GraphicsViewBezierRegionInput<Bezier_traits>* mBezierInput ;
+  QGraphicsScene                                           mScene;
+  bool                                                     mCircular_active ;
+  bool                                                     mBlue_active ;
+  Curve_set_vector                                         mCurve_sets ;
+  CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>* mBezierInput ;
     
 public:
 
@@ -591,7 +591,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   
-  mBezierInput = new CGAL::Qt::GraphicsViewBezierRegionInput<Bezier_traits>(this, &mScene);
+  mBezierInput = new CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>(this, &mScene);
   
   QObject::connect(mBezierInput, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
 
@@ -998,11 +998,11 @@ void MainWindow::on_actionInsertPWH_toggled(bool aChecked)
 
 void MainWindow::processInput(CGAL::Object o )
 {
-  Bezier_polygon_with_holes lBPWH ;
-  if(CGAL::assign(lBPWH, o))
+  Bezier_polygon lBP ;
+  if(CGAL::assign(lBP, o))
   {
     if ( ensure_bezier_mode() )
-      active_set().bezier().join( lBPWH ) ;  
+      active_set().bezier().join( Bezier_polygon_with_holes(lBP) ) ;  
   }
   modelChanged();
 }
