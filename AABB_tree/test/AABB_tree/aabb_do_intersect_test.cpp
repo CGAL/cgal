@@ -167,6 +167,12 @@ int main()
   std::cout << "Testing with Simple_cartesian<double>..." << std::endl ;
 	b &= test<CGAL::Simple_cartesian<double> >();
   
+  std::cout << "Testing with Cartesian<float>..." << std::endl ;
+	b &= test<CGAL::Cartesian<float> >();
+  
+  std::cout << "Testing with Cartesian<double>..." << std::endl ;
+	b &= test<CGAL::Cartesian<double> >();
+  
   std::cout << "Testing with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
 	b &= test<CGAL::Exact_predicates_inexact_constructions_kernel>();
 	
