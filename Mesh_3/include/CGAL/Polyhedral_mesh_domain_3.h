@@ -108,7 +108,6 @@ public:
     : tree_(TriangleAccessor().triangles_begin(p),
             TriangleAccessor().triangles_end(p))
   { 
-    tree_.accelerate_distance_queries();
   };
 
   /// Destructor
@@ -292,6 +291,12 @@ public:
   Subdomain_index subdomain_index(const Index& index) const
   { return boost::get<Subdomain_index>(index); };
 
+public:
+  Surface_index make_surface_index() const
+  {
+    return Surface_index(0,1);
+  }
+  
 private:
   typedef Mesh_3::Triangle_accessor_primitive<TriangleAccessor, IGT>
                                                                 AABB_primitive;
@@ -299,11 +304,7 @@ private:
   typedef class AABB_tree<AABB_traits> AABB_tree;
   typedef typename AABB_traits::Bounding_box Bounding_box;
 
-private:
-  Surface_index make_surface_index() const
-  {
-    return Surface_index(0,1);
-  }
+
 
 private:
   /// The AABB tree: intersection detection and more

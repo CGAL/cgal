@@ -47,7 +47,7 @@ public:
   
 };
 
-template<typename K> double Min_dihedral_angle_criterion<K>::default_value = 25.; 
+template<typename K> double Min_dihedral_angle_criterion<K>::default_value = 12.; 
 
   
 template <typename K>
