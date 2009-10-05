@@ -49,14 +49,15 @@ struct Tester
     // Data generation : get 4 nearly coplanar points
     //-------------------------------------------------------
     Point_creator creator;
-    FT little(1e-15);
+    FT little(1e-35);
+    FT tiny(1e-65);
     
-    Point p1 = creator(1,little,0);
-    Point p2 = creator(0,1,0);
-    Point p3 = creator(-1,0,little);
-    Point p4 = creator(little,-1,0);
+    Point p1 = creator(little,1,tiny);
+    Point p2 = creator(1,little,0);
+    Point p3 = creator(-1*little,1,0);
+    Point p4 = creator(1,-1*little,0);
     Point p5 = creator(0,0,1);
-    Point p6 = creator(0,0,0);
+    Point p6 = creator(0,1,0);
 
     std::cerr << "Using points: p1[" << p1 << "]\tp2[" << p2
               << "]\tp3[" << p3 << "]\tp4[" << p4 << "]\tp5[" << p5
@@ -107,6 +108,27 @@ struct Tester
     std::cerr << "\t" << nb_loop*1000/timer.time()
               << " circumcenter computation / second\n";
 
+    
+    std::cerr << "Test speed: compute loops of: 999*c(p1,p2,p3,p4) "
+              << "and 1*c(p1,p2,p3,p5)\n";
+    
+    timer.reset();
+    timer.start();
+    nb_loop = 0;
+    while ( timer.time() < 0.5 )
+    {
+      // Compute 1000 fast queries
+      for ( int i = 0 ; i < 999 ; ++i)
+        circumcenter(p1,p2,p3,p4);
+      
+      // Compute 1 exact query
+      circumcenter(p1,p2,p3,p5);
+      ++nb_loop;
+    }
+    timer.stop();
+    std::cerr << "\t" << nb_loop*1000/timer.time()
+              << " circumcenter computation / second\n";
+    
   }
 };
 

@@ -59,15 +59,16 @@ public:
                           const Weighted_point_3 & r,
                           const Weighted_point_3 & s ) const
   {
+    CGAL_precondition(! K_().coplanar_3_object()(p,q,r,s) );
+    
     typename K_::Construct_weighted_circumcenter_3 weighted_circumcenter =
         K_().construct_weighted_circumcenter_3_object();
     typename K_::Has_on_bounded_side_3 on_bounded_side =
         K_().has_on_bounded_side_3_object();
 
     // Compute denominator to swith to exact if it is 0
-    // TODO: replace hard coded comparison with 1E-14 by static filter.
     const FT denom = compute_denom(p,q,r,s);
-    if (denom < -1E-14 || denom > 1E-14)
+    if ( ! CGAL_NTS is_zero(denom) )
     {
       result_type point = weighted_circumcenter(p,q,r,s);
 
@@ -92,15 +93,16 @@ public:
                           const Weighted_point_3 & q,
                           const Weighted_point_3 & r ) const
   {
+    CGAL_precondition(! K_().collinear_3_object()(p,q,r) );
+    
     typename K_::Construct_weighted_circumcenter_3 weighted_circumcenter =
       K_().construct_weighted_circumcenter_3_object();
     typename K_::Has_on_bounded_side_3 on_bounded_side =
       K_().has_on_bounded_side_3_object();
 
     // Compute denominator to swith to exact if it is 0
-    // TODO: replace hard coded comparison with 1E-14 by static filter.
     const FT denom = compute_denom(p,q,r);
-    if (denom < -1E-14 || denom > 1E-14)
+    if ( ! CGAL_NTS is_zero(denom) )
     {
       result_type point = weighted_circumcenter(p,q,r);
 
