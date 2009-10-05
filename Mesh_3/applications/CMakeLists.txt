@@ -29,7 +29,7 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
 # Compilable examples
-  create_single_source_cgal_program( "mesh_implicit_domains.cpp" "implicit_functions.cpp" )
+  create_single_source_cgal_program( "mesh_implicit_domains.cpp" "../examples/Mesh_3/implicit_functions.cpp" )
   if( CGAL_ImageIO_USE_ZLIB )
     create_single_source_cgal_program( "mesh_3D_image.cpp" )
   else()
