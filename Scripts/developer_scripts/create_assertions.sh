@@ -46,9 +46,14 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 // $Id$
 // 
 //
-// Author(s)     : script by Geert-Jan Giezeman and Sven Schoenherr
+// Author(s)     : Geert-Jan Giezeman, Sven Schoenherr
+//
+// Generated from script create_assertions.sh
 
 
+// Note that this header file is intentionnaly not protected with a
+// macro (as <cassert>). Calling it a second time with another value
+// for NDEBUG for example must make a difference.
 
 // macro definitions
 // =================
