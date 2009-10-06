@@ -443,7 +443,7 @@ class No_patch_facet_pmap_first
   typedef typename C3T3::Cell_handle Cell_handle;
   
 public:
-  No_patch_facet_pmap_first(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+  No_patch_facet_pmap_first(const C3T3&, const Cell_pmap& cell_pmap)
     : cell_pmap_(cell_pmap) { }
   
   int surface_index(const Facet& f) const
@@ -486,7 +486,7 @@ class No_patch_facet_pmap_second
   typedef typename C3T3::Cell_handle Cell_handle;
   
 public:
-  No_patch_facet_pmap_second(const C3T3& c3t3, const Cell_pmap& cell_pmap)
+  No_patch_facet_pmap_second(const C3T3&, const Cell_pmap& cell_pmap)
     : cell_pmap_(cell_pmap) { }
   
   int surface_index(const Facet& f) const
