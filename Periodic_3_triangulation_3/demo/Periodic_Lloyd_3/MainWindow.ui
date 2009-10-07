@@ -137,8 +137,8 @@
   </action>
   <action name="actionNew_Point_Set" >
    <property name="icon" >
-    <iconset>
-     <normaloff>icons/fileNew.png</normaloff>icons/fileNew.png</iconset>
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/fileNew.png</normaloff>:/Periodic_Lloyd_3/icons/fileNew.png</iconset>
    </property>
    <property name="text" >
     <string>New Point Set</string>
@@ -155,9 +155,9 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset>
-     <normaloff>icons/pause.png</normaloff>
-     <normalon>icons/play.png</normalon>icons/pause.png</iconset>
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/pause.png</normaloff>
+     <normalon>:/Periodic_Lloyd_3/icons/play.png</normalon>:/Periodic_Lloyd_3/icons/pause.png</iconset>
    </property>
    <property name="text" >
     <string>Stop</string>
@@ -171,8 +171,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset>
-     <normaloff>icons/cp8.png</normaloff>icons/cp8.png</iconset>
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/cp8.png</normaloff>:/Periodic_Lloyd_3/icons/cp8.png</iconset>
    </property>
    <property name="text" >
     <string>Show 8 Copies</string>
@@ -186,8 +186,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset>
-     <normaloff>icons/planar.png</normaloff>icons/planar.png</iconset>
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/planar.png</normaloff>:/Periodic_Lloyd_3/icons/planar.png</iconset>
    </property>
    <property name="text" >
     <string>2D version</string>
@@ -198,8 +198,8 @@
   </action>
   <action name="actionStep" >
    <property name="icon" >
-    <iconset>
-     <normaloff>icons/step.png</normaloff>icons/step.png</iconset>
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/step.png</normaloff>:/Periodic_Lloyd_3/icons/step.png</iconset>
    </property>
    <property name="text" >
     <string>Step</string>
