@@ -55,6 +55,8 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 // macro (as <cassert>). Calling it a second time with another value
 // for NDEBUG for example must make a difference.
 
+#include <CGAL/assertions.h>
+
 // macro definitions
 // =================
 // assertions
