@@ -452,6 +452,32 @@ public:
     return ps;
   }
 
+  template <class OutputIterator>
+  OutputIterator dual(const Edge & e, OutputIterator points) const {
+    return dual(e.first, e.second, e.third, points);
+  }
+
+  template <class OutputIterator>
+  OutputIterator dual(Cell_handle c, int i, int j,
+      OutputIterator points) const {
+    // TODO
+  }
+
+  template <class OutputIterator>
+  OutputIterator dual(Vertex_handle v, OutputIterator points) const {
+    std::vector<Cell_handle> cells;
+    incident_cells(v,std::back_inserter(cells));
+
+    for (int i=0; i<cells.size() ; i++) {
+      Point dual_orig = periodic_circumcenter(cells[i]).first;
+      int idx = cells[i]->index(v);
+      Offset off = periodic_point(cells[i],idx).second;
+      Point dual = point(std::make_pair(dual_orig,-off));
+      *points++ = dual;
+    }
+    return points;
+  }
+
   template <class Stream>
   Stream& draw_dual(Stream& os) {
     CGAL_triangulation_assertion_code( unsigned int i = 0; )
