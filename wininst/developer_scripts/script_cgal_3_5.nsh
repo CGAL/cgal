@@ -18,6 +18,7 @@
 
 Var Platform
 Var IsGmpInstalled
+Var IsTAUCSInstalled
 
 ;--------------------------------
 ; Macros
@@ -72,6 +73,9 @@ Var IsGmpInstalled
 
 !macro DownloadFileFrom SERVER SRC_FOLDER FILE TGT
 !ifndef SkipDownload
+  !ifdef DebugLog
+    ${LogMsg} "Downloadimg ${SERVER}${SRC_FOLDER}${FILE} into ${TGT}\${FILE}"
+  !endif	
   !ifdef ViaFTP
     inetc::get ${SERVER}${SRC_FOLDER}${FILE} ${TGT}\${FILE}
   !else
@@ -126,6 +130,27 @@ Var IsGmpInstalled
   !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr-${VARIANT}.pdb.zip" "$INSTDIR\auxiliary\gmp\lib"
 !macroend
 
+!macro Install_LAPACK_TAUCS_libs PLATFORM VARIANT
+  ; Headers are not VARIANT dependent so we include this only once, but here since
+  ; we want to download headers only if at least one lib variant was selected.
+  ${If} $IsTAUCSInstalled = 0
+    StrCpy $IsTAUCSInstalled 1 
+    
+    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.5/"  "taucs.h.zip"               "$INSTDIR\auxiliary\taucs\include"
+    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.5/"  "taucs_private.h.zip"       "$INSTDIR\auxiliary\taucs\include"
+    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.5/"  "taucs_config_tests.h.zip"  "$INSTDIR\auxiliary\taucs\include"
+    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.5/"  "taucs_config_build.h.zip"  "$INSTDIR\auxiliary\taucs\include"
+    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.5/"  "blaswrap.h.zip"            "$INSTDIR\auxiliary\taucs\include"
+
+    ${If} "$Platform" == "win32"
+      !insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "common.zip" "$INSTDIR\auxiliary\taucs\lib"
+    ${Endif}
+    
+  ${Endif}
+  
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.5/"  "libs-${VARIANT}.zip"  "$INSTDIR\auxiliary\taucs\lib"
+!macroend
+
 !macro Install_GMP_MPFR_bin PLATFORM VARIANT
 
   ; Headers are not VARIANT dependent so we include this only once, but here since
@@ -141,86 +166,54 @@ Var IsGmpInstalled
   !insertmacro Install_DLL_if_dynamic_variant Install_GMP_MPFR_dlls "${PLATFORM}" "${VARIANT}"
 !macroend
 
+!macro _MaybeSelectVariant Compiler Variant Sec1 Sec2
 
-;--------------------------------
-; Functions
-;--------------------------------
- 
-; Given a section ($2) implicitely corresponding
-; to a certain compiler ($0) and variant choice ($2)
-; select it or unselect it based on the user choices in the variants page
-Function __MaybeSelectVariant
-    Exch $2
-    ; c, v, r2
-    Exch
-    ; c, r2, v
-    Exch $1
-    ; c, r2, r1
-    Exch
-    ; c, r1, r2
-    Exch 2
-    ; r2, r1, c
-    Exch $0
-    ; r2, r1, r0
-    Exch 2
-    ; r0, r1, r2
-
-    Push $3
-    Push $4
-    
-    ${If} $0 == "VC8.0"
-        !insertmacro MUI_INSTALLOPTIONS_READ $3 "variants.ini" "Field 5" "State"
-    ${Else}
-        !insertmacro MUI_INSTALLOPTIONS_READ $3 "variants.ini" "Field 6" "State"
-    ${EndIf}
-
-    ; If the corresponding compiler+variant is not found in the variant page
-    ; the section is unselected
-    StrCpy $5 0
-
-    ${If} $3 <> 0 ; Is the compiler selected?
-    
-      ; variants are the fields 7 to 10
-      ${For} $3 7 10
-      
-        !insertmacro MUI_INSTALLOPTIONS_READ $4 "variants.ini" "Field $3" "Text"
-        
-        ${If} $4 == $1 ; Is this variant field the one we are looking for?
-        
-          ; Found the variant field. Read the state and exit the loop
-          !insertmacro MUI_INSTALLOPTIONS_READ $5 "variants.ini" "Field $3" "State"
-          
-          goto break ; 
-          
-        ${EndIf}
-        
-      ${Next}
-      
-      break:
-      
-    ${EndIf}
-
-    ${If} $5 = 0
-      !insertmacro UnselectSection $2
-    ${Else}
-      !insertmacro SelectSection $2
-    ${EndIf}
-
-    Pop $4
-    Pop $3
-    Pop $2
-    Pop $1
-    Pop $0
-FunctionEnd
-
-!macro _MaybeSelectVariant Compiler Variant Sec
-
-  Push "${Compiler}"
-  Push "${Variant}"
-  Push "${Sec}"
+  Push $0
+  Push $1
   
-  call __MaybeSelectVariant
+  ${If} "${Compiler}" == "VC8.0"
+      !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 5" "State"
+  ${Else}
+      !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 6" "State"
+  ${EndIf}
+
+  ; If the corresponding compiler+variant is not found in the variant page
+  ; the section is unselected
+  StrCpy $1 0
+
+  ${If} $0 <> 0 ; Is the compiler selected?
   
+    ; variants are the fields 7 to 10
+    ${For} $0 7 10
+    
+      !insertmacro MUI_INSTALLOPTIONS_READ $1 "variants.ini" "Field $0" "Text"
+      
+      ${If} "$1" == "${Variant}" ; Is this variant field the one we are looking for?
+      
+        ; Found the variant field. Read the state and exit the loop
+        !insertmacro MUI_INSTALLOPTIONS_READ $1 "variants.ini" "Field $0" "State"
+        
+        goto break_${Sec1} ; 
+        
+      ${EndIf}
+      
+    ${Next}
+    
+    break_${Sec1}:
+    
+  ${EndIf}
+
+  ${If} $1 = 0
+    !insertmacro UnselectSection ${Sec1}
+    !insertmacro UnselectSection ${Sec2}
+  ${Else}
+    !insertmacro SelectSection ${Sec1}
+    !insertmacro SelectSection ${Sec2}
+  ${EndIf}
+
+  Pop $1
+  Pop $0
+    
 !macroend
 
 !define MaybeSelectVariant "!insertmacro _MaybeSelectVariant"
