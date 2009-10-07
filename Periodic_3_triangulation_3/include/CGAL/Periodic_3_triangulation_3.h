@@ -283,13 +283,13 @@ public:
 
   const Iso_cuboid & domain() const { return _domain; }
   // TODO: Documentation and tests
-//   void set_domain(const Iso_cuboid & domain) {
-//     clear();
-//     _domain = domain;
-//     _gt.set_domain(domain);
-//     edge_length_threshold = FT(0.166) * (_domain.xmax()-_domain.xmin())
-//                                       * (_domain.xmax()-_domain.xmin());
-//   }
+  void set_domain(const Iso_cuboid & domain) {
+    clear();
+    _domain = domain;
+    _gt.set_domain(domain);
+    edge_length_threshold = FT(0.166) * (_domain.xmax()-_domain.xmin())
+                                      * (_domain.xmax()-_domain.xmin());
+  }
 
   const Covering_sheets & number_of_sheets() const { return _cover; }
 
