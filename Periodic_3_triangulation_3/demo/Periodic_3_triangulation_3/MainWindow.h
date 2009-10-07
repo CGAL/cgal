@@ -1,6 +1,7 @@
 #include <QtGui>
 #include <QFile>
 #include <QTextStream>
+#include <QTimer>
 #include "Scene.h"
 
 #include <QtAssistant/QAssistantClient>
@@ -140,6 +141,7 @@ private:
 public:
   Ui::MainWindow* ui;
   Scene* s;
+  QTimer* timer;
 
 private:
   QAssistantClient *assistantClient;

@@ -2386,6 +2386,16 @@ Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/icons/wireframe.png -
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/icons/wireframeOff.png -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/resources/about.html -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/resources/about_CGAL.html -text
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/MainWindow.ui -text
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/Periodic_Lloyd_3.qrc -text
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/about_CGAL.html svneol=native#text/html
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/about_Periodic_Lloyd_3.html svneol=native#text/html
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/icons/cp8.png -text svneol=unset#image/png
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/icons/fileNew.png -text svneol=unset#image/png
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/icons/pause.png -text svneol=unset#image/png
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/icons/planar.png -text svneol=unset#image/png
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/icons/play.png -text svneol=unset#image/png
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/icons/step.png -text svneol=unset#image/png
 Periodic_3_triangulation_3/doc_tex/Periodic_3_triangulation_3/offsets.gif -text
 Periodic_3_triangulation_3/doc_tex/Periodic_3_triangulation_3/offsets.pdf -text
 Periodic_3_triangulation_3/doc_tex/Periodic_3_triangulation_3/orient.gif -text svneol=unset#image/gif
