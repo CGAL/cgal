@@ -121,6 +121,7 @@ MainWindow::newPoints(int n)
   timer.start();
   scene.periodic_triangulation.set_domain(Iso_cuboid_3(-1,-1,-1,1,1,1));
   scene.periodic_triangulation.insert(scene.points.begin(), scene.points.end());
+  scene.const_vertex = scene.periodic_triangulation.vertices_begin();
   timer.stop();
   
 

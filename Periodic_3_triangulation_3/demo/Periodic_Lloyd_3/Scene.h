@@ -7,6 +7,7 @@ struct Scene {
 
   std::list<Point_3> points;
   P3DT3 periodic_triangulation;
+  Vertex_handle const_vertex;
 
   bool eight_copies;
   bool two_dimensional;
@@ -25,6 +26,7 @@ struct Scene {
     points.clear();
     for (std::vector<Vertex_handle>::iterator vit = vts.begin();
 	 vit != vts.end(); ++vit) {
+      if (*vit == const_vertex) continue;
       std::vector<Point_3> dual_vertices;
       periodic_triangulation.dual(*vit,std::back_inserter(dual_vertices));
       Point_3 new_point = (two_dimensional ?
@@ -34,6 +36,7 @@ struct Scene {
       points.push_back(new_point);
     }
     periodic_triangulation.clear();
+    const_vertex = periodic_triangulation.insert(const_vertex->point());
     periodic_triangulation.insert(points.begin(),points.end());
   }
 
