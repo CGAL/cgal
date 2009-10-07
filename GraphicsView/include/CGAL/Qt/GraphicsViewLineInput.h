@@ -71,7 +71,7 @@ private:
 
 template <typename K>
 QRectF
-LineInput_2<K>::boundingRect()
+GraphicsViewLineInput<K>::boundingRect()
 {
   QRectF rect = CGAL::Qt::viewportsBbox(scene_);
   return rect;
