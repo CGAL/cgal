@@ -58,8 +58,8 @@ The class \ccc{Triangulation_3} defines the following types:
 \ccTypedef{typedef Geometric_traits::Tetrahedron_3 Tetrahedron;}{}
 
 \ccTypedef{typedef std::pair< Point, Offset >
-  Periodic_point;}{Represents a point-offset pair. The point has to
-  lie in the original domain.}
+  Periodic_point;}{Represents a point-offset pair. The point in the
+  pair lies in the original domain.}
 \ccGlue
 \ccTypedef{typedef array< Periodic_point, 2>
   Periodic_segment;}{}
@@ -225,7 +225,7 @@ a permutation of their vertices).}
 
 \ccHeading{Non const access}
 \ccMethod{void set_domain(const Iso_cuboid dom);}
-{Permits to change the domain. Note that this function calls \ccc{clear()},
+{Changes the domain. Note that this function calls \ccc{clear()},
   i.e., it erases the existing triangulation. }
 
 The responsibility of keeping a valid triangulation belongs to the user
@@ -349,8 +349,11 @@ inside of cell \ccc{c}.
 {Returns the periodic tetrahedron formed by the four point-offset pairs
   corresponding to the four vertices of \ccc{c}.}
 
-Note: the following functions require constructions in the traits to
-be exact.
+Note that a traits class providing exact constructions should be used
+in order to guarantee the following operations to be exact (as opposed
+to computing the triangulation only, which requires only exact
+predicates).
+
 \ccMethod{Point point(const Periodic_point & p ) const;}
 {Converts the \ccc{Periodic_point} \ccc{s} (point-offset pair) to the
   corresponding \ccc{Point} in $\mathbb R^3$.}
