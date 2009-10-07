@@ -211,15 +211,18 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   
   P3T3 PT_range_ins(Iso_cuboid(-1,-1,-1,1,1,1));
   pts_rnd1000.push_back(Point(-1,-1,-1));
-  PT_range_ins.insert(pts_rnd1000.begin(), pts_rnd1000.end(), true);
+  assert(PT_range_ins.insert(pts_rnd1000.begin(), pts_rnd1000.end(), true)
+      == 1001);
   assert(PT_range_ins.number_of_vertices() == 1001);
   assert(PT_range_ins.is_valid());
 
   // empty iterator range
-  PT_range_ins.insert(pts_rnd1000.begin(), pts_rnd1000.begin(), false);
+  assert(PT_range_ins.insert(pts_rnd1000.begin(), pts_rnd1000.begin(), false)
+      == 0);
   assert(PT_range_ins.number_of_vertices() == 1001);
   assert(PT_range_ins.is_valid());
-  PT_range_ins.insert(pts_rnd1000.begin(), pts_rnd1000.begin(), true);
+  assert(PT_range_ins.insert(pts_rnd1000.begin(), pts_rnd1000.begin(), true)
+      == 0);
   assert(PT_range_ins.number_of_vertices() == 1001);
   assert(PT_range_ins.is_valid());
 

@@ -164,7 +164,7 @@ public:
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last,
       bool is_large_point_set = false) {
-    if (first == last) return number_of_vertices();
+    if (first == last) return 0;
     int n = number_of_vertices();
     // The heuristic discards the existing triangulation so it can only be
     // applied to empty triangulations.
