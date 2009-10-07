@@ -258,6 +258,28 @@ predicates).
 {same as the previous method for facet \ccc{(c,i)}.
 \ccPrecond{$i\in\{0,1,2,3\}$}}
 
+\ccMethod{template <class OutputIterator>
+OutputIterator
+dual(Edge e, OutputIterator pts) const;}
+{Returns in the output iterator the points of the dual polygon of
+  edge \ccc{e} in consecutive order. The points form the dual polygon
+  in $\mathbb R^3$, so they do not necessarily lie all inside the
+  original domain. TODO: specify clockwiseness.}
+
+\ccMethod{template <class OutputIterator>
+OutputIterator
+dual(Cell_handle c, int i, int j, OutputIterator pts) const;}
+{same as the previous method for edge \ccc{(c,i,j)}.
+\ccPrecond{$i,j\in\{0,1,2,3\}, i\neq j$}}
+
+\ccMethod{template <class OutputIterator>
+OutputIterator
+dual(Vertex_handle v, OutputIterator pts) const;}
+{Returns in the output iterator the points of the dual polyhedron of
+  vertex \ccc{v} in no particular order. The points form the dual
+  polyhedron in $\mathbb R^3$, so they do not necessarily lie all
+  inside the original domain.}
+
 \ccMethod{template <class Stream> Stream & draw_dual(Stream & os);}
 {Sends the set of duals to all the facets of \ccVar\ into \ccc{os}.}
 
