@@ -147,6 +147,11 @@ public:
       return &periodic_tetrahedron;
     }
 
+  Cell_iterator get_cell() const
+  {
+    return pos;
+  }
+
 private:
   const T*  _t;
   Cell_iterator pos; // current cell.
@@ -448,6 +453,11 @@ public:
       return &periodic_triangle;
     }
 
+  Facet_iterator get_facet() const
+  {
+    return pos;
+  }
+
 private:
   const T*  _t;
   Facet_iterator pos; // current facet.
@@ -733,6 +743,10 @@ public:
       return &periodic_segment;
     }
 
+  Edge_iterator get_edge() const
+  {
+    return pos;
+  }
 private:
   const T*  _t;
   Edge_iterator pos; // current edge.
@@ -987,6 +1001,10 @@ public:
     return &periodic_point;
   }
   
+  Vertex_iterator get_vertex() const
+  {
+    return pos;
+  }
 private:
   const T*  _t;
   Vertex_iterator pos; // current vertex.
