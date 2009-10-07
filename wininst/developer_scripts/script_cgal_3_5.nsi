@@ -31,7 +31,6 @@
 
 !define CGAL_SRC  "CGAL-3.5"
 !define FTP_SRC   "https://cgal.geometryfactory.com/CGAL/precompiled_libs/"
-;!define FTP_SRC   "http://cgal.gforge.inria.fr/outgoing/precompiled_libs/"
 
 ;--------------------------------
 ; General
@@ -54,7 +53,7 @@
   
   BrandingText "The CGAL Project and GeometryFactory - Installer created with NSIS."
 
-  VIProductVersion "3.4.9.1"
+  VIProductVersion "3.5.0.0"
   VIAddVersionKey "ProductName"     "CGAL Windows Installer"
   VIAddVersionKey "CompanyName"     "The CGAL Project and GeometryFactory"
   VIAddVersionKey "LegalCopyright"  "© The CGAL Project and GeometryFactory"
@@ -216,62 +215,8 @@ ${MultiVariantSection} "GMP and MPFR precompiled libs"  Install_GMP_MPFR_bin "$P
 
 ;--------------------------------
 
-;--------------------------------
-Section /o "LAPACK and TAUCS precompiled libs" TAUCS_LIB_Idx
+${MultiVariantSection} "LAPACK and TAUCS precompiled libs"  Install_LAPACK_TAUCS_libs "$Platform" TAUCS_LIB_Idx
 
-  !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.5/"  "taucs.h.zip"               "$INSTDIR\auxiliary\taucs\include"
-  !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.5/"  "taucs_private.h.zip"       "$INSTDIR\auxiliary\taucs\include"
-  !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.5/"  "taucs_config_tests.h.zip"  "$INSTDIR\auxiliary\taucs\include"
-  !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.5/"  "taucs_config_build.h.zip"  "$INSTDIR\auxiliary\taucs\include"
-  !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.5/"  "blaswrap.h.zip"            "$INSTDIR\auxiliary\taucs\include"
-
-  ${If} "$Platform" == "win32"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libatlas.lib.zip"             "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libcblas.lib.zip"             "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libf77blas.lib.zip"           "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "liblapack.lib.zip"            "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libtstatlas.lib.zip"          "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libmetis-vc71-mt-s.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libmetis-vc71-mt.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libmetis-vc71-mt-sgd.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libmetis-vc71-mt-gd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libtaucs-vc71-mt-s.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libtaucs-vc71-mt.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libtaucs-vc71-mt-sgd.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libtaucs-vc71-mt-sgd.pdb.zip" "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libtaucs-vc71-mt-gd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "libtaucs-vc71-mt-gd.pdb.zip"  "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "vcf2c-vc71-mt-s.lib.zip"      "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "vcf2c-vc71-mt.lib.zip"        "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "vcf2c-vc71-mt-sgd.lib.zip"    "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.5/" "vcf2c-vc71-mt-gd.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
-  ${Else}
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "libmetis-vc80-mt-s.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "libmetis-vc80-mt.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "libmetis-vc80-mt-sgd.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "libmetis-vc80-mt-gd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "libtaucs-vc80-mt-s.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "libtaucs-vc80-mt.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "libtaucs-vc80-mt-sgd.lib.zip" "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "libtaucs-vc80-mt-sgd.pdb.zip" "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "libtaucs-vc80-mt-gd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "libtaucs-vc80-mt-gd.pdb.zip"  "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "vcf2c-vc80-mt-s.lib.zip"      "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "vcf2c-vc80-mt.lib.zip"        "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "vcf2c-vc80-mt-sgd.lib.zip"    "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "vcf2c-vc80-mt-gd.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "clapack-vc80-mt-s.lib.zip"    "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "clapack-vc80-mt.lib.zip"      "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "clapack-vc80-mt-sgd.lib.zip"  "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "clapack-vc80-mt-gd.lib.zip"   "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "blas-vc80-mt-s.lib.zip"       "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "blas-vc80-mt.lib.zip"         "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "blas-vc80-mt-sgd.lib.zip"     "$INSTDIR\auxiliary\taucs\lib"
-  	!insertmacro DownloadFile "auxiliary/x64/TAUCS-CGAL-3.5/" "blas-vc80-mt-gd.lib.zip"      "$INSTDIR\auxiliary\taucs\lib"
-  ${Endif}
-
-SectionEnd
-;--------------------------------
 
 Section /o "HTML Manuals" DOC_Idx
   !ifndef FetchLocal
@@ -375,7 +320,7 @@ Function .onInit
   
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "variants.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "environment_variables.ini"
-  
+ 
 FunctionEnd
 
 
@@ -411,16 +356,16 @@ Function VariantsPage
 
   ;
   ; These lines are TIGHTLY bound to the exact text in the Variants page
-  ; (from variants.ini) and the section numbers of the GMP/MPFR components
+  ; (from variants.ini) and the section numbers of the GMP/MPFR and TAUCS components
   ;
-  ${MaybeSelectVariant} "VC8.0" "Multithread Debug"                 4
-  ${MaybeSelectVariant} "VC8.0" "Multithread"                       5
-  ${MaybeSelectVariant} "VC8.0" "Multithread, static runtime"       6
-  ${MaybeSelectVariant} "VC8.0" "Multithread Debug, static runtime" 7
-  ${MaybeSelectVariant} "VC9.0" "Multithread Debug"                 10
-  ${MaybeSelectVariant} "VC9.0" "Multithread"                       11
-  ${MaybeSelectVariant} "VC9.0" "Multithread, static runtime"       12
-  ${MaybeSelectVariant} "VC9.0" "Multithread Debug, static runtime" 13
+  ${MaybeSelectVariant} "VC8.0" "Multithread Debug"                 4 18
+  ${MaybeSelectVariant} "VC8.0" "Multithread"                       5 19
+  ${MaybeSelectVariant} "VC8.0" "Multithread, static runtime"       6 20
+  ${MaybeSelectVariant} "VC8.0" "Multithread Debug, static runtime" 7 21
+  ${MaybeSelectVariant} "VC9.0" "Multithread Debug"                 10 24
+  ${MaybeSelectVariant} "VC9.0" "Multithread"                       11 25
+  ${MaybeSelectVariant} "VC9.0" "Multithread, static runtime"       12 26
+  ${MaybeSelectVariant} "VC9.0" "Multithread Debug, static runtime" 13 27
   
 FunctionEnd
 
