@@ -190,6 +190,12 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   Triangulation_data_structure tds = PT.tds();
   assert(P3T3().domain() == Iso_cuboid(0,0,0,1,1,1));
   assert(PT1.domain() == Iso_cuboid(-1,-1,-1,1,1,1));
+
+  P3T3 PT_change_domain(PT1);
+  PT_change_domain.set_domain(Iso_cuboid(1,2,3,4,5,6));
+  assert(PT_change_domain.number_of_vertices() == 0);
+  assert(PT_change_domain.domain() == Iso_cuboid(1,2,3,4,5,6));
+
   assert(PT3.number_of_sheets() == CGAL::make_array(3,3,3));
   assert(PT1.number_of_sheets() == CGAL::make_array(1,1,1));
   assert(PT3_deg.number_of_sheets() == CGAL::make_array(3,3,3));

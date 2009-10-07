@@ -215,6 +215,14 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   assert(PT_range_ins.number_of_vertices() == 1001);
   assert(PT_range_ins.is_valid());
 
+  // empty iterator range
+  PT_range_ins.insert(pts_rnd1000.begin(), pts_rnd1000.begin(), false);
+  assert(PT_range_ins.number_of_vertices() == 1001);
+  assert(PT_range_ins.is_valid());
+  PT_range_ins.insert(pts_rnd1000.begin(), pts_rnd1000.begin(), true);
+  assert(PT_range_ins.number_of_vertices() == 1001);
+  assert(PT_range_ins.is_valid());
+
   std::cout << "  Point moving" << std::endl;
 
   P3T3 PT_mov(PT);
@@ -348,12 +356,19 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
  
   std::cout << "Voronoi diagram" << std::endl;
 
+  Vertex_iterator vit = PT.vertices_begin();
+  eit = PT.edges_begin();
   fit = PT.facets_begin();
   Cell_iterator  cit = PT.cells_begin();
-  for (int i=0 ; i<10 ; i++,fit++,cit++ ) {
+  for (int i=0 ; i<10 ; i++,vit++,eit++,fit++,cit++ ) {
+    std::vector<Point> pts;
+    PT.dual(cit);
     PT.dual(*fit);
     PT.dual(fit->first,fit->second);
-    PT.dual(cit);
+    PT.dual(*eit,std::back_inserter(pts));
+    PT.dual(eit->first,eit->second,eit->third,std::back_inserter(pts));
+    PT.dual(vit,std::back_inserter(pts));
+    pts.clear();
   }
 
   std::stringstream vor3;
