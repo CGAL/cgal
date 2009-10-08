@@ -43,22 +43,22 @@ public:
     typedef typename Base::Compute_squared_radius_smallest_orthogonal_sphere_3
                                        Compute_squared_radius_base;
   public:
-    FT operator() (Weighted_point_3 p, 
-		   Weighted_point_3 q , 
-		   Weighted_point_3 r, 
-		   Weighted_point_3 s) {
+    FT operator() (const Weighted_point_3& p, 
+		   const Weighted_point_3& q , 
+		   const Weighted_point_3& r, 
+		   const Weighted_point_3& s) {
       return Compute_squared_radius_base()(p,q,r,s); }
 
-    FT operator() (Weighted_point_3 p, 
-		   Weighted_point_3 q , 
-		   Weighted_point_3 r) {
+    FT operator() (const Weighted_point_3& p, 
+		   const Weighted_point_3& q , 
+		   const Weighted_point_3& r) {
       return Compute_squared_radius_base()(p,q,r); }
 
-    FT operator() (Weighted_point_3 p, 
-		   Weighted_point_3 q ) {
+    FT operator() (const Weighted_point_3& p, 
+		   const Weighted_point_3& q ) {
       return Compute_squared_radius_base()(p,q); }
 
-    FT operator() (Weighted_point_3 p) {
+    FT operator() (const Weighted_point_3& p) {
       return -p.weight();}
   };
  

@@ -719,7 +719,7 @@ public:
 private:
   NT squared_radius(const Cell_handle& s) const
     {
-      return Gt().compute_squared_radius_3_object()(s->vertex(0)->point(),
+      return this->geom_traits().compute_squared_radius_3_object()(s->vertex(0)->point(),
 						    s->vertex(1)->point(),
 						    s->vertex(2)->point(),
 						    s->vertex(3)->point());
@@ -727,7 +727,7 @@ private:
 
   NT squared_radius(const Cell_handle& s, const int& i) const
     {
-      return Gt().compute_squared_radius_3_object() (
+      return this->geom_traits().compute_squared_radius_3_object() (
 		  s->vertex(vertex_triple_index(i,0))->point(),
 		  s->vertex(vertex_triple_index(i,1))->point(),
 		  s->vertex(vertex_triple_index(i,2))->point());
@@ -740,7 +740,7 @@ private:
   NT squared_radius(const Cell_handle& s, 
 			    const int& i, const int& j) const
     {
-      return Gt().compute_squared_radius_3_object()(s->vertex(i)->point(),
+      return this->geom_traits().compute_squared_radius_3_object()(s->vertex(i)->point(),
 						    s->vertex(j)->point());
     }
 
@@ -749,7 +749,7 @@ private:
   }
 
   NT squared_radius(const Vertex_handle& v) const {
-    return  Gt().compute_squared_radius_3_object()(v->point()); }
+    return  this->geom_traits().compute_squared_radius_3_object()(v->point()); }
 
 
   //---------------------------------------------------------------------
@@ -1251,6 +1251,7 @@ Alpha_shape_3<Dt>::initialize_alpha_vertex_maps(bool reinitialize)
       alpha = (*chit)->get_alpha();
       as->set_alpha_mid(alpha);
       as->set_alpha_max(alpha);
+      ++chit;
       for( ; chit != incidents.end(); ++chit) {
 	if (is_infinite(*chit)) as->set_is_on_chull(true);
 	else {
@@ -1584,32 +1585,43 @@ compute_edge_status( const Cell_handle& c,
   Facet_circulator fcirc, done;
   Alpha_status_iterator asf;
   NT alpha;
-
-  fcirc = incident_facets(c,i,j);
-  while (is_infinite(*fcirc) ) ++fcirc; //skip infinite incident faces
-  done = fcirc;
   as.set_is_on_chull(false);
-  asf = (*fcirc).first->get_facet_status((*fcirc).second);
-  as.set_alpha_mid(asf->alpha_mid());  // initialise as.alpha_mid
-  as.set_alpha_max(asf->alpha_mid()); // and as.alpha->max to the same
+  
+  Cell_circulator ccirc, last;
+  ccirc = incident_cells(c,i,j);
+  last=ccirc;
+  while (is_infinite(ccirc) ) ++ccirc; //skip infinite incident cells
+  alpha = (*ccirc).get_alpha();
+  as.set_alpha_mid(alpha); // initialise as.alpha_mid to alpha value of an incident cell
+  as.set_alpha_max(alpha); // same for as.alpha_max 
+  while (++ccirc != last) 
+  {
+    if (!is_infinite(ccirc)) {
+      alpha = (*ccirc).get_alpha();
+      if (alpha < as.alpha_mid())
+        as.set_alpha_mid(alpha);
+      if ( ! as.is_on_chull()) {
+        if( as.alpha_max() <  alpha)
+          as.set_alpha_max( alpha );
+      }
+    }
+  }   
+  
+  fcirc = incident_facets(c,i,j);
+  done = fcirc;  
   do {
     if (!is_infinite(*fcirc)) {
       asf = (*fcirc).first->get_facet_status((*fcirc).second);
-      if (get_mode() == GENERAL && asf->is_Gabriel()) 
-	alpha = asf->alpha_min();
-      else alpha = asf->alpha_mid();
-      if (alpha < as.alpha_mid())  as.set_alpha_mid(alpha) ;
-      if ( ! asf->is_on_chull()) { 
-	if( as.alpha_max() <  asf->alpha_max())
-	  as.set_alpha_max( asf->alpha_max());
+      if (get_mode() == GENERAL && asf->is_Gabriel()){
+        alpha = asf->alpha_min();
+        if (alpha < as.alpha_mid())  as.set_alpha_mid(alpha);
       }
-      else{
-	as.set_is_on_chull(true);
-      }
+      if (asf->is_on_chull())
+        as.set_is_on_chull(true);
     }
-  } while (++fcirc != done);
+  } while (++fcirc != done);  
 
-    // initialize alphamin
+  // initialize alphamin
   if ( get_mode() == GENERAL){
     if (is_Gabriel(c,i,j)) {
       alpha = squared_radius(c,i,j);
