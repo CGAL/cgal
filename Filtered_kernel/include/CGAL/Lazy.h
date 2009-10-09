@@ -93,7 +93,8 @@ CGAL_LAZY_FORWARD(Return_base_tag)
 CGAL_LAZY_FORWARD(Null_vector)
 CGAL_LAZY_FORWARD(Origin)
 CGAL_LAZY_FORWARD(Orientation)
-
+CGAL_LAZY_FORWARD(Bbox_2)
+CGAL_LAZY_FORWARD(Bbox_3)
 
 
 
@@ -843,6 +844,14 @@ struct Approx_converter
   const Null_vector&
   operator()(const Null_vector& n) const
   { return n; }
+  
+  const Bbox_2&
+  operator()(const Bbox_2& b) const
+  { return b; }
+  
+  const Bbox_3&
+  operator()(const Bbox_3& b) const
+  { return b; }
 };
 
 template < typename K1, typename K2 >
@@ -860,6 +869,14 @@ struct Exact_converter
   const Null_vector&
   operator()(const Null_vector& n) const
   { return n; }
+  
+  const Bbox_2&
+  operator()(const Bbox_2& b) const
+  { return b; }
+  
+  const Bbox_3&
+  operator()(const Bbox_3& b) const
+  { return b; }
 };
 
 //____________________________________________________________
