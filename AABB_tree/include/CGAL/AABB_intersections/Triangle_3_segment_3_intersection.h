@@ -174,9 +174,6 @@ intersection_coplanar(const typename K::Triangle_3 &t,
   typename K::Collinear_are_ordered_along_line_3 collinear_ordered =
     k.collinear_are_ordered_along_line_3_object();
   
-  typename K::Intersect_3 intersection =
-    k.intersect_3_object();
-  
   typename K::Construct_line_3 line =
     k.construct_line_3_object();
   

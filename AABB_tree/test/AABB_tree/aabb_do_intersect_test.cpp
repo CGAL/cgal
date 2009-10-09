@@ -28,6 +28,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 
 template <class T>
@@ -175,6 +176,9 @@ int main()
   
   std::cout << "Testing with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
 	b &= test<CGAL::Exact_predicates_inexact_constructions_kernel>();
+  
+  std::cout << "Testing with Exact_predicates_exact_constructions_kernel..." << std::endl ;
+	b &= test<CGAL::Exact_predicates_exact_constructions_kernel>();
 	
   if ( b )
     return EXIT_SUCCESS;
