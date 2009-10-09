@@ -291,7 +291,7 @@ class of \ccc{Delaunay_triangulation_3} must define predicates to test for the
 \textit{empty sphere property}.  It is described by the concept
 \ccc{DelaunayTriangulationTraits_3}, which refines \ccc{TriangulationTraits_3}.
 
-The kernels provided by CGAL: \ccc{Cartesian}, \ccc{Homogeneous},
+The kernels provided by \cgal: \ccc{Cartesian}, \ccc{Homogeneous},
 \ccc{Simple_cartesian}, \ccc{Simple_homogeneous} and
 \ccc{Filtered_kernel} can all be used as models for the geometric traits
 parameter.
@@ -512,16 +512,16 @@ Monique Teillaud started to work on the 3D triangulation packages in
 1997, following the design of the 2D triangulation packages. The
 notions of degenerate dimensions and infinite vertex were formalized
 \cite{t-tdtc-99} and induced changes in the 2D triangulation
-packages. The packages were first released in CGAL 2.1. They contained
+packages. The packages were first released in \cgal\ 2.1. They contained
 basic functionalities on triangulations, Delaunay triangulations,
 regular triangulations.
 
 A first version of removal of a vertex from a Delaunay triangulation
-was released in CGAL 2.2. However, this removal became really robust
-only in CGAL 2.3, after some research that allowed to deal with
+was released in \cgal\ 2.2. However, this removal became really robust
+only in \cgal\ 2.3, after some research that allowed to deal with
 degenerate cases quite easily \cite{cgal:dt-pvr3d-03}. Andreas Fabri
 implemented this revised version of the removal, and a faster removal
-algorithm for CGAL 3.0. 
+algorithm for \cgal\ 3.0. 
 
 The latter algorithm was proposed by Mariette Yvinec, who contributed
 in several ways to the package, first since she was maintaining the
@@ -529,12 +529,12 @@ close 2D triangulation package and participated in many discussions,
 she also wrote the traits classes for regular triangulations.
 
 In 2000, Sylvain Pion started working on these packages.  He improved
-the efficiency of triangulations in CGAL 2.3 and 2.4 in several ways
+the efficiency of triangulations in \cgal\ 2.3 and 2.4 in several ways
 \cite{cgal:bdpty-tc-02}: he implemented the Delaunay hierarchy
 \cite{cgal:d-dh-02} in 2.3, he improved the memory footprint in 2.4
 and 3.0, he also performed work on arithmetic filters
 \cite{cgal:dp-eegpd-03} (see \ccc{Filtered_kernel}) to improve
-the speed of triangulations.  He changed the design in CGAL 3.0,
+the speed of triangulations.  He changed the design in \cgal\ 3.0,
 allowing users to add handles in their own vertices and cells.
 
 Olivier Devillers, co-author of preliminary versions of the \cgal\ 2d
@@ -544,7 +544,7 @@ Delaunay hierarchy.
 
 In 2005, Christophe Delage implemented the vertex removal function for
 regular triangulations, which allowed to release this functionality in
-CGAL 3.2.
+\cgal\ 3.2.
 
 In 2006, Nico Kruithof wrote the \ccc{Triangulation_simplex_3} class
 that can store simplices of any dimension and improved the internal 
