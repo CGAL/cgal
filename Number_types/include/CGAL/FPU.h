@@ -40,7 +40,7 @@
 extern "C" {
 #  include <fenv.h>
 }
-#elif defined __powerpc__
+#elif defined __powerpc__ && defined __linux__
 #  include <fpu_control.h>
 #elif defined __SUNPRO_CC && defined __sun
 #  include <ieeefp.h>
@@ -228,7 +228,7 @@ typedef unsigned short FPU_CW_t;
 
 #  endif
 
-#elif defined __powerpc__
+#elif defined __powerpc__ && defined __linux__
 #define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)
 #define CGAL_IA_GETFPCW(CW) _FPU_GETCW(CW)
 typedef fpu_control_t FPU_CW_t;
