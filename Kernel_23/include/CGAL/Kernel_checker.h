@@ -245,6 +245,7 @@ struct dont_check_equal {
 template < class K1, class K2, class Cmp = dont_check_equal >
 class Kernel_checker
 {
+protected:
     K1 k1;
     K2 k2;
     Cmp cmp;

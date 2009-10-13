@@ -340,6 +340,16 @@ template < class K >
 inline
 typename K::Comparison_result
 compare_squared_radius(const typename K::Point_3 &p,
+		       const typename K::FT &sr,
+		       const K& k)
+{
+  return k.compare_squared_radius_3_object()(p, sr);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_squared_radius(const typename K::Point_3 &p,
 		       const typename K::Point_3 &q,
 		       const typename K::FT &sr,
 		       const K& k)

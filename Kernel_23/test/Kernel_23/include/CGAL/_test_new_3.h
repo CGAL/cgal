@@ -584,6 +584,7 @@ test_new_3(const R& rep)
     tmp = compare_sq_radius(p1, p2, p3, p4, rad);
     tmp = compare_sq_radius(p1, p2, p3, rad);
     tmp = compare_sq_radius(p1, p2, rad);
+    tmp = compare_sq_radius(p1, rad);
     (void)tmp;
   }
 

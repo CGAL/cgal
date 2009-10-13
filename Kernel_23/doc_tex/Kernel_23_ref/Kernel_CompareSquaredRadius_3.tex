@@ -3,6 +3,12 @@ A model for this must provide:
 
 \ccCreationVariable{fo}
 
+\ccMemberFunction{Comparison_result operator()(const Kernel::Point_3& p,
+                                               const Kernel::FT& sr);}
+      {compares the squared radius of the sphere of radius 0 centered
+       at \ccc{p} to \ccc{sr}. 
+       This returns the opposite sign of \ccc{sr}.}
+
 \ccMemberFunction{Comparison_result operator()(const Kernel::Point_3&p,
                                                const Kernel::Point_3&q, 
                                                const Kernel::FT& sr);}

@@ -329,6 +329,15 @@ template < class K >
 inline
 typename K::Comparison_result
 compare_squared_radius(const Point_3<K> &p,
+		       const typename K::FT &sr)
+{
+  return internal::compare_squared_radius(p, sr, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_squared_radius(const Point_3<K> &p,
 		       const Point_3<K> &q,
 		       const typename K::FT &sr)
 {

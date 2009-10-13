@@ -2,6 +2,13 @@
 
 \ccFunction{Comparison_result
 compare_squared_radius(const Point_3<Kernel>& p,
+                       const typename Kernel::FT& sr);}
+          {compares the squared radius of the sphere of radius 0 centered at
+           \ccStyle{p} to \ccStyle{sr}. 
+           This returns the opposite sign of \ccStyle{sr}.}           
+
+\ccFunction{Comparison_result
+compare_squared_radius(const Point_3<Kernel>& p,
                        const Point_3<Kernel>& q,
                        const typename Kernel::FT& sr);}
           {compares the squared radius of the sphere defined by the

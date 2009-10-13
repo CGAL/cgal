@@ -207,6 +207,9 @@ _test_fct_point_3(const R& )
  {
    CGAL::Point_3<R> p0(-2,0,0), p1(2,0,0), p2(0,2,0), p3(0,0,2);
    FT four(4);
+   assert( CGAL::compare_squared_radius(p0, 0) == CGAL::EQUAL );
+   assert( CGAL::compare_squared_radius(p0, -1) == CGAL::POSITIVE );
+   assert( CGAL::compare_squared_radius(p0,  1) == CGAL::NEGATIVE );
    assert( CGAL::compare_squared_radius(p0, p1, four) == CGAL::EQUAL );
    assert( CGAL::compare_squared_radius(p0, p1, p2, four) == CGAL::EQUAL );
    assert( CGAL::compare_squared_radius(p0, p1, p2, p3, four) == CGAL::EQUAL );

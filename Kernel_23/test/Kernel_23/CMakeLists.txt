@@ -19,6 +19,8 @@ if ( CGAL_FOUND )
   include(CGAL_CreateSingleSourceCGALProgram)
 
   include_directories (BEFORE include)
+  include_directories (BEFORE ../../../Cartesian_kernel/include)
+  include_directories (BEFORE ../../include)
 
   create_single_source_cgal_program( Cartesian.cpp )
   create_single_source_cgal_program( Dimension.cpp )
