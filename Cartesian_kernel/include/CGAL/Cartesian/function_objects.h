@@ -498,6 +498,12 @@ namespace CartesianKernelFunctors {
 					       q.x(), q.y(), q.z() ),
 			      ft);
     }
+    
+    result_type
+    operator()(const Point_3&, const FT& ft) const
+    {
+      return - CGAL_NTS sign(ft);
+    }    
   };
 
 
