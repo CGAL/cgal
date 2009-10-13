@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial/fwd.h>
 #include <CGAL/Polynomial/misc.h>
-#include <CGAL/Polynomial/Polynomial.h>
+#include <CGAL/Polynomial/Polynomial_type.h>
 
 CGAL_BEGIN_NAMESPACE
 namespace internal {
