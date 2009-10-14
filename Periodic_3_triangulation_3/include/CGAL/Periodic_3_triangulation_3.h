@@ -3360,21 +3360,21 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
 
   tr.clear();
 
-  unsigned int n=0;
-  int cx=0, cy=0, cz=0;
   Iso_cuboid domain(0,0,0,1,1,1);
+  int cx=0, cy=0, cz=0;
+  unsigned int n=0;
 
   if (is_ascii(is)) {
-    is >> n;
     is >> domain;
     is >> cx >> cy >> cz;
+    is >> n;
   }
   else {
-    read(is,n);
     is >> domain;
     read(is,cx);
     read(is,cy);
     read(is,cz);
+    read(is,n);
   }
  
   CGAL_triangulation_assertion((n/(cx*cy*cz))*cx*cy*cz == n);
@@ -3482,20 +3482,20 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
   typedef typename Triangulation::Iso_cuboid       Iso_cuboid;
 
   // outputs dimension, domain and number of vertices
-  unsigned int n = tr.number_of_vertices();
   Iso_cuboid domain = tr.domain();
   Covering_sheets cover = tr.number_of_sheets();
+  unsigned int n = tr.number_of_vertices();
 
   if (is_ascii(os))
-    os << n*cover[0]*cover[1]*cover[2] << std::endl
-       << domain << std::endl
-       << cover[0] << " " << cover[1] << " " << cover[2] << std::endl;
+    os << domain << std::endl
+       << cover[0] << " " << cover[1] << " " << cover[2] << std::endl
+       << n*cover[0]*cover[1]*cover[2] << std::endl;       
   else {
-    write(os,n*cover[0]*cover[1]*cover[2]);
     os << domain;
     write(os,cover[0]);
     write(os,cover[1]);
     write(os,cover[2]);
+    write(os,n*cover[0]*cover[1]*cover[2]);
   }
 
   if (n == 0)
