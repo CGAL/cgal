@@ -103,8 +103,7 @@ public:
    * \return A handle to the halfedge obtained from the insertion of the
    *         subcurve into the arrangement.
    */
-  Result found_subcurve (const X_monotone_curve_2& cv,
-                         Face_handle face,
+  Result found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
                          Vertex_handle left_v, Halfedge_handle left_he,
                          Vertex_handle right_v, Halfedge_handle right_he);
 
@@ -119,8 +118,7 @@ public:
    * \return A handle to the halfedge obtained from the insertion of the
    *         overlapping subcurve into the arrangement.
    */
-  Result found_overlap (const X_monotone_curve_2& cv,
-                        Halfedge_handle he,
+  Result found_overlap (const X_monotone_curve_2& cv, Halfedge_handle he,
                         Vertex_handle left_v, Vertex_handle right_v);
 
 private:
@@ -131,8 +129,7 @@ private:
    * \param p The split point.
    * \param arr_access An arrangement accessor.
    */
-  void _split_edge (Halfedge_handle he,
-                    const Point_2& p,
+  void _split_edge (Halfedge_handle he, const Point_2& p,
                     Arr_accessor<Arrangement_2>& arr_access);
 
 };
@@ -151,19 +148,25 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
                 Vertex_handle left_v, Halfedge_handle left_he,
                 Vertex_handle right_v, Halfedge_handle right_he)
 {
+  typename Traits_adaptor_2::Construct_min_vertex_2 min_vertex =
+    geom_traits->construct_min_vertex_2_object();
+  typename Traits_adaptor_2::Construct_max_vertex_2 max_vertex =
+    geom_traits->construct_max_vertex_2_object();
+
+  typename Traits_adaptor_2::Parameter_space_in_x_2 ps_in_x =
+    geom_traits->parameter_space_in_x_2_object();
+  typename Traits_adaptor_2::Parameter_space_in_y_2 ps_in_y =
+    geom_traits->parameter_space_in_y_2_object();
+    
   // Create an arrangement accessor.
   Arr_accessor<Arrangement_2>    arr_access (*p_arr);
   
   // Get the boundary conditions of the curve ends.
-  const Arr_parameter_space bx_l =
-    geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
-  const Arr_parameter_space by_l =
-    geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
+  const Arr_parameter_space bx_l = ps_in_x (cv, ARR_MIN_END);
+  const Arr_parameter_space by_l = ps_in_y (cv, ARR_MIN_END);
 
-  const Arr_parameter_space bx_r =
-    geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
-  const Arr_parameter_space by_r =
-    geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
+  const Arr_parameter_space bx_r = ps_in_x (cv, ARR_MAX_END);
+  const Arr_parameter_space by_r = ps_in_y (cv, ARR_MAX_END);
 
   // Check if the left and the right endpoints of cv should be associated
   // with arrangement vertices.
@@ -176,8 +179,7 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
   Halfedge_handle  prev_he_left;
   Halfedge_handle  prev_he_right;
 
-  if (vertex_for_left)
-  {
+  if (vertex_for_left) {
     // If we are given the previous halfedge, use it. Otherwise, we are given
     // the vertex and we should locate cv around it.
     if (left_he != invalid_he)
@@ -187,40 +189,47 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
 
     // In case the vertex does not exist, split left_he at cv's left endpoint
     // and create the vertex.
-    if (left_v == invalid_v)
-    {
-      _split_edge (left_he,
-                   geom_traits->construct_min_vertex_2_object() (cv),
-                   arr_access);
+    if (left_v == invalid_v) {
+      _split_edge (left_he, min_vertex (cv), arr_access);
 
-      // Check if we have just split the halfedge that right_he refers to,
-      // and if this halfedge is directed from left to right.
+      // Check whether we have just split the halfedge that right_he refers
+      // to, and if this halfedge is directed from left to right.
       // If so, right_he's target is now the new vertex, and we have to
       // proceed to the next halfedge (which is going to be split).
-      if (right_he == left_he && left_he->direction() == ARR_LEFT_TO_RIGHT)
+      if ((right_he == left_he) && (left_he->direction() == ARR_LEFT_TO_RIGHT))
         right_he = right_he->next();
     }
   }
-  else
-  {
-    // Check if the left end of cv is bounded of not.
+  else {
+    // Check whether the left end of cv is bounded or not.
     if ((bx_l == ARR_LEFT_BOUNDARY) || (by_l != ARR_INTERIOR)) {
       // Use the arrangement accessor and obtain a vertex associated with
       // the unbounded left end (possibly with a predecessor halfedge).
       std::pair<Vertex_handle, Halfedge_handle>  pos =
         arr_access.place_and_set_curve_end (face, cv, ARR_MIN_END, bx_l, by_l);
 
-      if (pos.second != invalid_he)
+      if (pos.second != invalid_he) {
         // Use the predecessor halfedge, if possible:
         prev_he_left = pos.second;
-      else
+
+        /* The following cannot happen, because a vertex at infinity has a
+         * single incident edge.
+         *
+         * Check whether we have just split the halfedge that right_he refers
+         * to, and if this halfedge is directed from left to right.
+         * If so, right_he's target is now the new vertex, and we have to
+         * proceed to the next halfedge (which is going to be split).
+         * if ((right_he == prev_he_left) &&
+         *     (prev_he_left->direction() == ARR_LEFT_TO_RIGHT))
+         *   right_he = right_he->next();
+         */
+      } else
         // Use just the isolated vertex:
         left_v = pos.first;
     }
   }
 
-  if (vertex_for_right)
-  {
+  if (vertex_for_right) {
     // If we are given the previous halfedge, use it. Otherwise, we are given
     // the vertex and we should locate cv around it.
     if (right_he != invalid_he)
@@ -230,34 +239,34 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
     
     // In case the vertex does not exist, split right_he at cv's right
     // endpoint and create the vertex.
-    if (right_v == invalid_v)
-    {
-      _split_edge (right_he,
-                   geom_traits->construct_max_vertex_2_object() (cv),
-                   arr_access);
+    if (right_v == invalid_v) {
+      _split_edge (right_he, max_vertex (cv), arr_access);
       
-      // Check if we have just split the halfedge that left_he refers to.
+      // Check whether we have just split the halfedge that left_he refers to.
       // If so, prev_he_right's target is now the new vertex, and we have to
       // proceed to the next halfedge (whose target is right_v).
       if (right_he == prev_he_left)
-      {
         prev_he_left = prev_he_left->next();
-      }
     }
   }
-  else
-  {
-    // Check if the right end of cv is bounded of not.    
+  else {
+    // Check whether the right end of cv is bounded or not.    
     if ((bx_r == ARR_RIGHT_BOUNDARY) || (by_r != ARR_INTERIOR)) {
       // Use the arrangement accessor and obtain a vertex associated with
       // the unbounded right end (possibly with a predecessor halfedge).
       std::pair<Vertex_handle, Halfedge_handle>  pos =
         arr_access.place_and_set_curve_end (face, cv, ARR_MAX_END, bx_r, by_r);
 
-      if (pos.second != invalid_he)
+      if (pos.second != invalid_he) {
         // Use the predecessor halfedge, if possible:
         prev_he_right = pos.second;
-      else
+
+        // Check whether we have just split the halfedge that left_he refers to.
+        // If so, prev_he_right's target is now the new vertex, and we have to
+        // proceed to the next halfedge (whose target is right_v).
+        if (prev_he_right == prev_he_left)
+          prev_he_left = prev_he_left->next();
+      } else
         // Use just the isolated vertex:
         right_v = pos.first;
     }
@@ -266,51 +275,31 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
   // Insert the curve into the arrangement.
   Halfedge_handle   inserted_he;
 
-  if (prev_he_left == invalid_he)
-  {
+  if (prev_he_left == invalid_he) {
     // The left endpoint is associated with an isolated vertex, or is not
     // associated with any vertex. In the latter case, we create such a vertex
     // now.
-    if (left_v == invalid_v)
-    {
-      if (bx_l == ARR_INTERIOR && by_l == ARR_INTERIOR)
-      {
-        left_v = arr_access.create_vertex 
-          (geom_traits->construct_min_vertex_2_object() (cv));
-      }
-      else
-      {
-        left_v =
-          arr_access.create_boundary_vertex (cv, ARR_MIN_END, bx_l, by_l);
-      }
+    if (left_v == invalid_v) {
+      left_v = ((bx_l == ARR_INTERIOR) && (by_l == ARR_INTERIOR)) ?
+        arr_access.create_vertex (min_vertex (cv)) :
+        arr_access.create_boundary_vertex (cv, ARR_MIN_END, bx_l, by_l);
     }
 
-    if (prev_he_right == invalid_he)
-    {
+    if (prev_he_right == invalid_he) {
       // The right endpoint is associated with an isolated vertex, or is not
       // associated with any vertex. In the latter case, we create such a
       // vertex now.
-      if (right_v == invalid_v)
-      {
-        if (bx_r == ARR_INTERIOR && by_r == ARR_INTERIOR)
-        {
-          right_v = arr_access.create_vertex 
-            (geom_traits->construct_max_vertex_2_object() (cv));
-        }
-        else
-        {
-          right_v = arr_access.create_boundary_vertex (cv, ARR_MAX_END,
-                                                       bx_r, by_r);
-        }
+      if (right_v == invalid_v) {
+        right_v = ((bx_r == ARR_INTERIOR) && (by_r == ARR_INTERIOR)) ?
+          arr_access.create_vertex (max_vertex (cv)) :
+          arr_access.create_boundary_vertex (cv, ARR_MAX_END, bx_r, by_r);
       }
      
       // We should insert the curve in the interior of the face.
-      inserted_he = arr_access.insert_in_face_interior_ex (cv, face,
-                                                           left_v, right_v,
-                                                           SMALLER);
+      inserted_he = arr_access.insert_in_face_interior_ex (cv, face, left_v,
+                                                           right_v, SMALLER);
     }
-    else
-    {
+    else {
       // The right endpoint is associated with an arrangement vertex, and
       // we have the predecessor halfedge for the insertion.
       inserted_he = arr_access.insert_from_vertex_ex (cv, prev_he_right,
@@ -321,51 +310,36 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
       inserted_he = inserted_he->twin();
     }
   }
-  else
-  {
+  else {
     // We have a vertex associated with the left end of the curve, along
     // with a predecessor halfedge.
-    if (prev_he_right == invalid_he)
-    {
+    if (prev_he_right == invalid_he) {
       // The right endpoint is associated with an isolated vertex, or is not
       // associated with any vertex. In the latter case, we create such a
       // vertex now.
-      if (right_v == invalid_v)
-      {
-        if (bx_r == ARR_INTERIOR && by_r == ARR_INTERIOR)
-        {
-          right_v = arr_access.create_vertex 
-              (geom_traits->construct_max_vertex_2_object() (cv));
-        }
-        else
-        {
-          right_v =
-            arr_access.create_boundary_vertex (cv, ARR_MAX_END, bx_r, by_r);
-        }
+      if (right_v == invalid_v) {
+        right_v = ((bx_r == ARR_INTERIOR) && (by_r == ARR_INTERIOR)) ?
+          arr_access.create_vertex (max_vertex (cv)) :
+          arr_access.create_boundary_vertex (cv, ARR_MAX_END, bx_r, by_r);
       }
      
       // Use the left predecessor for the insertion.
       inserted_he = arr_access.insert_from_vertex_ex (cv, prev_he_left,
                                                       right_v, SMALLER);
     }
-    else
-    {
+    else {
       // The right endpoint is associated with an arrangement vertex, and
       // we have the predecessor halfedge for the insertion.
       CGAL_assertion (prev_he_right != invalid_he);
 
       // Perform the insertion using the predecessor halfedges.
-      inserted_he = p_arr->insert_at_vertices (cv,
-                                               prev_he_left,
-                                               prev_he_right);
+      inserted_he = p_arr->insert_at_vertices (cv, prev_he_left, prev_he_right);
     }
   }
 
   // Return the inserted halfedge, and indicate we should not halt the
   // zone-computation process.
-  Result    res = Result (inserted_he, false);
-  
-  return (res);
+  return Result (inserted_he, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -374,8 +348,7 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
 template <class Arrangement>
 typename Arr_inc_insertion_zone_visitor<Arrangement>::Result
 Arr_inc_insertion_zone_visitor<Arrangement>::
-found_overlap (const X_monotone_curve_2& cv,
-               Halfedge_handle he,
+found_overlap (const X_monotone_curve_2& cv, Halfedge_handle he,
                Vertex_handle left_v, Vertex_handle right_v)
 {
   // Get the boundary conditions of the curve ends.
@@ -418,16 +391,14 @@ found_overlap (const X_monotone_curve_2& cv,
       // sub_cv2.
       updated_he = p_arr->split_edge (updated_he, cv, sub_cv2);
     }
-    else
-    {
+    else {
       // Split he, such that the left portion corresponds to sub_cv1 and the
       // right portion corresponds to the overlapping curve.
       updated_he = p_arr->split_edge (he, sub_cv1, cv);
       updated_he = updated_he->next();
     }
   }
-  else
-  {
+  else {
     if (right_v == invalid_v &&
         ! ((bx_r == ARR_RIGHT_BOUNDARY) || (by_r != ARR_INTERIOR)))
     {
@@ -440,8 +411,7 @@ found_overlap (const X_monotone_curve_2& cv,
       // curve and the right portion corresponds to sub_cv2.
       updated_he = p_arr->split_edge (he, cv, sub_cv2);
     }
-    else
-    {
+    else {
       // The entire edge is overlapped: Modify the curve associated with cv
       // to be the overlapping curve.
       updated_he = p_arr->modify_edge (he, cv);
@@ -450,9 +420,7 @@ found_overlap (const X_monotone_curve_2& cv,
 
   // Return the updated halfedge, and indicate we should not halt the
   // zone-computation process.
-  Result    res = Result (updated_he, false);
-
-  return (res);
+  return Result (updated_he, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -471,15 +439,9 @@ _split_edge (Halfedge_handle he, const Point_2& p,
   // left end of sub_cv1 equals he's source, and if the edge is directed from
   // right to left, we have to reverse the subcurve order.
   if (he->direction() == ARR_LEFT_TO_RIGHT)
-  {
     arr_access.split_edge_ex (he, p, sub_cv1, sub_cv2);
-  }
   else
-  {
     arr_access.split_edge_ex (he, p, sub_cv2, sub_cv1);
-  }
-
-  return;
 }
 
 CGAL_END_NAMESPACE

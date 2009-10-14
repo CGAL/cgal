@@ -73,13 +73,13 @@ protected:
     Arr_left_side_category, Arr_right_side_category > LR;
   
   typedef typename LR::Parameter_space_in_x_2_curve_end_tag 
-  Psx_2_curve_end_tag;
+    Psx_2_curve_end_tag;
   typedef typename LR::Parameter_space_in_x_2_curve_tag Psx_2_curve_tag;
   typedef typename LR::Parameter_space_in_x_2_point_tag Psx_2_point_tag;
   typedef typename LR::Compare_y_near_boundary_2_curve_ends_tag 
-  Cmp_y_nb_2_curve_ends_tag;
+    Cmp_y_nb_2_curve_ends_tag;
   typedef typename LR::Compare_y_on_boundary_2_points_tag 
-  Cmp_y_ob_2_points_tag;
+    Cmp_y_ob_2_points_tag;
   typedef typename LR::Is_on_y_identification_2_curve_tag Ioyi_2_curve_tag;
   typedef typename LR::Is_on_y_identification_2_point_tag Ioyi_2_point_tag;
   
@@ -89,15 +89,15 @@ protected:
     Arr_bottom_side_category, Arr_top_side_category > BT;
   
   typedef typename BT::Parameter_space_in_y_2_curve_end_tag 
-  Psy_2_curve_end_tag;
+    Psy_2_curve_end_tag;
   typedef typename BT::Parameter_space_in_y_2_curve_tag Psy_2_curve_tag;
   typedef typename BT::Parameter_space_in_y_2_point_tag Psy_2_point_tag;
   typedef typename BT::Compare_x_near_boundary_2_point_curve_end_tag 
-  Cmp_x_nb_2_point_curve_end_tag;
+    Cmp_x_nb_2_point_curve_end_tag;
   typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag 
-  Cmp_x_nb_2_curve_ends_tag;
+    Cmp_x_nb_2_curve_ends_tag;
   typedef typename BT::Compare_x_on_boundary_2_points_tag 
-  Cmp_x_ob_2_points_tag;
+    Cmp_x_ob_2_points_tag;
   typedef typename BT::Is_on_x_identification_2_curve_tag Ioxi_2_curve_tag;
   typedef typename BT::Is_on_x_identification_2_point_tag Ioxi_2_point_tag;
 
@@ -230,28 +230,21 @@ public:
       Is_vertical_2       is_vertical = m_self->is_vertical_2_object();
 
       if (is_vertical(xcv1))
-      {
         return (is_vertical (xcv2)) ? EQUAL : SMALLER;
-      }
       else if (is_vertical (xcv2))
-      {
         return (LARGER);
-      }
 
       // Perform the comparison based on the existance of bounded left
       // endpoints.
-      if (has_left1 && has_left2)
-      {
+      if (has_left1 && has_left2) {
         // Get the left endpoints of xcv1 and xcv2.
         Point_2        left1 = min_vertex(xcv1);
         Point_2        left2 = min_vertex(xcv2);
           
         if (equal (left1, left2))
-        {
           // The two curves have a common left endpoint:
           // Compare them to the right of this point.
           return (m_self->compare_y_at_x_right_2_object() (xcv1, xcv2, left1));
-        }    
       }
 
       // We now that the curves do not share a common endpoint, and we can
@@ -340,10 +333,9 @@ public:
     /*!
      * Implementation of the operator() in case the base should be used.
      */
-    Arr_parameter_space parameter_space_in_x (
-        const X_monotone_curve_2& xcv,
-        Arr_curve_end ind,
-        Arr_use_traits_tag) const
+    Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2& xcv,
+                                              Arr_curve_end ind,
+                                              Arr_use_traits_tag) const
     {
       return (m_base->parameter_space_in_x_2_object() (xcv, ind));
     }
@@ -351,10 +343,9 @@ public:
     /*!
      * Implementation of the operator() in case the dummy should be used.
      */
-    Arr_parameter_space parameter_space_in_x (
-        const X_monotone_curve_2&,
-        Arr_curve_end,
-        Arr_use_dummy_tag) const
+    Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2&,
+                                              Arr_curve_end,
+                                              Arr_use_dummy_tag) const
     {
       return ARR_INTERIOR;
     }
@@ -362,9 +353,8 @@ public:
     /*!
      * Implementation of the operator() in case the base should be used.
      */
-    Arr_parameter_space parameter_space_in_x (
-        const X_monotone_curve_2& xcv,
-        Arr_use_traits_tag) const
+    Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2& xcv,
+                                              Arr_use_traits_tag) const
     {
       return (m_base->parameter_space_in_x_2_object() (xcv));
     }
@@ -372,9 +362,8 @@ public:
     /*!
      * Implementation of the operator() in case the dummy should be used.
      */
-    Arr_parameter_space parameter_space_in_x (
-        const X_monotone_curve_2&,
-        Arr_use_dummy_tag) const
+    Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2&,
+                                              Arr_use_dummy_tag) const
     {
       return ARR_INTERIOR;
     }
@@ -469,10 +458,9 @@ public:
     /*!
      * Implementation of the operator() in case the base should be used.
      */
-    Arr_parameter_space parameter_space_in_y (
-        const X_monotone_curve_2& xcv,
-        Arr_curve_end ind,
-        Arr_use_traits_tag) const
+    Arr_parameter_space parameter_space_in_y (const X_monotone_curve_2& xcv,
+                                              Arr_curve_end ind,
+                                              Arr_use_traits_tag) const
     {
       return m_base->parameter_space_in_y_2_object() (xcv, ind);
     }
@@ -480,10 +468,9 @@ public:
     /*!
      * Implementation of the operator() in case the dummy should be used.
      */
-    Arr_parameter_space parameter_space_in_y (
-        const X_monotone_curve_2 &,
-        Arr_curve_end,
-        Arr_use_dummy_tag) const
+    Arr_parameter_space parameter_space_in_y (const X_monotone_curve_2 &,
+                                              Arr_curve_end,
+                                              Arr_use_dummy_tag) const
     {
       return ARR_INTERIOR;
     }
@@ -491,9 +478,8 @@ public:
     /*!
      * Implementation of the operator() in case the base should be used.
      */
-    Arr_parameter_space parameter_space_in_y (
-        const X_monotone_curve_2& xcv,
-        Arr_use_traits_tag) const
+    Arr_parameter_space parameter_space_in_y (const X_monotone_curve_2& xcv,
+                                              Arr_use_traits_tag) const
     {
       return (m_base->parameter_space_in_x_2_object() (xcv));
     }
@@ -501,9 +487,8 @@ public:
     /*!
      * Implementation of the operator() in case the dummy should be used.
      */
-    Arr_parameter_space parameter_space_in_y (
-        const X_monotone_curve_2&,
-        Arr_use_dummy_tag) const
+    Arr_parameter_space parameter_space_in_y (const X_monotone_curve_2&,
+                                              Arr_use_dummy_tag) const
     {
       return ARR_INTERIOR;
     }
@@ -556,11 +541,10 @@ public:
     /*!
      * Implementation of the operator() in case the base should be used.
      */
-    Comparison_result _compare_point_curve (
-        const Point_2 & p,
-        const X_monotone_curve_2 & xcv,
-        Arr_curve_end ce,
-        Arr_use_traits_tag) const
+    Comparison_result _compare_point_curve (const Point_2 & p,
+                                            const X_monotone_curve_2 & xcv,
+                                            Arr_curve_end ce,
+                                            Arr_use_traits_tag) const
     {
       return (m_base->compare_x_near_boundary_2_object()(p, xcv, ce));
     }
@@ -618,8 +602,7 @@ public:
                                   const X_monotone_curve_2 & xcv,
                                   Arr_curve_end ce) const
     {
-      return _compare_point_curve(p, xcv, ce, 
-                                  Cmp_x_nb_2_point_curve_end_tag());
+      return _compare_point_curve(p, xcv, ce, Cmp_x_nb_2_point_curve_end_tag());
     }
 
     /*! Compare the relative x-positions of two curve ends.
@@ -639,8 +622,7 @@ public:
                                   const X_monotone_curve_2 & xcv2,
                                   Arr_curve_end ce2) const
     {
-      return _compare_curves(xcv1, ce1, xcv2, ce2, 
-                             Cmp_x_nb_2_curve_ends_tag());
+      return _compare_curves(xcv1, ce1, xcv2, ce2, Cmp_x_nb_2_curve_ends_tag());
     }
   };
 
@@ -686,8 +668,7 @@ public:
      */
     Comparison_result comp_y_near_bnd (const X_monotone_curve_2 &,
                                        const X_monotone_curve_2 &, 
-                                       Arr_curve_end,
-                                       Arr_use_dummy_tag) const
+                                       Arr_curve_end, Arr_use_dummy_tag) const
     {
       CGAL_error();
       return EQUAL;
@@ -964,14 +945,12 @@ public:
       return SMALLER;
     }
     
-    bool is_on_y_idn (const X_monotone_curve_2 & xcv,
-                      Arr_use_traits_tag) const
+    bool is_on_y_idn (const X_monotone_curve_2 & xcv, Arr_use_traits_tag) const
     {
       return m_base->is_on_identification_2_object ()(xcv);
     }
 
-    bool is_on_y_idn (const X_monotone_curve_2 &, 
-                      Arr_use_dummy_tag) const
+    bool is_on_y_idn (const X_monotone_curve_2 &, Arr_use_dummy_tag) const
     {
       CGAL_error();
       return SMALLER;
@@ -1386,10 +1365,8 @@ public:
       const Arr_parameter_space ps_y2 = ps_y (xcv2, ARR_MIN_END);
       Comparison_result         l_res;
 
-      if (ps_y1 != ARR_INTERIOR)
-      {
-        if (ps_y2 != ARR_INTERIOR)
-        {
+      if (ps_y1 != ARR_INTERIOR) {
+        if (ps_y2 != ARR_INTERIOR) {
           // The curve ends have special boundary with oposite signs in y,
           // we readily know their relative position (recall that they do not
           // instersect).
@@ -1416,8 +1393,7 @@ public:
         
         l_res = compare_x_near_bnd(left2, xcv1, ARR_MIN_END);
 
-        if (l_res == LARGER)
-        {
+        if (l_res == LARGER) {
           // left2 lies in the x-range of xcv1, so it is safe to compare:
           res = compare_y_at_x (left2, xcv1);
 
@@ -1427,16 +1403,14 @@ public:
 
           return ((res == SMALLER) ? LARGER : SMALLER);
         }
-        else
-        {
+        else {
           if (ps_y1 == ARR_BOTTOM_BOUNDARY)
             return (SMALLER);          // xcv1 is obviously below xcv2.
           else
             return (LARGER);           // xcv2 is obviously above xcv1.
         }
       }
-      else if (ps_y2 != ARR_INTERIOR)
-      {
+      else if (ps_y2 != ARR_INTERIOR) {
         // xcv2 has a vertical asymptote and xcv1 has a normal left endpoint.
         // Compare the x-positions of this endpoint and the asymptote.
         const Point_2&  left1 = min_vertex(xcv1);
@@ -1444,14 +1418,10 @@ public:
         l_res = compare_x_near_bnd(left1, xcv2, ARR_MIN_END);
 
         if (l_res == LARGER)
-        {
           // left1 lies in the x-range of xcv2, so it is safe to compare:
           return (compare_y_at_x (left1, xcv2));
-        }
         else
-        {
           return (ps_y2 == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER;
-        }
       }
 
       // In this case we compare two normal points.
@@ -1467,13 +1437,11 @@ public:
       // to the other curve.
       l_res = compare_xy (left1, left2);
 
-      if (l_res != SMALLER)
-      {
+      if (l_res != SMALLER) {
         // left1 is in the x-range of xcv2:
         res = compare_y_at_x (left1, xcv2);
 
-        if (res == EQUAL)
-        {
+        if (res == EQUAL) {
           // The two curves intersect at left1. If both curves are defined to
           // the right of the reference point, we can compare them to its 
           // right. Otherwise, their share a common endpoint (which is the only
@@ -1484,17 +1452,14 @@ public:
 
         return (res);
       }
-      else
-      {
+      else {
         // left2 is in the x-range of xcv1:
         res = compare_y_at_x (left2, xcv1);
 
         if (res == EQUAL)
-        {
           // The two curves share a common endpoint (which is the only overlap
           // in their x-ranges) and are really equal.
           return (EQUAL);
-        }
 
         // Swap the result:
         return ((res == SMALLER) ? LARGER : SMALLER);
@@ -1566,16 +1531,13 @@ public:
       Comparison_result  l_res, r_res;
       Comparison_result  res1, res2;
     
-      if (!xcv1_to_right && !xcv2_to_right)
-      {
+      if (!xcv1_to_right && !xcv2_to_right) {
         // Case 1: Both xcv1 and xcv2 are defined to the left of p.
         l_res = compare_y_at_x_left (xcv1, xcv2, p);
       
-        if (l_res == LARGER)
-        {
+        if (l_res == LARGER) {
           // Case 1(a) : xcv1 is above xcv2.
-          if (!xcv_to_right)
-          {
+          if (!xcv_to_right) {
             res1 = compare_y_at_x_left (xcv1, xcv, p);
             res2 = compare_y_at_x_left (xcv2, xcv, p);
           
@@ -1588,11 +1550,9 @@ public:
           }
           return (true);
         }
-        else if (l_res == SMALLER)
-        {
+        else if (l_res == SMALLER) {
           // Case 1(b): xcv1 is below xcv2.
-          if (!xcv_to_right)
-          {
+          if (!xcv_to_right) {
             res1 = compare_y_at_x_left (xcv1, xcv, p);
             res2 = compare_y_at_x_left (xcv2, xcv, p);
           
@@ -1605,14 +1565,11 @@ public:
           }
           return (false);
         }
-        else
-        {
+        else {
           // Overlapping segments.
-          if (!xcv_to_right)
-          {
+          if (!xcv_to_right) {
             res1 = compare_y_at_x_left (xcv1, xcv, p);
-            if (res1 == EQUAL)
-            {
+            if (res1 == EQUAL) {
               xcv_equal_xcv1 = true;
               xcv_equal_xcv2 = true;
               return (false);
@@ -1623,16 +1580,13 @@ public:
         }
       }
       
-      if (xcv1_to_right && xcv2_to_right)
-      {
+      if (xcv1_to_right && xcv2_to_right) {
         // Case 2: Both xcv1 and xcv2 are defined to the right of p.
         r_res = compare_y_at_x_right (xcv1, xcv2, p);
 
-        if (r_res == LARGER)
-        {
+        if (r_res == LARGER) {
           // Case 2(a) : xcv1 is above xcv2.
-          if (xcv_to_right)
-          {
+          if (xcv_to_right) {
             res1 = compare_y_at_x_right (xcv1, xcv, p);
             res2 = compare_y_at_x_right (xcv2, xcv, p);
 
@@ -1645,11 +1599,9 @@ public:
           }
           return (false);
         }
-        else if (r_res == SMALLER)
-        {
+        else if (r_res == SMALLER) {
           // Case 2(b): xcv1 is below xcv2.
-          if (xcv_to_right)
-          {
+          if (xcv_to_right) {
             res1 = compare_y_at_x_right (xcv1, xcv, p);
             res2 = compare_y_at_x_right (xcv2, xcv, p);
 
@@ -1662,15 +1614,12 @@ public:
           }
           return (true);
         }
-        else
-        {
+        else {
           // Overlapping segments.
-          if (xcv_to_right)
-          {
+          if (xcv_to_right) {
             res1 = compare_y_at_x_right (xcv1, xcv, p);
           
-            if (res1 == EQUAL)
-            {
+            if (res1 == EQUAL) {
               xcv_equal_xcv1 = true;
               xcv_equal_xcv2 = true;             
               return (false);
@@ -1681,11 +1630,9 @@ public:
         }
       }
 
-      if (!xcv1_to_right && xcv2_to_right)
-      {
+      if (!xcv1_to_right && xcv2_to_right) {
         // Case 3: xcv1 is defined to the left of p, and xcv2 to its right.
-        if (!xcv_to_right)
-        {
+        if (!xcv_to_right) {
           res1 = compare_y_at_x_left (xcv1, xcv, p);
 
           if (res1 == EQUAL)
@@ -1693,8 +1640,7 @@ public:
         
           return (res1 == SMALLER);
         }
-        else
-        {
+        else {
           res2 = compare_y_at_x_right (xcv2, xcv, p);
 
           if (res2 == EQUAL)
@@ -1707,8 +1653,7 @@ public:
       CGAL_assertion (xcv1_to_right && !xcv2_to_right);
 
       // Case 4: xcv1 is defined to the right of p, and xcv2 to its left.
-      if (xcv_to_right)
-      {
+      if (xcv_to_right) {
 	res1 = compare_y_at_x_right (xcv1, xcv, p);
 	
 	if (res1 == EQUAL)
@@ -1716,8 +1661,7 @@ public:
         
 	return (res1  == LARGER);
       }
-      else
-      {
+      else {
         res2 = compare_y_at_x_left (xcv2, xcv, p);
         
         if (res2 == EQUAL)
@@ -1776,26 +1720,20 @@ public:
     {
       // Act according to where xcv1 and xcv2 lie.
       if (!xcv1_to_right && !xcv2_to_right)
-      {
         // Both are defined to the left of p, and we encounter xcv1 before
         // xcv2 if it is below xcv2:
         return (m_self->compare_y_at_x_left_2_object() (xcv1, xcv2, p));
-      }
       
       if (xcv1_to_right && xcv2_to_right)
-      {
         // Both are defined to the right of p, and we encounter xcv1 before
         // xcv2 if it is above xcv2. We therefore reverse the order of the
         // curves when we invoke compare_y_at_x_right:
         return (m_self->compare_y_at_x_right_2_object() (xcv2, xcv1, p));
-      }
       
       if (!xcv1_to_right && xcv2_to_right)
-      {
         // If we start from the top, we encounter the right curve (which
         // is xcv2) first. If we start from the bottom, we encounter xcv1 first.
         return (from_top ? LARGER : SMALLER);
-      }
 
       CGAL_assertion (xcv1_to_right && !xcv2_to_right);
 
@@ -1928,8 +1866,7 @@ public:
      * Implementation of the operator() in case the Has_merge tag is true.
      */
     bool _are_mergeable_imp (const X_monotone_curve_2& xcv1,
-           const X_monotone_curve_2& xcv2,
-           Tag_true) const
+                             const X_monotone_curve_2& xcv2, Tag_true) const
     {
       return (m_base->are_mergeable_2_object() (xcv1, xcv2));      
     }
@@ -1937,12 +1874,11 @@ public:
     /*!
      * Implementation of the operator() in case the Has_merge tag is false.
      */
-    bool _are_mergeable_imp (const X_monotone_curve_2& ,
-                             const X_monotone_curve_2& ,
-                             Tag_false) const
+    bool _are_mergeable_imp (const X_monotone_curve_2&,
+                             const X_monotone_curve_2&, Tag_false) const
     {
       // Curve merging is not supported:
-      return (false);
+      return false;
     }
   };
 
@@ -1992,8 +1928,7 @@ public:
      */
     void _merge_imp (const X_monotone_curve_2& xcv1,
                      const X_monotone_curve_2& xcv2,
-                     X_monotone_curve_2& c,
-                     Tag_true) const
+                     X_monotone_curve_2& c, Tag_true) const
     {
       return (m_base->merge_2_object() (xcv1, xcv2, c));      
     }
@@ -2001,10 +1936,8 @@ public:
     /*!
      * Implementation of the operator() in case the HasMerge tag is false.
      */
-    void _merge_imp (const X_monotone_curve_2& ,
-                     const X_monotone_curve_2& ,
-                     X_monotone_curve_2& ,
-                     Tag_false) const
+    void _merge_imp (const X_monotone_curve_2&, const X_monotone_curve_2&,
+                     X_monotone_curve_2& , Tag_false) const
     {
       // This function should never be called!
       CGAL_error_msg( "Merging curves is not supported.");
