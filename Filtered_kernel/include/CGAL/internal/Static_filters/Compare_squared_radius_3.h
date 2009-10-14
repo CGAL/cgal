@@ -19,18 +19,18 @@
 // This predicates was generated using the fpg tool written by Andreas Meyer.
 //
 
-#ifndef CGAL_STATIC_FILTERS_COMPARE_SQUARED_RADIUS_3_H
-#define CGAL_STATIC_FILTERS_COMPARE_SQUARED_RADIUS_3_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_COMPARE_SQUARED_RADIUS_3_H
+#define CGAL_INTERNAL_STATIC_FILTERS_COMPARE_SQUARED_RADIUS_3_H
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Static_filter_error.h>
 #include <cmath>
 
-namespace CGAL{
+namespace CGAL { namespace internal { namespace Static_filters_predicates {
   
   template <typename K_base>
-  class SF_Compare_squared_radius_3:
-    public K_base::Compare_squared_radius_3
+  class Compare_squared_radius_3
+    : public K_base::Compare_squared_radius_3
   {
     typedef typename K_base::Point_3 Point_3;
     typedef typename K_base::FT FT;
@@ -96,13 +96,13 @@ namespace CGAL{
         double sp2;
         sp2 = ((square( spx ) + square( spy )) + square( spz ));
         double num_x;
-        num_x = determinant( qpy, qpz, qp2, rpy, rpz, rp2, spy, spz, sp2 );
+        num_x = CGAL::determinant( qpy, qpz, qp2, rpy, rpz, rp2, spy, spz, sp2 );
         double num_y;
-        num_y = determinant( qpx, qpz, qp2, rpx, rpz, rp2, spx, spz, sp2 );
+        num_y = CGAL::determinant( qpx, qpz, qp2, rpx, rpz, rp2, spx, spz, sp2 );
         double num_z;
-        num_z = determinant( qpx, qpy, qp2, rpx, rpy, rp2, spx, spy, sp2 );
+        num_z = CGAL::determinant( qpx, qpy, qp2, rpx, rpy, rp2, spx, spy, sp2 );
         double den;
-        den = determinant( qpx, qpy, qpz, rpx, rpy, rpz, spx, spy, spz );
+        den = CGAL::determinant( qpx, qpy, qpz, rpx, rpy, rpz, spx, spy, spz );
         int int_tmp_result;
         double double_tmp_result;
         double eps;
@@ -233,13 +233,13 @@ namespace CGAL{
         double rsz;
         rsz = ((psx * qsy) - (psy * qsx));
         double num_x;
-        num_x = ((ps2 * determinant( qsy, qsz, rsy, rsz )) - (qs2 * determinant( psy, psz, rsy, rsz )));
+        num_x = ((ps2 * CGAL::determinant( qsy, qsz, rsy, rsz )) - (qs2 * CGAL::determinant( psy, psz, rsy, rsz )));
         double num_y;
-        num_y = ((ps2 * determinant( qsx, qsz, rsx, rsz )) - (qs2 * determinant( psx, psz, rsx, rsz )));
+        num_y = ((ps2 * CGAL::determinant( qsx, qsz, rsx, rsz )) - (qs2 * CGAL::determinant( psx, psz, rsx, rsz )));
         double num_z;
-        num_z = ((ps2 * determinant( qsx, qsy, rsx, rsy )) - (qs2 * determinant( psx, psy, rsx, rsy )));
+        num_z = ((ps2 * CGAL::determinant( qsx, qsy, rsx, rsy )) - (qs2 * CGAL::determinant( psx, psy, rsx, rsy )));
         double den;
-        den = determinant( psx, psy, psz, qsx, qsy, qsz, rsx, rsy, rsz );
+        den = CGAL::determinant( psx, psy, psz, qsx, qsy, qsz, rsx, rsy, rsz );
         int int_tmp_result;
         double double_tmp_result;
         double eps;
@@ -391,6 +391,7 @@ namespace CGAL{
     }
     
   };
-} //namespace CGAL
+
+} } } // namespace CGAL::internal::Static_filters_predicates
  
-#endif //CGAL_STATIC_FILTERS_COMPARE_SQUARED_RADIUS_3_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_COMPARE_SQUARED_RADIUS_3_H

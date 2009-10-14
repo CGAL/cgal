@@ -18,12 +18,17 @@
 //
 // Author(s)     : Sylvain Pion
  
-#ifndef CGAL_STATIC_FILTERS_TOOLS_H
-#define CGAL_STATIC_FILTERS_TOOLS_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_TOOLS_H
+#define CGAL_INTERNAL_STATIC_FILTERS_TOOLS_H
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
+
+template < typename ET >
+class Lazy_exact_nt;
+
+namespace internal {
 
 // Utility function to check a posteriori that a subtraction was performed
 // without rounding error.
@@ -56,11 +61,8 @@ inline bool fit_in_double(const float& f, double& r) { r = f; return true; }
 inline bool fit_in_double(const int& i, double& r) { r = i; return true; }
 
 template < typename ET >
-class Lazy_exact_nt;
-
-template < typename ET >
 inline bool fit_in_double(const Lazy_exact_nt<ET>&, double&);
 
-CGAL_END_NAMESPACE
+} } // namespace CGAL::internal
 
-#endif // CGAL_STATIC_FILTERS_TOOLS_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_TOOLS_H

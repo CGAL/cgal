@@ -17,17 +17,17 @@
 //
 // Author(s)     : Andreas Meyer
 
-#ifndef CGAL_STATIC_FILTERS_COMPARE_Y_AT_X_2_H 
-#define CGAL_STATIC_FILTERS_COMPARE_Y_AT_X_2_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_COMPARE_Y_AT_X_2_H 
+#define CGAL_INTERNAL_STATIC_FILTERS_COMPARE_Y_AT_X_2_H
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Static_filter_error.h>
+#include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/algorithm.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 template < typename K_base, typename Kernel >
-class SF_Compare_y_at_x_2
+class Compare_y_at_x_2
   : public K_base::Compare_y_at_x_2
 {
   typedef typename K_base::Point_2          Point_2;
@@ -64,6 +64,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} } } // namespace CGAL::internal::Static_filters_predicates
 
-#endif
+#endif // CGAL_INTERNAL_STATIC_FILTERS_COMPARE_Y_AT_X_2_H

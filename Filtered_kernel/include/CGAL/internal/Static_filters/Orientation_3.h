@@ -18,17 +18,17 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_STATIC_FILTERS_ORIENTATION_3_H
-#define CGAL_STATIC_FILTERS_ORIENTATION_3_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_3_H
+#define CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_3_H
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Static_filter_error.h>
+#include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 template < typename K_base >
-class SF_Orientation_3
+class Orientation_3
   : public K_base::Orientation_3
 {
   typedef typename K_base::Point_3          Point_3;
@@ -96,9 +96,9 @@ public:
           double maxz = fabs(pqz);
           if (maxz < fabs(prz)) maxz = fabs(prz);
           if (maxz < fabs(psz)) maxz = fabs(psz);
-          double det = determinant(pqx, pqy, pqz,
-                                   prx, pry, prz,
-                                   psx, psy, psz);
+          double det = CGAL::determinant(pqx, pqy, pqz,
+                                         prx, pry, prz,
+                                         psx, psy, psz);
 
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)
@@ -131,7 +131,7 @@ public:
   {
     typedef Static_filter_error F;
     F t1 = F(1, F::ulp()/2);         // First translation
-    F det = determinant(t1, t1, t1,
+    F det = CGAL::determinant(t1, t1, t1,
                               t1, t1, t1,
                               t1, t1, t1); // Full det
     double err = det.error();
@@ -142,6 +142,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} } } // namespace CGAL::internal::Static_filters_predicates
 
-#endif // CGAL_STATIC_FILTERS_ORIENTATION_3_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_3_H

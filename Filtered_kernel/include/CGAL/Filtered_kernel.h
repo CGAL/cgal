@@ -32,7 +32,7 @@
 #include <CGAL/internal/Exact_type_selector.h>
 
 #ifndef CGAL_NO_STATIC_FILTERS
-#  include <CGAL/Static_filters.h>
+#  include <CGAL/internal/Static_filters/Static_filters.h>
 #endif
 
 // This file contains the definition of a generic kernel filter.
@@ -92,7 +92,7 @@ struct Filtered_kernel_base
 #ifndef CGAL_NO_STATIC_FILTERS
 template < typename CK >
 struct Static_filters_base
-  : public Static_filters< Filtered_kernel_base<CK> >
+  : public internal::Static_filters< Filtered_kernel_base<CK> >
 {
     template < typename Kernel2 >
     struct Base {

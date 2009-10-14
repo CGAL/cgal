@@ -18,16 +18,16 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_STATIC_FILTERS_SIDE_OF_ORIENTED_SPHERE_3_H
-#define CGAL_STATIC_FILTERS_SIDE_OF_ORIENTED_SPHERE_3_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_SIDE_OF_ORIENTED_SPHERE_3_H
+#define CGAL_INTERNAL_STATIC_FILTERS_SIDE_OF_ORIENTED_SPHERE_3_H
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Static_filter_error.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 template < typename K_base >
-class SF_Side_of_oriented_sphere_3
+class Side_of_oriented_sphere_3
   : public K_base::Side_of_oriented_sphere_3
 {
   typedef typename K_base::Point_3                      Point_3;
@@ -101,10 +101,10 @@ public:
           else if (maxy < maxx)
               std::swap(maxx, maxy);
 
-          double det = determinant(ptx,pty,ptz,pt2,
-                                   rtx,rty,rtz,rt2,
-                                   qtx,qty,qtz,qt2,
-                                   stx,sty,stz,st2);
+          double det = CGAL::determinant(ptx,pty,ptz,pt2,
+                                         rtx,rty,rtz,rt2,
+                                         qtx,qty,qtz,qt2,
+                                         stx,sty,stz,st2);
 
           // Protect against underflow in the computation of eps.
           if (maxx < 1e-58) /* sqrt^5(min_double/eps) */ {
@@ -127,10 +127,10 @@ public:
   // Computes the epsilon for Side_of_oriented_sphere_3.
   static double compute_epsilon()
   {
-    typedef CGAL::Static_filter_error F;
+    typedef internal::Static_filter_error F;
     F t1 = F(1,F::ulp()/2);         // First translation
     F sq = t1*t1+t1*t1+t1*t1; // squares
-    F det = determinant(t1, t1, t1, sq,
+    F det = CGAL::determinant(t1, t1, t1, sq,
                               t1, t1, t1, sq,
                               t1, t1, t1, sq,
                               t1, t1, t1, sq); // Full det
@@ -142,6 +142,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} } } // namespace CGAL::internal::Static_filters_predicates
 
-#endif // CGAL_STATIC_FILTERS_SIDE_OF_ORIENTED_SPHERE_3_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_SIDE_OF_ORIENTED_SPHERE_3_H

@@ -18,8 +18,8 @@
 //
 // Author(s)     : Sylvain Pion
  
-#ifndef CGAL_STATIC_FILTERS_H
-#define CGAL_STATIC_FILTERS_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_H
+#define CGAL_INTERNAL_STATIC_FILTERS_H
 
 // This kernel wrapper gathers optimized predicates written by hand, using
 // a few steps of filtering.  It should work if the initial traits has
@@ -34,16 +34,16 @@
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/Cartesian/function_objects.h>
 
-#include <CGAL/Static_filters/tools.h>
-#include <CGAL/Static_filters/Orientation_2.h>
-#include <CGAL/Static_filters/Orientation_3.h>
-#include <CGAL/Static_filters/Compare_y_at_x_2.h>
-#include <CGAL/Static_filters/Side_of_oriented_circle_2.h>
-#include <CGAL/Static_filters/Side_of_oriented_sphere_3.h>
-#include <CGAL/Static_filters/Compare_squared_radius_3.h>
+#include <CGAL/internal/Static_filters/tools.h>
+#include <CGAL/internal/Static_filters/Orientation_2.h>
+#include <CGAL/internal/Static_filters/Orientation_3.h>
+#include <CGAL/internal/Static_filters/Compare_y_at_x_2.h>
+#include <CGAL/internal/Static_filters/Side_of_oriented_circle_2.h>
+#include <CGAL/internal/Static_filters/Side_of_oriented_sphere_3.h>
+#include <CGAL/internal/Static_filters/Compare_squared_radius_3.h>
 
-// #include <CGAL/Static_filters/Coplanar_orientation_3.h>
-// #include <CGAL/Static_filters/Coplanar_side_of_bounded_circle_3.h>
+// #include <CGAL/internal/Static_filters/Coplanar_orientation_3.h>
+// #include <CGAL/internal/Static_filters/Coplanar_side_of_bounded_circle_3.h>
 
 // TODO :
 // - add more predicates :
@@ -58,7 +58,7 @@
 //   compiler.  g++ 4.0 should be able to cprop the second part...
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal {
 
 // The K_base argument is supposed to provide exact primitives.
 template < typename K_base >
@@ -68,12 +68,12 @@ class Static_filters : public K_base
 
 public:
 
-  typedef SF_Compare_y_at_x_2<K_base,Self>          Compare_y_at_x_2;
-  typedef SF_Orientation_2<K_base>                  Orientation_2;
-  typedef SF_Orientation_3<K_base>                  Orientation_3;
-  typedef SF_Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
-  typedef SF_Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
-  typedef SF_Compare_squared_radius_3<K_base>       Compare_squared_radius_3;
+  typedef Static_filters_predicates::Compare_y_at_x_2<K_base,Self>          Compare_y_at_x_2;
+  typedef Static_filters_predicates::Orientation_2<K_base>                  Orientation_2;
+  typedef Static_filters_predicates::Orientation_3<K_base>                  Orientation_3;
+  typedef Static_filters_predicates::Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
+  typedef Static_filters_predicates::Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
+  typedef Static_filters_predicates::Compare_squared_radius_3<K_base>       Compare_squared_radius_3;
 
   // The following do not require filtering as they only do
   // comparisons.  We must be careful that *all* their function
@@ -190,9 +190,9 @@ public:
 
   // The two following are for degenerate cases, so I'll update them later.
   //
-  // typedef SF_Coplanar_orientation_3<Point_3, Orientation_2>
+  // typedef Static_filters_predicates::Coplanar_orientation_3<Point_3, Orientation_2>
   //                                                   Coplanar_orientation_3;
-  // typedef SF_Side_of_bounded_circle_3<Point_3>
+  // typedef Static_filters_predicates::Side_of_bounded_circle_3<Point_3>
   //                                         Coplanar_side_of_bounded_circle_3;
 
   // Coplanar_orientation_3
@@ -204,6 +204,6 @@ public:
   // { return Coplanar_side_of_bounded_circle_3(); }
 };
 
-CGAL_END_NAMESPACE
+} } // namespace CGAL::internal
 
-#endif // CGAL_STATIC_FILTERS_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_H

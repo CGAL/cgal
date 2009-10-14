@@ -18,19 +18,19 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_STATIC_FILTERS_COPLANAR_SIDE_OF_BOUNDED_CIRCLE_3_H
-#define CGAL_STATIC_FILTERS_COPLANAR_SIDE_OF_BOUNDED_CIRCLE_3_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_COPLANAR_SIDE_OF_BOUNDED_CIRCLE_3_H
+#define CGAL_INTERNAL_STATIC_FILTERS_COPLANAR_SIDE_OF_BOUNDED_CIRCLE_3_H
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Profile_counter.h>
-// #include <CGAL/Static_filter_error.h> // Only used to precompute constants
+// #include <CGAL/internal/Static_filters/Static_filter_error.h> // Only used to precompute constants
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 template <class Point>
-class SF_Side_of_bounded_circle_3
+class Side_of_bounded_circle_3
 {
   // Computes the epsilon for In_circle_3.
   static double cir_3()
@@ -134,6 +134,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} } } // namespace CGAL::internal::Static_filters_predicates
 
-#endif // CGAL_STATIC_FILTERS_COPLANAR_SIDE_OF_BOUNDED_CIRCLE_3_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_COPLANAR_SIDE_OF_BOUNDED_CIRCLE_3_H

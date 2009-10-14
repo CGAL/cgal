@@ -18,8 +18,8 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_STATIC_FILTER_ERROR_H
-#define CGAL_STATIC_FILTER_ERROR_H
+#ifndef CGAL_INTERNAL_STATIC_FILTER_ERROR_H
+#define CGAL_INTERNAL_STATIC_FILTER_ERROR_H
 
 // This file contains the description of the class Static_filter_error.
 // The goal of this class is to be run by some overloaded predicates,
@@ -37,7 +37,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/FPU.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal {
 
 struct Static_filter_error
 {
@@ -164,6 +164,6 @@ sqrt(const Static_filter_error &f)
   return Static_filter_error(b, e, f.degree()/2);
 }
 
-CGAL_END_NAMESPACE
+} } // namespace CGAL::internal
 
-#endif // CGAL_STATIC_FILTER_ERROR_H
+#endif // CGAL_INTERNAL_STATIC_FILTER_ERROR_H

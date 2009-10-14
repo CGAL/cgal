@@ -18,17 +18,17 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_STATIC_FILTERS_SIDE_OF_ORIENTED_CIRCLE_2_H
-#define CGAL_STATIC_FILTERS_SIDE_OF_ORIENTED_CIRCLE_2_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_SIDE_OF_ORIENTED_CIRCLE_2_H
+#define CGAL_INTERNAL_STATIC_FILTERS_SIDE_OF_ORIENTED_CIRCLE_2_H
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Static_filter_error.h>
+#include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 template < typename K_base >
-class SF_Side_of_oriented_circle_2
+class Side_of_oriented_circle_2
   : public K_base::Side_of_oriented_circle_2
 {
   typedef typename K_base::Point_2                      Point_2;
@@ -64,8 +64,8 @@ public:
 	  double rqx = rx-qx;
 	  double rqy = ry-qy;
 
-          double det = determinant(qpx*tpy - qpy*tpx, tpx*tqx + tpy*tqy,
-                                   qpx*rpy - qpy*rpx, rpx*rqx + rpy*rqy);
+          double det = CGAL::determinant(qpx*tpy - qpy*tpx, tpx*tqx + tpy*tqy,
+                                         qpx*rpy - qpy*rpx, rpx*rqx + rpy*rqy);
 
           // We compute the semi-static bound.
           double maxx = fabs(qpx);
@@ -101,11 +101,11 @@ public:
   // Computes the epsilon for Side_of_oriented_circle_2.
   static double compute_epsilon()
   {
-    typedef CGAL::Static_filter_error F;
+    typedef internal::Static_filter_error F;
     F t1 = F(1, F::ulp()/2);         // First translation
     F a = t1*t1 - t1*t1;
     F b = t1*t1 + t1*t1;
-    F det = determinant(a, b, a, b);
+    F det = CGAL::determinant(a, b, a, b);
     double err = det.error();
     err += err * 3 * F::ulp(); // Correction due to "eps * maxx * maxy...".
 
@@ -114,6 +114,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} } } // namespace CGAL::internal::Static_filters_predicates
 
-#endif // CGAL_STATIC_FILTERS_SIDE_OF_ORIENTED_CIRCLE_2_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_SIDE_OF_ORIENTED_CIRCLE_2_H

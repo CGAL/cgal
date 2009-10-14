@@ -18,18 +18,19 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_STATIC_FILTERS_ORIENTATION_2_H
-#define CGAL_STATIC_FILTERS_ORIENTATION_2_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_2_H
+#define CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_2_H
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Static_filter_error.h>
+#include <CGAL/determinant.h>
+#include <CGAL/internal/Static_filters/Static_filter_error.h>
 
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 template < typename K_base >
-class SF_Orientation_2
+class Orientation_2
   : public K_base::Orientation_2
 {
   typedef typename K_base::Point_2          Point_2;
@@ -76,8 +77,8 @@ public:
           double prx = rx - px;
           double pry = ry - py;
 
-          double det = determinant(pqx, pqy,
-                                   prx, pry);
+          double det = CGAL::determinant(pqx, pqy,
+                                         prx, pry);
 
           // Then semi-static filter.
           double maxx = std::fabs(pqx);
@@ -111,7 +112,7 @@ public:
   {
     typedef Static_filter_error F;
     F t1 = F(1, F::ulp()/2);         // First translation
-    F det = determinant(t1, t1,
+    F det = CGAL::determinant(t1, t1,
                               t1, t1); // Full det
     double err = det.error();
     err += err * 2 * F::ulp(); // Correction due to "epsilon * maxx * maxy".
@@ -120,6 +121,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} } } // namespace CGAL::internal::Static_filters_predicates
 
-#endif // CGAL_STATIC_FILTERS_ORIENTATION_2_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_2_H

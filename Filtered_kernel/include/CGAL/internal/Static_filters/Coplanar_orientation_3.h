@@ -18,14 +18,14 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_STATIC_FILTERS_COPLANAR_ORIENTATION_3_H
-#define CGAL_STATIC_FILTERS_COPLANAR_ORIENTATION_3_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_COPLANAR_ORIENTATION_3_H
+#define CGAL_INTERNAL_STATIC_FILTERS_COPLANAR_ORIENTATION_3_H
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Profile_counter.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 // XXX :
 // Is this really useful to optimize this predicate ?
@@ -45,7 +45,7 @@ struct Point_23_xy {
 };
 
 template < typename Kernel >
-class SF_Coplanar_orientation_3
+class Coplanar_orientation_3
   : public Kernel::Coplanar_orientation_3
 {
   typedef typename Kernel::Point_3                  Point_3;
@@ -165,6 +165,6 @@ private:
 
 };
 
-CGAL_END_NAMESPACE
+} } } // namespace CGAL::internal::Static_filters_predicates
 
-#endif // CGAL_STATIC_FILTERS_COPLANAR_ORIENTATION_3_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_COPLANAR_ORIENTATION_3_H
