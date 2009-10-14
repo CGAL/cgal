@@ -4,7 +4,6 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
-#include <CGAL/Static_filters.h>
 #include <CGAL/Kernel_checker.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Random.h>
@@ -308,7 +307,7 @@ int main(int argc, char **argv)
   std::cout.precision(20);
   std::cerr.precision(20);
 
-  std::cout << "ulp(1) = " << CGAL::Static_filter_error::ulp() << std::endl;
+  std::cout << "ulp(1) = " << CGAL::internal::Static_filter_error::ulp() << std::endl;
 
   compute_epsilons();
 
