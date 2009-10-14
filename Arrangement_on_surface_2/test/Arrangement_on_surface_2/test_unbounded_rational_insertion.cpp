@@ -5,7 +5,9 @@
  * |    |      |    |
  * |    \      /    |
  * |     ------     |
- * |                |
+ * |     ------     |
+ * |    /      \    |
+ * |    |      |    |
  * o----------------o
  *
  * When the maximal end of the curve is processed, a vertex that corresponds
@@ -51,17 +53,23 @@ int main ()
   std::list<Rational_arc_2>  arcs;
 
   // Create the rational function y = 1 / ((x - 2)(x - 5)) = 1 / (x^2 - 7x + 10)
+  // Create the rational function y = 1 / ((2 - x)(x - 5)) = 1 / (-x^2 + 7x - 10)
   Rat_vector        P1(1);
   P1[0] = 1;
 
   Rat_vector        Q1(3);
+  Rat_vector        Q2(3);
   Q1[2] = 1; Q1[1] = -7; Q1[0] = 10;
+  Q2[2] = -1; Q2[1] = 7; Q2[0] = -10;
 
-  Rational_arc_2 c(P1, Q1, Algebraic(2), Algebraic(5));
+  Rational_arc_2 c1(P1, Q1, Algebraic(2), Algebraic(5));
+  Rational_arc_2 c2(P1, Q2, Algebraic(2), Algebraic(5));
 
   // Construct the arrangement of the six arcs.
   Arrangement_2 arr;
-  insert (arr, c);
+  insert (arr, c1);
+  insert (arr, c2);
+  
   if (!arr.is_valid()) {
     std::cerr << "The arrangement is not valid!" << std::endl;
     return -1;
@@ -75,7 +83,7 @@ int main ()
     "number of unbounded faces"
   };
   
-  Arrangement_2::Size expected_sizes[] = {0, 2, 1, 2, 2};
+  Arrangement_2::Size expected_sizes[] = {0, 4, 2, 3, 3};
   Arrangement_2::Size sizes[5];
   sizes[0] = arr.number_of_vertices();
   sizes[1] = arr.number_of_vertices_at_infinity();
