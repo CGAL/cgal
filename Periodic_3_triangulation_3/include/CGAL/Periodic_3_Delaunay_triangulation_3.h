@@ -463,6 +463,8 @@ public:
       OutputIterator points) const {
     // TODO
     // TODO: Specify the order of the points in the doc.
+    CGAL_assertion(false);
+    return points;
   }
 
   template <class OutputIterator>
@@ -470,7 +472,7 @@ public:
     std::vector<Cell_handle> cells;
     incident_cells(v,std::back_inserter(cells));
 
-    for (int i=0; i<cells.size() ; i++) {
+    for (unsigned int i=0; i<cells.size() ; i++) {
       Point dual_orig = periodic_circumcenter(cells[i]).first;
       int idx = cells[i]->index(v);
       Offset off = periodic_point(cells[i],idx).second;
