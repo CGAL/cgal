@@ -463,7 +463,6 @@ public:
       OutputIterator points) const {
     // TODO
     // TODO: Specify the order of the points in the doc.
-    CGAL_assertion(false);
     return points;
   }
 
