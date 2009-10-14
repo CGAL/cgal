@@ -40,6 +40,7 @@
 #include <CGAL/Static_filters/Compare_y_at_x_2.h>
 #include <CGAL/Static_filters/Side_of_oriented_circle_2.h>
 #include <CGAL/Static_filters/Side_of_oriented_sphere_3.h>
+#include <CGAL/Static_filters/Compare_squared_radius_3.h>
 
 // #include <CGAL/Static_filters/Coplanar_orientation_3.h>
 // #include <CGAL/Static_filters/Coplanar_side_of_bounded_circle_3.h>
@@ -72,6 +73,7 @@ public:
   typedef SF_Orientation_3<K_base>                  Orientation_3;
   typedef SF_Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
   typedef SF_Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
+  typedef SF_Compare_squared_radius_3<K_base>       Compare_squared_radius_3;
 
   // The following do not require filtering as they only do
   // comparisons.  We must be careful that *all* their function
@@ -181,6 +183,10 @@ public:
   Side_of_oriented_sphere_3
   side_of_oriented_sphere_3_object() const
   { return Side_of_oriented_sphere_3(); }
+
+  Compare_squared_radius_3
+  compare_squared_radius_3_object() const
+  { return Compare_squared_radius_3(); }
 
   // The two following are for degenerate cases, so I'll update them later.
   //

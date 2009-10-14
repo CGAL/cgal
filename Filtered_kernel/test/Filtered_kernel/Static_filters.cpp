@@ -9,7 +9,7 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Random.h>
 
-typedef CGAL::Simple_cartesian<CGAL::MP_Float>   K4;
+typedef CGAL::Simple_cartesian<CGAL::Quotient<CGAL::MP_Float> >   K4;
 typedef CGAL::Simple_cartesian<double>   K0;
 typedef CGAL::Filtered_kernel<K0>        K1;
 typedef K1         K2; // Static_filters is now included in Filtered_kernel.
@@ -245,6 +245,44 @@ test_side_of_oriented_sphere_3()
   CGAL::internal::side_of_oriented_sphere(t, s, p, q, r, K3());
 }
 
+void
+test_compare_squared_radius_3()
+{
+  // First test with random points.
+  Point_3 p = my_rand_p3();
+  Point_3 q = my_rand_p3();
+  Point_3 r = my_rand_p3();
+  Point_3 s = my_rand_p3();
+  typedef std::pair<double,K4::FT> NT_pair;
+
+  CGAL::internal::compare_squared_radius(p, q, r, s, NT_pair(0,0), K3());
+  CGAL::internal::compare_squared_radius(p, q, r,    NT_pair(0,0), K3());
+  CGAL::internal::compare_squared_radius(p, q,       NT_pair(0,0), K3());
+
+  // Then with cospherical points (up to roundoff errors).
+  p = sphere_rand_p3();
+  q = sphere_rand_p3();
+  r = sphere_rand_p3();
+  s = sphere_rand_p3();
+
+  CGAL::internal::compare_squared_radius(p, q, r, s, NT_pair(1,1), K3());
+  //with three points
+  double alpha_pqr = CGAL::to_double( K4().compute_squared_radius_3_object()(p.second,q.second,r.second) );
+  CGAL::internal::compare_squared_radius(p, q, r, NT_pair(alpha_pqr,alpha_pqr), K3());
+  //with 2 points
+  double alpha_pq = CGAL::to_double( K4().compute_squared_radius_3_object()(p.second,q.second) );
+  CGAL::internal::compare_squared_radius(p, q, NT_pair(alpha_pq,alpha_pq), K3());
+
+
+  // Then with some perturbation.
+  perturb(p, 1.0/(1<<25)/(1<<20)); // 2^-45
+
+  CGAL::internal::compare_squared_radius(p, q, r, s, NT_pair(1,1), K3());
+  CGAL::internal::compare_squared_radius(p, q, r,    NT_pair(alpha_pqr,alpha_pqr), K3());
+  CGAL::internal::compare_squared_radius(p, q,       NT_pair(alpha_pq,alpha_pq), K3());
+}
+
+
 void compute_epsilons()
 {
   K2::Orientation_2::compute_epsilon();
@@ -289,6 +327,10 @@ int main(int argc, char **argv)
   std::cout << "Testing Side_of_oriented_sphere_3" << std::endl;
   for(int i=0; i<loops; ++i)
     test_side_of_oriented_sphere_3();
+
+  std::cout << "Testing Compare_squared_radius_3" << std::endl;
+  for(int i=0; i<loops; ++i)
+    test_compare_squared_radius_3();  
 
   return 0;
 }
