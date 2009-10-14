@@ -34,9 +34,9 @@
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/Cartesian/function_objects.h>
 
-#include <CGAL/Static_filters/tools.h>
-#include <CGAL/Static_filters/Periodic_3_orientation_3.h>
-#include <CGAL/Static_filters/Periodic_3_side_of_oriented_sphere_3.h>
+#include <CGAL/internal/Static_filters/tools.h>
+#include <CGAL/internal/Static_filters/Periodic_3_orientation_3.h>
+#include <CGAL/internal/Static_filters/Periodic_3_side_of_oriented_sphere_3.h>
 
 // TODO :
 // - add more predicates :
@@ -57,8 +57,9 @@ class Periodic_3_triangulation_statically_filtered_traits_3 : public Traits
 
 public:
 
-  typedef SF_Periodic_3_orientation_3<Traits>  Orientation_3;
-  typedef SF_Periodic_3_side_of_oriented_sphere_3<Traits>
+  typedef internal::Static_filters_predicates::Periodic_3_orientation_3<Traits>
+    Orientation_3;
+  typedef internal::Static_filters_predicates::Periodic_3_side_of_oriented_sphere_3<Traits>
     Side_of_oriented_sphere_3;
 
   Orientation_3 orientation_3_object() const {

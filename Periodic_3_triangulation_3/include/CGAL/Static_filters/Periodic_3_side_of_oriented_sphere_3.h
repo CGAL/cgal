@@ -18,18 +18,18 @@
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
-#ifndef CGAL_STATIC_FILTERS_PERIODIC_3_SIDE_OF_ORIENTED_SPHERE_3_H
-#define CGAL_STATIC_FILTERS_PERIODIC_3_SIDE_OF_ORIENTED_SPHERE_3_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_3_SIDE_OF_ORIENTED_SPHERE_3_H
+#define CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_3_SIDE_OF_ORIENTED_SPHERE_3_H
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Static_filter_error.h>
+#include <CGAL/internal/Static_filters/Static_filter_error.h>
 
 #include <CGAL/Periodic_3_offset_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 template < typename K_base >
-class SF_Periodic_3_side_of_oriented_sphere_3
+class Periodic_3_side_of_oriented_sphere_3
   : public K_base::Side_of_oriented_sphere_3
 {
   typedef typename K_base::Side_of_oriented_sphere_3    Base;
@@ -45,7 +45,7 @@ public:
   typedef typename Base::result_type  result_type;
 
   template <class EX, class AP>
-    SF_Periodic_3_side_of_oriented_sphere_3(const Iso_cuboid_3 * dom,
+  Periodic_3_side_of_oriented_sphere_3(const Iso_cuboid_3 * dom,
 					    const EX * dom_e,
 					    const AP * dom_f)
       : Base(dom_e,dom_f), _dom(dom) { }
@@ -119,7 +119,7 @@ public:
           double eps = 1.2466136531027298e-13 * maxx * maxy * maxz
                      * (maxz * maxz);
 
-          double det = determinant(ptx,pty,ptz,pt2,
+          double det = CGAL::determinant(ptx,pty,ptz,pt2,
                                          rtx,rty,rtz,rt2,
                                          qtx,qty,qtz,qt2,
                                          stx,sty,stz,st2);
@@ -225,7 +225,7 @@ public:
       double eps = 1.0466759304746772485e-13 * maxx * maxy * maxz
                   * (maxz * maxz);
 
-      double det = determinant(ptx,pty,ptz,pt2,
+      double det = CGAL::determinant(ptx,pty,ptz,pt2,
                                       rtx,rty,rtz,rt2,
                                       qtx,qty,qtz,qt2,
                                       stx,sty,stz,st2);
@@ -252,7 +252,7 @@ public:
     typedef CGAL::Static_filter_error F;
     F t1 = F(1,F::ulp()/4);   // First translations
     F sq = t1*t1+t1*t1+t1*t1; // squares
-    F det = determinant(t1, t1, t1, sq,
+    F det = CGAL::determinant(t1, t1, t1, sq,
                               t1, t1, t1, sq,
                               t1, t1, t1, sq,
                               t1, t1, t1, sq); // Full det
@@ -265,6 +265,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} } } // namespace CGAL::internal::Static_filters_predicates
 
-#endif // CGAL_STATIC_FILTERS_PERIODIC_3_SIDE_OF_ORIENTED_SPHERE_3_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_3_SIDE_OF_ORIENTED_SPHERE_3_H

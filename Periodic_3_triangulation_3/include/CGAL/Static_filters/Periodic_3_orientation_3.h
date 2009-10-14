@@ -18,20 +18,20 @@
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
-#ifndef CGAL_STATIC_FILTERS_PERIODIC_3_ORIENTATION_3_H
-#define CGAL_STATIC_FILTERS_PERIODIC_3_ORIENTATION_3_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_3_ORIENTATION_3_H
+#define CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_3_ORIENTATION_3_H
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Static_filter_error.h>
+#include <CGAL/internal/Static_filters/Static_filter_error.h>
 
 #include <CGAL/Periodic_3_offset_3.h>
 
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 template < typename K_base >
-class SF_Periodic_3_orientation_3
+class Periodic_3_orientation_3
   : public K_base::Orientation_3
 {
   typedef typename K_base::Orientation_3    Base;
@@ -49,8 +49,8 @@ public:
  typedef typename Base::result_type  result_type;
 
  template <class EX, class AP>
-   SF_Periodic_3_orientation_3(const Iso_cuboid_3 * const dom,
-       const EX * dom_e, const AP * dom_f) : Base(dom_e,dom_f), _dom(dom) {
+ Periodic_3_orientation_3(const Iso_cuboid_3 * const dom,
+     const EX * dom_e, const AP * dom_f) : Base(dom_e,dom_f), _dom(dom) {
  }
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
@@ -111,7 +111,7 @@ public:
           if (maxz < fabs(prz)) maxz = fabs(prz);
           if (maxz < fabs(psz)) maxz = fabs(psz);
           double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
-          double det = determinant(pqx, pqy, pqz,
+          double det = CGAL::determinant(pqx, pqy, pqz,
                                          prx, pry, prz,
                                          psx, psy, psz);
 
@@ -198,7 +198,7 @@ public:
           if (maxz < fabs(prz)) maxz = fabs(prz);
           if (maxz < fabs(psz)) maxz = fabs(psz);
           double eps = 4.111024169857068197e-15 * maxx * maxy * maxz;
-          double det = determinant(pqx, pqy, pqz,
+          double det = CGAL::determinant(pqx, pqy, pqz,
                                          prx, pry, prz,
                                          psx, psy, psz);
 
@@ -232,7 +232,7 @@ public:
   {
     typedef Static_filter_error F;
     F t1 = F(1, F::ulp()/4);         // First translation
-    F det = determinant(t1, t1, t1,
+    F det = CGAL::determinant(t1, t1, t1,
                               t1, t1, t1,
                               t1, t1, t1); // Full det
     double err = det.error();
@@ -244,6 +244,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} } } // namespace CGAL::internal::Static_filters_predicates
 
-#endif // CGAL_STATIC_FILTERS_PERIODIC_3_ORIENTATION_3_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_3_ORIENTATION_3_H
