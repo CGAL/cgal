@@ -21,6 +21,7 @@
   
   
   
+#include <CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h>
 #include <CGAL/internal/Static_filters/Power_test_3.h>
   
 namespace CGAL{ namespace internal {
@@ -29,6 +30,7 @@ template <class K_base>
 class Regular_triangulation_static_filters_traits_3:public K_base{
 
 public:  
+  typedef Static_filters_predicates::Compare_weighted_squared_radius_3<K_base>     Compare_weighted_squared_radius_3;
   typedef Static_filters_predicates::Power_test_3<K_base>                          Power_test_3;
 
   
@@ -36,6 +38,11 @@ public:
   Power_test_3 power_test_3_object() const
   { return Power_test_3();}
 
+  Compare_weighted_squared_radius_3
+  compare_weighted_squared_radius_3_object() const
+  { return Compare_weighted_squared_radius_3(); }
+  
+  
 };
   
   

@@ -102,6 +102,12 @@ public:
             Weighted_converter_3<C2E>,
             Weighted_converter_3<C2F> >  Does_simplex_intersect_dual_support_3;
 
+ typedef Filtered_predicate<
+            typename Exact_traits::Compare_weighted_squared_radius_3,
+            typename Filtering_traits::Compare_weighted_squared_radius_3,
+            Weighted_converter_3<C2E>,
+            Weighted_converter_3<C2F> >  Compare_weighted_squared_radius_3;
+
   Power_test_3 power_test_3_object() const
   { return Power_test_3();}
 
@@ -120,6 +126,9 @@ public:
   does_simplex_intersect_dual_support_3_object() const
   { return Does_simplex_intersect_dual_support_3(); }
 
+  Compare_weighted_squared_radius_3
+  compare_weighted_squared_radius_3_object() const
+  { return Compare_weighted_squared_radius_3();  }  
   // The following are inherited since they are constructions :
   // Construct_weighted_circumcenter_3
   // Compute_squared_radius_smallest_orthogonal_sphere_3

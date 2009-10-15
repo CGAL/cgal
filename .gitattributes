@@ -3685,6 +3685,7 @@ Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.gif -text
 Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.pdf -text svneol=unset#application/pdf
+Triangulation_3/include/CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h -text
 Triangulation_3/include/CGAL/internal/Static_filters/Power_test_3.h -text
 Triangulation_3/include/CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h -text
 Triangulation_3/test/Triangulation_3/test_static_filters.cpp -text

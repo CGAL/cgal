@@ -46,6 +46,7 @@ public:
 
 public:
   
+  CGAL_Kernel_pred(Compare_weighted_squared_radius_3,compare_weighted_squared_radius_3_object)
   CGAL_Kernel_pred(Power_test_3,power_test_3_object)
 };
 
@@ -84,6 +85,48 @@ void perturb(Weighted_point_3 &p, double rel_eps)
   double z = p.first.z()*(1+rand_base()*rel_eps);
   double r= p.first.weight()*(1+rand_base()*rel_eps);
   p=Weighted_point_3( Filtered_traits::Weighted_point_3(Filtered_traits::Bare_point(x, y, z),r) , Exact_traits::Weighted_point_3(Exact_traits::Bare_point(x, y, z),r) );
+}
+
+void test_compare_weighted_squared_radius_3(){
+  Weighted_point_3 p=my_rand_wp3();
+  Weighted_point_3 q=my_rand_wp3();
+  Weighted_point_3 r=my_rand_wp3();
+  Weighted_point_3 s=my_rand_wp3();
+  double alpha=my_rand();
+  
+  
+  //test with random points + random alpha
+  K3().compare_weighted_squared_radius_3_object()(p,q,r,s,NT_pair(alpha,alpha));
+  K3().compare_weighted_squared_radius_3_object()(p,q,r,  NT_pair(alpha,alpha));
+  K3().compare_weighted_squared_radius_3_object()(p,q,    NT_pair(alpha,alpha));
+  K3().compare_weighted_squared_radius_3_object()(p,      NT_pair(alpha,alpha));
+
+  
+  Exact_traits::Compute_squared_radius_smallest_orthogonal_sphere_3 radius=Exact_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+  double alpha_pqrs=CGAL::to_double( radius(p.second,q.second,r.second,s.second) );
+  double alpha_pqr=CGAL::to_double( radius(p.second,q.second,r.second) );
+  double alpha_pq=CGAL::to_double( radius(p.second,q.second) );
+  double alpha_p=p.first.weight();
+  
+  //test with random points + alpha limit
+  K3().compare_weighted_squared_radius_3_object()(p,q,r,s,NT_pair(alpha_pqrs,alpha_pqrs));
+  K3().compare_weighted_squared_radius_3_object()(p,q,r,  NT_pair(alpha_pqr,alpha_pqr));
+  K3().compare_weighted_squared_radius_3_object()(p,q,    NT_pair(alpha_pq,alpha_pq));
+  K3().compare_weighted_squared_radius_3_object()(p,      NT_pair(alpha_p,alpha_p));
+  //test correct result
+  assert( K3().compare_weighted_squared_radius_3_object()(p,q,r,s,NT_pair(alpha_pqrs-0.1,alpha_pqrs-0.1)) ==CGAL::POSITIVE );
+  assert( K3().compare_weighted_squared_radius_3_object()(p,q,r,  NT_pair(alpha_pqr-0.1,alpha_pqr-0.1)) ==CGAL::POSITIVE );
+  assert( K3().compare_weighted_squared_radius_3_object()(p,q,    NT_pair(alpha_pq-0.1,alpha_pq-0.1)) ==CGAL::POSITIVE );
+  assert( K3().compare_weighted_squared_radius_3_object()(p,      NT_pair(alpha_p-0.1,alpha_p-0.1)) ==CGAL::POSITIVE );
+
+  // Then with some perturbation on coordinates and weight.
+  perturb(p, 1.0/(1<<25)/(1<<20)); // 2^-45
+  
+  K3().compare_weighted_squared_radius_3_object()(p,q,r,s,NT_pair(alpha_pqrs,alpha_pqrs));
+  K3().compare_weighted_squared_radius_3_object()(p,q,r,  NT_pair(alpha_pqr,alpha_pqr));
+  K3().compare_weighted_squared_radius_3_object()(p,q,    NT_pair(alpha_pq,alpha_pq));
+  K3().compare_weighted_squared_radius_3_object()(p,      NT_pair(alpha_p,alpha_p));
+  
 }
 
 void test_power_test_3(){
@@ -157,6 +200,10 @@ int main(int argc, char **argv)
   std::cerr.precision(20);
 
   std::cout << "ulp(1) = " << CGAL::Static_filter_error::ulp() << std::endl;
+
+  std::cout << "Testing Compare_weighted_squared_radius_3" << std::endl;
+  for(int i=0; i<loops; ++i)
+    test_compare_weighted_squared_radius_3();  
 
   std::cout << "Testing Power_test_3" << std::endl;
   for(int i=0; i<loops; ++i)

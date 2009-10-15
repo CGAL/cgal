@@ -69,6 +69,28 @@ Weighted_point_3;}
 {A predicate type to compare power distance. Belongs to the
 \ccc{RegularTriangulationTraits_3} concept.}
 
+
+\ccNestedType{Compare_weighted_squared_radius_3}
+{A predicate  type.  The operator() takes weighted point(s) as arguments,
+together with one weight. It compares the weight of the smallest sphere
+orthogonal to the weighted points with the input weight.\\
+\ccc{Comparison_result operator()(  Weighted_point_3  p,
+                                    Weighted_point_3  q,
+                                    Weighted_point_3  r,
+                                    Weighted_point_3  s,
+                                    FT  w)  ;} \\
+\ccc{Comparison_result operator()(  Weighted_point_3  p,
+                                    Weighted_point_3  q,
+                                    Weighted_point_3  r,
+                                    FT  w)  ;} \\
+\ccc{Comparison_result operator()(  Weighted_point_3  p,
+                                    Weighted_point_3  q,
+                                    FT  w)  ;} \\
+\ccc{Comparison_result operator()(  Weighted_point_3  p,
+                                    FT  w)  ;} \\
+}
+
+
 \ccNestedType{In_smallest_orthogonal_sphere_3}
 {A predicate  type.  The operator() takes weighted points as arguments
  and returns  the  sign of the power distance of the last one
@@ -211,6 +233,9 @@ functors.
 \ccGlue
 \ccMethod{Compare_power_distance_3
 compare_power_distance_3_object();}{}
+\ccGlue
+\ccMethod{Compare_weighted_squared_radius_3
+compare_weighted_squared_radius_3_object();}{}
 \ccGlue
 \ccMethod{In_smallest_orthogonal_sphere_3 
   in_smallest_orthogonal_sphere_3_object();}{}

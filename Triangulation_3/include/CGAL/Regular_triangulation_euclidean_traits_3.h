@@ -372,7 +372,67 @@ class Compute_critical_squared_radius_3
 
 
 
+template <typename K>
+class Compare_weighted_squared_radius_3
+{
+ 
+  typedef typename K::Weighted_point_3                  Weighted_point_3;
+  typedef typename K::Comparison_result                 Comparison_result;
+  typedef typename K::FT                                FT;
 
+public:
+  typedef Comparison_result  result_type;
+
+
+  result_type operator() (
+        const Weighted_point_3 & p,
+			  const Weighted_point_3 & q,
+			  const Weighted_point_3 & r,
+			  const Weighted_point_3 & s,
+			  const FT& w) const
+  {
+    return compare(
+            squared_radius_orthogonal_sphereC3(
+                p.x(),p.y(),p.z(),p.weight(),
+                q.x(),q.y(),q.z(),q.weight(),
+                r.x(),r.y(),r.z(),r.weight(),
+                s.x(),s.y(),s.z(),s.weight() ),
+            w);
+  }
+
+  result_type operator() (
+        const Weighted_point_3 & p,
+			  const Weighted_point_3 & q,
+			  const Weighted_point_3 & r,
+			  const FT& w) const
+  {
+    return compare(
+            squared_radius_smallest_orthogonal_sphereC3(
+                p.x(),p.y(),p.z(),p.weight(),
+                q.x(),q.y(),q.z(),q.weight(),
+                r.x(),r.y(),r.z(),r.weight() ),
+            w);
+  }
+  
+  result_type operator() (
+        const Weighted_point_3 & p,
+			  const Weighted_point_3 & q,
+			  const FT& w) const
+  {
+    return compare(
+            squared_radius_smallest_orthogonal_sphereC3(
+                p.x(),p.y(),p.z(),p.weight(),
+                q.x(),q.y(),q.z(),q.weight() ),
+            w);
+  }
+
+  result_type operator() (
+        const Weighted_point_3 & p,
+			  const FT& w) const
+  {
+    return compare(p.weight(),w);
+  }
+};
 
 
 
@@ -412,6 +472,8 @@ public:
   typedef CGAL::Compute_power_product_3<Self>    Compute_power_product_3;
   typedef CGAL::Compute_critical_squared_radius_3<Self>
                                        Compute_critical_squared_radius_3;
+  typedef CGAL::Compare_weighted_squared_radius_3<Self>
+                                       Compare_weighted_squared_radius_3;
 
   Power_test_3   power_test_3_object() const
   { return Power_test_3(); }
@@ -446,6 +508,10 @@ public:
   Compute_critical_squared_radius_3
   compute_critical_squared_radius_3_object() const
   {return  Compute_critical_squared_radius_3(); }
+  
+  Compare_weighted_squared_radius_3
+  compare_weighted_squared_radius_3_object() const
+  {return Compare_weighted_squared_radius_3();  }
 };
 
 // We need to introduce a "traits_base_3" class in order to get the
