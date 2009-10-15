@@ -695,6 +695,36 @@ However, in order to simplify the initial set up some command line options are a
                   the testsuite process works correctly in your system.
 \end{itemize}
 
+\subsection{Sending results}
+Unless you use the {\tt -l} option, the script will attempt to send result
+using {\tt scp} (secured-copy, a tool from the SSH suite) to the
+GeometryFactory server {\tt cgal.geometryfactory.com}. You must declare
+yourself as a tester to Laurent Rineau, and send him the public part of
+your ssh key. Usually, that is the file {\tt \$HOME/.ssh/id\_rsa.pub}, or
+{\tt \$HOME/.ssh/id\_dsa.pub}.
+
+After that, you can test that the sending works, by typing:
+\begin{verbatim}
+  ssh cgaltest@cgal.geometryfactory.com
+\end{verbatim}
+If the result is something like:
+\begin{verbatim}
+Last login: Thu July 14 12:03:18 1789 from 1.1.1.1
+CentOS release 5.3 (Final)
+Linux cgal.geometryfactory.com 2.6.28.4-xxxx-std-ipv6-32 #4 SMP Wed Sep 9 22:08:40 UTC 2009 i686 i686 i386 GNU/Linux
+
+server    : 39891
+ip        : 91.121.110.28
+ip        : 91.121.110.28
+hostname  : cgal.geometryfactory.com
+\end{verbatim}
+then the test is successful (you will need to interrupt SSH with
+Ctrl+C). If instead you get something like:
+\begin{verbatim}
+Permission denied (publickey,gssapi-with-mic).
+\end{verbatim}
+then contact Laurent Rineau.
+
 \subsection{List of miscellaneous configurable variables} ~
 
 {\tt MYSHELL} is a variable that may be defined in {\tt .autocgalrc}
