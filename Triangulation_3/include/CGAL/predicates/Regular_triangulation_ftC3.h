@@ -40,22 +40,22 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
     FT dpy = py - ty;
     FT dpz = pz - tz;
     FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) +
-             CGAL_NTS square(dpz) - pwt + twt;
+             CGAL_NTS square(dpz) + (twt - pwt);
     FT dqx = qx - tx;
     FT dqy = qy - ty;
     FT dqz = qz - tz;
     FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) +
-             CGAL_NTS square(dqz) - qwt + twt;
+             CGAL_NTS square(dqz) + (twt - qwt);
     FT drx = rx - tx;
     FT dry = ry - ty;
     FT drz = rz - tz;
     FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) +
-             CGAL_NTS square(drz) - rwt + twt;
+             CGAL_NTS square(drz) + (twt - rwt);
     FT dsx = sx - tx;
     FT dsy = sy - ty;
     FT dsz = sz - tz;
     FT dst = CGAL_NTS square(dsx) + CGAL_NTS square(dsy) +
-             CGAL_NTS square(dsz) - swt + twt;
+             CGAL_NTS square(dsz) + (twt - swt);
 
     return - sign_of_determinant(dpx, dpy, dpz, dpt,
 				 dqx, dqy, dqz, dqt,
@@ -76,17 +76,17 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
     FT dpy = py - ty;
     FT dpz = pz - tz;
     FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) +
-             CGAL_NTS square(dpz) - pwt + twt;
+             CGAL_NTS square(dpz) + (twt - pwt);
     FT dqx = qx - tx;
     FT dqy = qy - ty;
     FT dqz = qz - tz;
     FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) +
-             CGAL_NTS square(dqz) - qwt + twt;
+             CGAL_NTS square(dqz) + (twt - qwt);
     FT drx = rx - tx;
     FT dry = ry - ty;
     FT drz = rz - tz;
     FT drt = CGAL_NTS square(drx) + CGAL_NTS square(dry) +
-             CGAL_NTS square(drz) - rwt + twt;
+             CGAL_NTS square(drz) + (twt - rwt);
     Sign cmp;
 
     // Projection on the (xy) plane.
@@ -125,12 +125,12 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
     FT dpy = py - ty;
     FT dpz = pz - tz;
     FT dpt = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) +
-             CGAL_NTS square(dpz) - pwt + twt;
+             CGAL_NTS square(dpz) + (twt - pwt);
     FT dqx = qx - tx;
     FT dqy = qy - ty;
     FT dqz = qz - tz;
     FT dqt = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) +
-             CGAL_NTS square (dqz) - qwt + twt;
+             CGAL_NTS square (dqz) + (twt - qwt);
     Comparison_result cmp;
 
     // We do an orthogonal projection on the (x) axis, if possible.
