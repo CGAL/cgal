@@ -15,7 +15,7 @@
 // $URL:  $
 // $Id:  $
 //
-// Author(s)     : Sébastien Loriot
+// Author(s)     : SÃ©bastien Loriot
 // This predicates was generated using the fpg tool written by Andreas Meyer.
 //
 
