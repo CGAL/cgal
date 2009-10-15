@@ -14,7 +14,7 @@
 // $URL:  $
 // $Id:  $
 //
-// Author(s)     : Sébastien Loriot
+// Author(s)     : Sebastien Loriot
 
 #ifndef CGAL_INTERNAL_STATIC_FILTERS_REGULAR_TRIANGULATION_STATIC_FILTERS_TRAITS_3_H
 #define CGAL_INTERNAL_STATIC_FILTERS_REGULAR_TRIANGULATION_STATIC_FILTERS_TRAITS_3_H
