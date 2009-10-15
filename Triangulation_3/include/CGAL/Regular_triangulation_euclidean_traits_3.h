@@ -346,7 +346,7 @@ public:
 
 
 // Compute the square radius of the circle centered in t
-// and orthogonal to  the circle orthogonal a p,q,r,s
+// and orthogonal to  the circle orthogonal to p,q,r,s
 template< typename K>
 class Compute_critical_squared_radius_3
 {
@@ -678,6 +678,10 @@ CGAL_END_NAMESPACE
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Filtered_kernel.h>
 
+#ifndef CGAL_NO_STATIC_FILTERS
+#  include <CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 // This declaration is needed to break the cyclic dependency.
@@ -687,7 +691,11 @@ class Regular_triangulation_filtered_traits_3;
 
 template < typename CK, typename T >
 class Regular_triangulation_euclidean_traits_3 < Filtered_kernel<CK>, T>
-  : public Regular_triangulation_filtered_traits_3 < Filtered_kernel<CK> >
+#ifndef CGAL_NO_STATIC_FILTERS
+  : public internal::Regular_triangulation_static_filters_traits_3< Regular_triangulation_filtered_traits_3 < Filtered_kernel<CK> > >
+#else
+  : public Regular_triangulation_filtered_traits_3 < Filtered_kernel<CK> > 
+#endif
 {
 public:
   typedef Filtered_kernel<CK>  Kernel;
