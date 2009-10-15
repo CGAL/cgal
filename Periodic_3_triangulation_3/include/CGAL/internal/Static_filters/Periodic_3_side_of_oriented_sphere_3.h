@@ -249,7 +249,7 @@ public:
   // Computes the epsilon for Periodic_3_side_of_oriented_sphere_3.
   static double compute_epsilon()
   {
-    typedef CGAL::Static_filter_error F;
+    typedef Static_filter_error F;
     F t1 = F(1,F::ulp()/4);   // First translations
     F sq = t1*t1+t1*t1+t1*t1; // squares
     F det = CGAL::determinant(t1, t1, t1, sq,
