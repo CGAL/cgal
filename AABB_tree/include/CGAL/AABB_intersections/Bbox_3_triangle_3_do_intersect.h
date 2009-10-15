@@ -171,6 +171,7 @@ namespace internal {
     const typename K::Point_3& j = triangle.vertex(SIDE);
     const typename K::Point_3& k = triangle.vertex((SIDE+2)%3);
     
+    typename K::Point_3 p_min, p_max;
     get_min_max<K, AXE>(AXE==0? 0: AXE==1? sides[SIDE].z(): -sides[SIDE].y(),
                         AXE==0? -sides[SIDE].z(): AXE==1? 0: sides[SIDE].x(),
                         AXE==0? sides[SIDE].y(): AXE==1? -sides[SIDE].x(): 0,
