@@ -4,6 +4,7 @@
 //----------------------------------------------------------
 
 // CGAL
+#include <CGAL/trace.h>
 #include <CGAL/AABB_tree.h> // must be included before kernel
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>

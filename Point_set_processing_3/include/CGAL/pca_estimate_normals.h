@@ -19,6 +19,7 @@
 #ifndef CGAL_PCA_ESTIMATE_NORMALS_H
 #define CGAL_PCA_ESTIMATE_NORMALS_H
 
+#include <CGAL/trace.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>

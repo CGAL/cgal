@@ -19,6 +19,7 @@
 #ifndef CGAL_MST_ORIENT_NORMALS_H
 #define CGAL_MST_ORIENT_NORMALS_H
 
+#include <CGAL/trace.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_vertex_handle_3.h>
