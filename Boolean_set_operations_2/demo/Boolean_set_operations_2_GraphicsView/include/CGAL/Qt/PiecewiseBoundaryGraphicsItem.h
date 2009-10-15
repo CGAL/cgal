@@ -43,8 +43,8 @@ public:
                                   )
     :
     mBoundary   (aBoundary)
-    mPieceDrawer(aPieceDrawer)
-    mPieceBBox  (aPieceBBox)
+   ,mPieceDrawer(aPieceDrawer)
+   ,mPieceBBox  (aPieceBBox)
   {}  
 
 public:
