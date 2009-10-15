@@ -315,7 +315,7 @@ starts the testsuite process : it downloads the internal release, unzips,
 untars, copies the configuration files, and starts the testsuite. When
 everything is done, it puts the results on some ftp server.
 
-\paragraph{How to set up your local testing} ~
+\subsection{How to set up your local testing} ~
 
 The first step is to create a directory where you will store the releases.
 This directory is known in the script as {\tt \$CGAL\_ROOT}. By default
@@ -388,7 +388,7 @@ of them to the testsuite. If you want to run the testsuite locally and
 not remotely, name the host as {\tt localhost} and the script will run
 the testsuite locally for that host.
 
-\paragraph{List of configurable variables} ~
+\subsection{List of configurable variables} ~
 
 {\tt MYSHELL} is a variable that must be defined in {\tt .autocgalrc},
 otherwise the script will not run.  You can use it to pass environment
@@ -481,7 +481,7 @@ starts the testsuite process : it downloads the internal release, unzips,
 untars, copies the configuration files, and starts the testsuite. When
 everything is done, it puts the results on some ftp server.
 
-\paragraph{How to set up your local testing} ~
+\subsection{How to set up your local testing} ~
 
 The first step is to create a directory where you will store the releases.
 This directory is known in the script as {\tt \$CGAL\_ROOT}. By default
@@ -673,7 +673,7 @@ if a directory of the name name exist in the reference release
 the files {\tt CMakeCache.txt} and {\tt setup} are copied
 from the reference release (if they exist). 
 
-\paragraph{Command line options for the initial set up} ~
+\subsection{Command line options for the initial set up} ~
 
 {\tt autotest\_cgal\_with\_cmake} is meant to be run unattended by a cron job. 
 However, in order to simplify the initial set up some command line options are available:
@@ -695,7 +695,7 @@ However, in order to simplify the initial set up some command line options are a
                   the testsuite process works correctly in your system.
 \end{itemize}
 
-\paragraph{List of miscellaneous configurable variables} ~
+\subsection{List of miscellaneous configurable variables} ~
 
 {\tt MYSHELL} is a variable that may be defined in {\tt .autocgalrc}
 to pass environment variables along to remote hosts. Here is an example of {\tt MYSHELL}
@@ -756,7 +756,7 @@ the creation of dumped core files, will stop processes after 3 hours,
 and will kill them if they reach 2GB of memory.
 The default value is empty (no limit).
 
-\paragraph{Testing with Visual Studio on cygwin} ~
+\subsection{Testing with Visual Studio on cygwin} ~
 
 In order to test with Visual Studio you need to use cygwin and set up
 the environment for the command line compiler. This can be done
