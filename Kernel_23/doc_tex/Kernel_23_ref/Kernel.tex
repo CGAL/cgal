@@ -49,8 +49,12 @@ number type is used such as within the filtering kernels, in which case it is
 \ccGlue
 \ccNestedType{Angle}{\ccc{CGAL::Angle} or \ccc{Uncertain<CGAL::Angle>}}
 
+\ccConstants
 
-\ccHeading{Two-dimensional Kernel}
+\ccVariable{static const bool Has_filtered_predicates;}{A Boolean value
+indicating whether the predicates are filtered (as in \ccc{Filtered_kernel}).
+This helps propagating such decisions to traits classes which are built on top
+of a kernel, so that they can decide to filter their own predicates or not.}
 
 \ccHeading{Coordinate Access}
 

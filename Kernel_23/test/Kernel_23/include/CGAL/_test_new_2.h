@@ -59,6 +59,9 @@ test_new_2(const R& rep)
 
   using namespace CGAL;
 
+  bool b = R::Has_filtered_predicates;
+  use(b);
+
   typedef typename R::RT                          RT;
   typedef typename R::FT                          FT;
 

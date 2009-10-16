@@ -59,6 +59,8 @@ struct Filtered_kernel_base
     typedef Cartesian_converter<CK, Exact_kernel>                C2E;
     typedef Cartesian_converter<CK, Approximate_kernel>          C2F;
 
+    enum { Has_filtered_predicates = true };
+
     template < typename Kernel2 >
     struct Base {
         typedef typename CK::template Base<Kernel2> CK2;

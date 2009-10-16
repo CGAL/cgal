@@ -85,6 +85,8 @@ struct Homogeneous_base
     typedef Homogeneous_tag                         Rep_tag;
     typedef Homogeneous_tag                         Kernel_tag;
 
+    enum { Has_filtered_predicates = false };
+
     typedef CGAL::Object                            Object_2;
     typedef CGAL::Object                            Object_3;
 

@@ -76,6 +76,8 @@ public:
   typedef typename Exact_kernel::Kernel_tag                       Kernel_tag;
   typedef typename Exact_kernel::Rep_tag                          Rep_tag;
 
+  enum { Has_filtered_predicates = true };
+
   // Types
   typedef CGAL::Lazy_exact_nt<typename Exact_kernel::FT>  FT;
   typedef FT RT;
