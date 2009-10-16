@@ -808,16 +808,21 @@ a precise indication of the kind of invalidity encountered.}
 \ccFunction{ostream& operator<< (ostream& os, const Periodic_3_triangulation_3 &t);}
 {Writes the triangulation \ccc{t} into \ccc{os}.}
 
-The information in the \ccc{iostream} is: the number of sheets of the
-covering as in \ccc{number_of_sheets()},
-the number of vertices, the non-combinatorial information about
-vertices (point resp. point-offset pairs, etc.), the number of cells,
-the indices of the vertices of each cell, plus the non-combinatorial
-information about each cell, then the indices of the neighbors of each
-cell, where the index corresponds to the preceding list of cells. Then
-the offsets corresponding to the vertices of the cells are written,
-the indices again correspond to the list of cells. Finally some
-optional information contained in the cell can be written.
+The information in the \ccc{iostream} is:
+\begin{itemize}
+\item the original domain
+\item the number of sheets of the covering as in
+  \ccc{number_of_sheets()}
+\item the number of vertices
+\item the non-combinatorial information of vertices (point
+  resp. point-offset pairs, etc.)
+\item the number of cells
+\item the indices of the vertices of each cell
+\item the indices of the neighbors of each cell, where the index
+  corresponds to the preceding list of cells
+\item the offsets corresponding to the vertices of the cells
+\item the non-combinatorial information of each cell
+\end{itemize}
 
 \ccSeeAlso
 
