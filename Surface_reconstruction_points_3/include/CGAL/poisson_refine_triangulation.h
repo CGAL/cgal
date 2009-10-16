@@ -20,6 +20,7 @@
 #define CGAL_POISSON_REFINE_TRIANGULATION_H
 
 // CGAL
+#include <CGAL/trace.h>
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Poisson_refine_cells_3.h>
 #include <CGAL/Poisson_mesh_cell_criteria_3.h>

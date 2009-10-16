@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include <CGAL/trace.h>
 #include <CGAL/Reconstruction_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Taucs_solver_traits.h>

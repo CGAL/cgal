@@ -21,6 +21,7 @@
 #ifndef CGAL_PEAK_MEMORY_SIZER_H
 #define CGAL_PEAK_MEMORY_SIZER_H
 
+#include <CGAL/trace.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Taucs_fix.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
