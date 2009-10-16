@@ -199,7 +199,7 @@ int main(int argc, char **argv)
   std::cout.precision(20);
   std::cerr.precision(20);
 
-  std::cout << "ulp(1) = " << CGAL::Static_filter_error::ulp() << std::endl;
+  std::cout << "ulp(1) = " << CGAL::internal::Static_filter_error::ulp() << std::endl;
 
   std::cout << "Testing Compare_weighted_squared_radius_3" << std::endl;
   for(int i=0; i<loops; ++i)
