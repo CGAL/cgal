@@ -29,6 +29,8 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/min_max_n.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Bbox_3.h>
 #include <vector>
 #include <CGAL/Default.h>
 
