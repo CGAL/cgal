@@ -1,5 +1,4 @@
 #define CGAL_PROFILE
-#undef CGAL_NO_STATIC_FILTERS
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
@@ -7,7 +6,7 @@
 #include <CGAL/Random.h>
 
 typedef CGAL::Simple_cartesian<double>   K0;
-typedef CGAL::Filtered_kernel<K0>        K2;
+typedef CGAL::Filtered_kernel<K0, true>  K2;
 typedef CGAL::Filtered_kernel<K0, false> K4;
 typedef CGAL::Kernel_checker<K2, K4>     K3;
 
