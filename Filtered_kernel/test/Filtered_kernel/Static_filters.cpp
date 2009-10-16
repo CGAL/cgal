@@ -1,20 +1,15 @@
 #define CGAL_PROFILE
 #undef CGAL_NO_STATIC_FILTERS
 
-#include <CGAL/MP_Float.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Kernel_checker.h>
-#include <CGAL/Cartesian_converter.h>
 #include <CGAL/Random.h>
 
-typedef CGAL::Simple_cartesian<CGAL::Quotient<CGAL::MP_Float> >   K4;
 typedef CGAL::Simple_cartesian<double>   K0;
-typedef CGAL::Filtered_kernel<K0>        K1;
-typedef K1         K2; // Static_filters is now included in Filtered_kernel.
-//typedef CGAL::Static_filters<K1>         K2;
+typedef CGAL::Filtered_kernel<K0>        K2;
+typedef CGAL::Filtered_kernel<K0, false> K4;
 typedef CGAL::Kernel_checker<K2, K4>     K3;
-              // CGAL::Cartesian_converter<K2, K4> >     K3;
 
 typedef K3::Point_2    Point_2;
 typedef K3::Point_3    Point_3;
@@ -306,6 +301,9 @@ int main(int argc, char **argv)
 
   std::cout.precision(20);
   std::cerr.precision(20);
+
+  assert(  K2::Has_static_filters);
+  assert(! K4::Has_static_filters);
 
   std::cout << "ulp(1) = " << CGAL::internal::Static_filter_error::ulp() << std::endl;
 

@@ -31,9 +31,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/internal/Exact_type_selector.h>
 
-#ifndef CGAL_NO_STATIC_FILTERS
-#  include <CGAL/internal/Static_filters/Static_filters.h>
-#endif
+#include <CGAL/internal/Static_filters/Static_filters.h>
 
 // This file contains the definition of a generic kernel filter.
 //
@@ -89,7 +87,6 @@ struct Filtered_kernel_base
 
 };
 
-#ifndef CGAL_NO_STATIC_FILTERS
 template < typename CK >
 struct Static_filters_base
   : public internal::Static_filters< Filtered_kernel_base<CK> >
@@ -100,23 +97,36 @@ struct Static_filters_base
         typedef Static_filters_base<CK2>                   Type;
     };
 };
+
+#ifdef CGAL_NO_STATIC_FILTERS
+template < typename CK, bool UseStaticFilters = false >
+#else
+template < typename CK, bool UseStaticFilters = true >
 #endif
+struct Filtered_kernel_adaptor
+  : public Filtered_kernel_base<CK>
+{
+	enum { Has_static_filters = false };
+};
 
 template < typename CK >
-struct Filtered_kernel_adaptor
-#ifndef CGAL_NO_STATIC_FILTERS
+struct Filtered_kernel_adaptor<CK, true>
   : public Static_filters_base<CK>
-#else
-  : public Filtered_kernel_base<CK>
-#endif
-{};
+{
+	enum { Has_static_filters = true };
+};
 
-template <class CK>
+#ifdef CGAL_NO_STATIC_FILTERS
+template < typename CK, bool UseStaticFilters = false >
+#else
+template < typename CK, bool UseStaticFilters = true >
+#endif
 struct Filtered_kernel
   : public Filtered_kernel_adaptor<
                Type_equality_wrapper<
-                   typename CK:: template Base< Filtered_kernel<CK> >::Type,
-                   Filtered_kernel<CK> > >
+                   typename CK:: template Base< Filtered_kernel<CK, UseStaticFilters> >::Type,
+                   Filtered_kernel<CK, UseStaticFilters> >,
+	       UseStaticFilters >
 {};
 
 CGAL_END_NAMESPACE

@@ -12,7 +12,6 @@ exact and efficient predicates.  In addition, a few selected important
 predicates are implemented using the formally proved, semi-static, filtering
 techniques from \cite{cgal:mp-fcafg-05}.
 
-% given an exact kernel \ccc{EK} and a filtering kernel \ccc{FK}.  
 The geometric constructions are exactly those
 of the kernel \ccc{CK}, which means that they are not necessarily exact.
 %The global functions are also currently not changed, i.e. they are those
@@ -36,16 +35,33 @@ of the kernel \ccc{CK}, which means that they are not necessarily exact.
 %   \ccc{C2E = Cartesian_converter<CK, EK>},
 %   \ccc{C2F = Cartesian_converter<CK, FK, To_interval<CK::RT>}.
 
+\ccInclude{CGAL/Filtered_kernel.h}
+
+\ccParameters
+
+The first parameter, \ccc{CK}, is the "Construction Kernel", namely the kernel
+from which are taken the types of the geometric objects as well as the
+geometric constructions.
+
+The second parameter, \ccc{UseStaticFilters}, is a Boolean value which
+activates or not an additional layer of semi-static filters.  It defaults to
+\ccc{true} (activated), unless the \ccc{CGAL_NO_STATIC_FILTERS} macro is
+defined.  This option is mostly for debugging and testing, there should be no
+production use for deactivating static filters.
+
 \ccIsModel
 \ccc{Kernel}
-
-\ccInclude{CGAL/Filtered_kernel.h}
 
 \ccTypes
 
 \ccTypedef{typedef EK Exact_kernel;}{The type of the exact kernel.}
 \ccGlue
 \ccTypedef{typedef FK Approximate_kernel;}{The type of the approximate "filtering" kernel.}
+
+\ccConstants
+
+\ccVariable{static const bool Has_static_filters;}{A Boolean value corresponding to the
+second template argument.  Tells whether static filters are provided.}
 
 \ccExample
 
@@ -65,7 +81,6 @@ typedef CGAL::Filtered_kernel<CK> K;
 \ccImplementation
 The implementation uses \ccc{CGAL::Filtered_predicate<EP, FP, C2E, C2F>} over
 each predicate of the kernel traits interface.  Additionally, faster static
-filters are used for a few selected critical predicates.  The static filters
-can be disabled by compiling with \ccc{-DCGAL_NO_STATIC_FILTERS}.
+filters may be used for a few selected critical predicates.
 
 \end{ccRefClass}
