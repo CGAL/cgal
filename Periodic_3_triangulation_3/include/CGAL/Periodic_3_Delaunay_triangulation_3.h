@@ -459,7 +459,7 @@ public:
   }
 
   template <class OutputIterator>
-  OutputIterator dual(Cell_handle c, int i, int j,
+  OutputIterator dual(Cell_handle, int, int,
       OutputIterator points) const {
     // TODO
     // TODO: Specify the order of the points in the doc.
