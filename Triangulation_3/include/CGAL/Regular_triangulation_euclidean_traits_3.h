@@ -475,6 +475,8 @@ public:
   typedef CGAL::Compare_weighted_squared_radius_3<Self>
                                        Compare_weighted_squared_radius_3;
 
+  enum { Has_filtered_predicates = false };
+  
   Power_test_3   power_test_3_object() const
   { return Power_test_3(); }
 
@@ -517,7 +519,7 @@ public:
 // We need to introduce a "traits_base_3" class in order to get the
 // specialization for Exact_predicates_inexact_constructions_kernel to work,
 // otherwise there is a cycle in the derivation.
-template < class K, class Weight = typename K::RT >
+template < typename K, class Weight = typename K::RT, bool UseFilteredPredicates = K::Has_filtered_predicates> 
 class Regular_triangulation_euclidean_traits_3
   : public Regular_triangulation_euclidean_traits_base_3<K, Weight>
 {};
@@ -744,28 +746,19 @@ CGAL_END_NAMESPACE
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Filtered_kernel.h>
 
-#ifndef CGAL_NO_STATIC_FILTERS
-#  include <CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h>
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
 // This declaration is needed to break the cyclic dependency.
-template < typename K >
+template < typename K,bool b >
 class Regular_triangulation_filtered_traits_3;
 
-
-template < typename CK, typename T >
-class Regular_triangulation_euclidean_traits_3 < Filtered_kernel<CK>, T>
-#ifndef CGAL_NO_STATIC_FILTERS
-  : public internal::Regular_triangulation_static_filters_traits_3< Regular_triangulation_filtered_traits_3 < Filtered_kernel<CK> > >
-#else
-  : public Regular_triangulation_filtered_traits_3 < Filtered_kernel<CK> > 
-#endif
+template < typename K, class Weight>
+class Regular_triangulation_euclidean_traits_3<K,Weight,true>
+  : public Regular_triangulation_filtered_traits_3 <K,K::Has_static_filters > 
 {
-public:
-  typedef Filtered_kernel<CK>  Kernel;
+  typedef Regular_triangulation_filtered_traits_3 <K,K::Has_static_filters >  Kernel;
 };
+ 
 
 CGAL_END_NAMESPACE
 

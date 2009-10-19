@@ -22,23 +22,25 @@
 #include <CGAL/basic.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Filtered_predicate.h>
+#include <CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
 // The Weighted_converter is parametrized by a usual kernel converter,
 // and adds the conversions for the Weighted_point.
-template < typename Converter >
+template < typename Converter, 
+           typename Source_traits= Regular_triangulation_euclidean_traits_base_3<typename Converter::Source_kernel>,
+           typename Target_traits= Regular_triangulation_euclidean_traits_base_3<typename Converter::Target_kernel> 
+         >
 struct Weighted_converter_3
   : public Converter
 {
   typedef typename Converter::Source_kernel Source_kernel;
   typedef typename Converter::Target_kernel Target_kernel;
 
-  typedef typename Regular_triangulation_euclidean_traits_base_3<Source_kernel>
-                   ::Weighted_point_3  Source_wp;
+  typedef typename Source_traits::Weighted_point_3  Source_wp;
 
-  typedef typename Regular_triangulation_euclidean_traits_base_3<Target_kernel>
-                   ::Weighted_point_3  Target_wp;
+  typedef typename Target_traits::Weighted_point_3  Target_wp;
 
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
@@ -54,8 +56,8 @@ struct Weighted_converter_3
 };
 
 // The argument is supposed to be a Filtered_kernel like kernel.
-template < typename K >
-class Regular_triangulation_filtered_traits_3
+template < typename K>
+class Regular_triangulation_filtered_traits_base_3
   : public Regular_triangulation_euclidean_traits_base_3<K>
 {
   // Exact traits is based on the exact kernel.
@@ -108,6 +110,8 @@ public:
             Weighted_converter_3<C2E>,
             Weighted_converter_3<C2F> >  Compare_weighted_squared_radius_3;
 
+  enum { Has_filtered_predicates = true };
+  
   Power_test_3 power_test_3_object() const
   { return Power_test_3();}
 
@@ -134,6 +138,24 @@ public:
   // Compute_squared_radius_smallest_orthogonal_sphere_3
   // Compute_power_product_3
 };
+
+template < typename K,bool UseStaticFilters = K::Has_static_filters>
+class Regular_triangulation_filtered_traits_3
+  : public Regular_triangulation_filtered_traits_base_3<K>
+{
+public:
+  enum { Has_static_filters = false };
+};
+
+template < typename K>
+class Regular_triangulation_filtered_traits_3<K,true>
+    : public internal::Regular_triangulation_static_filters_traits_3< Regular_triangulation_filtered_traits_base_3<K> >
+{
+public:  
+	enum { Has_static_filters = true };
+};
+
+	
 
 CGAL_END_NAMESPACE
 

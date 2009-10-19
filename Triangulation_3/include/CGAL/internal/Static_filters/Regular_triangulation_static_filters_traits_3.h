@@ -19,8 +19,7 @@
 #ifndef CGAL_INTERNAL_STATIC_FILTERS_REGULAR_TRIANGULATION_STATIC_FILTERS_TRAITS_3_H
 #define CGAL_INTERNAL_STATIC_FILTERS_REGULAR_TRIANGULATION_STATIC_FILTERS_TRAITS_3_H
   
-  
-  
+#include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h>
 #include <CGAL/internal/Static_filters/Power_test_3.h>
   
