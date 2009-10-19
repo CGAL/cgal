@@ -641,7 +641,7 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
   typedef Interval_nt<Protected> IA;
   typename Interval_nt<Protected>::Internal_protector P;
-  if (a.inf() >= 0.0)					// e>=0
+  if (a.inf() >= 0.0)					// a>=0
   {
     // b>=0     [a.inf()*b.inf(); a.sup()*b.sup()]
     // b<=0     [a.sup()*b.inf(); a.inf()*b.sup()]
@@ -655,7 +655,7 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
     }
     return IA(-CGAL_IA_MUL(aa, -b.inf()), CGAL_IA_MUL(bb, b.sup()));
   }
-  else if (a.sup()<=0.0)				// e<=0
+  else if (a.sup()<=0.0)				// a<=0
   {
     // b>=0     [a.inf()*b.sup(); a.sup()*b.inf()]
     // b<=0     [a.sup()*b.sup(); a.inf()*b.inf()]
@@ -669,15 +669,15 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
     }
     return IA(-CGAL_IA_MUL(bb, -b.sup()), CGAL_IA_MUL(aa, b.inf()));
   }
-  else						// 0 \in [inf();sup()]
+  else						// 0 \in a
   {
-    if (b.inf()>=0.0)				// d>=0
+    if (b.inf()>=0.0)				// b>=0
       return IA(-CGAL_IA_MUL(a.inf(), -b.sup()),
                  CGAL_IA_MUL(a.sup(), b.sup()));
-    if (b.sup()<=0.0)				// d<=0
+    if (b.sup()<=0.0)				// b<=0
       return IA(-CGAL_IA_MUL(a.sup(), -b.inf()),
                  CGAL_IA_MUL(a.inf(), b.inf()));
-        					// 0 \in d
+        					// 0 \in b
     double tmp1 = CGAL_IA_MUL(a.inf(), -b.sup());
     double tmp2 = CGAL_IA_MUL(a.sup(), -b.inf());
     double tmp3 = CGAL_IA_MUL(a.inf(),  b.inf());
