@@ -51,6 +51,9 @@ public:
             Weighted_converter_3<C2E>,
             Weighted_converter_3<C2F> >  Side_of_mixed_cell_3;
 
+  enum { Has_filtered_predicates=true };
+  enum { Has_static_filters=false };
+
   Skin_surface_filtered_traits_3() {}
   Skin_surface_filtered_traits_3(typename Base::FT s) : Base(s) {}
 

@@ -152,7 +152,7 @@ private:
 // specialization for Exact_predicates_inexact_constructions_kernel to work,
 // otherwise there is a cycle in the derivation.
 // Similar to Regular_triangulation_euclidean_traits_3
-template < class K >
+template < class K, bool UseFilteredPredicates=K::Has_filtered_predicates >
 class Skin_surface_traits_3
   : public Skin_surface_traits_base_3<K>
 {
@@ -160,6 +160,7 @@ class Skin_surface_traits_3
 public:
   Skin_surface_traits_3() {}
   Skin_surface_traits_3(typename Base::FT s) : Base(s) {}
+  enum { Has_filtered_predicates=false };
 };
 
 CGAL_END_NAMESPACE
@@ -172,14 +173,14 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-template < typename CK >
-class Skin_surface_traits_3 < Filtered_kernel<CK> >
-  : public Skin_surface_filtered_traits_3 < Filtered_kernel<CK> >
+template < typename FK >
+class Skin_surface_traits_3 < FK,true >
+  : public Skin_surface_filtered_traits_3 < FK >
 {
-  typedef Skin_surface_filtered_traits_3< Filtered_kernel<CK> > Base;
+  typedef Skin_surface_filtered_traits_3 < FK > Base;
 public:
-  typedef Filtered_kernel<CK>                                    Kernel;
-
+  typedef FK                                    Kernel;
+  
   Skin_surface_traits_3() {}
   Skin_surface_traits_3(typename Base::FT s) : Base(s) {}
 };
