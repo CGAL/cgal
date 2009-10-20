@@ -19,7 +19,10 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
 #define CGAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+
 
 namespace CGAL{
  
@@ -33,5 +36,7 @@ class Regular_triangulation_filtered_traits_3
 	
 
 } //namespace CGAL::internal
+
+#endif //CGAL_NO_DEPRECATED_CODE
 
 #endif // CGAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
