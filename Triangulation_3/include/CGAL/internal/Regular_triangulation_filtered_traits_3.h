@@ -16,16 +16,17 @@
 //
 // Author(s)     : Sylvain Pion
 
-#ifndef CGAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
-#define CGAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
+#ifndef CGAL_INTERNAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
+#define CGAL_INTERNAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL{
 
+  
 // The Weighted_converter is parametrized by a usual kernel converter,
 // and adds the conversions for the Weighted_point.
 template < typename Converter, 
@@ -54,6 +55,9 @@ struct Weighted_converter_3
                      Converter::operator()(wp.weight()));
   }
 };
+
+
+namespace internal{
 
 // The argument is supposed to be a Filtered_kernel like kernel.
 template < typename K>
@@ -157,6 +161,6 @@ public:
 
 	
 
-CGAL_END_NAMESPACE
+} } //namespace CGAL::internal
 
-#endif // CGAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H
+#endif // CGAL_INTERNAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_3_H

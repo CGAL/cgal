@@ -19,14 +19,14 @@
 
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/Regular_triangulation_filtered_traits_3.h>
+
 
 bool del=true;
 
 #include <CGAL/_test_types.h>
 #include <CGAL/_test_cls_delaunay_3.h>
 
-typedef CGAL::Regular_triangulation_filtered_traits_3<K>        Traits;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<K>        Traits;
 
 int main()
 {

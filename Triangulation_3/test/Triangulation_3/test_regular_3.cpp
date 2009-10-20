@@ -31,7 +31,7 @@
 bool del=true;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel FK;
-typedef CGAL::Regular_triangulation_filtered_traits_3<FK> traits;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<FK> traits;
 
 // Explicit instantiation of the whole class :
 template class CGAL::Regular_triangulation_3<traits>;

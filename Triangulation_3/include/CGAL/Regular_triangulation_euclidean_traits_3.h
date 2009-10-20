@@ -749,20 +749,22 @@ CGAL_END_NAMESPACE
 
 // Partial specialization for Filtered_kernel<CK>.
 
-#include <CGAL/Regular_triangulation_filtered_traits_3.h>
+#include <CGAL/internal/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Filtered_kernel.h>
 
 CGAL_BEGIN_NAMESPACE
 
-// This declaration is needed to break the cyclic dependency.
-template < typename K,bool b >
-class Regular_triangulation_filtered_traits_3;
+namespace internal{
+  // This declaration is needed to break the cyclic dependency.
+  template < typename K,bool b >
+  class Regular_triangulation_filtered_traits_3;
+} //namespace internal
 
 template < typename K, class Weight>
 class Regular_triangulation_euclidean_traits_3<K,Weight,true>
-  : public Regular_triangulation_filtered_traits_3 <K,K::Has_static_filters > 
+  : public internal::Regular_triangulation_filtered_traits_3 <K,K::Has_static_filters > 
 {
-  typedef Regular_triangulation_filtered_traits_3 <K,K::Has_static_filters >  Kernel;
+  typedef internal::Regular_triangulation_filtered_traits_3 <K,K::Has_static_filters >  Kernel;
 };
  
 

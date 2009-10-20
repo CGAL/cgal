@@ -327,14 +327,9 @@ TriangulationDataStructure_3>}.
 \textbf{Note that for regular triangulations, plugging a filtered kernel such
 as \ccc{Exact_predicates_inexact_constructions_kernel} or
 \ccc{Exact_predicates_exact_constructions_kernel} in
-\ccc{Regular_triangulation_euclidean_traits_3<K,Weight>} will in fact
-not provide exact predicates since the weighted points and the
-predicates on them are not defined in the \cgal\ kernels.} 
-To solve this, there is also another model of the traits concept,
-\ccc{Regular_triangulation_filtered_traits_3<FK>}, which is providing filtered
-predicates (exact and efficient). The template parameter \ccc{FK} must be a
-model of the \ccc{Kernel} concept, and it is also restricted to be a
-instance of the \ccc{Filtered_kernel} template. 
+\ccc{Regular_triangulation_euclidean_traits_3<K,Weight>} will 
+provide exact and efficient filtered predicates.
+
 
 \subsection{The Triangulation Data Structure Parameter\label{Triangulation3-sec-tds}}
 

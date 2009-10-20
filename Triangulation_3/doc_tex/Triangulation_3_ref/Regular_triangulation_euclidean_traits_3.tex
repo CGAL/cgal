@@ -34,10 +34,14 @@ but it also contains predicates and constructors on weighted points
 that are not required in the
 concept\ccc{RegularTriangulationTraits_3}.
 
-Note that this template class is specialized for
-\ccc{CGAL::Exact_predicates_inexact_constructions_kernel}, so that it is as if
-\ccc{Regular_triangulation_filtered_traits_3} was used, i.e. you get
-filtered predicates automatically.
+Note that filtered predicates are automatically used if the 
+boolean \ccc{Has_filtered_predicates} in the kernel provided as template parameter 
+of that class is set to \ccc{true}.
+
+% Note that this template class is specialized for
+% \ccc{CGAL::Exact_predicates_inexact_constructions_kernel}, so that it is as if
+% \ccc{Regular_triangulation_filtered_traits_3} was used, i.e. you get
+% filtered predicates automatically.
 
  
 
@@ -264,8 +268,6 @@ compare_weighted_squared_radius_3_object();}{}
 
 %% \ccIncludeExampleCode{Triangulation3/Regular_triangulation_euclidean_traits_3_prog.cpp}
 
-\ccSeeAlso
 
-\ccc{CGAL::Regular_triangulation_filtered_traits_3}.
 
 \end{ccRefClass}
