@@ -160,7 +160,7 @@ Segment_2_Iso_rectangle_2_pair<K>::intersection_type() const
             } else {
                 newmin = ( (*isomax_it) - (*ref_point_it)) /
                     _dir.cartesian(i);
-                newmax = ( (*isomin_it) - *(ref_point_it)) /
+                newmax = ( (*isomin_it) - (*ref_point_it)) /
                     _dir.cartesian(i);
             }
             if (newmin > _min)
