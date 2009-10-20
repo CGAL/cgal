@@ -57,12 +57,12 @@ namespace CGAL {
 
             const Point& a = s.source();
             const Point& b = s.target();
-            if((b-a)*(query-a) < (FT)0.0)
+            if((b-a)*(query-a) < FT(0))
             {
                 closest_point_on_segment = a;
                 return false;
             }
-            if((a-b)*(query-b) < (FT)0.0)
+            if((a-b)*(query-b) < FT(0))
             {
                 closest_point_on_segment = b;
                 return false;

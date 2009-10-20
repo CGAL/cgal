@@ -56,8 +56,8 @@ namespace internal {
     
     if ( ! CGAL_NTS is_zero(direction.x()) )
     {
-      FT inv_direction_x = (FT)1.0/direction.x();
-      const int sign_x = inv_direction_x < (FT)0.0;
+      FT inv_direction_x = FT(1)/direction.x();
+      const int sign_x = inv_direction_x < FT(0);
       
       tmin = (parameters[sign_x].x() - source.x()) * inv_direction_x;
       tmax = (parameters[1-sign_x].x() - source.x()) * inv_direction_x;
@@ -73,8 +73,8 @@ namespace internal {
     
     if ( ! CGAL_NTS is_zero(direction.y()) )
     {
-      FT inv_direction_y = (FT)1.0/direction.y();
-      const int sign_y = inv_direction_y < (FT)0.0;
+      FT inv_direction_y = FT(1)/direction.y();
+      const int sign_y = inv_direction_y < FT(0);
       
       const FT tymin = (parameters[sign_y].y() - source.y()) * inv_direction_y;
       const FT tymax = (parameters[1-sign_y].y() - source.y()) * inv_direction_y;
@@ -107,8 +107,8 @@ namespace internal {
     
     if ( ! CGAL_NTS is_zero(direction.z()) )
     {
-      FT inv_direction_z = (FT)1.0/direction.z();
-      const int sign_z = inv_direction_z < (FT)0.0;
+      FT inv_direction_z = FT(1)/direction.z();
+      const int sign_z = inv_direction_z < FT(0);
       
       FT tzmin = (parameters[sign_z].z() - source.z()) * inv_direction_z;
       FT tzmax = (parameters[1-sign_z].z() - source.z()) * inv_direction_z;

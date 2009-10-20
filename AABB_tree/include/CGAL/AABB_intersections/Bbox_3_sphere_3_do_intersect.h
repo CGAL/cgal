@@ -38,8 +38,8 @@ namespace internal {
     {
         typedef typename K::FT FT;
         typedef typename K::Point_3 Point;
-        FT d = (FT)0.0;
-        FT distance = (FT)0.0;
+        FT d = FT(0);
+        FT distance = FT(0);
 		Point center = sphere.center();
 
 		if(center.x() < (FT)bbox.xmin())
