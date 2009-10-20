@@ -218,6 +218,10 @@ namespace internal {
                 || do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k.x(), p_max.y()-k.y(), sides) >= 0 );
       }
       break;
+    default:
+      // Should not happen
+      CGAL_kernel_assertion(false);
+      return false;
     }
   }
 
