@@ -514,7 +514,7 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-option( WITH_CPACK "Create package generation rules")
+#option( WITH_CPACK "Create package generation rules")
 if( WITH_CPACK AND EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
 
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "CGAL - Computational Geometry Algorithms Library")
