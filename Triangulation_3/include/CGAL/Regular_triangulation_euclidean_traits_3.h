@@ -342,6 +342,12 @@ public:
 			   p.x(), p.y(), p.z(), p.weight(),
 			   q.x(), q.y(), q.z(), q.weight());
   }
+  
+  FT operator() (const Weighted_point_3 & p) const
+  {
+    return -p.weight();
+  }  
+  
 };
 
 
