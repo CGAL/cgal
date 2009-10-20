@@ -15,8 +15,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://pmachado@scm.gforge.inria.fr/svn/cgal/trunk/Intersections_2/include/CGAL/Circle_2_Circle_2_intersection.h $
-// $Id: Circle_2_Circle_2_intersection.h 39776 2007-08-08 15:15:20Z spion $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Geert-Jan Giezeman

@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL:  $
-// $Id: internal_function_compare_to_right_spherical_kernel.h 40627 2007-10-16 15:00:59Z sloriot $
+// $URL$
+// $Id$
 //
 // Author(s) : Sebastien Loriot
 

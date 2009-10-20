@@ -9,8 +9,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://hachenb@scm.gforge.inria.fr/svn/cgal/trunk/Nef_2/include/CGAL/Is_extended_kernel.h $
-// $Id: Is_extended_kernel.h 30322 2006-04-14 15:07:17Z lsaboret $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Andreas Fabri <andreas.fabri@geometryfactory.com>

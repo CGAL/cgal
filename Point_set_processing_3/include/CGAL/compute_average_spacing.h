@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Point_set_processing_3/include/CGAL/improved_laplacian_smooth_point_set.h $
-// $Id: improved_laplacian_smooth_point_set.h 48866 2009-04-22 15:06:24Z lsaboret $
+// $URL$
+// $Id$
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 

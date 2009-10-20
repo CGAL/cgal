@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://lrineau@scm.gforge.inria.fr/svn/cgal/trunk/AABB_tree/include/CGAL/AABB_intersections/Bbox_3_ray_3_do_intersect.h $
-// $Id: Bbox_3_ray_3_do_intersect.h 50124 2009-06-26 17:55:17Z palliez $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Camille Wormser, Pierre Alliez, Stephane Tayeb

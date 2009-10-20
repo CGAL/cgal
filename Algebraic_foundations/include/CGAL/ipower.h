@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://afabri@scm.gforge.inria.fr/svn/cgal/trunk/Polynomial/include/CGAL/Polynomial.h $
-// $Id: Polynomial.h 47254 2008-12-06 21:18:27Z afabri $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Michael Hemmer 
@@ -21,7 +21,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
+// $URL$
 
 #ifndef CGAL_IPOWER_H
 #define CGAL_IPOWER_H

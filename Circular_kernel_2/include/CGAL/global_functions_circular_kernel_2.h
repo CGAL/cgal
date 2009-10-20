@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://pmachado@scm.gforge.inria.fr/svn/cgal/trunk/Circular_kernel_2/include/CGAL/global_functions_on_line_arcs_2.h $
-// $Id: global_functions_on_line_arcs_2.h 45945 2008-10-01 12:25:23Z pmachado $
+// $URL$
+// $Id$
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Julien Hazebrouck, Pedro Machado
 

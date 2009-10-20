@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: https://scm.gforge.inria.fr/svn/cgal/trunk/AABB_tree/include/CGAL/Point_3_triangle_3_point_3_nearest_point_3.h $
-// $Id: Point_3_triangle_3_point_3_nearest_point_3.h 48981 2009-04-28 15:14:34Z stayeb $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Camille Wormser, Stephane Tayeb, Pierre Alliez

@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://afabri@scm.gforge.inria.fr/svn/cgal/trunk/Polynomial/include/CGAL/Polynomial/polynomial_functions.h $
-// $Id: polynomial_functions.h 46402 2008-10-21 16:20:05Z eric $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Michael Hemmer

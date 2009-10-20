@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://pmachado@scm.gforge.inria.fr/svn/cgal/trunk/Circular_kernel_3/include/CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h $
-// $Id: internal_function_has_on_spherical_kernel.h 44381 2008-07-24 09:26:28Z pmachado $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado
 

@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://hachenb@scm.gforge.inria.fr/svn/cgal/trunk/Nef_3/include/CGAL/Nef_3/polyhedron_3_to_nef_3.h $
-// $Id: polyhedron_3_to_nef_3.h 39613 2007-07-31 11:41:47Z hachenb $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>

@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://hachenb@scm.gforge.inria.fr/svn/cgal/branches/Filtered_Nef/Nef_3/include/CGAL/Nef_3/SFace.h $
-// $Id: SFace.h 35450 2006-12-06 10:43:20Z hachenb $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>

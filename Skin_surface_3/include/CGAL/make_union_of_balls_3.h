@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://nicokruithof@scm.gforge.inria.fr/svn/cgal/trunk/union_of_balls_3/include/CGAL/make_union_of_balls_mesh_3.h $
-// $Id: make_union_of_balls_mesh_3.h 35587 2006-12-18 09:37:55Z lsaboret $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>

@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://nicokruithof@scm.gforge.inria.fr/svn/cgal/trunk/Skin_surface_3/include/CGAL/Skin_surface_3.h $
-// $Id: Skin_surface_3.h 35826 2007-01-27 16:14:56Z nicokruithof $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>

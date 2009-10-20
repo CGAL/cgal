@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://ophirset@scm.gforge.inria.fr/svn/cgal/trunk/Arrangement_on_surface_2/include/CGAL/graph_traits_Dual_Arrangement_2.h $
-// $Id: graph_traits_Dual_Arrangement_2.h 48358 2009-03-11 14:28:13Z ophirset $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Ophir Setter <ophirset@post.tau.ac.il>

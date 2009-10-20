@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://afabri@scm.gforge.inria.fr/svn/cgal/trunk/Polynomial/include/CGAL/Polynomial/Fraction_traits.h $
-// $Id: Fraction_traits.h 44820 2008-08-07 09:49:32Z hemmer $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de>

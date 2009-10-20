@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: SNC_external_structure.h 36279 2007-02-15 10:29:45Z hachenb $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Michael Seel       <seel@mpi-sb.mpg.de> 
