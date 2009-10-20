@@ -28,58 +28,15 @@ CGAL_BEGIN_NAMESPACE
    
 //------------------ Traits class -------------------------------------
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 template <class K>
 class Weighted_alpha_shape_euclidean_traits_3 : public 
 Regular_triangulation_euclidean_traits_3<K>
-{
-public:
-  typedef Regular_triangulation_euclidean_traits_3<K> Base;
-  typedef typename Base::Side_of_bounded_orthogonal_sphere_3 
-                                       Side_of_bounded_sphere_3;
-
- class  Compute_squared_radius_3 {
-    typedef typename Base::Weighted_point   Weighted_point_3;
-    typedef typename Base::FT         FT;
-    typedef typename Base::Compute_squared_radius_smallest_orthogonal_sphere_3
-                                       Compute_squared_radius_base;
-  public:
-    FT operator() (const Weighted_point_3& p, 
-		   const Weighted_point_3& q , 
-		   const Weighted_point_3& r, 
-		   const Weighted_point_3& s) {
-      return Compute_squared_radius_base()(p,q,r,s); }
-
-    FT operator() (const Weighted_point_3& p, 
-		   const Weighted_point_3& q , 
-		   const Weighted_point_3& r) {
-      return Compute_squared_radius_base()(p,q,r); }
-
-    FT operator() (const Weighted_point_3& p, 
-		   const Weighted_point_3& q ) {
-      return Compute_squared_radius_base()(p,q); }
-
-    FT operator() (const Weighted_point_3& p) {
-      return -p.weight();}
-  };
- 
-  
-
-  //---------------------------------------------------------------------
-
-  Compute_squared_radius_3 
-  compute_squared_radius_3_object() const
-    {
-      return Compute_squared_radius_3();
-    }
-  //---------------------------------------------------------------------
-
-  Side_of_bounded_sphere_3 
-  side_of_bounded_sphere_3_object() const
-    {
-      return Side_of_bounded_sphere_3();
-    }
-};
+{};
 
 CGAL_END_NAMESPACE
-
+#endif //CGAL_NO_DEPRECATED_CODE
+  
+  
 #endif //CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 

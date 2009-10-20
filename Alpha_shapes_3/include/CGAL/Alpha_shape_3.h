@@ -46,6 +46,33 @@
 CGAL_BEGIN_NAMESPACE
 //-------------------------------------------------------------------
 
+namespace internal{
+  
+  //small class to select predicate in weighted and unweighted case
+  template <class Dt,class Weighted_tag=typename Dt::Weighted_tag>
+  struct Compute_squared_radius_3;
+  
+  template <class Dt>
+  struct Compute_squared_radius_3<Dt,Tag_false>
+  {
+    typename Dt::Geom_traits::Compute_squared_radius_3
+    operator()(const Dt& dt) const{
+      return dt.geom_traits().compute_squared_radius_3_object();
+    }
+  };
+  
+  template <class Dt>
+  struct Compute_squared_radius_3<Dt,Tag_true>
+  {
+    typename Dt::Geom_traits::Compute_squared_radius_smallest_orthogonal_sphere_3
+    operator()(const Dt& dt) const{
+      return dt.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+    }
+  };
+  
+  
+} //namespace internal
+
 template < class Dt >
 class Alpha_shape_3 : public Dt
 {
@@ -719,7 +746,7 @@ public:
 private:
   NT squared_radius(const Cell_handle& s) const
     {
-      return this->geom_traits().compute_squared_radius_3_object()(s->vertex(0)->point(),
+      return internal::Compute_squared_radius_3<Dt>()(*this)(s->vertex(0)->point(),
 						    s->vertex(1)->point(),
 						    s->vertex(2)->point(),
 						    s->vertex(3)->point());
@@ -727,7 +754,7 @@ private:
 
   NT squared_radius(const Cell_handle& s, const int& i) const
     {
-      return this->geom_traits().compute_squared_radius_3_object() (
+      return internal::Compute_squared_radius_3<Dt>()(*this) (
 		  s->vertex(vertex_triple_index(i,0))->point(),
 		  s->vertex(vertex_triple_index(i,1))->point(),
 		  s->vertex(vertex_triple_index(i,2))->point());
@@ -740,7 +767,7 @@ private:
   NT squared_radius(const Cell_handle& s, 
 			    const int& i, const int& j) const
     {
-      return this->geom_traits().compute_squared_radius_3_object()(s->vertex(i)->point(),
+      return internal::Compute_squared_radius_3<Dt>()(*this)(s->vertex(i)->point(),
 						    s->vertex(j)->point());
     }
 
@@ -749,7 +776,8 @@ private:
   }
 
   NT squared_radius(const Vertex_handle& v) const {
-    return  this->geom_traits().compute_squared_radius_3_object()(v->point()); }
+    return  internal::Compute_squared_radius_3<Dt>()(*this)(v->point()); 
+  }
 
 
   //---------------------------------------------------------------------

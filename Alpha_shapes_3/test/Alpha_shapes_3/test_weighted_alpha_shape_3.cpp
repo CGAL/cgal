@@ -21,7 +21,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
-#include <CGAL/Weighted_alpha_shape_euclidean_traits_3.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
 
@@ -29,7 +29,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Weighted_alpha_shape_euclidean_traits_3<K> Gt;
+typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Gt;
 typedef Gt::Weighted_point   Weighted_point;
 
 typedef CGAL::Alpha_shape_vertex_base_3<Gt>          Vb;
