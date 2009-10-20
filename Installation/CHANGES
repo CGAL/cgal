@@ -7,9 +7,13 @@ CGAL 3.6 offers the following improvements and new functionality :
   - Regular_triangulation_3 : semi-static floating-point filters are now used
     in its predicates, which can speed up its construction by a factor of about 3
     when Exact_predicates_inexact_constructions_kernel is used.
+  - The class Regular_triangulation_filtered_traits_3 is deprecated, the class
+    Regular_triangulation_euclidean_traits_3 must be used instead. The predicates of
+    that traits will be filtered if the kernel given as template parameter of that traits
+    is itself a filtered kernel.
 * 3D Alpha shapes:
   - The class Weighted_alpha_shape_euclidean_traits_3 is deprecated, the class
-    Regular_triangulation_euclidean_traits must be used instead.
+    Regular_triangulation_euclidean_traits_3 must be used instead.
 ----------------------------- Release 3.5 ----------------------------------
 CGAL releases will now be published about every six months. As a transition
 release, CGAL-3.5 has been developed during 9 months from the release
