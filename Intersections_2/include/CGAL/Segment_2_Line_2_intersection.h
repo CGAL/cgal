@@ -99,13 +99,11 @@ intersection(const typename K::Line_2 &line,
 
 template <class K>
 inline bool do_intersect(
-    const typename K::Line_2 &p1,
-    const typename K::Segment_2 &p2,
-    const K&)
+    const typename K::Line_2 &line,
+    const typename K::Segment_2 &seg,
+    const K& k)
 {
-    typedef Segment_2_Line_2_pair<K> pair_t;
-    pair_t pair(&p2, &p1);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
+  return internal::do_intersect(seg, line, k);
 }
 
 
