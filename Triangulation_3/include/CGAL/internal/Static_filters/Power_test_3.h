@@ -42,9 +42,9 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     using Base::operator();
     #else 
     result_type
-    operator()(const Weighted_point_3& p, const FT& w) const
+    operator()(const Weighted_point_3& p, const Weighted_point_3& q) const
     { 
-      return Base::operator()(p,w);
+      return Base::operator()(p,q);
     }
     #endif
     
