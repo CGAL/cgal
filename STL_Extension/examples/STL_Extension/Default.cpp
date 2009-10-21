@@ -1,14 +1,19 @@
 #include <CGAL/Default.h>
 
-// A will be used as the concrete default type
+// A is a concrete type
 struct A {};
 
-// B is the template class which has 2 template arguments with defaults
-template < typename A1_ = A, // we could also write "= CGAL::Default" here instead
-           typename A2 = int >
+// B is the template class which has 2 template parameters
+// with default arguments : A and int.
+template < typename A1_ = A, typename A2 = int >
 struct B
 {
+    // Note that it is also possible to use CGAL::Default
+    // instead of A as the default argument for A1_ above.
+
+    // Extract the desired type for A1 :
     typedef typename CGAL::Default::Get<A1_, A>::type  A1;
+
     A1 a1;
 };
 
