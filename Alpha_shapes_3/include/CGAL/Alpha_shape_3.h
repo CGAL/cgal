@@ -416,7 +416,11 @@ public:
       return alpha_spectrum.size();
     }
 
-  
+  const Edge_alpha_map* get_edge_alpha_map() const
+  {
+     return  &edge_alpha_map;
+  }    
+    
   //---------------------------------------------------------------------
 
 private:
