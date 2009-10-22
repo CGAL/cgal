@@ -764,6 +764,7 @@ template < typename K, class Weight>
 class Regular_triangulation_euclidean_traits_3<K,Weight,true>
   : public internal::Regular_triangulation_filtered_traits_3 <K,K::Has_static_filters > 
 {
+public:
   typedef internal::Regular_triangulation_filtered_traits_3 <K,K::Has_static_filters >  Kernel;
 };
  
