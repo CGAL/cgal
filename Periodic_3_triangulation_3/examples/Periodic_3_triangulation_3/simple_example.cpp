@@ -17,24 +17,27 @@ typedef PDT::Cell_handle       Cell_handle;
 typedef PDT::Vertex_handle     Vertex_handle;
 typedef PDT::Locate_type       Locate_type;
 typedef PDT::Point             Point;
+typedef PDT::Iso_cuboid        Iso_cuboid;
 
 int main()
 {
+  Iso_cuboid domain(-1,-1,-1,2,2,2);  // The cube for the periodic domain
+
   // construction from a list of points :
   std::list<Point> L;
   L.push_front(Point(0,0,0));
-  L.push_front(Point(.1,0,0));
-  L.push_front(Point(0,.1,0));
+  L.push_front(Point(1,0,0));
+  L.push_front(Point(0,1,0));
 
-  PDT T(L.begin(), L.end());
+  PDT T(L.begin(), L.end(), domain); // Put the domain with the constructor
 
   int n = T.number_of_vertices();
 
   // insertion from a vector :
   std::vector<Point> V(3);
-  V[0] = Point(0,0,.1);
-  V[1] = Point(.1,.1,.1);
-  V[2] = Point(.2,.2,.2);
+  V[0] = Point(0,0,1);
+  V[1] = Point(1,1,1);
+  V[2] = Point(-1,-1,-1);
 
   n = n + T.insert(V.begin(), V.end());
 
