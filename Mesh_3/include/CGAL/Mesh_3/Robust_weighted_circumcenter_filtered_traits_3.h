@@ -40,111 +40,111 @@ template < typename K_ >
 class Robust_filtered_construct_weighted_circumcenter_3
 {
 public:
-  typedef typename K_::Weighted_point_3               Weighted_point_3;
-  typedef typename K_::Bare_point                     Bare_point;
-  typedef typename K_::FT                             FT;
-  typedef typename K_::Sphere_3                       Sphere_3;
-  typedef Bare_point                                 result_type;
-
-  typedef Exact_predicates_exact_constructions_kernel   EK2;
-  typedef Regular_triangulation_euclidean_traits_3<EK2> EK;
-  typedef Weighted_converter_3<
-      Cartesian_converter<typename K_::Kernel, EK2> >    To_exact;
-  typedef Weighted_converter_3<
-      Cartesian_converter<EK2, typename K_::Kernel> >    Back_from_exact;
-
-
+  typedef Exact_predicates_exact_constructions_kernel          EK;
+  typedef Weighted_converter_3<Cartesian_converter<K_, EK> >   To_exact;
+  typedef Weighted_converter_3<Cartesian_converter<EK,K_> >    Back_from_exact;
+  
+  typedef CGAL::Regular_triangulation_euclidean_traits_3<K_> Rt;
+  typedef CGAL::Regular_triangulation_euclidean_traits_3<EK> Exact_Rt;
+  
+  typedef typename Rt::Weighted_point_3               Weighted_point_3;
+  typedef typename Rt::Bare_point                     Bare_point;
+  typedef typename Rt::FT                             FT;
+  typedef typename Rt::Sphere_3                       Sphere_3;
+  
+  typedef Bare_point                                  result_type;
+  
   Bare_point operator() ( const Weighted_point_3 & p,
                           const Weighted_point_3 & q,
                           const Weighted_point_3 & r,
                           const Weighted_point_3 & s ) const
   {
-    CGAL_precondition(! K_().coplanar_3_object()(p,q,r,s) );
+    CGAL_precondition(! Rt().coplanar_3_object()(p,q,r,s) );
     
-    typename K_::Construct_weighted_circumcenter_3 weighted_circumcenter =
-        K_().construct_weighted_circumcenter_3_object();
-    typename K_::Has_on_bounded_side_3 on_bounded_side =
-        K_().has_on_bounded_side_3_object();
-
+    typename Rt::Construct_weighted_circumcenter_3 weighted_circumcenter =
+      Rt().construct_weighted_circumcenter_3_object();
+    typename Rt::Has_on_bounded_side_3 on_bounded_side =
+      Rt().has_on_bounded_side_3_object();
+    
     // Compute denominator to swith to exact if it is 0
     const FT denom = compute_denom(p,q,r,s);
     if ( ! CGAL_NTS is_zero(denom) )
     {
       result_type point = weighted_circumcenter(p,q,r,s);
-
+      
       // Fast output
       if ( on_bounded_side(Sphere_3(p,q,r,s),point) )
         return point;
     }
-
+    
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
-    EK::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
-        EK().construct_weighted_circumcenter_3_object();
-
+    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+      Exact_Rt().construct_weighted_circumcenter_3_object();
+    
     return back_from_exact(exact_weighted_circumcenter(to_exact(p),
-                   to_exact(q),
-                   to_exact(r),
-                   to_exact(s)));
+                                                       to_exact(q),
+                                                       to_exact(r),
+                                                       to_exact(s)));
   }
-
+  
   Bare_point operator() ( const Weighted_point_3 & p,
                           const Weighted_point_3 & q,
                           const Weighted_point_3 & r ) const
   {
-    CGAL_precondition(! K_().collinear_3_object()(p,q,r) );
+    CGAL_precondition(! Rt().collinear_3_object()(p,q,r) );
     
-    typename K_::Construct_weighted_circumcenter_3 weighted_circumcenter =
-      K_().construct_weighted_circumcenter_3_object();
-    typename K_::Has_on_bounded_side_3 on_bounded_side =
-      K_().has_on_bounded_side_3_object();
-
+    typename Rt::Construct_weighted_circumcenter_3 weighted_circumcenter =
+      Rt().construct_weighted_circumcenter_3_object();
+    typename Rt::Has_on_bounded_side_3 on_bounded_side =
+      Rt().has_on_bounded_side_3_object();
+    
     // Compute denominator to swith to exact if it is 0
     const FT denom = compute_denom(p,q,r);
     if ( ! CGAL_NTS is_zero(denom) )
     {
       result_type point = weighted_circumcenter(p,q,r);
-
+      
       // Fast output
       if ( on_bounded_side(Sphere_3(p,q,r),point) )
         return point;
     }
-
+    
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
-    EK::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
-        EK().construct_weighted_circumcenter_3_object();
-
+    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+      Exact_Rt().construct_weighted_circumcenter_3_object();
+    
     return back_from_exact(exact_weighted_circumcenter(to_exact(p),
-                   to_exact(q),
-                   to_exact(r)));
+                                                       to_exact(q),
+                                                       to_exact(r)));
   }
-
+  
   Bare_point operator() ( const Weighted_point_3 & p,
                           const Weighted_point_3 & q ) const
   {
-    typename K_::Construct_weighted_circumcenter_3 weighted_circumcenter =
-      K_().construct_weighted_circumcenter_3_object();
-    typename K_::Has_on_bounded_side_3 on_bounded_side =
-      K_().has_on_bounded_side_3_object();
-
+    typename Rt::Construct_weighted_circumcenter_3 weighted_circumcenter =
+      Rt().construct_weighted_circumcenter_3_object();
+    typename Rt::Has_on_bounded_side_3 on_bounded_side =
+      Rt().has_on_bounded_side_3_object();
+    
     // No division here
     result_type point = weighted_circumcenter(p,q);
-
+    
     // Fast output
     if ( on_bounded_side(Sphere_3(p,q),point) )
       return point;
-
+    
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
-    EK::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
-      EK().construct_weighted_circumcenter_3_object();
-
+    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+      Exact_Rt().construct_weighted_circumcenter_3_object();
+    
     return back_from_exact(exact_weighted_circumcenter(to_exact(p),
-                   to_exact(q)));
+                                                       to_exact(q)));
   }
 
 private:
@@ -215,15 +215,15 @@ private:
  */
 template<class K_>
 struct Robust_weighted_circumcenter_filtered_traits_3
-: public K_
+: public CGAL::Regular_triangulation_euclidean_traits_3<K_>
 {
   typedef CGAL::Robust_filtered_construct_weighted_circumcenter_3<K_>
-                                            Construct_weighted_circumcenter_3;
-
+    Construct_weighted_circumcenter_3;
+  
   Construct_weighted_circumcenter_3
   construct_weighted_circumcenter_3_object() const
   { return Construct_weighted_circumcenter_3(); }
-
+  
 };  // end class Robust_weighted_circumcenter_filtered_traits_3
 
 

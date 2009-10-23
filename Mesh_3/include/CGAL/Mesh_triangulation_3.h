@@ -39,8 +39,7 @@ namespace CGAL {
     struct Mesh_geom_traits_generator
     {
     private:
-      typedef Regular_triangulation_filtered_traits_3<K>          Regular_traits;
-      typedef Robust_weighted_circumcenter_filtered_traits_3<Regular_traits>
+      typedef Robust_weighted_circumcenter_filtered_traits_3<K>
         Geom_traits;
       
     public:
@@ -51,13 +50,11 @@ namespace CGAL {
   }  // end namespace details
   
   
-  
-  
 // Struct Mesh_triangulation_3
 //
 template<class MD, class K=typename Kernel_traits<MD>::Kernel>
 struct Mesh_triangulation_3
-{
+  {
 private:
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
   typedef Mesh_vertex_base_3<Geom_traits, MD>                   Vertex_base;
@@ -69,6 +66,7 @@ public:
   typedef Triangulation type;
   typedef type Type;
 };  // end struct Mesh_triangulation_3
+
 
 
 }  // end namespace CGAL
