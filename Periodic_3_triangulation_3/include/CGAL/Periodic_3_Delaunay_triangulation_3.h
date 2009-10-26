@@ -469,14 +469,18 @@ public:
     std::vector<Facet> facets;
     Facet_circulator fstart = incident_facets(c, i, j);
 
+    Offset offv = periodic_point(c,i).second;
     Vertex_handle v = c->vertex(i);
-    for(Facet_circulator fcit = fstart; fcit != fstart; ++fcit) {
+
+    Facet_circulator fcit = fstart;
+    do {
       Point dual_orig = periodic_circumcenter(fcit->first).first;
       int idx = fcit->first->index(v);
       Offset off = periodic_point(fcit->first,idx).second;
-      Point dual = point(std::make_pair(dual_orig,-off));
+      Point dual = point(std::make_pair(dual_orig,-off+offv));
       *points++ = dual;
-    } 
+      ++fcit;
+    } while (fcit != fstart);
     return points;
   }
 
