@@ -170,7 +170,9 @@ public:
     EDGE, //1
     FACET, //2
     CELL, //3
-    EMPTY }; //4
+    EMPTY , //4
+    OUTSIDE_CONVEX_HULL, // unused, for compatibility with Alpha_shape_3
+    OUTSIDE_AFFINE_HULL }; // unused, for compatibility with Alpha_shape_3
 
 private:
   Geometric_traits  _gt;

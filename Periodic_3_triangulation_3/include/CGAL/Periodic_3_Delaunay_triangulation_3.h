@@ -91,6 +91,9 @@ public:
   typedef typename Base::All_edges_iterator     All_edges_iterator;
   typedef typename Base::All_vertices_iterator  All_vertices_iterator;
 
+  typedef typename Base::size_type              size_type;
+  typedef typename Base::difference_type        difference_type;
+
   typedef typename Base::Locate_type            Locate_type;
   typedef typename Base::Iterator_type          Iterator_type;
 
@@ -107,7 +110,9 @@ public:
   using Base::int_to_off;
   using Base::number_of_sheets;
   using Base::number_of_vertices;
+  using Base::number_of_edges;
   using Base::number_of_facets;
+  using Base::number_of_cells;
   using Base::cells_begin;
   using Base::cells_end;
   using Base::vertices_begin;
@@ -459,10 +464,19 @@ public:
   }
 
   template <class OutputIterator>
-  OutputIterator dual(Cell_handle, int, int,
+  OutputIterator dual(Cell_handle c, int i, int j,
       OutputIterator points) const {
-    // TODO
-    // TODO: Specify the order of the points in the doc.
+    std::vector<Facet> facets;
+    Facet_circulator fstart = incident_facets(c, i, j);
+
+    Vertex_handle v = c->vertex(i);
+    for(Facet_circulator fcit = fstart; fcit != fstart; ++fcit) {
+      Point dual_orig = periodic_circumcenter(fcit->first).first;
+      int idx = fcit->first->index(v);
+      Offset off = periodic_point(fcit->first,idx).second;
+      Point dual = point(std::make_pair(dual_orig,-off));
+      *points++ = dual;
+    } 
     return points;
   }
 
@@ -554,6 +568,22 @@ private:
     std::vector<Point> hidden;
   };
 #endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+
+  // unused and undocumented types and functions required to be
+  // compatible to Alpha_shape_3
+public:
+  typedef Cell_iterator   Finite_cells_iterator;
+  typedef Facet_iterator  Finite_facets_iterator;
+  typedef Edge_iterator   Finite_edges_iterator;
+  typedef Vertex_iterator Finite_vertices_iterator;
+
+  int dimension() const { return 3; }
+  template < class T >
+  bool is_infinite(const T&, int = 0, int = 0) const { return false; }
+  size_type number_of_finite_cells() const { return number_of_cells(); }
+  size_type number_of_finite_facets() const { return number_of_facets(); }
+  size_type number_of_finite_edges() const { return number_of_edges(); }
+  size_type number_of_finite_vertices() const { return number_of_vertices(); }
 };
 
 template < class GT, class Tds >

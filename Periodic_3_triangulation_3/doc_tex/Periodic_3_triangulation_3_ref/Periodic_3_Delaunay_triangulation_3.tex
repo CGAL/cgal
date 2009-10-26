@@ -262,7 +262,8 @@ predicates).
 OutputIterator
 dual(Edge e, OutputIterator pts) const;}
 {Returns in the output iterator the points of the dual polygon of
-  edge \ccc{e} in consecutive order. The points form the dual polygon
+  edge \ccc{e} in the same order as the \ccc{Facet_circulator} returns
+  facets incident to the edge \ccc{e}. The points form the dual polygon
   in $\mathbb R^3$, so they do not necessarily all lie inside the
   original domain.}
 
