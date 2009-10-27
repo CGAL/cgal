@@ -21,9 +21,13 @@ set( QT_USE_QTOPENGL  TRUE )
 find_package(Qt4)
 
 find_package(OpenGL)
-find_package(QGLViewer)
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
+if(QT4_FOUND)
+  include( ${QT_USE_FILE} )
+  find_package(QGLViewer)
+endif(QT4_FOUND)
+
+if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   include(${QT_USE_FILE})
 
@@ -46,8 +50,27 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_
   target_link_libraries( Periodic_Lloyd_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
   target_link_libraries( Periodic_Lloyd_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
-else()
+else( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
-  message(STATUS "NOTICE: This demo requires CGAL, the QGLViewer, OpenGL and Qt4, and will not be compiled.")
+  set(PERIODIC_LLOYD_MISSING_DEPS "")
 
-endif()
+  if(NOT CGAL_FOUND)
+    set(PERIODIC_LLOYD_MISSING_DEPS "the CGAL Qt4 library, ${PERIODIC_LLOYD_MISSING_DEPS}")
+  endif()      	   
+
+  if(NOT QT4_FOUND)
+    set(PERIODIC_LLOYD_MISSING_DEPS "Qt4, ${PERIODIC_LLOYD_MISSING_DEPS}")
+  endif()      	   
+
+  if(NOT OPENGL_FOUND)
+    set(PERIODIC_LLOYD_MISSING_DEPS "OpenGL, ${PERIODIC_LLOYD_MISSING_DEPS}")
+  endif()      	   
+
+  if(NOT QGLVIEWER_FOUND)
+    set(PERIODIC_LLOYD_MISSING_DEPS "QGLViewer, ${PERIODIC_LLOYD_MISSING_DEPS}")
+  endif()      	   
+
+
+  message(STATUS "NOTICE: This demo requires ${PERIODIC_LLOYD_MISSING_DEPS}and will not be compiled.")
+
+endif( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
