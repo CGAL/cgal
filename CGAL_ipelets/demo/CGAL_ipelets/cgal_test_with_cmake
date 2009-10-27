@@ -12,7 +12,7 @@
 # - the script should clean up object files and executables
 
   ERRORFILE=error.txt
-  DO_RUN=n
+  DO_RUN=
   if [ -z "${MAKE_CMD}" ]; then
     MAKE_CMD=make
   fi
