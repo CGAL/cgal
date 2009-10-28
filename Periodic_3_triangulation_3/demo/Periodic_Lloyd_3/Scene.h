@@ -42,7 +42,7 @@ struct Scene {
 
   Point_3 compute_barycenter(std::vector<Point_3> dual_pts) const {
     FT x(0), y(0), z(0);
-    int i;
+    unsigned int i;
     for ( i=0 ; i<dual_pts.size() ; i++) {
       x += dual_pts[i].x();
       y += dual_pts[i].y();
@@ -61,7 +61,7 @@ struct Scene {
 
   Point_3 compute_barycenter_2D(std::vector<Point_3> dual_pts) const {
     FT x(0), y(0);
-    int i;
+    unsigned int i;
     for ( i=0 ; i<dual_pts.size() ; i++) {
       x += dual_pts[i].x();
       y += dual_pts[i].y();
