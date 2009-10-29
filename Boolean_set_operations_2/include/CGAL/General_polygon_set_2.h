@@ -34,22 +34,21 @@ template <class Traits_, class Dcel_ = Gps_default_dcel<Traits_> >
 class General_polygon_set_2 : public General_polygon_set_on_surface_2
   <Traits_, typename Default_planar_topology<Traits_, Dcel_ >::Traits>
 {
+protected:
+  typedef General_polygon_set_2< Traits_, Dcel_ >         Self;
+  
 public:
   typedef Traits_                                         Traits_2;
   typedef Dcel_                                           Dcel;
 
-  typedef General_polygon_set_2< Traits_, Dcel_ >         Self;
   typedef General_polygon_set_on_surface_2 <Traits_2,
     typename Default_planar_topology<Traits_2, Dcel >::Traits>
                                                           Base;
 
   typedef typename Base::Arrangement_on_surface_2         Arrangement_2;
 
-protected:
   typedef typename Base::Polygon_2                        Polygon_2;
   typedef typename Base::Polygon_with_holes_2             Polygon_with_holes_2;
-
-public:
 
   // default costructor
   General_polygon_set_2() : Base()
