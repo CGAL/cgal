@@ -22,8 +22,8 @@
 //
 //******************************************************************************
 
-#ifndef AABB_TRIANGLE_PRIMITIVE_H_
-#define AABB_TRIANGLE_PRIMITIVE_H_
+#ifndef CGAL_AABB_TRIANGLE_PRIMITIVE_H_
+#define CGAL_AABB_TRIANGLE_PRIMITIVE_H_
 
 namespace CGAL {
 
@@ -67,5 +67,5 @@ namespace CGAL {
 }  // end namespace CGAL
 
 
-#endif // AABB_TRIANGLE_PRIMITIVE_H_
+#endif // CGAL_AABB_TRIANGLE_PRIMITIVE_H_
 

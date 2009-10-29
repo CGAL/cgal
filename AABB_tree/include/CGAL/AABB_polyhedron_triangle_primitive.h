@@ -22,8 +22,8 @@
 //
 //******************************************************************************
 
-#ifndef AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
-#define AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
+#ifndef CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
+#define CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
 
 namespace CGAL {
 
@@ -126,4 +126,4 @@ namespace CGAL {
 }  // end namespace CGAL
 
 
-#endif // AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
+#endif // CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
