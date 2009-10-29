@@ -390,11 +390,11 @@ setup_dirs()
     log "${ACTUAL_LOGFILE}" "Creating ${CGAL_DIR}/cmake/platforms"
   fi
 
-  CGAL_BINARY_DIR_BASE=${CGAL_DIR}/cmake/platforms
-
   CGAL_RELEASE_DIR=`readlink "${CGAL_DIR}"`
 
   CGAL_RELEASE_ID=`basename "${CGAL_RELEASE_DIR}"`
+
+  CGAL_BINARY_DIR_BASE=${CGAL_RELEASE_DIR}/cmake/platforms
 
   log "${ACTUAL_LOGFILE}" "Release to test ${CGAL_RELEASE_DIR}"
   log "${ACTUAL_LOGFILE}" "CGAL_RELEASE_ID=${CGAL_RELEASE_ID}"
