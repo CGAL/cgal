@@ -130,7 +130,7 @@ bool read_Bezier_polygon (const char* filename, Polygon_with_holes_2& P)
 }
 
 // The main program.
-int main (int argc, char **argv)
+int main (int argc, char *argv[])
 {
   // Get the name of the input files from the command line, or use the default
   // char_g.dat and char_m.dat files if no command-line parameters are given.
