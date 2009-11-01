@@ -17,6 +17,7 @@ There are currently the following problems with aspell which affect us:
   at switching to e.g. UTF8 accented letters instead.
 - code pieces in \begin{ExampleCode} also tend to barf.  Some of them should be
   moved to external .cpp example files (compiled by the test-suite).
+- don't forget to set LANG=en_US.
 
 Moreover, I made the choice to have the local word dictionnary containing words
 which might be incorrect but largely used or not clearly obviously wrong
