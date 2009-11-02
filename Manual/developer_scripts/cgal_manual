@@ -2024,7 +2024,7 @@ fi
 
 find $EXAMPLECODEDIRECTORIES -name "*.cpp" -or -name "*.h" | while read f ; do
   cmdlog "echo $f | sed 's/[\.][\.][\/]//' > $f.filename"
-  cmdlog "cat $f | perl -e 'while(<>) { if( \$_ !~ /(^\/\/)|(^\s\*\$)/ ) { print; last; } } while(<>) { print; }' > $f.noheader"
+  cmdlog "cat $f | expand | perl -e 'while(<>) { if( \$_ !~ /(^\/\/)|(^\s\*\$)/ ) { print; last; } } while(<>) { print; }' > $f.noheader"
 done
 
 GlobalReturnStatus=0
