@@ -49,11 +49,12 @@ the holes.
 \ccConstructor{template <class InputIterator>
 GeneralPolygonWithHoles_2(General_polygon_2 & outer,
                           InputIterator begin, InputIterator end);}
-{constructs a general polygon with holes using a given general polygon \ccc{outer}
-as the outer boundary and a given range of holes. If \ccc{outer} is an empty
-general polygon, then an unbounded polygon with holes will be created. The holes must be
-contained inside the outer boundary, and the polygons representing the holes 
-must be strictly simple and pairwise disjoint, except perhaps at the vertices.}
+{constructs a general polygon with holes using a given general polygon
+\ccc{outer} as the outer boundary and a given range of holes. If \ccc{outer}
+is an empty general polygon, then an unbounded polygon with holes will be
+created. The holes must be contained inside the outer boundary, and the
+polygons representing the holes must be simple and pairwise disjoint, except
+perhaps at the vertices.}
 
 \ccPredicates
 % ===========

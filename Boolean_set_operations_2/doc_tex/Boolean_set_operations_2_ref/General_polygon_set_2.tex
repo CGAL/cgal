@@ -18,14 +18,17 @@ represented as a doubly-connected edge-list ({\sc Dcel}).
 The \ccc{Traits} template-parameter should be instantiated with a
 model of the concept \ccc{GeneralPolygonSetTraits_2}. The traits class
 defines the types of points, $x$-monotone curves, general polygons,
-and general polygons with holes, that is \ccc{Traits::Point_2},
+and general polygons with holes, that is
+\ccHtmlNoLinksFrom{\ccc{Traits::Point_2},
 \ccc{Traits::X_monotone_curve_2}, \ccc{Traits::Polygon_2}, and 
-\ccc{Traits::Polygon_with_holes_2} respectively. \ccc{Traits::Point_2} must 
-be the type of the endpoints of \ccc{Traits::X_monotone_curve_2}, and 
-\ccc{Traits::X_monotone_curve_2} must be the type of the curves that comprise
-the boundaries of the general polygons. The traits class supports geometric 
-operations on the types above. We sometimes use the term {\em polygon} instead
-of general polygon for simplicity hereafter.
+\ccc{Traits::Polygon_with_holes_2}}, respectively.
+\ccHtmlNoLinksFrom{\ccc{Traits::Point_2}} must 
+be the type of the endpoints of
+\ccHtmlNoLinksFrom{\ccc{Traits::X_monotone_curve_2}}, and 
+\ccHtmlNoLinksFrom{\ccc{Traits::X_monotone_curve_2}} must be the type of
+the curves that comprise the boundaries of the general polygons. The traits
+class supports geometric operations on the types above. We sometimes use
+the term {\em polygon} instead of general polygon for simplicity hereafter.
 
 The template parameter \ccc{Dcel} should be instantiated with a
 model of the concept \ccc{GeneralPolygonSetDcel}. It is instantiated
@@ -38,14 +41,17 @@ and process it further.
 The input and output of the Boolean set-operations methods consist of one 
 or more general polygons, some of which may have holes. In particular, 
 these methods operate on pairs of objects of type \ccClassTemplateName, or
-directly on objects of type \ccc{Traits::Polygon_2} or 
-\ccc{Traits::Polygon_with_holes_2}. An object of type 
-\ccc{Traits::Polygon_2} is a valid operand, only if it is strictly simple 
-and its boundary is oriented counterclockwise. An object of type
-\ccc{Traits::Polygon_with_holes_2} is valid, only if 
- its outer boundary is simple and oriented counterclockwise, and each one of 
- its holes is a strictly simple polygon that oriented clockwise, contained inside its outer 
- boundary, and they are all together pairwise disjoint, except perhaps at the vertices.
+directly on objects of type \ccHtmlNoLinksFrom{\ccc{Traits::Polygon_2}} or 
+\ccHtmlNoLinksFrom{\ccc{Traits::Polygon_with_holes_2}}. An object of type 
+\ccHtmlNoLinksFrom{\ccc{Traits::Polygon_2}} is a valid operand, only if it
+is simple and its boundary is oriented counterclockwise. An object of type
+\ccHtmlNoLinksFrom{\ccc{Traits::Polygon_with_holes_2}} is valid, only if 
+its outer boundary bounds a relatively simple general polygon oriented
+counterclockwise, and each one of its holes is a simple polygon oriented
+clockwise. The holes are pairwise disjoint, except perhaps at the vertices,
+and are contained in the polygon bounded by the outer boundary. The outer
+boundary and the holes are also pairwise disjoint, except perhaps at the
+vertices.
 
 \ccTypes
 %=======
@@ -143,12 +149,12 @@ and its boundary is oriented counterclockwise. An object of type
 
 \ccMethod{void insert(Polygon_2 & pgn);}
   {inserts \ccc{pgn} into \ccVar.
-   \ccPrecond{\ccc{pgn} and the point set represented by \ccVar\ are disjoint.}
+   \ccPrecond{\ccc{pgn} and the point set represented by \ccVar{} are disjoint.}
    This precondition enables the use of very efficient insertion methods.
    Use the respective overloaded method that inserts a polygon of type 
-   \ccc{Polygon_with_holes_2}, if only a relaxed precondition can be
-   guaranteed. If even the relaxed precondition cannot be guaranteed, use
-   the \ccc{join} method.}
+   \ccHtmlNoLinksFrom{\ccc{Polygon_with_holes_2}}, if only a relaxed
+   precondition can be guaranteed. If even the relaxed precondition cannot
+   be guaranteed, use the \ccc{join} method.}
 
 \ccMethod{void insert(Polygon_with_holes_2 & pgn_with_holes);}
   {inserts \ccc{pgn_with_holes} into \ccVar.
@@ -162,11 +168,11 @@ void insert(InputIterator begin, InputIterator end);}
   {inserts the range of polygons (or polygons with holes) into \ccVar. (The
    value type of the input iterator is used to distinguish between the two.)
    \ccPrecond{If the given range contains objects of type 
-   \ccc{Polygon_with_holes_2}, then these polygons and the point set 
-   represented by \ccVar\ are pairwise disjoint, except maybe at the vertices. 
-   If the given range contains objects of type \ccc{Polygon_2}, then these 
-   polygons and the point set represented by \ccVar\ are pairwise disjoint 
-   without any exceptions.}}
+   \ccHtmlNoLinksFrom{\ccc{Polygon_with_holes_2}}, then these polygons and
+   the point set represented by \ccVar{} are pairwise disjoint, except maybe
+   at the vertices. If the given range contains objects of type
+   \ccHtmlNoLinksFrom{\ccc{Polygon_2}}, then these polygons and the point
+   set represented by \ccVar{} are pairwise disjoint without any exceptions.}}
 
 \ccMethod{template <class InputIterator1, class InputIterator2>
 void insert(InputIterator1 pgn_begin, InputIterator1 pgn_end,
