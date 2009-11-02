@@ -417,13 +417,11 @@ public:
       in = (*eit).second;
       fn->vertex(cw(in))->set_face(fn);
       next_f = reset_or_create_face(fn, in , newv, fit, face_end);
-      next_f->set_neighbor(1, previous_f);
-      previous_f->set_neighbor(0, next_f);
+      set_adjacency(next_f, 1, previous_f, 0);
       previous_f=next_f;
     }
-    
-    next_f->set_neighbor(0, first_f);
-    first_f->set_neighbor(1, next_f);
+
+    set_adjacency(next_f, 0, first_f, 1);
     newv->set_face(first_f);
     return;    
   }
@@ -693,15 +691,10 @@ flip(Face_handle f, int i)
   n->set_vertex(cw(ni), f->vertex(i));
     
   // update the neighborhood relations
-  f->set_neighbor(i, bl);
-  bl->set_neighbor(bli, f);
-    
-  f->set_neighbor(ccw(i), n);
-  n->set_neighbor(ccw(ni), f);
-    
-  n->set_neighbor(ni, tr);
-  tr->set_neighbor(tri, n);
-    
+  set_adjacency(f, i, bl, bli);
+  set_adjacency(f, ccw(i), n, ccw(ni));
+  set_adjacency(n, ni, tr, tri);
+
   if(v_cw->face() == f) {
     v_cw->set_face(n);
   }
@@ -752,8 +745,7 @@ insert_in_face(Face_handle f)
   Face_handle f1 = create_face(v0, v, v2, f, n1, Face_handle());
   Face_handle f2 = create_face(v0, v1, v, f, Face_handle(), n2);
 
-  f1->set_neighbor(2, f2);
-  f2->set_neighbor(1, f1);
+  set_adjacency(f1, 2, f2, 1);
   if (n1 != Face_handle()) {
     int i1 = mirror_index(f,1); //int i1 = n1->index(f);
     n1->set_neighbor(i1,f1);
@@ -834,8 +826,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
   case 0 :
     f1 = face_iterator_base_begin();
     f2 = create_face(v,Vertex_handle(),Vertex_handle());
-    f1->set_neighbor(0,f2);
-    f2->set_neighbor(0,f1);
+    set_adjacency(f1, 0, f2, 0);
     v->set_face(f2);
     break;
   case 1 :
@@ -855,8 +846,9 @@ insert_dim_up(Vertex_handle w,  bool orient)
       for ( ; lfit != faces_list.end() ; ++lfit) {
 	f = * lfit;
 	g = create_face(f); //calls copy constructor of face
-	f->set_vertex(dim,v); f->set_neighbor(dim,g);
-	g->set_vertex(dim,w); g->set_neighbor(dim,f);
+	f->set_vertex(dim,v);
+	g->set_vertex(dim,w);
+	set_adjacency(f, dim, g, dim);
 	if (f->has_vertex(w)) to_delete.push_back(g); // flat face to delete
       }
 
@@ -895,8 +887,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
 	else {j=1;}
 	f1= f->neighbor(dim); i1= mirror_index(f,dim); //f1->index(f);
 	f2= f->neighbor(j); i2= mirror_index(f,j); //f2->index(f);
-	f1->set_neighbor(i1,f2);
-	f2->set_neighbor(i2,f1);
+	set_adjacency(f1, i1, f2, i2);
 	delete_face(f);
       }
     
@@ -1101,8 +1092,7 @@ remove_1D(Vertex_handle v)
   CGAL_triangulation_assertion( f->index(v) == 1);
   Face_handle g= f->neighbor(0);
   f->set_vertex(1, g->vertex(1));
-  f->set_neighbor(0,g->neighbor(0));
-  g->neighbor(0)->set_neighbor(1,f);
+  set_adjacency(f, 0, g->neighbor(0), 1);
   g->vertex(1)->set_face(f);
   delete_face(g);
   delete_vertex(v);
@@ -1563,11 +1553,8 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
   // from this point and on we modify the values
 
   // first set the neighbors
-  tl->set_neighbor(itl, tr);
-  tr->set_neighbor(itr, tl);
-
-  bl->set_neighbor(ibl, br);
-  br->set_neighbor(ibr, bl);
+  set_adjacency(tl, itl, tr, itr);
+  set_adjacency(bl, ibl, br, ibr);
 
   // make sure that all the faces containing v2 as a vertex, now
   // contain v1
@@ -1650,11 +1637,8 @@ insert_degree_2(Face_handle f, int i)
   Face_handle f1 = create_face(v0, v, v1, f_undef, f, f_undef);
   Face_handle f2 = create_face(v0, v1, v, f_undef, f_undef, g);
 
-  f1->set_neighbor(0, f2);
-  f1->set_neighbor(2, f2);
-
-  f2->set_neighbor(0, f1);
-  f2->set_neighbor(1, f1);
+  set_adjacency(f1, 0, f2, 0);
+  set_adjacency(f1, 2, f2, 1);
 
   f->set_neighbor(i, f1);
   g->set_neighbor(j, f2);
@@ -1683,8 +1667,7 @@ remove_degree_2(Vertex_handle v)
   int id1 = mirror_index(f1,i);
   int id2 = mirror_index(f2,j);
 
-  ff1->set_neighbor(id1, ff2);
-  ff2->set_neighbor(id2, ff1);
+  set_adjacency(ff1, id1, ff2, id2);
 
   Vertex_handle v1 = f1->vertex( ccw(i) );
   //    if ( v1->face() == f1 || v1->face() == f2 ) {
