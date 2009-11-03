@@ -28,7 +28,8 @@ arguments and for composition, functors for projection and creation and
 adaptor classes around iterators and circulators. See also circulators in
 Chapter~\ref{chapterCirculators}.  A class storing polymorphic objects
 is also provided, as well as a class to manage the uncertainty of some values.
-Finally, a class which helps specifying that the default types in template
+Finally, tags and policy classes to specify complexity trade-offs of data-structures,
+and a class which helps specifying that the default types in template
 parameter lists are desired is also provided.
 
 \section{Doubly-Connected List Managing Items in Place}
@@ -135,6 +136,16 @@ but it is important that providers of predicates that are meant to be
 filtered by \ccc{Filtered_predicate}, know about it.
 
 It can also be used in other contexts as well, as it is a general tool.
+
+\section{Complexity tags and policies}
+
+Some data structures and algorithms can be implemented with different
+complexity trade-offs between memory usage and time complexity. \cgal\ provides
+the tags \ccc{Fast} and \ccc{Compact} which can be used to select between those
+variants.  For example, the \ccc{Location_policy} class is parameterized by
+these tags and allows to specify the complexity of point location (currently in
+\ccc{Delaunay_triangulation_3} only).  Convenient typedefs \ccc{Fast_location}
+and \ccc{Compact_location} are also provided.
 
 \section{Default Arguments in Template Parameter Lists}
 
