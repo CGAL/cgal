@@ -49,8 +49,8 @@ struct Tester
     // Data generation : get 4 nearly coplanar points
     //-------------------------------------------------------
     Point_creator creator;
-    FT little(1e-35);
-    FT tiny(1e-65);
+    FT little(1e-10);
+    FT tiny(1e-25);
     
     Point p1 = creator(little,1,tiny);
     Point p2 = creator(1,little,0);

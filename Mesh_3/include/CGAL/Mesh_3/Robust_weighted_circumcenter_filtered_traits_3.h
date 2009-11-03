@@ -63,8 +63,9 @@ public:
     
     typename Rt::Construct_weighted_circumcenter_3 weighted_circumcenter =
       Rt().construct_weighted_circumcenter_3_object();
-    typename Rt::Has_on_bounded_side_3 on_bounded_side =
-      Rt().has_on_bounded_side_3_object();
+    
+    typename Rt::Side_of_bounded_sphere_3 side_of_bounded_sphere =
+      Rt().side_of_bounded_sphere_3_object();
     
     // Compute denominator to swith to exact if it is 0
     const FT denom = compute_denom(p,q,r,s);
@@ -73,7 +74,7 @@ public:
       result_type point = weighted_circumcenter(p,q,r,s);
       
       // Fast output
-      if ( on_bounded_side(Sphere_3(p,q,r,s),point) )
+      if ( side_of_bounded_sphere(p,q,r,s,point) == CGAL::ON_BOUNDED_SIDE )
         return point;
     }
     
@@ -97,8 +98,9 @@ public:
     
     typename Rt::Construct_weighted_circumcenter_3 weighted_circumcenter =
       Rt().construct_weighted_circumcenter_3_object();
-    typename Rt::Has_on_bounded_side_3 on_bounded_side =
-      Rt().has_on_bounded_side_3_object();
+    
+    typename Rt::Side_of_bounded_sphere_3 side_of_bounded_sphere =
+      Rt().side_of_bounded_sphere_3_object();
     
     // Compute denominator to swith to exact if it is 0
     const FT denom = compute_denom(p,q,r);
@@ -107,7 +109,7 @@ public:
       result_type point = weighted_circumcenter(p,q,r);
       
       // Fast output
-      if ( on_bounded_side(Sphere_3(p,q,r),point) )
+      if ( side_of_bounded_sphere(p,q,r,point) == CGAL::ON_BOUNDED_SIDE )
         return point;
     }
     
@@ -127,14 +129,15 @@ public:
   {
     typename Rt::Construct_weighted_circumcenter_3 weighted_circumcenter =
       Rt().construct_weighted_circumcenter_3_object();
-    typename Rt::Has_on_bounded_side_3 on_bounded_side =
-      Rt().has_on_bounded_side_3_object();
+    
+    typename Rt::Side_of_bounded_sphere_3 side_of_bounded_sphere =
+      Rt().side_of_bounded_sphere_3_object();
     
     // No division here
     result_type point = weighted_circumcenter(p,q);
     
     // Fast output
-    if ( on_bounded_side(Sphere_3(p,q),point) )
+    if ( side_of_bounded_sphere(p,q,point) == CGAL::ON_BOUNDED_SIDE )
       return point;
     
     // Switch to exact
