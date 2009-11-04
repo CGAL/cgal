@@ -11,9 +11,13 @@ CGAL 3.6 offers the following improvements and new functionality :
     Regular_triangulation_euclidean_traits_3 must be used instead. The predicates of
     that traits will be filtered if the kernel given as template parameter of that traits
     is itself a filtered kernel.
+  - Triangulation_hierarchy_3 is now deprecated, and replaced by a simpler
+    CGAL::Fast_location policy template parameter of Delaunay_triangulation_3.
+
 * 3D Alpha shapes:
   - The class Weighted_alpha_shape_euclidean_traits_3 is deprecated, the class
     Regular_triangulation_euclidean_traits_3 must be used instead.
+
 ----------------------------- Release 3.5 ----------------------------------
 CGAL releases will now be published about every six months. As a transition
 release, CGAL-3.5 has been developed during 9 months from the release
