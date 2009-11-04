@@ -1,13 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_hierarchy_3.h>
-
 #include <CGAL/natural_neighbor_coordinates_3.h>
-
 #include <fstream>
 
 typedef double NT; //Number Type
@@ -18,15 +11,7 @@ typedef K::Point_3 Point3;
 typedef K::Vector_3 Vector3;
 typedef K::Sphere_3 Sphere_3;
 
-typedef CGAL::Triangulation_vertex_base_3<K> Vb3d;
-typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vb3d>  Vbh;
-
-typedef CGAL::Triangulation_cell_base_3<K> Cb3d;
-
-typedef CGAL::Triangulation_data_structure_3<Vbh,Cb3d> Tds3d;
-
-typedef CGAL::Delaunay_triangulation_3<K, Tds3d> Delaunay3d;
-typedef CGAL::Triangulation_hierarchy_3<Delaunay3d> Dh;
+typedef CGAL::Delaunay_triangulation_3<K, CGAL::Fast_location> Dh;
 
 typedef Dh::Facet Facet;
 typedef Dh::Vertex_handle Vertex_handle;

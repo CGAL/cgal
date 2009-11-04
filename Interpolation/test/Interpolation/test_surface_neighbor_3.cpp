@@ -21,7 +21,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_hierarchy_3.h>
 #include <CGAL/aff_transformation_tags.h>
 
 #include <CGAL/_test_surface_neighbors_3.cpp>
@@ -33,12 +32,8 @@ typedef CGAL::Delaunay_triangulation_3<K>                   Dt;
 typedef CGAL::Exact_predicates_exact_constructions_kernel K2;
 typedef CGAL::Delaunay_triangulation_3<K2>                   Dt2;
 
-//Hierarchy with exact pred exact const. kernel:
-typedef CGAL::Triangulation_vertex_base_3<K2>             Vb;
-typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vb>  Vbh;
-typedef CGAL::Triangulation_data_structure_3<Vbh>        Tds;
-typedef CGAL::Delaunay_triangulation_3<K2,Tds>            Dt1;
-typedef CGAL::Triangulation_hierarchy_3<Dt1>              Dh;
+// Fast_location with exact pred exact const. kernel:
+typedef CGAL::Delaunay_triangulation_3<K2, CGAL::Fast_location>  Dh;
 
 
 // Aff_transformation:
