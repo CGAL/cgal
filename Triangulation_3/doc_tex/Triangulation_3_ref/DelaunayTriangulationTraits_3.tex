@@ -56,7 +56,9 @@ which determines on which side of the oriented sphere circumscribing
 {A predicate object that must provide the function operator\\
 \ccc{Comparison_result operator()(Point p, Point q, Point r)},\\
 which compares the distance between \ccc{p} and \ccc{q} to the distance
-between \ccc{p} and \ccc{r}.}
+between \ccc{p} and \ccc{r}.\\
+It is only needed when using the \ccc{Fast_location} policy or the
+\ccc{nearest_vertex} function.}
 
 In addition, only when the dual operations are used, the traits class
 must provide the following constructor objects: 
@@ -113,7 +115,8 @@ The following functions give access to the predicate and construction objects:
 \ccGlue
 \ccMethod{Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object();}{}
 
-When using the triangulation hierarchy, the traits must provide:
+When using the \ccc{Fast_location} policy or the \ccc{nearest_vertex} function,
+the traits must provide:
 
 \ccMethod{Compare_distance_3 compare_distance_3_object();}{}
 

@@ -3654,6 +3654,12 @@ Triangulation_3/doc_tex/Triangulation_3/design.fig -text svneol=unset#applicatio
 Triangulation_3/doc_tex/Triangulation_3/design.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/Triangulation_3/design.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc_tex/Triangulation_3/fig/Delaunay_3.jpg -text
+Triangulation_3/doc_tex/Triangulation_3/fig/HD.gif -text svneol=unset#image/gif
+Triangulation_3/doc_tex/Triangulation_3/fig/HD.pdf -text svneol=unset#application/pdf
+Triangulation_3/doc_tex/Triangulation_3/fig/api1_01.gif -text svneol=unset#image/gif
+Triangulation_3/doc_tex/Triangulation_3/fig/api1_01.pdf -text svneol=unset#application/pdf
+Triangulation_3/doc_tex/Triangulation_3/fig/b35-1.gif -text svneol=unset#image/gif
+Triangulation_3/doc_tex/Triangulation_3/fig/b35-1.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc_tex/Triangulation_3/fig/twotets.png -text
 Triangulation_3/doc_tex/Triangulation_3/insert_outside_affine_hull.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/Triangulation_3/insert_outside_affine_hull.pdf -text svneol=unset#application/pdf

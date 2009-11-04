@@ -30,12 +30,19 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/internal/Delaunay_remove_tds_3.h>
 #include <CGAL/iterator.h>
-#include <CGAL/Default.h>
+#include <CGAL/Location_policy.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Gt, class Tds_ = Default >
-class Delaunay_triangulation_3 : public Triangulation_3<Gt,Tds_>
+template < class Gt,
+           class Tds_ = Default,
+           class Location_policy = Default >
+class Delaunay_triangulation_3;
+
+
+template < class Gt, class Tds_ >
+class Delaunay_triangulation_3<Gt, Tds_>
+  : public Triangulation_3<Gt, Tds_>
 {
   typedef Delaunay_triangulation_3<Gt, Tds_> Self;
   typedef Triangulation_3<Gt,Tds_>           Tr_Base;
@@ -45,6 +52,7 @@ public:
   typedef typename Tr_Base::Triangulation_data_structure
                                      Triangulation_data_structure;
   typedef Gt                         Geom_traits;
+  typedef Compact_location           Location_policy;
 
   typedef typename Gt::Point_3       Point;
   typedef typename Gt::Segment_3     Segment;
@@ -1384,5 +1392,7 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
 }
 
 CGAL_END_NAMESPACE
+
+#include <CGAL/internal/Delaunay_triangulation_hierarchy_3.h>
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_3_H

@@ -24,8 +24,17 @@
 #include <CGAL/Random.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
+#include <CGAL/Location_policy.h>
 
 CGAL_BEGIN_NAMESPACE
+
+// This class is deprecated, but must be kept for backward compatibility.
+//
+// It would be better to move its content to the Delaunay_triangulation_3
+// specializations for Fast_location and make Triangulation_hierarchy_3 the
+// empty nutshell instead.
+//
+// Then, later, maybe merge the Compact/Fast codes in a cleaner factorized way.
 
 template < class Tr >
 class Triangulation_hierarchy_3
@@ -39,6 +48,7 @@ class Triangulation_hierarchy_3
 
 public:
   typedef Tr                                   Tr_Base;
+  typedef Fast_location                        Location_policy;
   typedef typename Tr_Base::Geom_traits        Geom_traits;
   typedef typename Tr_Base::Point              Point;
   typedef typename Tr_Base::size_type          size_type;

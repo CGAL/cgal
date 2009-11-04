@@ -13,8 +13,15 @@
 
 \begin{ccRefClass}{Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}
 
+\begin{ccDeprecated}
+
+{\em Note} : this class is deprecated since \cgal\ 3.6.  Its functionality is now
+transparently added when using the \ccc{Fast_location} tag as the
+\ccc{LocationPolicy} template parameter in \ccc{Delaunay_triangulation_3},
+instead of \ccc{Triangulation_hierarchy_3}.
+
 \ccDefinition
-  
+
 This class is designed to be used as the vertex base class for
 \ccc{Triangulation_hierarchy_3}.
 
@@ -41,5 +48,7 @@ It is parameterized by a model of the concept \ccc{TriangulationVertexBase_3}.
 \ccc{CGAL::Triangulation_hierarchy_3}\\
 \ccc{CGAL::Triangulation_vertex_base_3}\\
 \ccc{CGAL::Triangulation_vertex_base_with_info_3}
+
+\end{ccDeprecated}
 
 \end{ccRefClass}

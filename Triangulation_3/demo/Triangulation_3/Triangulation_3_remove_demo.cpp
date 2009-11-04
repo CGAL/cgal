@@ -31,9 +31,7 @@ int main()
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_hierarchy_3.h>
 
 #include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
@@ -43,12 +41,7 @@ int main()
 #include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-
-typedef CGAL::Triangulation_vertex_base_3<K>             Vb;
-typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vb>  Vbh;
-typedef CGAL::Triangulation_data_structure_3<Vbh>        Tds;
-typedef CGAL::Delaunay_triangulation_3<K,Tds>            Dt;
-typedef CGAL::Triangulation_hierarchy_3<Dt>              Dh;
+typedef CGAL::Delaunay_triangulation_3<K, CGAL::Fast_location>  Dt;
 
 typedef Dh::Vertex_iterator Vertex_iterator;
 typedef Dh::Vertex_handle   Vertex_handle;

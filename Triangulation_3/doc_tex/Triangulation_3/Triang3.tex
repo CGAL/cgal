@@ -148,8 +148,7 @@ computes a unique triangulation even in these cases.
 
 This implementation is fully dynamic: it supports both insertions of points
 and vertex removal.
-The user is advised to use the class \ccc{Triangulation_hierarchy_3} in
-order to benefit from an increased efficiency for large data sets. 
+
 
 \section{Regular Triangulation\label{Triangulation3-sec-class-Regulartriangulation}}
 
@@ -213,28 +212,14 @@ When all weights are 0, power spheres are nothing more than
 circumscribing spheres, and the regular triangulation is exactly the
 Delaunay triangulation.
 
-\section{Triangulation Hierarchy} 
-
-The class \ccc{Triangulation_hierarchy_3} implements a
-triangulation augmented with a data structure that allows fast point
-location queries. Thus, it allows fast construction of the
-triangulation. As proved in~\cite{cgal:d-dh-02}, this structure has an
-optimal behavior when it is built for Delaunay triangulations.
-
-Note that, since the algorithms that are provided are randomized, the
-running time of constructing a triangulation with a hierarchy may be
-improved when shuffling the data points.
-
 \section{Software Design\label{Triangulation3-sec-design}}
 
 The main classes \ccc{Triangulation_3}, \ccc{Delaunay_triangulation_3} and
 \ccc{Regular_triangulation_3} are connected to each other by the
 derivation diagram shown in Figure~\ref{t3_derivation}.  This diagram
-also shows two other classes: \ccc{Triangulation_utils_3}\lcTex{
+also shows another class: \ccc{Triangulation_utils_3}\lcTex{
 (\ccRefPage{CGAL::Triangulation_utils_3})}, which provides
-a set of tools operating on the indices of vertices in cells,
-and \ccc{Triangulation_hierarchy_3}, which implements a hierarchy of
-triangulations suitable for speeding up point location.
+a set of tools operating on the indices of vertices in cells.
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -259,7 +244,7 @@ and possibly removal of a point~\cite{cgal:dt-pvr3d-03}, and are responsible for
 geometric validity.  They are built as layers on top of a triangulation data
 structure, which stores their combinatorial structure.  This separation between
 the geometry and the combinatorics is reflected in the software design by the
-fact that these three triangulation classes take two template parameters :
+fact that these three triangulation classes take the following template parameters :
 
 \begin{itemize}
 \item {} the \textbf{geometric traits} class, which provides the type of points
@@ -270,11 +255,10 @@ details in Section~\ref{Triangulation3-sec-Traits}\lcTex{ and in
 \item {} the \textbf{triangulation data structure} class, which stores their
 combinatorial structure, described in Section~\ref{TDS3-sec-design} of
 Chapter~\ref{chapter-TDS3}.
+\item {} the \textbf{location policy} tag, which is supported only by the Delaunay
+triangulation class, described in Section~\ref{Triangulation3-sec-locpol}.
 \end{itemize}
 
-The class \ccc{Triangulation_hierarchy_3} is parameterized by a class, which at
-the moment can only be \ccc{Delaunay_triangulation_3}.  It fetches its
-geometric traits from this parameter directly.
 
 \subsection{The Geometric Traits Parameter\label{Triangulation3-sec-Traits}}
 
@@ -305,7 +289,7 @@ In addition, the predefined kernels
 (\ccRefPage{Exact_predicates_inexact_constructions_kernel})} and
 \ccc{Exact_predicates_exact_constructions_kernel}\lcTex{
 (\ccRefPage{Exact_predicates_exact_constructions_kernel})}
-can also be used, the later being recommended when the dual construction is
+can also be used, the latter being recommended when the dual construction is
 used.
 
 In order to be used as the traits class for \ccc{Regular_triangulation_3},
@@ -324,7 +308,7 @@ It can be used as a traits class for
 \ccc{Regular_triangulation_3<RegularTriangulationTraits_3,
 TriangulationDataStructure_3>}.
 
-\textbf{Note that for regular triangulations, plugging a filtered kernel such
+Note that for regular triangulations, plugging a filtered kernel such
 as \ccc{Exact_predicates_inexact_constructions_kernel} or
 \ccc{Exact_predicates_exact_constructions_kernel} in
 \ccc{Regular_triangulation_euclidean_traits_3<K,Weight>} will 
@@ -370,6 +354,40 @@ A default value for the triangulation data structure parameter is provided in
 all the triangulation classes, so it need not be specified by the user unless
 he wants to use a different triangulation data structure or a different vertex
 or cell base class.
+
+\subsection{The Location Policy Parameter\label{Triangulation3-sec-locpol}}
+
+The Delaunay triangulation class supports an optional feature which maintains
+an additional data structure for fast point location queries.  This can be
+beneficial when the user needs to do many unrelated queries with no close
+starting hint for location in large data sets.
+
+The point location strategy can be selected with the third template argument of
+\ccc{Delaunay_triangulation_3}, \ccc{LocationPolicy}, which enables a fast
+point location data structure when set to \ccc{Fast_location}.  By default, it
+uses \ccc{Compact_location}, which has the advantage of using less memory.
+
+Note that you can specify the \ccc{LocationPolicy} parameter without specifying
+the triangulation data structure, in case you are fine with the default there.
+In this case, the \ccc{LocationPolicy} appears as a second parameter after the
+geometric traits.\footnote{The mechanism used behind the scenes to allow this
+syntactical convenience is called \textit{deduced parameters}.} 
+
+The \ccc{Fast_location} policy is implemented using a hierarchy of
+triangulations.  As proved in~\cite{cgal:d-dh-02}, this structure has an
+optimal behavior when it is built for Delaunay triangulations.
+
+In this setting, if you build a triangulation by iteratively inserting points,
+you should try to shuffle the points beforehand, as the time complexity is
+guaranteed only for a randomized order.  For example, inserting points in
+lexicographic order is typically much slower.  Note that this shuffling is
+performed internally by the constructor taking a range of points.
+
+Reading Section~\ref{Triangulation3-sec-complexity} on complexity and
+performance can help making an informed choice for this parameter.
+
+Prior to \cgal\ 3.6, this functionality was available through the
+\ccc{Triangulation_hierarchy_3} class, which is now deprecated.
 
 \subsection{Flexibility of the Design}
 
@@ -444,6 +462,7 @@ public:
 The situation is exactly similar for cell base classes.
 Section~\ref{TDS3-sec-design} provides more detailed information.
 
+
 \section{Examples\label{Triangulation3-sec-examples}}
 \subsection{Basic Example}
 This example shows the incremental construction of a 3D triangulation, the
@@ -482,9 +501,9 @@ simplices can be stored in a set.
 \ccIncludeExampleCode{Triangulation_3/simplex.cpp}
 
 
-\subsection{Use of the Delaunay Hierarchy}
+\subsection{Fast Point Location for Delaunay Triangulations\label{Triangulation3-ex-fast-location}}
 
-\ccIncludeExampleCode{Triangulation_3/hierarchy_3.cpp}
+\ccIncludeExampleCode{Triangulation_3/fast_location_3.cpp}
 
 \subsection{Finding the Cells in Conflict with a Point in a Delaunay
 Triangulation}
@@ -499,6 +518,225 @@ Another difference is that a specific traits class has to be used
 (at least at the moment).
 
 \ccIncludeExampleCode{Triangulation_3/regular_3.cpp}
+
+\section{Complexity and Performance\label{Triangulation3-sec-complexity}}
+
+In 3D, the worst case complexity of a triangulation is quadratic in the number
+of points.  For Delaunay triangulations, this bound is reached in cases such as
+points equally distributed on two non-coplanar lines.  However, the good news
+is that, in many cases, the complexity of a Delaunay triangulation is linear or
+close to linear in the number of points.  Several
+articles~\cite{d-hdvdl-89,e-dpssdt-02,geometrica-5986i,prisme-4453a,prisme-abl-03}
+have proved such good complexity bounds for specific point distributions, such
+as points distributed on surfaces under some conditions.
+
+\subsection{Running Time}
+
+There are several algorithms provided in this package.  We will focus here on
+the following ones and give practical numbers on their efficiency~:
+\begin{itemize}
+\item construction of a triangulation from a range of points, 
+\item location of a point (using the \ccc{locate} function),
+\item removal of a vertex (using the \ccc{remove} function).
+\end{itemize}
+
+We will use the following types of triangulations, using
+\ccc{Exact_predicates_inexact_constructions_kernel} as geometric traits
+(combined with \ccc{Regular_triangulation_euclidean_traits_3} in the weighted
+case)~:
+\begin{itemize}
+\item \textbf{Delaunay} : \ccc{Delaunay_triangulation_3}
+\item \textbf{Delaunay - Fast location} : \ccc{Delaunay_triangulation_3} with \ccc{Fast_location}
+\item \textbf{Regular} : \ccc{Regular_triangulation_3} (default setting : memorize hidden points)
+\item \textbf{Regular - No hidden points} : \ccc{Regular_triangulation_3} with hidden points discarded (using
+      \ccc{Triangulation_cell_base_3} instead of \ccc{Regular_triangulation_cell_base_3}).
+\end{itemize}
+
+Figure~\ref{Triangulation3-fig-benchmarks} shows, for all these types of
+triangulations, the times in seconds taken to build a triangulation from a
+given number of points, then the average time to perform one point location in
+triangulations of various sizes, and the average time to perform one vertex
+removal (which is largely independent on the size of the triangulation).
+
+The data sets used here are points randomly distributed in the unit cube (the
+coordinates are generated using the \texttt{drand48} C function).  In the
+weighted case, the weights are all zero, which means that there are actually no
+hidden points during execution.
+
+The measurements have been performed using \cgal\ 3.6, using the \gnu\ \CC\ compiler
+version 4.3.2, under Linux (Fedora 10 distribution), with the compilation options
+\texttt{-O3 -DCGAL\_NDEBUG}.  The computer used was equipped with a 64bit Intel
+Xeon 3GHz processor and 32MB of RAM (a recent desktop machine as of 2009).
+% Note : it's "tigre" that I used.
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tabular}{|l||r|r|r|r|}
+\hline
+& \textbf{Delaunay} & \textbf{Delaunay}      & \textbf{Regular} & \textbf{Regular} \\
+&                   & \textbf{Fast location} &                  & \textbf{No hidden points} \\
+\hline\hline
+Construction from $10^2$ points & 0.00054 & 0.000576 & 0.000948 & 0.000955 \\
+Construction from $10^3$ points & 0.00724 & 0.00748  & 0.0114   & 0.0111\\
+Construction from $10^4$ points & 0.0785  & 0.0838   & 0.122    & 0.117 \\
+Construction from $10^5$ points & 0.827   & 0.878    & 1.25     & 1.19 \\
+Construction from $10^6$ points & 8.5     & 9.07     & 12.6     & 12.2 \\
+Construction from $10^7$ points & 87.4    & 92.5     & 129      & 125 \\
+\hline
+Point location in $10^2$ points & 9.93e-07 & 1.06e-06 & 7.19e-06 & 6.99e-06 \\
+Point location in $10^3$ points & 2.25e-06 & 1.93e-06 & 1.73e-05 & 1.76e-05 \\
+Point location in $10^4$ points & 4.79e-06 & 3.09e-06 & 3.96e-05 & 3.76e-05 \\
+Point location in $10^5$ points & 2.98e-05 & 6.12e-06 & 1.06e-04 & 1.06e-04 \\
+Point location in $10^6$ points & 1e-04    & 9.65e-06 & 2.7e-04  & 2.67e-04 \\
+Point location in $10^7$ points & 2.59e-04 & 1.33e-05 & 6.25e-04 & 6.25e-04 \\
+\hline
+Vertex removal                  & 1e-04    & 1.03e-04 & 1.42e-04 & 1.38e-04 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Running times in seconds for algorithms on 3D triangulations.
+\label{Triangulation3-fig-benchmarks}}
+\end{figure}
+
+More benchmarks comparing \cgal\ to other software can be found
+in~\cite{msri52:liu-snoeyink-05}.
+
+
+\subsection{Memory Usage}
+
+We give here some indication about the memory usage of the triangulations.
+Those structures being intensively based on pointers, the size almost doubles
+on 64bit platforms compared to 32bit.
+
+The size also depends on the size of the point type which is copied in the
+vertices (hence on the kernel).  Obviously, any user data added to vertices
+and cells also affect the memory used.
+
+More specifically, the memory space used to store a triangulation is first
+a function of the size of its \ccc{Vertex} and \ccc{Cell} types times their
+numbers (and for volumic distribution, one sees about 6.7 times more cells than
+vertices).  However, these are stored in memory using \ccc{Compact_container},
+which allocates them in lists of blocks of growing size, and this requires some
+additional overhead for bookkeeping.  Moreover, memory is only released to the
+system when clearing or destroying the triangulation.  This can be important
+for algorithms like simplifications of data sets which will produce fragmented
+memory usage (doing fresh copies of the data structures are one way out in such
+cases).  The asymptotic memory overhead of \ccc{Compact_container} for its
+internal bookkeeping is otherwise on the order of $O(\sqrt{n})$.
+
+Figure~\ref{Triangulation3-fig-memory} shows the number of bytes used per
+points, as measured empirically using \ccc{Memory_sizer} for large triangulations
+($10^6$ random points).
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tabular}{|l||r|r|r|r|}
+\hline
+& \textbf{Delaunay} & \textbf{Delaunay}      & \textbf{Regular} & \textbf{Regular} \\
+&                   & \textbf{Fast location} &                  & \textbf{No hidden points} \\
+\hline\hline
+32bit & 274 & 291 & 336 & 282 \\
+\hline
+64bit & 519 & 553 & 635 & 527 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Memory usage in bytes per point for large data sets.
+\label{Triangulation3-fig-memory}}
+\end{figure}
+
+
+\subsection{Variability Depending on the Data Sets and the Kernel}
+
+Besides the complexity of the Delaunay triangulation that varies with the
+distribution of the points, another critical aspect affects the efficiency~:
+the degeneracy of the data sets.  These algorithms are quite sensitive to
+numerical accuracy and it is important to run them using exact predicates.
+
+Using a kernel with no exact predicates will quickly lead to crashes or
+infinite loops once they are executed on non-random data sets.  More precisely,
+problems appear with data sets which contain (nearly) degenerate cases for the
+\ccc{orientation} and \ccc{side_of_oriented_sphere} predicates, namely when
+there are (nearly) coplanar or (nearly) cospherical points.  This unfortunately
+happens often in practice with data coming from various kinds of scanners or
+other automatic acquisition devices.
+
+Using an inexact kernel such as \ccc{Simple_cartesian<double>} would lead
+to optimal performance, which is only about 30\% better than
+\ccc{Exact_predicates_inexact_constructions_kernel}.  The latter is strongly
+recommended since it takes care about potential robustness issues.  The former
+can be used for benchmarking purposes mostly, or when you really know that your
+data sets won't exhibit any robustness issue.
+
+Exact predicates take more time to compute when they hit (nearly) degenerate
+cases.  Depending on the data set, this can have a visible impact on the
+overall performance of the algorithm or not.
+
+Sometimes you need exact constructions as well, so
+\ccc{Exact_predicates_exact_constructions_kernel} is a must.  This is the case
+for example when you need the \ccc{dual} functions to be exact, or when your
+input is stored in points of such a kernel for other reasons (because it is the
+output of another algorithm which has this requirement, for example).  This
+will slow down the computations by a factor of 4 to 5 at least, and it can be
+much more.
+
+Figure~\ref{Triangulation3-fig-kernels-and-data-sets} gives more detailed
+timings about various kernels one the following data sets~: random points in a
+cube, random points on the surface of an ellipsoid, points scanned on the
+surface of a Buddha statue, points on a molecular surface, and points scanned
+on a dryer handle.  See Figure~\ref{Triangulation3-fig-data-sets} for pictures of
+the last 3 objects, which respectively illustrate volumic data, surfacic data,
+and data with many degenerate cases.  This last data set exhibits an infinite
+loop with an inexact kernel, and of course we are not sure whether what is
+computed for the other data sets with this inexact kernel is a Delaunay
+triangulation.  General introductory information about these robustness issues
+can be found in~\cite{cgta-kmpsy-08}.  More benchmarks around this issue can
+also be found in~\cite{cgal:dp-eegpd-03}.
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tabular}{|l||r|r|r|r|r|}
+\hline
+         & \textbf{Random} & \textbf{Ellipsoid} & \textbf{Buddha} & \textbf{Molecule} & \textbf{Dryer} \\
+         &                 &                    &                 &                   & \textbf{Handle} \\
+\#points & \textbf{100000} & \textbf{100000}    & \textbf{542548} & \textbf{525296}   & \textbf{49787} \\
+\hline\hline
+\ccc{Simple_cartesian<double>} & 0.69 & 0.627 & 4.21 & 3.8 & $\infty$-loop \\
+\hline
+\ccc{Exact_predicates_inexact_constructions_kernel} & 0.824 & 0.749 & 4.99 & 4.64 & 1.68 \\
+\hline
+\ccc{Exact_predicates_exact_constructions_kernel} & 4.59 & 3.85 & 30.1 & 26.4 & 4.57 \\
+\hline
+\ccc{Simple_cartesian<Gmpq>}   & 492 & 534 & 1120 & 1030 & 75.2 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Running times (seconds) for various kernels and data sets.
+\label{Triangulation3-fig-kernels-and-data-sets}}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\begin{center} 
+\begin{ccTexOnly}
+\includegraphics[width=5cm]{Triangulation_3/fig/api1_01} 
+\includegraphics[width=5cm]{Triangulation_3/fig/b35-1} 
+\includegraphics[width=5cm]{Triangulation_3/fig/HD} 
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<table>
+<tr>
+<td width="30%"><img border=0 width="100%" src="./fig/api1_01.gif" alt="Buddha statue">
+<td width="30%"><img border=0 width="100%" src="./fig/b35-1.gif" alt="Molecule">
+<td width="30%"><img border=0 width="100%" src="./fig/HD.gif" alt="Dryer Handle">
+</table>
+\end{ccHtmlOnly}
+\end{center}
+\caption{Data sets used in the benchmark of Figure~\ref{Triangulation3-fig-kernels-and-data-sets}.
+\label{Triangulation3-fig-data-sets}}
+\end{figure} 
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Design and Implementation History}
@@ -550,6 +788,9 @@ constructors use \ccc{spatial_sort} to improve efficiency.
 
 In 2008, Camille Wormser added a few more iterators in
 the package that were integrated in release~3.4.
+
+In 2009, Sylvain Pion simplified the design of the Delaunay hierarchy
+so that it became the simple \ccc{Fast_location} policy in release~3.6.
 
 The authors also wish to thank Jean-Daniel Boissonnat for helpful
 discussions \cite{bdty-tcgal-00}.

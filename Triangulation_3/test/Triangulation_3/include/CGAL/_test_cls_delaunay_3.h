@@ -36,6 +36,16 @@
 // Delaunay::nearest_vertex[_in_cell] and
 //  Regular::nearest_power_vertex[_in_cell].
 
+template < typename T, typename Weighted_tag = typename T::Weighted_tag >
+struct Test_location_policy {
+	typedef typename T::Location_policy Location_policy;
+};
+
+template < typename T >
+struct Test_location_policy <T, CGAL::Tag_true> {
+	struct Location_policy{};
+};
+
 template < typename T, typename P >
 typename T::Vertex_handle
 nearest_vertex(const T&t, const P&p, CGAL::Tag_true)
@@ -149,6 +159,8 @@ void
 _test_cls_delaunay_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
+
+  typedef typename Test_location_policy<Cls>::Location_policy Location_policy;
 
   // We assume the traits class has been tested already
   // actually, any traits is good if it has been tested
