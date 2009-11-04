@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_hierarchy_3.h>
 #include <CGAL/Alpha_shape_3.h>
 
 #include <fstream>
@@ -10,12 +9,10 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Alpha_shape_vertex_base_3<K>               Vb;
-typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vb>  Vbh;
 typedef CGAL::Alpha_shape_cell_base_3<K>                 Fb;
-typedef CGAL::Triangulation_data_structure_3<Vbh,Fb>     Tds;
-typedef CGAL::Delaunay_triangulation_3<K,Tds>            Delaunay;
-typedef CGAL::Triangulation_hierarchy_3<Delaunay>        Delaunay_hierarchy;
-typedef CGAL::Alpha_shape_3<Delaunay_hierarchy>          Alpha_shape_3;
+typedef CGAL::Triangulation_data_structure_3<Vb,Fb>      Tds;
+typedef CGAL::Delaunay_triangulation_3<K,Tds,CGAL::Fast_location>  Delaunay;
+typedef CGAL::Alpha_shape_3<Delaunay>                    Alpha_shape_3;
 
 typedef K::Point_3                                  Point;
 typedef Alpha_shape_3::Alpha_iterator               Alpha_iterator;
@@ -23,7 +20,7 @@ typedef Alpha_shape_3::NT                           NT;
 
 int main()
 {
-  Delaunay_hierarchy dt;
+  Delaunay dt;
   std::ifstream is("./data/bunny_1000");
   int n;
   is >> n;
