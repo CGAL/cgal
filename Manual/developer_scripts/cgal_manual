@@ -1664,7 +1664,7 @@ gives the corresponding logfiles. The first column contains a
 <b>summary logfile</b> for a quick overview. </p>
 
 <p><b>The tools are currently under development, please report all
-problems to Andreas Meyer.</b></p>
+problems to cgal-develop.</b></p>
 
 <ul>
    <li> Due to the separate testing of each package, some references in the
