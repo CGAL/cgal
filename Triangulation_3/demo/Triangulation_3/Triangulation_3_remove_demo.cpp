@@ -43,10 +43,10 @@ int main()
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_3<K, CGAL::Fast_location>  Dt;
 
-typedef Dh::Vertex_iterator Vertex_iterator;
-typedef Dh::Vertex_handle   Vertex_handle;
-typedef Dh::Cell_handle     Cell_handle;
-typedef Dh::Point           Point;
+typedef Dt::Vertex_iterator Vertex_iterator;
+typedef Dt::Vertex_handle   Vertex_handle;
+typedef Dt::Cell_handle     Cell_handle;
+typedef Dt::Point           Point;
 
 //////////////////////
 // VISU GEOMVIEW
@@ -105,7 +105,7 @@ int main()
   gv.set_wired(true);
   gv.clear();
 
-  Dh T;
+  Dt T;
 
   std::cout <<"          Inserting points" << std::endl ;
   int x,y,z;
