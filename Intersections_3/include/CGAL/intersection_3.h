@@ -26,6 +26,7 @@
 #define CGAL_INTERSECTION_3_H
 
 #include <CGAL/intersection_3_1.h>
+
 #include <CGAL/Triangle_3_Line_3_do_intersect.h>
 #include <CGAL/Triangle_3_Plane_3_do_intersect.h>
 #include <CGAL/Triangle_3_Point_3_do_intersect.h> 
@@ -33,6 +34,17 @@
 #include <CGAL/Triangle_3_Segment_3_do_intersect.h> 
 #include <CGAL/Triangle_3_Tetrahedron_3_do_intersect.h> 
 #include <CGAL/Triangle_3_Triangle_3_do_intersect.h>
+#include <CGAL/Triangle_3_line_3_intersection.h>
+#include <CGAL/Triangle_3_ray_3_intersection.h>
+#include <CGAL/Triangle_3_segment_3_intersection.h>
+#include <CGAL/Triangle_3_plane_3_intersection.h>
 
+#include <CGAL/Bbox_3_line_3_do_intersect.h>
+#include <CGAL/Bbox_3_ray_3_do_intersect.h>
+#include <CGAL/Bbox_3_segment_3_do_intersect.h>
+#include <CGAL/Bbox_3_sphere_3_do_intersect.h>
+#include <CGAL/Bbox_3_plane_3_do_intersect.h>
+#include <CGAL/Bbox_3_triangle_3_do_intersect.h>
+#include <CGAL/Bbox_3_bbox_3_do_intersect.h>
 
 #endif // CGAL_INTERSECTION_3_H

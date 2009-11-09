@@ -1321,6 +1321,7 @@ Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application
 Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#application/pdf
 Interpolation/doc_tex/Interpolation/nn_coords.xml svneol=native#text/xml
 Intersections_2/include/CGAL/Circle_2_Line_2_intersection.h -text
+Intersections_3/include/CGAL/Triangle_3_line_3_intersection.h -text
 Interval_skip_list/doc_tex/Interval_skip_list/query.png -text
 Interval_skip_list/examples/Interval_skip_list/isl_terrain.pts -text
 Jet_fitting_3/clean_tree.csh eol=lf
