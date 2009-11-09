@@ -26,7 +26,8 @@
 #define CGAL_AABB_TRAITS_H_
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/AABB_intersections.h>
+#include <CGAL/AABB_intersections/nearest_point_segment_3.h>
+#include <CGAL/AABB_intersections/nearest_point_triangle_3.h>
 
 namespace CGAL {
 

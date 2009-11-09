@@ -26,7 +26,6 @@
 #include <fstream>
 #include <CGAL/Timer.h>
 
-#include <CGAL/AABB_intersections.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>

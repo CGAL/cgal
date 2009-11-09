@@ -6,8 +6,6 @@ project(AABB_tests)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
-include_directories(../../include)
-
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
  
 if ( COMMAND cmake_policy )
@@ -22,6 +20,9 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
   include( CGAL_CreateSingleSourceCGALProgram )
+
+  include_directories( BEFORE ../../include )
+  include_directories( BEFORE ../../../trunk/Intersections_3/include )
 
   create_single_source_cgal_program("aabb_intersection_triangle_test.cpp")
   create_single_source_cgal_program("aabb_distance_triangle_test.cpp")
