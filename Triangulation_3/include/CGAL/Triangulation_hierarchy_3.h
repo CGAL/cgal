@@ -80,12 +80,13 @@ private:
 public:
 
   Triangulation_hierarchy_3(const Geom_traits& traits = Geom_traits());
+
   Triangulation_hierarchy_3(const Triangulation_hierarchy_3& tr);
 
   template < typename InputIterator >
   Triangulation_hierarchy_3(InputIterator first, InputIterator last,
                             const Geom_traits& traits = Geom_traits())
-    : Tr_Base(traits), random((long)0)
+    : Tr_Base(traits), random(0L)
   {
       hierarchy[0] = this;
       for(int i=1; i<maxlevel; ++i)
@@ -103,6 +104,7 @@ public:
   ~Triangulation_hierarchy_3();
 
   void swap(Triangulation_hierarchy_3 &tr);
+
   void clear();
 
   // CHECKING
@@ -113,9 +115,11 @@ public:
   {
     return insert(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell());
   }
+
   Vertex_handle insert(const Point &p, Cell_handle start = Cell_handle ());
+
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle loc,
-      int li, int lj);
+                       int li, int lj);
 
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)
@@ -169,13 +173,15 @@ public:
   {
     return locate(p, lt, li, lj, hint == Vertex_handle() ? this->infinite_cell() : hint->cell());
   }
+
   Cell_handle locate(const Point& p, Vertex_handle hint) const
   {
     return locate(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell());
   }
 
   Cell_handle locate(const Point& p, Locate_type& lt, int& li, int& lj,
-          Cell_handle start = Cell_handle ()) const;
+                     Cell_handle start = Cell_handle ()) const;
+
   Cell_handle locate(const Point& p, Cell_handle start = Cell_handle ()) const;
 
   Vertex_handle
@@ -191,6 +197,7 @@ private:
 
   void locate(const Point& p, Locate_type& lt, int& li, int& lj,
 	      locs pos[maxlevel], Cell_handle start = Cell_handle ()) const;
+
   int random_level();
 };
 
@@ -198,7 +205,7 @@ private:
 template <class Tr >
 Triangulation_hierarchy_3<Tr>::
 Triangulation_hierarchy_3(const Geom_traits& traits)
-  : Tr_Base(traits), random((long)0)
+  : Tr_Base(traits), random(0L)
 {
   hierarchy[0] = this;
   for(int i=1;i<maxlevel;++i)
@@ -261,8 +268,8 @@ void
 Triangulation_hierarchy_3<Tr>::
 clear()
 {
-        for(int i=0;i<maxlevel;++i)
-	hierarchy[i]->clear();
+  for(int i=0;i<maxlevel;++i)
+    hierarchy[i]->clear();
 }
 
 template <class Tr>
@@ -417,7 +424,8 @@ typename Triangulation_hierarchy_3<Tr>::Cell_handle
 Triangulation_hierarchy_3<Tr>::
 locate(const Point& p, Locate_type& lt, int& li, int& lj, Cell_handle start) const
 {
-  if (start != Cell_handle ()) return Tr_Base::locate (p, lt, li, lj, start);
+  if (start != Cell_handle ())
+    return Tr_Base::locate (p, lt, li, lj, start);
   locs positions[maxlevel];
   locate(p, lt, li, lj, positions);
   return positions[0].pos;
@@ -429,7 +437,8 @@ typename Triangulation_hierarchy_3<Tr>::Cell_handle
 Triangulation_hierarchy_3<Tr>::
 locate(const Point& p, Cell_handle start) const
 {
-  if (start != Cell_handle ()) return Tr_Base::locate (p, start);
+  if (start != Cell_handle ())
+    return Tr_Base::locate (p, start);
   Locate_type lt;
   int li, lj;
   return locate(p, lt, li, lj);
@@ -462,15 +471,17 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
 	                                                 pos[level].lj,
 	                                                 position);
     // find the nearest vertex.
-    Vertex_handle nearest =
-	hierarchy[level]->nearest_vertex_in_cell(p, position);
+    Vertex_handle nearest = hierarchy[level]->nearest_vertex_in_cell(p, position);
 
     // go at the same vertex on level below
     nearest = nearest->down();
     position = nearest->cell();                // incident cell
     --level;
   }
-  if (start != Cell_handle ()) position = start;
+
+  if (start != Cell_handle())
+    position = start;
+
   pos[0].pos = hierarchy[0]->locate(p, lt, li, lj, position); // at level 0
   pos[0].lt = lt;
   pos[0].li = li;
@@ -482,8 +493,7 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 nearest_vertex(const Point& p, Cell_handle start) const
 {
-    return Tr_Base::nearest_vertex(p, start != Cell_handle() ? start
-	                                                     : locate(p));
+    return Tr_Base::nearest_vertex(p, start != Cell_handle() ? start : locate(p));
 }
 
 template <class Tr>
