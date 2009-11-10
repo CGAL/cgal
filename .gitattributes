@@ -1180,6 +1180,22 @@ GraphicsView/demo/Circular_kernel_2/Circular_kernel_2.ui -text
 GraphicsView/demo/Circular_kernel_2/arcs.arc -text
 GraphicsView/demo/Polygon/Polygon_2.qrc -text
 GraphicsView/demo/Polygon/Polygon_2.ui -text
+GraphicsView/demo/Segment_Delaunay_graph_2/Segment_voronoi_2.qrc -text
+GraphicsView/demo/Segment_Delaunay_graph_2/Segment_voronoi_2.ui -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/circumcenter.pdf -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/circumcenter.png -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/conflict_zone.pdf -text svneol=unset#unset
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/conflict_zone.png -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/constrained_triangulation.pdf -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/constrained_triangulation.png -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/constrained_triangulation_show_constraints.pdf -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/constrained_triangulation_show_constraints.png -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/constrained_triangulation_show_in_domain.pdf -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/constrained_triangulation_show_in_domain.png -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/moving_point.pdf -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/moving_point.png -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/triangulation.pdf -text
+GraphicsView/demo/Segment_Delaunay_graph_2/icons/triangulation.png -text
 GraphicsView/demo/Triangulation_2/Constrained_Delaunay_triangulation_2.qrc -text
 GraphicsView/demo/Triangulation_2/Constrained_Delaunay_triangulation_2.ui -text
 GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.qrc -text
