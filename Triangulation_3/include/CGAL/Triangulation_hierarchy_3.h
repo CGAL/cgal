@@ -66,11 +66,19 @@ public:
   using Tr_Base::geom_traits;
 
 private:
+
   // here is the stack of triangulations which form the hierarchy
   Tr_Base*   hierarchy[maxlevel];
   Random     random; // random generator
 
+  void set_up_down(Vertex_handle up, Vertex_handle down)
+  {
+    up->set_down(down);
+    down->set_up(up);
+  }
+
 public:
+
   Triangulation_hierarchy_3(const Geom_traits& traits = Geom_traits());
   Triangulation_hierarchy_3(const Triangulation_hierarchy_3& tr);
 
@@ -132,8 +140,7 @@ public:
 
           for (int level = 1; level <= vertex_level; ++level) {
               v = hints[level] = hierarchy[level]->insert (*p, hints[level]);
-              v->set_down (prev);
-              prev->set_up (v);
+	      set_up_down(v, prev);
               prev = v;
           }
       }
@@ -221,10 +228,8 @@ Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
   for(int j=1; j<maxlevel; ++j) {
     for( Finite_vertices_iterator it=hierarchy[j]->finite_vertices_begin();
 	 it != hierarchy[j]->finite_vertices_end(); ++it) {
-	// down pointer goes in original instead in copied triangulation
-	it->set_down(V[it->down()]);
-	// make reverse link
-	it->down()->set_up( it );
+	// current it->down() pointer goes in original instead in copied triangulation
+	set_up_down(it, V[it->down()]);
 	// make map for next level
 	if (it->up() != Vertex_handle())
 	    V[ it->up()->down() ] = it;
@@ -322,8 +327,7 @@ insert(const Point &p, Cell_handle start)
 	                                    positions[level].pos,
 	                                    positions[level].li,
 	                                    positions[level].lj);
-    vertex->set_down(previous);// link with level above
-    previous->set_up(vertex);
+    set_up_down(vertex, previous);
     previous=vertex;
     level++;
   }
@@ -358,8 +362,7 @@ insert(const Point &p, Locate_type lt, Cell_handle loc, int li, int lj)
 	    positions[level].pos,
 	    positions[level].li,
 	    positions[level].lj);
-      vertex->set_down(previous);// link with level above
-      previous->set_up(vertex);
+      set_up_down(vertex, previous);
       previous=vertex;
       level++;
     }
@@ -397,8 +400,7 @@ move_point(Vertex_handle v, const Point & p)
 	ret = w;
     }
     else {
-	old->set_up(w);
-	w->set_down(old);
+        set_up_down(w, old);
     }
     if (u == Vertex_handle())
 	break;
