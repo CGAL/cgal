@@ -26,6 +26,8 @@
 #include <fstream>
 #include <CGAL/Timer.h>
 
+#include <CGAL/AABB_intersections.h>
+
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
