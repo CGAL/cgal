@@ -216,7 +216,7 @@ Triangulation_hierarchy_3(const Geom_traits& traits)
 template <class Tr>
 Triangulation_hierarchy_3<Tr>::
 Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
-    : Tr_Base(tr), random((long)0)
+    : Tr_Base(tr), random(0L)
 {
   hierarchy[0] = this;
   for(int i=1; i<maxlevel; ++i)
