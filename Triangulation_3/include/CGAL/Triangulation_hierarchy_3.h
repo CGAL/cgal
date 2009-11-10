@@ -141,8 +141,7 @@ public:
       return number_of_vertices() - n;
   }
 
-  // bool only for backward compatibility, we document void.
-  bool remove(Vertex_handle v);
+  void remove(Vertex_handle v);
 
   template < typename InputIterator >
   int remove(InputIterator first, InputIterator beyond)
@@ -369,7 +368,7 @@ insert(const Point &p, Locate_type lt, Cell_handle loc, int li, int lj)
 }
 
 template <class Tr>
-bool
+void
 Triangulation_hierarchy_3<Tr>::
 remove(Vertex_handle v)
 {
@@ -381,7 +380,6 @@ remove(Vertex_handle v)
 	break;
     v = u;
   }
-  return true;
 }
 
 template < class Tr >

@@ -315,9 +315,7 @@ public:
       return std::copy(vertices.begin(), vertices.end(), res);
   }
 
-  // We return bool only for backward compatibility (it's always true).
-  // The documentation mentions void.
-  bool remove(Vertex_handle v);
+  void remove(Vertex_handle v);
 
   template < typename InputIterator >
   int remove(InputIterator first, InputIterator beyond)
@@ -623,14 +621,14 @@ remove_3D_ear(Vertex_handle v)
 }
 
 template < class Gt, class Tds >
-bool
+void
 Delaunay_triangulation_3<Gt,Tds>::
 remove(Vertex_handle v)
 {
 #ifdef CGAL_DELAUNAY_3_OLD_REMOVE
   if (dimension()==3 && !test_dim_down(v)) {
     remove_3D_ear(v);
-    return true;
+    return;
   }
 #endif
   Self tmp;
@@ -638,7 +636,6 @@ remove(Vertex_handle v)
   Tr_Base::remove(v,remover);
 
   CGAL_triangulation_expensive_postcondition(is_valid());
-  return true;
 }
 
 template < class Gt, class Tds >
