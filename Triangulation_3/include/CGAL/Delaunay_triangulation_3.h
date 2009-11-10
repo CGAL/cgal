@@ -894,7 +894,8 @@ nearest_vertex(const Point& p, Cell_handle start) const
     if (dimension() < 3) {
 	Finite_vertices_iterator vit = finite_vertices_begin();
 	Vertex_handle res = vit;
-	for (++vit; vit != finite_vertices_end(); ++vit)
+	++vit;
+	for (Finite_vertices_iterator end = finite_vertices_end(); vit != end; ++vit)
 	    res = nearest_vertex(p, res, vit);
 	return res;
     }
@@ -1096,10 +1097,9 @@ is_valid(bool verbose, int level) const
   switch ( dimension() ) {
   case 3:
     {
-      Finite_cells_iterator it;
-      for ( it = finite_cells_begin(); it != finite_cells_end(); ++it ) {
+      for(Finite_cells_iterator it = finite_cells_begin(), end = finite_cells_end(); it != end; ++it) {
 	is_valid_finite(it);
-	for (int i=0; i<4; i++ ) {
+	for(int i=0; i<4; i++ ) {
 	  if ( !is_infinite
 	       (it->neighbor(i)->vertex(it->neighbor(i)->index(it))) ) {
 	    if ( side_of_sphere
@@ -1118,10 +1118,9 @@ is_valid(bool verbose, int level) const
     }
   case 2:
     {
-      Finite_facets_iterator it;
-      for ( it = finite_facets_begin(); it != finite_facets_end(); ++it ) {
+      for(Finite_facets_iterator it = finite_facets_begin(), end = finite_facets_end(); it != end; ++it) {
 	is_valid_finite((*it).first);
-	for (int i=0; i<3; i++ ) {
+	for(int i=0; i<3; i++ ) {
 	  if( !is_infinite
 	      ((*it).first->neighbor(i)->vertex( (((*it).first)->neighbor(i))
 						 ->index((*it).first))) ) {
@@ -1142,8 +1141,7 @@ is_valid(bool verbose, int level) const
     }
   case 1:
     {
-      Finite_edges_iterator it;
-      for ( it = finite_edges_begin(); it != finite_edges_end(); ++it )
+      for(Finite_edges_iterator it = finite_edges_begin(), end = finite_edges_end(); it != end; ++it)
 	is_valid_finite((*it).first);
       break;
     }
@@ -1304,8 +1302,8 @@ fill_hole_3D_ear(const std::vector<Facet> & boundhole)
     // the two faces form a concavity, in which we might plug a cell
 
     // we now look at all vertices that are on the boundary of the hole
-    for(typename Surface::Vertex_iterator vit = surface.vertices_begin();
-	vit != surface.vertices_end(); ++vit) {
+    for(typename Surface::Vertex_iterator vit = surface.vertices_begin(),
+	    end = surface.vertices_end(); vit != end; ++vit) {
       Vertex_handle v = vit->info();
       if (is_infinite(v) || v == v0 || v == v1 || v == v2 || v == v3)
 	  continue;

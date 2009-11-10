@@ -1225,7 +1225,8 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
 
   // write the vertices
 
-  for (Vertex_iterator it=tr.vertices_begin(); it!=tr.vertices_end(); ++it)
+  for (Vertex_iterator it = tr.vertices_begin(), end = tr.vertices_end();
+	 it != end; ++it)
     TV[i++] = it;
 
   CGAL_triangulation_assertion( i == n+1 );
@@ -1252,7 +1253,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   switch ( tr.dimension() ) {
   case 3:
     {
-      for(Cell_iterator it=tr.cells_begin(); it != tr.cells_end(); ++it) {
+      for(Cell_iterator it = tr.cells_begin(), end = tr.cells_end(); it != end; ++it) {
 	os << *it; // other information
         if(is_ascii(os))
           os << std::endl;
@@ -1261,7 +1262,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
     }
   case 2:
     {
-      for(Facet_iterator it=tr.facets_begin(); it != tr.facets_end(); ++it) {
+      for(Facet_iterator it = tr.facets_begin(), end = tr.facets_end(); it != end; ++it) {
 	os << *((*it).first); // other information
         if(is_ascii(os))
           os << std::endl;
@@ -1270,7 +1271,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
     }
   case 1:
     {
-      for(Edge_iterator it=tr.edges_begin(); it != tr.edges_end(); ++it) {
+      for(Edge_iterator it = tr.edges_begin(), end = tr.edges_end(); it != end; ++it) {
 	os << *((*it).first); // other information
         if(is_ascii(os))
           os << std::endl;
@@ -3041,8 +3042,8 @@ make_hole_3D( Vertex_handle v,
 
   incident_cells(v, std::back_inserter(hole));
 
-  for (typename std::vector<Cell_handle>::iterator cit = hole.begin();
-       cit != hole.end(); ++cit) {
+  for (typename std::vector<Cell_handle>::iterator cit = hole.begin(),
+       end = hole.end(); cit != end; ++cit) {
     int indv = (*cit)->index(v);
     Cell_handle opp_cit = (*cit)->neighbor( indv );
     Facet f(opp_cit, opp_cit->index(*cit));
@@ -3064,8 +3065,8 @@ remove_dim_down(Vertex_handle v, VertexRemover &remover)
     CGAL_triangulation_precondition (dimension() >= 0);
 
     // Collect all the hidden points.
-    for (All_cells_iterator ci = tds().raw_cells_begin();
-            ci != tds().raw_cells_end(); ++ci)
+    for (All_cells_iterator ci = tds().raw_cells_begin(),
+            end = tds().raw_cells_end(); ci != end; ++ci)
         remover.add_hidden_points(ci);
 
     tds().remove_decrease_dimension(v, infinite_vertex());
@@ -3176,9 +3177,8 @@ remove_3D(Vertex_handle v, VertexRemover &remover)
   // Also note that we use the vertices of *this, not of remover.tmp
 
   if(inf){
-    for(All_cells_iterator it = remover.tmp.all_cells_begin();
-	it != remover.tmp.all_cells_end();
-	++it){
+    for(All_cells_iterator it = remover.tmp.all_cells_begin(),
+	end = remover.tmp.all_cells_end(); it != end; ++it){
       for(i=0; i < 4; i++){
 	Facet f = std::pair<Cell_handle,int>(it,i);
 	Vertex_triple vt_aux = make_vertex_triple(f);
@@ -3188,9 +3188,8 @@ remove_3D(Vertex_handle v, VertexRemover &remover)
       }
     }
   } else {
-      for(Finite_cells_iterator it = remover.tmp.finite_cells_begin();
-	it != remover.tmp.finite_cells_end();
-	++it){
+      for(Finite_cells_iterator it = remover.tmp.finite_cells_begin(),
+	end = remover.tmp.finite_cells_end(); it != end; ++it){
       for(i=0; i < 4; i++){
 	Facet f = std::pair<Cell_handle,int>(it,i);
 	Vertex_triple vt_aux = make_vertex_triple(f);
@@ -3304,22 +3303,22 @@ is_valid(bool verbose, int level) const
   switch ( dimension() ) {
   case 3:
     {
-      Finite_cells_iterator it;
-      for ( it = finite_cells_begin(); it != finite_cells_end(); ++it )
+      for(Finite_cells_iterator it = finite_cells_begin(), end = finite_cells_end();
+	      it != end; ++it)
 	is_valid_finite(it, verbose, level);
       break;
     }
   case 2:
     {
-      Finite_facets_iterator it;
-      for ( it = finite_facets_begin(); it != finite_facets_end(); ++it )
+      for(Finite_facets_iterator it = finite_facets_begin(), end = finite_facets_end();
+	     it != end; ++it)
 	is_valid_finite(it->first,verbose,level);
       break;
     }
   case 1:
     {
-      Finite_edges_iterator it;
-      for ( it = finite_edges_begin(); it != finite_edges_end(); ++it )
+      for(Finite_edges_iterator it = finite_edges_begin(), end = finite_edges_end();
+	     it != end; ++it)
 	is_valid_finite(it->first,verbose,level);
       break;
     }

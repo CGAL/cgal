@@ -709,7 +709,8 @@ nearest_power_vertex(const Bare_point& p, Cell_handle start) const
     if (dimension() < 3) {
 	Finite_vertices_iterator vit = finite_vertices_begin();
 	Vertex_handle res = vit;
-	for (++vit; vit != finite_vertices_end(); ++vit)
+	++vit;
+	for (Finite_vertices_iterator end = finite_vertices_end(); vit != end; ++vit)
 	    res = nearest_power_vertex(p, res, vit);
 	return res;
     }
@@ -1294,10 +1295,9 @@ is_valid(bool verbose, int level) const
   switch ( dimension() ) {
   case 3:
     {
-      Finite_cells_iterator it;
-      for ( it = finite_cells_begin(); it != finite_cells_end(); ++it ) {
+      for(Finite_cells_iterator it = finite_cells_begin(), end = finite_cells_end(); it != end; ++it) {
 	is_valid_finite(it, verbose, level);
-	for (int i=0; i<4; i++ ) {
+	for(int i=0; i<4; i++) {
 	  if ( !is_infinite
 	       (it->neighbor(i)->vertex(it->neighbor(i)->index(it))) ) {
 	    if ( side_of_power_sphere
@@ -1316,10 +1316,9 @@ is_valid(bool verbose, int level) const
     }
   case 2:
     {
-      Finite_facets_iterator it;
-      for ( it = finite_facets_begin(); it != finite_facets_end(); ++it ) {
+      for(Finite_facets_iterator it = finite_facets_begin(), end = finite_facets_end(); it!= end; ++it) {
 	is_valid_finite((*it).first, verbose, level);
-	for (int i=0; i<3; i++ ) {
+	for(int i=0; i<3; i++) {
 	  if( !is_infinite
 	      ((*it).first->neighbor(i)->vertex( (((*it).first)->neighbor(i))
 						 ->index((*it).first))) ) {
@@ -1341,10 +1340,9 @@ is_valid(bool verbose, int level) const
     }
   case 1:
     {
-      Finite_edges_iterator it;
-      for ( it = finite_edges_begin(); it != finite_edges_end(); ++it ) {
+      for(Finite_edges_iterator it = finite_edges_begin(), end = finite_edges_end(); it != end; ++it) {
 	is_valid_finite((*it).first, verbose, level);
-	for (int i=0; i<2; i++ ) {
+	for(int i=0; i<2; i++) {
 	  if( !is_infinite
 	      ((*it).first->neighbor(i)->vertex( (((*it).first)->neighbor(i))
 						 ->index((*it).first))) ) {

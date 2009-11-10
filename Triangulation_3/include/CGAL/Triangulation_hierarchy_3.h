@@ -220,14 +220,14 @@ Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
 
   std::map< Vertex_handle, Vertex_handle > V;
 
-  for( Finite_vertices_iterator it=hierarchy[0]->finite_vertices_begin();
-       it != hierarchy[0]->finite_vertices_end(); ++it)
+  for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(),
+       end = hierarchy[0]->finite_vertices_end(); it != end; ++it)
     if (it->up() != Vertex_handle())
       V[ it->up()->down() ] = it;
 
   for(int j=1; j<maxlevel; ++j) {
-    for( Finite_vertices_iterator it=hierarchy[j]->finite_vertices_begin();
-	 it != hierarchy[j]->finite_vertices_end(); ++it) {
+    for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin(),
+	 end = hierarchy[j]->finite_vertices_end(); it != end; ++it) {
 	// current it->down() pointer goes in original instead in copied triangulation
 	set_up_down(it, V[it->down()]);
 	// make map for next level
@@ -277,20 +277,20 @@ is_valid(bool verbose, int level) const
 	result = result && hierarchy[i]->is_valid(verbose, level);
 
   // verify that lower level has no down pointers
-  for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin();
-       it != hierarchy[0]->finite_vertices_end(); ++it)
+  for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(),
+       end = hierarchy[0]->finite_vertices_end(); it != end; ++it)
     result = result && (it->down() == Vertex_handle());
 
   // verify that other levels has down pointer and reciprocal link is fine
   for(int j=1; j<maxlevel; ++j)
-    for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin();
-	 it != hierarchy[j]->finite_vertices_end(); ++it)
+    for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin(),
+	 end = hierarchy[j]->finite_vertices_end(); it != end; ++it)
       result = result && &*(it) == &*(it->down()->up());
 
   // verify that other levels has down pointer and reciprocal link is fine
   for(int k=0; k<maxlevel-1; ++k)
-    for( Finite_vertices_iterator it = hierarchy[k]->finite_vertices_begin();
-	 it != hierarchy[k]->finite_vertices_end(); ++it)
+    for( Finite_vertices_iterator it = hierarchy[k]->finite_vertices_begin(),
+	 end = hierarchy[k]->finite_vertices_end(); it != end; ++it)
       result = result && ( it->up() == Vertex_handle() ||
 	        &*it == &*(it->up())->down() );
 
