@@ -14,8 +14,6 @@ MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
 
   qtimer = new QTimer(this);
   connect(qtimer, SIGNAL(timeout()), this, SLOT(lloydStep()));
-  int slider_value = speedSlider->value();
-  int speed = (100-slider_value)*100;
 }
 
 
