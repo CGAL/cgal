@@ -395,7 +395,7 @@ namespace Qt {
     void GenerateBezierPolygon() 
     {
       Traits traits ;
-      Traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
+      typename Traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
       
       std::vector<Bezier_X_monotone_curve> xcvs;
 

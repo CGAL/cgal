@@ -56,7 +56,7 @@ protected:
      Base(aPieceDrawer, aPieceBBox)
   {}  
   
-  virtual void update_bbox( Bbox_builder& aBBoxBuilder)
+  virtual void update_bbox( Piece_bbox& aBBoxBuilder)
   {
     if ( mRegion ) 
       update_region_bbox(*mRegion, aBBoxBuilder ) ;
@@ -68,7 +68,7 @@ protected:
       draw_region(*mRegion,aPath);  
   }
 
-  void update_region_bbox( Piecewise_region const& aRegion, Bbox_builder& aBBoxBuilder ) ;
+  void update_region_bbox( Piecewise_region const& aRegion, Piece_bbox& aBBoxBuilder ) ;
   void draw_region       ( Piecewise_region const& aRegion, QPainterPath& aPath ) ;
   
 protected:
@@ -77,7 +77,7 @@ protected:
 };
 
 template <class R, class D, class P>
-void Piecewise_region_graphics_item<R,D,P>::update_region_bbox( Piecewise_region const& aRegion, Bbox_builder& aBBoxBuilder )
+void Piecewise_region_graphics_item<R,D,P>::update_region_bbox( Piecewise_region const& aRegion, Piece_bbox& aBBoxBuilder )
 {
   update_boundary_bbox( aRegion.outer_boundary(), aBBoxBuilder ) ;
   
