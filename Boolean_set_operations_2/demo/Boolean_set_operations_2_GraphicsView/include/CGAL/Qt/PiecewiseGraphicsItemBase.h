@@ -82,9 +82,9 @@ protected:
 
   virtual bool isModelEmpty() const = 0 ;
   
-  virtual void draw_model ( QPainterPath& aPath       ) = 0 ;
+  virtual void draw_model ( QPainterPath& aPath ) = 0 ;
   
-  virtual void update_bbox( Bbox_builder& aBBoxBuilder) = 0 ;
+  virtual void update_bbox( Bbox_builder& aBBoxBuilder ) = 0 ;
 
 protected:
 

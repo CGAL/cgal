@@ -23,6 +23,7 @@
 #include <CGAL/value_type_traits.h>
 #include <CGAL/Qt/PiecewiseSetGraphicsItem.h>
 #include <CGAL/Qt/BoundaryPiecesGraphicsItem.h>
+#include <CGAL/Qt/Converter.h>
 
 namespace CGAL {
 
@@ -219,10 +220,14 @@ struct Bezier_X_monotone_bbox
 
 struct Draw_bezier_curve
 {
-  template<class Bezier_curve, class Path, class Converter>
-  void operator()( Bezier_curve const& aBC, Path& aPath, Converter aConvert, int aIdx ) const 
+  template<class Bezier_curve, class Path>
+  void operator()( Bezier_curve const& aBC, Path& aPath, int aIdx ) const 
   {
-    typedef Point_2< Simple_cartesian<double> > Linear_point ;
+    typedef Simple_cartesian<double> Linear_kernel ;
+       
+    typedef Qt::Converter<Linear_kernel> Converter ;
+        
+    typedef Point_2<Linear_kernel> Linear_point ;
     
     typedef std::vector<Linear_point> Linear_point_vector ;
     
@@ -230,29 +235,31 @@ struct Draw_bezier_curve
     
     Bezier_helper::get_approximated_control_points(aBC,true,std::back_inserter(lQ));
     
+    Converter convert ;
+    
     if ( lQ.size() == 2 )
     {
       if ( aIdx == 0 )
-           aPath.moveTo( aConvert(lQ[0]) ) ;
-      else aPath.lineTo( aConvert(lQ[0]) ) ; 
+           aPath.moveTo( convert(lQ[0]) ) ;
+      else aPath.lineTo( convert(lQ[0]) ) ; 
       
-      aPath.lineTo( aConvert(lQ[1]) ) ;
+      aPath.lineTo( convert(lQ[1]) ) ;
     }
     else if ( lQ.size() == 3 )
     {
       if ( aIdx == 0 )
-           aPath.moveTo ( aConvert(lQ[0]) ) ;
-      else aPath.lineTo ( aConvert(lQ[0]) ) ; 
+           aPath.moveTo ( convert(lQ[0]) ) ;
+      else aPath.lineTo ( convert(lQ[0]) ) ; 
       
-      aPath.quadTo( aConvert(lQ[1]), aConvert(lQ[2]) ) ; 
+      aPath.quadTo( convert(lQ[1]), convert(lQ[2]) ) ; 
     }
     else if ( lQ.size() == 4 )
     {
       if ( aIdx == 0 )
-           aPath.moveTo ( aConvert(lQ[0]) ) ;
-      else aPath.lineTo ( aConvert(lQ[0]) ) ; 
+           aPath.moveTo ( convert(lQ[0]) ) ;
+      else aPath.lineTo ( convert(lQ[0]) ) ; 
       
-      aPath.cubicTo( aConvert(lQ[1]), aConvert(lQ[2]), aConvert(lQ[3]) ) ; 
+      aPath.cubicTo( convert(lQ[1]), convert(lQ[2]), convert(lQ[3]) ) ; 
     }
     else
     {
@@ -262,7 +269,7 @@ struct Draw_bezier_curve
       
       for( typename Linear_point_vector::const_iterator it = lSample.begin() ;  it != lSample.end() ; ++ it )
       {
-        QPointF lP = aConvert(*it) ;
+        QPointF lP = convert(*it) ;
         
         if ( aIdx == 0 && it == lSample.begin() ) 
              aPath.moveTo(lP) ;
@@ -274,41 +281,48 @@ struct Draw_bezier_curve
 
 struct Draw_bezier_X_monotone_curve
 {
-  template<class Bezier_X_monotone_curve, class Path, class Converter>
-  void operator()( Bezier_X_monotone_curve const& aBXMC, Path& aPath, Converter aConvert, int aIdx ) const 
+  template<class Bezier_X_monotone_curve, class Path>
+  void operator()( Bezier_X_monotone_curve const& aBXMC, Path& aPath, int aIdx ) const 
   {
-    typedef Point_2< Simple_cartesian<double> > Linear_point ;
+    typedef Simple_cartesian<double> Linear_kernel ;
+       
+    typedef Qt::Converter<Linear_kernel> Converter ;
+        
+    typedef Point_2<Linear_kernel> Linear_point ;
+
     typedef std::vector<Linear_point> Linear_point_vector ;
     
     typedef typename Bezier_X_monotone_curve::Curve_2 Bezier_curve ;
     
     Linear_point_vector lQ ;
 
+    Converter convert ;
+    
     Bezier_helper::approximated_clip(aBXMC,std::back_inserter(lQ));
     
     if ( lQ.size() == 2 )
     {
       if ( aIdx == 0 )
-           aPath.moveTo( aConvert(lQ[0]) ) ;
-      else aPath.lineTo( aConvert(lQ[0]) ) ; 
+           aPath.moveTo( convert(lQ[0]) ) ;
+      else aPath.lineTo( convert(lQ[0]) ) ; 
       
-      aPath.lineTo( aConvert(lQ[1]) ) ;
+      aPath.lineTo( convert(lQ[1]) ) ;
     }
     else if ( lQ.size() == 3 )
     {
       if ( aIdx == 0 )
-           aPath.moveTo ( aConvert(lQ[0]) ) ;
-      else aPath.lineTo ( aConvert(lQ[0]) ) ; 
+           aPath.moveTo ( convert(lQ[0]) ) ;
+      else aPath.lineTo ( convert(lQ[0]) ) ; 
       
-      aPath.quadTo( aConvert(lQ[1]), aConvert(lQ[2]) ) ; 
+      aPath.quadTo( convert(lQ[1]), convert(lQ[2]) ) ; 
     }
     else if ( lQ.size() == 4 )
     {
       if ( aIdx == 0 )
-           aPath.moveTo ( aConvert(lQ[0]) ) ;
-      else aPath.lineTo ( aConvert(lQ[0]) ) ; 
+           aPath.moveTo ( convert(lQ[0]) ) ;
+      else aPath.lineTo ( convert(lQ[0]) ) ; 
       
-      aPath.cubicTo( aConvert(lQ[1]), aConvert(lQ[2]), aConvert(lQ[3]) ) ; 
+      aPath.cubicTo( convert(lQ[1]), convert(lQ[2]), convert(lQ[3]) ) ; 
     }
     else
     {
@@ -319,7 +333,7 @@ struct Draw_bezier_X_monotone_curve
       
       for( typename Linear_point_vector::const_iterator it = lSample.begin() ;  it != lSample.end() ; ++ it )
       {
-        QPointF lP = aConvert(*it) ;
+        QPointF lP = convert(*it) ;
         
         if ( aIdx == 0 && it == lSample.begin() ) 
              aPath.moveTo(lP) ;

@@ -74,10 +74,10 @@ public:
   
 protected:
   
-  virtual void update_bbox( Piece_bbox& aBBoxBuilder)
+  virtual void update_bbox( Bbox_builder& aBboxBuilder)
   {
     if ( mSet ) 
-      update_set_bbox(*mSet, aBBoxBuilder ) ;
+      update_set_bbox(*mSet, aBboxBuilder ) ;
   }    
 
   virtual void draw_model ( QPainterPath& aPath ) 
@@ -86,7 +86,7 @@ protected:
       draw_set(*mSet,aPath);  
   }
 
-  void update_set_bbox( Piecewise_set const& aSet, Piece_bbox& aBBoxBuilder ) ;
+  void update_set_bbox( Piecewise_set const& aSet, Bbox_builder& aBboxBuilder ) ;
   void draw_set       ( Piecewise_set const& aSet, QPainterPath& aPath ) ;
   
 protected:
@@ -95,14 +95,14 @@ protected:
 };
 
 template <class S, class D, class P>
-void Piecewise_set_graphics_item<S,D,P>::update_set_bbox( Piecewise_set const& aSet, Piece_bbox& aBBoxBuilder )
+void Piecewise_set_graphics_item<S,D,P>::update_set_bbox( Piecewise_set const& aSet, Bbox_builder& aBboxBuilder )
 {
   Region_vector vec ;
   
   aSet.polygons_with_holes( std::back_inserter(vec) ) ;
   
   for( Region_const_iterator rit = vec.begin(); rit != vec.end() ; ++ rit )
-    update_region_bbox(*rit,aBBoxBuilder);
+    update_region_bbox(*rit,aBboxBuilder);
 }
 
 template <class S, class D, class P>

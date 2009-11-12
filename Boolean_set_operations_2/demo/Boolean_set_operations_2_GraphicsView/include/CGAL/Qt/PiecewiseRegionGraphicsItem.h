@@ -56,10 +56,10 @@ protected:
      Base(aPieceDrawer, aPieceBBox)
   {}  
   
-  virtual void update_bbox( Piece_bbox& aBBoxBuilder)
+  virtual void update_bbox( Bbox_builder& aBboxBuilder)
   {
     if ( mRegion ) 
-      update_region_bbox(*mRegion, aBBoxBuilder ) ;
+      update_region_bbox(*mRegion, aBboxBuilder ) ;
   }    
 
   virtual void draw_model ( QPainterPath& aPath ) 
@@ -68,7 +68,7 @@ protected:
       draw_region(*mRegion,aPath);  
   }
 
-  void update_region_bbox( Piecewise_region const& aRegion, Piece_bbox& aBBoxBuilder ) ;
+  void update_region_bbox( Piecewise_region const& aRegion, Bbox_builder& aBboxBuilder ) ;
   void draw_region       ( Piecewise_region const& aRegion, QPainterPath& aPath ) ;
   
 protected:
@@ -77,12 +77,12 @@ protected:
 };
 
 template <class R, class D, class P>
-void Piecewise_region_graphics_item<R,D,P>::update_region_bbox( Piecewise_region const& aRegion, Piece_bbox& aBBoxBuilder )
+void Piecewise_region_graphics_item<R,D,P>::update_region_bbox( Piecewise_region const& aRegion, Bbox_builder& aBboxBuilder )
 {
-  update_boundary_bbox( aRegion.outer_boundary(), aBBoxBuilder ) ;
+  update_boundary_bbox( aRegion.outer_boundary(), aBboxBuilder ) ;
   
   for( Hole_const_itertator hit = aRegion.holes_begin(); hit != aRegion.holes_end(); ++ hit )
-    update_boundary_bbox(*hit,aBBoxBuilder);
+    update_boundary_bbox(*hit,aBboxBuilder);
 }
 
 template <class R, class D, class P>

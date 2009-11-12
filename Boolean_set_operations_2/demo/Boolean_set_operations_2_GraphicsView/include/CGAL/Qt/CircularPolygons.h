@@ -37,19 +37,25 @@ struct Circular_X_monotone_bbox
 
 struct Draw_circular_X_monotone_curve
 {
-  template<class Circular_X_monotone_curve, class Path, class Converter>
-  void operator()( Circular_X_monotone_curve const& curve, Path& aPath, Converter aConvert, int aIdx ) const 
+  template<class Circular_X_monotone_curve, class Path>
+  void operator()( Circular_X_monotone_curve const& curve, Path& aPath, int aIdx ) const 
   {
-    typedef Point_2< Simple_cartesian<double> > Linear_point ;
+    typedef Simple_cartesian<double> Linear_kernel ;
+    
+    typedef Point_2<Linear_kernel> Linear_point ;
+    
+    typedef Qt::Converter<Linear_kernel> Converter ;
+    
+    Converter convert ;
     
     Linear_point lS( CGAL::to_double(curve.source().x()), CGAL::to_double(curve.source().y()) ) ;
     Linear_point lT( CGAL::to_double(curve.target().x()), CGAL::to_double(curve.target().y()) ) ;
     
     if ( aIdx == 0 )
-         aPath.moveTo( aConvert( lS ) ) ;
-    else aPath.lineTo( aConvert( lS ) ) ;
+         aPath.moveTo( convert( lS ) ) ;
+    else aPath.lineTo( convert( lS ) ) ;
     
-    aPath.lineTo( aConvert( lT ) ) ;
+    aPath.lineTo( convert( lT ) ) ;
   }
 } ;
 

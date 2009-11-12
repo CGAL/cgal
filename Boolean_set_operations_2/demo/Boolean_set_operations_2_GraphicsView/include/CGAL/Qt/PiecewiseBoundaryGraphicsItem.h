@@ -62,10 +62,10 @@ protected:
    ,mPieceBBox  (aPieceBBox)
   {}  
   
-  virtual void update_bbox( Bbox_builder& aBBoxBuilder)
+  virtual void update_bbox( Bbox_builder& aBboxBuilder)
   {
     if ( mBoundary ) 
-      update_boundary_bbox(*mBoundary, aBBoxBuilder ) ;
+      update_boundary_bbox(*mBoundary, aBboxBuilder ) ;
   }    
 
   virtual void draw_model ( QPainterPath& aPath ) 
@@ -74,10 +74,10 @@ protected:
       draw_boundary(*mBoundary,aPath);  
   }
 
-  void update_boundary_bbox( Piecewise_boundary const& aBoundary, Bbox_builder& aBBoxBuilder )
+  void update_boundary_bbox( Piecewise_boundary const& aBoundary, Bbox_builder& aBboxBuilder )
   {
     for( Curve_piece_const_iterator pit = aBoundary.curves_begin(); pit != aBoundary.curves_end(); ++ pit )
-      aBBoxBuilder.add(mPieceBBox(*pit));
+      aBboxBuilder.add(mPieceBBox(*pit));
   }
   
   void draw_boundary( Piecewise_boundary const& aBoundary, QPainterPath& aPath ) ;
@@ -94,7 +94,7 @@ void Piecewise_boundary_graphics_item<B,D,P>::draw_boundary( Piecewise_boundary 
 {
   int c = 0 ;
   for( Curve_piece_const_iterator pit = aBoundary.curves_begin(); pit != aBoundary.curves_end(); ++ pit, ++c )
-    mPieceDrawer(*pit,aPath,ToQtConverter(),c);
+    mPieceDrawer(*pit,aPath,c);
 }
 
 

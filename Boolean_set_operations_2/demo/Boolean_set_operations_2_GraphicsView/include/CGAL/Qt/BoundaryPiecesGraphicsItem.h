@@ -56,12 +56,12 @@ public:
   
 protected:
   
-  virtual void update_bbox( Bbox_builder& aBBoxBuilder)
+  virtual void update_bbox( Bbox_builder& aBboxBuilder)
   {
     if ( mBoundary ) 
     {
       for( Piece_const_iterator pit = mBoundary->begin(); pit != mBoundary->end(); ++ pit )
-        aBBoxBuilder.add(mPieceBBox(*pit));
+        aBboxBuilder.add(mPieceBBox(*pit));
     }  
   }    
 
@@ -71,7 +71,7 @@ protected:
     {
       int c = 0 ;
       for( Piece_const_iterator pit = mBoundary->begin(); pit != mBoundary->end(); ++ pit, ++c )
-        mPieceDrawer(*pit,aPath,ToQtConverter(),c);
+        mPieceDrawer(*pit,aPath,c);
     }  
   }
 
