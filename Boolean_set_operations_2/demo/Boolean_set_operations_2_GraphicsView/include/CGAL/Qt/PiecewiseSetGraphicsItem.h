@@ -74,7 +74,7 @@ public:
   
 protected:
   
-  virtual void update_bbox( Bbox_builder& aBboxBuilder)
+  virtual void update_bbox( Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder)
   {
     if ( mSet ) 
       update_set_bbox(*mSet, aBboxBuilder ) ;
@@ -86,7 +86,7 @@ protected:
       draw_set(*mSet,aPath);  
   }
 
-  void update_set_bbox( Piecewise_set const& aSet, Bbox_builder& aBboxBuilder ) ;
+  void update_set_bbox( Piecewise_set const& aSet, Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder ) ;
   void draw_set       ( Piecewise_set const& aSet, QPainterPath& aPath ) ;
   
 protected:
@@ -95,7 +95,7 @@ protected:
 };
 
 template <class S, class D, class P>
-void Piecewise_set_graphics_item<S,D,P>::update_set_bbox( Piecewise_set const& aSet, Bbox_builder& aBboxBuilder )
+void Piecewise_set_graphics_item<S,D,P>::update_set_bbox( Piecewise_set const& aSet, Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder )
 {
   Region_vector vec ;
   

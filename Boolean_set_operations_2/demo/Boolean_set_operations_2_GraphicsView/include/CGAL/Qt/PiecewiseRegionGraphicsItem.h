@@ -36,7 +36,7 @@ class Piecewise_region_graphics_item : public Piecewise_boundary_graphics_item< 
   typedef Piece_bbox_       Piece_bbox ;
   
   typedef typename Piecewise_region::Hole_const_iterator Hole_const_itertator ;
-
+  
 public:
 
   Piecewise_region_graphics_item( Piecewise_region* aRegion, Draw_piece const& aPieceDrawer = Draw_piece(), Piece_bbox const& aPieceBBox = Piece_bbox() )
@@ -56,7 +56,7 @@ protected:
      Base(aPieceDrawer, aPieceBBox)
   {}  
   
-  virtual void update_bbox( Bbox_builder& aBboxBuilder)
+  virtual void update_bbox( Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder)
   {
     if ( mRegion ) 
       update_region_bbox(*mRegion, aBboxBuilder ) ;
@@ -68,7 +68,7 @@ protected:
       draw_region(*mRegion,aPath);  
   }
 
-  void update_region_bbox( Piecewise_region const& aRegion, Bbox_builder& aBboxBuilder ) ;
+  void update_region_bbox( Piecewise_region const& aRegion, Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder ) ;
   void draw_region       ( Piecewise_region const& aRegion, QPainterPath& aPath ) ;
   
 protected:
@@ -77,7 +77,7 @@ protected:
 };
 
 template <class R, class D, class P>
-void Piecewise_region_graphics_item<R,D,P>::update_region_bbox( Piecewise_region const& aRegion, Bbox_builder& aBboxBuilder )
+void Piecewise_region_graphics_item<R,D,P>::update_region_bbox( Piecewise_region const& aRegion, Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder )
 {
   update_boundary_bbox( aRegion.outer_boundary(), aBboxBuilder ) ;
   
