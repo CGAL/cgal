@@ -52,13 +52,13 @@ the filtering kernel fails to produce an answer.
 
 The second, fourth and sixth template parameters correspond to how
 predicates are evaluated. There are two predefined possible values for
-these parameters, namely \ccc{CGAL::Sqrt_field_tag} and
+these parameters, namely \ccc{CGAL::Field_with_sqrt_tag} and
 \ccc{CGAL::Field_tag}. The first one must be used when the number type
 used in the representation supports the exact evaluation of signs of
 expressions involving all four basic operations and square roots,
 whereas the second one requires that only field operations are
 exact. Finally, in order to get exact constructions \ccc{CM}
-must be set to \ccc{CGAL::Sqrt_field_tag} and the number type in
+must be set to \ccc{CGAL::Field_with_sqrt_tag} and the number type in
 \ccc{CK} must support operations involing divisions and square roots
 (as well as the other three basic operations of course).
 %
@@ -67,12 +67,12 @@ The way the predicates are evaluated is discussed in
 part).
 
 The default values for the template parameters are as follows:
-\ccc{CM = CGAL::Sqrt_field_tag} (it is assumed that
+\ccc{CM = CGAL::Field_with_sqrt_tag} (it is assumed that
 \ccc{CGAL::Cartesian<double>} or \ccc{CGAL::Simple_cartesian<double>}
 will be the entry for the template parameter \ccc{CK}), 
 \ccc{EM = CGAL::Field_tag},
 \ccc{FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >},
-\ccc{FM = CGAL::Sqrt_field_tag}. If the \textsc{Gmp} package is
+\ccc{FM = CGAL::Field_with_sqrt_tag}. If the \textsc{Gmp} package is
 installed with \cgal, the template parameter \ccc{EK} has the default
 value: \ccc{EK = CGAL::Simple_cartesian<CGAL::Gmpq>}, otherwise its
 default value is
@@ -127,7 +127,7 @@ defines the following types:
 \ccc{Kernel}\\
 \ccc{SegmentDelaunayGraphTraits_2} \\
 \ccc{CGAL::Field_tag}\\
-\ccc{CGAL::Sqrt_field_tag}\\
+\ccc{CGAL::Field_with_sqrt_tag}\\
 \ccc{CGAL::Segment_Delaunay_graph_2<Gt,DS>}\\
 \ccc{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}\\
 \ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\

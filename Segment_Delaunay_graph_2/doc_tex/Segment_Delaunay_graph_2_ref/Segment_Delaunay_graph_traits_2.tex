@@ -32,7 +32,7 @@ The class \ccRefName\ provides a model for the
 This class has two template parameters. The first template parameter
 must be a model of the \ccc{Kernel} concept. The second template
 parameter corresponds to how predicates are evaluated. There are two
-possible values for \ccc{MTag}, namely \ccc{CGAL::Sqrt_field_tag} and
+possible values for \ccc{MTag}, namely \ccc{CGAL::Field_with_sqrt_tag} and
 \ccc{CGAL::Field_tag}. The first one must be used when the number type
 used in the representation supports the exact evaluation of signs of
 expressions involving all four basic operations and square roots,
@@ -70,7 +70,7 @@ to the \ccc{SegmentDelaunayGraphTraits_2} concept. These are:
 \ccc{Kernel}\\
 \ccc{SegmentDelaunayGraphTraits_2} \\
 \ccc{CGAL::Field_tag}\\
-\ccc{CGAL::Sqrt_field_tag}\\
+\ccc{CGAL::Field_with_sqrt_tag}\\
 \ccc{CGAL::Segment_Delaunay_graph_2<Gt,DS>}\\
 \ccc{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}\\
 \ccc{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\

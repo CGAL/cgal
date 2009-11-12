@@ -513,13 +513,13 @@ Let's consider once more the classes
 The template parameter \ccc{MTag} provides another degree of freedom
 to the user, who can indicate the type of arithmetic operations to
 be used in the evaluation of the predicates. More specifically, in
-both classes, \ccc{MTag} can be \ccc{CGAL::Sqrt_field_tag}, in
+both classes, \ccc{MTag} can be \ccc{CGAL::Field_with_sqrt_tag}, in
 which case the predicates will be evaluated using all four basic
 arithmetic operations plus square roots; this requires, of course,
 that the number type used in the kernel \ccc{K} supports these
 operations exactly. The second choices are \ccc{CGAL::Field_tag} for
 the \ccc{Segment_Delaunay_graph_2<K,MTag>} class, and
-\ccc{CGAL::Ring_tag} for the
+\ccc{CGAL::Euclidean_ring_tag} for the
 \ccc{Segment_Delaunay_graph_without_intersections_2<K,MTag>}
 class. In the first case we indicate that we want the predicates to be
 computed using only the four basic arithmetic operations, whereas in
@@ -538,10 +538,10 @@ calculations involving each of the corresponding kernels \ccc{CK},
 \ccc{FK} and \ccc{EK}. When the
 \ccc{Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>} is
 used the possible values for \ccc{CM}, \ccc{FM} and \ccc{EM} are
-\ccc{CGAL::Sqrt_field_tag} and \ccc{CGAL::Field_tag}, whereas if the 
+\ccc{CGAL::Field_with_sqrt_tag} and \ccc{CGAL::Field_tag}, whereas if the 
 \ccc{Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
-class is used, the possible values are \ccc{CGAL::Sqrt_field_tag} and
-\ccc{CGAL::Ring_tag}. The semantics are the same as in the case of the 
+class is used, the possible values are \ccc{CGAL::Field_with_sqrt_tag} and
+\ccc{CGAL::Euclidean_ring_tag}. The semantics are the same as in the case of the 
 \ccc{Segment_Delaunay_graph_2<K,MTag>} and 
 \ccc{Segment_Delaunay_graph_without_intersections_2<K,MTag>} classes.
 
