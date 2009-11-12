@@ -318,11 +318,19 @@ might lead to problems when modifying the triangulation later.
 \ccThree{Periodic_tetrahedron}{t.tetrahedron()}{}
 
 \ccMethod{Periodic_point periodic_point(const Vertex_handle v) const;}
-{Returns the periodic point given by vertex \ccc{v}.}
+{Returns the periodic point given by vertex \ccc{v}. If \ccVar\ is
+  represented in 1-sheeted covering space, the offset is always
+  zero. Otherwise \ccc{v} can correspond to a periodic copy outside
+  \ccc{domain} of an input point.}
 \ccGlue
 \ccMethod{Periodic_point periodic_point(const Cell_handle c, int i)
   const;}
-{Returns the periodic point given by the i-th vertex of cell c.
+{If \ccVar\ is represented in 1-sheeted covering space, this function
+  returns the periodic point given by the $i$-th vertex of cell
+  \ccc{c}, that is the point in the original domain and the offset of
+  the vertex in \ccc{c}.
+  If \ccVar\ is represented in 27-sheeted covering space,
+  this offset is possibly added to another offset determining the periodic copy.
 \ccPrecond{$i \in \{0,1,2,3\}$}}
 \ccGlue
 \ccMethod{Periodic_segment periodic_segment(const Cell_handle c, int
