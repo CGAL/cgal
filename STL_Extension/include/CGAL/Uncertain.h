@@ -346,10 +346,12 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 #  define CGAL_OR(X, Y)   ((X) || (Y))
 #else
 #  define CGAL_AND(X, Y) \
+       __extension__ \
        ({ CGAL::Uncertain<bool> CGAL_TMP = (X); \
           CGAL::certainly_not(CGAL_TMP) ? CGAL::make_uncertain(false) \
                                         : CGAL_TMP & CGAL::make_uncertain((Y)); })
 #  define CGAL_OR(X, Y) \
+       __extension__ \
        ({ CGAL::Uncertain<bool> CGAL_TMP = (X); \
           CGAL::certainly(CGAL_TMP) ? CGAL::make_uncertain(true) \
                                     : CGAL_TMP | CGAL::make_uncertain((Y)); })

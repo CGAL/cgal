@@ -25,7 +25,7 @@
 
 int main()
 {
-  int i = ({ int j = 2; j+j; });
+  int i = __extension__ ({ int j = 2; j+j; });
   assert(i == 4);
   return 0;
 }
