@@ -9,7 +9,7 @@ namespace internal {
   extern Monomer dummy_residue;
   extern Atom dummy_atom;
 
-};
+}
 }}
 
 #endif

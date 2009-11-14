@@ -357,8 +357,8 @@ private:
 };
 
 
-CGAL_SWAP(Chain);
-CGAL_OUTPUT(Chain);
+CGAL_SWAP(Chain)
+CGAL_OUTPUT(Chain)
 
 
 

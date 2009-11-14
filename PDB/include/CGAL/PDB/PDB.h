@@ -185,9 +185,9 @@ inline int index_atoms(const PDB &c, int start=0) {
   return start;
 }
 
-CGAL_OUTPUT(PDB);
+CGAL_OUTPUT(PDB)
 
-CGAL_SWAP(PDB);
+CGAL_SWAP(PDB)
 
 }}
 #endif

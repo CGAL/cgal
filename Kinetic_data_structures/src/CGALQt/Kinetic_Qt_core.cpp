@@ -35,7 +35,7 @@ void Qt_core::play_button() {
   CGAL_LOG(Log::SOME, "Play button pushed.\n");
   mode_=RUN;
   CGAL_KINETIC_NOTIFY(LAST_BUTTON_PRESSED);
-};
+}
 
 void Qt_core::pause_button() {
   CGAL_LOG(Log::SOME, "Pause button pushed.\n");

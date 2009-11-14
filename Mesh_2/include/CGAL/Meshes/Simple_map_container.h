@@ -77,7 +77,7 @@ namespace CGAL {
       }
     }; // end Simple_map_container
     
-  }; // end namespace Mesh_3
-}; // end namespace CGAL
+  } // end namespace Mesh_3
+} // end namespace CGAL
 
 #endif // CGAL_MESHES_SIMPLE_MAP_CONTAINER_H

@@ -296,8 +296,8 @@ inline int index_atoms(const Monomer &m, int start=0) {
 }
 
 
-CGAL_SWAP(Monomer);
-CGAL_OUTPUT(Monomer);
+CGAL_SWAP(Monomer)
+CGAL_OUTPUT(Monomer)
 
 }}
 #endif

@@ -42,7 +42,7 @@ namespace CGAL
 
 	Qt_core();
 
-	CGAL_KINETIC_LISTENERNT1(LAST_BUTTON_PRESSED);
+	CGAL_KINETIC_LISTENERNT1(LAST_BUTTON_PRESSED)
       public:
       
 	/*class Listener
@@ -143,7 +143,7 @@ namespace CGAL
 	typename Base::Handle t_;
       };
 
-    };
-  };
-};
+    }
+  }
+}
 #endif

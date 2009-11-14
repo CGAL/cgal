@@ -47,7 +47,7 @@ public:
 		Position = 0x2,
 		State    = 0x4};
 
-  Q_DECLARE_FLAGS(Options, Option);
+  Q_DECLARE_FLAGS(Options, Option)
 
 public:
   unsigned int maxNumberOfRecentFiles() const ;

@@ -161,8 +161,8 @@ inline int index_atoms(const Heterogen &m, int start=0) {
 }
 
 
-CGAL_SWAP(Heterogen);
-CGAL_OUTPUT(Heterogen);
+CGAL_SWAP(Heterogen)
+CGAL_OUTPUT(Heterogen)
 
 }}
 #endif

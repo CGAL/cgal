@@ -74,6 +74,6 @@ private:
   QToolButton* nolayerBt;
 };//end class
 
-};//end namespace
+} //end namespace
 
 #endif //CGAL_QT_WIDGET_STANDARD_TOOLBAR_H

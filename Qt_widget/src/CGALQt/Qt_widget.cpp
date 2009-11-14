@@ -558,7 +558,7 @@ void Qt_widget::clear() {
         emit(redraw_on_front());
       unlock();
     }
-  };
+  }
   
   void Qt_widget::detach(Qt_widget_layer* s)
   {

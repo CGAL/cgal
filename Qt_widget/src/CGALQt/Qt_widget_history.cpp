@@ -42,7 +42,7 @@ Qt_widget_history::Qt_widget_history(Qt_widget* parent, const char* name):
 	  this, SLOT(save()));
   connect(parent, SIGNAL(internal_clear_history()),
 	  this, SLOT(clear()));
-};
+}
 
 void Qt_widget_history::backward()
 {
@@ -90,6 +90,6 @@ void Qt_widget_history::save()
   emit forwardAvaillable(false);
 }
 
-}; // end namespace
+} // end namespace
 #include "Qt_widget_history.moc"
 

@@ -206,7 +206,7 @@ typedef struct imformat {
   char realName[IMAGE_FORMAT_NAME_LENGTH];
   /* pointer towards the next image format*/
   struct imformat *next;
-} IMAGE_FORMAT, *PTRIMAGE_FORMAT;;
+} IMAGE_FORMAT, *PTRIMAGE_FORMAT;
 
 /** Image descriptor */
 typedef struct point_image {

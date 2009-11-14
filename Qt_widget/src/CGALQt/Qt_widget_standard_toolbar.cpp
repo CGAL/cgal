@@ -57,7 +57,7 @@ namespace CGAL {
   {
     setLabel("Qt_widget standard toolbar");
     fill_toolbar(parent);
-  };
+  }
   
   Qt_widget_standard_toolbar::
   Qt_widget_standard_toolbar(Qt_widget *w, QMainWindow *mw,
@@ -68,7 +68,7 @@ namespace CGAL {
     widget(w)
   {
     fill_toolbar(mw);
-  };
+  }
   
   void Qt_widget_standard_toolbar::fill_toolbar(QMainWindow *mw)
   {
@@ -206,7 +206,7 @@ namespace CGAL {
     connect(history, SIGNAL(forwardAvaillable(bool)),
             forwardBt, SLOT(setEnabled(bool)));
     history->clear();
-  };
+  }
 
   void Qt_widget_standard_toolbar::group_clicked(int i)
   {

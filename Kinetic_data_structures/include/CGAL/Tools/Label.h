@@ -20,6 +20,7 @@
 
 #ifndef CGAL_LABEL_H_
 #define CGAL_LABEL_H_
+
 #include <CGAL/basic.h>
 #include <iostream>
 #include <sstream>
@@ -75,8 +76,8 @@ public:
   }
 };
 
-CGAL_OUTPUT1(Label);
-
+CGAL_OUTPUT1(Label)
 
 CGAL_END_NAMESPACE
+
 #endif

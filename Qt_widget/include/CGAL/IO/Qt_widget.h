@@ -282,7 +282,7 @@ inline
 Qt_widget& operator<<(Qt_widget& w, Qt_widget& (*m)(Qt_widget&))
 {
   return m(w);
-};
+}
 
 // w << noFill << ... stop the filling of geometrical object
 inline
@@ -348,7 +348,7 @@ inline
 QColor Qt_widget::color() const
 {
   return painter->pen().color();
-};
+}
 
 
 inline

@@ -83,7 +83,7 @@ namespace CGAL
 	Qt_widget_2_core *widget_;
 	Qt_core core_;
       };
-    };
-  };
-};
+    }
+  }
+}
 #endif

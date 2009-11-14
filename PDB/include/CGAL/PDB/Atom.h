@@ -107,7 +107,7 @@ private:
 };
 
 
-CGAL_SWAP(Atom);
+CGAL_SWAP(Atom)
 
 /*inline bool Atom::operator<(const Atom &o) const {
   if (index_ < o.index_) return true;

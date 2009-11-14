@@ -308,9 +308,9 @@ private:
   HeterogensMap heterogens_;
 };
 
-CGAL_SWAP(Model);
+CGAL_SWAP(Model)
 
-CGAL_OUTPUT(Model);
+CGAL_OUTPUT(Model)
 
 //! Assign unique indices to all atoms in the Model, starting at optional start value
 /*!

@@ -104,4 +104,5 @@ void MemoryPool< T, nObjects >::free(void* t) {
 }
 
 CORE_END_NAMESPACE
+
 #endif // _CORE_MEMORYPOOL_H_

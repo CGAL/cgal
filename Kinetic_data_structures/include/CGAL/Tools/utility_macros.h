@@ -370,7 +370,7 @@ template <class A, class B>			\
       typedef name<Tr> T;						\
       CGAL_HAS_INFINITY_BODY;						\
     };									\
-  };
+  }
 
 
 
@@ -396,7 +396,7 @@ template <class A, class B>			\
       typedef name<Tr, Ur> T;						\
       CGAL_HAS_INFINITY_BODY;						\
     };									\
-  };
+  }
 
 #endif
 

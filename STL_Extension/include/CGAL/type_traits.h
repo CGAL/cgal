@@ -34,6 +34,6 @@ struct is_same_or_derived :
   >::type
 {};
 
-};
+}
 
 #endif

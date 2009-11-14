@@ -112,7 +112,7 @@ public:
     }
   }
 
-  CGAL_KINETIC_LISTENER1(CURRENT_TIME);
+  CGAL_KINETIC_LISTENER1(CURRENT_TIME)
 public:
   //! get the simulator
   typename Simulator::Handle& simulator() {
@@ -168,7 +168,7 @@ protected:
 
   
 
-  CGAL_KINETIC_LISTEN1(Timer, TICKS, timer_rang());
+  CGAL_KINETIC_LISTEN1(Timer, TICKS, timer_rang())
   /*class Timer_listener: public Timer::Listener
   {
   public:
@@ -328,5 +328,5 @@ protected:
   //Listener *drawable_;
   bool processing_;
 };
-CGAL_KINETIC_END_NAMESPACE;
+CGAL_KINETIC_END_NAMESPACE
 #endif

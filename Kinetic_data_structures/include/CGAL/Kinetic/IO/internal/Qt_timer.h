@@ -33,7 +33,7 @@ namespace CGAL
       class Qt_timer: public QObject, public Non_ref_counted<Qt_timer>
       {
 	Q_OBJECT
-    	CGAL_KINETIC_LISTENERNT1(TICKS);
+    	CGAL_KINETIC_LISTENERNT1(TICKS)
      
       public:
 	Qt_timer();
@@ -46,7 +46,7 @@ namespace CGAL
 	  //CGAL_precondition(id_!=-1);
 	  if (id_!= -1) timer_.killTimer(id_);
 	  id_=-1;
-	};
+	}
 	void run(double time_in_seconds);
       protected:
 	QTimer timer_;
@@ -57,7 +57,7 @@ namespace CGAL
 	 private slots:
 	 void timerDone();
       };
-    };
-  };
-};
+    }
+  }
+}
 #endif

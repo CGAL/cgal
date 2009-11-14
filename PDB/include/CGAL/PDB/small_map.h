@@ -277,5 +277,6 @@ namespace std{
     return k > vk.key();
     }*/
 
-};
+}
+
 #endif

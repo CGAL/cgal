@@ -13,7 +13,7 @@
 
 // macros for defining namespace
 #define CORE_BEGIN_NAMESPACE    namespace CORE {
-#define CORE_END_NAMESPACE      };
+#define CORE_END_NAMESPACE      }
 
 // condition preprocessor for inline function
 #ifndef CORE_DISABLE_INLINE
