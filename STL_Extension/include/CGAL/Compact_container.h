@@ -739,9 +739,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-                         "Doing ++ on empty container iterator ?");
+	 "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) != DSC::START_END,
-                         "Doing ++ on end() ?");
+	 "Incrementing end() ?");
 
       // If it's not end(), then it's valid, we can do ++.
       do {
@@ -759,9 +759,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-                         "Doing -- on empty container iterator ?");
+	 "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p - 1) != DSC::START_END,
-                         "Doing -- on begin() ?");
+	 "Decrementing begin() ?");
 
       // If it's not begin(), then it's valid, we can do --.
       do {
@@ -777,8 +777,26 @@ namespace internal {
 
   public:
 
-    Self & operator++() { increment(); return *this; }
-    Self & operator--() { decrement(); return *this; }
+    Self & operator++()
+    {
+      CGAL_assertion_msg(m_ptr.p != NULL,
+	 "Incrementing a singular iterator or an empty container iterator ?");
+      CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
+                         "Incrementing an invalid iterator.");
+      increment();
+      return *this;
+    }
+
+    Self & operator--()
+    {
+      CGAL_assertion_msg(m_ptr.p != NULL,
+	 "Decrementing a singular iterator or an empty container iterator ?");
+      CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
+		      || DSC::type(m_ptr.p) == DSC::START_END,
+                         "Decrementing an invalid iterator.");
+      decrement();
+      return *this;
+    }
 
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
