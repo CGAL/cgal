@@ -251,7 +251,7 @@ private:						\
 #define CGAL_KINETIC_LISTEN1(Notifier, NOTIF, function)\
   private:								\
   class Notifier##_listener: public Notifier::Listener {		\
-    CGAL_KINETIC_LISTENER_BASICS(Notifier##_listener, This);		\
+    CGAL_KINETIC_LISTENER_BASICS(Notifier##_listener, This)		\
   public:								\
     virtual void new_notification(typename Notifier::Listener::Notification_type t) { \
       if (recipient() != NULL && t== Notifier::Listener::NOTIF) recipient()->function; \
@@ -265,7 +265,7 @@ private:						\
 #define CGAL_KINETIC_LISTEN2(Notifier, NOTIF, function, NOTIF2, function2) \
   private:								\
   class Notifier##_listener: public Notifier::Listener {                \
-    CGAL_KINETIC_LISTENER_BASICS(Notifier##_listener, This);		\
+    CGAL_KINETIC_LISTENER_BASICS(Notifier##_listener, This)		\
   public:								\
     virtual void new_notification(typename Notifier::Listener::Notification_type t) { \
       if (recipient()== NULL) return;					\
