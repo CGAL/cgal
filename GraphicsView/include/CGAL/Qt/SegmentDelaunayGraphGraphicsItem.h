@@ -23,6 +23,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Qt/PainterOstream.h>
 #include <CGAL/Qt/GraphicsItem.h>
+#include <CGAL/Qt/utility.h>
 //#include <CGAL/Qt/Converter.h>
 
 #include <QGraphicsScene>
