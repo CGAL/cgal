@@ -28,7 +28,7 @@
 
 #if (defined _MSC_VER && ! defined __INTEL_COMPILER) || defined __SUNPRO_CC
 
-this should not compile and that is good so
+#error "this should not compile and that is good so"
 
 #endif
 
