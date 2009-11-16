@@ -30,20 +30,20 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Gt, class Tds >
-class Triangulation_2;
 
-template < class Gt, class Tds >
+template <class Triangulation_ > //  < class Gt, class Tds >
 class Triangulation_line_face_circulator_2
-  :   public Bidirectional_circulator_base< typename Tds::Face,
+  :   public Bidirectional_circulator_base< typename Triangulation_::Triangulation_data_structure::Face,
 	                                    std::ptrdiff_t,
                                             std::size_t>,
       public Triangulation_cw_ccw_2
 {
 public:
-  typedef Triangulation_line_face_circulator_2<Gt,Tds> Line_face_circulator;
-  typedef Triangulation_2<Gt,Tds>                      Triangulation;
- 
+
+  typedef Triangulation_line_face_circulator_2<Triangulation_> Line_face_circulator;
+  typedef Triangulation_                      Triangulation;
+  typedef typename Triangulation::Geom_traits  Gt;
+  typedef typename Triangulation_::Triangulation_data_structure Tds;
   typedef typename Tds::Vertex                 Vertex;
   typedef typename Tds::Face                   Face;
   typedef typename Tds::Edge                   Edge;
@@ -62,7 +62,7 @@ public:
             
 private:
   Face_handle pos;
-  const Triangulation_2<Gt, Tds>* _tr;
+  const Triangulation* _tr;
   State s;
   int i;
   Point p, q;
@@ -73,17 +73,17 @@ public:
     {}
             
   Triangulation_line_face_circulator_2(Vertex_handle v,
-				       const Triangulation_2<Gt,Tds>* tr,
+				       const Triangulation* tr,
 				       const Point& dir);
 
   Triangulation_line_face_circulator_2(const Point& pp,
 				       const Point& qq,
-				       const Triangulation_2<Gt,Tds> * t);
+				       const Triangulation * t);
            
   Triangulation_line_face_circulator_2(const Point& pp,
 				       const Point& qq,
 				       const Face_handle& ff,
-				       const Triangulation_2<Gt,Tds>* t); 
+				       const Triangulation* t); 
 
   Line_face_circulator&   operator++() ;
   Line_face_circulator&   operator--() ;
@@ -109,7 +109,7 @@ public:
   Triangulation_line_face_circulator_2(const Face_handle& face,
 				       int index,
 				       State state,
-				       const Triangulation_2<Gt,Tds> * t,
+				       const Triangulation * t,
 				       const Point& pp,
 				       const Point& qq);
 private:
@@ -117,30 +117,30 @@ private:
   void decrement();
 };
 
-template < class Gt, class Tds >
+template < class Triangulation >
 inline
 bool
-operator==(typename Tds::Face_handle fh, 
-	   Triangulation_line_face_circulator_2<Gt,Tds> fc)
+operator==(typename Triangulation::Triangulation_data_structure::Face_handle fh, 
+	   Triangulation_line_face_circulator_2<Triangulation> fc)
 {
   return (fc==fh);
 }
 
-template < class Gt, class Tds >
+template < class Triangulation >
 inline
 bool
-operator!=(typename Tds::Face_handle fh, 
-	   Triangulation_line_face_circulator_2<Gt, Tds> fc)
+operator!=(typename Triangulation::Triangulation_data_structure::Face_handle fh, 
+	   Triangulation_line_face_circulator_2<Triangulation> fc)
 {
   return (fc!=fh);
 }
 
-template < class Gt, class Tds >
-Triangulation_line_face_circulator_2<Gt,Tds>::
+template < class Triangulation >
+Triangulation_line_face_circulator_2<Triangulation>::
 Triangulation_line_face_circulator_2(const Face_handle& face,
 				     int index,
 				     State state,
-				     const Triangulation_2<Gt,Tds> * t,
+				     const Triangulation * t,
 				     const Point& pp,
 				     const Point& qq)
     : pos(face), _tr(t), s(state), i(index),  
@@ -150,10 +150,10 @@ Triangulation_line_face_circulator_2(const Face_handle& face,
 }
 
 
-template < class Gt, class Tds >
-Triangulation_line_face_circulator_2<Gt,Tds>::
+template < class Triangulation >
+Triangulation_line_face_circulator_2<Triangulation>::
 Triangulation_line_face_circulator_2(Vertex_handle v,
-				     const Triangulation_2<Gt,Tds>* tr,
+				     const Triangulation* tr,
 				     const Point& dir)
   :pos(), _tr(tr), s(undefined)
   // begin at the face incident to v, traversed by the ray from v to
@@ -232,11 +232,11 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
 
 
 
-template < class Gt, class Tds >
-Triangulation_line_face_circulator_2<Gt,Tds>::
+template < class Triangulation >
+Triangulation_line_face_circulator_2<Triangulation>::
 Triangulation_line_face_circulator_2(const Point& pp,
 				     const Point& qq,
-				     const Triangulation_2<Gt,Tds> * t)
+				     const Triangulation * t)
      : pos(), _tr(t), s(undefined), p(pp), q(qq)
   //begins at the  first finite face traversed be the oriented line pq
 {
@@ -309,12 +309,12 @@ Triangulation_line_face_circulator_2(const Point& pp,
 }
 
 
-template < class Gt, class Tds >
-Triangulation_line_face_circulator_2<Gt,Tds>::
+template < class Triangulation >
+Triangulation_line_face_circulator_2<Triangulation>::
 Triangulation_line_face_circulator_2(const Point& pp,
 				     const Point& qq,
 				     const Face_handle& ff,
-				     const Triangulation_2<Gt,Tds>* t)
+				     const Triangulation* t)
   : pos(ff), _tr(t), s(undefined), p(pp), q(qq)
   // precondition : face ff contain p
   // the walk  begins at face ff if ff is a finite face traversed by the
@@ -417,10 +417,10 @@ Triangulation_line_face_circulator_2(const Point& pp,
 }
 
 
-template < class Gt, class Tds >
+template < class Triangulation >
 inline
 void
-Triangulation_line_face_circulator_2<Gt,Tds>::
+Triangulation_line_face_circulator_2<Triangulation>::
 increment()
 {
   CGAL_triangulation_precondition(pos != Face_handle());
@@ -471,9 +471,9 @@ increment()
   }
 } 
             
-template < class Gt, class Tds >
+template < class Triangulation >
 void
-Triangulation_line_face_circulator_2<Gt,Tds>::             
+Triangulation_line_face_circulator_2<Triangulation>::             
 decrement()
 {
   CGAL_triangulation_precondition(pos != Face_handle());
@@ -519,9 +519,9 @@ decrement()
   }
 }
 
-template < class Gt, class Tds >
+template < class Triangulation >
 bool
-Triangulation_line_face_circulator_2<Gt,Tds>::
+Triangulation_line_face_circulator_2<Triangulation>::
 locate(const Point& t, Locate_type &lt,  int &li)
 {
   switch(s){            
@@ -590,10 +590,10 @@ locate(const Point& t, Locate_type &lt,  int &li)
   }
 }
            
-template < class Gt, class Tds >
+template < class Triangulation >
 inline
-Triangulation_line_face_circulator_2<Gt,Tds>&
-Triangulation_line_face_circulator_2<Gt,Tds>::
+Triangulation_line_face_circulator_2<Triangulation>&
+Triangulation_line_face_circulator_2<Triangulation>::
 operator++()
 {
   CGAL_triangulation_precondition( pos != Face_handle()) ;
@@ -601,10 +601,10 @@ operator++()
   return *this;
 }
             
-template < class Gt, class Tds >
+template < class Triangulation >
 inline
-Triangulation_line_face_circulator_2<Gt,Tds>&
-Triangulation_line_face_circulator_2<Gt,Tds>::            
+Triangulation_line_face_circulator_2<Triangulation>&
+Triangulation_line_face_circulator_2<Triangulation>::            
 operator--()
 {
   CGAL_triangulation_precondition(pos != Face_handle()) ;
@@ -612,10 +612,10 @@ operator--()
   return *this;
 }
             
-template < class Gt, class Tds >
+template < class Triangulation >
 inline
-Triangulation_line_face_circulator_2<Gt,Tds>
-Triangulation_line_face_circulator_2<Gt,Tds>::             
+Triangulation_line_face_circulator_2<Triangulation>
+Triangulation_line_face_circulator_2<Triangulation>::             
 operator++(int)
 {
   Line_face_circulator tmp(*this);
@@ -623,10 +623,10 @@ operator++(int)
   return tmp;
 }
             
-template < class Gt, class Tds >
+template < class Triangulation >
 inline
-Triangulation_line_face_circulator_2<Gt,Tds>
-Triangulation_line_face_circulator_2<Gt,Tds>::             
+Triangulation_line_face_circulator_2<Triangulation>
+Triangulation_line_face_circulator_2<Triangulation>::             
 operator--(int)
 {
   Line_face_circulator tmp(*this);
@@ -634,9 +634,9 @@ operator--(int)
   return tmp;
 }
 
-template < class Gt, class Tds >
+template < class Triangulation >
 inline bool
-Triangulation_line_face_circulator_2<Gt,Tds>::    
+Triangulation_line_face_circulator_2<Triangulation>::    
 operator==(const Line_face_circulator& lfc) const
 {
   CGAL_triangulation_precondition( pos != Face_handle() &&
@@ -645,43 +645,43 @@ operator==(const Line_face_circulator& lfc) const
             s== lfc.s && p==lfc.p && q==lfc.q);
 }
 
-template < class Gt, class Tds >
+template < class Triangulation >
 inline bool
-Triangulation_line_face_circulator_2<Gt,Tds>:: 
+Triangulation_line_face_circulator_2<Triangulation>:: 
 operator!=(const Line_face_circulator& lfc) const
 {
   return !(*this == lfc);
 }
             
-template < class Gt, class Tds >
+template < class Triangulation >
 inline bool
-Triangulation_line_face_circulator_2<Gt,Tds>::   
+Triangulation_line_face_circulator_2<Triangulation>::   
 is_empty() const
 {
   return pos == Face_handle();
 }
 
-template < class Gt, class Tds >
+template < class Triangulation >
 inline bool
-Triangulation_line_face_circulator_2<Gt,Tds>::            
+Triangulation_line_face_circulator_2<Triangulation>::            
 operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const
 {
   CGAL_triangulation_assertion( n == NULL);
   return pos == Face_handle();
 }
             
-template < class Gt, class Tds >
+template < class Triangulation >
 inline bool
-Triangulation_line_face_circulator_2<Gt,Tds>::            
+Triangulation_line_face_circulator_2<Triangulation>::            
 operator!=(Nullptr_t n) const
 {
   CGAL_triangulation_assertion( n == NULL);
   return !(*this == n);
 }
             
-template < class Gt, class Tds >
+template < class Triangulation >
 inline bool
-Triangulation_line_face_circulator_2<Gt,Tds>:: 
+Triangulation_line_face_circulator_2<Triangulation>:: 
 collinear_outside() const
 {
 //   return (_tr->is_infinite(*this))

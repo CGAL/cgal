@@ -148,7 +148,7 @@ public:
   typedef Finite_edges_iterator                Edge_iterator;
   typedef Finite_vertices_iterator             Vertex_iterator;
 
-  typedef Triangulation_line_face_circulator_2<Gt,Tds>  Line_face_circulator;
+  typedef Triangulation_line_face_circulator_2<Self>  Line_face_circulator;
 
   // Auxiliary iterators for convenience
   // do not use default template argument to please VC++
