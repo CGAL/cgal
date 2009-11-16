@@ -160,7 +160,7 @@ template <class K>
 bool do_intersect(const CGAL::Bbox_3& bbox, 
 		  const CGAL::Ray_3<K>& ray)
 {
-  return typename K::Do_intersect_3(ray, bbox);
+  return typename K::Do_intersect_3()(ray, bbox);
 }
 
 CGAL_END_NAMESPACE
