@@ -92,7 +92,6 @@ void speed(const std::string& name)
     segment_vector.push_back(T(source, target));
   }
   
-  
   int nb_loops = 0;
   
   CGAL::Timer timer;
@@ -103,13 +102,13 @@ void speed(const std::string& name)
          it != segment_vector.end() ; ++it )
     {
       do_intersect(bbox_small, *it);
-      ++nb_loops;
     }
+    ++nb_loops;
   }
   timer.stop();
 
   std::cout << "\tDo_intersect(bbox, " << name << "): " 
-            << nb_loops / (timer.time()*1000) 
+            << (nb_loops*segment_vector.size()) / (timer.time()*1000) 
             << " computations / ms " << std::endl;
 }
 
