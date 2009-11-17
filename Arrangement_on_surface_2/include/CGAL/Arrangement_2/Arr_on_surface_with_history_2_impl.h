@@ -58,7 +58,7 @@ Arrangement_on_surface_with_history_2 (const Self& arr) :
 template<class GeomTr, class TopTr>
 Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
 Arrangement_on_surface_with_history_2 (const Geometry_traits_2 * tr) :
-  Base_arr_2 (static_cast<Data_traits_2*> (tr))
+  Base_arr_2 (static_cast<const Data_traits_2*> (tr))
 {
   m_observer.attach (*this);
 }
