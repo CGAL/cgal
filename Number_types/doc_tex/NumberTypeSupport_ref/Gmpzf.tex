@@ -3,11 +3,12 @@
 
 \ccDefinition
 
-This is an exact floating-point type; it can represent numbers
-of the form $m*2^e$, where $m$ is an arbitrary precision integer 
-based on the {\sc Gnu} Multiple Precision Arithmetic Library,
-and $e$ is of type \ccc{long}. This number type offers functionality
-very similar to \ccc{MP_Float} but is generally faster.
+This is an multiple-precision floating-point type; it can represent
+numbers of the form $m*2^e$, where $m$ is an arbitrary precision integer
+based on the {\sc Gnu} Multiple Precision Arithmetic Library, and $e$
+is of type \ccc{long}. This type can be considered exact, even if the
+exponent is not a multiple-precision number.  This number type offers
+functionality very similar to \ccc{MP_Float} but is generally faster.
 
 \ccInclude{CGAL/Gmpzf.h}
 
@@ -20,30 +21,25 @@ very similar to \ccc{MP_Float} but is generally faster.
 \ccCreationVariable{f}
 
 \ccConstructor{Gmpzf();}
-             {creates a multiple precision floating-point number
-               initialized with $0$.}
+             {creates a \ccc{Gmpzf} initialized with $0$.}
 
 \ccHidden \ccConstructor{Gmpzf(const Gmpzf& q);}
             {copy constructor.}
 
 \ccConstructor{Gmpzf(int i);}
-            {creates a multiple-precision floating-point number 
-              initialized with
-             \ccStyle{i}.}
+            {creates a \ccc{Gmpzf} initialized with \ccStyle{i}.}
 
 \ccConstructor{Gmpzf(long int l);}
-            {creates a multiple-precision floating-point number 
-              initialized with
-             \ccStyle{l}.}
+            {creates a \ccc{Gmpzf} initialized with \ccStyle{l}.}
 
 \ccConstructor{Gmpzf(const Gmpz& i);}
-            {creates a multiple-precision floating-point number 
-              initialized with
-             \ccStyle{i}.}
+            {creates a \ccc{Gmpzf} initialized with \ccStyle{i}.}
+
+\ccConstructor{Gmpzf(const Gmpfr& f);}
+            {creates a \ccc{Gmpzf} initialized with \ccStyle{f}.}
 
 \ccConstructor{Gmpzf(double d);}
-            {creates a multiple-precision  floating-point number
-              initialized with \ccStyle{d}.}
+            {creates a \ccc{Gmpzf} initialized with \ccStyle{d}.}
 \ccOperations
 
 \ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpzf& f);}
@@ -56,7 +52,8 @@ very similar to \ccc{MP_Float} but is generally faster.
 {reads a \ccc{double} from \ccc{in}, then converts it to a \ccc{Gmpzf}.}
 
 \ccImplementation
-The significand $m$ of a \ccc{Gmpzf} is reference counted.
+The significand $m$ of a \ccc{Gmpzf} is a \ccc{Gmpz} and is reference
+counted. The exponent $e$ of a \ccc{Gmpzf} is a \verb=long=.
 
 \end{ccRefClass} 
 \ccDefGlobalScope{CGAL::}

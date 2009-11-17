@@ -1,21 +1,21 @@
-
 \section{Introduction}
 
-This chapter gives an overview of the number types supported by 
+This chapter gives an overview of the number types supported by
 \cgal. Number types must fulfill certain syntactical and semantic
 requirements, such that they can be successfully used in \cgal\ code.
-In general they are expected to be a model of an algebraic structure 
-concepts and in case they model a subring of the real numbers they are 
-also a model of \ccc{RealEmbeddable}. For an overview of the algebraic 
+In general they are expected to be a model of an algebraic structure
+concepts and in case they model a subring of the real numbers they are
+also a model of \ccc{RealEmbeddable}. For an overview of the algebraic
 structure concepts see Section~\ref{caf_ref::algebraic_structures}.
 
 \section{Built-in Number Types}
 
 The built-in number types \ccc{float}, \ccc{double} and \ccc{long double} have
 the required arithmetic and comparison operators. They lack some required
-routines though which are automatically included by \cgal.
+routines though which are automatically included by \cgal .
 \footnote{ The functions can be found in the header files 
-{\tt CGAL/int.h}, {\tt CGAL/float.h}, {\tt CGAL/double.h} and {\tt CGAL/long\_long.h}.}
+        {\tt CGAL/int.h}, {\tt CGAL/float.h}, {\tt CGAL/double.h} and
+        {\tt CGAL/long\_long.h}.}
 
 
 All built-in number types of \CC\ can represent a discrete (bounded)
@@ -80,17 +80,30 @@ types.
 \section[Number Types Provided by GMP]{Number Types Provided by \gmp} 
 \label{gmp-nt}
 
-\cgal\ provides wrapper classes for number types defined in the
-{\sc Gnu} Multiple Precision arithmetic library~\cite{g-ggmpa-}.
-The file {\tt  CGAL/Gmpz.h} provides the class \ccc{Gmpz},
-a wrapper class for the integer type \ccc{mpz_t}, that is compliant with the
-\cgal\ number type requirements. The file {\tt  CGAL/Gmpq.h} provides the class \ccc{Gmpq},
-a wrapper class for the rational type \ccc{mpq_t}, that is compliant
-with the \cgal\ number type requirements. 
+\cgal\ provides wrapper classes for number types defined in the {\sc
+Gnu} Multiple Precision arithmetic library~\cite{g-ggmpa-}. The file
+{\tt  CGAL/Gmpz.h} provides the class \ccc{Gmpz}, a wrapper class for
+the arbitrary-precision integer type \ccc{mpz_t}, which is compliant
+with the \cgal\ number type requirements. The file {\tt  CGAL/Gmpq.h}
+provides the class \ccc{Gmpq}, a wrapper class for the arbitrary-precision
+rational type \ccc{mpq_t}, which is compliant with the \cgal\ number
+type requirements.
 
-The file {\tt  CGAL/Gmpzf.h} provides the class \ccc{Gmpzf},
-an exact floating-point type based on \ccc{mpz_t}, that is compliant
-with the \cgal\ number type requirements. 
+The file {\tt CGAL/Gmpzf.h} provides the class \ccc{Gmpzf}, an exact
+arbitrary-precision floating-point type. Hence, It does not support
+operators like \verb=/=\ to guarantee exactness of the operations. The
+arithmetic operations on this type are restricted to \verb=+=, \verb=-=,
+\verb=*=\ and \ccc{CGAL::integral_division}.
+
+The file {\tt CGAL/Gmpfr.h} provides the class \ccc{Gmpfr},
+a fixed-precision floating-point number type. Since the precision
+(number of bits used to represent the mantissa of the number) is fixed
+for each object, the result of each operation is rounded when necessary.
+Though not necessary at first, the user will take full advantage of this
+number type by understanding the ideas behind floating-point arithmetic,
+such as precision and rounding, and understandig the flags set by this
+library after each operation.  For more details, the reader should refer
+to \cite{cgal:mt-mpfr} and the \ccc{Gmpfr} reference manual.
 
 In addition, it is possible to directly use the C++ number types provided by
 \gmp~: \ccc{mpz_class}, \ccc{mpq_class} (note that support for
@@ -98,7 +111,7 @@ In addition, it is possible to directly use the C++ number types provided by
 necessary functions to make these classes compliant to the \cgal\ number type
 requirements.
 
-To use this, \gmp\ must be installed.
+To use these classes, \gmp\ and \textsc{Mpfr}\ must be installed.
 
 
 \section[Number Types Provided by LEDA] {Number Types Provided by \leda}
@@ -161,6 +174,35 @@ necessary functions to make these classes compliant to the \cgal\ number type
 requirements.
 
 \core\ version 1.7 or later is required.
+
+\section[Interval arithmetic]
+{Interval arithmetic}
+
+Interval arithmetic is very important for geometric programming. It
+is a fundamental tool for filtering predicates. For many problems,
+intervals of machine double-precision numbers are sufficient, but it is
+not always enough. For example, one approach for determining the sign of
+an expression is to evaluate its sign using interval arithmetic and to
+repeatedly increase the precision of the bounds of the intervals until
+either the interval does not contain zero or its width is less than the
+separation bound of the polynomial.
+
+For intervals of machine double-precision numbers, \cgal~provides
+the class \ccc{Interval_nt}. For intervals of floating-point
+arbitrary-precision numbers, the class \ccc{Gmpfi} is provided in the
+file {\tt CGAL/Gmpfi.h}.
+
+Endpoints of \ccc{Gmpfi} intervals are represented as \ccc{Gmpfr}
+numbers.  Each interval has an associated \emph{precision}, which is
+the maximum precision (number of bits used to represent the mantissa)
+of its endpoints.  The result of the operations is guaranteed to be
+always contained in the returned interval. Since the interval arithmetic
+is implemented on top of \ccc{Gmpfr}, the global flags and the default
+precision are inherited from the \ccc{Gmpfr} interface. See
+\cite{cgal:r-mpfi} and the \ccc{Gmpfi} reference manual for details.
+
+To use the \ccc{Gmpfi} class, \textsc{Mpfi}\ must be installed.
+
 
 \section{User-supplied Number Types}
 

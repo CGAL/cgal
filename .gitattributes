@@ -2217,10 +2217,20 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Nef_S2/include/CGAL/IO/Nef_polyhedron_iostream_S2.h -text
+Number_types/cmake/modules/CGAL_SetupMPFI.cmake -text
+Number_types/cmake/modules/FindMPFI.cmake -text
 Number_types/doc_tex/NumberTypeSupport/illustration.png -text
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
+Number_types/doc_tex/NumberTypeSupport_ref/Gmpfi.tex -text
+Number_types/doc_tex/NumberTypeSupport_ref/Gmpfr.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text
+Number_types/include/CGAL/Gmpfi.h -text
+Number_types/include/CGAL/Gmpfi_type.h -text
+Number_types/include/CGAL/Gmpfi_type_static.h -text
+Number_types/include/CGAL/Gmpfr.h -text
+Number_types/include/CGAL/Gmpfr_type.h -text
+Number_types/include/CGAL/Gmpfr_type_static.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_extension_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_structure_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Coercion_traits.h -text
@@ -2230,6 +2240,16 @@ Number_types/include/CGAL/Sqrt_extension/Real_embeddable_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Scalar_factor_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Sqrt_extension_type.h -text
 Number_types/include/CGAL/Sqrt_extension/io.h -text
+Number_types/include/CGAL/mpfi_coercion_traits.h -text
+Number_types/include/CGAL/mpfr_coercion_traits.h -text
+Number_types/test/Number_types/CMakeLists.txt -text
+Number_types/test/Number_types/Gmpfi.cpp -text
+Number_types/test/Number_types/Gmpfi_test_arithmetic.cpp -text
+Number_types/test/Number_types/Gmpfi_test_operators.cpp -text
+Number_types/test/Number_types/Gmpfi_test_precision.cpp -text
+Number_types/test/Number_types/Gmpfr.cpp -text
+Number_types/test/Number_types/Gmpfr_test_arithmetic.cpp -text
+Number_types/test/Number_types/Gmpfr_test_operators.cpp -text
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.pdf -text svneol=unset#application/pdf
 Optimisation_doc/doc_tex/Bounding_volumes/ball.gif -text svneol=unset#image/gif

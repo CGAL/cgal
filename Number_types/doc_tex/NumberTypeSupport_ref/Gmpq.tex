@@ -13,66 +13,68 @@ number based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 \ccc{RealEmbeddable}\\
 \ccc{Fraction}
 
-\ccTypes
-
-\ccNestedType{NT}{the field type, which is \ccc{Gmpz}.  }
-
 \ccCreation
 \ccCreationVariable{q}
 
 \ccConstructor{Gmpq();}
-             {creates an uninitialized multiple precision rational number \ccVar.}
+             {creates an uninitialized \ccc{Gmpq} \ccVar.}
 
 \ccHidden \ccConstructor{Gmpq(const Gmpq& q);}
             {copy constructor.}
 
 \ccConstructor{Gmpq(int i)}
-            {creates a multiple-precision rational number initialized with
+            {creates a \ccc{Gmpq} initialized with
              \ccStyle{i}.}
 
 \ccConstructor{Gmpq(Gmpz n)}
-            {creates a multiple-precision rational number initialized with
+            {creates a \ccc{Gmpq} initialized with
              \ccStyle{n}.}
 
+\ccConstructor{Gmpq(Gmpfr f)}
+            {creates a \ccc{Gmpq} initialized with
+             \ccStyle{f}.}
+
 \ccConstructor{Gmpq(int n, int d)}
-            {creates a multiple-precision rational number initialized with
+            {creates a \ccc{Gmpq} initialized with
              \ccStyle{n/d}.}
 
 \ccConstructor{Gmpq(signed long n, unsigned long d)}
-            {creates a multiple-precision rational number initialized with
+            {creates a \ccc{Gmpq} initialized with
              \ccStyle{n/d}.}
 
 \ccConstructor{Gmpq(unsigned long n, unsigned long d)}
-            {creates a multiple-precision rational number initialized with
+            {creates a \ccc{Gmpq} initialized with
              \ccStyle{n/d}.}
 
 \ccConstructor{Gmpq(Gmpz n, Gmpz d)}
-            {creates a multiple-precision rational number initialized with
+            {creates a \ccc{Gmpq} initialized with
              \ccStyle{n/d}.}
 
 \ccConstructor{Gmpq(double d)}
-            {creates a multiple-precision rational number initialized with
+            {creates a \ccc{Gmpq} initialized with
              \ccStyle{d}.}
 
 \ccConstructor{Gmpq(const std::string& str)}
-            {creates a multiple-precision rational number initialized with
-             \ccStyle{str}.}
+            {creates a \ccc{Gmpq} initialized with \ccStyle{str}, which can
+	    be an integer like "41" or a fraction like "41/152". White
+	    space is allowed in the string, and ignored.}
 
 \ccConstructor{Gmpq(const std::string& str, int base)}
-            {creates a multiple-precision rational number initialized with
-             \ccStyle{str}.}
+            {creates a \ccc{Gmpq} initialized with \ccStyle{str} in base
+	    \ccc{base}, which is an integer between 2 and 62. White space
+	    in the string is ignored.}
 
 %\ccSetTwoOfThreeColumns{5cm}{4cm}
 %SetThreeColumns{std::ostream& }{}{\hspace*{8cm}}
 
 \ccOperations
 \ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpq& q);}
-{writes \ccc{q} to the ostream \ccc{out}, in the form $n/d$.}
+	{writes \ccc{q} to the ostream \ccc{out}, in the form $n/d$.}
 
 \ccFunction{std::istream& operator>>(std::istream& in, Gmpq& q);}
-{reads a number from \ccc{in}, then converts it to a \ccc{Gmpq}. The 
-number may be an integer, a rational number in the form $n/d$, or a
-floating-point number.}
+	{reads a number from \ccc{in}, then converts it to a
+	\ccc{Gmpq}. The number may be an integer, a rational number in
+	the form $n/d$, or a floating-point number.}
 
 There are two access functions, namely to the
 numerator and the denominator of a rational.
