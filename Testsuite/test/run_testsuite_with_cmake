@@ -71,7 +71,7 @@ wait_for_process()
 	    kill -HUP $pid
 	    sleep 10
 	    # If SIGHUP was not enough, SIGKILL will finish the job, 10s after.
-	    kill -KILL -$pid
+	    kill -KILL $pid
 	fi
         return 1  
     fi
