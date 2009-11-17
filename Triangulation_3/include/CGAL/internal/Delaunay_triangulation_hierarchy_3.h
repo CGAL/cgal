@@ -31,12 +31,12 @@ namespace CGAL {
 // as 2nd as well as 3rd positions (deduced parameter).
 
 #define CGAL_TDS_3 \
-typename Default::Get<Tds, Triangulation_data_structure_3 <\
-	                   Triangulation_vertex_base_3<Gt>,\
-	                   Triangulation_cell_base_3<Gt> > >::type
+typename Default::Get<Tds_, Triangulation_data_structure_3 <\
+	                    Triangulation_vertex_base_3<Gt>,\
+	                    Triangulation_cell_base_3<Gt> > >::type
 
-template < class Gt, class Tds >
-class Delaunay_triangulation_3<Gt, Tds, Fast_location>
+template < class Gt, class Tds_ >
+class Delaunay_triangulation_3<Gt, Tds_, Fast_location>
   : public Triangulation_hierarchy_3<Delaunay_triangulation_3<Gt,
       CGAL_TDS_3::template Rebind_vertex<Triangulation_hierarchy_vertex_base_3<CGAL_TDS_3::Vertex> >::Other> >
 {
@@ -56,11 +56,11 @@ public:
 
 #undef CGAL_TDS_3
 
-template < class Gt, class Tds >
-class Delaunay_triangulation_3<Gt, Tds, Compact_location>
-  : public Delaunay_triangulation_3<Gt, Tds>
+template < class Gt, class Tds_ >
+class Delaunay_triangulation_3<Gt, Tds_, Compact_location>
+  : public Delaunay_triangulation_3<Gt, Tds_>
 {
-    typedef Delaunay_triangulation_3<Gt, Tds> Base;
+    typedef Delaunay_triangulation_3<Gt, Tds_> Base;
 
 public:
 
