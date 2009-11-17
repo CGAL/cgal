@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez
+// Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez, Stephane Tayeb
 
 
 #ifndef CGAL_SEGMENT_3_BBOX_3_DO_INTERSECT_H
@@ -30,94 +30,120 @@ CGAL_BEGIN_NAMESPACE
 
 namespace internal {
 
+  template <typename FT> 
+  inline
+  bool 
+  do_intersect_bbox_segment_aux(
+                          const FT& px, const FT& py, const FT& pz,
+                          const FT& qx, const FT& qy, const FT& qz,
+                          const FT& bxmin, const FT& bymin, const FT& bzmin,
+                          const FT& bxmax, const FT& bymax, const FT& bzmax)
+  {
+    // -----------------------------------
+    // treat x coord
+    // -----------------------------------
+    FT dmin (0);
+    FT tmin (0);
+    FT tmax (0);
+    if ( qx >= px )
+    {
+      tmin = bxmin - px;
+      tmax = bxmax - px;
+      dmin = qx - px;
+    }
+    else 
+    {
+      tmin = px - bxmax;
+      tmax = px - bxmin;
+      dmin = px - qx;
+    }
+    
+    if ( tmax < FT(0) || tmin > dmin )
+      return false;
+    
+    FT dmax = dmin;
+    if ( tmin < FT(0) )
+    { 
+      tmin = FT(0);
+      dmin = FT(1);
+    }
+    
+    if ( tmax > dmax )
+    { 
+      tmax = FT(1);
+      dmax = FT(1);
+    }
+    
+    // -----------------------------------
+    // treat y coord
+    // -----------------------------------
+    FT d_ (0);
+    FT tmin_ (0);
+    FT tmax_ (0);
+    if ( qy >= py )
+    {
+      tmin_ = bymin - py;
+      tmax_ = bymax - py;
+      d_ = qy - py;
+    }
+    else
+    {
+      tmin_ = py - bymax;
+      tmax_ = py - bymin;
+      d_ = py - qy;
+    }
+    
+    if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
+      return false;
+    
+    if( (dmin*tmin_) > (d_*tmin) )
+    { 
+      tmin = tmin_;
+      dmin = d_;
+    }
+    
+    if( (dmax*tmax_) < (d_*tmax) )
+    { 
+      tmax = tmax_;
+      dmax = d_;
+    }
+    
+    
+    // -----------------------------------
+    // treat z coord
+    // -----------------------------------
+    if ( qz >= pz )
+    {
+      tmin_ = bzmin - pz;
+      tmax_ = bzmax - pz;
+      d_ = qz - pz;
+    }
+    else
+    {
+      tmin_ = pz - bzmax;
+      tmax_ = pz - bzmin;
+      d_ = pz - qz;
+    }
+
+    return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );
+  }
+  
   template <class K>
   bool do_intersect(const typename K::Segment_3& segment, 
     const CGAL::Bbox_3& bbox,
     const K&)
   {
     typedef typename K::FT FT;
-    typedef typename K::Point_3 Point;
-    typedef typename K::Vector_3 Vector;
-    typedef typename K::Segment_3 Segment;
-
-    Point parameters[2];
-    parameters[0] = Point(bbox.xmin(), bbox.ymin(), bbox.zmin());
-    parameters[1] = Point(bbox.xmax(), bbox.ymax(), bbox.zmax());
-
-    const Point source = segment.source();
-    const Point target = segment.target();
-
-    const Vector direction = target - source;
-    FT tmin(0.0);
-    FT tmax(1.0);
+    typedef typename K::Point_3 Point_3;
     
-    if ( ! CGAL_NTS is_zero(direction.x()) )
-    {
-      FT inv_direction_x = FT(1)/direction.x();
-      const int sign_x = inv_direction_x < FT(0);
-      
-      tmin = (parameters[sign_x].x() - source.x()) * inv_direction_x;
-      tmax = (parameters[1-sign_x].x() - source.x()) * inv_direction_x;
-      
-      // premature exit
-      if(tmax < FT(0) || tmin > FT(1))
-        return false;
-      
-      if(tmin < FT(0))
-        tmin = FT(0);
-      if(tmax > FT(1))
-        tmax = FT(1);
-    }
-    else
-    {
-      // premature exit if x value of segment is outside bbox
-      if ( source.x() < parameters[0].x() || source.x() > parameters[1].x() )
-        return false;
-    }
+    const Point_3 source = segment.source();
+    const Point_3 target = segment.target();
     
-    if ( ! CGAL_NTS is_zero(direction.y()) )
-    {
-      FT inv_direction_y = FT(1)/direction.y();
-      const int sign_y = inv_direction_y < FT(0);
-      
-      const FT tymin = (parameters[sign_y].y() - source.y()) * inv_direction_y;
-      const FT tymax = (parameters[1-sign_y].y() - source.y()) * inv_direction_y;
-      
-      if(tmin > tymax || tymin > tmax) 
-        return false;
-      
-      if(tymin > tmin)
-        tmin = tymin;
-      
-      if(tymax < tmax)
-        tmax = tymax;
-    }
-    else
-    {
-      // premature exit if y value of segment is outside bbox
-      if ( source.y() < parameters[0].y() || source.y() > parameters[1].y() )
-        return false;
-    }
-    
-    if ( ! CGAL_NTS is_zero(direction.z()) )
-    {
-      FT inv_direction_z = FT(1)/direction.z();
-      const int sign_z = inv_direction_z < FT(0);
-      
-      FT tzmin = (parameters[sign_z].z() - source.z()) * inv_direction_z;
-      FT tzmax = (parameters[1-sign_z].z() - source.z()) * inv_direction_z;
-      
-      if(tmin > tzmax || tzmin > tmax) 
-        return false;
-    }
-    else
-    {
-      // premature exit if z value of segment is outside bbox
-      if ( source.z() < parameters[0].z() || source.z() > parameters[1].z() )
-        return false;
-    }
-    
-  return true;
+    return do_intersect_bbox_segment_aux(
+                          source.x(), source.y(), source.z(), 
+                          target.x(), target.y(), target.z(),
+                          FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),
+                          FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()) );
   }
 
   template <class K>

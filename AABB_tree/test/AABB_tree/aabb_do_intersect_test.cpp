@@ -29,6 +29,29 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Timer.h>
+#include <CGAL/Kernel_traits.h>
+
+#include <iomanip>
+
+
+
+double random_in(const double a,
+                 const double b)
+{
+  double r = rand() / (double)RAND_MAX;
+  return a + (b - a) * r;
+}
+
+template <class K>
+typename K::Point_3 random_point_in(const CGAL::Bbox_3& bbox)
+{
+  typedef typename K::FT FT;
+  FT x = (FT)random_in(bbox.xmin(),bbox.xmax());
+  FT y = (FT)random_in(bbox.ymin(),bbox.ymax());
+  FT z = (FT)random_in(bbox.zmin(),bbox.zmax());
+  return typename K::Point_3(x,y,z);
+}
 
 
 template <class T>
@@ -46,6 +69,62 @@ bool test_aux(const T& t,
   return (b == expected);
 }
 
+template <class T>
+void speed(const std::string& name)
+{
+  // types
+  typedef typename CGAL::Kernel_traits<T>::Kernel K;
+  typedef typename K::FT FT;
+  typedef typename K::Point_3 Point;
+  
+  // speed
+  double d1 = 1.44258699;
+  CGAL::Bbox_3 bbox_small(-d1, -d1, -d1, d1, d1, d1);
+  double d2 = 10;
+  CGAL::Bbox_3 bbox_big(-d2,-d2,-d2,d2,d2,d2);
+  
+  std::vector<T> segment_vector;
+  for ( int i = 0 ; i < 1e4 ; ++i )
+  {
+    Point source = random_point_in<K>(bbox_big);
+    Point target = random_point_in<K>(bbox_big);
+    
+    segment_vector.push_back(T(source, target));
+  }
+  
+  
+  int nb_loops = 0;
+  
+  CGAL::Timer timer;
+  timer.start();
+  while ( timer.time() < 0.1 )
+  {
+    for ( typename std::vector<T>::iterator it = segment_vector.begin();
+         it != segment_vector.end() ; ++it )
+    {
+      do_intersect(bbox_small, *it);
+      ++nb_loops;
+    }
+  }
+  timer.stop();
+
+  std::cout << "\tDo_intersect(bbox, " << name << "): " 
+            << nb_loops / (timer.time()*1000) 
+            << " computations / ms " << std::endl;
+}
+
+template <class K>
+void test_speed()
+{
+  typedef typename K::Segment_3 Segment;
+  typedef typename K::Ray_3 Ray;
+  typedef typename K::Line_3 Line;
+  
+  speed<Segment>("segment");
+  speed<Ray>("ray");
+  speed<Line>("line");
+}
+
 template <class K>
 bool test()
 {
@@ -56,7 +135,7 @@ bool test()
   typedef typename K::Segment_3 Segment;
   typedef typename K::Ray_3 Ray;
   typedef typename K::Line_3 Line;
-
+  
   CGAL::Bbox_3 bbox(1.0,1.0,1.0,10.0,50.0,100.0);
   
   Point p1(FT(0.), FT(0.), FT(0.));
@@ -157,29 +236,71 @@ bool test()
   b &= test_aux(lCE,"lCE",bbox,true);
   b &= test_aux(lEC,"lEC",bbox,true);
 
+  // Test more bboxes
+  CGAL::Bbox_3 bbox2(-0.248143,-0.49325,0.0747943,-0.107021,-0.406955,0.151042);
+  Segment seg2(Point(0.10114,0.23963,0.0854394),
+               Point(1.35831,1.52921,0.524127) );
+  
+  CGAL::Bbox_3 bbox3(-0.489613, -0.333874, -0.154123, -0.100856, 0.0477374, 0.155364);
+  Segment seg3(Point(-0.123786,0.0689497,0.274589),
+               Point(-0.203405,-0.119905,0.0661125) );
+
+  CGAL::Bbox_3 bbox4(-0.161409, -0.462146, -0.104619, -0.111159, -0.408844, -0.0594407);
+  Segment seg4(Point(0.0586705,-0.276077,0.0726862),
+               Point(-1.12212,-1.19194,-1.25109) );
+
+  Ray ray2(seg2.source(), seg2.target());
+  Ray ray3(seg3.source(), seg3.target());
+  Ray ray4(seg4.source(), seg4.target());
+  
+  Line line2(seg2);
+  Line line3(seg3);
+  Line line4(seg4);
+  
+  test_aux(seg2, "seg2", bbox2, false);
+  test_aux(seg3, "seg3", bbox3, true);
+  test_aux(seg4, "seg4", bbox4, false);
+  
+  test_aux(ray2, "ray2", bbox2, false);
+  test_aux(ray3, "ray3", bbox3, true);
+  test_aux(ray4, "ray4", bbox4, false);
+  
+  test_aux(line2, "line2", bbox2, false);
+  test_aux(line3, "line3", bbox3, true);
+  test_aux(line4, "line4", bbox4, false);
+
 	return b;
 }
 
 int main()
 {
+  srand(0);
+  std::cout << std::setprecision(5);
+  
   std::cout << "Testing with Simple_cartesian<float>..." << std::endl ;
   bool b = test<CGAL::Simple_cartesian<float> >();
+  test_speed<CGAL::Simple_cartesian<float> >();
   
-  std::cout << "Testing with Simple_cartesian<double>..." << std::endl ;
+  std::cout << std::endl << "Testing with Simple_cartesian<double>..." << std::endl ;
 	b &= test<CGAL::Simple_cartesian<double> >();
+  test_speed<CGAL::Simple_cartesian<double> >();
   
-  std::cout << "Testing with Cartesian<float>..." << std::endl ;
+  std::cout << std::endl << "Testing with Cartesian<float>..." << std::endl ;
 	b &= test<CGAL::Cartesian<float> >();
+  test_speed<CGAL::Cartesian<float> >();
   
-  std::cout << "Testing with Cartesian<double>..." << std::endl ;
+  std::cout << std::endl << "Testing with Cartesian<double>..." << std::endl ;
 	b &= test<CGAL::Cartesian<double> >();
+  test_speed<CGAL::Cartesian<double> >();
   
-  std::cout << "Testing with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
+  std::cout << std::endl << "Testing with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
 	b &= test<CGAL::Exact_predicates_inexact_constructions_kernel>();
+  test_speed<CGAL::Exact_predicates_inexact_constructions_kernel>();
   
-  std::cout << "Testing with Exact_predicates_exact_constructions_kernel..." << std::endl ;
+  std::cout << std::endl << "Testing with Exact_predicates_exact_constructions_kernel..." << std::endl ;
 	b &= test<CGAL::Exact_predicates_exact_constructions_kernel>();
-	
+	test_speed<CGAL::Exact_predicates_exact_constructions_kernel>();
+  
   if ( b )
     return EXIT_SUCCESS;
   else
