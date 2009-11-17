@@ -11,7 +11,7 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
 
-find_package(CGAL COMPONENTS Qt4)
+find_package(CGAL COMPONENTS Qt4 Core)
 
 include(${CGAL_USE_FILE})
 
