@@ -43,10 +43,7 @@ struct Weighted_converter_3
 
   typedef typename Target_traits::Weighted_point_3  Target_wp;
 
-
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Converter::operator();
-#endif
 
   Target_wp
   operator()(const Source_wp &wp) const
