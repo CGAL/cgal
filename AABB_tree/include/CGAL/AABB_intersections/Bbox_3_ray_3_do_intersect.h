@@ -40,9 +40,7 @@ namespace internal {
     // -----------------------------------
     // treat x coord
     // -----------------------------------
-    FT dmin (0);
-    FT tmin (0);
-    FT tmax (0);
+    FT dmin, tmin, tmax;
     if ( qx >= px )
     {
       tmin = bxmin - px;
@@ -75,9 +73,7 @@ namespace internal {
     // -----------------------------------
     // treat y coord
     // -----------------------------------
-    FT d_ (0);
-    FT tmin_ (0);
-    FT tmax_ (0);
+    FT d_, tmin_, tmax_;
     if ( qy >= py )
     {
       tmin_ = bymin - py;
