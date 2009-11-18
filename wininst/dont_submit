@@ -14,4 +14,3 @@ WriteEnvStr.nsh
 ReplaceInFile.nsh
 StrRep.nsh
 zirkel.bmp
-INSTALL.win32.txt
