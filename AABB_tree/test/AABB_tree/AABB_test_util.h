@@ -748,9 +748,9 @@ private:
       FT dist_naive = CGAL::squared_distance(query, point_naive);
       FT dist_tree = CGAL::squared_distance(query, point_tree);
 
-      const FT epsilon = (FT)1e-6;
-      assert( (dist_naive - dist_tree) <= (epsilon * dist_tree) );
-      assert( (dist_naive - dist_tree) >= (-1. * epsilon * dist_tree) );
+      const FT epsilon = (FT)1e-12;
+      assert( (dist_naive - dist_tree) <= epsilon );
+      assert( (dist_naive - dist_tree) >= (-1. * epsilon) );
     }
 
     mutable CGAL::Timer naive_timer;
