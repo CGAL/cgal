@@ -78,18 +78,19 @@ struct Tester
     center = circumcenter(p1,p2,p5);
     std::cerr << "\tcircumcenter(p1,p3,p5)=[" << center << "]\n";
 
-    center = circumcenter(p1,p2,p3,p4);
-    std::cerr << "\tcircumcenter(p1,p2,p3,p4)=[" << center << "]\n";
+    // Use positive orientation
+    center = circumcenter(p2,p3,p4,p1);
+    std::cerr << "\tcircumcenter(p2,p3,p4,p1)=[" << center << "]\n";
 
-    center = circumcenter(p1,p2,p3,p5);
-    std::cerr << "\tcircumcenter(p1,p2,p3,p5)=[" << center << "]\n";
+    center = circumcenter(p1,p3,p2,p5);
+    std::cerr << "\tcircumcenter(p1,p3,p2,p5)=[" << center << "]\n";
 
 
     //-------------------------------------------------------
     // Test speed
     //-------------------------------------------------------
-    std::cerr << "Test speed: compute loops of: 999*c(p1,p2,p3,p5) "
-              << "and 1*c(p1,p2,p3,p4)\n";
+    std::cerr << "Test speed: compute loops of: 999*c(p1,p3,p2,p5) "
+              << "and 1*c(p2,p3,p4,p1)\n";
 
     CGAL::Timer timer;
     timer.start();
@@ -98,10 +99,10 @@ struct Tester
     {
       // Compute 1000 fast queries
       for ( int i = 0 ; i < 999 ; ++i)
-        circumcenter(p1,p2,p3,p5);
+        circumcenter(p1,p3,p2,p5);
 
       // Compute 1 exact query
-      circumcenter(p1,p2,p3,p4);
+      circumcenter(p2,p3,p4,p1);
       ++nb_loop;
     }
     timer.stop();
@@ -109,20 +110,20 @@ struct Tester
               << " circumcenter computation / second\n";
 
     
-    std::cerr << "Test speed: compute loops of: 999*c(p1,p2,p3,p4) "
-              << "and 1*c(p1,p2,p3,p5)\n";
+    std::cerr << "Test speed: compute loops of: 999*c(p2,p3,p4,p1) "
+              << "and 1*c(p1,p3,p2,p5)\n";
     
     timer.reset();
     timer.start();
     nb_loop = 0;
     while ( timer.time() < 0.5 )
     {
-      // Compute 1000 fast queries
+      // Compute 1 exact queries
       for ( int i = 0 ; i < 999 ; ++i)
-        circumcenter(p1,p2,p3,p4);
+        circumcenter(p2,p3,p4,p1);
       
-      // Compute 1 exact query
-      circumcenter(p1,p2,p3,p5);
+      // Compute 1 fast query
+      circumcenter(p1,p3,p2,p5);
       ++nb_loop;
     }
     timer.stop();

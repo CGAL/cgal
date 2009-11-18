@@ -59,13 +59,15 @@ public:
                           const Weighted_point_3 & r,
                           const Weighted_point_3 & s ) const
   {
-    CGAL_precondition(! Rt().coplanar_3_object()(p,q,r,s) );
+    CGAL_precondition(Rt().orientation_3_object()(p,q,r,s) == CGAL::POSITIVE);
     
     typename Rt::Construct_weighted_circumcenter_3 weighted_circumcenter =
       Rt().construct_weighted_circumcenter_3_object();
     
-    typename Rt::Side_of_bounded_sphere_3 side_of_bounded_sphere =
-      Rt().side_of_bounded_sphere_3_object();
+    // We use Side_of_oriented_sphere_3: it is static filtered and
+    // we know that p,q,r,s are positive oriented
+    typename Rt::Side_of_oriented_sphere_3 side_of_oriented_sphere =
+      Rt().side_of_oriented_sphere_3_object();
     
     // Compute denominator to swith to exact if it is 0
     const FT denom = compute_denom(p,q,r,s);
@@ -74,7 +76,7 @@ public:
       result_type point = weighted_circumcenter(p,q,r,s);
       
       // Fast output
-      if ( side_of_bounded_sphere(p,q,r,s,point) == CGAL::ON_BOUNDED_SIDE )
+      if ( side_of_oriented_sphere(p,q,r,s,point) == CGAL::ON_POSITIVE_SIDE )
         return point;
     }
     
