@@ -24,7 +24,9 @@ set( QT_USE_QTOPENGL  TRUE )
 find_package(Qt4)
 include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
-
+include_directories (BEFORE ../../../Triangulation_2/include)
+include_directories (BEFORE ../../../Kernel_23/include)
+include_directories (BEFORE ../../../Cartesian_kernel/include)
 
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
@@ -95,6 +97,9 @@ add_to_cached_list( CGAL_EXECUTABLE_TARGETS Regular_triangulation_2 )
 target_link_libraries( Regular_triangulation_2 ${QT_LIBRARIES} )
 # Link with CGAL
 target_link_libraries( Regular_triangulation_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+
+add_executable( poly poly.cpp )
+target_link_libraries( poly ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 else()
 

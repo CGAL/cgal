@@ -182,11 +182,28 @@ DemosMainWindow::popupAboutBox(QString title, QString html_resource_name)
 {
   QFile about_CGAL(html_resource_name);
   about_CGAL.open(QIODevice::ReadOnly);
+  QString about_CGAL_txt = QTextStream(&about_CGAL).readAll();
+#ifdef CGAL_VERSION_STR
+  about_CGAL_txt.replace("<!--CGAL_VERSION-->",
+                         QString(" (version %1, svn r%2)")
+                         .arg(CGAL_VERSION_STR).arg(CGAL_SVN_REVISION));
+#endif
   QMessageBox mb(QMessageBox::NoIcon,
                  title,
-                 QTextStream(&about_CGAL).readAll(),
+                 about_CGAL_txt,
                  QMessageBox::Ok,
                  this);
+
+  QLabel* mb_label = mb.findChild<QLabel*>("qt_msgbox_label");
+  if(mb_label) {
+    mb_label->setTextInteractionFlags(mb_label->textInteractionFlags() | 
+                                      ::Qt::LinksAccessibleByMouse | 
+                                      ::Qt::LinksAccessibleByKeyboard);
+  }
+  else {
+    std::cerr << "Cannot find child \"qt_msgbox_label\" in QMessageBox\n"
+              << "  with Qt version " << QT_VERSION_STR << "!\n";
+  }
   mb.exec();
 }
 

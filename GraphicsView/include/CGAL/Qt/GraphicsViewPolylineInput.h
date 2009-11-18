@@ -88,6 +88,7 @@ public:
   GraphicsViewPolylineInput(QObject* parent, QGraphicsScene* s, int n = 0, bool closed = true)
     : GraphicsViewPolylineInput_non_templated_base(parent, s, n, closed)
   {
+    std::cerr << "GraphicsViewPolylineInput\n";
   }
 
 protected:
@@ -98,6 +99,7 @@ protected:
     if(closed_){
       points.push_back(points.front());
     }
+    std::cerr << "emit\n";
     emit(generate(CGAL::make_object(points)));
   }
 }; // end class GraphicsViewPolylineInput
