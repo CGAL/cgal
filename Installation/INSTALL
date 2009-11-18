@@ -27,7 +27,7 @@ To install CGAL, you need 'cmake' and several third-party libraries.
 Some are mandatory for entire CGAL, some are mandatory for particular 
 CGAL packages, some are only needed for demos.
 
-   * CMake (>= 2.4.5), the build system used by CGAL
+   * CMake (>= 2.4.8), the build system used by CGAL
      Required for building CGAL
      CMake >= 2.6 is recommended, since it supports a cross platform GUI
      http://www.cmake.org/
@@ -58,17 +58,17 @@ CGAL packages, some are only needed for demos.
        or precompiled version that can be downloaded with CGAL-3.5-Setup.exe
        based on http://fp.gladman.plus.com/computing/gmp4win.htm
 
-     - LEDA (>= 6.0)
+     - LEDA (>= 6.2)
        http://www.algorithmic-solutions.com/leda/index.htm
 
    * Visualization 
      Required for most demos
 
      - Qt3 (>= 3.3)
-       http://trolltech.com/products/qt/
+       ftp://ftp.qt.nokia.com/qt/source/
 
      - Qt4 (>= 4.2)
-       http://trolltech.com/products/qt/
+       http://qt.nokia.com/
 
      - libQGLViewer
        http://www.libqglviewer.com/
