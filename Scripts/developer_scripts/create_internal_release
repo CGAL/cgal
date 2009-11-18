@@ -137,7 +137,7 @@ sub install_packages() {
   chdir $RELEASEDIR or die;
 
   if( ! open(LOG_CONFLICTS, ">>&=3") ) {
-      open(LOG_CONFLICTS, ">&", STDOUT);
+    open(LOG_CONFLICTS, ">&", STDOUT) or die;
   }
   foreach my $package_name (keys(%LISTOFALLPACKAGES)) {
     my $package_comes_from = $LISTOFALLPACKAGES{$package_name};
@@ -165,12 +165,6 @@ sub install_packages() {
         unlink 'temppack.tar';
         next;
     }
-    if( (-e "/proc/self/fd/3") ) {
-	open(LOG_CONFLICTS, ">&=", 3);
-    }
-    else {
-	open(LOG_CONFLICTS, ">&", STDOUT);
-    }
     for( $tar->get_files() )
     {
       my $filename = $_->name();
@@ -193,7 +187,6 @@ sub install_packages() {
         system("svn info $package_comes_from/$package_name/$filename | grep URL >> $filename/.scm-urls\n");
       }
     }
-    close(LOG_CONFLICTS);
     system('tar', '-xf', "temppack.tar");
 #    $tmp_package_name = "temp_${package_name}";
 #    system("mv", "$package_name", "$tmp_package_name");
@@ -210,6 +203,9 @@ sub install_packages() {
   }
   close(LOG_CONFLICTS);
   unlink 'temppack.tar';
+  # foreach my $file (sort keys(%files)) {
+  #   print "$files{$file}: $file\n";
+  # }
 }
 
 
@@ -266,10 +262,19 @@ sub create_version_file()
 #ifndef CGAL_VERSION_H
 #define CGAL_VERSION_H
 
+#define CGAL_xstr(s) #s
+#define CGAL_str(s) CGAL_xstr(s)
+
 EOF
     print TEMPFILE "#define CGAL_VERSION $newver\n";
     print TEMPFILE "#define CGAL_VERSION_NR $VERSION_NR\n";
-    print TEMPFILE "#define CGAL_SVN_REVISION 0\n\n#endif\n";
+    print TEMPFILE "#define CGAL_SVN_REVISION 0\n";
+
+print TEMPFILE << 'EOF';
+#define CGAL_VERSION_STR CGAL_str(CGAL_VERSION)
+
+#endif
+EOF
 
     close TEMPFILE || die "Error closing temporary file: $!\n";
     move("tempfile", 'version.h');
