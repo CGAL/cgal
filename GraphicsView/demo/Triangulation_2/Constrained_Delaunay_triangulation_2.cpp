@@ -6,7 +6,7 @@
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_mesher_no_edge_refinement_2.h>
+#include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Lipschitz_sizing_field_2.h>
@@ -102,7 +102,7 @@ typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
 
 typedef CGAL::Lipschitz_sizing_field_2<K> Lipschitz_sizing_field;
 typedef CGAL::Lipschitz_sizing_field_criteria_2<CDT, Lipschitz_sizing_field> Lipschitz_criteria;
-typedef CGAL::Delaunay_mesher_no_edge_refinement_2<CDT, Lipschitz_criteria> Lipschitz_mesher;
+typedef CGAL::Delaunay_mesher_2<CDT, Lipschitz_criteria> Lipschitz_mesher;
 
 typedef CDT::Vertex_handle Vertex_handle;
 typedef CDT::Face_handle Face_handle;
@@ -353,7 +353,7 @@ MainWindow::dropEvent(QDropEvent *event)
 void
 MainWindow::processInput(CGAL::Object o)
 {
-  std::cerr << "Object " << o.type().name() << std::endl;
+
   std::list<Point_2> points;
   if(CGAL::assign(points, o)){
     if(points.size() == 1) {
@@ -612,7 +612,7 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   discoverComponents(cdt);
 
   int nv = cdt.number_of_vertices();
-  CGAL::refine_Delaunay_mesh_2_without_edge_refinement(cdt, Criteria(0.125, edge_length), true);
+  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, edge_length), true);
   timer.stop();
   nv = cdt.number_of_vertices() - nv;
   initializeID(cdt);
