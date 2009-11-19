@@ -32,6 +32,7 @@
 #include <QTextStream>
 #include <QSettings>
 #include <QFileInfo>
+#include <iostream>
 
 #include <CGAL/Qt/DemosMainWindow.h>
 
