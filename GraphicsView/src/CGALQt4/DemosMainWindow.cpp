@@ -32,9 +32,10 @@
 #include <QTextStream>
 #include <QSettings>
 #include <QFileInfo>
-#include <iostream>
 
+#include <CGAL/config.h> // needed to get CGAL_VERSION_STR
 #include <CGAL/Qt/DemosMainWindow.h>
+#include <iostream>
 
 namespace CGAL {
 namespace Qt {
