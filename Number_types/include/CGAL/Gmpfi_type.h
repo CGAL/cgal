@@ -670,7 +670,7 @@ Uncertain<bool> Gmpfi::divides(const Gmpfi &n,Gmpfi &c,Gmpfi::Precision_type p
                 return false;
         if(mpfi_has_zero(mpfi())!=0)
                 return Uncertain<bool>::indeterminate();
-        c=div(n,*this,p);
+        c=Gmpfi::div(n,*this,p);
         return true;
 }
 
