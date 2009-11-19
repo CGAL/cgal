@@ -307,6 +307,7 @@ _GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpq);
         Uncertain<Sign> sign()const;
         Uncertain<bool> is_positive()const;
         Uncertain<bool> is_negative()const;
+        Uncertain<bool> is_square()const;
         Uncertain<bool> is_square(Gmpfi&)const;
         Uncertain<bool> divides(const Gmpfi&)const;
         Uncertain<bool> divides(const Gmpfi&,
@@ -629,6 +630,15 @@ Uncertain<bool> Gmpfi::is_negative()const{
         if(mpfr_sgn(right_mpfr())<0)
                 return true;
         if(mpfr_sgn(left_mpfr())>=0)
+                return false;
+        return Uncertain<bool>::indeterminate();
+}
+
+inline
+Uncertain<bool> Gmpfi::is_square()const{
+        if(mpfr_sgn(left_mpfr())>=0)
+                return true;
+        if(mpfr_sgn(right_mpfr())<0)
                 return false;
         return Uncertain<bool>::indeterminate();
 }
@@ -967,6 +977,18 @@ Uncertain<bool> operator==(const Gmpfi &a,const Gmpz &b){
                         mpfr_cmp_z(a.right_mpfr(),b.mpz())<0)
                 return false;
         return Uncertain<bool>::indeterminate();
+}
+
+inline
+Uncertain<Gmpfi> min BOOST_PREVENT_MACRO_SUBSTITUTION
+                (const Gmpfi &x,const Gmpfi &y){
+        return (x<=y)?x:y;
+}
+
+inline
+Uncertain<Gmpfi> max BOOST_PREVENT_MACRO_SUBSTITUTION
+                (const Gmpfi &x,const Gmpfi &y){
+        return (x>=y)?x:y;
 }
 
 } // namespace CGAL

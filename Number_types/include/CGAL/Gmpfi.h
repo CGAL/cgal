@@ -55,11 +55,11 @@ public Algebraic_structure_traits_base<Gmpfi,Field_with_kth_root_tag>{
 
         struct Is_square:
         public std::binary_function<Type,Type&,Boolean>{
-                Boolean operator()(const Type &x,Type &y){
-                        return x.is_square(y);
+                Boolean operator()(const Type &x)const{
+                        return x.is_square();
                 };
-                Boolean operator()(const Type &x){
-                        return true;
+                Boolean operator()(const Type &x,Type &y)const{
+                        return x.is_square(y);
                 };
         };
 
@@ -79,10 +79,10 @@ public Algebraic_structure_traits_base<Gmpfi,Field_with_kth_root_tag>{
 
         struct Divides:
         public std::binary_function<Type,Type,Boolean>{
-                Boolean operator()(const Type &d,const Type &n){
+                Boolean operator()(const Type &d,const Type &n)const{
                         return d.divides(n);
                 };
-                Boolean operator()(const Type &d,const Type &n,Type &c){
+                Boolean operator()(const Type &d,const Type &n,Type &c)const{
                         return d.divides(n,c);
                 };
         };
