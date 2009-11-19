@@ -204,7 +204,7 @@ interfaces are similar:
 
 \ccFunction{static Gmpfr add (const Gmpfr &a,const Gmpfr &b);}{}
 \ccFunction{static Gmpfr add (const Gmpfr &a,const Gmpfr &b,
-				std::float_round_style r);}{}
+                              std::float_round_style r);}{}
 \ccFunction{static Gmpfr add (const Gmpfr &a,const Gmpfr &b,Precision_type p);}
         {}
 \ccFunction{static Gmpfr add (const Gmpfr &a,const Gmpfr &b,Precision_type p,
@@ -216,35 +216,40 @@ specified, the default is used.
 
 Other arithmetic functions provided by the class are:
 
-\ccMethod{Gmpfr abs(Precision_type p);}
-        {Returns the absolute value of \ccVar, with precision \ccc{p},
-        and rounded using the default rounding mode. If \ccc{p} is not
-        specified, the precision used is the maximum between \ccVar
-        's precision and the default.}
-
-\ccMethod{Gmpfr sqrt(Precision_type p);}
-        {Returns the square root of \ccVar, with precision \ccc{p},
-        and rounded using the default rounding mode. If \ccc{p} is not
-        specified, the precision used is the maximum between \ccVar
-        's precision and the default.}
-
-%\ccMethod{Gmpfr cbrt(Precision_type p);}
-%        {Returns the cubic root of \ccVar, with precision \ccc{p},
-%        and rounded using the default rounding mode. If \ccc{p} is not
-%        specified, the precision used is the maximum between \ccVar
-%        's precision and the default.}
-
-\ccMethod{Gmpfr kthroot(int k,Precision_type p);}
-        {Returns the k-th root of \ccVar, with precision \ccc{p}, and
-        rounded using the default rounding mode. If \ccc{p} is not
-        specified, the precision used is the maximum between \ccVar
-        's precision and the default.}
-
-\ccMethod{Gmpfr square(Precision_type p);}
-        {Returns the square of \ccVar, with precision \ccc{p}, and rounded
-        using the default rounding mode. If \ccc{p} is not specified,
+\ccMethod{Gmpfr abs(Precision_type p,
+                    std::float_round_style r=get_default_rndmode())const;}
+        {Returns the absolute value of \ccVar, rounded with precision
+        \ccc{p} in the direction \ccc{r}. If \ccc{p} is not specified,
         the precision used is the maximum between \ccVar 's precision
         and the default.}
+
+\ccMethod{Gmpfr sqrt(Precision_type p,
+                     std::float_round_style r=get_default_rndmode())const;}
+        {Returns the square root of \ccVar, rounded with precision
+        \ccc{p} in the direction \ccc{r}. If \ccc{p} is not specified,
+        the precision used is the maximum between \ccVar 's precision
+        and the default.}
+
+%\ccMethod{Gmpfr cbrt(Precision_type p,
+%                     std::float_round_style r=get_default_rndmode())const;}
+%        {Returns the cubic root of \ccVar, rounded with precision
+%        \ccc{p} in the direction \ccc{r}. If \ccc{p} is not specified,
+%        the precision used is the maximum between \ccVar 's precision
+%        and the default.}
+
+\ccMethod{Gmpfr kthroot(int k,
+                        Precision_type p,
+                        std::float_round_style r=get_default_rndmode())const;}
+        {Returns the k-th root of \ccVar, rounded with precision
+        \ccc{p} in the direction \ccc{r}. If \ccc{p} is not specified,
+        the precision used is the maximum between \ccVar 's precision
+        and the default.}
+
+\ccMethod{Gmpfr square(Precision_type p,
+                       std::float_round_style r=get_default_rndmode())const;}
+        {Returns the square of \ccVar, rounded with precision \ccc{p} in
+        the direction \ccc{r}. If \ccc{p} is not specified, the precision
+        used is the maximum between \ccVar 's precision and the default.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -318,11 +323,13 @@ converted nor rounded before comparison.
         {Returns \ccc{true} iff \ccVar~is a valid number.}
 
 \ccMethod{bool is_square();}
-        {Returns \ccc{true} iff \ccVar~is a the square of a number
+        {Returns \ccc{true} iff \ccVar~is the square of a number
         representable by an object of this type.}
 
 \ccMethod{bool is_square(const Gmpfr &y);}
-        {Returns \ccc{true} iff \ccVar~is the the square of \ccc{y}.}
+        {Returns \ccc{true} iff \ccVar~is the square of a number
+        representable by an object of this type, calculating it and storing
+        it in \ccc{y}.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -331,15 +338,14 @@ converted nor rounded before comparison.
 \ccHeading{Input/Output}
 
 \ccFunction{std::istream& operator>>(std::istream& in, Gmpfr& f);}
-        {Reads a number from \ccc{in}, then converts it to a
-        \ccc{Gmpfr}.  The number can be an integer in base 10, as well
-        as a floating-point number in the same base. After being read,
-        it is rounded using the default rounding mode to the precision
-        of \ccc{f}.}
+        {Reads a floating-point number from \ccc{in}. The number
+        \(M \times 2^E\) must be in the form \(MeE\), where the mantissa
+        \(M\) and the exponent \(E\) are integers in base 10.}
 
 \ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpfr& f);}
         {Writes \ccc{f} to the ostream \ccc{out}, in the form
-        \(.MeE\), where \(M\) is the mantissa and \(E\) is the exponent.}
+        \(MeE\), where \(M\) is its mantissa and \(E\) is its exponent,
+        both in base 10.}
 
 
 \ccImplementation

@@ -29,8 +29,10 @@ int test_nt(){
         NT b(2);
         if((-a)==-5&&(a+b)==7&&(a-b)==3&&(a*b)==10&&(a/b)==2.5)
                 return 0;
-        else
+        else{
+                std::cerr<<"error: operator test"<<std::endl;
                 exit(-1);
+        }
 }
 
 template<>

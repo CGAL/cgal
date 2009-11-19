@@ -345,12 +345,23 @@ class Gmpfr:
 #undef _GMPFR_DECLARE_STATIC_FUNCTION
 #undef _GMPFR_DECLARE_STATIC_FUNCTIONS
 
-        Gmpfr abs(Gmpfr::Precision_type=Gmpfr::get_default_precision())const;
-        Gmpfr sqrt(Gmpfr::Precision_type=Gmpfr::get_default_precision())const;
-        Gmpfr cbrt(Gmpfr::Precision_type=Gmpfr::get_default_precision())const;
-        Gmpfr kthroot(int,Gmpfr::Precision_type=Gmpfr::get_default_precision())
-                const;
-        Gmpfr square(Gmpfr::Precision_type=Gmpfr::get_default_precision())const;
+#define _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(_f) \
+        Gmpfr _f (std::float_round_style=Gmpfr::get_default_rndmode()) const; \
+        Gmpfr _f (Gmpfr::Precision_type,\
+                  std::float_round_style=Gmpfr::get_default_rndmode()) const;
+
+        _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(abs)
+        _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(sqrt)
+        _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(cbrt)
+        Gmpfr kthroot
+                (int,std::float_round_style=Gmpfr::get_default_rndmode()) const;
+        Gmpfr kthroot
+                (int,
+                 Gmpfr::Precision_type,
+                 std::float_round_style=Gmpfr::get_default_rndmode()) const;
+        _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(square)
+
+#undef _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION
 
         // comparison and query functions
 
@@ -692,18 +703,21 @@ _GMPFR_OBJECT_BINARY_OPERATOR(operator/=,Gmpq,mpq(),mpfr_div_q)
 #undef _GMPFR_OBJECT_BINARY_OPERATOR
 #undef _GMPFR_GMPFR_BINARY_OPERATOR
 #undef _GMPFR_TYPE_BINARY_OPERATOR
-#undef _GMPFR_MEMBER_PREC
-#undef _GMPFR_MEMBER_PREC_2
 
 // the static arithmetic functions are defined in a separate file
 #include <CGAL/Gmpfr_type_static.h>
 
 #define _GMPFR_ARITHMETIC_FUNCTION(_name,_fun) \
-        inline \
-        Gmpfr Gmpfr::_name (Gmpfr::Precision_type p)const{ \
+        Gmpfr Gmpfr::_name (std::float_round_style r)const{ \
+                Gmpfr result(0,_GMPFR_MEMBER_PREC()); \
+                _fun(result.fr(),fr(),_gmp_rnd(r)); \
+                return result; \
+        } \
+        Gmpfr Gmpfr::_name (Gmpfr::Precision_type p, \
+                            std::float_round_style r)const{ \
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 Gmpfr result(0,p); \
-                _fun(result.fr(),fr(),mpfr_get_default_rounding_mode()); \
+                _fun(result.fr(),fr(),_gmp_rnd(r)); \
                 return result; \
         }
 
@@ -711,17 +725,26 @@ _GMPFR_ARITHMETIC_FUNCTION(abs,mpfr_abs)
 _GMPFR_ARITHMETIC_FUNCTION(sqrt,mpfr_sqrt)
 _GMPFR_ARITHMETIC_FUNCTION(cbrt,mpfr_cbrt)
 
-inline
-Gmpfr Gmpfr::kthroot(int k,Gmpfr::Precision_type p)const{
+Gmpfr Gmpfr::kthroot(int k,std::float_round_style r)const{
+        Gmpfr result(0,_GMPFR_MEMBER_PREC());
+        mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
+        return result;
+}
+
+Gmpfr Gmpfr::kthroot(int k,
+                     Gmpfr::Precision_type p,
+                     std::float_round_style r)const{
         CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
         Gmpfr result(0,p);
-        mpfr_root(result.fr(),fr(),k,mpfr_get_default_rounding_mode());
+        mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
         return result;
 }
 
 _GMPFR_ARITHMETIC_FUNCTION(square,mpfr_sqr)
 
 #undef _GMPFR_ARITHMETIC_FUNCTION
+#undef _GMPFR_MEMBER_PREC
+#undef _GMPFR_MEMBER_PREC_2
 
 // comparison and query functions
 
@@ -763,7 +786,7 @@ bool Gmpfr::is_square()const{
                 return false;
         if(s==ZERO)
                 return true;
-        std::pair<Gmpz,long> r=to_integer_exp();
+        std::pair<Gmpz,long> r=Gmpfr::to_integer_exp();
         if(r.second%2)
                 r.first=r.first*2;
         return mpz_perfect_square_p(r.first.mpz())!=0;
@@ -822,48 +845,129 @@ std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
 
 // input/output
 
+// this function was based on the Gmpq's one
 inline
 std::istream& operator>>(std::istream& is,Gmpfr &f){
-        std::string s;
-        is>>s;
-        mpfr_set_str(f.fr(),s.c_str(),10,mpfr_get_default_rounding_mode());
-        return is;
+        // reads rational and floating point literals.
+        std::istream::int_type c;
+        std::ios::fmtflags old_flags = is.flags();
+
+        is.unsetf(std::ios::skipws);
+        gmpz_eat_white_space(is);
+
+        // 1. read the mantissa, it starts in +, - or a digit and ends in e
+        Gmpz mant(0);   // the mantissa of the number
+        Gmpz exp(0);    // the exponent of the number
+        bool neg_mant;  // true iff the mantissa is negative
+        bool neg_exp;   // true iff the exponent is negative
+        c=is.peek();
+        switch(c){
+                case '-':
+                        neg_mant=true;
+                        is.get();
+                        gmpz_eat_white_space(is);
+                        break;
+                case '+':
+                        neg_mant=false;
+                        is.get();
+                        gmpz_eat_white_space(is);
+                        break;
+                case 'n':       // this is NaN
+                        is.get();
+                        if(is.get()=='a'&&is.get()=='n'){
+                                f=Gmpfr();
+                                return is;
+                        }
+                        else
+                                goto invalid_number;
+                default:
+                        if(c!='i'&&(c<'0'||c>'9')){     // invalid number
+                                invalid_number:
+                                is.setstate(std::ios_base::failbit);
+                                is.flags(old_flags);
+                                return is;
+                        }
+                        neg_mant=false;
+        }
+
+        // at this point, we have the sign of the number and we are ready
+        // to read the mantissa
+        c=is.get();
+        if(c=='i'){     // infinity comes
+                if(is.get()=='n'&&is.get()=='f'){
+                        f=Gmpfr();
+                        mpfr_set_inf(f.fr(),neg_mant?-1:1);
+                        return is;
+                }
+                else
+                        goto invalid_number;
+        }
+
+        while(c>='0'&&c<='9'){
+                mant=10*mant+(c-'0');
+                c=is.get();
+        }
+        is.putback(c);
+        gmpz_eat_white_space(is);
+
+        switch(c=is.get()){
+                case 'e':
+                        break;
+                default:
+                        is.setstate(std::ios_base::failbit);
+                        is.flags(old_flags);
+                        return is;
+        }
+        c=is.peek();
+        switch(c){
+                case '-':
+                        neg_exp=true;
+                        is.get();
+                        gmpz_eat_white_space(is);
+                        break;
+                case '+':
+                        neg_exp=false;
+                        is.get();
+                        gmpz_eat_white_space(is);
+                        break;
+                default:
+                        if(c<'0'||c>'9')
+                                goto invalid_number;
+                        neg_mant=false;
+        }
+        gmpz_eat_white_space(is);
+        while((c=is.get())>='0'&&c<='9')
+                exp=10*exp+(c-'0');
+        if(mpz_sizeinbase(exp.mpz(),2)>8*sizeof(mp_exp_t))
+                mpfr_set_erangeflag();
+
+        // we have now both exponent and mantissa
+        f=Gmpfr(mant,mpz_sizeinbase(mant.mpz(),2));
+        mpfr_mul_2si(f.fr(),
+                     f.fr(),
+                     neg_exp?-mpz_get_ui(exp.mpz()):mpz_get_ui(exp.mpz()),
+                     GMP_RNDN);
+
+        // this expensive assertion checks that we didn't lose bits when
+        // multiplying or dividing by 2^exp
+        CGAL_expensive_assertion_code( \
+                Gmpfr g(mpz_sizeinbase(mant.mpz(),2)); \
+                mpfr_div_2si( \
+                        g.fr(), \
+                        f.fr, \
+                        neg_exp?-mpz_get_ui(exp.mpz()):mpz_get_ui(exp.mpz()),
+                        GMP_RNDN);)
+        CGAL_expensive_assertion(g==mant);
 }
 
 inline
 std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
-        char *str;
-        std::string s;
-        mp_exp_t expptr;
         if(a.is_nan())
                 return os<<"nan";
         if(a.is_inf())
                 return os<<(a<0?"-inf":"+inf");
-        str=mpfr_get_str(
-                         NULL,
-                         &expptr,
-                         10,
-                         0,
-                         a.fr(),
-                         mpfr_get_default_rounding_mode());
-        s=(const char*)str;
-        if(str[0]=='-'){
-                os<<"-."<<s.substr(1);
-        }else{
-                os<<"."<<s;
-        }
-        os<<"e"<<expptr;
-        mpfr_free_str(str);
-        return os;
-}
-
-inline
-std::ostream& print(std::ostream& os,const Gmpfr &a){
-        mpz_t z;
-        mpz_init(z);
-        mp_exp_t e=mpfr_get_z_exp(z,a.fr());
-        os<<Gmpz(z)<<"*2^"<<e;
-        mpz_clear(z);
+        std::pair<Gmpz,long> ie=a.to_integer_exp();
+        os<<ie.first<<'e'<<ie.second;
         return os;
 }
 

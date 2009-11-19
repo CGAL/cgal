@@ -2249,7 +2249,9 @@ Number_types/test/Number_types/Gmpfi_test_operators.cpp -text
 Number_types/test/Number_types/Gmpfi_test_precision.cpp -text
 Number_types/test/Number_types/Gmpfr.cpp -text
 Number_types/test/Number_types/Gmpfr_test_arithmetic.cpp -text
+Number_types/test/Number_types/Gmpfr_test_io.cpp -text
 Number_types/test/Number_types/Gmpfr_test_operators.cpp -text
+Number_types/test/Number_types/include/CGAL/_test_io.h -text
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.pdf -text svneol=unset#application/pdf
 Optimisation_doc/doc_tex/Bounding_volumes/ball.gif -text svneol=unset#image/gif

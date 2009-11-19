@@ -18,31 +18,24 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_MPFI
-#include <CGAL/Gmpfi.h>
-
-template<class _NT>
-int test_nt(){
-        typedef CGAL::Gmpfi     Gmpfi;
-        typedef _NT             NT;
-        Gmpfi a(5.0);
-        NT b(2);
-        if((-a)==-5&&(a+b)==7&&(a-b)==3&&(a*b)==10&&(a/b)==2.5)
-                return 0;
-        else{
-                std::cerr<<"error: operator test"<<std::endl;
-                exit(-1);
-        }
-}
+#ifdef CGAL_USE_GMP
+#include <CGAL/_test_io.h>
+#include <CGAL/Gmpfr.h>
 
 int main(){
-        test_nt<CGAL::Gmpfi>();
-        test_nt<CGAL::Gmpfr>();
-        test_nt<CGAL::Gmpz>();
-        test_nt<CGAL::Gmpq>();
-        test_nt<int>();
-        test_nt<long>();
-        test_nt<unsigned long>();
+        typedef CGAL::Gmpfr     Gmpfr;
+
+        Gmpfr plus_infinity;
+        Gmpfr minus_infinity;
+
+        mpfr_set_inf(plus_infinity.fr(),1);
+        mpfr_set_inf(minus_infinity.fr(),-1);
+
+        CGAL::test_io<Gmpfr,int>(2145338339);
+        CGAL::test_io<Gmpfr,double>(.2147483647);
+        CGAL::test_io<Gmpfr,Gmpfr>(plus_infinity);
+        CGAL::test_io<Gmpfr,Gmpfr>(minus_infinity);
+
         return 0;
 }
 

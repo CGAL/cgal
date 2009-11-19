@@ -30,6 +30,7 @@
 #ifdef CGAL_HAS_THREADS
 #  include <boost/thread/tss.hpp>
 #endif
+#include <limits>
 
 namespace CGAL{
 
@@ -695,9 +696,17 @@ double Gmpfi::to_double()const{
 
 inline
 std::pair<double,double> Gmpfi::to_interval()const{
-        return std::make_pair(
-                        mpfr_get_d(left_mpfr(),GMP_RNDD),
-                        mpfr_get_d(right_mpfr(),GMP_RNDU));
+        double d_low=mpfr_get_d(left_mpfr(),GMP_RNDD);
+        double d_upp=mpfr_get_d(right_mpfr(),GMP_RNDU);
+        CGAL_assertion(std::numeric_limits<double>::has_infinity);
+        // if an endpoint is finite and its double is infinity, we overflow
+        if(mpfr_inf_p(left_mpfr())==0&&
+                        d_low==std::numeric_limits<double>::infinity())
+                mpfr_set_underflow();
+        if(mpfr_inf_p(right_mpfr())==0&&
+                        d_upp==std::numeric_limits<double>::infinity())
+                mpfr_set_overflow();
+        return std::make_pair(d_low,d_upp);
 }
 
 inline
@@ -753,16 +762,6 @@ std::istream& operator>>(std::istream& is,Gmpfi &f){
 inline
 std::ostream& operator<<(std::ostream& os,const Gmpfi &a){
         return(os<<"["<<a.inf()<<","<<a.sup()<<"]");
-}
-
-inline
-std::ostream& print(std::ostream& os,const Gmpfi &a){
-        os<<"[";
-        print(os,a.inf());
-        os<<",";
-        print(os,a.sup());
-        os<<"]";
-        return os;
 }
 
 // comparisons

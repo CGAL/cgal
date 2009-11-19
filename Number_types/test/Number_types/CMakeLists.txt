@@ -71,6 +71,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Gmpfr.cpp" )
   create_single_source_cgal_program( "Gmpfr_test_arithmetic.cpp" )
   create_single_source_cgal_program( "Gmpfr_test_operators.cpp" )
+  create_single_source_cgal_program( "Gmpfr_test_io.cpp" )
 
   if ( CGAL_USE_MPFI )
     create_single_source_cgal_program( "Gmpfi.cpp" )

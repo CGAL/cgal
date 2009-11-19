@@ -39,8 +39,10 @@ int test_arithmetic(){
            && Gmpfi(9.0).is_square(a) && a==3
         )
                 return 0;
-        else
+        else{
+                std::cerr<<"error: arithmetic test"<<std::endl;
                 exit(-1);
+        }
 }
 
 int main(){
