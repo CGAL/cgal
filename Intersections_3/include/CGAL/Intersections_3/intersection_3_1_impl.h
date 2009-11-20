@@ -437,14 +437,30 @@ intersection(const typename K::Plane_3 &plane,
         case ON_POSITIVE_SIDE:
             return Object();
         case ON_NEGATIVE_SIDE:
-            return intersection(plane, seg.supporting_line(), k);
+          { 
+            // intersection object should be a point, but rounding errors 
+            // could lead to a line. In such case, return seg.
+            Object obj = intersection(plane, seg.supporting_line(), k);
+            if ( NULL != object_cast<typename K::Line_3>(&obj) )
+              return obj;
+            else
+              return make_object(seg);
+          }
         }
     case ON_NEGATIVE_SIDE:
         switch (target_side) {
         case ON_ORIENTED_BOUNDARY:
             return make_object(target);
         case ON_POSITIVE_SIDE:
-            return intersection(plane, seg.supporting_line(), k);
+          { 
+            // intersection object should be a point, but rounding errors 
+            // could lead to a line. In such case, return seg.
+            Object obj = intersection(plane, seg.supporting_line(), k);
+            if ( NULL != object_cast<typename K::Line_3>(&obj) )
+              return obj;
+            else 
+              return make_object(seg);
+          }
         case ON_NEGATIVE_SIDE:
             return Object();
         }
