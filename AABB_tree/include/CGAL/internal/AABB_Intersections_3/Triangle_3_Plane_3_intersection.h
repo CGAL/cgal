@@ -21,8 +21,8 @@
 //
 // Author(s)     : Philippe Guigue, Laurent Rineau
 
-#ifndef CGAL_TRIANGLE_3_PLANE_3_INTERSECTION_H
-#define CGAL_TRIANGLE_3_PLANE_3_INTERSECTION_H
+#ifndef CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_PLANE_3_INTERSECTION_H
+#define CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_PLANE_3_INTERSECTION_H
 
 #include <CGAL/Plane_3.h>
 #include <CGAL/Triangle_3.h>
@@ -184,4 +184,4 @@ intersection(const Triangle_3<K> &triangle, const Plane_3<K> &plane)
 
 } // end namespace CGAL
 
-#endif // CGAL_TRIANGLE_3_PLANE_3_INTERSECTION_H
+#endif // CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_PLANE_3_INTERSECTION_H

@@ -24,8 +24,8 @@
 //******************************************************************************
 
 
-#ifndef CGAL_TRIANGLE_3_SEGMENT_3_INTERSECTION_H
-#define CGAL_TRIANGLE_3_SEGMENT_3_INTERSECTION_H
+#ifndef CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_SEGMENT_3_INTERSECTION_H
+#define CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_SEGMENT_3_INTERSECTION_H
 
 #include <CGAL/kernel_basic.h>
 #include <CGAL/intersections.h>
@@ -578,5 +578,5 @@ intersection(const Segment_3<K> &s, const Triangle_3<K> &t)
 
 } // end namespace CGAL
 
-#endif // CGAL_TRIANGLE_3_SEGMENT_3_INTERSECTION_H
+#endif // CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_SEGMENT_3_INTERSECTION_H
 

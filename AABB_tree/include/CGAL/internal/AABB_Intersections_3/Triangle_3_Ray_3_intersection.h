@@ -17,8 +17,8 @@
 //
 // Author(s)     :  Laurent Rineau
 
-#ifndef CGAL_TRIANGLE_3_RAY_3_INTERSECTION_H
-#define CGAL_TRIANGLE_3_RAY_3_INTERSECTION_H
+#ifndef CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_RAY_3_INTERSECTION_H
+#define CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_RAY_3_INTERSECTION_H
 
 #include <CGAL/kernel_basic.h>
 #include <CGAL/intersections.h>
@@ -603,4 +603,4 @@ intersection(const Ray_3<K> &r, const Triangle_3<K> &t)
 
 } // end namespace CGAL
 
-#endif // CGAL_TRIANGLE_3_RAY_3_INTERSECTION_H
+#endif // CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_RAY_3_INTERSECTION_H

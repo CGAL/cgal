@@ -18,8 +18,8 @@
 //
 // Author(s)     :  Laurent Rineau, Camille Wormser, Jane Tournois, Pierre Alliez
 
-#ifndef CGAL_BBOX_3_BBOX_3_DO_INTERSECT_H
-#define CGAL_BBOX_3_BBOX_3_DO_INTERSECT_H
+#ifndef CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_BBOX_3_DO_INTERSECT_H
+#define CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_BBOX_3_DO_INTERSECT_H
 
 // Turn off Visual C++ warning
 #ifdef _MSC_VER
@@ -28,12 +28,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-bool do_intersect(const CGAL::Bbox_3& c, 
-		  const CGAL::Bbox_3& bbox)
+bool 
+inline
+do_intersect(const CGAL::Bbox_3& c, 
+             const CGAL::Bbox_3& bbox)
 {
   return CGAL::do_overlap(c, bbox);
 }
 
 CGAL_END_NAMESPACE
 
-#endif  // CGAL_BBOX_3_BBOX_3_DO_INTERSECT_H
+#endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_BBOX_3_DO_INTERSECT_H

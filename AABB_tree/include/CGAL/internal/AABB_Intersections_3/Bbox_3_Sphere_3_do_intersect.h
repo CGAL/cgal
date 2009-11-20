@@ -18,8 +18,8 @@
 // Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez
 
 
-#ifndef CGAL_SPHERE_3_BBOX_DO_INTERSECT_H
-#define CGAL_SPHERE_3_BBOX_DO_INTERSECT_H
+#ifndef CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_SPHERE_3_DO_INTERSECT_H
+#define CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_SPHERE_3_DO_INTERSECT_H
 
 #include <CGAL/Sphere_3.h>
 #include <CGAL/Bbox_3.h>
@@ -113,4 +113,4 @@ bool do_intersect(const CGAL::Bbox_3& bbox,
 
 CGAL_END_NAMESPACE
 
-#endif  // CGAL_SPHERE_3_BBOX_DO_INTERSECT_H
+#endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_SPHERE_3_DO_INTERSECT_H
