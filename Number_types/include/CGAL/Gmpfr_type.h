@@ -33,6 +33,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
+#include <CGAL/Gmpzf.h>
 #include <string>
 #include <limits>
 #include <CGAL/Uncertain.h>
@@ -191,6 +192,18 @@ class Gmpfr:
         Gmpfr(mpfr_srcptr f,Gmpfr::Precision_type p){
                 mpfr_init2(fr(),p);
                 mpfr_set(fr(),f,mpfr_get_default_rounding_mode());
+        }
+
+        Gmpfr(Gmpzf f,
+              std::float_round_style r=Gmpfr::get_default_rndmode(),
+              Gmpfr::Precision_type p=0){
+              mpfr_init2(fr(),p?p:
+                                  mpz_sizeinbase(f.man(),2)>MPFR_PREC_MIN?
+                                  mpz_sizeinbase(f.man(),2):
+                                  MPFR_PREC_MIN);
+                mpfr_set_z(fr(),f.man(),_gmp_rnd(r));
+                CGAL_assertion(mpfr_cmp_z(fr(),f.man())==0);
+                mpfr_mul_2si(fr(),fr(),f.exp(),_gmp_rnd(r));
         }
 
 #define _GMPFR_CONSTRUCTOR_FROM_TYPE(_type,_fun) \
@@ -856,10 +869,10 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
         gmpz_eat_white_space(is);
 
         // 1. read the mantissa, it starts in +, - or a digit and ends in e
-        Gmpz mant(0);   // the mantissa of the number
-        Gmpz exp(0);    // the exponent of the number
-        bool neg_mant;  // true iff the mantissa is negative
-        bool neg_exp;   // true iff the exponent is negative
+        Gmpz mant(0);           // the mantissa of the number
+        Gmpz exp(0);            // the exponent of the number
+        bool neg_mant=false;    // true iff the mantissa is negative
+        bool neg_exp=false;     // true iff the exponent is negative
         c=is.peek();
         switch(c){
                 case '-':
@@ -868,7 +881,6 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                         gmpz_eat_white_space(is);
                         break;
                 case '+':
-                        neg_mant=false;
                         is.get();
                         gmpz_eat_white_space(is);
                         break;
@@ -887,7 +899,6 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                                 is.flags(old_flags);
                                 return is;
                         }
-                        neg_mant=false;
         }
 
         // at this point, we have the sign of the number and we are ready
@@ -926,14 +937,12 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                         gmpz_eat_white_space(is);
                         break;
                 case '+':
-                        neg_exp=false;
                         is.get();
                         gmpz_eat_white_space(is);
                         break;
                 default:
                         if(c<'0'||c>'9')
                                 goto invalid_number;
-                        neg_mant=false;
         }
         gmpz_eat_white_space(is);
         while((c=is.get())>='0'&&c<='9')
@@ -942,10 +951,13 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                 mpfr_set_erangeflag();
 
         // we have now both exponent and mantissa
-        f=Gmpfr(mant,mpz_sizeinbase(mant.mpz(),2));
+        f=Gmpfr(mant,
+                mpz_sizeinbase(mant.mpz(),2)>MPFR_PREC_MIN?
+                mpz_sizeinbase(mant.mpz(),2):
+                MPFR_PREC_MIN);
         mpfr_mul_2si(f.fr(),
                      f.fr(),
-                     neg_exp?-mpz_get_ui(exp.mpz()):mpz_get_ui(exp.mpz()),
+                     (neg_exp?-1:1)*mpz_get_ui(exp.mpz()),
                      GMP_RNDN);
 
         // this expensive assertion checks that we didn't lose bits when
@@ -958,6 +970,8 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                         neg_exp?-mpz_get_ui(exp.mpz()):mpz_get_ui(exp.mpz()),
                         GMP_RNDN);)
         CGAL_expensive_assertion(g==mant);
+
+        return is;
 }
 
 inline

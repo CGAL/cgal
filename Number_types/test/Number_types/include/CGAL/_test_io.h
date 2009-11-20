@@ -19,6 +19,7 @@
 #ifndef CGAL_TEST_IO_H
 #define CGAL_TEST_IO_H
 
+#include <iostream>
 #include <CGAL/basic.h>
 #ifdef NDEBUG
 #  undef NDEBUG
@@ -37,9 +38,8 @@ void test_io(_CT x){
 
         NT a(x);
         std::stringstream ss;
-        CGAL::set_ascii_mode(ss);
         ss<<CGAL::oformat(a);
-        ss>>a;
+        ss>>CGAL::iformat(a);
         assert(a==NT(x));
 }
 
@@ -53,9 +53,8 @@ void test_io(){
 
         NT a;
         std::stringstream ss;
-        CGAL::set_ascii_mode(ss);
         ss<<CGAL::oformat(a);
-        ss>>a;
+        ss>>CGAL::iformat(a);
         assert(a==NT());
 }
 

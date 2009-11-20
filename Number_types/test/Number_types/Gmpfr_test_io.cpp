@@ -21,12 +21,14 @@
 #ifdef CGAL_USE_GMP
 #include <CGAL/_test_io.h>
 #include <CGAL/Gmpfr.h>
+#include <CGAL/Gmpzf.h>
 
 int main(){
         typedef CGAL::Gmpfr     Gmpfr;
 
         Gmpfr plus_infinity;
         Gmpfr minus_infinity;
+        CGAL::Gmpzf f;
 
         mpfr_set_inf(plus_infinity.fr(),1);
         mpfr_set_inf(minus_infinity.fr(),-1);
@@ -35,6 +37,7 @@ int main(){
         CGAL::test_io<Gmpfr,double>(.2147483647);
         CGAL::test_io<Gmpfr,Gmpfr>(plus_infinity);
         CGAL::test_io<Gmpfr,Gmpfr>(minus_infinity);
+        CGAL::test_io<Gmpfr,CGAL::Gmpzf>(f);
 
         return 0;
 }
