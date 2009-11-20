@@ -2,6 +2,9 @@
 #include <CGAL/AABB_tree.h>
 
 #include "Polyhedron_type.h"
+#include "Scene_item.h"
+#include "Scene_polyhedron_item.h"
+#include "Scene_polygon_soup.h"
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
@@ -17,11 +20,13 @@
 #include <CGAL/assertions_behaviour.h>
 
 #include <algorithm>
+#include <sstream>
 
-Polyhedron* cgal_code_remesh(const Polyhedron* pMesh,
+Scene_item* cgal_code_remesh(const Polyhedron* pMesh,
                              const double angle,
                              const double sizing,
-                             const double approx) {
+                             const double approx,
+                             int tag) {
   CGAL::set_error_behaviour(CGAL::ABORT);
   if(!pMesh) return 0;
 
@@ -50,7 +55,6 @@ Polyhedron* cgal_code_remesh(const Polyhedron* pMesh,
   // initial point set
   timer.reset();
   std::cerr << "Insert initial point set...";
-  unsigned int nb_initial_points = 10;
   typedef CGAL::Cartesian_converter<Kernel,GT> Converter;
   Converter convert;
 
@@ -62,7 +66,10 @@ Polyhedron* cgal_code_remesh(const Polyhedron* pMesh,
     std::copy(pMesh->points_begin(), pMesh->points_end(), 
               std::back_inserter(polyhedron_points));
 
-    for(int n = 0;
+    typedef std::vector<Point>::size_type size_type;
+    size_type nb_initial_points = 10;
+    nb_initial_points = (std::min)(nb_initial_points, polyhedron_points.size());
+    for(size_type n = 0;
         n < nb_initial_points || (n < 10 * nb_initial_points && 
                                   triangulation.dimension() < 3 );
         n = triangulation.number_of_vertices())
@@ -79,7 +86,17 @@ Polyhedron* cgal_code_remesh(const Polyhedron* pMesh,
   // remesh
   timer.reset();
   std::cerr << "Remesh...";
-  CGAL::make_surface_mesh(c2t3, input, input, facets_criteria, CGAL::Manifold_with_boundary_tag());
+  switch(tag) {
+  case 0: 
+    CGAL::make_surface_mesh(c2t3, input, input, facets_criteria, CGAL::Non_manifold_tag());
+    break;
+  case 1:
+    CGAL::make_surface_mesh(c2t3, input, input, facets_criteria, CGAL::Manifold_tag());
+    break;
+  default:
+    CGAL::make_surface_mesh(c2t3, input, input, facets_criteria, CGAL::Manifold_with_boundary_tag());
+  }
+
   std::cerr << "done (" << timer.time() << " ms, " << triangulation.number_of_vertices() << " vertices)" << std::endl;
 
   if(triangulation.number_of_vertices() > 0)
@@ -88,7 +105,26 @@ Polyhedron* cgal_code_remesh(const Polyhedron* pMesh,
     Polyhedron *pRemesh = new Polyhedron;
     CGAL::Complex_2_in_triangulation_3_polyhedron_builder<C2t3, Polyhedron> builder(c2t3);
     pRemesh->delegate(builder);
-    return pRemesh;
+    if(c2t3.number_of_facets() != pRemesh->size_of_facets())
+    {
+      delete pRemesh;
+      std::stringstream temp_file;
+      if(!CGAL::output_surface_facets_to_off(temp_file, c2t3))
+      {
+        std::cerr << "Cannot write the mesh to an off file!\n";
+        return 0;
+      }
+      Scene_polygon_soup* soup = new Scene_polygon_soup();
+      if(!soup->load(temp_file))
+      {
+        std::cerr << "Cannot reload the mesh from an off file!\n";
+        return 0;
+      }
+      else
+        return soup;
+    } else {
+      return new Scene_polyhedron_item(pRemesh);
+    }
   }
   else
     return 0;

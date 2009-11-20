@@ -10,12 +10,14 @@
 #include <QtPlugin>
 #include "Scene_polyhedron_item.h"
 #include <QInputDialog>
+#include <QStringList>
 
 // declare the CGAL function
-Polyhedron* cgal_code_remesh(const Polyhedron*,
+Scene_item* cgal_code_remesh(const Polyhedron*,
                              const double angle,
                              const double sizing,
-                             const double approx);
+                             const double approx,
+                             int tag);
 
 class Polyhedron_demo_remeshing_plugin : 
   public QObject,
@@ -94,13 +96,22 @@ void Polyhedron_demo_remeshing_plugin::remesh()
       &ok);
     if(!ok) return;
 
+    QStringList tag_items;
+    tag_items << tr("Non manifold") << tr("Manifold") << tr("Manifold with boundary");
+
+    QString tag_item = QInputDialog::getItem(mw, tr("Topological criterion"),
+                                         tr("Choose the topological criterion :"),
+                                         tag_items, 1, false);
+
+    int tag_index = tag_items.indexOf(tag_item);
+    if(tag_index < 0) return;
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    Polyhedron* pRemesh = cgal_code_remesh(pMesh, angle, sizing, approx);
+    Scene_item* new_item = cgal_code_remesh(pMesh, angle, sizing, approx, tag_index);
 
-    if(pRemesh)
+    if(new_item)
     {
-      Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pRemesh);
       new_item->setName(tr("%1 remeshed (%2 %3 %4)")
                          .arg(item->name())
                          .arg(angle)

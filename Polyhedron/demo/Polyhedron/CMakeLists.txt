@@ -14,7 +14,7 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 # Use packages improved since CGAL 3.4
-foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_kernel Profiling_tools Mesh_3)
+foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_kernel Profiling_tools Mesh_3 Triangulation_3 )
   foreach(CGAL_SVN_TRUNK ../../../ ../../trunk ..)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
       include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
@@ -188,7 +188,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endmacro(polyhedron_demo_plugin)
 
   polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin Polyhedron_demo_remeshing_plugin_cgal_code.cpp)
-  target_link_libraries(remeshing_plugin scene_polyhedron_item)
+  target_link_libraries(remeshing_plugin scene_polyhedron_item polygon_soup)
 
   qt4_generate_moc("${CMAKE_CURRENT_SOURCE_DIR}/Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" Scene_c3t3_item.moc )
 
