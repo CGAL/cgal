@@ -2225,12 +2225,12 @@ Number_types/doc_tex/NumberTypeSupport_ref/Gmpfi.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfr.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text
+Number_types/include/CGAL/GMP/Gmpfi_type.h -text
+Number_types/include/CGAL/GMP/Gmpfi_type_static.h -text
+Number_types/include/CGAL/GMP/Gmpfr_type.h -text
+Number_types/include/CGAL/GMP/Gmpfr_type_static.h -text
 Number_types/include/CGAL/Gmpfi.h -text
-Number_types/include/CGAL/Gmpfi_type.h -text
-Number_types/include/CGAL/Gmpfi_type_static.h -text
 Number_types/include/CGAL/Gmpfr.h -text
-Number_types/include/CGAL/Gmpfr_type.h -text
-Number_types/include/CGAL/Gmpfr_type_static.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_extension_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_structure_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Coercion_traits.h -text

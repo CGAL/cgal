@@ -163,7 +163,7 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfi,CGAL::Tag_true>{
 
 }
 
-#include <CGAL/Gmpfi_type.h>
+#include <CGAL/GMP/Gmpfi_type.h>
 
 #endif  // CGAL_GMPFI_H
 

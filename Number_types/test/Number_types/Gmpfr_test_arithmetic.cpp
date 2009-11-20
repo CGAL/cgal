@@ -61,6 +61,7 @@ int main(){
         test_arithmetic<int>();
         test_arithmetic<CGAL::Gmpz>();
         test_arithmetic<CGAL::Gmpq>();
+        test_arithmetic<CGAL::Gmpzf>();
         return 0;
 }
 

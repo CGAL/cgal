@@ -31,9 +31,9 @@
 #include <mpfr.h>
 #include <boost/operators.hpp>
 #include <CGAL/Handle_for.h>
-#include <CGAL/Gmpz.h>
-#include <CGAL/Gmpq.h>
-#include <CGAL/Gmpzf.h>
+#include <CGAL/GMP/Gmpz_type.h>
+#include <CGAL/GMP/Gmpq_type.h>
+#include <CGAL/GMP/Gmpzf_type.h>
 #include <string>
 #include <limits>
 #include <CGAL/Uncertain.h>
@@ -196,14 +196,19 @@ class Gmpfr:
 
         Gmpfr(Gmpzf f,
               std::float_round_style r=Gmpfr::get_default_rndmode(),
-              Gmpfr::Precision_type p=0){
-              mpfr_init2(fr(),p?p:
-                                  mpz_sizeinbase(f.man(),2)>MPFR_PREC_MIN?
-                                  mpz_sizeinbase(f.man(),2):
-                                  MPFR_PREC_MIN);
+              Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
+                mpfr_init2(fr(),p);
                 mpfr_set_z(fr(),f.man(),_gmp_rnd(r));
-                CGAL_assertion(mpfr_cmp_z(fr(),f.man())==0);
                 mpfr_mul_2si(fr(),fr(),f.exp(),_gmp_rnd(r));
+        }
+
+        Gmpfr(Gmpzf f,Gmpfr::Precision_type p){
+                mpfr_init2(fr(),p);
+                mpfr_set_z(fr(),f.man(),mpfr_get_default_rounding_mode());
+                mpfr_mul_2si(fr(),
+                             fr(),
+                             f.exp(),
+                             mpfr_get_default_rounding_mode());
         }
 
 #define _GMPFR_CONSTRUCTOR_FROM_TYPE(_type,_fun) \
@@ -396,6 +401,7 @@ class Gmpfr:
                 to_double_exp(std::float_round_style=Gmpfr::get_default_rndmode())const;
         std::pair<std::pair<double,double>,long> to_interval_exp()const;
         std::pair<Gmpz,long> to_integer_exp()const;
+        Gmpq to_fraction()const;
 };
 
 
@@ -718,7 +724,7 @@ _GMPFR_OBJECT_BINARY_OPERATOR(operator/=,Gmpq,mpq(),mpfr_div_q)
 #undef _GMPFR_TYPE_BINARY_OPERATOR
 
 // the static arithmetic functions are defined in a separate file
-#include <CGAL/Gmpfr_type_static.h>
+#include <CGAL/GMP/Gmpfr_type_static.h>
 
 #define _GMPFR_ARITHMETIC_FUNCTION(_name,_fun) \
         Gmpfr Gmpfr::_name (std::float_round_style r)const{ \
@@ -855,6 +861,20 @@ std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
         long e=mpfr_get_z_exp(z.mpz(),fr());
         return std::make_pair(z,e);
 }
+
+inline
+Gmpq Gmpfr::to_fraction()const{
+        Gmpq q;
+        std::pair<Gmpz,long> p=to_integer_exp();
+        mpz_set(mpq_numref(q.mpq()),p.first.mpz());
+        mpz_set_ui(mpq_denref(q.mpq()),1);
+        if(p.second>=0)     // q=(p.first*2^p.second)/1
+                mpz_mul_2exp(mpq_numref(q.mpq()),mpq_numref(q.mpq()),p.second);
+        else        // q=p.first/2^(-p.second)
+                mpz_mul_2exp(mpq_denref(q.mpq()),mpq_denref(q.mpq()),-p.second);
+        mpq_canonicalize(q.mpq());
+}
+
 
 // input/output
 

@@ -48,6 +48,7 @@ int test_nt<CGAL::Gmpfr>(){
 
 int main(){
         test_nt<CGAL::Gmpfr>();
+        test_nt<CGAL::Gmpzf>();
         test_nt<CGAL::Gmpz>();
         test_nt<CGAL::Gmpq>();
         test_nt<int>();

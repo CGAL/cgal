@@ -22,7 +22,7 @@
 #ifdef CGAL_USE_MPFR
 
 #include <CGAL/number_type_basic.h>
-#include <CGAL/Gmpfr_type.h>
+#include <CGAL/GMP/Gmpfr_type.h>
 #include <CGAL/Coercion_traits.h>
 
 namespace CGAL{

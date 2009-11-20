@@ -22,8 +22,8 @@
 //#ifdef CGAL_USE_MPFI
 
 #include <CGAL/number_type_basic.h>
-#include <CGAL/Gmpfr_type.h>
-#include <CGAL/Gmpfi_type.h>
+#include <CGAL/GMP/Gmpfr_type.h>
+#include <CGAL/GMP/Gmpfi_type.h>
 #include <CGAL/Coercion_traits.h>
 
 namespace CGAL{

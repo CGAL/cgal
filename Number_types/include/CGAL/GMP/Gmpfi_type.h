@@ -22,7 +22,7 @@
 #include <CGAL/basic.h>
 #include <gmp.h>
 #include <mpfr.h>
-#include <CGAL/Gmpfr.h>
+#include <CGAL/GMP/Gmpfr_type.h>
 #include <mpfi.h>
 #include <boost/operators.hpp>
 #include <CGAL/Handle_for.h>
@@ -514,7 +514,7 @@ _GMPFI_OBJECT_BINARY_OPERATOR(operator/=,Gmpq,mpq(),mpfi_div_q)
 #undef _GMPFI_TYPE_BINARY_OPERATOR
 
 // the static arithmetic functions are defined in a separate file
-#include <CGAL/Gmpfi_type_static.h>
+#include <CGAL/GMP/Gmpfi_type_static.h>
 
 #define _GMPFI_ARITHMETIC_FUNCTION(_name,_fun) \
         inline \
