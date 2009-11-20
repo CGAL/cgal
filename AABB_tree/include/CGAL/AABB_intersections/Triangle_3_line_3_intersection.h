@@ -31,6 +31,47 @@
 namespace CGAL {
 namespace internal {
 
+template <class K>
+typename K::Point_3
+t3l3_intersection_coplanar_aux(const typename K::Line_3& l,
+                               const typename K::Point_3& a,
+                               const typename K::Point_3& b,
+                               const K& k)
+{  
+  // Returns the intersection point between line l and segment [a,b]
+  //
+  // preconditions:
+  //   + l,a,b are coplanar
+  
+  typedef typename K::Point_3 Point_3;
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::FT FT;
+  
+  typename K::Construct_vector_3 vector = 
+    k.construct_vector_3_object();
+  
+  typename K::Construct_cross_product_vector_3 cross_product = 
+    k.construct_cross_product_vector_3_object();
+  
+  typename K::Compute_scalar_product_3 scalar_product = 
+    k.compute_scalar_product_3_object();
+  
+  typename K::Compute_squared_length_3 sq_length = 
+    k.compute_squared_length_3_object();
+  
+  const Point_3 p = l.point();
+  const Vector_3 v = l.to_vector();
+  const Vector_3 ab = vector(a,b);
+  const Vector_3 pa = vector(p,a);
+  
+  const Vector_3 pa_ab = cross_product(pa,ab);
+  const Vector_3 v_ab = cross_product(v,ab);
+  
+  const FT t = scalar_product(pa_ab,v_ab) / sq_length(v_ab);
+  
+  return ( p + t*v );
+}
+  
   
 template <class K>
 Object
@@ -44,12 +85,12 @@ t3l3_intersection_coplanar_aux(const typename K::Point_3& a,
   // This function is designed to clip pq into the triangle abc.
   // Point configuration should be as follows
   //
-  //     +q
-  //     |    +a
   //     |
-  //  +c |       +b
+  //     |    +b
   //     |
-  //     +p
+  //  +c |       +a
+  //     |
+  //     | l
   //
   // We know that c is isolated on the negative side of pq
   
@@ -65,26 +106,13 @@ t3l3_intersection_coplanar_aux(const typename K::Point_3& a,
     k.construct_segment_3_object();
   
   // Let's get the intersection points
-  Object l_bc_obj = intersection(l,line(b,c));
-  const Point_3* l_bc = object_cast<Point_3>(&l_bc_obj);
-  if ( NULL == l_bc )
-  {
-    CGAL_kernel_assertion(false);
-    return Object();
-  }
-  
-  Object l_ca_obj = intersection(l,line(c,a));
-  const Point_3* l_ca = object_cast<Point_3>(&l_ca_obj);
-  if ( NULL == l_ca )
-  {
-    CGAL_kernel_assertion(false);
-    return Object();
-  }
+  const Point_3 l_bc = t3l3_intersection_coplanar_aux(l,b,c,k);
+  const Point_3 l_ca = t3l3_intersection_coplanar_aux(l,c,a,k);
   
   if ( negative_side )
-    return make_object(segment(*l_bc, *l_ca));
+    return make_object(segment(l_bc, l_ca));
   else
-    return make_object(segment(*l_ca, *l_bc));  
+    return make_object(segment(l_ca, l_bc));  
 }
   
   
@@ -140,12 +168,10 @@ intersection_coplanar(const typename K::Triangle_3 &t,
   const Point_3& b = vertex_on(t,k1);
   const Point_3& c = vertex_on(t,k2);
   
-  // Test whether the segment's supporting line intersects the
-  // triangle in the common plane
+  // Test whether the line intersects the triangle in the common plane
   const Orientation pqa = coplanar_orientation(p,q,a);
   const Orientation pqb = coplanar_orientation(p,q,b);
   const Orientation pqc = coplanar_orientation(p,q,c);
-  
   
   switch ( pqa ) {
     // -----------------------------------
@@ -298,8 +324,24 @@ intersection_coplanar(const typename K::Triangle_3 &t,
 }
   
   
+template <class K>
+inline
+Object 
+t3l3_intersection_aux(const typename K::Triangle_3 &t,
+                      const typename K::Line_3 &l,
+                      const K& k)
+{
+  typename K::Intersect_3 intersection =
+    k.intersect_3_object();
   
+  Object obj = intersection(l,t.supporting_plane());
   
+  // Intersection should be a point (because of orientation test done before)
+  if ( NULL == object_cast<typename K::Line_3>(&obj) )
+    return obj;
+  else
+    return Object();
+}
   
   
   
@@ -335,22 +377,23 @@ intersection(const typename K::Triangle_3 &t,
   const Point_3 & p = point_on(l,0);
   const Point_3 & q = point_on(l,1);
   
+
+  
   if ( ( orientation(a,b,c,p) != COPLANAR )
       || ( orientation(a,b,c,q) != COPLANAR ) )
   {
     const Orientation pqab = orientation(p,q,a,b);
     const Orientation pqbc = orientation(p,q,b,c);
-    
     switch ( pqab ) {
       case POSITIVE: 
         if ( pqbc != NEGATIVE && orientation(p,q,c,a) != NEGATIVE )
-          return intersection(l,t.supporting_plane());
+          return t3l3_intersection_aux(t,l,k);
         else
           return Object();
         
       case NEGATIVE:
         if ( pqbc != POSITIVE && orientation(p,q,c,a) != POSITIVE )
-          return intersection(l,t.supporting_plane());
+          return t3l3_intersection_aux(t,l,k);
         else
           return Object();
         
@@ -358,18 +401,18 @@ intersection(const typename K::Triangle_3 &t,
         switch ( pqbc ) {
           case POSITIVE: 
             if ( orientation(p,q,c,a) != NEGATIVE )
-              return intersection(l,t.supporting_plane());
+              return t3l3_intersection_aux(t,l,k);
             else
               return Object();
             
           case NEGATIVE:
             if ( orientation(p,q,c,a) != POSITIVE )
-              return intersection(l,t.supporting_plane());
+              return t3l3_intersection_aux(t,l,k);
             else
               return Object();
               
           case COPLANAR: // pqa or pqb or pqc are collinear
-            return intersection(l,t.supporting_plane());
+            return t3l3_intersection_aux(t,l,k);
           
           default: // should not happen.
             CGAL_kernel_assertion(false);

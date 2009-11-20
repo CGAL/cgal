@@ -121,13 +121,14 @@ namespace internal {
   {
     typedef typename K::FT FT;
     typedef typename K::Point_3 Point_3;
+    typedef typename K::Vector_3 Vector_3;
     
-    const Point_3 point_a = line.point(0);
-    const Point_3 point_b = line.point(1);
+    const Point_3 point = line.point();
+    const Vector_3 v = line.to_vector();
     
     return bbox_line_do_intersect_aux(
-                         point_a.x(), point_a.y(), point_a.z(), 
-                         point_b.x(), point_b.y(), point_b.z(),
+                         point.x(), point.y(), point.z(), 
+                         point.x()+v.x(), point.y()+v.y(), point.z()+v.z(),
                          FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),
                          FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()) );
   }
