@@ -24,7 +24,11 @@
 
 #include <string>
 
-#include <CGAL/AABB_intersections.h>
+
+#include <CGAL/internal/AABB_Intersections_3/Bbox_3_Ray_3_do_intersect.h>
+#include <CGAL/internal/AABB_Intersections_3/Bbox_3_Line_3_do_intersect.h>
+#include <CGAL/internal/AABB_Intersections_3/Bbox_3_Segment_3_do_intersect.h>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

@@ -21,6 +21,7 @@
 #define CGAL_RAY_3_BBOX_3_DO_INTERSECT_H
 
 #include <CGAL/Ray_3.h>
+#include <CGAL/Bbox_3.h>
 
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
 
