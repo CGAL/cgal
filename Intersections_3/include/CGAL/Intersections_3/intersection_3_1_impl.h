@@ -441,7 +441,7 @@ intersection(const typename K::Plane_3 &plane,
             // intersection object should be a point, but rounding errors 
             // could lead to a line. In such case, return seg.
             Object obj = intersection(plane, seg.supporting_line(), k);
-            if ( NULL != object_cast<typename K::Line_3>(&obj) )
+            if ( NULL == object_cast<typename K::Line_3>(&obj) )
               return obj;
             else
               return make_object(seg);
@@ -456,7 +456,7 @@ intersection(const typename K::Plane_3 &plane,
             // intersection object should be a point, but rounding errors 
             // could lead to a line. In such case, return seg.
             Object obj = intersection(plane, seg.supporting_line(), k);
-            if ( NULL != object_cast<typename K::Line_3>(&obj) )
+            if ( NULL == object_cast<typename K::Line_3>(&obj) )
               return obj;
             else 
               return make_object(seg);

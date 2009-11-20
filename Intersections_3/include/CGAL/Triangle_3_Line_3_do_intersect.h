@@ -72,11 +72,11 @@ bool do_intersect(const typename K::Triangle_3 &t,
 		       orientation(p,q,c,a) != NEGATIVE ;
       case NEGATIVE: return  pqbc != POSITIVE  &&  
 		       orientation(p,q,c,a) != POSITIVE ;
-      case COLLINEAR:
+      case COPLANAR:
 	switch ( pqbc ) {
 	case POSITIVE: return  orientation(p,q,c,a) != NEGATIVE ;
 	case NEGATIVE: return  orientation(p,q,c,a) != POSITIVE ;
-	case COLLINEAR: return true;
+	case COPLANAR: return true;
 	default: // should not happen.
 	  CGAL_kernel_assertion(false);
 	  return false;
