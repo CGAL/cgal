@@ -873,6 +873,7 @@ Gmpq Gmpfr::to_fraction()const{
         else        // q=p.first/2^(-p.second)
                 mpz_mul_2exp(mpq_denref(q.mpq()),mpq_denref(q.mpq()),-p.second);
         mpq_canonicalize(q.mpq());
+        return q;
 }
 
 
