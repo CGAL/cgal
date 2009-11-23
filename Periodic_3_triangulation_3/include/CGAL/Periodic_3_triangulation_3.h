@@ -2864,11 +2864,13 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
   // ###################################################################
   {
     // Delete the marked cells.
+    std::vector<Cell_handle> cells_to_delete;
     for ( Cell_iterator cit = all_cells_begin() ;
     cit != all_cells_end() ; ++cit ) {
       if ( cit->get_additional_flag() == 1 )
-        _tds.delete_cell( cit );
+        cells_to_delete.push_back( cit );
     }
+    _tds.delete_cells(cells_to_delete.begin(), cells_to_delete.end());
   }
   
   // ###################################################################
@@ -2877,13 +2879,15 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
   {
     // Delete all the vertices in virtual_vertices, that is all vertices
     // outside the original domain.
+    std::vector<Vertex_handle> vertices_to_delete;
     for ( Vertex_iterator vit = all_vertices_begin() ;
-    vit != all_vertices_end() ; ++vit ) {
+	  vit != all_vertices_end() ; ++vit ) {
       if ( virtual_vertices.count( vit ) != 0 ) {
         CGAL_triangulation_assertion( virtual_vertices.count( vit ) == 1 );
-        _tds.delete_vertex( vit ) ;
+        vertices_to_delete.push_back( vit ) ;
       }
     }
+    _tds.delete_vertices(vertices_to_delete.begin(), vertices_to_delete.end());
   }
   _cover = make_array(1,1,1);
   virtual_vertices.clear();
