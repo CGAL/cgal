@@ -5,10 +5,9 @@
 
 #ifdef USE_FORWARD_DECL
 
-namespace CGAL {
+#include <CGAL/Filtered_kernel_fwd.h>
 
-  template <class CK>
-  struct Filtered_kernel;
+namespace CGAL {
 
   template < typename FT_ >
   struct Simple_cartesian;

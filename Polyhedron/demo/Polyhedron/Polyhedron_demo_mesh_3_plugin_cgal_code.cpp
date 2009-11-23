@@ -279,6 +279,7 @@ private:
 };
 
 Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
+                             const QString filename,
                              const double angle,
                              const double sizing,
                              const double approx,
@@ -297,6 +298,11 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
 
   CGAL::Timer timer;
   timer.start();
+  std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
+  std::cerr << "  angle: " << angle << std::endl
+            << "  facets size bound: " << sizing << std::endl
+            << "  approximation bound: " << approx << std::endl
+            << "  tetrahedra size bound: " << tets_sizing << std::endl;
   std::cerr << "Build AABB tree...";
   // Create domain
   Mesh_domain domain(*pMesh);

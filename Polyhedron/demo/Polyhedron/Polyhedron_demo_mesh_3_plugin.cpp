@@ -15,6 +15,7 @@
 
 // declare the CGAL function
 Scene_item* cgal_code_mesh_3(const Polyhedron*,
+                             QString filename,
                              const double angle,
                              const double sizing,
                              const double approx,
@@ -109,7 +110,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    Scene_item* result_item = cgal_code_mesh_3(pMesh, angle, sizing, approx, tets_sizing);
+    Scene_item* result_item = cgal_code_mesh_3(pMesh, item->name(), angle, sizing, approx, tets_sizing);
     if(result_item) {
       result_item->setName(tr("%1 3d mesh (%2 %3 %4 %5)")
                            .arg(item->name())

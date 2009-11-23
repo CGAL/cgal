@@ -13,7 +13,7 @@
 #include <QStringList>
 
 // declare the CGAL function
-Scene_item* cgal_code_remesh(const Polyhedron*,
+Scene_item* cgal_code_remesh(Polyhedron*,
                              const double angle,
                              const double sizing,
                              const double approx,

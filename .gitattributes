@@ -2578,6 +2578,7 @@ Polyhedron/demo/Polyhedron/data/bull.off -text svneol=unset#application/octet-st
 Polyhedron/demo/Polyhedron/data/couplingdown.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cow.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cross.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/cube-ouvert.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cube.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/dragknob.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/elephant.off -text svneol=unset#application/octet-stream
