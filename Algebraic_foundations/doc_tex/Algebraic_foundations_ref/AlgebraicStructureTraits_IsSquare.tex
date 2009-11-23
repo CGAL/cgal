@@ -4,9 +4,11 @@
 
 \ccDefinition
 
-\ccc{AdaptableBinaryFunction} providing an integral square root. 
+\ccc{AdaptableBinaryFunction} that computes whether the first argument is a square. 
+If the first argument is a square the second argument, which is taken by reference, contains the square root. 
+Otherwise, the content of the second argument is undefined. 
 
-An ring element $x$ is said to be a square iff there exists a ring element $y$ such
+A ring element $x$ is said to be a square iff there exists a ring element $y$ such
 that $x= y*y$. In case the ring is a \ccc{UniqueFactorizationDomain},
 $y$ is uniquely defined up to multiplication by units. \\
 
