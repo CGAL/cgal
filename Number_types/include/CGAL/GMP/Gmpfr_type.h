@@ -866,13 +866,12 @@ inline
 Gmpq Gmpfr::to_fraction()const{
         Gmpq q;
         std::pair<Gmpz,long> p=to_integer_exp();
-        mpz_set(mpq_numref(q.mpq()),p.first.mpz());
-        mpz_set_ui(mpq_denref(q.mpq()),1);
-        if(p.second>=0)     // q=(p.first*2^p.second)/1
-                mpz_mul_2exp(mpq_numref(q.mpq()),mpq_numref(q.mpq()),p.second);
-        else        // q=p.first/2^(-p.second)
-                mpz_mul_2exp(mpq_denref(q.mpq()),mpq_denref(q.mpq()),-p.second);
-        mpq_canonicalize(q.mpq());
+        mpq_set_z(q.mpq(),p.first.mpz());
+        if(p.second<0)
+                mpq_div_2exp(q.mpq(),q.mpq(),(unsigned long)(-p.second));
+        else
+                mpq_mul_2exp(q.mpq(),q.mpq(),(unsigned long)(p.second));
+        CGAL_assertion(*this==q);
         return q;
 }
 
