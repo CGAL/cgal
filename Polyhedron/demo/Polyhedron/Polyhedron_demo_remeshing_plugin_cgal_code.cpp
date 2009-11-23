@@ -68,13 +68,21 @@ public:
     if(isEmpty())
       return Bbox();
     else {
-      CGAL::Bbox_3 result = c2t3().triangulation().vertices_begin()->point().bbox();
+      bool first = true;
+      CGAL::Bbox_3 result;
       for(Tr::Finite_vertices_iterator
             vit = ++c2t3().triangulation().finite_vertices_begin(),
             end = c2t3().triangulation().finite_vertices_end();
           vit != end; ++vit)
       {
-        result = result + vit->point().bbox();
+        if(vit->point().weight() > 0) {
+          if(first) {
+            result = vit->point().bbox();
+            first = false;
+          } else { 
+            result = result + vit->point().bbox();
+          }
+        }
       }
       return Bbox(result.xmin(), result.ymin(), result.zmin(),
                   result.xmax(), result.ymax(), result.zmax());
@@ -100,10 +108,7 @@ public:
   }
 
   void draw() const {
-    if(sphere_display_list == 0) {
-      sphere_display_list = glGenLists(1);
-      glNewList(sphere_display_list, GL_COMPILE);
-    }
+    // draw_sphere(c2t3().triangulation().finite_vertices_begin()->point());
     for(Tr::Finite_vertices_iterator 
           vit = c2t3().triangulation().finite_vertices_begin(),
           end =  c2t3().triangulation().finite_vertices_end();
@@ -116,7 +121,6 @@ public:
   void draw_sphere(const Tr::Point p) const 
   {
     if(p.weight() > 0) {
-      std::cerr << "draw_sphere(" << p << ")\n";
       if(sphere_display_list == 0) {
         sphere_display_list = glGenLists(1);
         if(sphere_display_list == 0)
@@ -211,7 +215,7 @@ Scene_item* cgal_code_remesh(Polyhedron* pMesh,
 
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
-  insert_spheres(c2t3, pMesh, sizing / 3);
+  insert_spheres(c2t3, pMesh, sizing);
   std::cerr << c2t3.number_of_facets() << std::endl;
   return new Scene_c2t3_item(c2t3);
   // remesh

@@ -168,28 +168,37 @@ struct Insert_spheres {
     const FT local_size = distance / n;
     std::cerr << n << std::endl;
     std::cerr << "Local size: " << local_size << std::endl;
-    CGAL_assertion(local_size < size);
-    
-    Point_3 a(begin->point(), local_size/1.5);
-    Point_3 b(end2->point(), local_size/1.5);
+    // CGAL_assertion(local_size < size);
+    const FT r2 = CGAL::square(local_size/1.5);
+    Point_3 a(begin->point(), r2);
+    Point_3 b(end2->point(), r2);
     c2t3.triangulation().insert(a);
-    Polyline::const_iterator it = begin;
-    ++it;
     FT small_distance_to_go = local_size;
-    while(it != end) {
+    Polyline::const_iterator it = begin;
+    while(it != end2) {
       const Point& a = *it;
       const Point& b = *++it;
-      const FT  d = CGAL_NTS squared_distance(a, b);
-      unsigned i = 0;
-      for(; small_distance_to_go + i * local_size >= d;
-          ++i)
-      {
-        const Point p = a +
-          (small_distance_to_go + i * local_size) * ( b - a ) / d;
-        c2t3.triangulation().insert(Point_3(p, local_size / 1.5));
+      std::cerr << "segment( " << a << ", " << b << ")\n";
+      std::cerr << "small_distance_to_go=" << small_distance_to_go << std::endl;
+      const FT d = CGAL_NTS sqrt(squared_distance(a, b));
+      std::cerr << "d=" << d << std::endl;
+      FT pos = small_distance_to_go;
+      if(pos < d) {
+        for(; pos < d;
+            pos += local_size)
+        {
+          const Point p = a +
+            pos * ( b - a ) / d;
+          c2t3.triangulation().insert(Point_3(p, r2));
+          std::cerr << ".";
+        }
+        // pos -= local_size;
+        small_distance_to_go = pos - d;
       }
-      small_distance_to_go -= d;
-      small_distance_to_go += i * local_size;
+      else  {
+        small_distance_to_go -= d;
+      }
+      std::cerr << "\n";
     }
     c2t3.triangulation().insert(b);
     std::cerr << "One polyline is protected!\n";
