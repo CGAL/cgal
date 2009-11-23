@@ -6,12 +6,13 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+#include <CGAL/Mesh_3/Robust_weighted_circumcenter_filtered_traits_3.h>
 
 // traits class
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K2;
-typedef CGAL::Robust_circumcenter_traits_3<K2>  K;
+typedef CGAL::Robust_weighted_circumcenter_filtered_traits_3<K2>  Traits;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K>  Traits;
+// typedef CGAL::Regular_triangulation_euclidean_traits_3<K>  Traits;
 
 // vertex and cell types
 typedef CGAL::Surface_mesh_vertex_base_3<Traits> Vb;

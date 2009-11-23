@@ -178,10 +178,10 @@ struct Insert_spheres {
     while(it != end2) {
       const Point& a = *it;
       const Point& b = *++it;
-      std::cerr << "segment( " << a << ", " << b << ")\n";
-      std::cerr << "small_distance_to_go=" << small_distance_to_go << std::endl;
+      // std::cerr << "segment( " << a << ", " << b << ")\n";
+      // std::cerr << "small_distance_to_go=" << small_distance_to_go << std::endl;
       const FT d = CGAL_NTS sqrt(squared_distance(a, b));
-      std::cerr << "d=" << d << std::endl;
+      // std::cerr << "d=" << d << std::endl;
       FT pos = small_distance_to_go;
       if(pos < d) {
         for(; pos < d;
@@ -190,7 +190,7 @@ struct Insert_spheres {
           const Point p = a +
             pos * ( b - a ) / d;
           c2t3.triangulation().insert(Point_3(p, r2));
-          std::cerr << ".";
+          // std::cerr << ".";
         }
         // pos -= local_size;
         small_distance_to_go = pos - d;
@@ -198,7 +198,7 @@ struct Insert_spheres {
       else  {
         small_distance_to_go -= d;
       }
-      std::cerr << "\n";
+      // std::cerr << "\n";
     }
     c2t3.triangulation().insert(b);
     std::cerr << "One polyline is protected!\n";

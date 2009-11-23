@@ -13,6 +13,7 @@
 
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Surface_mesh_default_criteria_3.h>
+#include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_polyhedron_builder.h>
@@ -31,6 +32,79 @@
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
+#include <CGAL/array.h>
+
+template <class Tr>
+class Surface_mesh_modified_criteria_3
+{
+public:
+  typedef Tr Triangulation;
+  typedef typename Tr::Geom_traits::FT FT;
+
+  typedef typename CGAL::array<FT, 3> Quality;
+  typedef typename Tr::Facet Facet;
+
+  Surface_mesh_modified_criteria_3(const FT angle_bound,
+                                   const FT radius_bound,
+                                   const FT distance_bound)
+    : curvature_size_criterion(distance_bound),
+      uniform_size_criterion(radius_bound),
+      aspect_ratio_criterion(angle_bound)
+      
+  {
+  }
+
+  bool is_bad (const Facet& f, Quality& q) const
+  {
+    const typename Tr::Point& pa = f.first->vertex((f.second+1)%4)->point();
+    const typename Tr::Point& pb = f.first->vertex((f.second+2)%4)->point();
+    const typename Tr::Point& pc = f.first->vertex((f.second+3)%4)->point();
+    int nb_protecting_balls = 0;
+    if(pa.weight() != FT(0)) ++nb_protecting_balls;
+    if(pb.weight() != FT(0)) ++nb_protecting_balls;
+    if(pc.weight() != FT(0)) ++nb_protecting_balls;
+    if(nb_protecting_balls == 0)
+    { 
+      if(aspect_ratio_criterion.is_bad(f, q[0]))
+        return true;
+      else {
+        q[0] = 1;
+        if(uniform_size_criterion.is_bad(f, q[1]))
+          return true;
+        else {
+          q[1] = 1;
+          if(curvature_size_criterion.is_bad(f, q[2]))
+            return true;
+        }
+      }
+    }
+    else {
+      q[0] = 1;
+      if(nb_protecting_balls == 3)
+        return false;
+      else if(uniform_size_criterion.is_bad(f, q[1]))
+        return true;
+      else {
+        q[1] = 1;
+        if(nb_protecting_balls == 1 && curvature_size_criterion.is_bad(f, q[2]))
+          return true;
+      }
+    }
+    return false;
+  }
+private:
+  CGAL::Surface_mesher::Curvature_size_criterion<Tr> curvature_size_criterion;
+  // bound on Hausdorff distance does not play any role if bigger than
+  // the square of the Uniform_size_criterion
+
+  CGAL::Surface_mesher::Uniform_size_criterion<Tr> uniform_size_criterion;
+  // bound on radii of surface Delaunay balls
+  
+  CGAL::Surface_mesher::Aspect_ratio_criterion<Tr> aspect_ratio_criterion;
+  // lower bound on minimum angle in degrees
+
+}; // end class Surface_mesh_default_criteria_3
+
 
 namespace {
   void CGALglcolor(QColor c)
@@ -108,7 +182,25 @@ public:
   }
 
   void draw() const {
-    // draw_sphere(c2t3().triangulation().finite_vertices_begin()->point());
+    ::glBegin(GL_TRIANGLES);
+    for(C2t3::Facet_iterator
+          fit = c2t3().facets_begin(),
+          end = c2t3().facets_end();
+        fit != end; ++fit)
+    {
+      const Tr::Cell_handle& cell = fit->first;
+      const int& index = fit->second;
+      const Tr::Geom_traits::Point_3& pa = cell->vertex((index+1)&3)->point();
+      const Tr::Geom_traits::Point_3& pb = cell->vertex((index+2)&3)->point();
+      const Tr::Geom_traits::Point_3& pc = cell->vertex((index+3)&3)->point();
+      draw_triangle(pa, pb, pc);
+    }
+    ::glEnd();
+
+    // force wireframe for protecting spheres
+    GLint polygon_mode[2];
+    ::glGetIntegerv(GL_POLYGON_MODE, &polygon_mode[0]);
+    ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     for(Tr::Finite_vertices_iterator 
           vit = c2t3().triangulation().finite_vertices_begin(),
           end =  c2t3().triangulation().finite_vertices_end();
@@ -116,6 +208,8 @@ public:
     {
       draw_sphere(vit->point());
     }
+    ::glPolygonMode(GL_FRONT, polygon_mode[0]);
+    ::glPolygonMode(GL_BACK, polygon_mode[1]);
   }
 
   void draw_sphere(const Tr::Point p) const 
@@ -147,6 +241,20 @@ public:
   }
 
 private:
+  static void draw_triangle(const Tr::Point& pa,
+                            const Tr::Point& pb,
+                            const Tr::Point& pc) {
+    Tr::Geom_traits::Vector_3 n = cross_product(pb - pa, pc -pa);
+    n = n / CGAL::sqrt(n*n);
+
+    ::glNormal3d(n.x(),n.y(),n.z());
+
+    ::glVertex3d(pa.x(),pa.y(),pa.z());
+    ::glVertex3d(pb.x(),pb.y(),pb.z());
+    ::glVertex3d(pc.x(),pc.y(),pc.z());
+  }
+
+private:
   mutable GLuint sphere_display_list;
   mutable GLUquadric* quadric;
   C2t3 c2t3_;
@@ -172,7 +280,9 @@ Scene_item* cgal_code_remesh(Polyhedron* pMesh,
   // C2t3 c2t3(triangulation); // 2D-complex in 3D-Delaunay triangulation
 
   // meshing parameters
-  CGAL::Surface_mesh_default_criteria_3<Tr> facets_criteria(angle,sizing,approx);
+  const Surface_mesh_modified_criteria_3<Tr> facets_criteria(angle,sizing,approx);
+
+  // const Criteria new_facets_criteria(facets_criteria);
 
   // AABB tree
   CGAL::Timer timer;
@@ -180,13 +290,14 @@ Scene_item* cgal_code_remesh(Polyhedron* pMesh,
   std::cerr << "Build AABB tree...";
   typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel;
   // input surface
-  typedef CGAL::AABB_polyhedral_oracle<Polyhedron,Kernel,Simple_cartesian_kernel> Input_surface;
+  typedef CGAL::Mesh_3::Robust_intersection_traits_3<Kernel> IGT;
+  typedef CGAL::AABB_polyhedral_oracle<Polyhedron,IGT,Simple_cartesian_kernel> Input_surface;
   Input_surface input(*pMesh);
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
   // initial point set
   timer.reset();
-  std::cerr << "Insert initial point set...";
+  std::cerr << "Insert initial point set... ";
   typedef CGAL::Cartesian_converter<Kernel,GT> Converter;
   Converter convert;
 
@@ -215,9 +326,12 @@ Scene_item* cgal_code_remesh(Polyhedron* pMesh,
 
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
-  insert_spheres(c2t3, pMesh, sizing);
-  std::cerr << c2t3.number_of_facets() << std::endl;
-  return new Scene_c2t3_item(c2t3);
+  std::cerr << "Insert protecting balls... ";
+  timer.reset();
+  insert_spheres(c2t3, pMesh, sizing/1.5);
+  std::cerr << "done (" << timer.time() << " ms)" << std::endl;
+
+  // return new Scene_c2t3_item(c2t3);
   // remesh
   timer.reset();
   std::cerr << "Remesh...";
@@ -236,37 +350,43 @@ Scene_item* cgal_code_remesh(Polyhedron* pMesh,
 
   if(triangulation.number_of_vertices() > 0)
   {
-    // add remesh as new polyhedron
-    Polyhedron *pRemesh = new Polyhedron;
-    CGAL::Complex_2_in_triangulation_3_polyhedron_builder<C2t3, Polyhedron> builder(c2t3);
-    try {
-      CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
-      pRemesh->delegate(builder);
-    } catch(CGAL::Failure_exception)
-    {
-    }
-    CGAL::set_error_behaviour(CGAL::ABORT);
+    // // add remesh as new polyhedron
+    // Polyhedron *pRemesh = new Polyhedron;
+    // CGAL::Complex_2_in_triangulation_3_polyhedron_builder<C2t3,
+    // Polyhedron> builder(c2t3);
+    return new Scene_c2t3_item(c2t3);
 
-    if(c2t3.number_of_facets() != pRemesh->size_of_facets())
-    {
-      delete pRemesh;
-      std::stringstream temp_file;
-      if(!CGAL::output_surface_facets_to_off(temp_file, c2t3))
-      {
-        std::cerr << "Cannot write the mesh to an off file!\n";
-        return 0;
-      }
-      Scene_polygon_soup* soup = new Scene_polygon_soup();
-      if(!soup->load(temp_file))
-      {
-        std::cerr << "Cannot reload the mesh from an off file!\n";
-        return 0;
-      }
-      else
-        return soup;
-    } else {
-      return new Scene_polyhedron_item(pRemesh);
-    }
+    // try {
+    //   CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
+    //   pRemesh->delegate(builder);
+    // } catch(CGAL::Failure_exception)
+    // {
+    // }
+    // CGAL::set_error_behaviour(CGAL::ABORT);
+
+    // if(c2t3.number_of_facets() != pRemesh->size_of_facets())
+    // {
+    //   delete pRemesh;
+    //   std::stringstream temp_file;
+    //   namespace sm = CGAL::Surface_mesher;
+    //   if(!CGAL::output_surface_facets_to_off(temp_file, c2t3, 
+    //                                          sm::NO_OPTION | sm::IO_VERBOSE))
+    //   {
+    //     std::cerr << "Cannot write the mesh to an off file!\n";
+    //     std::cerr << temp_file.str() << std::endl;
+    //     return 0;
+    //   }
+    //   Scene_polygon_soup* soup = new Scene_polygon_soup();
+    //   if(!soup->load(temp_file))
+    //   {
+    //     std::cerr << "Cannot reload the mesh from an off file!\n";
+    //     return 0;
+    //   }
+    //   else
+    //     return soup;
+    // } else {
+    //   return new Scene_polyhedron_item(pRemesh);
+    // }
   }
   else
     return 0;
