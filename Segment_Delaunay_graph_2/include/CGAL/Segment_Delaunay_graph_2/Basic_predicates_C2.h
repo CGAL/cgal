@@ -52,6 +52,7 @@ public:
   typedef typename K::Comparison_result   Comparison_result;
   typedef typename K::Sign                Sign;
   typedef typename K::Orientation         Orientation;
+  typedef typename K::Compute_scalar_product_2 Compute_scalar_product_2;
   typedef typename K::Boolean             Boolean;
 
   typedef CGAL::Sqrt_extension_1<RT>       Sqrt_1;
