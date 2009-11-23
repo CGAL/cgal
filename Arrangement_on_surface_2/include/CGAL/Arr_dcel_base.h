@@ -265,7 +265,7 @@ public:
   typedef Isolated_vertices_container::iterator Isolated_vertex_iterator;
   typedef Isolated_vertices_container::const_iterator
                                                 Isolated_vertex_const_iterator;
-
+  
 protected:
 
   enum
@@ -276,7 +276,7 @@ protected:
 
   int                          flags;      // Face flags.
   Outer_ccbs_container         outer_ccbs; // The outer CCBs of the faces.
-  Inner_ccbs_container         inner_ccbs; // The holes inside the face.
+  Inner_ccbs_container         inner_ccbs; // The inner CCBs of the face.
   Isolated_vertices_container  iso_verts;  // The isolated vertices inside
                                            // the face.
 
@@ -602,6 +602,8 @@ public:
   typedef Arr_inner_ccb<V,H,F>         Inner_ccb;
   typedef Arr_isolated_vertex<V,H,F>   Isolated_vertex;
 
+  typedef Inner_ccb                    Hole;
+  
 private:
 
   typedef Cast_function_object<void*,
@@ -675,6 +677,9 @@ public:
                            _Const_ccb_to_halfedge_cast> 
                                                     Inner_ccb_const_iterator;
 
+  typedef Inner_ccb_iterator                        Hole_iterator;
+  typedef Inner_ccb_const_iterator                  Hole_const_iterator;
+  
   /*! Get the number of inner CCBs the face has. */
   size_t number_of_inner_ccbs () const
   {
@@ -717,6 +722,13 @@ public:
   {
     this->inner_ccbs.erase (ic->iterator().current_iterator());
   }
+
+  // Backward compatibility:
+  size_t number_of_holes () const { return number_of_inner_ccbs(); }
+  Hole_iterator holes_begin() { return inner_ccbs_begin(); }
+  Hole_iterator holes_end() { return inner_ccbs_end(); }
+  Hole_const_iterator holes_begin() const { return inner_ccbs_begin(); }
+  Hole_const_iterator holes_end() const { return inner_ccbs_end(); }
 
   // Definition of the isloated vertices iterators:
   typedef I_Dereference_iterator<
@@ -847,7 +859,7 @@ public:
     return (p_f);
   }
 
-  /*! Set the incident face, the one that contains the hole. */
+  /*! Set the incident face. */
   void set_face (Face* f)
   {
     p_f = f;
@@ -943,7 +955,7 @@ public:
     return (p_f);
   }
 
-  /*! Set the incident face, the one that contains the hole. */
+  /*! Set the incident face. */
   void set_face (Face* f)
   {
     p_f = f;
@@ -988,8 +1000,8 @@ public:
 
 private:
 
-  Face                        *p_f;   // The face containing the hole.
-  Isolated_vertex_iterator   iv_it; // The isolated vertex identifier.
+  Face                        *p_f;     // The containing face.
+  Isolated_vertex_iterator   iv_it;     // The isolated vertex identifier.
   bool iter_is_not_singular;
 
 public:
@@ -1068,6 +1080,8 @@ public:
   typedef Arr_inner_ccb<V,H,F>        Inner_ccb;
   typedef Arr_isolated_vertex<V,H,F>  Isolated_vertex;
 
+  typedef Inner_ccb                   Hole;
+  
 protected:
 
   // The vetices, halfedges and faces are stored in three in-place lists.
@@ -1152,7 +1166,6 @@ private:
   Self& operator= (const Self&);
 
 public:
-
   /// \name Construction and destruction.
   //@{
   /*! Default constructor. */
@@ -1213,8 +1226,8 @@ public:
   Halfedge_iterator halfedges_end()   { return halfedges.end(); }
   Face_iterator     faces_begin()     { return faces.begin(); }
   Face_iterator     faces_end()       { return faces.end(); }
-  Edge_iterator     edges_begin()     { return halfedges.begin(); }  
-  Edge_iterator     edges_end()       { return halfedges.end(); }  
+  Edge_iterator     edges_begin()     { return halfedges.begin(); }
+  Edge_iterator     edges_end()       { return halfedges.end(); }
   //@}
 
   /// \name Obtaining constant iterators.
@@ -1225,8 +1238,8 @@ public:
   Halfedge_const_iterator halfedges_end() const { return halfedges.end(); }
   Face_const_iterator     faces_begin() const { return faces.begin(); }
   Face_const_iterator     faces_end() const { return faces.end(); }
-  Edge_const_iterator     edges_begin() const { return halfedges.begin(); }  
-  Edge_const_iterator     edges_end() const { return halfedges.end(); }  
+  Edge_const_iterator     edges_begin() const { return halfedges.begin(); }
+  Edge_const_iterator     edges_end() const { return halfedges.end(); }
   //@}
 
   // \name Creation of new DCEL features.
