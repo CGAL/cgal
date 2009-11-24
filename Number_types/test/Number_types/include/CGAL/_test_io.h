@@ -19,13 +19,13 @@
 #ifndef CGAL_TEST_IO_H
 #define CGAL_TEST_IO_H
 
-#include <iostream>
 #include <CGAL/basic.h>
 #ifdef NDEBUG
 #  undef NDEBUG
 #  include <cassert>
 #  define NDEBUG 1
 #endif
+#include <sstream>
 
 namespace CGAL{
 
