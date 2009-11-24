@@ -63,7 +63,6 @@ struct Checker
     
     if ( ! result.empty() )
     { 
-      assert( CGAL::do_intersect(q, t) );     
       assert(   NULL != CGAL::object_cast<typename K::Point_3>(&result) 
              || NULL != CGAL::object_cast<typename K::Segment_3>(&result));
     }
@@ -623,6 +622,7 @@ int main()
   // -----------------------------------
   // Test random intersection
   // -----------------------------------
+  srand(time(NULL));
   std::cout << std::endl << "Test random intersections" << std::endl;
   std::cout << "\tTesting with Simple_cartesian<float>..." << std::endl ;
   random_test<Sc_f>();

@@ -15,7 +15,13 @@
 // $Id$
 //
 //
-// Author(s)     :  Laurent Rineau
+// Author(s)     :  Laurent Rineau, Stephane Tayeb
+//
+//******************************************************************************
+// File Description : Implements triangle_3 ray_3 intersection construction.
+//
+// This implementation is adapted from Triangle_3_Ray_3_do_intersect.h.
+//******************************************************************************
 
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_RAY_3_INTERSECTION_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_RAY_3_INTERSECTION_H
