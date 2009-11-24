@@ -538,7 +538,6 @@ Polyhedron/demo/Polyhedron/*.kdev*
 Polyhedron/demo/Polyhedron/*.off
 Polyhedron/demo/Polyhedron/*.s
 Polyhedron/demo/Polyhedron/*.sln
-Polyhedron/demo/Polyhedron/*.ui
 Polyhedron/demo/Polyhedron/*.vcproj
 Polyhedron/demo/Polyhedron/*_moc.cpp
 Polyhedron/demo/Polyhedron/.qglviewer*.xml
