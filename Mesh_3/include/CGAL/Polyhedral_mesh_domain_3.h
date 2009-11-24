@@ -334,8 +334,8 @@ Polyhedral_mesh_domain_3<P_,IGT,TA>::Construct_initial_points::operator()(
 
   const Bounding_box bbox = r_domain_.tree_.bbox();
   const Point_3 center( FT( (bbox.xmin() + bbox.xmax()) / 2),
-                        FT( (bbox.xmin() + bbox.xmax()) / 2),
-                        FT( (bbox.xmin() + bbox.xmax()) / 2) );
+                        FT( (bbox.ymin() + bbox.ymax()) / 2),
+                        FT( (bbox.zmin() + bbox.zmax()) / 2) );
 
   const double diameter = Mesh_3::details::max_length(bbox) * 2;
   Random_points_on_sphere_3<Point_3> random_point(1.);
