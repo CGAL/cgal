@@ -100,8 +100,9 @@ void Polyhedron_demo_remeshing_plugin::remesh()
     tag_items << tr("Non manifold") << tr("Manifold") << tr("Manifold with boundary");
 
     QString tag_item = QInputDialog::getItem(mw, tr("Topological criterion"),
-                                         tr("Choose the topological criterion :"),
-                                         tag_items, 1, false);
+                                             tr("Choose the topological criterion :"),
+                                             tag_items, 1, false, &ok);
+    if(!ok) return;
 
     int tag_index = tag_items.indexOf(tag_item);
     if(tag_index < 0) return;
