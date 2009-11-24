@@ -2245,6 +2245,7 @@ Number_types/include/CGAL/mpfr_coercion_traits.h -text
 Number_types/test/Number_types/CMakeLists.txt -text
 Number_types/test/Number_types/Gmpfi.cpp -text
 Number_types/test/Number_types/Gmpfi_test_arithmetic.cpp -text
+Number_types/test/Number_types/Gmpfi_test_io.cpp -text
 Number_types/test/Number_types/Gmpfi_test_operators.cpp -text
 Number_types/test/Number_types/Gmpfi_test_precision.cpp -text
 Number_types/test/Number_types/Gmpfr.cpp -text

@@ -878,10 +878,12 @@ Gmpq Gmpfr::to_fraction()const{
 
 // input/output
 
-// this function was based on the Gmpq's one
+// This function was based on the Gmpq's one. It reads a number in the form
+// MeE, where M and E are integers. The read number is M.2^E. The number
+// may contain spaces between integers and the 'e', but not in the middle
+// of the numbers.
 inline
 std::istream& operator>>(std::istream& is,Gmpfr &f){
-        // reads rational and floating point literals.
         std::istream::int_type c;
         std::ios::fmtflags old_flags = is.flags();
 
@@ -967,6 +969,7 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
         gmpz_eat_white_space(is);
         while((c=is.get())>='0'&&c<='9')
                 exp=10*exp+(c-'0');
+        is.putback(c);
         if(mpz_sizeinbase(exp.mpz(),2)>8*sizeof(mp_exp_t))
                 mpfr_set_erangeflag();
 

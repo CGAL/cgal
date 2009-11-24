@@ -34,7 +34,6 @@ namespace CGAL{
 template <class _NT,class _CT>
 void test_io(_CT x){
         typedef _NT     NT;
-        typedef _CT     CT;
 
         NT a(x);
         std::stringstream ss;
@@ -56,6 +55,21 @@ void test_io(){
         ss<<CGAL::oformat(a);
         ss>>CGAL::iformat(a);
         assert(a==NT());
+}
+
+// construct an interval of type _NT from a value of type _CT, output it to
+// a stream, read it again and check that the bounds of the number
+// (obtained with member functions inf() and sup()) are the same
+template <class _NT,class _CT>
+void test_interval_io(_CT x){
+        typedef _NT     NT;
+
+        NT a(x),b(x);
+        std::stringstream ss;
+        ss<<CGAL::oformat(a);
+        ss>>CGAL::iformat(a);
+        assert(a.inf()==b.inf());
+        assert(a.sup()==b.sup());
 }
 
 } // namespace CGAL

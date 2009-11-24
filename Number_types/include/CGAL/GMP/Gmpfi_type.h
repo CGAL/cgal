@@ -736,26 +736,39 @@ std::pair<std::pair<double,double>,long> Gmpfi::to_interval_exp()const{
 
 // input/output
 
+// This function reads an interval from the istream. It has the form
+// [inf,sup], where each one of inf and sup is read as a Gmpfr. Then, they
+// are rounded accordingly. The input may contain spaces between the
+// brackets and the numbers and the numbers and the comma. The result is
+// undefined when the input is malformed.
 inline
 std::istream& operator>>(std::istream& is,Gmpfi &f){
-        std::string s;
-        char* sc;
-        is>>s;
-        sc=(char*)s.c_str();
-        if(s[0]=='[')
-                mpfi_set_str(f.mpfi(),sc,10);
-        else{
-                int l=strlen(sc);
-                // TODO: this array declaration is forbidden in iso c++
-                char complete[2*l+4];
-                complete[0]='[';
-                strncpy(complete+1,sc,l);
-                complete[l+1]=',';
-                strncpy(complete+l+2,sc,l);
-                complete[2*l+2]=']';
-                complete[2*l+3]='\0';
-                mpfi_set_str(f.mpfi(),complete,10);
+        Gmpfr left,right;
+        std::istream::int_type c;
+        std::ios::fmtflags old_flags = is.flags();
+        is.unsetf(std::ios::skipws);
+        gmpz_eat_white_space(is);
+        c=is.get();
+        if(c!='['){
+                invalid_number:
+                is.setstate(std::ios_base::failbit);
+                is.flags(old_flags);
+                return is;
         }
+        gmpz_eat_white_space(is);
+        is>>left;
+        c=is.get();
+        if(c!=',')
+                goto invalid_number;
+        is>>right;
+        gmpz_eat_white_space(is);
+        c=is.get();
+        if(c!=']')
+                goto invalid_number;
+        Gmpfr::Precision_type p=left.get_precision()>right.get_precision()?
+                                left.get_precision():
+                                right.get_precision();
+        f=Gmpfi(std::make_pair(left,right),(Gmpfi::Precision_type)p);
         return is;
 }
 
