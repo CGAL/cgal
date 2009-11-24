@@ -126,13 +126,13 @@ struct Insert_spheres {
           CGAL_assertion(e2 == Halfedge_const_handle());
           e2 = he;
         }
-        std::cerr << "x";
+        // std::cerr << "x";
       }
-      else
-        std::cerr << ".";
+      // else
+        // std::cerr << ".";
       ++he;
     } while(he != end);
-      std::cerr << "\n";
+      // std::cerr << "\n";
     const Point_3 pv = v->point();
     const Point_3 pa = e1->opposite()->vertex()->point();
     const Point_3 pb = e2->opposite()->vertex()->point();
@@ -162,12 +162,12 @@ struct Insert_spheres {
       const Point& b = *++it;
       distance += CGAL_NTS sqrt( CGAL::squared_distance(a, b) );
     }
-    std::cerr << "Distance:   " << distance << std::endl;
-    std::cerr << "Size:       " << size << std::endl;
+    // std::cerr << "Distance:   " << distance << std::endl;
+    // std::cerr << "Size:       " << size << std::endl;
     const size_type n = static_cast<size_type>(std::ceil(distance / size) + 0.5);
     const FT local_size = distance / n;
-    std::cerr << n << std::endl;
-    std::cerr << "Local size: " << local_size << std::endl;
+    // std::cerr << n << std::endl;
+    // std::cerr << "Local size: " << local_size << std::endl;
     // CGAL_assertion(local_size < size);
     const FT r2 = CGAL::square(local_size/1.5);
     Point_3 a(begin->point(), r2);

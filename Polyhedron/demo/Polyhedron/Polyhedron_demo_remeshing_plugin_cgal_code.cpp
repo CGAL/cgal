@@ -26,13 +26,17 @@
 #include <algorithm>
 #include <sstream>
 
+#include <CGAL/array.h>
 
 #include "Scene_item.h"
+
 #include <Qt/qglobal.h>
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
-#include <CGAL/array.h>
+#include <QApplication>
+#include <QThread>
+#include <QMessageBox>
 
 template <class Tr>
 class Surface_mesh_modified_criteria_3
@@ -84,11 +88,11 @@ public:
         return false;
       else if(uniform_size_criterion.is_bad(f, q[1]))
         return true;
-      else {
-        q[1] = 1;
-        if(nb_protecting_balls == 1 && curvature_size_criterion.is_bad(f, q[2]))
-          return true;
-      }
+      // else {
+      //   q[1] = 1;
+      //   if(nb_protecting_balls == 1 && curvature_size_criterion.is_bad(f, q[2]))
+      //     return true;
+      // }
     }
     return false;
   }
@@ -112,6 +116,126 @@ namespace {
     ::glColor4f(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
   }
 }
+
+//
+// Types for meshing
+//
+typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel;
+// input surface
+typedef CGAL::Mesh_3::Robust_intersection_traits_3<Kernel> IGT;
+typedef CGAL::AABB_polyhedral_oracle<Polyhedron,IGT,Simple_cartesian_kernel> Input_surface;
+
+
+// A base non-templated class, to allow 
+class Mesher_base : public QObject {
+  Q_OBJECT
+protected:
+  bool is_stopped;
+public:
+  Mesher_base(QObject* parent) : QObject(parent) {
+    is_stopped = true;
+  };
+  virtual ~Mesher_base() {}
+public slots:
+  virtual void mesh() = 0;
+  virtual void one_step() = 0;
+
+  void stop() {
+    std::cerr << "STOP!\n";
+    is_stopped = true;
+  }
+};
+
+// Class template, refines Mesher_base
+// That allows to create meshers with different criteria or manifold tag,
+// and thread them with the API of Mesher_base (mesh/one_step/stop).
+template <typename Criteria, typename Manifold_tag>
+class Mesher : public Mesher_base
+{
+  typedef typename CGAL::Surface_mesher_generator<
+    C2t3,
+    Input_surface,
+    Criteria,
+    Manifold_tag,
+    CGAL_SURFACE_MESHER_VERBOSITY >::type MyMesher;
+
+  MyMesher mesher;
+  const C2t3& c2t3;
+  const Input_surface& surface;
+  CGAL::Null_mesh_visitor visitor;
+public:
+  Mesher(QObject* parent, 
+         C2t3& c2t3, 
+         const Input_surface& surface,
+         const Criteria& criteria)
+    : Mesher_base(parent), 
+      mesher(c2t3, surface, surface, criteria),
+      c2t3(c2t3),
+      surface(surface)
+  {
+    typename Input_surface::Construct_initial_points get_initial_points =
+      surface.construct_initial_points_object();
+
+    get_initial_points(surface,
+                       CGAL::inserter(c2t3.triangulation()),
+                       20);
+    mesher.init();
+  }
+        
+  void mesh()
+  {
+    int global_nbsteps = 0;
+    int nbsteps = 0;
+    CGAL::Timer timer;
+    timer.start();
+    is_stopped = false;
+
+    std::cerr << "Legende of the following line: "
+              << "(#vertices,#steps," << mesher.debug_info_header()
+              << ")\n";
+
+    while(!is_stopped && !mesher.is_algorithm_done())
+    {
+      one_step();
+      ++nbsteps;
+      ++global_nbsteps;
+      if(timer.time() > 1)
+      {
+        std::cerr 
+	  << boost::format("\r             \r"
+			   "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+	  % c2t3.triangulation().number_of_vertices()
+	  % global_nbsteps % mesher.debug_info()
+	  % (nbsteps / timer.time());
+        qApp->processEvents();
+        nbsteps = 0;
+        timer.reset();
+      }
+    }
+  }
+
+  void one_step()
+  {
+    mesher.one_step(visitor);
+  }
+};
+
+// That thread takes a Mesher_base* as parent. It just launches the meshing
+// process.
+struct Meshing_thread : QThread 
+{
+  Mesher_base* mesher;
+
+  Meshing_thread(Mesher_base* parent) 
+    : QThread(parent), mesher(parent)
+  {
+  }
+
+  void run() {
+    mesher->mesh();
+    mesher->moveToThread(QApplication::instance()->thread());
+  }
+};
 
 class Q_DECL_EXPORT Scene_c2t3_item : public Scene_item
 {
@@ -197,6 +321,7 @@ public:
     }
     ::glEnd();
 
+    return;
     // force wireframe for protecting spheres
     GLint polygon_mode[2];
     ::glGetIntegerv(GL_POLYGON_MODE, &polygon_mode[0]);
@@ -264,14 +389,45 @@ typedef Tr::Geom_traits GT;
 
 bool insert_spheres(C2t3& c2t3, Polyhedron* pMesh, const GT::FT size);
 
-Scene_item* cgal_code_remesh(Polyhedron* pMesh,
+Scene_item* cgal_code_remesh(QWidget* parent, 
+                             Polyhedron* pMesh,
                              const double angle,
                              const double sizing,
                              const double approx,
                              int tag) {
-  CGAL::set_error_behaviour(CGAL::ABORT);
+// };
+
+// class Mesh_process : public QObject {
+//   Q_OBJECT
+
+//   QWidget* parent;
+//   Polyhedron* pMesh;
+//   const double angle;
+//   const double sizing;
+//   const double approx;
+//   int tag;
+
+// public:
+//   Mesh_process(QWidget* parent, 
+//                Polyhedron* pMesh,
+//                const double angle,
+//                const double sizing,
+//                const double approx,
+//                int tag)
+//     : parent(parent),
+//       pMesh(pMesh),
+//       angle(angle),
+//       sizing(sizing),
+//       approx(approx)
+//       tag(tag)
+//   {
+//   }
+
+//   Scene_item* launch() 
+
   if(!pMesh) return 0;
 
+  CGAL::set_error_behaviour(CGAL::ABORT);
   // remesh
 
 
@@ -280,7 +436,8 @@ Scene_item* cgal_code_remesh(Polyhedron* pMesh,
   // C2t3 c2t3(triangulation); // 2D-complex in 3D-Delaunay triangulation
 
   // meshing parameters
-  const Surface_mesh_modified_criteria_3<Tr> facets_criteria(angle,sizing,approx);
+  typedef Surface_mesh_modified_criteria_3<Tr> Criteria;
+  const Criteria facets_criteria(angle,sizing,approx);
 
   // const Criteria new_facets_criteria(facets_criteria);
 
@@ -288,10 +445,6 @@ Scene_item* cgal_code_remesh(Polyhedron* pMesh,
   CGAL::Timer timer;
   timer.start();
   std::cerr << "Build AABB tree...";
-  typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel;
-  // input surface
-  typedef CGAL::Mesh_3::Robust_intersection_traits_3<Kernel> IGT;
-  typedef CGAL::AABB_polyhedral_oracle<Polyhedron,IGT,Simple_cartesian_kernel> Input_surface;
   Input_surface input(*pMesh);
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
@@ -334,18 +487,43 @@ Scene_item* cgal_code_remesh(Polyhedron* pMesh,
   // return new Scene_c2t3_item(c2t3);
   // remesh
   timer.reset();
+  Mesher_base* mesher;
   std::cerr << "Remesh...";
+  QMessageBox* message_box = new QMessageBox(QMessageBox::NoIcon,
+                                            "Remeshing...",
+                                            "Meshing process is running...",
+                                            QMessageBox::Cancel,
+                                            parent);
   switch(tag) {
   case 0: 
-    CGAL::make_surface_mesh(c2t3, input, input, facets_criteria, CGAL::Non_manifold_tag());
+    mesher = new Mesher<Criteria, 
+      CGAL::Non_manifold_tag>(0, c2t3, input, facets_criteria);
+        ;
     break;
   case 1:
-    CGAL::make_surface_mesh(c2t3, input, input, facets_criteria, CGAL::Manifold_tag());
+    mesher = new Mesher<Criteria, 
+      CGAL::Manifold_tag>(0, c2t3, input, facets_criteria);
     break;
   default:
-    CGAL::make_surface_mesh(c2t3, input, input, facets_criteria, CGAL::Manifold_with_boundary_tag());
+    mesher = new Mesher<Criteria, 
+      CGAL::Manifold_with_boundary_tag>(0, c2t3, input, facets_criteria);
   }
+  QObject::connect(message_box, SIGNAL(buttonClicked( QAbstractButton *)),
+                   mesher, SLOT(stop()));
+  message_box->show();
+  qApp->processEvents();
 
+  
+  Meshing_thread* thread = new Meshing_thread(mesher);
+  mesher->moveToThread(thread);
+  thread->start();
+  while(!thread->isFinished())
+  {
+    qApp->processEvents();
+    thread->wait(200);
+  }
+  delete message_box;
+  delete mesher;
   std::cerr << "done (" << timer.time() << " ms, " << triangulation.number_of_vertices() << " vertices)" << std::endl;
 
   if(triangulation.number_of_vertices() > 0)

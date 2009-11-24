@@ -13,7 +13,8 @@
 #include <QStringList>
 
 // declare the CGAL function
-Scene_item* cgal_code_remesh(Polyhedron*,
+Scene_item* cgal_code_remesh(QWidget* parent,
+                             Polyhedron*,
                              const double angle,
                              const double sizing,
                              const double approx,
@@ -109,7 +110,12 @@ void Polyhedron_demo_remeshing_plugin::remesh()
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    Scene_item* new_item = cgal_code_remesh(pMesh, angle, sizing, approx, tag_index);
+    Scene_item* new_item = cgal_code_remesh(mw, 
+                                            pMesh,
+                                            angle,
+                                            sizing,
+                                            approx,
+                                            tag_index);
 
     if(new_item)
     {
