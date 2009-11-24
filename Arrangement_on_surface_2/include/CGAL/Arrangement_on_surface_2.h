@@ -1394,6 +1394,21 @@ public:
                                          _dcel().faces_end(),
                                          _Is_unbounded_face (&m_topol_traits));
   }
+
+  /*! Get the fictitious face (non-const version). */
+  Face_handle fictitious_face ()
+  {
+    // The fictitious contains all other faces in a single hole inside it.
+    return
+      Face_handle(const_cast<DFace*>(this->topology_traits()->initial_face()));
+  }
+  
+  /*! Get the unbounded face (const version). */
+  Face_const_handle fictitious_face () const
+  {
+    // The fictitious contains all other faces in a single hole inside it.
+    return DFace_const_iter (this->topology_traits()->initial_face());
+  }
   //@}
   
   /// \name Casting away constness for handle types.
