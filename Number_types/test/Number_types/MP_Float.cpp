@@ -274,7 +274,7 @@ int main(int argc, char **argv)
 
   std::cout << "Checking MP_Float(float) constructor." << std::endl;
   for (int i = 0; i < loops; ++i) {
-    float d = CGAL::default_random.get_double();
+    float d = (float)CGAL::default_random.get_double();
     int exp = int((CGAL::default_random.get_double()-.5)*256);
     d = std::ldexp(d, exp);
     // std::cout << d << std::endl;

@@ -3,7 +3,7 @@
 int main()
 {
     float zero = 0.0;
-    float posnormal = 1.3;
+    float posnormal = (float)1.3;
     float negnormal = -1.0;
     float nan = zero/zero;
     float posinf = posnormal/zero;
