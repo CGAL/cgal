@@ -64,11 +64,9 @@ public:
   operator*() const {
     if (const P* const* p = boost::get<const P*>(&var))
       return (*p)->cartesian(index);
-    if (const V* const* v = boost::get<const V*>(&var))
-      return (*v)->cartesian(index);
-    // std::cerr << "type of var = " << var.type().name() << std::endl;
-    CGAL_error();
-    std::abort(); // to kill warning
+    const V* const* v = boost::get<const V*>(&var);
+    CGAL_assertion(v);
+    return (*v)->cartesian(index);
   }
 
   Self&  operator++() {
