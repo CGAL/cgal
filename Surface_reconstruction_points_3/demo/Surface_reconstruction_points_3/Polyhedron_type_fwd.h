@@ -1,14 +1,14 @@
 #ifndef POLYHEDRON_TYPE_FWD_H
 #define POLYHEDRON_TYPE_FWD_H
 
+#include <CGAL/Filtered_kernel_fwd.h>
 #include <memory>
 
 #ifdef USE_FORWARD_DECL
 
-namespace CGAL {
+#include <CGAL/Filtered_kernel_fwd.h>
 
-  template <class CK>
-  struct Filtered_kernel;
+namespace CGAL {
 
   template < typename FT_ >
   struct Simple_cartesian;
@@ -33,7 +33,8 @@ namespace CGAL {
 } // end namespace CGAL
 
 // kernel
-typedef CGAL::Filtered_kernel< CGAL::Simple_cartesian<double> > Kernel;
+
+typedef CGAL::Filtered_kernel< CGAL::Simple_cartesian<double>, true > Kernel;
 
 // surface mesh
 typedef CGAL::Polyhedron_3<Kernel,
