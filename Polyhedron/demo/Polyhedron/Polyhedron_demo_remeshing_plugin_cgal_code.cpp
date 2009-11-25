@@ -320,8 +320,14 @@ public:
       draw_triangle(pa, pb, pc);
     }
     ::glEnd();
+    
+    GLenum gl_error = ::glGetError();
+    if(gl_error != GL_NO_ERROR)
+      std::cerr << "GL error: " << gluErrorString(gl_error) << std::endl;
 
-    return;
+    if(!draw_spheres)
+      return;
+
     // force wireframe for protecting spheres
     GLint polygon_mode[2];
     ::glGetIntegerv(GL_POLYGON_MODE, &polygon_mode[0]);
@@ -365,6 +371,11 @@ public:
     }
   }
 
+public slots:
+  void show_spheres(bool b) {
+    draw_spheres = b;
+  }
+
 private:
   static void draw_triangle(const Tr::Point& pa,
                             const Tr::Point& pb,
@@ -383,6 +394,7 @@ private:
   mutable GLuint sphere_display_list;
   mutable GLUquadric* quadric;
   C2t3 c2t3_;
+  bool draw_spheres;
 };
 
 typedef Tr::Geom_traits GT;

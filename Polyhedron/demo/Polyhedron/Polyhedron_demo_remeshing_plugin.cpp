@@ -6,6 +6,8 @@
 #include <QObject>
 #include <QAction>
 #include <QMainWindow>
+#include <QAction>
+#include <QMenu>
 #include <QApplication>
 #include <QtPlugin>
 #include "Scene_polyhedron_item.h"
@@ -35,6 +37,18 @@ public:
       connect(actionRemeshing, SIGNAL(triggered()),
               this, SLOT(remesh()));
     }
+    actionShowSpheres = new QAction("Show protecting spheres", mw);
+    actionShowSpheres->setCheckable(true);
+    actionShowSpheres->setChecked(false);
+    QMenu* menuView = mw->findChild<QMenu*>("menuView");
+    if(menuView)
+    {
+      menuView->addAction(actionShowSpheres);
+    }
+    else {
+      std::cerr << "Error: cannot find menu \"menuView\" in QMainWindow \"" 
+                << qPrintable(mw->objectName()) << "\"!\n";
+    }
   }
 
   QList<QAction*> actions() const {
@@ -45,6 +59,7 @@ public slots:
 
 private:
   QAction* actionRemeshing;
+  QAction* actionShowSpheres;
 }; // end class Polyhedron_demo_remeshing_plugin
 
 void Polyhedron_demo_remeshing_plugin::remesh()
@@ -128,6 +143,14 @@ void Polyhedron_demo_remeshing_plugin::remesh()
       new_item->setRenderingMode(item->renderingMode());
       item->setVisible(false);
       scene->itemChanged(index);
+      QObject::connect(actionShowSpheres, SIGNAL(toggled(bool)),
+                       new_item, SLOT(show_spheres(bool)));
+      // meta-call, to avoid the inclusing of the CGAL headers
+      QMetaObject::invokeMethod(new_item,
+                                "show_spheres",
+                                Qt::DirectConnection,
+                                Q_ARG(bool, actionShowSpheres->isChecked()));
+
       scene->addItem(new_item);
     }
 
