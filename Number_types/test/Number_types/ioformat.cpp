@@ -42,7 +42,7 @@ typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
 #define TESTIT(NT,N)                                                    \
     {                                                                   \
         std::cout << "\nTesting ioformat: " << N << std::endl;          \
-        NT tmp2, tmp1(13);                                              \
+        NT tmp2(0), tmp1(13);                                           \
                                                                         \
         std::ostringstream os;                                          \
         os << ::CGAL::oformat(tmp1);                                    \
