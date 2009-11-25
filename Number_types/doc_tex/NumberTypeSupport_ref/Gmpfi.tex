@@ -296,9 +296,10 @@ of comparisons:
 \ccHeading{Input/Output}
 
 \ccFunction{std::istream& operator>>(std::istream &is,Gmpfi i);}
-        {Reads \ccc{i} from \ccc{is}. \ccc{is} can be a number, read
-        as in \ccc{Gmpfr}, or can be in the form \ccc{[inf,sup]}, where
-        \ccc{inf} and \ccc{sup} are read as in \ccc{Gmpfr}.}
+        {Reads \ccc{i} from \ccc{is}. \ccc{is} has the form
+        \ccc{[inf,sup]}, where \ccc{inf} and \ccc{sup} have valid
+        \ccc{Gmpfr} formats.}
+        % TODO: add the possibility of reading a number in non-interval form
 
 \ccFunction{std::ostream& operator<<(std::ostream &os,const Gmpfi &i);}
         {Writes \ccc{i} to \ccc{os}, in the form \ccc{[i.inf(),i.sup()]}.}
