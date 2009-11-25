@@ -21,6 +21,7 @@
 #ifndef CGAL_FILTERED_KERNEL_H
 #define CGAL_FILTERED_KERNEL_H
 
+#include <CGAL/Filtered_kernel_fwd.h>
 #include <CGAL/basic.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
@@ -118,11 +119,9 @@ struct Filtered_kernel_adaptor<CK, true>
 	enum { Has_static_filters = true };
 };
 
-#ifdef CGAL_NO_STATIC_FILTERS
-template < typename CK, bool UseStaticFilters = false >
-#else
-template < typename CK, bool UseStaticFilters = true >
-#endif
+// UseStaticFilters has a default value, depending on
+// CGAL_NO_STATIC_FILTERS. See in <CGAL/Filtered_kernel_fwd.h>.
+template < typename CK, bool UseStaticFilters >
 struct Filtered_kernel
   : public Filtered_kernel_adaptor<
                Type_equality_wrapper<
