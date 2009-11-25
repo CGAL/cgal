@@ -460,6 +460,11 @@ Scene_item* cgal_code_remesh(QWidget* parent,
   Input_surface input(*pMesh);
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
+  std::cerr << "Insert protecting balls... ";
+  timer.reset();
+  insert_spheres(c2t3, pMesh, sizing/1.5);
+  std::cerr << "done (" << timer.time() << " ms)" << std::endl;
+
   // initial point set
   timer.reset();
   std::cerr << "Insert initial point set... ";
@@ -489,11 +494,6 @@ Scene_item* cgal_code_remesh(QWidget* parent,
   if(triangulation.dimension() < 3)
     return 0;
 
-  std::cerr << "done (" << timer.time() << " ms)" << std::endl;
-
-  std::cerr << "Insert protecting balls... ";
-  timer.reset();
-  insert_spheres(c2t3, pMesh, sizing/1.5);
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
   // return new Scene_c2t3_item(c2t3);
