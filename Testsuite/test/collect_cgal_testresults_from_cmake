@@ -48,7 +48,7 @@ print_testresult()
       then
         RESULT="w"
       else
-	if grep -E -q 'NOTICE: This [^ ]+ (require|need)' CompilerOutput_$1
+	if grep -E -q 'NOTICE: .*(need|require).*and.*will not be' CompilerOutput_$1
 	then
 	  RESULT="r"
         else
