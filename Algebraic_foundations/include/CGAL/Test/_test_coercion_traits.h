@@ -41,7 +41,7 @@ template  <class FROM, class TO> void test_explicit_interoperable_from_to();
 namespace INTERN_COERCION_TRAITS {
 
 template <typename A, typename B>
-void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_false){};
+void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_false){}
 
 template <typename A, typename B>
 void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_true){
@@ -98,12 +98,12 @@ void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_true){
   assert ( (b <= a));
   assert (!(b >  a));
   assert ( (b >= a));
-};
+}
 
 
 template <typename A, typename B>
 void test_implicit_interoperable_for_algebraic_structure 
-(CGAL::Null_tag){};
+(CGAL::Null_tag){}
 
 template <typename A, typename B>
 void test_implicit_interoperable_for_algebraic_structure 
@@ -127,7 +127,7 @@ void test_implicit_interoperable_for_algebraic_structure
   c = C(4); assert((c+= B(3)) == C(7));
   c = C(4); assert((c-= B(3)) == C(1));
   c = C(4); assert((c*= B(3)) == C(12));  
-};
+}
 
 template <typename A, typename B>
 void test_implicit_interoperable_for_algebraic_structure 
@@ -145,7 +145,7 @@ void test_implicit_interoperable_for_algebraic_structure
   C c; 
   c = C(4); assert((c /= A(2)) == C(2));
   c = C(4); assert((c /= B(2)) == C(2));
-};
+}
 
 template< class A, class B, class Type, class Compare >
 class Test_compare {

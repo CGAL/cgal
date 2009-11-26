@@ -100,7 +100,7 @@ AS unit_normal( const AS& x ) {
 //Syntax tests
 template< class  AS  >
 void test_algebraic_structure_intern( 
-        const CGAL::Integral_domain_without_division_tag& ) {};
+        const CGAL::Integral_domain_without_division_tag& ) {}
 
 template< class  AS  >
 void test_algebraic_structure_intern( const CGAL::Integral_domain_tag& ) {
@@ -184,7 +184,7 @@ void test_algebraic_structure_intern( const CGAL::Integral_domain_tag& ) {
     assert( !ie || tmp == integral_division(a,c));
     assert( CGAL_NTS divides(AS(c*b-c),AS(a+a-a),tmp));
     assert( !ie || tmp == integral_division(a+a-a,c*b-c));   
-};
+}
 	
 template< class  AS  >
 void test_algebraic_structure_intern( 
@@ -245,7 +245,7 @@ void test_algebraic_structure_intern(
     // special test for expression template, e.g. mpz_class 
     assert( CGAL_NTS gcd(AS(-10)+AS(-5),AS(-4)*AS(-3))  
             ==  unit_normal( AS (3) ) );
-};
+}
 
 template< class  AS  >
 void test_algebraic_structure_intern( const CGAL::Euclidean_ring_tag&) {
@@ -319,7 +319,7 @@ void test_algebraic_structure_intern( const CGAL::Euclidean_ring_tag&) {
     assert( mod(AS(-4)+AS(-4),AS(3)*AS(1)) ==  AS (-2));
     AS q,r;
     div_mod(AS(-4)+AS(-4),AS(3)*AS(1),q,r);
-};
+}
 
 template< class  AS  >
 void test_algebraic_structure_intern( const CGAL::Field_tag& ) {
@@ -359,7 +359,7 @@ void test_algebraic_structure_intern( const CGAL::Field_tag& ) {
     assert(CGAL_NTS divides(AS(5),AS(2),tmp));
     assert(!ie || tmp == AS(2)/AS(5));
     
-};
+}
 
 template <class  AS >
 void test_algebraic_structure_intern( const CGAL::Field_with_sqrt_tag& ) {
@@ -380,7 +380,7 @@ void test_algebraic_structure_intern( const CGAL::Field_with_sqrt_tag& ) {
     assert( !ie || sqrt(c) * sqrt(c) == c );
     (void)c;  // avoid warnings for unused variables
     // #### more involved square root and root tests
-};
+}
 	
 	
 //semantic test
@@ -423,7 +423,7 @@ void test_algebraic_structure_intern(
     assert(-a* AS (-1)==a);  
     assert(-b* AS (-1)==b);  
     assert(-c* AS (-1)==c);
-};
+}
  
  template <class  AS >
  void test_algebraic_structure_intern( 
@@ -456,7 +456,7 @@ void test_algebraic_structure_intern(
      assert(divides(c,c*a));
      assert(divides(c,c*b));
      assert(CGAL_NTS divides(c,c*b));
- };
+ }
     
 template <class  AS >
 void test_algebraic_structure_intern( 
@@ -483,7 +483,7 @@ void test_algebraic_structure_intern(
     assert(gcd(-a,a)*unit_part(a)==a);
     assert(gcd(-b,b)*unit_part(b)==b);
     assert(gcd(-c,c)*unit_part(c)==c);
-};
+}
 
 template <class  AS >
 void test_algebraic_structure_intern( 
@@ -521,7 +521,7 @@ void test_algebraic_structure_intern(
     assert(tmp_div==div(c,b));
     assert(tmp_mod==mod(c,b));
     assert(tmp_div*b+tmp_mod==c);
-};
+}
 
 template <class  AS >
 void test_algebraic_structure_intern( 
@@ -550,7 +550,7 @@ void test_algebraic_structure_intern(
                                               AS ( c ), epsilon ) );
     assert( test_equality_epsilon(  AS ( (c/a)*a ),
                                               AS ( c ), epsilon ) );
-};
+}
   
 template <class  AS >
 void test_algebraic_structure_intern( 
@@ -583,7 +583,7 @@ void test_algebraic_structure_intern(
     tmp=CGAL_NTS unit_part(c)*c;
     assert( test_equality_epsilon( sqrt(tmp)*sqrt(tmp),
                                              tmp, epsilon ) );
-};
+}
    
 template< class AS, class Is_square > 
 class Test_is_square {
@@ -681,14 +681,14 @@ void test_Type_functions(
     assert( CGAL_NTS is_zero(  AS (0)) );
     assert( CGAL_NTS is_one(  AS (1)) );
     assert( CGAL_NTS square(  AS (23)) ==  AS (23*23) );
-};
+}
  
 template <class  AS >
 void test_Type_functions( const CGAL::Integral_domain_tag&) {
     test_Type_functions< AS >
         (CGAL::Integral_domain_without_division_tag());
     assert(CGAL_NTS integral_division( AS (10), AS (2))== AS (5));
-};
+}
     
 template <class  AS >
 void test_Type_functions( 
@@ -697,7 +697,7 @@ void test_Type_functions(
         
     assert(CGAL_NTS gcd( AS (21), AS (15)) == unit_normal(AS (3)));
     
-};
+}
 
 template <class  AS >
 void test_Type_functions( const CGAL::Euclidean_ring_tag&) {
@@ -712,7 +712,7 @@ void test_Type_functions( const CGAL::Euclidean_ring_tag&) {
     assert( a == b*q+r);
     CGAL_NTS div_mod(a,b,q,r);
     assert( a == b*q+r);
-};
+}
  
 template <class  AS >
 void test_Type_functions( const CGAL::Field_tag&) {
@@ -720,7 +720,7 @@ void test_Type_functions( const CGAL::Field_tag&) {
     assert(CGAL_NTS unit_part( AS (-15))== AS (-15));
     assert(CGAL_NTS unit_part( AS (1  ))== AS (  1));
     assert(CGAL_NTS unit_part( AS (0  ))== AS (  1));
-};
+}
   
 template <class  AS >
 void test_Type_functions( const CGAL::Field_with_sqrt_tag&) {   
