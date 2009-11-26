@@ -236,7 +236,7 @@ Coeff resultant_modularize(
         const CGAL::Polynomial<Coeff>& G, 
         CGAL::Tag_false){
     return resultant_interpolate(F,G);
-};
+}
 
 template <class Coeff> 
 inline

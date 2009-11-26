@@ -87,7 +87,7 @@ template <typename Polynomial> struct Monomial_representation;
 
  
 
-CGAL_BEGIN_NAMESPACE;
+CGAL_BEGIN_NAMESPACE
 
 namespace internal {
 

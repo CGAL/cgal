@@ -35,7 +35,7 @@
   }   
 
 #define CGAL_UNARY_POLY_FUNCTION_INDEX(functor,function)                \
-  CGAL_UNARY_POLY_FUNCTION(functor,function);                           \
+  CGAL_UNARY_POLY_FUNCTION(functor,function)                            \
   template <typename Polynomial_d>  inline                              \
   typename Polynomial_traits_d<Polynomial_d>::functor::result_type      \
   function(const Polynomial_d& p, int index ){                          \
@@ -110,25 +110,25 @@ permute(const Polynomial_d& p, Input_iterator begin, Input_iterator end){
 }
 
 // Degree
-CGAL_UNARY_POLY_FUNCTION_INDEX(Degree,degree);
+CGAL_UNARY_POLY_FUNCTION_INDEX(Degree,degree)
 // TotalDegree
-CGAL_UNARY_POLY_FUNCTION(Total_degree,total_degree);
+CGAL_UNARY_POLY_FUNCTION(Total_degree,total_degree)
 // DegreeVector
-CGAL_UNARY_POLY_FUNCTION(Degree_vector,degree_vector);
+CGAL_UNARY_POLY_FUNCTION(Degree_vector,degree_vector)
 // LeadingCoefficient
-CGAL_UNARY_POLY_FUNCTION(Leading_coefficient,leading_coefficient);
+CGAL_UNARY_POLY_FUNCTION(Leading_coefficient,leading_coefficient)
 // InnermostLeadingCoefficient
 CGAL_UNARY_POLY_FUNCTION(
     Innermost_leading_coefficient,
-    innermost_leading_coefficient);
+    innermost_leading_coefficient)
 
 // Canonicalize
-CGAL_UNARY_POLY_FUNCTION(Canonicalize, canonicalize);
+CGAL_UNARY_POLY_FUNCTION(Canonicalize, canonicalize)
 // Differentiate
-CGAL_UNARY_POLY_FUNCTION_INDEX(Differentiate, differentiate);
+CGAL_UNARY_POLY_FUNCTION_INDEX(Differentiate, differentiate)
 
 // Evaluate
-CGAL_BINARY_POLY_FUNCTION(Evaluate,evaluate);
+CGAL_BINARY_POLY_FUNCTION(Evaluate,evaluate)
 // EvaluateHomogeneous
 template <typename Polynomial_d>  inline                                 
 typename Polynomial_traits_d<Polynomial_d>::Evaluate_homogeneous::result_type
@@ -196,9 +196,9 @@ sign_at_homogeneous(
 // CGAL_BINARY_POLY_FUNCTION(Compare,compare);
 
 // UnivariateContent
-CGAL_UNARY_POLY_FUNCTION(Univariate_content, univariate_content);
+CGAL_UNARY_POLY_FUNCTION(Univariate_content, univariate_content)
 // MultivariateContent
-CGAL_UNARY_POLY_FUNCTION(Multivariate_content, multivariate_content);
+CGAL_UNARY_POLY_FUNCTION(Multivariate_content, multivariate_content)
 
 // SquareFreeFactorize
 template <typename Polynomial_d, typename OutputIterator>  inline     
@@ -208,7 +208,7 @@ square_free_factorize(const Polynomial_d& p, OutputIterator oi){
   return typename PT::Square_free_factorize()(p,oi);                      
 }  
 // MakeSquareFree
-CGAL_UNARY_POLY_FUNCTION(Make_square_free, make_square_free);
+CGAL_UNARY_POLY_FUNCTION(Make_square_free, make_square_free)
 
 // PseudoDivision
 // PseudoDivisionQuotient
@@ -239,15 +239,15 @@ pseudo_division_remainder(const Polynomial_d& f, const Polynomial_d& g){
 // GcdUpToConstantFactor
 CGAL_BINARY_POLY_FUNCTION(
     Gcd_up_to_constant_factor, 
-    gcd_up_to_constant_factor);
+    gcd_up_to_constant_factor)
 // IntegralDivisionUpToConstantFactor
 CGAL_BINARY_POLY_FUNCTION(
     Integral_division_up_to_constant_factor, 
-    integral_division_up_to_constant_factor);
+    integral_division_up_to_constant_factor)
 // UnivariateContentUpToConstantFactor
 CGAL_UNARY_POLY_FUNCTION(
     Univariate_content_up_to_constant_factor, 
-    univariate_content_up_to_constant_factor);
+    univariate_content_up_to_constant_factor)
 // SquareFreeFactorizeUpToConstantFactor
 template <typename Polynomial_d, typename OutputIterator>  inline     
 OutputIterator
@@ -258,13 +258,13 @@ square_free_factorize_up_to_constant_factor(
 }  
 
 // Shift
-CGAL_BINARY_POLY_FUNCTION_INDEX(Shift,shift);
+CGAL_BINARY_POLY_FUNCTION_INDEX(Shift,shift)
 // Negate
-CGAL_UNARY_POLY_FUNCTION_INDEX(Negate,negate);
+CGAL_UNARY_POLY_FUNCTION_INDEX(Negate,negate)
 // Invert
-CGAL_UNARY_POLY_FUNCTION_INDEX(Invert,invert);
+CGAL_UNARY_POLY_FUNCTION_INDEX(Invert,invert)
 // Translate
-CGAL_BINARY_POLY_FUNCTION_INDEX(Translate,translate);
+CGAL_BINARY_POLY_FUNCTION_INDEX(Translate,translate)
 // TranslateHomogeneous
 template <typename Polynomial_d>  inline     
 typename Polynomial_traits_d<Polynomial_d>::Translate_homogeneous::result_type
@@ -285,7 +285,7 @@ translate_homogeneous(const Polynomial_d& f,
   return typename PT::Translate_homogeneous()(f,num,den,index);
 }      
 // Scale
-CGAL_BINARY_POLY_FUNCTION_INDEX(Scale,scale);
+CGAL_BINARY_POLY_FUNCTION_INDEX(Scale,scale)
 // ScaleHomogeneous
 template <typename Polynomial_d>  inline     
 typename Polynomial_traits_d<Polynomial_d>::Scale_homogeneous::result_type
@@ -306,7 +306,7 @@ scale_homogeneous(const Polynomial_d& f,
   return typename PT::Scale_homogeneous()(f,num,den,index);
 }  
 // Resultant
-CGAL_BINARY_POLY_FUNCTION(Resultant,resultant);
+CGAL_BINARY_POLY_FUNCTION(Resultant,resultant)
 
 template <typename Polynomial_d,typename OutputIterator> inline
 OutputIterator polynomial_subresultants

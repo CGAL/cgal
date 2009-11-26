@@ -307,7 +307,7 @@ Polynomial<NT> gcdex_(
 ) {
     typedef typename Algebraic_structure_traits<NT>::Algebraic_category Algebraic_category;
     return gcdex_(x, y, xf, yf, Algebraic_category());
-};
+}
 
 template <class NT>
 inline
@@ -427,7 +427,7 @@ Polynomial<NT> gcdex_(
     xf.simplify_coefficients();
     yf.simplify_coefficients();
     return v;
-};
+}
 
 } // namespace internal
 
@@ -461,7 +461,7 @@ Polynomial<NT> gcdex(
     typedef typename CGAL::Fraction_traits< Polynomial<NT> >
         ::Is_fraction Is_fraction;
     return internal::gcdex_(p1, p2, f1, f2, Is_fraction());
-};
+}
 
 
 /*! \ingroup CGAL_Polynomial
