@@ -71,7 +71,7 @@ CGAL_BEGIN_NAMESPACE
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int           ,::CORE::BigFloat)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long          ,::CORE::BigFloat)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float         ,::CORE::BigFloat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double        ,::CORE::BigFloat);
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double        ,::CORE::BigFloat)
 
 template <> 
 struct Coercion_traits<CORE::BigFloat , ::CORE::BigInt>{
