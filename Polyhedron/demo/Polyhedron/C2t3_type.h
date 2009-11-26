@@ -17,8 +17,20 @@ typedef CGAL::Robust_weighted_circumcenter_filtered_traits_3<K2>  Traits;
 
 // typedef CGAL::Regular_triangulation_euclidean_traits_3<K>  Traits;
 
+struct Ball_context;
+
+class Info {
+  Ball_context* context_;
+
+public:
+  Info();
+  ~Info();
+
+  Ball_context* context();
+};
+
 // vertex and cell types
-typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, Traits> Vb1;
+typedef CGAL::Triangulation_vertex_base_with_info_3<Info, Traits> Vb1;
 typedef CGAL::Surface_mesh_vertex_base_3<Traits, Vb1> Vb;
 typedef CGAL::Surface_mesh_cell_base_3<Traits> Cb;
 typedef CGAL::Triangulation_cell_base_with_circumcenter_3<Traits, Cb> Cb_with_circumcenter;

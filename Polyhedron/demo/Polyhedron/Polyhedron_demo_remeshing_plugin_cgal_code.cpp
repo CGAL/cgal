@@ -84,7 +84,7 @@ public:
     }
     else {
       q[0] = 1;
-      if(nb_protecting_balls == 3)
+      if(false && nb_protecting_balls == 3)
         return false;
       else if(uniform_size_criterion.is_bad(f, q[1]))
         return true;
@@ -339,8 +339,7 @@ public:
     {
       draw_sphere(vit->point());
     }
-    ::glPolygonMode(GL_FRONT, polygon_mode[0]);
-    ::glPolygonMode(GL_BACK, polygon_mode[1]);
+    ::glPolygonMode(GL_FRONT_AND_BACK, polygon_mode[0]);
   }
 
   void draw_sphere(const Tr::Point p) const 
