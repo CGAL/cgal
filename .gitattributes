@@ -896,6 +896,18 @@ Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.gif -text s
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.pdf -text svneol=unset#application/pdf
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2_ref/GpsTraitsGeneralPolygonWithHoles_2.tex -text
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2_ref/GpsTraitsGeneralPolygon_2.tex -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_a.bps -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_b.bps -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_c.bps -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_d.bps -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_e.bps -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_f.bps -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_g.bps -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_h.bps -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_i.bps -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_j.bps -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/amer_k.bps -text
+Boolean_set_operations_2/examples/Boolean_set_operations_2/bezier_traits_adapter2.cpp -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/char_g.dat -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/char_m.dat -text
 Boolean_set_operations_2/examples/Boolean_set_operations_2/pgn_holes.dat -text
