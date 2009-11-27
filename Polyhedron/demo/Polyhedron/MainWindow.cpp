@@ -144,21 +144,35 @@ void MainWindow::loadPlugins()
     initIOPlugin(obj);
   }
 
-  QDir pluginsDir(qApp->applicationDirPath());
-  Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files)) {
-    if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
-      qDebug("### Loading \"%s\"...", fileName.toUtf8().data());
-      QPluginLoader loader;
-      loader.setFileName(pluginsDir.absoluteFilePath(fileName));
-      QObject *obj = loader.instance();
-      if(obj) {
-        initPlugin(obj);
-        initIOPlugin(obj);
-      }
-      else {
-        qDebug("Error loading \"%s\": %s",
-               qPrintable(fileName),
-               qPrintable(loader.errorString()));
+  QList<QDir> plugins_directories;
+  plugins_directories << qApp->applicationDirPath();
+  QString env_path = ::getenv("POLYHEDRON_DEMO_PLUGINS_PATH");
+  if(!env_path.isEmpty()) {
+    Q_FOREACH (QString pluginsDir, 
+               env_path.split(":", QString::SkipEmptyParts)) {
+      QDir dir(pluginsDir);
+      if(dir.isReadable())
+        plugins_directories << dir;
+    }
+  }
+  Q_FOREACH (QDir pluginsDir, plugins_directories) {
+    qDebug("# Looking for plugins in directory \"%s\"...",
+           qPrintable(pluginsDir.absolutePath()));
+    Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files)) {
+      if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
+        qDebug("### Loading \"%s\"...", fileName.toUtf8().data());
+        QPluginLoader loader;
+        loader.setFileName(pluginsDir.absoluteFilePath(fileName));
+        QObject *obj = loader.instance();
+        if(obj) {
+          initPlugin(obj);
+          initIOPlugin(obj);
+        }
+        else {
+          qDebug("Error loading \"%s\": %s",
+                 qPrintable(fileName),
+                 qPrintable(loader.errorString()));
+        }
       }
     }
   }
