@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>Remeshing_dialog</class>
+ <widget class="QDialog" name="Remeshing_dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>380</width>
-    <height>192</height>
+    <width>393</width>
+    <height>196</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,17 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="angle"/>
+      <widget class="QDoubleSpinBox" name="angle">
+       <property name="minimum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>30.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>25.000000000000000</double>
+       </property>
+      </widget>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="sizingLabel">
@@ -46,7 +56,11 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="sizing"/>
+      <widget class="QDoubleSpinBox" name="sizing">
+       <property name="decimals">
+        <number>4</number>
+       </property>
+      </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="approxLabel">
@@ -65,7 +79,7 @@
       <widget class="QDoubleSpinBox" name="approx"/>
      </item>
      <item row="3" column="1">
-      <widget class="QComboBox" name="comboBox">
+      <widget class="QComboBox" name="tags">
        <item>
         <property name="text">
          <string>Non manifold</string>
@@ -73,12 +87,12 @@
        </item>
        <item>
         <property name="text">
-         <string>Manifold with boundaries</string>
+         <string>Manifold</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Manifold</string>
+         <string>Manifold with boundaries</string>
         </property>
        </item>
       </widget>
@@ -92,13 +106,13 @@
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="buddy">
-        <cstring>comboBox</cstring>
+        <cstring>tags</cstring>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -109,9 +123,19 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QCheckBox" name="checkBox">
+    <widget class="QCheckBox" name="protect">
      <property name="text">
       <string>&amp;Protect borders with spheres</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QCheckBox" name="refine_balls">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>&amp;Refine protecting balls</string>
      </property>
     </widget>
    </item>
@@ -122,32 +146,48 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>Remeshing_dialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>384</x>
+     <y>191</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
-     <y>274</y>
+     <y>195</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>Remeshing_dialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>384</x>
+     <y>191</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
-     <y>274</y>
+     <y>195</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>protect</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>refine_balls</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>237</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>241</x>
+     <y>143</y>
     </hint>
    </hints>
   </connection>

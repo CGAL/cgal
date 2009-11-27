@@ -32,15 +32,15 @@ struct Ball_context {
   bool is_corner;
 };
 
-Info::Info() : context_(0) {
+Vertex_info::Vertex_info() : context_(0) {
 }
 
-Info::~Info() {
+Vertex_info::~Vertex_info() {
   if(context_)
     delete context_;
 }
 
-Ball_context* Info::context() {
+Ball_context* Vertex_info::context() {
   if(!context_) {
     context_ = new Ball_context;
   }
@@ -67,7 +67,6 @@ struct Insert_spheres {
   typedef std::vector<Polyline> Polylines;
 
   typedef std::vector<bool> Polyline_is_a_cycle;
-
   typedef std::set<Point_3> Hidden_balls;
   typedef CGAL::cpp0x::tuple<Polyline_id, 
                              Polyline::const_iterator,
@@ -209,55 +208,66 @@ struct Insert_spheres {
   void cover(Polyline::const_iterator begin,
              Polyline::const_iterator end2,
              const Polyline_id polyline_id,
-             const FT position_begin = 0,
-             const FT position_end = 0,
-             const FT radius_begin = 0,
-             const FT radius_end = 0,
-             FT alpha = 0) {
-    if(alpha == 0) alpha = size;
+             FT alpha,
+             Tr_vertex_handle va,
+             Tr_vertex_handle vb,
+             const FT position_begin,
+             const FT position_end) {
+    if(alpha == 0) {
+      alpha = size;
+    }
+    FT radius_begin = CGAL_NTS sqrt(va->point().weight());
+    FT radius_end = CGAL_NTS sqrt(vb->point().weight());
+    if(radius_begin != 0 && alpha > radius_begin) alpha = radius_begin;
+    if(radius_end != 0 && alpha > radius_end) alpha = radius_end;
     // for(Polyline::const_iterator it
 
-    if(begin == end2)
+    if(begin == end2 && position_begin >= position_end)
       return;
 
     FT distance = 0;
     for(Polyline::const_iterator it = begin;
-        it != end2;) {
+        it != end2; /*'it' is incremented in the body*/ ) {
       const Point& a = *it;
       const Point& b = *++it;
       distance += CGAL_NTS sqrt( CGAL::squared_distance(a, b) );
     }
-    // distance -= radius_begin;
-    // distance -= radius_end;
+    distance -= radius_begin;
+    distance -= radius_end;
+    distance -= position_begin;
+    distance += position_end;
+    if(distance < 0) return;
     // distance -= (alpha * 2) / 3;
     // std::cerr << "Distance:   " << distance << std::endl;
     // std::cerr << "Size:       " << size << std::endl;
-    const size_type n = static_cast<size_type>(std::ceil(distance / alpha) + 0.5);
-    const FT local_size = distance / n;
+       const size_type n = static_cast<size_type>(std::ceil((3 * distance / ( 2 * alpha) - 1) / 2) + 0.5);
+    const FT r = (n == 0 ? alpha : distance / n);
     // std::cerr << n << std::endl;
     // std::cerr << "Local size: " << local_size << std::endl;
     // CGAL_assertion(local_size < size);
-    const FT r2 = CGAL::square(local_size/1.5);
+    const FT inter_distance = 4 * r / 3;
+    const FT r2 = CGAL::square(r);
     Point_3 a(begin->point(), r2);
     Point_3 b(end2->point(), r2);
-    FT small_distance_to_go = local_size;
+    FT small_distance_to_go = position_begin + radius_begin + (r / 3);
     Polyline::const_iterator it = begin;
     bool first = true;
     Tr_vertex_handle first_non_corner;
     Tr_vertex_handle last_non_corner;
-    Tr_vertex_handle va = insert(a, polyline_id);
     Tr_vertex_handle previous = va;
-    while(it != end2) {
+    while(it != end2 || (it == end2 + 1 && small_distance_to_go < position_end)) {
       const Point& a = *it;
       const Point& b = *++it;
       // std::cerr << "segment( " << a << ", " << b << ")\n";
       // std::cerr << "small_distance_to_go=" << small_distance_to_go << std::endl;
-      const FT d = CGAL_NTS sqrt(squared_distance(a, b));
+      const FT d = (it != end2 ? 
+                    CGAL_NTS sqrt(squared_distance(a, b)) :
+                    position_end);
       // std::cerr << "d=" << d << std::endl;
       FT pos = small_distance_to_go;
       if(pos < d) {
         for(; pos < d;
-            pos += local_size)
+            pos += inter_distance)
         {
           const Point p = a +
             pos * ( b - a ) / d;
@@ -282,7 +292,7 @@ struct Insert_spheres {
           // std::cerr << ".";
           previous = current;
         }
-        // pos -= local_size;
+        // pos -= inter_distance;
         small_distance_to_go = pos - d;
       }
       else  {
@@ -290,10 +300,8 @@ struct Insert_spheres {
       }
       // std::cerr << "\n";
     }
-    Tr_vertex_handle vb;
     if(!polyline_is_a_cycle[polyline_id])
     {
-      vb = insert(b, polyline_id);
       // CGAL_assertion(va == Tr_vertex_handle() || 
       //                vb == Tr_vertex_handle() || 
       //                va != vb);
@@ -448,16 +456,16 @@ struct Insert_spheres {
       const Tr_vertex_handle pred = context->pred;
       const Tr_vertex_handle succ = context->succ;
       const Polyline::const_iterator it = context->iterator;
-      const FT position = context->position;
+      // const FT position = context->position;
       
       c2t3.triangulation().remove(v);
-      Tr_vertex_handle new_v = insert(new_point, id);
-      Ball_context* new_context = new_v->info().context();
-      new_context->is_corner = false;
-      new_context->pred = pred;
-      new_context->succ = succ;
-      new_context->iterator = it;
-      new_context->position = position;
+      // Tr_vertex_handle new_v = insert(new_point, id);
+      // Ball_context* new_context = new_v->info().context();
+      // new_context->is_corner = false;
+      // new_context->pred = pred;
+      // new_context->succ = succ;
+      // new_context->iterator = it;
+      // new_context->position = position;
 
       Polyline::const_iterator pred_it, succ_it;
       FT pred_pos, succ_pos;
@@ -471,12 +479,11 @@ struct Insert_spheres {
           std::swap(pred_it, succ_it);
           std::swap(pred_pos, succ_pos);
         }
-        // cover(pred_it, succ_it,
-        //       id,
-        //       pred_pos, succ_pos,
-        //       CGAL_NTS sqrt(pred->point().weight()),
-        //       CGAL_NTS sqrt(succ->point().weight()),
-        //       CGAL_NTS sqrt(new_point.weight()));
+        cover(pred_it, succ_it,
+              id,
+              CGAL_NTS sqrt(new_point.weight()),
+              pred, succ,
+              pred_pos, succ_pos);
       }
       else {
         std::cerr << "ERROR!\n";
@@ -506,9 +513,12 @@ struct Insert_spheres {
     return std::make_pair(Polyline::const_iterator(), 0);
   }
 
-  Insert_spheres(C2t3& c2t3, Polyhedron* pMesh, const FT size)
+  Insert_spheres(C2t3& c2t3, Polyhedron* pMesh, const FT size, 
+                 bool refine_balls)
     : c2t3(c2t3), pMesh(pMesh), size(size)
   {
+    Tr& tr = c2t3.triangulation();
+
     // That call orders the set of edges of the polyhedron, so that the
     // border edges are at the end of the sequence of edges.
     pMesh->normalize_border();
@@ -556,11 +566,72 @@ struct Insert_spheres {
       follow_half_edge(*edges_to_consider.begin(), true);
     }
 
+    typedef std::vector<std::pair<Tr_vertex_handle,
+      Tr_vertex_handle> > Polylines_endpoints;
+    Polylines_endpoints polylines_endpoints;
+
     // Then insert the protecting balls.
     for(Polyline_id i = 0; i < polylines.size(); ++i)
     {
-      cover(polylines[i].begin(), --polylines[i].end(), i);
+      Tr_vertex_handle va = insert(Point_3(*polylines[i].begin(), 0), i);
+      Tr_vertex_handle vb = insert(Point_3(*(--polylines[i].end()), 0), i);
+      polylines_endpoints.push_back(std::make_pair(va, vb));
+      CGAL_assertion(!polyline_is_a_cycle[i] ||
+                     va == vb);
     }
+
+    typedef std::vector<std::pair<FT, FT> > Polylines_endpoints_sq_radii;
+    std::map<Tr_vertex_handle, FT> sq_radii;
+    Polylines_endpoints_sq_radii polylines_endpoints_sq_radii;
+    
+    FT size2 = CGAL::square(size);
+    for(Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin(), 
+          end = tr.finite_vertices_end(); vit != end; ++vit)
+    {
+      const Point_3& a = vit->point();
+      std::vector<Tr_vertex_handle> incident_vertices;
+      incident_vertices.reserve(32);
+      tr.incident_vertices(vit, std::back_inserter(incident_vertices));
+      std::vector<Tr_vertex_handle>::const_iterator vit2 = incident_vertices.begin();
+      FT min_sq_distance = CGAL::squared_distance(a, (*vit2)->point());
+      for(std::vector<Tr_vertex_handle>::const_iterator end = incident_vertices.end(); 
+          vit2 != end; ++vit2)
+      {
+        FT sq_distance = CGAL::squared_distance(a, (*vit2)->point());
+        if(sq_distance < min_sq_distance) {
+          min_sq_distance = sq_distance;
+        }
+      }
+      sq_radii[vit] = (std::min)(min_sq_distance, size2);
+    }
+
+    for(Polyline_id i = 0; i < polylines.size(); ++i) {
+      polylines_endpoints_sq_radii.push_back(std::make_pair(sq_radii[polylines_endpoints[i].first],
+                                                            sq_radii[polylines_endpoints[i].second]));
+    }
+
+    polylines_endpoints.clear();
+    tr.clear();
+
+    // Then insert the protecting balls.
+    for(Polyline_id i = 0; i < polylines.size(); ++i)
+    {
+      Tr_vertex_handle va = insert(Point_3(*polylines[i].begin(),
+                                           polylines_endpoints_sq_radii[i].first), i);
+      Tr_vertex_handle vb = insert(Point_3(*(--polylines[i].end()),
+                                           polylines_endpoints_sq_radii[i].second), i);
+
+      cover(polylines[i].begin(),
+            --polylines[i].end(),
+            i,
+            CGAL_NTS sqrt((std::min)(va->point().weight(),
+                                     vb->point().weight())),
+            va,
+            vb,
+            0,
+            0);
+    }
+    polylines_endpoints_sq_radii.clear();
 
     unsigned counter = 0;
     for(unsigned i = 0; i < polyline_is_a_cycle.size(); ++i)
@@ -570,7 +641,6 @@ struct Insert_spheres {
     std::cerr << "Number of protecting balls: " 
               << c2t3.triangulation().number_of_vertices() << std::endl;
 
-    Tr& tr = c2t3.triangulation();
     counter = 0;
     for(Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin(), 
           end = tr.finite_vertices_end(); vit != end; ++vit) {
@@ -587,11 +657,14 @@ struct Insert_spheres {
                 << c2t3.triangulation().nearest_power_vertex(*it)->point()
                 << "\n";
     }
-    separate_balls();
+    if(refine_balls) {
+      separate_balls();
+    }
   }
 };
 
-void insert_spheres(C2t3& c2t3, Polyhedron* pMesh, const FT size) {
+void insert_spheres(C2t3& c2t3, Polyhedron* pMesh, const FT size, 
+                    bool refine_balls) {
 
-  Insert_spheres go(c2t3, pMesh, size);
+  Insert_spheres go(c2t3, pMesh, size, refine_balls);
 }

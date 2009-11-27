@@ -74,6 +74,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   qt4_wrap_ui( UI_FILES MainWindow.ui )
 
+  qt4_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
+
   include(AddFileDependencies)
 
   qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" MainWindow_moc.cpp )
@@ -94,6 +96,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_plane_item.cpp
               Scene_polygon_soup.cpp 
               Scene_polyhedron_item.cpp
+              Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp)
 
   # AUXILIARY LIBRARIES
@@ -105,6 +108,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp Scene_plane_item.moc)
   target_link_libraries(scene_basic_objects scene_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+
+  add_library(scene_c2t3_item SHARED
+    Scene_c2t3_item.cpp Scene_c2t3_item.moc)
+  target_link_libraries(scene_c2t3_item scene_item)
 
   add_library(scene_polyhedron_item SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
@@ -190,8 +197,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   endmacro(polyhedron_demo_plugin)
 
-  polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin Polyhedron_demo_remeshing_plugin_cgal_code.cpp Polyhedron_demo_remeshing_plugin_protection_cgal_code.cpp Polyhedron_demo_remeshing_plugin_cgal_code.moc)
-  target_link_libraries(remeshing_plugin scene_polyhedron_item polygon_soup)
+  polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin Polyhedron_demo_remeshing_plugin_cgal_code.cpp Polyhedron_demo_remeshing_plugin_protection_cgal_code.cpp Polyhedron_demo_remeshing_plugin_cgal_code.moc ${remeshingUI_FILES})
+  target_link_libraries(remeshing_plugin scene_polyhedron_item polygon_soup scene_c2t3_item)
 
   qt4_generate_moc("${CMAKE_CURRENT_SOURCE_DIR}/Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" Scene_c3t3_item.moc )
 
