@@ -243,6 +243,12 @@ $\bullet$ {\sl Accessing the Arrangement Faces:}
     {returns the past-the-end iterator of the unbounded faces in the
      arrangement.}
 
+\ccMethod{Face_handle fictitious_face();}
+    {returns a handle to the fictitious face of the arrangement.
+    If the arrangement is not unbounded, there is no fictitious
+    face. In this case the result is not deterministic. A const
+    version is also available.}
+     
 \begin{ccAdvanced}
 
 \ccHeading{Casting away Constness}
