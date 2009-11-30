@@ -171,3 +171,18 @@
   #10 and #12. Here I don't have a clue ...
 - There are still some mysterious crashes of the test-suite on some platforms.
   Again, I don't have a clue ...
+
+- compute_intersection_points (InputIterator curves_begin,
+                               InputIterator curves_end,
+                               OutputIterator points,
+                               bool report_endpoints = false,
+                               Traits traits = Default_traits())
+  Allow the traits to be a model of ArrangementXMonotoneTraits_2 and the
+  value type of the input iterator to be X_monotone_curve_2 (and not the
+  general Curve_2). This requires the introduction of a new visitor that
+  does not call the make_x_monotone().
+  
+- The callback functions of the observers are const referenced. However,
+  the documentation generator automatically removes the const reference when
+  it generates the cods. The result is very misleading!
+  
