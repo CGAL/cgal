@@ -134,7 +134,7 @@ struct Bezier_helper
                                                 , NT aMid
                                                 , NT aMax
                                                 , Control_point_out_iterator aOut
-                                                , NT aFlatness = 1e-5
+                                                , NT aFlatness = 1e-10
                                                 )
   {
     typedef typename value_type_traits<Control_point_in_iterator>::type Control_point ;
@@ -162,7 +162,7 @@ struct Bezier_helper
   }
 
   template<class Bezier_curve, class NT, class Output_iterator>
-  static void sample_curve( Bezier_curve const& aCurve, NT aSourceT, NT aTargetT, Output_iterator aOut, double aFlatness = 1e-5 )
+  static void sample_curve( Bezier_curve const& aCurve, NT aSourceT, NT aTargetT, Output_iterator aOut, double aFlatness = 1e-10 )
   {
     typedef typename value_type_traits<Output_iterator>::type Output_point ;
     
@@ -184,7 +184,7 @@ struct Bezier_helper
   static void sample_curve( Bezier_curve const& aCurve, Output_iterator aOut, double aFlatness = 1e-5 ) { sample_curve(aCurve, 0.0, 1.0, aOut, aFlatness); }
 
   template<class Bezier_X_monotone_curve, class Output_iterator>
-  static void sample_X_monotone_curve( Bezier_X_monotone_curve const& aXMCurve, bool aFwd, Output_iterator aOut, double aFlatness = 1e-5, double aEPApproxError = 1e-3 )
+  static void sample_X_monotone_curve( Bezier_X_monotone_curve const& aXMCurve, bool aFwd, Output_iterator aOut, double aFlatness = 1e-10, double aEPApproxError = 1e-5 )
   {
     double lFromT = get_approximated_endpoint_parameter(aFwd ? aXMCurve.source() : aXMCurve.target(), aXMCurve.supporting_curve(), aXMCurve.xid(), aEPApproxError ) ;
     double lToT   = get_approximated_endpoint_parameter(aFwd ? aXMCurve.target() : aXMCurve.source(), aXMCurve.supporting_curve(), aXMCurve.xid(), aEPApproxError ) ;

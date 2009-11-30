@@ -465,6 +465,7 @@ public slots:
   void on_actionOpenLinear_triggered() ;
   void on_actionOpenDXF_triggered() ;
   void on_actionOpenBezier_triggered() ;
+  void on_actionSave_triggered() ;
   void on_actionIntersection_triggered() ;
   void on_actionUnion_triggered() ;
   void on_actionBlueMinusRed_triggered() ;
@@ -881,6 +882,67 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
   return rOK ;
 }
 
+bool save_circular ( QString aFileName, Circular_polygon_set& rSet )
+{
+  bool rOK = false ;
+  
+  return rOK ;
+}
+
+void save_bezier_polygon( std::ostream& out_file, Bezier_polygon const& aBP )
+{
+  out_file << aBP.size() << std::endl ;
+  
+  for ( Bezier_polygon::Curve_const_iterator cit = aBP.curves_begin() ; cit != aBP.curves_end() ; ++ cit )
+  {
+    typedef std::vector<Linear_point> Linear_point_vector ;
+    
+    Linear_point_vector lQ ;
+
+    CGAL::Qt::Bezier_helper::approximated_clip(*cit,std::back_inserter(lQ));  
+    
+    out_file << lQ.size() << std::endl ;
+    
+    for ( Linear_point_vector::const_iterator pit = lQ.begin() ; pit != lQ.end() ; ++ pit )
+    {
+      out_file << pit->x() << " " << pit->y() << std::endl ;
+    }
+  }
+}
+bool save_bezier ( QString aFileName, Bezier_polygon_set const& aSet )
+{
+  bool rOK = false ;
+  
+  std::ofstream out_file( qPrintable(aFileName) ) ;
+  if ( out_file )
+  {
+    out_file << "DOUBLE" << std::endl ;
+    
+    std::vector<Bezier_polygon_with_holes> bpwh_container;
+  
+    aSet.polygons_with_holes( std::back_inserter(bpwh_container) ) ;
+  
+    out_file << bpwh_container.size() << std::endl ;
+    
+    for( std::vector<Bezier_polygon_with_holes>::const_iterator rit = bpwh_container.begin(); rit != bpwh_container.end() ; ++ rit )
+    {
+      Bezier_polygon_with_holes bpwh = *rit ;
+      
+      out_file << ( 1 + bpwh.number_of_holes() ) << std::endl ;
+  
+      save_bezier_polygon( out_file, bpwh.outer_boundary() ) ;
+      
+      for ( Bezier_polygon_with_holes::Hole_const_iterator hit = bpwh.holes_begin() ; hit != bpwh.holes_end() ; ++ hit )
+        save_bezier_polygon(out_file, *hit);
+      
+      rOK = true ;
+    }
+  }
+  
+  return rOK ;
+  
+}
+
 void MainWindow::on_actionOpenLinear_triggered()
 {
   open(QFileDialog::getOpenFileName(this, tr("Open Linear Polygon"), "../data", tr("Linear Curve files (*.lps)") ));
@@ -894,6 +956,32 @@ void MainWindow::on_actionOpenDXF_triggered()
 void MainWindow::on_actionOpenBezier_triggered()
 {
   open(QFileDialog::getOpenFileName(this, tr("Open Bezier Polygon"), "../data", tr("Bezier Curve files (*.bps)") ));
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+  if ( mCircular_active )
+  {
+    if ( !save_circular(QFileDialog::getSaveFileName(this, tr("Save Acive Circular Polygon Set"), "../data", tr("Linear Curve files (*.lps)") ) 
+                       ,active_set().circular()
+                       )
+       )
+    {
+      show_error("Caanoit save circular polygon set.");
+    }
+       
+  }
+  else
+  {
+    if ( !save_bezier(QFileDialog::getSaveFileName(this, tr("Save Acive Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
+                     ,active_set().bezier() 
+                     )
+       )
+    {
+      show_error("Caanoit save bezier polygon set.");
+    }
+  }
+
 }
 
 void MainWindow::switch_set_type( Curve_set& aSet, int aType )
@@ -1002,9 +1090,15 @@ void MainWindow::processInput(CGAL::Object o )
   if(CGAL::assign(lBP, o))
   {
     if ( ensure_bezier_mode() )
+    {
+      CGAL::Orientation o = lBP.orientation();
+      if ( o == CGAL::CLOCKWISE )
+        lBP.reverse_orientation();
       active_set().bezier().join( Bezier_polygon_with_holes(lBP) ) ;  
+      
+    }
   }
-  modelChanged();
+  modelChanged();  
 }
 
 void MainWindow::on_actionIntersection_triggered() 

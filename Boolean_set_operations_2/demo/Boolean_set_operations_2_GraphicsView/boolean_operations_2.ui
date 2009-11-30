@@ -60,6 +60,8 @@
     <addaction name="actionOpenDXF" />
     <addaction name="actionOpenBezier" />
     <addaction name="separator" />
+    <addaction name="actionSave" />
+    <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
    <widget class="QMenu" name="menuHelp" >
@@ -210,6 +212,12 @@
   <action name="actionOpenBezier" >
    <property name="text" >
     <string>&amp;Open Bezier Polygon</string>
+   </property>
+  </action>
+
+  <action name="actionSave" >
+   <property name="text" >
+    <string>&amp;Save Currently Active Set</string>
    </property>
   </action>
 
