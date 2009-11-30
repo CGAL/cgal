@@ -37,7 +37,10 @@ Vertex_info::Vertex_info() : context_(0) {
 
 Vertex_info::~Vertex_info() {
   if(context_)
+  {
     delete context_;
+    context_ = 0;
+  }
 }
 
 Ball_context* Vertex_info::context() {
@@ -200,6 +203,12 @@ struct Insert_spheres {
     if(v == Tr_vertex_handle()) {
       v = c2t3.triangulation().nearest_power_vertex(p);
       hidden_balls.insert(p);
+      std::cerr << "Hidden ball " << p << " (id="
+                << polyline_id << "), hidden by the ball "
+                << v->point()
+                << " (" 
+                << print_context(v)
+                << ")\n";
     }
     v->info().context()->id = polyline_id;
     return v;
@@ -208,19 +217,17 @@ struct Insert_spheres {
   void cover(Polyline::const_iterator begin,
              Polyline::const_iterator end2,
              const Polyline_id polyline_id,
-             FT alpha,
+             FT alpha, // alpha is the desired radius of covering ball
+                       // the real radius must be lower.
              Tr_vertex_handle va,
              Tr_vertex_handle vb,
              const FT position_begin,
-             const FT position_end) {
-    if(alpha == 0) {
-      alpha = size;
-    }
+             const FT position_end)
+  {
+    std::cerr << "cover(" << va->point() << ", " 
+              << vb->point() << ", " << polyline_id << ")\n";
     FT radius_begin = CGAL_NTS sqrt(va->point().weight());
     FT radius_end = CGAL_NTS sqrt(vb->point().weight());
-    if(radius_begin != 0 && alpha > radius_begin) alpha = radius_begin;
-    if(radius_end != 0 && alpha > radius_end) alpha = radius_end;
-    // for(Polyline::const_iterator it
 
     if(begin == end2 && position_begin >= position_end)
       return;
@@ -240,13 +247,42 @@ struct Insert_spheres {
     // distance -= (alpha * 2) / 3;
     // std::cerr << "Distance:   " << distance << std::endl;
     // std::cerr << "Size:       " << size << std::endl;
-       const size_type n = static_cast<size_type>(std::ceil((3 * distance / ( 2 * alpha) - 1) / 2) + 0.5);
-    const FT r = (n == 0 ? alpha : distance / n);
+
+    // The desired radius is alpha. The desired inter-distance (between
+    // balls centers) is 4*alpha/3
+    // const FT desired_inter_distance = 4 * alpha / 3;
+
+    // Let r be the real radius (r <= alpha).
+    // Let inter_distance be the real inter-distance:
+    //   inter_distance = 4 * r / 3 <= desired_inter_distance
+    // Let n be the number of steps: the number of inserted balls is n+1.
+    // Then : 
+    //   distance = r / 3 + n * (4 * r /3 ) + r / 3
+    //
+    //   3* distance = (4 * n + 2 ) * r
+    //
+    //       1     3 * distance      
+    //   n = - * ( ------------ - 2 )
+    //       4           r
+    //
+    // n >= 1 then r <= distance / 2
+    const int n = (std::max)
+      (1, 
+       static_cast<int>(std::ceil(((3 * distance / alpha) - 2) / 4) + 0.5));
+    
+    const FT r = (3 * distance ) / ( 4 * n + 2) ;
     // std::cerr << n << std::endl;
     // std::cerr << "Local size: " << local_size << std::endl;
     // CGAL_assertion(local_size < size);
     const FT inter_distance = 4 * r / 3;
     const FT r2 = CGAL::square(r);
+
+    std::cerr << "distance = " << distance
+              << "\nalpha = " << alpha
+              << "\nn = " << n
+              << "\nr = " << r
+              << std::endl;
+
     Point_3 a(begin->point(), r2);
     Point_3 b(end2->point(), r2);
     FT small_distance_to_go = position_begin + radius_begin + (r / 3);
@@ -255,42 +291,43 @@ struct Insert_spheres {
     Tr_vertex_handle first_non_corner;
     Tr_vertex_handle last_non_corner;
     Tr_vertex_handle previous = va;
-    while(it != end2 || (it == end2 + 1 && small_distance_to_go < position_end)) {
+    int counter = 0;
+    while(it <= end2 && counter <= n)//small_distance_to_go < (position_end - radius_end))) 
+    {
       const Point& a = *it;
-      const Point& b = *++it;
-      // std::cerr << "segment( " << a << ", " << b << ")\n";
-      // std::cerr << "small_distance_to_go=" << small_distance_to_go << std::endl;
-      const FT d = (it != end2 ? 
-                    CGAL_NTS sqrt(squared_distance(a, b)) :
-                    position_end);
-      // std::cerr << "d=" << d << std::endl;
+      const Point& b = *(it+1);
+      std::cerr << "segment( " << a << ", " << b << ")\n";
+      std::cerr << "small_distance_to_go=" << small_distance_to_go << std::endl;
+      const FT d = CGAL_NTS sqrt(squared_distance(a, b));
+      std::cerr << "d=" << d << std::endl;
       FT pos = small_distance_to_go;
-      if(pos < d) {
-        for(; pos < d;
+      if(pos < d && counter <= n) {
+        for(; pos < d && counter <= n;
             pos += inter_distance)
         {
+          std::cerr << "pos=" << pos << "" << std::endl;
           const Point p = a +
             pos * ( b - a ) / d;
+          ++counter;
           Tr_vertex_handle current = insert(Point_3(p, r2), polyline_id);
-          last_non_corner = current;
           if(current != Tr_vertex_handle()) {
             current->info().context()->pred = previous;
             current->info().context()->iterator = it;
             current->info().context()->position = pos;
             current->info().context()->is_corner = false;
-          }
-          if(previous != Tr_vertex_handle())
             previous->info().context()->succ = current;
-          // at the end of the loop, last_non_corner is the last non-corner
-          // ball on the polyline
-          if(first) {
-            // and first_non_corner is the first non-corner ball on the
-            // polyline
-            first_non_corner = last_non_corner;
-            first = false;
+
+            // at the end of the loop, last_non_corner is the last non-corner
+            // ball on the polyline
+            last_non_corner = current;
+            if(first) {
+              // and first_non_corner is the first non-corner ball on the
+              // polyline
+              first_non_corner = current;
+              first = false;
+            }
+            previous = current;
           }
-          // std::cerr << ".";
-          previous = current;
         }
         // pos -= inter_distance;
         small_distance_to_go = pos - d;
@@ -298,6 +335,7 @@ struct Insert_spheres {
       else  {
         small_distance_to_go -= d;
       }
+      ++it;
       // std::cerr << "\n";
     }
     if(!polyline_is_a_cycle[polyline_id])
@@ -306,21 +344,23 @@ struct Insert_spheres {
       //                vb == Tr_vertex_handle() || 
       //                va != vb);
       // if(va != Tr_vertex_handle())
-      {
+      if(va->info().context()->is_corner) {
+        std::cerr << "Corner vertex va " << va->point()
+                  << ", neighbor " << *first_non_corner << std::endl;
         tr_corner_vertices.insert(std::make_pair(va, 
                                                  Corner_context(polyline_id, begin, first_non_corner)));
-        va->info().context()->is_corner = true;
+        CGAL_assertion(first_non_corner->info().context()->pred == va);
       }
-      if(vb != Tr_vertex_handle()) {
+      if(vb->info().context()->is_corner) {
+        std::cerr << "Corner vertex vb " << vb->point()
+                  << ", neighbor " << *last_non_corner << std::endl;
         tr_corner_vertices.insert(std::make_pair(vb, 
                                                  Corner_context(polyline_id, end2, last_non_corner)));
-        vb->info().context()->is_corner = true;
       }
     }
     else 
     {
       vb = va;
-      va->info().context()->is_corner = false;
     }
     if(last_non_corner != Tr_vertex_handle()) {
       last_non_corner->info().context()->succ = vb;
@@ -343,22 +383,44 @@ struct Insert_spheres {
         const Tr_vertex_handle& vb = eit->first->vertex(eit->third);
         if(non_adjacent_but_intersect(va, vb))
         {
-          std::cerr << "Balls " << va->point() << " (on polyline "
-                    << va->info().context()->id << ")"
-                    << " and " << vb->point() << " (on polyline "
-                    << vb->info().context()->id << ")"
-                    << " intersect.\n";
+          std::cerr << "Balls " << va->point() << " ("
+                    << print_context(va)
+                    << ") and " << vb->point() << " ("
+                    << print_context(vb) 
+                    << ") intersect.\n";
 
-          restart = true;
-          if(va->point().weight() > vb->point().weight())
+          if(// !va->info().context()->is_corner &&
+             va->point().weight() > vb->point().weight()) {
+            restart = true;
             refine_ball(va);
-          else
+            break;
+          }
+          else // if(!vb->info().context()->is_corner)
+          {
+            restart = true;
             refine_ball(vb);
-          break;
+            break;
+          }
         }
       }
     }
     while(restart);
+  }
+
+  std::string print_context(Tr_vertex_handle va) {
+    std::stringstream s;
+    using CGAL::cpp0x::get;
+    if(!va->info().context()->is_corner)
+      s << "on polyline " << va->info().context()->id;
+    else {
+      typedef Tr_corner_vertices::const_iterator const_iterator;
+      typedef std::pair<const_iterator, const_iterator> Range;
+      Range range_a = tr_corner_vertices.equal_range(va);
+      s << "on polylines";
+      for(const_iterator it = range_a.first; it != range_a.second; ++it)
+        s << " " << get<0>(it->second);
+    }
+    return s.str();
   }
 
   bool non_adjacent_but_intersect(const Tr_vertex_handle& va,
@@ -412,9 +474,10 @@ struct Insert_spheres {
   }
 
   void refine_ball(Tr_vertex_handle v) {
+    typedef Tr_corner_vertices::const_iterator const_iterator;
     typedef Tr_corner_vertices::iterator iterator;
     typedef std::pair<iterator, iterator> Range;
-
+    using CGAL::cpp0x::get;
     if(v->info().context()->is_corner) //r.first != r.second)
     {
       Range r = tr_corner_vertices.equal_range(v);
@@ -425,8 +488,12 @@ struct Insert_spheres {
       Polyline_id id = v->info().context()->id;
       c2t3.triangulation().remove(v);
       Tr_vertex_handle new_v = insert(new_point, id);
+      new_v->info().context()->is_corner = true;
       for(iterator it = r.first; it != r.second; ++it) {
-        Ball_context* context = it->first->info().context();
+        Tr_vertex_handle neighbor = get<2>(it->second);
+        Ball_context* context = neighbor->info().context();
+        std::cerr << "  adjacent ball: " << neighbor->point() 
+                  << ", id=" << context->id << std::endl;
         if(v == context->pred)
         {
           context->pred = new_v;
@@ -436,7 +503,6 @@ struct Insert_spheres {
           context->succ = new_v;
         }
       }
-      new_v->info().context()->is_corner = true;
 
       iterator hint = tr_corner_vertices.begin();
       for(iterator it = r.first; it != r.second; ++it) {
@@ -444,15 +510,16 @@ struct Insert_spheres {
                                          std::make_pair(new_v, it->second));
       }
       for(iterator it = r.first; it != r.second; ++it) {
-        refine_ball(it->first);
+        refine_ball(get<2>(it->second));
       }
       tr_corner_vertices.erase(r.first, r.second);
     }
     else {
-      std::cerr << "Refine ball " << v->point() << "\n";
+      std::cerr << "Refine ball " << v->point();
       Point_3 new_point(v->point().point(), v->point().weight() / 16);
       Ball_context* context = v->info().context();
       const Polyline_id id = context->id;
+      std::cerr << ", id= " << id << "\n";
       const Tr_vertex_handle pred = context->pred;
       const Tr_vertex_handle succ = context->succ;
       const Polyline::const_iterator it = context->iterator;
@@ -618,11 +685,18 @@ struct Insert_spheres {
     {
       Tr_vertex_handle va = insert(Point_3(*polylines[i].begin(),
                                            polylines_endpoints_sq_radii[i].first), i);
-      Tr_vertex_handle vb = insert(Point_3(*(--polylines[i].end()),
+      Tr_vertex_handle vb = insert(Point_3(*(polylines[i].end()-1),
                                            polylines_endpoints_sq_radii[i].second), i);
+      if(!polyline_is_a_cycle[i]) {
+        va->info().context()->is_corner = true;
+        vb->info().context()->is_corner = true;
+      }
+      else {
+        CGAL_assertion(va == vb);
+      }
 
       cover(polylines[i].begin(),
-            --polylines[i].end(),
+            polylines[i].end()-1,
             i,
             CGAL_NTS sqrt((std::min)(va->point().weight(),
                                      vb->point().weight())),
