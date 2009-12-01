@@ -173,13 +173,13 @@ _GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
 _GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpq);
 
         Gmpfi(mpfi_srcptr i,Gmpfi::Precision_type p=0){
-                if(p==mpfr_get_prec(&(i->left))&&p==mpfr_get_prec(&(i->right))){
+                if((p==0)||
+                   (p==mpfr_get_prec(&(i->left))
+                    &&p==mpfr_get_prec(&(i->right)))){
                         mpfi()->left=i->left;
                         mpfi()->right=i->right;
                         dont_clear_on_destruction();
                 }else{
-                        if(!p)
-                                p=mpfi_get_prec(i);
                         CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                         mpfi_init2(mpfi(),p);
                         mpfi_set(mpfi(),i);
