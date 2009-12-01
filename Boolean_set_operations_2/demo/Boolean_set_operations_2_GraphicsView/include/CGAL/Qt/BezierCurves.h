@@ -108,7 +108,7 @@ struct Bezier_helper
   }
   
   template<class Bezier_X_monotone_curve, class Output_iterator>
-  static void approximated_clip ( Bezier_X_monotone_curve const& aXMCurve, Output_iterator aOut, double aApproxError = 1e-3 )
+  static void approximated_clip ( Bezier_X_monotone_curve const& aXMCurve, Output_iterator aOut, double aApproxError = 1e-10 )
   {
     typedef typename value_type_traits<Output_iterator>::type Output_point ;
 

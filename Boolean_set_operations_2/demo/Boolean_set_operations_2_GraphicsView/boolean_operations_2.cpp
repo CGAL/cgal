@@ -889,7 +889,7 @@ bool save_circular ( QString aFileName, Circular_polygon_set& rSet )
   return rOK ;
 }
 
-void save_bezier_polygon( std::ostream& out_file, Bezier_polygon const& aBP )
+void save_bezier_polygon( std::ostream& out_file, Bezier_polygon const& aBP, boost::optional<Linear_point>& rLastP )
 {
   out_file << aBP.size() << std::endl ;
   
@@ -905,7 +905,11 @@ void save_bezier_polygon( std::ostream& out_file, Bezier_polygon const& aBP )
     
     for ( Linear_point_vector::const_iterator pit = lQ.begin() ; pit != lQ.end() ; ++ pit )
     {
-      out_file << pit->x() << " " << pit->y() << std::endl ;
+      Linear_point lP = pit == lQ.begin() && !!rLastP ? *rLastP : *pit ;
+      
+      out_file << lP.x() << " " << lP.y() << std::endl ;
+      
+      rLastP = lP ;
     }
   }
 }
@@ -930,10 +934,12 @@ bool save_bezier ( QString aFileName, Bezier_polygon_set const& aSet )
       
       out_file << ( 1 + bpwh.number_of_holes() ) << std::endl ;
   
-      save_bezier_polygon( out_file, bpwh.outer_boundary() ) ;
+      boost::optional<Linear_point> lLastP ;
+      
+      save_bezier_polygon( out_file, bpwh.outer_boundary() , lLastP ) ;
       
       for ( Bezier_polygon_with_holes::Hole_const_iterator hit = bpwh.holes_begin() ; hit != bpwh.holes_end() ; ++ hit )
-        save_bezier_polygon(out_file, *hit);
+        save_bezier_polygon(out_file, *hit, lLastP );
       
       rOK = true ;
     }
