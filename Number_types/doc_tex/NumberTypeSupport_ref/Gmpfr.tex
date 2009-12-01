@@ -154,7 +154,7 @@ each Gmpfr object.
 
 MPFR provides some flags to know whether performed operations were exact
 or not, or they incurred in overflow or underflow, if the exponent is
-out of range, or the result was NaN (not-a-number). One can clear the
+out of range, or the result was \ccc{NaN} (not-a-number). One can clear the
 flags before a set of operations and inspect them afterward, in order to
 see if something unexpected happened during the operations. The static
 functions used to handle flags are:
@@ -170,7 +170,7 @@ functions used to handle flags are:
         {Shows whether an operation incurred in overflow.}
 
 \ccFunction{static bool nan_flag();}
-        {Shows whether the result of an operation was NaN.}
+        {Shows whether the result of an operation was \ccc{NaN}.}
 
 \ccFunction{static bool inex_flag();}
         {Shows whether an operation was inexact.}
@@ -179,7 +179,7 @@ functions used to handle flags are:
         {Returns \ccc{true} iff a range error occurred. Such an exception
         occurs when some function which does not return an MPFR number
         has an invalid result. For example, this flag will be set if
-        one of the operands of a comparison is NaN.}
+        one of the operands of a comparison is \ccc{NaN}.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,13 +269,13 @@ Other arithmetic functions provided by the class are:
                 (std::float_round_style r=get_default_rndmode());}
         {Returns the pair \( (d,e) \) such that \( 0.5 \le |d| < 1 \) and
         \( d \times 2^e \) equals \ccVar~rounded to double precision,
-        using the rounding mode \ccc{r}. If \ccVar~is \ccc{Nan} or
+        using the rounding mode \ccc{r}. If \ccVar~is \ccc{NaN} or
         infinity, then the corresponding double is returned, leaving
         the exponent undefined and setting the appropriate error flag.}
 
 \ccMethod{std::pair<std::pair<double,double>,long> to_interval_exp();}
         {Returns \( ((m,M),e) \) such that \( m \times 2^e \le \ccVar
-        \le M \times 2^e \). If \ccVar~is \ccc{Nan} or infinity, then
+        \le M \times 2^e \). If \ccVar~is \ccc{NaN} or infinity, then
         the corresponding doubles are returned, leaving the exponent
         undefined and setting the appropriate error flag.}
 
@@ -300,7 +300,8 @@ Comparison operators \verb-==-, \verb-!=-, \verb->-, \verb-<-, \verb->=-
 with other \ccc{Gmpfr}, as well as with a \ccc{Gmpz}, \ccc{Gmpq},
 \verb=long=, \verb=unsigned long=, \verb=int=, \verb=double= \ or
 \verb=long double=. It is worth noting that the numbers are never
-converted nor rounded before comparison.
+converted nor rounded before comparison. In the case where one of the
+compared numbers is \ccc{NaN}, the \ccc{erange} flag is set.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
