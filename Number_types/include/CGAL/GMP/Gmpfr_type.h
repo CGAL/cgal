@@ -178,8 +178,9 @@ class Gmpfr:
                         mpfr_get_prec(f),
                         mpfr_custom_get_mantissa(f));
                 dont_clear_on_destruction();
-                CGAL_assertion(mpfr_unordered_p(f,fr())==0
-                               && mpfr_equal_p(f,fr())!=0);
+                CGAL_assertion((mpfr_nan_p(f)!=0 && mpfr_nan_p(fr())!=0) ||
+                               (mpfr_unordered_p(f,fr())==0 &&
+                                mpfr_equal_p(f,fr())!=0));
         }
 
         Gmpfr(mpfr_srcptr f,
