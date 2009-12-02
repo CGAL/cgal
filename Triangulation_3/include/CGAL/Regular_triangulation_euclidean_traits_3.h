@@ -436,7 +436,7 @@ public:
         const Weighted_point_3 & p,
 			  const FT& w) const
   {
-    return compare(p.weight(),w);
+    return compare(-p.weight(),w);
   }
 };
 

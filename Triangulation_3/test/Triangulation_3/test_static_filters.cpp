@@ -115,7 +115,7 @@ void test_compare_weighted_squared_radius_3(){
   double alpha_pqrs=CGAL::to_double( radius(p_e,q_e,r_e,s_e) );
   double alpha_pqr =CGAL::to_double( radius(p_e,q_e,r_e) );
   double alpha_pq  =CGAL::to_double( radius(p_e,q_e) );
-  double alpha_p=p.first.weight();
+  double alpha_p   = - p.first.weight();
   
   //test with random points + alpha limit
   K3().compare_weighted_squared_radius_3_object()(p,q,r,s,NT_pair(alpha_pqrs,alpha_pqrs));
