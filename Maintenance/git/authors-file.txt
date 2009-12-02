@@ -54,6 +54,7 @@ isuslov = Ilya Suslov <Ilya.Suslov@sophia.inria.fr>
 jflotott = Julia Flötotto <Julia.Flototto@sophia.inria.fr>
 jhazebro = Julien Hazebrouck <Julien.Hazebrouck@sophia.inria.fr>
 jlenorma = Jacques Le Normand <Jacques.Le.Normand@sophia.inria.fr>
+jtournoi = Jane Tournois <Jane.Tournois@sophia.inria.fr>
 kettner = Lutz Kettner <kettner@mpi-sb.mpg.de>
 leiserow = Eran Leiserowitz <leiserow@post.tau.ac.il>
 lrineau = Laurent Rineau <Laurent.Rineau@geometryfactory.com>
