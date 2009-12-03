@@ -255,11 +255,11 @@ an edge (resp. facet) \ccc{infinite} if it is incident to the infinite vertex.
 \ccHeading{Geometric access functions}
 \ccThree{Tetrahedron}{t.tetrahedron()}{}
 
-\ccMethod{Tetrahedron tetrahedron(const Cell_handle c) const;}
+\ccMethod{Tetrahedron tetrahedron(Cell_handle c) const;}
 {Returns the tetrahedron formed by the four vertices of \ccc{c}.
 \ccPrecond{\ccVar.\ccc{dimension()} $=3$ and the cell is finite.}}
 \ccGlue
-\ccMethod{Triangle triangle(const Cell_handle c, int i) const;}
+\ccMethod{Triangle triangle(Cell_handle c, int i) const;}
 {Returns the triangle formed by the three vertices of facet
 \ccc{(c,i)}. The triangle is oriented so that its normal points to the
 inside of cell \ccc{c}. 
@@ -274,7 +274,7 @@ in dimension~3, $i = 3$ in dimension~2, and the facet is finite.}}
 {Returns the line segment formed by the vertices of \ccc{e}.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$ and \ccc{e} is finite.}}
 \ccGlue
-\ccMethod{Segment segment(const Cell_handle c, int i, int j) const;}
+\ccMethod{Segment segment(Cell_handle c, int i, int j) const;}
 {Same as the previous method for edge \ccc{(c,i,j)}.
 \ccPrecond{As above and $i\neq j$. Moreover $i,j \in \{0,1,2,3\}$ in
 dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j \in \{0,1\}$ in 
@@ -282,14 +282,14 @@ dimension~1.}}
 
 \ccHeading{Tests for Finite and Infinite Vertices and Faces}
 
-\ccMethod{bool is_infinite(const Vertex_handle v) const;}
+\ccMethod{bool is_infinite(Vertex_handle v) const;}
 {\ccc{true}, iff vertex \ccc{v} is the infinite vertex.}
 \ccGlue
-\ccMethod{bool is_infinite(const Cell_handle c) const;}
+\ccMethod{bool is_infinite(Cell_handle c) const;}
 {\ccc{true}, iff \ccc{c} is incident to the infinite vertex.
 \ccPrecond{\ccVar.\ccc{dimension()} $=3$.}}
 \ccGlue
-\ccMethod{bool is_infinite(const Cell_handle c, int i) const;}
+\ccMethod{bool is_infinite(Cell_handle c, int i) const;}
 {\ccc{true}, iff the facet \ccc{i} of cell \ccc{c} is incident to the
 infinite vertex.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and $i\in\{0,1,2,3\}$ in
@@ -299,7 +299,7 @@ dimension~3, $i=3$ in dimension~2.}}
 {\ccc{true} iff facet \ccc{f} is incident to the infinite vertex.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$.}}
 \ccGlue
-\ccMethod{bool is_infinite(const Cell_handle c, int i, int j) const;}
+\ccMethod{bool is_infinite(Cell_handle c, int i, int j) const;}
 {\ccc{true}, iff the edge \ccc{(i,j)} of cell \ccc{c} is incident to
 the infinite vertex.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 1$ and $i\neq j$. Moreover
