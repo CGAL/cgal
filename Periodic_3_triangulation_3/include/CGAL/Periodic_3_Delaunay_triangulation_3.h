@@ -128,6 +128,7 @@ public:
   using Base::swap;
   using Base::is_1_cover;
   using Base::is_virtual;
+  using Base::point;
 #endif
 
 public:

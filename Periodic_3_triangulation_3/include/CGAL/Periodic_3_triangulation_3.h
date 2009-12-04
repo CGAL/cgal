@@ -1183,6 +1183,55 @@ protected:
   friend std::ostream& operator<< <>
       (std::ostream& os, const Periodic_3_triangulation_3<GT,TDS> &tr);
   //@}
+
+  // unused and undocumented function required to be compatible to
+  // Alpha_shape_3
+public:
+  Point point(Cell_handle c, int idx) const {
+    //    if (is_1_cover())
+      return point(periodic_point(c,idx));
+
+    Offset vec_off[4];
+    for (int i=0 ; i<4 ; i++) vec_off[i] = periodic_point(c,i).second;
+    int ox = vec_off[0].x();
+    int oy = vec_off[0].y();
+    int oz = vec_off[0].z();
+    for (int i=1 ; i<4 ; i++) {
+      ox = std::min(ox,vec_off[i].x());
+      oy = std::min(oy,vec_off[i].y());
+      oz = std::min(oz,vec_off[i].z());
+    }
+    Offset diff_off(-ox,-oy,-oz);
+    if (diff_off.is_null()) return point(periodic_point(c,idx));
+
+    for (unsigned int i=0 ; i<4 ; i++) vec_off[i] += diff_off;
+    Vertex_handle canonic_vh[4];
+    for (int i=0 ; i<4 ; i++) {
+      Virtual_vertex_map_it vvmit = virtual_vertices.find(c->vertex(i));
+      Vertex_handle orig_vh;
+      if (vvmit == virtual_vertices.end()) orig_vh = c->vertex(i);
+      else orig_vh = vvmit->second.first;
+      if (vec_off[i].is_null()) canonic_vh[i] = orig_vh;
+      else {
+	CGAL_assertion(virtual_vertices_reverse.find(orig_vh)
+	    != virtual_vertices_reverse.end());
+	canonic_vh[i] = virtual_vertices_reverse.find(orig_vh)
+	  ->second[9*vec_off[i][0]+3*vec_off[i][1]+vec_off[i][2]-1];
+      }
+    }
+    
+    std::vector<Cell_handle> cells;
+    incident_cells(canonic_vh[0], std::back_inserter(cells));
+    for (unsigned int i=0 ; i<cells.size() ; i++) {
+      CGAL_assertion(cells[i]->has_vertex(canonic_vh[0]));
+      if (cells[i]->has_vertex(canonic_vh[1])
+	  && cells[i]->has_vertex(canonic_vh[2])
+	  && cells[i]->has_vertex(canonic_vh[3]) )
+	return point(periodic_point(cells[i],cells[i]->index(canonic_vh[idx])));
+    }
+    CGAL_assertion(false);
+  
+  }
 };
 
 template < class GT, class TDS >
@@ -2698,6 +2747,7 @@ Periodic_3_triangulation_3<GT,TDS>::convert_to_1_sheeted_covering() {
   // ### First cell iteration ##########################################
   // ###################################################################
   {
+    if (is_1_cover()) return;
     bool to_delete, has_simplifiable_offset;
     Virtual_vertex_map_it vvmit;
     // First iteration over all cells: Mark the cells that are to delete.
