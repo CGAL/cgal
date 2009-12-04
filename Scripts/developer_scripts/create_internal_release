@@ -145,6 +145,10 @@ sub install_packages() {
     $dont_submit="$package_full_path/dont_submit";
     chdir "$package_comes_from" or die;
     @command = ('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn');
+    # comment for later: once the tar version installed on
+    # cgal.geometryfactory.com knows the option --exclude-vcs, use that
+    # option instead of --exclude=.svn
+    # -- Laurent Rineau, 2009/12/04 (idea by Sylvain Pion)
     if( -f $dont_submit ) {
 	@command = (@command, "--exclude-from=$dont_submit");
     }
