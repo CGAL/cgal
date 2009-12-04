@@ -750,18 +750,17 @@ public:
 private:
   NT squared_radius(const Cell_handle& s) const
     {
-      return internal::Compute_squared_radius_3<Dt>()(*this)(s->vertex(0)->point(),
-						    s->vertex(1)->point(),
-						    s->vertex(2)->point(),
-						    s->vertex(3)->point());
+      return internal::Compute_squared_radius_3<Dt>()(*this)(
+	  this->point(s,0), this->point(s,1),
+	  this->point(s,2), this->point(s,3));
     }
 
   NT squared_radius(const Cell_handle& s, const int& i) const
     {
       return internal::Compute_squared_radius_3<Dt>()(*this) (
-		  s->vertex(vertex_triple_index(i,0))->point(),
-		  s->vertex(vertex_triple_index(i,1))->point(),
-		  s->vertex(vertex_triple_index(i,2))->point());
+	  this->point(s,vertex_triple_index(i,0)),
+	  this->point(s,vertex_triple_index(i,1)),
+	  this->point(s,vertex_triple_index(i,2)) );
     }
 
   NT squared_radius(const Facet& f) const {
@@ -771,8 +770,8 @@ private:
   NT squared_radius(const Cell_handle& s, 
 			    const int& i, const int& j) const
     {
-      return internal::Compute_squared_radius_3<Dt>()(*this)(s->vertex(i)->point(),
-						    s->vertex(j)->point());
+      return internal::Compute_squared_radius_3<Dt>()(*this)(
+	  this->point(s,i), this->point(s,j));
     }
 
   NT squared_radius(const Edge& e) const {

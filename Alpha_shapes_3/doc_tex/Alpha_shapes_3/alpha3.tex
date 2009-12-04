@@ -196,7 +196,9 @@ points cannot be inserted or removed.
 
 We currently do not specify concepts for the underlying triangulation
 type. Models that work for a basic alpha-shape are the instantiations
-of the class \ccc{CGAL::Delaunay_triangulation_3}.
+of the classes \ccc{CGAL::Delaunay_triangulation_3} and
+\ccc{CGAL::Periodic_3_Delaunay_triangulation_3} (see
+example~\ref{l1_SectPeriodicAS3D}).
 A model that works for a weighted alpha-shape is 
 the class \ccc{CGAL::Regular_triangulation_3}.
 
@@ -210,13 +212,17 @@ in the weighted case.
 The triangulation data structure of the triangulation with any 
 has to be a model of the concept \ccc{CGAL::TriangulationDataStructure_3}.
 However it must be parameterized with 
-vertex and cell classes, which are model of the concepts
+vertex and cell classes, which are models of the concepts
 \ccc{AlphaShapeVertex_3} and \ccc{AlphaShapeCell_3}.
-The package provides
-by default the classes \ccc{CGAL::Alpha_shape_vertex_base_3<Gt>} 
-and \ccc{CGAL::Alpha_shape_cell_base_3<Gt>}.
-
-
+The package provides by default the classes
+\ccc{CGAL::Alpha_shape_vertex_base_3<Gt>} and
+\ccc{CGAL::Alpha_shape_cell_base_3<Gt>}. When using
+\ccc{CGAL::Periodic_3_Delaunay_triangulation_3} as underlying
+triangulation the vertex and cell classes need to be models to both
+\ccc{AlphaShapeVertex_3} and
+\ccc{Periodic_3TriangulationDSVertexBase_3} as well as
+\ccc{AlphaShapeCell_3} and \ccc{Periodic_3TriangulationDSCellBase_3}
+(see example~\ref{l1_SectPeriodicAS3D}). 
 
 
 %----------------------------------------------------------------------
@@ -248,3 +254,26 @@ The alpha shape is built in \ccc{GENERAL} mode.
 
 
 \ccIncludeExampleCode{Alpha_shapes_3/ex_weighted_alpha_shapes_3.cpp}
+
+\subsection{Example for periodic
+  Alpha Shapes\label{l1_SectPeriodicAS3D}}
+
+The following example shows how to use the periodic Delaunay
+triangulation (Chapter~\ref{chapter-P3Triangulation3}) as underlying
+triangulation for the alpha shape computation.
+
+In order to define the original domain and to benefit from the
+built-in heuristic optimizations of the periodic Delaunay
+triangulation computation it is recommended to first construct the
+triangulation and then construct the alpha shape from it. The alpha
+shape constructor that takes a point range can be used as well but in
+this case the original domain cannot be specified and the default unit
+cube will be chosen and no optimizations will be used.
+
+It is also recommended to switch the triangulation to 1-sheeted
+covering if possible. Note that a periodic triangulation in 27-sheeted
+covering space is degenerate. In this case an exact constructions
+kernel needs to be used to compute the alpha shapes. Otherwise the
+results will suffer from round-off problems.
+
+\ccIncludeExampleCode{Alpha_shapes_3/ex_periodic_alpha_shapes_3.cpp}
