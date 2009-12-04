@@ -144,7 +144,7 @@ sub install_packages() {
     my $package_full_path = File::Spec->catdir($package_comes_from, $package_name);
     $dont_submit="$package_full_path/dont_submit";
     chdir "$package_comes_from" or die;
-    @command = ('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude-vcs');
+    @command = ('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn');
     if( -f $dont_submit ) {
 	@command = (@command, "--exclude-from=$dont_submit");
     }
