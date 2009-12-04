@@ -278,7 +278,17 @@ in dimension~3, $i = 3$ in dimension~2, and the facet is finite.}}
 {Same as the previous method for edge \ccc{(c,i,j)}.
 \ccPrecond{As above and $i\neq j$. Moreover $i,j \in \{0,1,2,3\}$ in
 dimension~3, $i,j \in \{0,1,2\}$ in dimension~2, $i,j \in \{0,1\}$ in 
-dimension~1.}}
+dimension~1, and the edge is finite.}}
+\ccGlue
+\ccMethod{const Point & point(Cell_handle c, int i) const;}
+{Returns the point given by vertex \ccc{i} of cell \ccc{c}.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 0$ and $i \in \{0,1,2,3\}$
+in dimension~3, $i \in \{0,1,2\}$ in dimension~2, $i \in \{0,1\}$ in
+dimension~1, $i = 0$ in dimension~0, and the vertex is finite.}}
+\ccGlue
+\ccMethod{const Point & point(Vertex_handle v) const;}
+{Same as the previous method for vertex \ccc{v}. 
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 0$ and the vertex is finite.}}
 
 \ccHeading{Tests for Finite and Infinite Vertices and Faces}
 

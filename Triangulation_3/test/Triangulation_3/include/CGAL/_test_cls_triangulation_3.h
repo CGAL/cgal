@@ -664,6 +664,14 @@ _test_cls_triangulation_3(const Triangulation &)
   c= T0.locate(Point(50,0,5),lt,li,lj);
   Segment s2 = T0.segment(Edge(c,0,1));
   assert(s1==s2);
+  c= T0.locate(Point(50,0,5),lt,li,lj);
+  Point pt1 = T0.point(c,0);
+  c= T0.locate(Point(10,0,1),lt,li,lj);
+  Point pt2 = T0.point(c->vertex(0));
+  assert(pt1==pt2);
+  c= T0.locate(Point(20,0,2),lt,li,lj);
+  Point pt3 = c->vertex(0)->point();
+  assert(pt2==pt3);
      
   if (! del) { // Delaunay should not be flipped
     // or it will not be Delaunay any longer --> not valid

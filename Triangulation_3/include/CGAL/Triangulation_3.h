@@ -411,6 +411,19 @@ public:
   Segment segment(const Edge & e) const
     { return segment(e.first,e.second,e.third); }
 
+  const Point & point(Cell_handle c, int i) const {
+    CGAL_triangulation_precondition( dimension() >= 0 );
+    CGAL_triangulation_precondition( i >= 0 && i <= dimension() );
+    CGAL_triangulation_precondition( ! is_infinite(c->vertex(i)) );
+    return c->vertex(i)->point();
+  }
+
+  const Point & point(Vertex_handle v) const {
+    CGAL_triangulation_precondition( dimension() >= 0 );
+    CGAL_triangulation_precondition( ! is_infinite(v) );
+    return v->point();
+  }
+
   // TEST IF INFINITE FEATURES
   bool is_infinite(const Vertex_handle v) const
     { return v == infinite_vertex(); }
