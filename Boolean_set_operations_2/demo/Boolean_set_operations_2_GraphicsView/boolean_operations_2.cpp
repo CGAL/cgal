@@ -747,7 +747,9 @@ Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
     {
       double x,y ;
       is >> x >> y ;
-      p = Bezier_rat_point(x,y);
+      Bezier_rational rx(static_cast<int> (1000 * x + 0.5), 1000);
+      Bezier_rational ry(static_cast<int> (1000 * y + 0.5), 1000); 
+      p = Bezier_rat_point(rx,ry);
     }
     else
     {
@@ -760,7 +762,40 @@ Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
     }
   }
 
-  return Bezier_curve(ctrl_pts.begin(),ctrl_pts.end());
+  std::vector<Bezier_rat_point> ctrl_pts2;
+
+  typedef std::vector<Bezier_rat_point>::const_iterator cp_const_iterator ;
+
+  cp_const_iterator beg  = ctrl_pts.begin();
+  cp_const_iterator end  = ctrl_pts.end  ();
+  cp_const_iterator last = end - 1 ;
+
+  ctrl_pts2.push_back(*beg);
+
+  if ( ctrl_pts.size() > 2 )
+  {
+    cp_const_iterator curr = beg ;
+    cp_const_iterator next1 = curr  + 1 ;
+    cp_const_iterator next2 = next1 + 1 ;
+
+    do
+    {
+      CGAL::Orientation lOrient = orientation(*curr,*next1,*next2);
+
+      if ( lOrient != CGAL::COLLINEAR )
+        ctrl_pts2.push_back(*next1);
+
+      ++ curr  ;
+      ++ next1 ; 
+      ++ next2 ;
+
+    }
+    while ( next2 != end ) ;
+  }
+
+  ctrl_pts2.push_back(*last);
+
+  return Bezier_curve(ctrl_pts2.begin(),ctrl_pts2.end());
 }
 
 bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
