@@ -26,6 +26,7 @@
 #include <CGAL/Boolean_set_operations_2/Gps_default_dcel.h>
 #include <CGAL/General_polygon_set_on_surface_2.h>
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
+#include <CGAL/Arrangement_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -45,7 +46,7 @@ public:
     typename Default_planar_topology<Traits_2, Dcel >::Traits>
                                                           Base;
 
-  typedef typename Base::Arrangement_on_surface_2         Arrangement_2;
+  typedef CGAL::Arrangement_2<Traits_2, Dcel>             Arrangement_2;
 
   typedef typename Base::Polygon_2                        Polygon_2;
   typedef typename Base::Polygon_with_holes_2             Polygon_with_holes_2;
@@ -95,6 +96,25 @@ public:
                        static_cast<const Base&>(ps2));
   }
 
+  //@{
+  
+  /*! Obtain a const reference to the underlying arrangement
+   * \return the underlying arrangement.
+   */
+  const Arrangement_2& arrangement() const
+  {
+    return *(static_cast<const Arrangement_2*>(this->m_arr));
+  }
+
+  /*! Obtain a reference to the underlying arrangement
+   * \return the underlying arrangement.
+   */
+  Arrangement_2& arrangement()
+  {
+    return *(static_cast<Arrangement_2*>(this->m_arr));
+  }
+
+  //@}
 };
 
 CGAL_END_NAMESPACE
