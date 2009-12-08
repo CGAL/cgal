@@ -1,4 +1,4 @@
- // Copyright (c) 2009  GeometryFactory (France)
+// Copyright (c) 2009  GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -32,26 +32,30 @@ template <class Traits>
 class Projected_orientation_with_normal_3
 {
   // private members
-  const Traits& traits;
+  const typename Traits::Vector_3 normal;
 
   // private type aliases
   typedef typename Traits::K K;
   typedef typename Traits::Point_2 Point;
+  typedef typename Traits::Vector_3 Vector_3;
 public:
   typedef typename K::Orientation Orientation;
   typedef Orientation result_type;
 
-  Projected_orientation_with_normal_3(const Traits& traits_)
-    : traits(traits_)
+  Projected_orientation_with_normal_3(const Vector_3& normal_)
+    : normal(normal_)
   {
+    CGAL_PROFILER("Construct Projected_orientation_with_normal_3.")
+    CGAL_TIME_PROFILER("Construct Projected_orientation_with_normal_3")
   }
 
   Orientation operator()(const Point& p,
 			 const Point& q,
 			 const Point& r) const
   {    
-    CGAL_TIME_PROFILER("Projected_orientation_with_normal_3");
-    return orientation(q-p, r-p, traits.normal());
+    CGAL_PROFILER("Projected_orientation_with_normal_3::operator()");
+    CGAL_TIME_PROFILER("Projected_orientation_with_normal_3::operator()");
+    return orientation(q-p, r-p, normal);
   }
 }; // end class Projected_orientation_with_normal_3<Traits>
 
@@ -59,7 +63,7 @@ template <class Traits>
 class Projected_side_of_oriented_circle_with_normal_3
 {
   // private members
-  const Traits& traits;
+  const typename Traits::Vector_3 normal;
 
   // private types aliases
   typedef typename Traits::K K;
@@ -67,13 +71,25 @@ class Projected_side_of_oriented_circle_with_normal_3
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::FT FT;
 
+  typedef Projected_side_of_oriented_circle_with_normal_3<Traits> Self;
+
 public:
   typedef typename K::Oriented_side Oriented_side;
   typedef Oriented_side result_type;
 
-  Projected_side_of_oriented_circle_with_normal_3(const Traits& traits_)
-    : traits(traits_)
+  Projected_side_of_oriented_circle_with_normal_3(const Vector_3& normal_)
+    : normal(normal_)
   {
+    CGAL_PROFILER("Construct Projected_side_of_oriented_circle_with_normal_3.")
+    CGAL_TIME_PROFILER("Construct Projected_side_of_oriented_circle_with_normal_3.")
+//     std::cerr << "Projected_side_of_oriented_circle_with_normal_3(" << normal_ << ")\n";
+  }
+
+  Projected_side_of_oriented_circle_with_normal_3(const Self& other)
+    : normal(other.normal)
+  {
+    CGAL_PROFILER("Copy Projected_side_of_oriented_circle_with_normal_3::operator()")
+    CGAL_TIME_PROFILER("Copy Projected_side_of_oriented_circle_with_normal_3::operator()")
   }
 
   Oriented_side operator()(const Point& p,
@@ -81,8 +97,10 @@ public:
 			   const Point& r,
 			   const Point& t) const
   {
-    CGAL_TIME_PROFILER("Projected_side_of_oriented_circle_with_normal_3")
-    const Vector_3& u = traits.normal();
+    CGAL_PROFILER("Projected_side_of_oriented_circle_with_normal_3::operator()")
+    CGAL_TIME_PROFILER("Projected_side_of_oriented_circle_with_normal_3::operator()")
+    const Vector_3& u = normal;
+//     std::cerr << "Projected_side_of_oriented_circle_with_normal_3::operator(). Normal=" << normal << ")\n";
 
     const Vector_3 tp = p - t;
     const Vector_3 tq = q - t;
@@ -111,7 +129,7 @@ template <class Traits>
 class Projected_square_distance_to_line_with_normal_3
 {
   // private members
-  const Traits& traits;
+  const typename Traits::Vector_3 normal;
   
   // private types aliases
   typedef typename Traits::K K;
@@ -121,15 +139,20 @@ class Projected_square_distance_to_line_with_normal_3
   typedef typename Traits::FT FT;
 
 public:
-  Projected_square_distance_to_line_with_normal_3(const Traits& traits_)
-    : traits(traits_)
-  {}
+  Projected_square_distance_to_line_with_normal_3(const Vector_3& normal_)
+    : normal(normal_)
+  {
+    CGAL_PROFILER("Construct Projected_square_distance_to_line_with_normal_3.")
+    CGAL_TIME_PROFILER("Construct Projected_square_distance_to_line_with_normal_3")
+  }
 
   FT operator()(const Line& line, const Point& p)
   {
+    CGAL_PROFILER("Projected_square_distance_to_line_with_normal_3::operator()")
+    CGAL_TIME_PROFILER("Projected_square_distance_to_line_with_normal_3::operator()")
     const Vector_3& vl = line.to_vector();
     const Point& pl = line.point();
-    const Vector_3 v = cross_product(traits.normal(),
+    const Vector_3 v = cross_product(normal,
                                      vl);
     if(v == NULL_VECTOR) {
       // den == 0 if the line is vertical
@@ -139,7 +162,7 @@ public:
       return (w * w) / (vl * vl);
     }
     else {
-      const FT det = determinant(traits.normal(), 
+      const FT det = determinant(normal, 
                                  vl, 
                                  pl - p);
       return (det * det) / ( v * v );
@@ -151,7 +174,7 @@ template <class Traits>
 class Projected_intersect_3
 {
   // private members
-  const Traits& traits;
+  const typename Traits::Vector_3 normal;
   
   // private types aliases
   typedef typename Traits::K K;
@@ -162,18 +185,22 @@ class Projected_intersect_3
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::FT FT;
 public:
-  Projected_intersect_3(const Traits& traits_)
-    : traits(traits_)
-  {}
+  Projected_intersect_3(const Vector_3& normal_)
+    : normal(normal_)
+  {
+    CGAL_PROFILER("Construct Projected_intersect_3")
+    CGAL_TIME_PROFILER("Construct Projected_intersect_3")
+  }
 
   Object operator()(const Segment& s1, const Segment& s2)
   {
-    CGAL_TIME_PROFILER("Projected_intersect_3")
-    const Vector_3 u1 = cross_product(s1.to_vector(), traits.normal());
+    CGAL_PROFILER("Projected_intersect_3::operator()")
+    CGAL_TIME_PROFILER("Projected_intersect_3::operator()")
+    const Vector_3 u1 = cross_product(s1.to_vector(), normal);
     if(u1 == NULL_VECTOR)
       return K().intersect_3_object()(s1.supporting_line(), s2);
 
-    const Vector_3 u2 = cross_product(s2.to_vector(), traits.normal());
+    const Vector_3 u2 = cross_product(s2.to_vector(), normal);
     if(u2 == NULL_VECTOR)
       return K().intersect_3_object()(s1, s2.supporting_line());
     
@@ -188,11 +215,11 @@ public:
     if(const Line* line = object_cast<Line>(&planes_intersection))
     {
       const Point& pi = line->point(0);
-      if(cross_product(traits.normal(), pi - s1.source())
-         * cross_product(traits.normal(), pi - s1.target()) > FT(0)
+      if(cross_product(normal, pi - s1.source())
+         * cross_product(normal, pi - s1.target()) > FT(0)
          ||
-         cross_product(traits.normal(), pi - s2.source())
-         * cross_product(traits.normal(), pi - s2.target()) > FT(0) )
+         cross_product(normal, pi - s2.source())
+         * cross_product(normal, pi - s2.target()) > FT(0) )
       {
         // the intersection of the lines is not inside the segments
         std::cerr << "intersection not inside\n";
@@ -236,20 +263,28 @@ public:
     : n(n_)
   {}
 
+  Triangulation_2_projection_traits_3(const Self& other)
+    : n(other.n)
+  {
+//     std::cerr << "Copy of a traits. Type="
+//               << typeid(*this).name() << std::endl
+//               << "normal=" << normal() << std::endl;
+  }
+
   const Vector_3& normal() const
   {
+//     std::cerr << "normal=" << n << std::endl;
     return n;
   }
 
-  Triangulation_2_projection_traits_3(const Self& other)
-    : n(other.n)
-  {}
-
   Self& operator=(const Self& other)
   {
+    std::cerr << "Assign of a non-filtrered projected traits. Type="
+              << typeid(*this).name() << std::endl;
     if(this != &other) {
       n = other.n;
     }
+    std::cerr << "Normal="<< this->normal() << std::endl;
     return *this;
   }
 
@@ -306,25 +341,25 @@ public:
   Orientation_2 
   orientation_2_object() const
   {
-    return Orientation_2(*this); 
+    return Orientation_2(this->normal()); 
   }
 
   Side_of_oriented_circle_2
   side_of_oriented_circle_2_object() const
   {
-    return Side_of_oriented_circle_2(*this);
+    return Side_of_oriented_circle_2(this->normal());
   }
   
   Compute_squared_distance_2
   compute_squared_distance_2_object() const
   {
-    return Compute_squared_distance_2(*this);
+    return Compute_squared_distance_2(this->normal());
   }
   
   Intersect_2
   intersect_2_object () const
   {
-    return Intersect_2(*this);
+    return Intersect_2(this->normal());
   }
 
   Construct_segment_2  construct_segment_2_object() const
@@ -335,6 +370,32 @@ public:
   
   Construct_triangle_2  construct_triangle_2_object() const
     {return Construct_triangle_2();}
+
+
+  // Special functor, not in the Kernel concept
+  class Projection_to_plan {
+    // Remeber: Point_2 is K::Point_3
+    const Point_2& plane_point;
+    const Vector_3& normal;
+  public:
+    // Return the projection of a point to a plane passing through 
+    // the point 'plane_point' and with orthogonal vector normal().
+    Projection_to_plan(const Point_2& plane_point_, const Self& self)
+      : plane_point(plane_point_),
+        normal(self.normal())
+    {}
+
+    Point_2 operator()(const Point_2& point) const 
+    {
+      return point +
+        ( ( (plane_point - point) * normal ) / (normal * normal) ) * normal;
+    }
+  }; // end Projection_to_plan
+
+  Projection_to_plan projection_to_plan_object(const Point_2& plane_point) const
+  {
+    return Projection_to_plan(plane_point, *this);
+  }
 
 }; // end class Triangulation_2_projection_traits_3<Kernel>
   

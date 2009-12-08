@@ -1115,7 +1115,7 @@ operator<<(std::ostream& os,
 //Helping functions to compute intersections of constrained edges
 template<class Gt>
 bool
-intersection(Gt ,
+intersection(const Gt& ,
 	     const typename Gt::Point_2& , 
 	     const typename Gt::Point_2& , 
 	     const typename Gt::Point_2& , 
@@ -1128,7 +1128,7 @@ intersection(Gt ,
 	     
 template<class Gt>
 bool
-intersection(Gt gt,
+intersection(const Gt& gt,
 	     const typename Gt::Point_2& pa, 
 	     const typename Gt::Point_2& pb, 
 	     const typename Gt::Point_2& pc, 
@@ -1142,7 +1142,7 @@ intersection(Gt gt,
 
 template<class Gt>
 inline bool
-intersection(Gt gt,
+intersection(const Gt& gt,
 	     const typename Gt::Point_2& pa, 
 	     const typename Gt::Point_2& pb, 
 	     const typename Gt::Point_2& pc, 
@@ -1155,7 +1155,7 @@ intersection(Gt gt,
 
 template<class Gt>
 bool
-compute_intersection(Gt gt,
+compute_intersection(const Gt& gt,
 	     const typename Gt::Point_2& pa, 
 	     const typename Gt::Point_2& pb, 
 	     const typename Gt::Point_2& pc, 
@@ -1173,7 +1173,7 @@ compute_intersection(Gt gt,
 
 template<class Gt>
 int
-limit_intersection(Gt ,
+limit_intersection(const Gt& ,
 		   const typename Gt::Point_2& , 
 		   const typename Gt::Point_2& , 
 		   const typename Gt::Point_2& , 
@@ -1185,7 +1185,7 @@ limit_intersection(Gt ,
 
 template<class Gt>
 int
-limit_intersection(Gt ,
+limit_intersection(const Gt& ,
 		   const typename Gt::Point_2& , 
 		   const typename Gt::Point_2& , 
 		   const typename Gt::Point_2& , 
@@ -1197,7 +1197,7 @@ limit_intersection(Gt ,
 
 template<class Gt>
 int
-limit_intersection(Gt gt,
+limit_intersection(const Gt& gt,
 	     const typename Gt::Point_2& pa, 
 	     const typename Gt::Point_2& pb, 
 	     const typename Gt::Point_2& pc, 
