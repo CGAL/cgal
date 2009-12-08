@@ -18,7 +18,6 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
   void connectActions();
 
   Scene scene;
-  Timer timer;
   QTimer * qtimer;
 
 public slots:

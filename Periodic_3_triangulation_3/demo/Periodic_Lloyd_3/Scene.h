@@ -7,15 +7,11 @@ struct Scene {
 
   std::list<Point_3> points;
   P3DT3 periodic_triangulation;
-  Vertex_handle const_vertex;
 
   bool eight_copies;
   bool two_dimensional;
 
   void lloyd_step() {
-    Timer timer;
-    timer.reset();
-
     std::vector<Vertex_handle> vts;
     for (Periodic_point_iterator ppit
 	   = periodic_triangulation.periodic_points_begin(P3DT3::UNIQUE) ;
@@ -24,51 +20,41 @@ struct Scene {
       vts.push_back(ppit.get_vertex());
     
     points.clear();
+    std::vector<Point_3> dual_vertices;
+    Point_3 new_point;
     for (std::vector<Vertex_handle>::iterator vit = vts.begin();
 	 vit != vts.end(); ++vit) {
-      if (*vit == const_vertex) continue;
-      std::vector<Point_3> dual_vertices;
-      periodic_triangulation.dual(*vit,std::back_inserter(dual_vertices));
-      Point_3 new_point = (two_dimensional ?
-	  compute_barycenter_2D(dual_vertices) :
-	  compute_barycenter(dual_vertices) );
-      dual_vertices.clear();
+      if (two_dimensional) {
+	dual_vertices.clear();
+	periodic_triangulation.dual(*vit,std::back_inserter(dual_vertices));
+	new_point = compute_barycenter_2D(dual_vertices);
+      } else {
+	new_point = periodic_triangulation.dual_centroid(*vit);
+      }
       points.push_back(new_point);
     }
     periodic_triangulation.clear();
-    const_vertex = periodic_triangulation.insert(const_vertex->point());
     periodic_triangulation.insert(points.begin(),points.end());
   }
 
-  Point_3 compute_barycenter(std::vector<Point_3> dual_pts) const {
-    FT x(0), y(0), z(0);
-    unsigned int i;
-    for ( i=0 ; i<dual_pts.size() ; i++) {
-      x += dual_pts[i].x();
-      y += dual_pts[i].y();
-      z += dual_pts[i].z();
-    }
-    x /= i;
-    y /= i;
-    z /= i;
-
-    x = (x < -1 ? x+2 : (x >= 1 ? x-2 : x));
-    y = (y < -1 ? y+2 : (y >= 1 ? y-2 : y));
-    z = (z < -1 ? z+2 : (z >= 1 ? z-2 : z));
-  
-    return Point_3(x,y,z);
-  }
-
   Point_3 compute_barycenter_2D(std::vector<Point_3> dual_pts) const {
-    FT x(0), y(0);
-    unsigned int i;
-    for ( i=0 ; i<dual_pts.size() ; i++) {
-      x += dual_pts[i].x();
-      y += dual_pts[i].y();
+    T2 t;
+    for (int i=0 ; i<dual_pts.size() ; i++)
+      t.insert(Point_2(dual_pts[i].x(),dual_pts[i].y()));
+    FT area(0);
+    FT x(0),y(0);
+    for (T2::Finite_faces_iterator ffit = t.finite_faces_begin() ;
+	 ffit != t.finite_faces_end() ; ++ffit) {
+      Triangle_2 tri = t.triangle(ffit);
+      FT triarea = tri.area();
+      Point_2 tricentr = centroid(tri);
+      area += triarea;
+      x += triarea * tricentr.x();
+      y += triarea * tricentr.y();
     }
-    x /= i;
-    y /= i;
 
+    x /= area;
+    y /= area;
     x = (x < -1 ? x+2 : (x >= 1 ? x-2 : x));
     y = (y < -1 ? y+2 : (y >= 1 ? y-2 : y));
   

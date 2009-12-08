@@ -4,6 +4,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
+#include <CGAL/Triangulation_2.h>
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Timer.h>
@@ -58,6 +59,10 @@ typedef P3DT3::Periodic_point_iterator Periodic_point_iterator;
 typedef P3DT3::Periodic_triangle_iterator Periodic_triangle_iterator;
 
 typedef P3DT3::Periodic_tetrahedron_iterator Periodic_tetrahedron_iterator;
+
+typedef CGAL::Triangulation_2<EPIC> T2;
+typedef EPIC::Point_2 Point_2;
+typedef EPIC::Triangle_2 Triangle_2;
 
 typedef CGAL::Timer Timer;
 
