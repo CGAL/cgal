@@ -596,11 +596,11 @@ public:
     z /= ( 4 * vol );
 
     Iso_cuboid d = domain();
-    x = (x < -d.xmin() ? x+d.xmax()-d.xmin() 
+    x = (x < d.xmin() ? x+d.xmax()-d.xmin() 
 	: (x >= d.xmax() ? x-d.xmax()+d.xmin() : x));
-    y = (y < -d.ymin() ? y+d.ymax()-d.ymin() 
+    y = (y < d.ymin() ? y+d.ymax()-d.ymin() 
 	: (y >= d.ymax() ? y-d.ymax()+d.ymin() : y));
-    z = (z < -d.zmin() ? z+d.zmax()-d.zmin() 
+    z = (z < d.zmin() ? z+d.zmax()-d.zmin() 
 	: (z >= d.zmax() ? z-d.zmax()+d.zmin() : z));
 
     CGAL_triangulation_postcondition((d.xmin()<=x)&&(x<d.xmax()));

@@ -41,7 +41,7 @@ MainWindow::connectActions()
   QObject::connect(this->actionStep, SIGNAL(triggered()),
                    this, SLOT(lloydStep()));
 
-  QObject::connect(this->actionStop, SIGNAL(toggled(bool)),
+  QObject::connect(this->actionPlay, SIGNAL(toggled(bool)),
                    this, SLOT(togglePause(bool)));
 
   QObject::connect(this->actionShow_8_Copies, SIGNAL(toggled(bool)),
@@ -57,12 +57,11 @@ MainWindow::connectActions()
 void
 MainWindow::togglePause(bool p)
 {
-  if (p)
-    qtimer->stop();
-  else {
+  if (p) {
     int speed = (100-(speedSlider->value()))*100;
     qtimer->start(speed);
   }
+  else qtimer->stop();
 }
 
 void
@@ -173,8 +172,22 @@ MainWindow::newPoints(int n)
     } else 
       scene.points.push_back(*in_cube++);
 
-  scene.periodic_triangulation.set_domain(Iso_cuboid_3(-1,-1,-1,1,1,1));
+  Iso_cuboid_3 dom(-1,-1,-1,1,1,1);
+  scene.periodic_triangulation.set_domain(dom);
   scene.periodic_triangulation.insert(scene.points.begin(), scene.points.end());
+
+  FT cx(0),cy(0),cz(0);
+  for (int i=0 ; i<8 ; i++) {
+    cx += dom[i].x();
+    cy += dom[i].y();
+    cy += dom[i].y();
+  }
+  qglviewer::Vec center(cx/8.,cy/8.,cz/8.);
+  viewer->setSceneCenter(center);
+  viewer->setSceneRadius(std::sqrt(
+	  ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
+	  + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
+	  + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))));
 
   speedSlider->setRange(0,100);
   speedSlider->setSliderPosition(100);

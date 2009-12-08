@@ -97,7 +97,7 @@
      <string>Control</string>
     </property>
     <addaction name="actionStep" />
-    <addaction name="actionStop" />
+    <addaction name="actionPlay" />
     <addaction name="separator" />
     <addaction name="actionShow_8_Copies" />
     <addaction name="action2D_version" />
@@ -121,7 +121,7 @@
    <addaction name="actionSave_points" />
    <addaction name="separator" />
    <addaction name="actionStep" />
-   <addaction name="actionStop" />
+   <addaction name="actionPlay" />
    <addaction name="separator" />
    <addaction name="actionShow_8_Copies" />
    <addaction name="action2D_version" />
@@ -151,17 +151,17 @@
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="actionStop" >
+  <action name="actionPlay" >
    <property name="checkable" >
     <bool>true</bool>
    </property>
    <property name="checked" >
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon" >
     <iconset resource="Periodic_Lloyd_3.qrc" >
-     <normaloff>:/Periodic_Lloyd_3/icons/pause.png</normaloff>
-     <normalon>:/Periodic_Lloyd_3/icons/play.png</normalon>:/Periodic_Lloyd_3/icons/pause.png</iconset>
+     <normaloff>:/Periodic_Lloyd_3/icons/play.png</normaloff>
+     <normalon>:/Periodic_Lloyd_3/icons/pause.png</normalon>:/Periodic_Lloyd_3/icons/play.png</iconset>
    </property>
    <property name="text" >
     <string>Stop</string>
