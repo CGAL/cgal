@@ -215,6 +215,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(orient_soup_plugin Polyhedron_demo_orient_soup_plugin)
   target_link_libraries(orient_soup_plugin polygon_soup)
 
+  polyhedron_demo_plugin(triangulate_facets_plugin Polyhedron_demo_triangulate_facets_plugin)
+  target_link_libraries(triangulate_facets_plugin scene_polyhedron_item)
+
   polyhedron_demo_plugin(off_to_nef_plugin Polyhedron_demo_off_to_nef_plugin EXCLUDE_FROM_ALL)
   target_link_libraries(off_to_nef_plugin scene_nef_polyhedron_item)
 
