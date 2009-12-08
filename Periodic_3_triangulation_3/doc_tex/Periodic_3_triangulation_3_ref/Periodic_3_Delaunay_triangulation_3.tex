@@ -284,6 +284,11 @@ dual(Vertex_handle v, OutputIterator pts) const;}
 \ccMethod{template <class Stream> Stream & draw_dual(Stream & os);}
 {Sends the set of duals to all the facets of \ccVar\ into \ccc{os}.}
 
+\ccMethod{Geom_traits::FT dual_volume(Vertex_handle v) const;}
+{Returns the volume of the Voronoi cell dual to \ccc{v}.}
+
+\ccMethod{Point dual_centroid(Vertex_handle v) const;}
+{Returns the cetroid of the Voronoi cell dual to \ccc{v}.}
 
 \begin{ccAdvanced}
 \ccHeading{Checking}
