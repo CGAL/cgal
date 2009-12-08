@@ -48,14 +48,46 @@ struct Draw_circular_X_monotone_curve
     
     Converter convert ;
     
-    Linear_point lS( CGAL::to_double(curve.source().x()), CGAL::to_double(curve.source().y()) ) ;
-    Linear_point lT( CGAL::to_double(curve.target().x()), CGAL::to_double(curve.target().y()) ) ;
-    
-    if ( aIdx == 0 )
-         aPath.moveTo( convert( lS ) ) ;
-    else aPath.lineTo( convert( lS ) ) ;
-    
-    aPath.lineTo( convert( lT ) ) ;
+    if ( curve.is_circular() )
+    {
+      typename Circular_X_monotone_curve::Circle_2        const& circ   = curve.supporting_circle();
+      typename Circular_X_monotone_curve::Kernel::Point_2 const& center = circ.center();
+      typename Circular_X_monotone_curve::Point_2         const& source = curve.source();
+      typename Circular_X_monotone_curve::Point_2         const& target = curve.target();
+
+      double asource = std::atan2( -to_double(source.y() - center.y())
+                                 ,  to_double(source.x() - center.x())
+                                 ); 
+
+      double atarget = std::atan2( -to_double(target.y() - center.y())
+                                 ,  to_double(target.x() - center.x())
+                                 );
+
+      std::swap(asource, atarget);
+
+      double aspan = atarget - asource;
+
+      if( aspan < 0.0)
+        aspan += 2 * CGAL_PI;
+
+      const double coeff = 180.0/CGAL_PI;
+
+      Orientation lO = curve.orientation() ;
+
+      const double sign = lO == COUNTERCLOCKWISE ? +1.0 : -1.0 ;
+
+      aPath.moveTo(CGAL::to_double(source.x()), CGAL::to_double(source.y()) ) ;
+
+      aPath.arcTo(convert(circ.bbox()), asource * coeff, aspan * coeff * sign );    
+    }
+    else
+    {
+      Linear_point lS( CGAL::to_double(curve.source().x()), CGAL::to_double(curve.source().y()) ) ;
+      Linear_point lT( CGAL::to_double(curve.target().x()), CGAL::to_double(curve.target().y()) ) ;
+      
+      aPath.moveTo( convert( lS ) ) ;
+      aPath.lineTo( convert( lT ) ) ;
+    }
   }
 } ;
 
