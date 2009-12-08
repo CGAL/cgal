@@ -126,23 +126,24 @@ Viewer::gl_draw_surface()
       FT ty = dual.target().y();
 
       ::glVertex3d(sx,sy,sz); ::glVertex3d(tx,ty,tz);
+      Iso_cuboid_3 d = scene->periodic_triangulation.domain();
       if (scene->eight_copies) {
 	::glColor3f(0.69f, 0.77f, 0.87f);
-	::glVertex3d(sx+0.,sy+2.,sz+0.);
-	::glVertex3d(tx+0.,ty+2.,tz+0.);
-	::glVertex3d(sx+2.,sy+0.,sz+0.);
-	::glVertex3d(tx+2.,ty+0.,tz+0.);
-	::glVertex3d(sx+2.,sy+2.,sz+0.);
-	::glVertex3d(tx+2.,ty+2.,tz+0.);
+	::glVertex3d(sx+0.,sy+d.ymax()-d.ymin(),sz+0.);
+	::glVertex3d(tx+0.,ty+d.ymax()-d.ymin(),tz+0.);
+	::glVertex3d(sx+d.xmax()-d.xmin(),sy+0.,sz+0.);
+	::glVertex3d(tx+d.xmax()-d.xmin(),ty+0.,tz+0.);
+	::glVertex3d(sx+d.xmax()-d.xmin(),sy+d.ymax()-d.ymin(),sz+0.);
+	::glVertex3d(tx+d.xmax()-d.xmin(),ty+d.ymax()-d.ymin(),tz+0.);
 	if (!scene->two_dimensional) {
-	  ::glVertex3d(sx+0.,sy+0.,sz+2.);
-	  ::glVertex3d(tx+0.,ty+0.,tz+2.);
-	  ::glVertex3d(sx+0.,sy+2.,sz+2.);
-	  ::glVertex3d(tx+0.,ty+2.,tz+2.);
-	  ::glVertex3d(sx+2.,sy+0.,sz+2.);
-	  ::glVertex3d(tx+2.,ty+0.,tz+2.);
-	  ::glVertex3d(sx+2.,sy+2.,sz+2.);
-	  ::glVertex3d(tx+2.,ty+2.,tz+2.);
+	  ::glVertex3d(sx+0.,sy+0.,sz+d.zmax()-d.zmin());
+	  ::glVertex3d(tx+0.,ty+0.,tz+d.zmax()-d.zmin());
+	  ::glVertex3d(sx+0.,sy+d.ymax()-d.ymin(),sz+d.zmax()-d.zmin());
+	  ::glVertex3d(tx+0.,ty+d.ymax()-d.ymin(),tz+d.zmax()-d.zmin());
+	  ::glVertex3d(sx+d.xmax()-d.xmin(),sy+0.,sz+d.zmax()-d.zmin());
+	  ::glVertex3d(tx+d.xmax()-d.xmin(),ty+0.,tz+d.zmax()-d.zmin());
+	  ::glVertex3d(sx+d.xmax()-d.xmin(),sy+d.ymax()-d.ymin(),sz+d.zmax()-d.zmin());
+	  ::glVertex3d(tx+d.xmax()-d.xmin(),ty+d.ymax()-d.ymin(),tz+d.zmax()-d.zmin());
 	}
 	::glColor3f(0.27f, 0.51f, 0.7f);
 

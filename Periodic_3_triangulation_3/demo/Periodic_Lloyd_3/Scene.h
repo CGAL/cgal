@@ -55,8 +55,15 @@ struct Scene {
 
     x /= area;
     y /= area;
-    x = (x < -1 ? x+2 : (x >= 1 ? x-2 : x));
-    y = (y < -1 ? y+2 : (y >= 1 ? y-2 : y));
+
+    Iso_cuboid_3 d = periodic_triangulation.domain();
+    x = (x < -d.xmin() ? x+d.xmax()-d.xmin() 
+	: (x >= d.xmax() ? x-d.xmax()+d.xmin() : x));
+    y = (y < -d.ymin() ? y+d.ymax()-d.ymin() 
+	: (y >= d.ymax() ? y-d.ymax()+d.ymin() : y));
+
+    CGAL_triangulation_postcondition((d.xmin()<=x)&&(x<d.xmax()));
+    CGAL_triangulation_postcondition((d.ymin()<=y)&&(y<d.ymax()));
   
     return Point_3(x,y,0);
   }

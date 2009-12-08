@@ -3,6 +3,7 @@
 
 #include "ui_MainWindow.h"
 #include <CGAL/Qt/DemosMainWindow.h>
+#include <QFileDialog>
 #include <QInputDialog>
 #include <QSlider>
 #include <QTimer>
@@ -23,6 +24,8 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
 public slots:
   void newPoints(int i);
   void newPointSet();
+  void loadPoints();
+  void savePoints();
   void speedChanged(int i);
   void togglePause(bool p);
   void toggle8Copies(bool on);

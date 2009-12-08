@@ -23,6 +23,12 @@ MainWindow::connectActions()
   QObject::connect(this->actionNew_Point_Set, SIGNAL(triggered()), 
 		   this, SLOT(newPointSet()));
 
+  QObject::connect(this->actionLoad_points, SIGNAL(triggered()), 
+		   this, SLOT(loadPoints()));
+
+  QObject::connect(this->actionSave_points, SIGNAL(triggered()), 
+		   this, SLOT(savePoints()));
+
   QObject::connect(this->speedSlider, SIGNAL(valueChanged(int)), 
 		   this, SLOT(speedChanged(int)));
 
@@ -84,6 +90,58 @@ MainWindow::newPointSet()
   if (ok) newPoints(numberOfPoints);
 }
 
+void
+MainWindow::loadPoints()
+{
+  QString fileName = QFileDialog
+    ::getOpenFileName(this, tr("Open point set"),
+	".", tr("All files (*)"));
+  if(fileName.isEmpty()) return;
+  
+  std::ifstream ifs(fileName.toAscii().data() );
+  scene.points.clear();
+  Iso_cuboid_3 dom;
+  ifs >> dom;
+  std::copy(std::istream_iterator<Point_3>(ifs), 
+      std::istream_iterator<Point_3>(),
+      std::back_inserter(scene.points));
+
+  scene.periodic_triangulation.set_domain(dom);
+  scene.periodic_triangulation.insert(scene.points.begin(), scene.points.end());
+
+  FT cx(0),cy(0),cz(0);
+  for (int i=0 ; i<8 ; i++) {
+    cx += dom[i].x();
+    cy += dom[i].y();
+    cy += dom[i].y();
+  }
+  qglviewer::Vec center(cx/8.,cy/8.,cz/8.);
+  viewer->setSceneCenter(center);
+  viewer->setSceneRadius(std::sqrt(
+	  ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
+	  + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))
+	  + ((dom.xmax()-dom.xmin())*(dom.xmax()-dom.xmin()))));
+
+  speedSlider->setRange(0,100);
+  speedSlider->setSliderPosition(100);
+
+  emit (sceneChanged()); 
+}
+
+void
+MainWindow::savePoints()
+{
+  QString fileName = QFileDialog
+    ::getSaveFileName(this, tr("Save point set"),
+	".", tr("*.pts"));
+  if(fileName.isEmpty()) return;
+  
+  std::ofstream ofs(fileName.toAscii().data() );
+  ofs << scene.periodic_triangulation.domain() << '\n';
+  for (std::list<Point_3>::iterator pit = scene.points.begin() ;
+       pit != scene.points.end() ; ++pit) ofs << *pit << '\n';
+}
+
 void MainWindow::lloydStep() {
   scene.lloyd_step();
   viewer->updateGL();
@@ -122,7 +180,6 @@ MainWindow::newPoints(int n)
   speedSlider->setSliderPosition(100);
 
   emit (sceneChanged()); 
-
 }
 
 

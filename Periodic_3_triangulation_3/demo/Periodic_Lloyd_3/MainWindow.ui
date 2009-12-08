@@ -85,6 +85,8 @@
      <string>File</string>
     </property>
     <addaction name="actionNew_Point_Set" />
+    <addaction name="actionLoad_points" />
+    <addaction name="actionSave_points" />
     <addaction name="separator" />
     <addaction name="actionRender_Video" />
     <addaction name="separator" />
@@ -115,6 +117,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionNew_Point_Set" />
+   <addaction name="actionLoad_points" />
+   <addaction name="actionSave_points" />
    <addaction name="separator" />
    <addaction name="actionStep" />
    <addaction name="actionStop" />
@@ -206,6 +210,30 @@
    </property>
    <property name="shortcut" >
     <string>Return, Enter</string>
+   </property>
+  </action>
+  <action name="actionLoad_points" >
+   <property name="icon" >
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/fileOpen.png</normaloff>:/Periodic_Lloyd_3/icons/fileOpen.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Load points</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave_points" >
+   <property name="icon" >
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/fileSave.png</normaloff>:/Periodic_Lloyd_3/icons/fileSave.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Save points</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>

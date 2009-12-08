@@ -4,6 +4,8 @@
     <file>about_CGAL.html</file>
   </qresource>
   <qresource prefix="/Periodic_Lloyd_3" >
+    <file>icons/fileSave.png</file>
+    <file>icons/fileOpen.png</file>
     <file>icons/fileNew.png</file>
     <file>icons/pause.png</file>
     <file>icons/planar.png</file>
