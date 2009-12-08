@@ -415,7 +415,7 @@ _Bezier_cache<NtTraits>::get_intersections
 
   // We should now have the same number of s-values and t-values, and we have
   // to pair them together. 
-  CGAL_assertion (s_vals.size() == s_vals.size());
+  CGAL_assertion (s_vals.size() == t_vals.size());
 
   // Compute all points on (X_1, Y_1) that match an s-value from the list.
   typename Parameter_list::iterator  s_it;
