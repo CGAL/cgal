@@ -82,7 +82,7 @@ struct Draw_circular_X_monotone_curve
 
       double dasource = asource * coeff ;
 
-      double daspan  = aspan * coeff * sign ;
+      double daspan  = aspan * coeff ;
 
       aPath.arcTo(bbox , dasource, daspan );    
     }
