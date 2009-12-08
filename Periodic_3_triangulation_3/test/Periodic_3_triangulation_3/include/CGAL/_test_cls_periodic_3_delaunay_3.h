@@ -103,6 +103,8 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
 
   // Create a triangulation for testing
   P3T3 PT(pts_rnd10.begin(), pts_rnd10.end(), Iso_cuboid(-1,-1,-1,1,1,1));
+  assert(PT.number_of_vertices() == 10);
+  assert(PT.is_valid());
 
   // Creation
   std::cout << "Creation:" << std::endl;
@@ -378,6 +380,30 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   PT.draw_dual(vor3);
   std::stringstream vor1;
   PT1.draw_dual(vor1);
+
+  {
+    vh = PT.insert(Point(0,0,0));
+    FT vol = PT.dual_volume(vh);
+    Point centr = PT.dual_centroid(vh);
+    
+    // Volume: 0.739304
+    // Centroid: (-0.146008, -0.0334585, -0.150329)
+    assert((0.7393 < vol) && (vol < 0.7394));
+    assert((-0.1461 < centr.x()) && (centr.x() < -0.1460));
+    assert((-0.0335 < centr.y()) && (centr.y() < -0.0334));
+    assert((-0.1504 < centr.z()) && (centr.z() < -0.1503));
+
+    vh = PT1.insert(Point(0,0,0));
+    vol = PT1.dual_volume(vh);
+    centr = PT1.dual_centroid(vh);
+
+    // Volume: 0.0877881
+    // Centroid: (-0.0400664, -0.0419085, 0.019252)
+    assert((0.0877 < vol) && (vol < 0.0878));
+    assert((-0.0401 < centr.x()) && (centr.x() < -0.0400));
+    assert((-0.0420 < centr.y()) && (centr.y() < -0.0419));
+    assert(( 0.0192 < centr.z()) && (centr.z() <  0.0193));
+  }
 
   std::cout << "Additional testing of degenerate cases" << std::endl;
   

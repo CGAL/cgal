@@ -60,6 +60,7 @@ public:
 
   ///Compatibility typedef:
   typedef Geometric_traits                      Geom_traits;
+  typedef typename Gt::FT                       FT;
 
   typedef typename Gt::Point_3                  Point;
   typedef typename Gt::Segment_3                Segment;
@@ -501,7 +502,7 @@ public:
   }
 
   template <class Stream>
-  Stream& draw_dual(Stream& os) {
+  Stream& draw_dual(Stream& os) const {
     CGAL_triangulation_assertion_code( unsigned int i = 0; )
     for (Facet_iterator fit = facets_begin(), end = facets_end();
 	 fit != end; ++fit) {
@@ -513,6 +514,96 @@ public:
     }
     CGAL_triangulation_assertion( i == number_of_facets() );
     return os;
+  }
+
+  /// Volume computations
+
+  // Note: Polygon area computation requires to evaluate square roots
+  // and thus cannot be done without changing the Traits concept.
+
+  FT dual_volume(Vertex_handle v) const {
+    std::list<Edge> edges;
+    incident_edges(v, std::back_inserter(edges));
+
+    FT vol(0);
+    for (typename std::list<Edge>::iterator eit = edges.begin() ; 
+	 eit != edges.end() ; ++eit) {
+
+      // compute the dual of the edge *eit but handle the translations
+      // with respect to the dual of v. That is why we cannot use one
+      // of the existing dual functions here.
+      Facet_circulator fstart = incident_facets(*eit);
+      Facet_circulator fcit = fstart;
+      std::vector<Point> pts;
+      do {
+	// TODO: possible speed-up by caching the circumcenters
+	Point dual_orig = periodic_circumcenter(fcit->first).first;
+	int idx = fcit->first->index(v);
+	Offset off = periodic_point(fcit->first,idx).second;
+	pts.push_back(point(std::make_pair(dual_orig,-off)));
+	++fcit;
+      } while (fcit != fstart);
+
+      Point orig(0,0,0);
+      for (int i=1 ; i<pts.size()-1 ; i++) 
+	vol += Tetrahedron(orig,pts[0],pts[i],pts[i+1]).volume();
+    }
+    return vol;
+  }
+
+  /// Centroid computations
+
+  // Note: Centroid computation for polygons requires to evaluate
+  // square roots and thus cannot be done without changing the
+  // Traits concept.
+
+  Point dual_centroid(Vertex_handle v) const {
+    std::list<Edge> edges;
+    incident_edges(v, std::back_inserter(edges));
+
+    FT vol(0);
+    FT x(0), y(0), z(0);
+    for (typename std::list<Edge>::iterator eit = edges.begin() ; 
+	 eit != edges.end() ; ++eit) {
+
+      // compute the dual of the edge *eit but handle the translations
+      // with respect to the dual of v. That is why we cannot use one
+      // of the existing dual functions here.
+      Facet_circulator fstart = incident_facets(*eit);
+      Facet_circulator fcit = fstart;
+      std::vector<Point> pts;
+      do {
+	// TODO: possible speed-up by caching the circumcenters
+	Point dual_orig = periodic_circumcenter(fcit->first).first;
+	int idx = fcit->first->index(v);
+	Offset off = periodic_point(fcit->first,idx).second;
+	pts.push_back(point(std::make_pair(dual_orig,-off)));
+	++fcit;
+      } while (fcit != fstart);
+
+      Point orig(0,0,0);
+      FT tetvol;
+      for (int i=1 ; i<pts.size()-1 ; i++) {
+	tetvol = Tetrahedron(orig,pts[0],pts[i],pts[i+1]).volume();
+	x += (pts[0].x() + pts[i].x() + pts[i+1].x()) * tetvol;
+	y += (pts[0].y() + pts[i].y() + pts[i+1].y()) * tetvol;
+	z += (pts[0].z() + pts[i].z() + pts[i+1].z()) * tetvol;
+	vol += tetvol;
+      }
+    }
+    x /= ( 4 * vol );
+    y /= ( 4 * vol );
+    z /= ( 4 * vol );
+
+    x = (x < -1 ? x+2 : (x >= 1 ? x-2 : x));
+    y = (y < -1 ? y+2 : (y >= 1 ? y-2 : y));
+    z = (z < -1 ? z+2 : (z >= 1 ? z-2 : z));
+
+    CGAL_triangulation_postcondition((domain().xmin()<=x)&&(x<domain().xmax()));
+    CGAL_triangulation_postcondition((domain().ymin()<=y)&&(y<domain().ymax()));
+    CGAL_triangulation_postcondition((domain().zmin()<=z)&&(z<domain().zmax()));
+
+    return Point(x,y,z);
   }
   //@}
   
@@ -950,13 +1041,25 @@ is_valid(Cell_handle ch, bool verbose, int level) const {
     for (int i=-1; i<=1; i++)
       for (int j=-1; j<=1; j++)
 	for (int k=-1; k<=1; k++) {
-	  if (_side_of_sphere(ch, vit->point(), Offset(i,j,k))
+	  if (periodic_point(ch,0) == std::make_pair(periodic_point(vit).first,
+		  periodic_point(vit).second+Offset(i,j,k))
+	  || periodic_point(ch,1) == std::make_pair(periodic_point(vit).first,
+		  periodic_point(vit).second+Offset(i,j,k))
+          || periodic_point(ch,2) == std::make_pair(periodic_point(vit).first,
+		  periodic_point(vit).second+Offset(i,j,k))
+	  || periodic_point(ch,3) == std::make_pair(periodic_point(vit).first,
+                  periodic_point(vit).second+Offset(i,j,k)) )
+	    continue;
+	  if (_side_of_sphere(ch, periodic_point(vit).first,
+		  periodic_point(vit).second+Offset(i,j,k),true)
 	      != ON_UNBOUNDED_SIDE) {
 	    error = true;
 	    if (verbose) {
 	      std::cerr << "Delaunay invalid cell" << std::endl;
-	      for (int i=0; i<4; i++ )
-		std::cerr << ch->vertex(i)->point() << ", ";
+	      for (int i=0; i<4; i++ ) {
+		Periodic_point pp = periodic_point(ch,i);
+		std::cerr <<"("<<pp.first <<","<<pp.second<< "), ";
+	      }
 	      std::cerr << std::endl;
 	    }
 	  }
