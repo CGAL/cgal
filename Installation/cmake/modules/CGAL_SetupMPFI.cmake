@@ -10,14 +10,15 @@ if( NOT CGAL_MPFI_SETUP )
 
       include(CGAL_Macros)
 
-      message( STATUS "MPFI include:    ${MPFI_INCLUDE_DIR}" )
-      message( STATUS "MPFI libraries:  ${MPFI_LIBRARIES}" )
+      message( STATUS "MPFI include:      ${MPFI_INCLUDE_DIR}" )
+      message( STATUS "MPFI libraries:    ${MPFI_LIBRARIES}" )
+      message( STATUS "MPFI definitions:  ${MPFI_DEFINITIONS}" )
 
       set ( CGAL_USE_MPFI 1 )
-      add_definitions ( "-DCGAL_USE_MPFI" )
 
       add_to_cached_list(CGAL_3RD_PARTY_INCLUDE_DIRS   ${MPFI_INCLUDE_DIR}   )
       add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES_DIRS ${MPFI_LIBRARIES_DIR} )
+      add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS    ${MPFI_DEFINITIONS}   )
 
       if( NOT MSVC )
         add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES ${MPFI_LIBRARIES} )

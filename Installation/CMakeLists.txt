@@ -269,6 +269,7 @@ endforeach()
 
 add_config_flag( CGAL_USE_GMP )
 add_config_flag( CGAL_USE_MPFR )
+add_config_flag( CGAL_USE_MPFI )
 add_config_flag( CGAL_USE_GMPXX )
 add_config_flag( CGAL_USE_LEDA )
 
