@@ -595,13 +595,17 @@ public:
     y /= ( 4 * vol );
     z /= ( 4 * vol );
 
-    x = (x < -1 ? x+2 : (x >= 1 ? x-2 : x));
-    y = (y < -1 ? y+2 : (y >= 1 ? y-2 : y));
-    z = (z < -1 ? z+2 : (z >= 1 ? z-2 : z));
+    Iso_cuboid d = domain();
+    x = (x < -d.xmin() ? x+d.xmax()-d.xmin() 
+	: (x >= d.xmax() ? x-d.xmax()+d.xmin() : x));
+    y = (y < -d.ymin() ? y+d.ymax()-d.ymin() 
+	: (y >= d.ymax() ? y-d.ymax()+d.ymin() : y));
+    z = (z < -d.zmin() ? z+d.zmax()-d.zmin() 
+	: (z >= d.zmax() ? z-d.zmax()+d.zmin() : z));
 
-    CGAL_triangulation_postcondition((domain().xmin()<=x)&&(x<domain().xmax()));
-    CGAL_triangulation_postcondition((domain().ymin()<=y)&&(y<domain().ymax()));
-    CGAL_triangulation_postcondition((domain().zmin()<=z)&&(z<domain().zmax()));
+    CGAL_triangulation_postcondition((d.xmin()<=x)&&(x<d.xmax()));
+    CGAL_triangulation_postcondition((d.ymin()<=y)&&(y<d.ymax()));
+    CGAL_triangulation_postcondition((d.zmin()<=z)&&(z<d.zmax()));
 
     return Point(x,y,z);
   }
