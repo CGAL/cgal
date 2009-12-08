@@ -1300,6 +1300,7 @@ Installation/cmake/modules/CGAL_SetupFlags.cmake -text
 Installation/cmake/modules/CGAL_SetupGMP.cmake -text
 Installation/cmake/modules/CGAL_SetupGMPXX.cmake -text
 Installation/cmake/modules/CGAL_SetupLEDA.cmake -text
+Installation/cmake/modules/CGAL_SetupMPFI.cmake -text
 Installation/cmake/modules/CGAL_UseBLAS.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
 Installation/cmake/modules/CGAL_UseMKL.cmake -text
@@ -1317,6 +1318,7 @@ Installation/cmake/modules/FindIPE.cmake -text
 Installation/cmake/modules/FindLAPACK.cmake -text
 Installation/cmake/modules/FindLEDA.cmake -text
 Installation/cmake/modules/FindMKL.cmake -text
+Installation/cmake/modules/FindMPFI.cmake -text
 Installation/cmake/modules/FindMPFR.cmake -text
 Installation/cmake/modules/FindOpenGL.cmake -text
 Installation/cmake/modules/FindPackageMessage.cmake -text
@@ -2232,8 +2234,6 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Nef_S2/include/CGAL/IO/Nef_polyhedron_iostream_S2.h -text
-Number_types/cmake/modules/CGAL_SetupMPFI.cmake -text
-Number_types/cmake/modules/FindMPFI.cmake -text
 Number_types/doc_tex/NumberTypeSupport/illustration.png -text
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfi.tex -text
