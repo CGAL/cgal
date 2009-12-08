@@ -55,15 +55,15 @@ struct Draw_circular_X_monotone_curve
       typename Circular_X_monotone_curve::Point_2         const& source = curve.source();
       typename Circular_X_monotone_curve::Point_2         const& target = curve.target();
 
-      double asource = std::atan2( -to_double(source.y() - center.y())
-                                 ,  to_double(source.x() - center.x())
-                                 ); 
+      double sx = to_double(source.x());
+      double sy = to_double(source.y());
+      double tx = to_double(target.x());
+      double ty = to_double(target.y());
+      double cx = to_double(center.x());
+      double cy = to_double(center.y());
 
-      double atarget = std::atan2( -to_double(target.y() - center.y())
-                                 ,  to_double(target.x() - center.x())
-                                 );
-
-      std::swap(asource, atarget);
+      double asource = std::atan2( (sy-cy), sx-cx ); 
+      double atarget = std::atan2( (ty-cy), tx-cx );
 
       double aspan = atarget - asource;
 
@@ -76,9 +76,15 @@ struct Draw_circular_X_monotone_curve
 
       const double sign = lO == COUNTERCLOCKWISE ? +1.0 : -1.0 ;
 
-      aPath.moveTo(CGAL::to_double(source.x()), CGAL::to_double(source.y()) ) ;
+      aPath.moveTo(sx,sy) ;
 
-      aPath.arcTo(convert(circ.bbox()), asource * coeff, aspan * coeff * sign );    
+      QRectF bbox = convert(circ.bbox()) ;
+
+      double dasource = asource * coeff ;
+
+      double daspan  = aspan * coeff * sign ;
+
+      aPath.arcTo(bbox , dasource, daspan );    
     }
     else
     {
