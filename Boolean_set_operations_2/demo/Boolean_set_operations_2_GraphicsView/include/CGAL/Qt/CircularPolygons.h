@@ -62,36 +62,61 @@ struct Draw_circular_X_monotone_curve
       double cx = to_double(center.x());
       double cy = to_double(center.y());
 
-      double asource = std::atan2( (sy-cy), sx-cx ); 
-      double atarget = std::atan2( (ty-cy), tx-cx );
+      bool degenerate = ( sx == tx ) && ( sy == ty ) ;
 
-      double aspan = atarget - asource;
+      if ( !degenerate )
+      {
+        double sdy = sy - cy ;
+        double sdx = sx - cx ;
+        double tdy = ty - cy ;
+        double tdx = tx - cx ;
 
-      if( aspan < 0.0)
-        aspan += 2 * CGAL_PI;
+        double asource = std::atan2(sdy, sdx ); 
+        double atarget = std::atan2(tdy, tdx );
 
-      const double coeff = 180.0/CGAL_PI;
+        if( asource < 0.0)
+          asource += 2 * CGAL_PI;
 
-      Orientation lO = curve.orientation() ;
+        if( atarget <= 0.0)
+          atarget += 2 * CGAL_PI;
 
-      const double sign = lO == COUNTERCLOCKWISE ? +1.0 : -1.0 ;
+        if ( atarget  < asource )
+          atarget += 2 * CGAL_PI;
 
-      aPath.moveTo(sx,sy) ;
+        double aspan = atarget - asource ;  
 
-      QRectF bbox = convert(circ.bbox()) ;
+        // This is to prevent the approximations to turn a tiny arc into a full circle by
+        // inverting the relative ordering of the start, target angles.
+        // We use the fact that an X-monotone arc can never span an angle greater than PI.
+        if ( aspan < 3.0 * CGAL_PI / 2.0 )
+        {
+          const double to_deg = 180.0/CGAL_PI;
 
-      double dasource = asource * coeff ;
+          Orientation lO = curve.orientation() ;
 
-      double daspan  = aspan * coeff ;
+          if ( aIdx == 0 ) 
+               aPath.moveTo(sx,sy) ;
+          else aPath.lineTo(sx,sy) ;
 
-      aPath.arcTo(bbox , dasource, daspan );    
+          QRectF bbox = convert(circ.bbox()) ;
+
+          double dasource = std::atan2(-sdy, sdx ) * to_deg ;
+
+          double daspan  = aspan * to_deg * ( lO == COUNTERCLOCKWISE ? -1.0 : +1.0) ;
+
+          aPath.arcTo(bbox , dasource, daspan );    
+        }
+      }
     }
     else
     {
       Linear_point lS( CGAL::to_double(curve.source().x()), CGAL::to_double(curve.source().y()) ) ;
       Linear_point lT( CGAL::to_double(curve.target().x()), CGAL::to_double(curve.target().y()) ) ;
       
-      aPath.moveTo( convert( lS ) ) ;
+      if ( aIdx == 0 ) 
+           aPath.moveTo( convert( lS ) ) ;
+      else aPath.lineTo( convert( lS ) ) ;
+
       aPath.lineTo( convert( lT ) ) ;
     }
   }
