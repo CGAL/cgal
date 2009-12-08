@@ -10,8 +10,23 @@
 include(CGAL_FindPackageHandleStandardArgs)
 include(CGAL_GeneratorSpecificSettings)
 
+if(GMP_INCLUDE_DIR)
+  set(GMP_in_cache TRUE)
+else()
+  set(GMP_in_cache FALSE)
+endif()
+if( CGAL_AUTO_LINK_ENABLED )
+  if(NOT GMP_LIBRARIES_DIR)
+    set(GMP_in_cache FALSE)
+  endif()
+else()
+  if(NOT GMP_LIBRARIES)
+    set(GMP_in_cache FALSE)
+  endif()
+endif()
+
 # Is it already configured?
-if (GMP_INCLUDE_DIR AND GMP_LIBRARIES_DIR ) 
+if (GMP_in_cache)
    
   set(GMP_FOUND TRUE)
   
@@ -55,6 +70,10 @@ else()
     include( GMPConfig OPTIONAL )
   endif()
   
-  find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_INCLUDE_DIR GMP_LIBRARIES_DIR)
+  if(CGAL_AUTO_LINK_ENABLED)
+    find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_LIBRARIES_DIR GMP_INCLUDE_DIR)
+  else()
+    find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_LIBRARIES GMP_INCLUDE_DIR)
+  endif()
   
 endif()

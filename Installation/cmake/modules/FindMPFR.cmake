@@ -10,8 +10,23 @@
 include(CGAL_FindPackageHandleStandardArgs)
 include(CGAL_GeneratorSpecificSettings)
 
+if(MPFR_INCLUDE_DIR)
+  set(MPFR_in_cache TRUE)
+else()
+  set(MPFR_in_cache FALSE)
+endif()
+if( CGAL_AUTO_LINK_ENABLED )
+  if(NOT MPFR_LIBRARIES_DIR)
+    set(MPFR_in_cache FALSE)
+  endif()
+else()
+  if(NOT MPFR_LIBRARIES)
+    set(MPFR_in_cache FALSE)
+  endif()
+endif()
+
 # Is it already configured?
-if (MPFR_INCLUDE_DIR AND MPFR_LIBRARIES_DIR ) 
+if (MPFR_in_cache) 
    
   set(MPFR_FOUND TRUE)
   
@@ -54,8 +69,12 @@ else()
   if ( NOT MPFR_INCLUDE_DIR OR NOT MPFR_LIBRARIES_DIR )
     include( MPFRConfig OPTIONAL )
   endif()
-  
-  find_package_handle_standard_args(MPFR "DEFAULT_MSG" MPFR_INCLUDE_DIR MPFR_LIBRARIES_DIR)
-  
+
+  if(CGAL_AUTO_LINK_ENABLED)
+    find_package_handle_standard_args(MPFR "DEFAULT_MSG" MPFR_LIBRARIES_DIR MPFR_INCLUDE_DIR)
+  else()
+    find_package_handle_standard_args(MPFR "DEFAULT_MSG" MPFR_LIBRARIES MPFR_INCLUDE_DIR)
+  endif()
+
 endif()
 
