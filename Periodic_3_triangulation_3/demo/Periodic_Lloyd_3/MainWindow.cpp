@@ -5,6 +5,15 @@ MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
 {
   setupUi(this);
   this->viewer->setScene(&scene);
+
+  QString loc = QLibraryInfo::location(QLibraryInfo::BinariesPath);
+  assistantClient = new QAssistantClient(loc, this);
+  QStringList arguments;
+  arguments << "-profile"
+	    << QCoreApplication::applicationDirPath() + QDir::separator()
+    + QString("documentation/Periodic_Lloyd_3.adp");
+  assistantClient->setArguments(arguments);
+
   connectActions();
   this->addAboutDemo(":/cgal/help/about_Periodic_Lloyd_3.html");
   this->addAboutCGAL();
@@ -15,7 +24,6 @@ MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
   qtimer = new QTimer(this);
   connect(qtimer, SIGNAL(timeout()), this, SLOT(lloydStep()));
 }
-
 
 void
 MainWindow::connectActions()
@@ -52,6 +60,9 @@ MainWindow::connectActions()
 
   QObject::connect(this->actionQuit, SIGNAL(triggered()), 
 		   qApp, SLOT(quit()));
+
+  QObject::connect(this->actionDemo_Help, SIGNAL(triggered()),
+                   this, SLOT(help()));
 }
 
 void
@@ -195,6 +206,11 @@ MainWindow::newPoints(int n)
   emit (sceneChanged()); 
 }
 
+void MainWindow::help() {
+  QString loc = QCoreApplication::applicationDirPath() + QDir::separator()
+    + QString("documentation/index.html");
+  assistantClient->showPage(loc);
+}
 
 #include "MainWindow.moc"
 

@@ -7,19 +7,27 @@
 #include <QInputDialog>
 #include <QSlider>
 #include <QTimer>
+
+#include <QtGui>
+#include <QtAssistant/QAssistantClient>
+
 class QWidget;
 
 class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
 {
   Q_OBJECT
 
-  public:
+public:
   MainWindow(QWidget* = 0);
+  ~MainWindow() { delete(assistantClient); }
 
   void connectActions();
 
   Scene scene;
   QTimer * qtimer;
+
+private:
+  QAssistantClient *assistantClient;
 
 public slots:
   void newPoints(int i);
@@ -31,6 +39,7 @@ public slots:
   void toggle8Copies(bool on);
   void toggle2D(bool on);
   void lloydStep();
+  void help();
 
   signals:
   void sceneChanged();
