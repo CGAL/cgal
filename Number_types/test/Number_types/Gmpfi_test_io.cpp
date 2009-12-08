@@ -18,7 +18,7 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_GMP
+#ifdef CGAL_USE_MPFI
 #include <CGAL/_test_io.h>
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Gmpfi.h>
