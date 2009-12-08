@@ -52,6 +52,7 @@
 \newcommand{\cgalhomepage}{\path'http://www.cgal.org'}
 \newcommand{\gmppage}{\path'http://gmplib.org/'}
 \newcommand{\mpfrpage}{\path'http://www.mpfr.org/'}
+\newcommand{\mpfipage}{\path'http://gforge.inria.fr/projects/mpfi/'}
 \newcommand{\boostpage}{\path'http://www.boost.org/'}
 \newcommand{\corepage}{\path'http://www.cs.nyu.edu/exact/core\_pages/'}
 \newcommand{\ledapage}{\path'http://www.algorithmic-solutions.com/leda/index.html'}
@@ -149,16 +150,20 @@ Some demos depend on \texttt{Boost.Program\_options}.
 
 \subsection{Exact Arithmetic}
 
-\cgal\ combines floating point arithmetic with exact arithmetic, in order
-to be efficient and reliable.  \cgal\ offers support for \gmp+\mpfr\ and \leda\ 
-exact number types, as well as a built-in exact number type used when
-none of the above is installed on your system. 
+\cgal\ combines floating point arithmetic with exact arithmetic,
+in order to be efficient and reliable.  \cgal\ offers support for
+\gmp+\mpfr, \mpfi\ and \leda\ number types, as well as a built-in
+exact number type used when none of the above is installed on your
+system.
 
 Having \gmp\ version 4.1.4 or higher and \mpfr\ version 2.2.1 or higher
 installed is highly recommended. These libraries can be obtained from
 \gmppage\ and \mpfrpage, respectively. As Visual \CC\ is not properly
 support by the \gmp\ and \mpfr\ projects, we provide precompiled versions
 of \gmp\ and \mpfr.  
+
+\mpfi\ can be downloaded from \mpfipage. Version 1.4 or higher is
+recommended.
 
 \leda\ can be found at \ledapage. There is a free and a commercial
 edition for this library.
@@ -844,6 +849,26 @@ Under Linux, the GMPXX is also searched for, and you may specify the following v
   \textbf{Variable}             & \textbf{Description}                           & \textbf{Type}\\\hline\hline
   \texttt{GMPXX\_INCLUDE\_DIR}  & Directory containing the \texttt{gmpxx.h} file & CMake\\\hline
   \texttt{GMPXX\_LIBRARIES}     & Full pathname of the compiled gmpxx library    & CMake\\\hline
+\end{tabular}
+}
+
+\index{cgal!general-config-cmake-vars-dep-mpfi}\index{cgal configuration cmake variables - dependencies - mpfi}
+\subsubsection{MPFI library}
+
+When MPFI is not automatically detected, the locations of the headers
+and library files must be specified using environment variables.
+
+{\ccTexHtml{\small}{}
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}             & \textbf{Description}                                & \textbf{Type}\\\hline\hline
+  \texttt{WITH\_MPFI}           & Indicates whether to search and use mpfi or not & CMake\\\hline
+  \texttt{MPFI\_INCLUDE\_DIR}   & Directory containing the \texttt{mpfi.h} file       & CMake\\\hline
+  \texttt{MPFI\_INC\_DIR}       & Idem                                                & Environment\\\hline
+  \texttt{MPFI\_LIBRARIES\_DIR} & Directory containing the compiled mpfi library      & CMake\\\hline
+  \texttt{MPFI\_LIB\_DIR}       & Idem                                                & Environment\\\hline
+  \texttt{MPFI\_LIBRARIES}      & Full pathname of the compiled mpfi library          & CMake\\\hline
 \end{tabular}
 }
 
