@@ -213,7 +213,6 @@ public slots:
         } while( ++he_circ != he_circ_end );
         cdt.insert_constraint(previous, first);
 
-        std::cerr << cdt.number_of_vertices() << std::endl;
         Modifier modifier(&cdt, fit);
         pMesh->delegate(modifier);
         CGAL_assertion_code(pMesh->normalize_border());
