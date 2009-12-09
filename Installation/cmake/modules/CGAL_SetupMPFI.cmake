@@ -1,32 +1,26 @@
 if( NOT CGAL_MPFI_SETUP )
 
-  option( WITH_MPFI "Search for MPFI" ON )
+  find_package( MPFI )
 
-  if( WITH_MPFI )
+  if( MPFI_FOUND )
 
-    find_package( MPFI )
+    include(CGAL_Macros)
 
-    if( MPFI_FOUND )
+    message( STATUS "MPFI include:      ${MPFI_INCLUDE_DIR}" )
+    message( STATUS "MPFI libraries:    ${MPFI_LIBRARIES}" )
+    message( STATUS "MPFI definitions:  ${MPFI_DEFINITIONS}" )
 
-      include(CGAL_Macros)
+    set ( CGAL_USE_MPFI 1 )
 
-      message( STATUS "MPFI include:      ${MPFI_INCLUDE_DIR}" )
-      message( STATUS "MPFI libraries:    ${MPFI_LIBRARIES}" )
-      message( STATUS "MPFI definitions:  ${MPFI_DEFINITIONS}" )
+    add_to_cached_list(CGAL_3RD_PARTY_INCLUDE_DIRS   ${MPFI_INCLUDE_DIR}   )
+    add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES_DIRS ${MPFI_LIBRARIES_DIR} )
+    add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS    ${MPFI_DEFINITIONS}   )
 
-      set ( CGAL_USE_MPFI 1 )
+    if( NOT MSVC )
+      add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES ${MPFI_LIBRARIES} )
+    endif( NOT MSVC )
 
-      add_to_cached_list(CGAL_3RD_PARTY_INCLUDE_DIRS   ${MPFI_INCLUDE_DIR}   )
-      add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES_DIRS ${MPFI_LIBRARIES_DIR} )
-      add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS    ${MPFI_DEFINITIONS}   )
-
-      if( NOT MSVC )
-        add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES ${MPFI_LIBRARIES} )
-      endif( NOT MSVC )
-
-    endif( MPFI_FOUND )
-
-  endif( WITH_MPFI )
+  endif( MPFI_FOUND )
 
   set( CGAL_MPFI_SETUP TRUE )
 

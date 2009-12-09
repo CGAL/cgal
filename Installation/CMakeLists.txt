@@ -272,6 +272,7 @@ add_config_flag( CGAL_USE_MPFR )
 add_config_flag( CGAL_USE_MPFI )
 add_config_flag( CGAL_USE_GMPXX )
 add_config_flag( CGAL_USE_LEDA )
+add_config_flag( CGAL_USE_RS )
 
 if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
   file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>\n\n" )
