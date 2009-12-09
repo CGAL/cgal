@@ -61,6 +61,7 @@
 \newcommand{\atlaspage}{\path'http://math-atlas.sourceforge.net/'}
 \newcommand{\lapackpage}{\path'http://www.netlib.org/lapack/'}
 \newcommand{\taucspage}{\path'http://www.tau.ac.il/~stoledo/taucs/'}
+\newcommand{\rspage}{\path'http://www.loria.fr/equipes/vegas/rs/'}
 \newcommand{\xpage}{\path'http://www.x.org/'}
 \newcommand{\zlibpage}{\path'http://www.zlib.net/'}
 \newcommand{\cmakepage}{\path'http://www.cmake.org/'}
@@ -195,6 +196,9 @@ The Surface parametrization package can be accelerated by using the sparse matri
 This library can be downloaded from \taucspage. As Visual~\CC\ is not properly
 supported by the \taucs\ project, we provide a precompiled version of
 \taucs.
+
+The Algebraic Kernel package uses the library \rs\ to perform real solving
+on univariate polynomials. It can be downloaded from \rspage.
 
 
 
@@ -862,13 +866,13 @@ and library files must be specified using environment variables.
 \renewcommand{\arraystretch}{1.3}
 \gdef\lcTabularBorder{2}
 \begin{tabular}{|l|l|l|} \hline
-  \textbf{Variable}             & \textbf{Description}                                & \textbf{Type}\\\hline\hline
-  \texttt{WITH\_MPFI}           & Indicates whether to search and use mpfi or not & CMake\\\hline
-  \texttt{MPFI\_INCLUDE\_DIR}   & Directory containing the \texttt{mpfi.h} file       & CMake\\\hline
-  \texttt{MPFI\_INC\_DIR}       & Idem                                                & Environment\\\hline
-  \texttt{MPFI\_LIBRARIES\_DIR} & Directory containing the compiled mpfi library      & CMake\\\hline
-  \texttt{MPFI\_LIB\_DIR}       & Idem                                                & Environment\\\hline
-  \texttt{MPFI\_LIBRARIES}      & Full pathname of the compiled mpfi library          & CMake\\\hline
+  \textbf{Variable}             & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
+  \texttt{WITH\_MPFI}           & Indicates whether to search and use mpfi or not       & CMake\\\hline
+  \texttt{MPFI\_INCLUDE\_DIR}   & Directory containing the \texttt{mpfi.h} file         & CMake\\\hline
+  \texttt{MPFI\_INC\_DIR}       & Idem                                                  & Environment\\\hline
+  \texttt{MPFI\_LIBRARIES\_DIR} & Directory containing the compiled mpfi library        & CMake\\\hline
+  \texttt{MPFI\_LIB\_DIR}       & Idem                                                  & Environment\\\hline
+  \texttt{MPFI\_LIBRARIES}      & Full pathname of the compiled mpfi library            & CMake\\\hline
 \end{tabular}
 }
 
@@ -1029,6 +1033,30 @@ variable. You do not need to provide this, if the BLAS|LAPACK libraries do not n
   \texttt{LAPACK\_LINKER\_FLAGS}  & Linker flags                                                                     & CMake\\\hline
   \texttt{LAPACK\_DEFINITIONS}    & Preprocessor definitions                                                         & CMake\\\hline
   \texttt{F2C\_LIBRARIES}         & Full pathname to the f2c library                                                 & CMake\\\hline
+\end{tabular}
+}
+
+\index{cgal!general-config-cmake-vars-dep-rs}\index{cgal configuration cmake variables - dependencies - rs}
+\subsubsection{RS library}
+
+As said before, the CGAL's univariate algebraic kernel depends on the
+library RS. This library requires GMP, MPFR and MPFI.
+
+The installer will try to find RS in the standard header and library
+directories. When it is not automatically detected, the locations of the
+headers and library files must be specified using environment variables.
+
+{\ccTexHtml{\small}{}
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}             & \textbf{Description}                                  & \textbf{Type}\\\hline\hline
+  \texttt{WITH\_RS}             & Indicates whether to search and use rs or not         & CMake\\\hline
+  \texttt{RS\_INCLUDE\_DIR}     & Directory containing the \texttt{rs\_exports.h} file  & CMake\\\hline
+  \texttt{RS\_INC\_DIR}         & Idem                                                  & Environment\\\hline
+  \texttt{RS\_LIBRARIES\_DIR}   & Directory containing the compiled rs library          & CMake\\\hline
+  \texttt{RS\_LIB\_DIR}         & Idem                                                  & Environment\\\hline
+  \texttt{RS\_LIBRARIES}        & Full pathname of the compiled rs library              & CMake\\\hline
 \end{tabular}
 }
 
