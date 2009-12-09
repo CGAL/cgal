@@ -18,8 +18,8 @@
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 
 #include "CGAL/compute_normal.h"
-      // Vector n = compute_facet_normal<Facet,Kernel>(*f);
-      // ::glNormal3d(n.x(),n.y(),n.z());
+
+#include <queue>
 
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 
@@ -30,7 +30,8 @@ typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
 
 struct Face_info {
   Halfedge_handle e[3];
-};  
+  bool is_external;
+};
 
 typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
                                                   Traits>              Fb1;
@@ -55,7 +56,7 @@ public:
   }
 
   bool is_external(CDT::Face_handle fh) const {
-    return cdt->is_infinite(fh);
+    return fh->info().is_external;
   }
 
   void operator()(HDS& hds) {
@@ -168,6 +169,8 @@ public slots:
         return;
       }
 
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
       typedef Polyhedron::Facet Facet;
       typedef Polyhedron::Facet_iterator Facet_iterator;
       typedef Polyhedron::Facet_handle Facet_handle;
@@ -213,12 +216,39 @@ public slots:
         } while( ++he_circ != he_circ_end );
         cdt.insert_constraint(previous, first);
 
+        // sets mark is_external
+        for(CDT::Finite_faces_iterator
+              fit = cdt.finite_faces_begin(),
+              end = cdt.finite_faces_end();
+            fit != end; ++fit)
+        {
+          fit->info().is_external = false;
+        }
+        std::queue<CDT::Face_handle> face_queue;
+        face_queue.push(cdt.infinite_vertex()->face());
+        while(! face_queue.empty() ) {
+          CDT::Face_handle fh = face_queue.front();
+          face_queue.pop();
+          CGAL_assertion(cdt.is_infinite(fh));
+          if(fh->info().is_external) continue;
+          std::cerr << (void*)(&*fh) << std::endl;
+          fh->info().is_external = true;
+          for(int i = 0; i <3; ++i) {
+            if(!cdt.is_constrained(std::make_pair(fh, i)))
+            {
+              face_queue.push(fh->neighbor(i));
+            }
+          }
+        }
+        // then modify the polyhedron
         Modifier modifier(&cdt, fit);
         pMesh->delegate(modifier);
-        CGAL_assertion_code(pMesh->normalize_border());
-        CGAL_assertion(pMesh->is_valid(true, 3));
       }
+      CGAL_assertion_code(pMesh->normalize_border());
+      CGAL_assertion(pMesh->is_valid(false, 3));
       scene->itemChanged(item);
+      // default cursor
+      QApplication::restoreOverrideCursor();
     }
   }
   
