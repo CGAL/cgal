@@ -86,7 +86,14 @@ Viewer::gl_draw_surface()
 {
   ::glColor3f(1.0f, 0.72f, 0.06f);
   ::glDisable(GL_LIGHTING);
+
+  ::glEnable(GL_BLEND);
   ::glEnable(GL_POINT_SMOOTH);
+  ::glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+  ::glEnable(GL_LINE_SMOOTH);
+  ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+  ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
   ::glPointSize(5);
   ::glBegin(GL_POINTS);
   for(Periodic_point_iterator ppit
@@ -98,7 +105,6 @@ Viewer::gl_draw_surface()
     ::glVertex3d(p.x(), p.y(), p.z());
   }
   ::glEnd();
-  ::glDisable(GL_POINT_SMOOTH);
 
   ::glBegin(GL_LINES);
 
