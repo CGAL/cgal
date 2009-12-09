@@ -378,7 +378,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                typename Insert_visitor::Event>
     sweep_line(&traits, &visitor);
   sweep_line.sweep(ex_cvs.begin(), ex_cvs.end(),ex_pts.begin(), ex_pts.end());
-};
+}
 
 //-----------------------------------------------------------------------------
 // Insert a range of curves into the arrangement (aggregated insertion). 

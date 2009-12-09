@@ -100,7 +100,7 @@ enum Arr_boundary_type {
   ARR_OPEN,
   ARR_CLOSED,
   ARR_CONTRACTION,
-  ARR_IDENTIFICATION,
+  ARR_IDENTIFICATION
 };
 
 //! \brief prints boundary type (for debugging)
