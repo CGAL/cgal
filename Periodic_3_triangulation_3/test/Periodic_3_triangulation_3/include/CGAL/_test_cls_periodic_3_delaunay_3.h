@@ -388,10 +388,10 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
     
     // Volume: 0.739304
     // Centroid: (-0.146008, -0.0334585, -0.150329)
-    assert((0.7393 < vol) && (vol < 0.7394));
-    assert((-0.1461 < centr.x()) && (centr.x() < -0.1460));
-    assert((-0.0335 < centr.y()) && (centr.y() < -0.0334));
-    assert((-0.1504 < centr.z()) && (centr.z() < -0.1503));
+    assert((FT(0.7393) < vol) && (vol < FT(0.7394)));
+    assert((FT(-0.1461) < centr.x()) && (centr.x() < FT(-0.1460)));
+    assert((FT(-0.0335) < centr.y()) && (centr.y() < FT(-0.0334)));
+    assert((FT(-0.1504) < centr.z()) && (centr.z() < FT(-0.1503)));
 
     vh = PT1.insert(Point(0,0,0));
     vol = PT1.dual_volume(vh);
@@ -399,10 +399,10 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
 
     // Volume: 0.0877881
     // Centroid: (-0.0400664, -0.0419085, 0.019252)
-    assert((0.0877 < vol) && (vol < 0.0878));
-    assert((-0.0401 < centr.x()) && (centr.x() < -0.0400));
-    assert((-0.0420 < centr.y()) && (centr.y() < -0.0419));
-    assert(( 0.0192 < centr.z()) && (centr.z() <  0.0193));
+    assert((FT(0.0877) < vol) && (vol < 0.0878));
+    assert((FT(-0.0401) < centr.x()) && (centr.x() < FT(-0.0400)));
+    assert((FT(-0.0420) < centr.y()) && (centr.y() < FT(-0.0419)));
+    assert((FT( 0.0192) < centr.z()) && (centr.z() < FT( 0.0193)));
   }
 
   std::cout << "Additional testing of degenerate cases" << std::endl;

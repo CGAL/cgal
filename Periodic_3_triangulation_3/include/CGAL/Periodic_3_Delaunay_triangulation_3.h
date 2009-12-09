@@ -545,7 +545,7 @@ public:
       } while (fcit != fstart);
 
       Point orig(0,0,0);
-      for (int i=1 ; i<pts.size()-1 ; i++) 
+      for (unsigned int i=1 ; i<pts.size()-1 ; i++) 
 	vol += Tetrahedron(orig,pts[0],pts[i],pts[i+1]).volume();
     }
     return vol;
@@ -583,7 +583,7 @@ public:
 
       Point orig(0,0,0);
       FT tetvol;
-      for (int i=1 ; i<pts.size()-1 ; i++) {
+      for (unsigned int i=1 ; i<pts.size()-1 ; i++) {
 	tetvol = Tetrahedron(orig,pts[0],pts[i],pts[i+1]).volume();
 	x += (pts[0].x() + pts[i].x() + pts[i+1].x()) * tetvol;
 	y += (pts[0].y() + pts[i].y() + pts[i+1].y()) * tetvol;
