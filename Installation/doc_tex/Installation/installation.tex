@@ -1040,7 +1040,8 @@ variable. You do not need to provide this, if the BLAS|LAPACK libraries do not n
 \subsubsection{RS library}
 
 As said before, the CGAL's univariate algebraic kernel depends on the
-library RS. This library requires GMP, MPFR and MPFI.
+library RS. If you don't plan to use the algebraic kernel, this library is
+not needed by CGAL. RS requires GMP, MPFR and MPFI.
 
 The installer will try to find RS in the standard header and library
 directories. When it is not automatically detected, the locations of the
