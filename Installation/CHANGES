@@ -1,5 +1,26 @@
 Release notes of CGAL.
 
+----------------------------- Release 3.5.1 --------------------------------
+The following has been changed since release 3.5.
+
+1 Documentation
+
+  - Minor fixes in the documentation.
+
+  - Fixes to the bibliographic references.
+
+2 Windows installer
+
+  - The Windows installer of CGAL-3.5.1 fixes an issue with downloading of
+    precompiled binaries of the external library TAUCS.
+
+TODO: describe changes in the following header files:
+           examples/Periodic_3_triangulation_3/simple_example.cpp
+           include/CGAL/AABB_intersections/Bbox_3_ray_3_do_intersect.h
+           include/CGAL/Periodic_3_triangulation_3.h
+           include/CGAL/Polyhedral_mesh_domain_3.h
+           include/CGAL/Triangulation_data_structure_2.h
+
 ----------------------------- Release 3.5 ----------------------------------
 CGAL releases will now be published about every six months. As a transition
 release, CGAL-3.5 has been developed during 9 months from the release
