@@ -39,6 +39,9 @@
 % |                                                                         |
 % |#########################################################################|
 
+\usepackage{listings}
+\usepackage[usenames,dvipsnames]{color}
+
 % used for writing the refpage entries.
 \newwrite\ccListOfRefpagesFile%
 % used to test if a file exists
@@ -659,40 +662,36 @@ Reference~Manual}%
 % +--------------------------------------------------------------------------
 % | C++ Program Examples
 % +--------------------------------------------------------------------------
-% Environment to format contents as C++ code
-\newenvironment{ccExampleCode}{%
-    \begin{alltt}
-    \begingroup
-    \catcode`\{=12
-    \catcode`\}=12
-    \catcode`\\=12
-    \ccParseExampleCodeBody
-}{%
-    \endgroup
-    \end{alltt}
+\definecolor{light-gray}{gray}{0.95}
+
+\lstset{language=C++,
+        columns=flexible, % spaceflexible fullflexible fixed flexible
+        keepspaces=true,
+        % identifierstyle=\color{red},
+        % emph={...},emphstyle=\underbar
+        basicstyle=\ttfamily, % \small
+        keywordstyle=\color{Cerulean}, %\bfseries %\underbar
+        commentstyle=\color{Peach}\itshape,
+        stringstyle=\color{green},
+        % backgroundcolor=\color{light-gray},
+        showstringspaces=false,
+        breaklines=true,
+        breakatwhitespace=true,
+        frame=trbl,
+        frameround=tttt
 }
 
-%  Take care: catcodes changes a lot here!!
-\begingroup
-   \catcode`\@=11\relax
-   \catcode`\|=0
-   \catcode`\[=1
-   \catcode`\]=2
-   \catcode`\{=12
-   \catcode`\}=12
-   \catcode`\\=12
-   |long|gdef|ccParseExampleCodeBody #1\end{ccExampleCode}[%
-     #1|csname endccExampleCode|endcsname|@checkend[ccExampleCode]%
-     |expandafter|endgroup|if@endpe|@doendpe|fi
-     |if@ignore|global|@ignorefalse|ignorespaces|fi
-]
-|endgroup
+% Environment to format contents as C++ code
+\lstnewenvironment{ccExampleCode}
+{\lstset{language=C++}}
+{}
 
 % Format external file:  #1  the file name.
-% additional to \ccIncludeVerbatim, (license) headers in files are stripped
+% additional to \lstinputlisting, (license) headers in files are stripped
 % and a filename is printed below the example code.
 \newcommand{\ccIncludeExampleCode}[1]{%
-\ccIncludeVerbatim{#1.noheader}
+\lstinputlisting{#1.noheader}
+%\lstinputlisting[title={\textbf{File: }#1}]{#1.noheader} % doesn't work
 \begin{alltt}
 \textbf{File: }\input{#1.filename}
 \end{alltt}
