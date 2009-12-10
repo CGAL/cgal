@@ -1,0 +1,35 @@
+
+
+\section{Design and Implementation History}
+
+This package is clearly split into a univariate and bivariate
+kernel. However, with respect to its history the package splits into
+a design part and an implementation part.  The concepts, which make up
+the design part, where written by Eric Berberich, Michael Hemmer, and
+Monique Teillaud. The implementation part is currently comprised of two
+univariate kernels that interface the library RS~\cite{cgal:r-rs}. These
+models were written by Luis Pe\~{n}aranda and Sylvain Lazard.
+
+The design history of the package is fairly old and several
+ideas that influenced this package can already be found
+in~\cite{cgal:bhkt-risak-07}. Since then, the initial design underwent
+considerable changes. For instance, it was decided that the algebraic
+numbers should be under the control of the algebraic kernel. On the other
+hand the initial support for polynomials was extended to a separate
+and independent package that is not restricted to a certain number of
+variables. Thus, the authors want to thank for all the useful feedback and
+ideas that was brought to them throughout the last years. In particular,
+they want to thank Menelaos Karavelas and Elias Tsigaridas for their
+initial contributions.
+
+%ACS-TR-123101-01 and 
+%Interface specification of algebraic kernel
+%Eric Berberich, Michael Hemmer, Menelaos Karavelas, Sylvain Pion, Monique Teillaud, Elias Tsigaridas
+
+The implementation history shall be considered as unclosed, since there
+are some more models in the pipeline. So far, the package provides
+two models of a univariate algebraic kernel. Both models interface the
+library RS~\cite{cgal:r-rs} by Fabrice Rouillier. The authors want to
+thank Fabrice Rouillier and Elias Tsigaridas for strong support and many
+useful discussions that lead to the integration of RS.
+

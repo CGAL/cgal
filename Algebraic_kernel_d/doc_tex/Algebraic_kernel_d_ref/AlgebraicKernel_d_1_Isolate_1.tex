@@ -1,0 +1,31 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::Isolate_1}
+
+\ccDefinition
+Computes an open isolating interval for an \ccc{AlgebraicKernel_d_1::Algebraic_real_1} 
+with respect to the real roots of a given univariate polynomial. 
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}  
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+\ccTypedef{typedef std::pair<AlgebraicKernel_d_1::Bound,AlgebraicKernel_d_1::Bound> result_type;}{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 first_argument_type;}{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 second_argument_type;}{}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(first_argument_type a, second_argument_type p);}
+{Computes an open isolating interval $I=(l,u)$ for $a$ with respect to the real roots of $p$.
+It is not required that $a$ is a root of $p$. 
+\ccPostcond{ $a \in I$. } 
+\ccPostcond{ $p(x) \neq 0 | \forall x \in \overline{I}\backslash a$.}
+}
+
+
+%\ccHasModels
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::ComputePolynomial_1}\\
+
+\end{ccRefFunctionObjectConcept}

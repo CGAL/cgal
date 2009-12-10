@@ -1,0 +1,41 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::ApproximateRelative_1}
+
+\ccDefinition
+A model of \ccRefName\ is an \ccc{AdaptableBinaryFunction} that computes an 
+approximation of an \ccc{AlgebraicKernel_d_1::Algebraic_real_1} value with 
+respect to a given relative precision. 
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+\ccTypedef{typedef std::pair<AlgebraicKernel_d_1::Bound, AlgebraicKernel_d_1::Bound>        result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1  first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef int second_argument_type;}{}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+%\ccThree{result_type}{fofirst_argument_type,++}{}
+\ccMethod{
+result_type
+operator()(const first_argument_type  & x,
+           const second_argument_type & r );}{
+The function computes a pair $p$ of \ccc{AlgebraicKernel_d_1::Bound}, 
+where $p.first$ represents the lower approximation and $p.second$ represents 
+the upper approximation.  The pair $p$ approximates the given value $x$ 
+with respect to the given relative precision $r$. 
+\ccPostcond{$ p.first <= x $}
+\ccPostcond{$ x <= p.second $}
+\ccPostcond{$(x -  p.first) <= 2^{-r} *|x|$}
+\ccPostcond{$(p.second - x) <= 2^{-r} *|x|$}
+}
+
+ 
+\ccSeeAlso
+
+
+\ccRefIdfierPage{AlgebraicKernel_d_1::ApproximateAbsolute_1}\\
+
+\end{ccRefFunctionObjectConcept}
