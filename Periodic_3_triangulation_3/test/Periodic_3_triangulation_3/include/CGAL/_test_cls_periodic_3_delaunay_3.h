@@ -399,7 +399,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
 
     // Volume: 0.0877881
     // Centroid: (-0.0400664, -0.0419085, 0.019252)
-    assert((FT(0.0877) < vol) && (vol < 0.0878));
+    assert((FT(0.0877) < vol) && (vol < FT(0.0878)));
     assert((FT(-0.0401) < centr.x()) && (centr.x() < FT(-0.0400)));
     assert((FT(-0.0420) < centr.y()) && (centr.y() < FT(-0.0419)));
     assert((FT( 0.0192) < centr.z()) && (centr.z() < FT( 0.0193)));
