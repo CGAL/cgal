@@ -1,3 +1,4 @@
+#define CGAL_MESH_3_VERBOSE
 #include <CGAL/AABB_intersections.h>
 #include "Polyhedron_type.h"
 #include "Image_type.h"
@@ -15,6 +16,11 @@
 #include <fstream>
 
 #include <CGAL/Timer.h>
+
+#include <QVector>
+#include <QColor>
+#include <map>
+#include <CGAL/gl.h>
 
 
 // @TODO: Is that the right kernel?!
@@ -34,7 +40,7 @@ typedef Mesh_criteria::Cell_criteria Cell_criteria;
 
 typedef Tr::Point Point_3;
 
-#include "Scene_item.h"
+#include "Scene_item_with_display_list.h"
 #include <Qt/qglobal.h>
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
@@ -47,7 +53,7 @@ namespace {
   }
 }
 
-class Q_DECL_EXPORT Scene_c3t3_item : public Scene_item
+class Q_DECL_EXPORT Scene_c3t3_item : public Scene_item_with_display_list
 {
   Q_OBJECT
 public:
@@ -55,8 +61,32 @@ public:
 
   Scene_c3t3_item(const C3t3& c3t3)
     : c3t3_(c3t3), frame(new ManipulatedFrame())
-
-  {}
+  {
+    connect(frame, SIGNAL(modified()),
+            this, SLOT(changed()));
+    typedef std::set<int> Indices;
+    typedef Indices::size_type size_type;
+    Indices indices;
+    int max = 0;
+    for(Tr::Finite_cells_iterator
+          cit = this->c3t3().triangulation().finite_cells_begin(),
+          end = this->c3t3().triangulation().finite_cells_end();
+        cit != end; ++cit)
+    {
+      max = (std::max)(max, cit->subdomain_index());
+      indices.insert(cit->subdomain_index());
+    }
+    colors.resize(max+1);
+    size_type nb_domains = indices.size();
+    size_type i = 0;
+    for(Indices::iterator
+          it = indices.begin(),
+          end = indices.end();
+        it != end; ++it, ++i) 
+    {
+      colors[*it] = QColor::fromHsvF( 1. / nb_domains * i, 1., 1.);
+    }
+  }
 
   ~Scene_c3t3_item()
   {
@@ -139,7 +169,7 @@ public:
     return (m != Gouraud); // CHECK THIS!
   }
 
-  void draw() const {
+  void direct_draw() const {
     ::glPushMatrix();
     ::glMultMatrixd(frame->matrix());
     QGLViewer::drawGrid((float)complex_diag());
@@ -169,6 +199,12 @@ public:
     {
       const Tr::Cell_handle& cell = fit->first;
       const int& index = fit->second;
+      if(cell->subdomain_index() != 0 &&
+         cell->neighbor(index)->subdomain_index() != 0)
+      {
+        continue;
+      }
+
       const Kernel::Point_3& pa = cell->vertex((index+1)&3)->point();
       const Kernel::Point_3& pb = cell->vertex((index+2)&3)->point();
       const Kernel::Point_3& pc = cell->vertex((index+3)&3)->point();
@@ -182,6 +218,12 @@ public:
           sc != ON_ORIENTED_BOUNDARY &&
           sb == sa && sc == sa )
       {
+        if(cell->subdomain_index() == 0) {
+          CGALglcolor(colors[cell->neighbor(index)->subdomain_index()]);
+        }
+        else {
+          CGALglcolor(colors[cell->subdomain_index()]);
+        }
         draw_triangle(pa, pb, pc);
       }
     }
@@ -220,6 +262,7 @@ public:
             sd == ON_ORIENTED_BOUNDARY ||
             sb != sa || sc != sa || sd != sa)
         {
+          CGALglcolor(colors[cit->subdomain_index()]);
           draw_triangle(pa, pb, pc);
           draw_triangle(pa, pb, pd);
           draw_triangle(pa, pc, pd);
@@ -277,6 +320,7 @@ private:
   }
 
   C3t3 c3t3_;
+  QVector<QColor> colors;
 
   qglviewer::ManipulatedFrame* frame;
 };
@@ -313,8 +357,9 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
 
   // Meshing
   std::cerr << "Mesh...";
+  using namespace CGAL::parameters;
   Scene_c3t3_item* new_item = 
-    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria));
+    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude()));
 
   std::cerr << "done (" << timer.time() << " ms, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
 
@@ -364,7 +409,8 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
   // Meshing
   std::cerr << "Mesh...";
   Scene_c3t3_item* new_item = 
-    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria));
+    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria, 
+                                                CGAL::parameters::no_exude()));
 
   std::cerr << "done (" << timer.time() << " ms, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
 
