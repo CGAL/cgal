@@ -1,6 +1,8 @@
-find_package( GMP QUIET )
+find_package( MPFI )
 
-if( GMP_FOUND )
+if( MPFI_FOUND )
+
+  include( ${MPFI_USE_FILE} )
 
   find_path(RS_INCLUDE_DIR
             NAMES rs_exports.h
@@ -34,16 +36,27 @@ if( GMP_FOUND )
     set(RS3_FOUND TRUE)
   endif( RS3_INCLUDE_DIR AND RS3_LIBRARIES )
 
-  if( RS_LIBRARIES ) 
+  if( RS_LIBRARIES )
     get_filename_component(RS_LIBRARIES_DIR ${RS_LIBRARIES} PATH CACHE )
-  endif( RS_LIBRARIES ) 
+  endif( RS_LIBRARIES )
 
   if( NOT RS_INCLUDE_DIR OR NOT RS_LIBRARIES_DIR )
     include( RSConfig OPTIONAL )
   endif( NOT RS_INCLUDE_DIR OR NOT RS_LIBRARIES_DIR )
- 
-  include(CGAL_FindPackageHandleStandardArgs)
-  
-  find_package_handle_standard_args(RS "DEFAULT_MSG" RS_LIBRARIES RS_INCLUDE_DIR )
 
-endif( GMP_FOUND )
+  include(CGAL_FindPackageHandleStandardArgs)
+
+  find_package_handle_standard_args( RS
+                                     "DEFAULT_MSG"
+                                     RS_LIBRARIES
+                                     RS_INCLUDE_DIR )
+else( MPFI_FOUND )
+
+  message( STATUS "RS requires MPFI" )
+  set( RS_FOUND FALSE )
+
+endif( MPFI_FOUND )
+
+if(RS_FOUND)
+  set(RS_USE_FILE "CGAL_UseRS")
+endif(RS_FOUND)

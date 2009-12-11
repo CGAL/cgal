@@ -3,7 +3,7 @@ find_package( GMP QUIET )
 if( GMP_FOUND )
 
   if( MPFI_INCLUDE_DIR AND MPFI_LIBRARIES )
-    set(MPFI_FOUND TRUE)
+    set( MPFI_FOUND TRUE )
   endif( MPFI_INCLUDE_DIR AND MPFI_LIBRARIES )
 
   find_path(MPFI_INCLUDE_DIR NAMES mpfi.h
@@ -28,4 +28,12 @@ if( GMP_FOUND )
 
   find_package_handle_standard_args(MPFI "DEFAULT_MSG" MPFI_LIBRARIES MPFI_INCLUDE_DIR )
 
+else( GMP_FOUND )
+
+  message( STATUS "MPFI needs GMP and MPFR" )
+
 endif( GMP_FOUND )
+
+if( MPFI_FOUND )
+  set( MPFI_USE_FILE "CGAL_UseMPFI" )
+endif( MPFI_FOUND )
