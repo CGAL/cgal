@@ -28,7 +28,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-bool do_intersect(const CGAL::Bbox_3& c, 
+bool
+inline
+do_intersect(const CGAL::Bbox_3& c, 
 		  const CGAL::Bbox_3& bbox)
 {
   return CGAL::do_overlap(c, bbox);
