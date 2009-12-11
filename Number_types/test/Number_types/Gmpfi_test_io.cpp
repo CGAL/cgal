@@ -16,9 +16,6 @@
 // 
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
-#include <CGAL/basic.h>
-
-#ifdef CGAL_USE_MPFI
 #include <CGAL/_test_io.h>
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Gmpfi.h>
@@ -47,11 +44,3 @@ int main(){
 
         return 0;
 }
-
-#else
-int main(){
-        return 0;
-}
-#endif
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

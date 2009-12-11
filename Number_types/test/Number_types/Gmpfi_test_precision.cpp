@@ -16,9 +16,6 @@
 // 
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
-#include <CGAL/basic.h>
-
-#ifdef CGAL_USE_MPFI
 #include <CGAL/Gmpfi.h>
 
 #ifdef NDEBUG
@@ -41,11 +38,3 @@ int main(){
 	// now, test the precision in mu
         return 0;
 }
-
-#else
-int main(){
-        return 0;
-}
-#endif
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

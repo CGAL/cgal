@@ -1,22 +1,26 @@
 # based on a script created by cgal_create_cmake_script
+# TODO: currently, everything depends on CORE, it would be nice to break
+# that dependency so as to test all the number types not depending on CORE
+# when it is not installed
 
 project( NT_extension_test )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
- 
+
 if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
+  cmake_policy( SET CMP0003 NEW )
 endif()
- 
-find_package(CGAL QUIET COMPONENTS Core)
+
+find_package( CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
   include( CGAL_CreateSingleSourceCGALProgram )
-  include_directories (BEFORE ../../include include)
+  find_package( MPFI )
+  include_directories( BEFORE ../../include include )
   create_single_source_cgal_program( "bench_interval.cpp" )
   create_single_source_cgal_program( "Coercion_traits.cpp" )
   create_single_source_cgal_program( "constant.cpp" )
@@ -29,11 +33,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "doubletst.cpp" )
   create_single_source_cgal_program( "float.cpp" )
   create_single_source_cgal_program( "floattst.cpp" )
-  create_single_source_cgal_program( "Gmpfi.cpp" )
-  create_single_source_cgal_program( "Gmpfi_test_arithmetic.cpp" )
-  create_single_source_cgal_program( "Gmpfi_test_io.cpp" )
-  create_single_source_cgal_program( "Gmpfi_test_operators.cpp" )
-  create_single_source_cgal_program( "Gmpfi_test_precision.cpp" )
   create_single_source_cgal_program( "Gmpfr.cpp" )
   create_single_source_cgal_program( "Gmpfr_test_arithmetic.cpp" )
   create_single_source_cgal_program( "Gmpfr_test_io.cpp" )
@@ -76,10 +75,21 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "_test_valid_finite_float.cpp" )
   create_single_source_cgal_program( "to_interval_test.cpp" )
   create_single_source_cgal_program( "utilities.cpp" )
+  if( MPFI_FOUND )
+    include( ${MPFI_USE_FILE} )
+    create_single_source_cgal_program( "Gmpfi.cpp" )
+    create_single_source_cgal_program( "Gmpfi_test_arithmetic.cpp" )
+    create_single_source_cgal_program( "Gmpfi_test_io.cpp" )
+    create_single_source_cgal_program( "Gmpfi_test_operators.cpp" )
+    create_single_source_cgal_program( "Gmpfi_test_precision.cpp" )
+  else( MPFI_FOUND )
+    message( STATUS
+      "MPFI is not present, some of the tests will not be compiled." )
+  endif( MPFI_FOUND )
 
 else( CGAL_FOUND )
-  
-    message(STATUS "This program requires the CGAL library with GMP support, and will not be compiled.")
-  
-endif( CGAL_FOUND )
 
+  message(STATUS
+    "These tests require the CGAL library and will not be compiled.")
+
+endif( CGAL_FOUND )

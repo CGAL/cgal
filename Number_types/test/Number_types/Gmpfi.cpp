@@ -16,9 +16,6 @@
 // 
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
-#include <CGAL/basic.h>
-
-#ifdef CGAL_USE_MPFI
 #include <CGAL/Gmpfi.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
@@ -39,11 +36,3 @@ int main(){
         CGAL::test_real_embeddable<NT>();
         return 0;
 }
-
-#else
-int main(){
-        return 0;
-}
-#endif
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab
