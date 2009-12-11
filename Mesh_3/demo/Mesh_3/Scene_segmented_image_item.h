@@ -4,10 +4,12 @@
 #include "Scene_item.h"
 #include "Scene_interface.h"
 #include "Image_type_fwd.h"
+#include "Scene_segmented_image_item_config.h"
 
 typedef CGAL::Image_3 Image;
 
-class Scene_segmented_image_item : public Scene_item
+class SCENE_SEGMENTED_IMAGE_ITEM_EXPORT Scene_segmented_image_item 
+  : public Scene_item
 {
   Q_OBJECT
 public:
