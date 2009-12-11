@@ -239,8 +239,9 @@ struct Meshing_thread : QThread
 };
 
 typedef Tr::Geom_traits GT;
+typedef Tr::Geom_traits::FT FT;
 
-bool insert_spheres(C2t3& c2t3, Polyhedron* pMesh, const GT::FT size, bool);
+#include "Polyhedron_demo_remeshing_plugin_protection_cgal_code.h"
 
 Scene_item* cgal_code_remesh(QWidget* parent, 
                              Polyhedron* pMesh,

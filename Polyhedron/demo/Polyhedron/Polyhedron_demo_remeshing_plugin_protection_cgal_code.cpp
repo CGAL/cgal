@@ -737,8 +737,12 @@ struct Insert_spheres {
   }
 };
 
+#include "Polyhedron_demo_remeshing_plugin_protection_cgal_code.h"
+
 void insert_spheres(C2t3& c2t3, Polyhedron* pMesh, const FT size, 
                     bool refine_balls) {
 
   Insert_spheres go(c2t3, pMesh, size, refine_balls);
 }
+
+
