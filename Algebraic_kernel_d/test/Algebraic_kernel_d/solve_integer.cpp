@@ -16,9 +16,6 @@
 // 
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
-#include <CGAL/basic.h>
-
-#ifdef CGAL_USE_RS
 #include <CGAL/Algebraic_kernel_d_1_RS_Gmpz.h>
 #include <vector>
 
@@ -107,9 +104,3 @@ int main(){
 
         return returnvalue;
 }
-#else
-int main(){
-        std::cerr<<"RS was not configured"<<std::endl;
-        return 0;
-}
-#endif

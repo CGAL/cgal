@@ -1,9 +1,6 @@
 // $URL$
 // $Id$
 
-#include <CGAL/basic.h>
-
-#ifdef CGAL_USE_RS
 #include <CGAL/Algebraic_kernel_d_1_RS_Gmpz.h>
 #include <vector>
 
@@ -55,9 +52,3 @@ int main(){
 
   return 0;
   }
-#else
-int main(){
-        std::cerr<<"RS was not configured"<<std::endl;
-        return 0;
-}
-#endif
