@@ -40,4 +40,4 @@ int main() {
   tree.search(std::ostream_iterator<Point_d>(std::cout,"\n"), approximate_range);
 
   return 0;
-};
+}

@@ -2,7 +2,7 @@
 #include <CGAL/Kinetic/Delaunay_triangulation_3.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_event_log_visitor_3.h>
 
-int main(int , char *[])
+int main()
 {
 
     typedef CGAL::Kinetic::Exact_simulation_traits Traits;
@@ -27,4 +27,4 @@ int main(int , char *[])
       std::ostream_iterator<std::string>(std::cout, "\n"));*/
 
     return EXIT_SUCCESS;
-};
+}

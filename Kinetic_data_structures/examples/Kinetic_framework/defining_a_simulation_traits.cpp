@@ -105,7 +105,8 @@ protected:
 };
 
 
-int main(int, char *[]){
+int main()
+{
   typedef My_simulation_traits::Kinetic_kernel::Point_2 Moving_point_2;
   
   typedef CGAL::Kinetic::Delaunay_triangulation_2<My_simulation_traits> KDel;
@@ -133,4 +134,4 @@ int main(int, char *[]){
   }
   
   return EXIT_SUCCESS;
-};
+}

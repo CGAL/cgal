@@ -5,7 +5,7 @@
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
 
-int main(int, char *[])
+int main()
 {
 
     typedef CGAL::Kinetic::Exact_simulation_traits Simulation_traits;
@@ -35,4 +35,4 @@ int main(int, char *[])
     }
 
     return EXIT_SUCCESS;
-};
+}

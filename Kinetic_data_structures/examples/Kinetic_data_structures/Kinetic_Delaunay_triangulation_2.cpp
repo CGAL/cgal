@@ -1,7 +1,7 @@
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_2.h>
 
-int main(int, char *[])
+int main()
 {
 
     typedef CGAL::Kinetic::Exact_simulation_traits Simulation_traits;
@@ -29,4 +29,4 @@ int main(int, char *[])
     }
 
     return EXIT_SUCCESS;
-};
+}

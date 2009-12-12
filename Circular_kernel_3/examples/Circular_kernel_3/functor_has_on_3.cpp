@@ -28,4 +28,4 @@ int main()
 	    << " arc defined by the points (10,10,0), (5,5,5), (0,0,0)" 
 	    << std::endl << "See the points above." << std::endl;
   return 0;
-};
+}

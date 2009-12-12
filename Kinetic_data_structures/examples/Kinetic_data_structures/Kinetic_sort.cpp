@@ -4,9 +4,8 @@
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Kinetic/Sort.h>
 
-int main(int, char *[])
+int main()
 {
-
     typedef CGAL::Kinetic::Exact_simulation_traits Traits;
 
     typedef CGAL::Kinetic::Insert_event<Traits::Active_points_1_table> Insert_event;
@@ -26,4 +25,4 @@ int main(int, char *[])
     }
 
     return EXIT_SUCCESS;
-};
+}

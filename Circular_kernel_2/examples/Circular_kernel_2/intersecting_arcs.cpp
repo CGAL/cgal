@@ -46,4 +46,4 @@ int main()
   std::cout << "an unit square intersect? (wait a second please)" << std::endl;
   std::cout << "The probability is: " << prob_2<Circle_2>() << std::endl;
   return 0;
-};
+}

@@ -25,4 +25,4 @@ int main()
 	    << " arc defined counterclockwisely by the points (0,0), (5,5), (10,0)" 
 	    << std::endl << "See the points above." << std::endl;
   return 0;
-};
+}
