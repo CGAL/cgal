@@ -794,6 +794,14 @@ public:
     return size;
   }
   
+  /* Print the sgm vertices */
+  void print_vertices()   
+  {
+    typename Base::Face_const_iterator vit;
+    for (vit = this->faces_begin(); vit != this->faces_end(); ++vit)
+      std::cout << "vertex of polyhedron = " << vit->point() << std::endl;
+  }
+
   /*! Print statistics */
   void print_stat()
   {
