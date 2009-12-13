@@ -351,6 +351,10 @@ public:
   typedef T_Traits                                          Traits;
   typedef Traits                                            Geometry_traits_2;
   
+  typedef Arrangement_on_surface_2<Traits, 
+	Arr_spherical_topology_traits_2<Traits, T_Dcel<Traits> > >
+															Base;
+
   /*! Parameter-less Constructor */
   Arr_spherical_gaussian_map_3() { }
 
