@@ -18,6 +18,9 @@ int main()
   CGAL::test_x(std::cin, "sitesxx", false);
   CGAL::test_no_x(std::cin, "sitesxx", false);
 
+  CGAL::test_x(std::cin, "MartinHeldBugreport", false);
+  CGAL::test_no_x(std::cin, "MartinHeldBugreport", false);
+
   return 0;
 }
 

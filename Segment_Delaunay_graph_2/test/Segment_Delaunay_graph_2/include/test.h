@@ -10,6 +10,7 @@ template<class InputStream>
 bool test_x(InputStream& is, const char* ifname, bool test_remove = true)
 {
   SDG2 sdg;
+  std::cout << "Testing data from file: " << ifname << std::endl;
   return test_base(is, sdg, ifname, "sdg.tmp", test_remove);
 }
 
@@ -18,6 +19,7 @@ template<class InputStream>
 bool test_no_x(InputStream& is, const char* ifname, bool test_remove = true)
 {
   SDG2_wi sdg;
+  std::cout << "Testing data from file: " << ifname << std::endl;
   return test_base(is, sdg, ifname, "sdg_wi.tmp", test_remove);
 }
 
@@ -27,6 +29,7 @@ template<class InputStream>
 bool test_hierarchy_x(InputStream& is, const char* ifname, bool test_remove = true)
 {
   SDG2 sdg;
+  std::cout << "Testing data from file: " << ifname << std::endl;
   return test_base(is, sdg, ifname, "sdgh.tmp", test_remove);
 }
 
@@ -35,6 +38,7 @@ template<class InputStream>
 bool test_hierarchy_no_x(InputStream& is, const char* ifname, bool test_remove = true)
 {
   SDG2_wi sdg;
+  std::cout << "Testing data from file: " << ifname << std::endl;
   return test_base(is, sdg, ifname, "sdgh_wi.tmp", test_remove);
 }
 

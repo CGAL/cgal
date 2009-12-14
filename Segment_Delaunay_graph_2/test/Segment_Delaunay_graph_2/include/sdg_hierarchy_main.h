@@ -18,6 +18,9 @@ int main(int, char**)
   CGAL::test_hierarchy_x(std::cin, "sitesxx", false);
   CGAL::test_hierarchy_no_x(std::cin, "sitesxx", false);
 
+  CGAL::test_hierarchy_x(std::cin, "MartinHeldBugreport", false);
+  CGAL::test_hierarchy_no_x(std::cin, "MartiHeldBugreport", false);
+
   return 0;
 }
 
