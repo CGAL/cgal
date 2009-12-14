@@ -629,7 +629,8 @@ public:
   // we declare the Base to be public to overcome the problem.
   typedef Arr_spherical_gaussian_map_3<Geometry_traits_2, T_Dcel>   Base;
 
-  typedef Arr_polyhedral_sgm_overlay<Self>
+  // WE NEED TO ADD THE CGAL NAMESPACE TO PACIFY THE G++ 4.3.3 COMPILER.
+  typedef CGAL::Arr_polyhedral_sgm_overlay<Self>
     Arr_polyhedral_sgm_overlay;
 
 #if 0
