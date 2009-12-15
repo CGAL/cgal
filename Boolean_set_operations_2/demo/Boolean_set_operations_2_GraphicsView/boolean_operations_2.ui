@@ -60,7 +60,9 @@
     <addaction name="actionOpenDXF" />
     <addaction name="actionOpenBezier" />
     <addaction name="separator" />
-    <addaction name="actionSave" />
+    <addaction name="actionSaveRed" />
+    <addaction name="actionSaveBlue" />
+    <addaction name="actionSaveResult" />
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
@@ -215,12 +217,24 @@
    </property>
   </action>
 
-  <action name="actionSave" >
+  <action name="actionSaveRed" >
    <property name="text" >
-    <string>&amp;Save Currently Active Set</string>
+    <string>&amp;Save 'P' Set</string>
    </property>
   </action>
 
+  <action name="actionSaveBlue" >
+   <property name="text" >
+    <string>&amp;Save 'Q' Set</string>
+   </property>
+  </action>
+  
+  <action name="actionSaveResult" >
+   <property name="text" >
+    <string>&amp;Save Result Set</string>
+   </property>
+  </action>
+  
   <action name="actionQuit" >
    <property name="text" >
     <string>&amp;Quit</string>

@@ -343,6 +343,7 @@ struct Draw_bezier_X_monotone_curve
   }
 } ;
 
+
 template<class Bezier_boundary_pieces>
 class Bezier_boundary_pieces_graphics_item : public Boundary_pieces_graphics_item<Bezier_boundary_pieces,Draw_bezier_curve,Bezier_bbox>
 {

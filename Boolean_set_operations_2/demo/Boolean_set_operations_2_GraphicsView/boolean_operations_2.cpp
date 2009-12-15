@@ -465,7 +465,9 @@ public slots:
   void on_actionOpenLinear_triggered() ;
   void on_actionOpenDXF_triggered() ;
   void on_actionOpenBezier_triggered() ;
-  void on_actionSave_triggered() ;
+  void on_actionSaveRed_triggered() ;
+  void on_actionSaveBlue_triggered() ;
+  void on_actionSaveResult_triggered() ;
   void on_actionIntersection_triggered() ;
   void on_actionUnion_triggered() ;
   void on_actionBlueMinusRed_triggered() ;
@@ -999,27 +1001,79 @@ void MainWindow::on_actionOpenBezier_triggered()
   open(QFileDialog::getOpenFileName(this, tr("Open Bezier Polygon"), "../data", tr("Bezier Curve files (*.bps)") ));
 }
 
-void MainWindow::on_actionSave_triggered()
+void MainWindow::on_actionSaveRed_triggered()
 {
   if ( mCircular_active )
   {
-    if ( !save_circular(QFileDialog::getSaveFileName(this, tr("Save Acive Circular Polygon Set"), "../data", tr("Linear Curve files (*.lps)") ) 
-                       ,active_set().circular()
+    if ( !save_circular(QFileDialog::getSaveFileName(this, tr("Save 'P' Circular Polygon Set"), "../data", tr("Linear Curve files (*.lps)") ) 
+                       ,red_set().circular()
                        )
        )
     {
-      show_error("Caanoit save circular polygon set.");
+      show_error("Cannot save circular polygon set.");
     }
        
   }
   else
   {
-    if ( !save_bezier(QFileDialog::getSaveFileName(this, tr("Save Acive Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
+    if ( !save_bezier(QFileDialog::getSaveFileName(this, tr("Save 'P' Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
                      ,active_set().bezier() 
                      )
        )
     {
-      show_error("Caanoit save bezier polygon set.");
+      show_error("Cannot save bezier polygon set.");
+    }
+  }
+
+}
+
+void MainWindow::on_actionSaveBlue_triggered()
+{
+  if ( mCircular_active )
+  {
+    if ( !save_circular(QFileDialog::getSaveFileName(this, tr("Save 'Q' Circular Polygon Set"), "../data", tr("Linear Curve files (*.lps)") ) 
+                       ,active_set().circular()
+                       )
+       )
+    {
+      show_error("Cannot save circular polygon set.");
+    }
+       
+  }
+  else
+  {
+    if ( !save_bezier(QFileDialog::getSaveFileName(this, tr("Save 'Q' Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
+                     ,active_set().bezier() 
+                     )
+       )
+    {
+      show_error("Cannot save bezier polygon set.");
+    }
+  }
+
+}
+
+void MainWindow::on_actionSaveResult_triggered()
+{
+  if ( mCircular_active )
+  {
+    if ( !save_circular(QFileDialog::getSaveFileName(this, tr("Save Result Circular Polygon Set"), "../data", tr("Linear Curve files (*.lps)") ) 
+                       ,result_set().circular()
+                       )
+       )
+    {
+      show_error("Cannot save circular polygon set.");
+    }
+       
+  }
+  else
+  {
+    if ( !save_bezier(QFileDialog::getSaveFileName(this, tr("Save Result Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
+                     ,result_set().bezier() 
+                     )
+       )
+    {
+      show_error("Cannot save bezier polygon set.");
     }
   }
 
