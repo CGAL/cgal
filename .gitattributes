@@ -1642,6 +1642,7 @@ Manual/doc_tex/Manual/fig/g-simp.pdf -text svneol=unset#application/pdf
 Manual/doc_tex/Manual/fig/l-simp.eps -text svneol=unset#application/postscript
 Manual/doc_tex/Manual/fig/l-simp.pdf -text svneol=unset#application/pdf
 Manual/doc_tex/Manual/manual-3.3.bib -text
+Manual/doc_tex/Manual/manual-x.y.bib.README -text
 Manual/doc_tex/Miscellany/modifier.gif -text svneol=unset#image/gif
 Manual/doc_tex/Miscellany/modifier_small.gif -text svneol=unset#image/gif
 Manual/doc_tex/Miscellany/stopwatch.png -text
@@ -1968,6 +1969,7 @@ Manual_tools/src/latex_converter_config/gif/cc_wedge.gif -text svneol=unset#imag
 Manual_tools/src/latex_converter_config/gif/cc_wp.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/gif/cc_wr.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/gif/cc_zeta.gif -text svneol=unset#image/gif
+Manual_tools/src/latex_converter_config/html/Biblio.README -text
 Manual_tools/src/latex_converter_config/html/Biblio/how_to_cite_cgal.html svneol=native#text/html
 Manual_tools/src/latex_converter_config/html/images.html svneol=native#text/html
 Manual_tools/src/latex_converter_config/html/layout.html -text
