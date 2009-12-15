@@ -858,21 +858,34 @@ std::pair<std::pair<double,double>,long> Gmpfr::to_interval_exp()const{
 
 inline
 std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
+        if(is_zero())
+                return std::make_pair(Gmpz(0),0);
         Gmpz z;
         long e=mpfr_get_z_exp(z.mpz(),fr());
+        CGAL_assertion(mpfr_get_emin()<=e && mpfr_get_emax()>=e);
+        if(mpz_sgn(z.mpz())!=0&&mpz_tstbit(z.mpz(),0)==0){
+                unsigned long firstone=mpz_scan1(z.mpz(),0);
+                CGAL_assertion(mpz_divisible_2exp_p(z.mpz(),firstone)!=0);
+                Gmpz d(1);
+                mpz_mul_2exp(d.mpz(),d.mpz(),firstone);
+                CGAL_assertion(mpz_divisible_p(z.mpz(),d.mpz()));
+                mpz_divexact(z.mpz(),z.mpz(),d.mpz());
+                e+=firstone;
+                CGAL_assertion(mpfr_get_emax()>=e);
+        }
         return std::make_pair(z,e);
 }
 
 inline
 Gmpq Gmpfr::to_fraction()const{
-        Gmpq q;
-        std::pair<Gmpz,long> p=to_integer_exp();
-        mpq_set_z(q.mpq(),p.first.mpz());
+        std::pair<Gmpz,long> p=this->to_integer_exp();
+        Gmpq q(p.first);
         if(p.second<0)
                 mpq_div_2exp(q.mpq(),q.mpq(),(unsigned long)(-p.second));
         else
                 mpq_mul_2exp(q.mpq(),q.mpq(),(unsigned long)(p.second));
-        CGAL_assertion(*this==q);
+        mpq_canonicalize(q.mpq());
+        CGAL_assertion(mpfr_cmp_q(fr(),q.mpq())==0);
         return q;
 }
 
