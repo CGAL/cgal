@@ -57,7 +57,7 @@ public std::unary_function<_P,bool>{
         typedef _P              P;
         typedef to_rs_poly<P>   convert;
         typedef _Gcd_policy     Gcd;
-        inline bool operator()(const P &p){
+        inline bool operator()(const P &p)const{
                 Polynomial rsp=convert()(p);
                 return(!(Gcd()(rsp,rsp.derive()).get_degree_static()));
         }
@@ -70,13 +70,11 @@ public std::unary_function<_P,_P>{
         typedef to_rs_poly<P>   convert;
         typedef from_rs_poly<P> back;
         typedef _Gcd_policy     Gcd;
-        inline P operator()(const P &p){
-                return back()(sfpart_1<Gcd>(convert()(p)));
+        inline P operator()(const P &p)const{
+                return back()(sfpart_1<Gcd>()(convert()(p)));
         }
 };      // Make_square_free_1
 
-// this function is not well defined in algebraic kernel concepts; we
-// don't care, we do it correctly
 template <class _P,class _Gcd_policy>
 struct Square_free_factorize_1{
         typedef _P              P;
@@ -84,12 +82,15 @@ struct Square_free_factorize_1{
         typedef from_rs_poly<P> back;
         typedef _Gcd_policy     Gcd;
         template <class OutputIterator>
-        int operator()(const P &p,OutputIterator oi){
+        OutputIterator operator()(const P &p,OutputIterator oi)const{
                 Polynomial rsp=convert()(p);
-                sqfrvec factorization(sqfr_1<Gcd>(rsp));
-                // TODO: make a vector<P> and map back() functor
-                //std::copy(factorization.begin(),factorization.end(),oi);
-                return factorization.size();
+                sqfrvec factorization(sqfr_1<Gcd>()(rsp));
+                for(sqfrvec::iterator i=factorization.begin();
+                    i!=factorization.end();
+                    ++i){
+                        *oi++=std::make_pair(back()((*i).first),(*i).second);
+                    }
+                return oi;
         }
 };      // Square_free_factorize_1
 
@@ -99,7 +100,7 @@ public std::binary_function<_P,_P,bool>{
         typedef _P              P;
         typedef to_rs_poly<P>   convert;
         typedef _Gcd_policy     Gcd;
-        inline bool operator() (const P &p1,const P &p2){
+        inline bool operator() (const P &p1,const P &p2)const{
                 RS_polynomial_1 rsp1=convert()(p1);
                 RS_polynomial_1 rsp2=convert()(p2);
                 return(!Gcd()(rsp1,rsp2).get_degree_static());
@@ -112,17 +113,17 @@ struct Make_coprime_1{
         typedef to_rs_poly<P>   convert;
         typedef from_rs_poly<P> back;
         typedef _Gcd_policy     Gcd;
-        bool operator()(const P &p1,const P &p2,P &g,P &q1,P &q2){
+        bool operator()(const P &p1,const P &p2,P &g,P &q1,P &q2)const{
                 typedef _Gcd_policy     Gcd;
                 RS_polynomial_1 rsp1=convert()(p1);
                 RS_polynomial_1 rsp2=convert()(p2);
-                g=Gcd()(rsp1,rsp2);
-                // we don't calculate q1 and q2 when g==1, shall we?
-                if(!(g.get_degree_static()))
-                        return true;
-                q1=back()(*Ediv_1()(p1,g));
-                q2=back()(*Ediv_1()(p2,g));
-                return false;
+                RS_polynomial_1 rsg=convert()(g);
+                rsg=Gcd()(rsp1,rsp2);
+                g=back()(rsg);
+                // even when g==1, we calculate q1 and q2
+                q1=back()(*Ediv_1()(rsp1,rsg));
+                q2=back()(*Ediv_1()(rsp2,rsg));
+                return rsg.get_degree_static()?false:true;
         }
 };      // Make_coprime_1
 
@@ -133,7 +134,7 @@ struct Solve_RS_1{
     typedef sqfr_1<Gcd>     Sqfr;
 
     template <class OutputIterator>
-    OutputIterator operator()(Polynomial &p,OutputIterator res)const{
+    OutputIterator operator()(const Polynomial &p,OutputIterator res)const{
         int nr,*m;
         mpfi_ptr *x;
         boost::function2<
@@ -171,7 +172,7 @@ struct Solve_RS_1{
     }
 
     template <class OutputIterator>
-    OutputIterator operator()(Polynomial &p,
+    OutputIterator operator()(const Polynomial &p,
                               bool known_to_be_square_free,
                               OutputIterator res)const{
         int nr,m;
@@ -225,9 +226,9 @@ struct Solve_1{
 
   template <class OutputIterator>
   inline
-  OutputIterator operator()( 
-      const P &p, 
-      const Bound& lower, const Bound& upper, 
+  OutputIterator operator()(
+      const P &p,
+      const Bound& lower, const Bound& upper,
       OutputIterator res) const {
     typedef std::vector<std::pair<Algebraic,Multiplicity> > RMV;
     RMV roots;
@@ -241,10 +242,10 @@ struct Solve_1{
 
   template <class OutputIterator>
   inline
-  OutputIterator operator()( 
+  OutputIterator operator()(
       const P &p,
-      bool known_to_be_square_free, 
-      const Bound& lower, const Bound& upper, 
+      bool known_to_be_square_free,
+      const Bound& lower, const Bound& upper,
       OutputIterator res) const {
     typedef std::vector< Algebraic > RV;
     RV roots;
@@ -309,7 +310,7 @@ public std::unary_function<_P,int>{
     typedef _P              P;
     typedef to_rs_poly<P>   convert;
 
-    int operator()(P &p)const{
+    int operator()(const P &p)const{
         int nr;
         mpfi_ptr *x;
         RS_polynomial_1 rspoly=convert()(p);
@@ -328,8 +329,8 @@ public std::binary_function<_P,Algebraic,CGAL::Sign>{
     typedef _Gcd_policy     Gcd;
     typedef to_rs_poly<P>   convert;
 
-    CGAL::Sign operator()(P &p,const Algebraic &a)const{
-        return sign_1_no_rs<Gcd>(convert()(p),const_cast<Algebraic&>(a));
+    CGAL::Sign operator()(const P &p,const Algebraic &a)const{
+        return sign_1_no_rs<Gcd>(convert()(p),a);
     }
 };  // Sign_at_1
 
@@ -340,7 +341,7 @@ public std::binary_function<_P,Algebraic,bool>{
     typedef _Gcd_policy         Gcd;
     typedef Sign_at_1<P,Gcd>    Sign_at;
 
-    bool operator()(P &p,const Algebraic &a)const{
+    bool operator()(const P &p,const Algebraic &a)const{
         return (Sign_at()(p,a)==CGAL::ZERO);
     }
 };  // Is_zero_at_1
@@ -349,21 +350,27 @@ template <class _Gcd_policy>
 struct Compare_1:
     public std::binary_function<Algebraic,Algebraic,Comparison_result>{
   typedef _Gcd_policy     Gcd;
-  
-  // TODO: make this const Algebraic& ASAP  
-  inline Comparison_result operator()(Algebraic r1, Algebraic r2) const{ 
+
+  Comparison_result operator()(const Algebraic &r1,const Algebraic &r2) const{
     return RS_COMPARE::compare_1<Gcd>(r1,r2);
   }
-  
-  Comparison_result operator()(const int &r1,   const Algebraic &r2) const{return this->operator()(Algebraic(r1),r2);}
-  Comparison_result operator()(const Bound &r1, const Algebraic &r2) const{return this->operator()(Algebraic(r1),r2);}
-  Comparison_result operator()(const Gmpz &r1,  const Algebraic &r2) const{return this->operator()(Algebraic(r1),r2);}
-  Comparison_result operator()(const Gmpq &r1,  const Algebraic &r2) const{return this->operator()(Algebraic(r1),r2);}
-  Comparison_result operator()(const Algebraic &r1, const int   &r2) const{return this->operator()(r1,Algebraic(r2));}
-  Comparison_result operator()(const Algebraic &r1, const Bound &r2) const{return this->operator()(r1,Algebraic(r2));}
-  Comparison_result operator()(const Algebraic &r1, const Gmpz  &r2) const{return this->operator()(r1,Algebraic(r2));}
-  Comparison_result operator()(const Algebraic &r1, const Gmpq  &r2) const{return this->operator()(r1,Algebraic(r2));}
 
+  Comparison_result operator()(const int &r1,   const Algebraic &r2) const{
+    return this->operator()(Algebraic(r1),r2);}
+  Comparison_result operator()(const Bound &r1, const Algebraic &r2) const{
+    return this->operator()(Algebraic(r1),r2);}
+  Comparison_result operator()(const Gmpz &r1,  const Algebraic &r2) const{
+    return this->operator()(Algebraic(r1),r2);}
+  Comparison_result operator()(const Gmpq &r1,  const Algebraic &r2) const{
+    return this->operator()(Algebraic(r1),r2);}
+  Comparison_result operator()(const Algebraic &r1, const int   &r2) const{
+    return this->operator()(r1,Algebraic(r2));}
+  Comparison_result operator()(const Algebraic &r1, const Bound &r2) const{
+    return this->operator()(r1,Algebraic(r2));}
+  Comparison_result operator()(const Algebraic &r1, const Gmpz  &r2) const{
+    return this->operator()(r1,Algebraic(r2));}
+  Comparison_result operator()(const Algebraic &r1, const Gmpq  &r2) const{
+    return this->operator()(r1,Algebraic(r2));}
 };  // Compare_1
 
 template <class _P,class _Gcd>
@@ -389,7 +396,7 @@ template <class _Gcd_policy>
 struct Bound_between_1:
     public std::binary_function<Algebraic,Algebraic,Bound>{
         typedef _Gcd_policy     Gcd;
-        Bound operator()(Algebraic &x1,Algebraic &x2)const{
+        Bound operator()(const Algebraic &x1,const Algebraic &x2)const{
             mpfr_t temp;
             mp_prec_t p1,p2;
             int round;
@@ -417,53 +424,44 @@ struct Bound_between_1:
             }
             CGAL_assertion(!round);
             mpfr_div_2ui(temp,temp,1,GMP_RNDN);
-            return Gmpfr(temp);
+            return Bound(temp);
         }
     };  // Bound_between_1
 
-
-
 template <class _Gcd_policy>
 struct Approximate_absolute_1:
-    public std::binary_function<Algebraic_1,int,std::pair<Bound,Bound> >{ 
+    public std::binary_function<Algebraic_1,int,std::pair<Bound,Bound> >{
   typedef _Gcd_policy  Gcd;
-  
-  std::pair<Bound,Bound> 
-  operator()(Algebraic_1&  x, int prec) const {
-    Bound l = x.left();  
-    Bound u = x.right();
+
+  std::pair<Bound,Bound>
+  operator()(const Algebraic_1& x, int prec) const {
     Bound error = CGAL::ipower(Bound(2),CGAL::abs(prec));
-    while((prec>0)?((u-l)*error>Bound(1)):((u-l)>error)){
+    while((prec>0)?((x.sup()-x.inf())*error>Bound(1)):((x.sup()-x.inf())>error))
       bisect_n_dyadic<Gcd>(x, (unsigned long) 1);
-      l = x.left();
-      u = x.right();
-    }
-    return std::make_pair(l,u);
+    return std::make_pair(x.inf(),x.sup());
   }
-}; 
+};
 
 template <class _Gcd_policy>
 struct Approximate_relative_1
   :public std::binary_function<Algebraic_1,int,std::pair<Bound,Bound> >{
- 
-  std::pair<Bound,Bound> operator()(Algebraic_1 x, int prec) const {
-    if(CGAL::is_zero(x)) return std::make_pair(Bound(0),Bound(0));
+
+  std::pair<Bound,Bound> operator()(const Algebraic_1 &x, int prec) const {
+    if(CGAL::is_zero(x))
+      return std::make_pair(Bound(0),Bound(0));
     typedef _Gcd_policy  Gcd;
-    
-    Bound l = x.left();  
-    Bound u = x.right();
+
     Bound error = CGAL::ipower(Bound(2),CGAL::abs(prec));
-    Bound max_b = (CGAL::max)(CGAL::abs(u),CGAL::abs(l));
-    while((prec>0)?((u-l)*error>max_b):((u-l)>error*max_b)){
+    Bound max_b = (CGAL::max)(CGAL::abs(x.sup()),CGAL::abs(x.inf()));
+    while((prec>0)?(
+          (x.sup()-x.inf())*error>max_b):
+          ((x.sup()-x.inf())>error*max_b)){
       bisect_n_dyadic<Gcd>(x, (unsigned long) 1);
-      l = x.left();
-      u = x.right();
-      max_b = (CGAL::max)(CGAL::abs(u),CGAL::abs(l));
+      max_b = (CGAL::max)(CGAL::abs(x.sup()),CGAL::abs(x.inf()));
     }
-    return std::make_pair(l,u);
+    return std::make_pair(x.inf(),x.sup());
   }
 };
-
 
 }   // namespace RSFunctors
 } // namespace CGAL

@@ -39,7 +39,7 @@ class Algebraic_1;
 // Comparison_result, which is the comparison between a and p
 // precondition: p belongs to a's isolation interval
 template <class _Gcd_policy>
-Comparison_result bisect_at(Algebraic_1 &a,mpfr_srcptr p){
+Comparison_result bisect_at(const Algebraic_1 &a,mpfr_srcptr p){
         typedef _Gcd_policy     Gcd;
         Sign sl,sp;
         int round;
@@ -96,7 +96,7 @@ int bisect_at_endpoints(const Algebraic_1 &a,Algebraic_1 &b){
 // bisect n times an interval; this function returns the number of
 // refinements made
 template <class _Gcd_policy>
-int bisect_n(Algebraic_1 &a,unsigned long n=1){
+int bisect_n(const Algebraic_1 &a,unsigned long n=1){
         typedef _Gcd_policy     Gcd;
         Sign sl,sc;
         mp_prec_t pl,pc;
@@ -111,9 +111,9 @@ int bisect_n(Algebraic_1 &a,unsigned long n=1){
         pc=mpfr_get_prec(&(a.mpfi()->right));
         pc=(pl>pc?pl:pc)+(mp_prec_t)n;
         mpfr_init2(center,pc);
-        round=mpfr_prec_round(&(a.mpfi()->left),pc,GMP_RNDN);
+        round=mpfr_prec_round((mpfr_ptr)&(a.mpfi()->left),pc,GMP_RNDN);
         CGAL_assertion(!round);
-        round=mpfr_prec_round(&(a.mpfi()->right),pc,GMP_RNDN);
+        round=mpfr_prec_round((mpfr_ptr)&(a.mpfi()->right),pc,GMP_RNDN);
         CGAL_assertion(!round);
         for(i=0;i<n;++i){
                 round=mpfr_add(
@@ -126,16 +126,18 @@ int bisect_n(Algebraic_1 &a,unsigned long n=1){
                 CGAL_assertion(!round);
                 sc=RSSign::signat(sfpart_1<Gcd>()(a.pol()),center);
                 if(sc==ZERO){   // we have a root
-                        round=mpfr_set(&(a.mpfi()->left),center,GMP_RNDN);
+                        round=mpfr_set((mpfr_ptr)&(a.mpfi()->left),
+                                       center,
+                                       GMP_RNDN);
                         CGAL_assertion(!round);
-                        mpfr_swap(&(a.mpfi()->right),center);
+                        mpfr_swap((mpfr_ptr)&(a.mpfi()->right),center);
                         a.set_lefteval(ZERO);
                         break;
                 }
                 if(sc==sl)
-                        mpfr_swap(&(a.mpfi()->left),center);
+                        mpfr_swap((mpfr_ptr)&(a.mpfi()->left),center);
                 else
-                        mpfr_swap(&(a.mpfi()->right),center);
+                        mpfr_swap((mpfr_ptr)&(a.mpfi()->right),center);
         }
         mpfr_clear(center);
         return i;
@@ -146,7 +148,7 @@ int bisect_n(Algebraic_1 &a,unsigned long n=1){
 // allocating a big amount of memory. Note that the dyadic numbers are
 // implemented as mpfrs, this implies that no conversion is needed.
 template <class _Gcd_policy>
-int bisect_n_dyadic(Algebraic_1 &a,unsigned long n=1){
+int bisect_n_dyadic(const Algebraic_1 &a,unsigned long n=1){
 
         typedef _Gcd_policy     Gcd;
         Sign sl,sc;
@@ -176,7 +178,7 @@ int bisect_n_dyadic(Algebraic_1 &a,unsigned long n=1){
 
 // refine an interval, by bisecting it, until having a size smaller than 2^(-s)
 template <class _Gcd_policy>
-int bisect(Algebraic_1 &a,mp_exp_t s){
+int bisect(const Algebraic_1 &a,mp_exp_t s){
         typedef _Gcd_policy     Gcd;
         long ed;
         mpfr_t d;       // interval size
@@ -370,7 +372,7 @@ int refine_interval_by_factor(dyadic_ptr x_lo,dyadic_ptr x_hi,
 
 // applies qir a given number of times
 template <class _Gcd_policy>
-int qir_n(Algebraic_1 &a,unsigned t=1){
+int qir_n(const Algebraic_1 &a,unsigned t=1){
         typedef _Gcd_policy     Gcd;
         unsigned count=0;
         unsigned n=2;   // N=2^n
@@ -417,7 +419,7 @@ int qir_n(Algebraic_1 &a,unsigned t=1){
 
 // applies qir until having an interval of size less than 2^(-t)
 template <class _Gcd_policy>
-int qir(Algebraic_1 &a,mp_exp_t t){
+int qir(const Algebraic_1 &a,mp_exp_t t){
         typedef _Gcd_policy     Gcd;
         int count=0;
         long ed;

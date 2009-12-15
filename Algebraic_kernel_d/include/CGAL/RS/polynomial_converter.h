@@ -34,7 +34,7 @@ namespace CGAL{
 template<class P>
 struct to_rs_poly:
 public std::unary_function<P,RS_polynomial_1>{
-        RS_polynomial_1 operator()(const P &p){
+        RS_polynomial_1 operator()(const P &p)const{
                 std::cerr<<"can't convert to integer polynomial"<<std::endl;
                 exit(-1);
         }
@@ -43,7 +43,7 @@ public std::unary_function<P,RS_polynomial_1>{
 template<>
 struct to_rs_poly<RS_polynomial_1>:
 public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
-        RS_polynomial_1& operator()(RS_polynomial_1 &p){
+        const RS_polynomial_1& operator()(const RS_polynomial_1 &p)const{
                 return p;
         }
 };
@@ -55,7 +55,7 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
         template<> \
         struct to_rs_poly<Polynomial<_T> >: \
         public std::unary_function<Polynomial<_T>,RS_polynomial_1>{ \
-                RS_polynomial_1& operator()(const Polynomial<_T> &p){ \
+                RS_polynomial_1& operator()(const Polynomial<_T> &p)const{ \
                         void *(*af)(size_t); \
                         void *(*rf)(void*,size_t,size_t); \
                         void (*ff)(void*,size_t); \
@@ -78,7 +78,7 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
         template<> \
         struct to_rs_poly<Polynomial<_T> >: \
         public std::unary_function<Polynomial<_T>,RS_polynomial_1>{ \
-                RS_polynomial_1& operator()(const Polynomial<_T> &p){ \
+                RS_polynomial_1& operator()(const Polynomial<_T> &p)const{ \
                         int d=p.degree(); \
                         mpz_t* c=(mpz_t*)malloc((d+1)*sizeof(mpz_t)); \
                         for(int i=0;i<=d;++i){ \
@@ -111,7 +111,7 @@ RS_POLYNOMIAL_CONVERTER_COPY(
 template<>
 struct to_rs_poly<Polynomial<Gmpq> >:
 public std::unary_function<Polynomial<Gmpq>,RS_polynomial_1>{
-        RS_polynomial_1& operator()(const Polynomial<Gmpq> &p){
+        RS_polynomial_1& operator()(const Polynomial<Gmpq> &p)const{
                 int d=p.degree();
                 mpz_t denominator;
                 mpz_init(denominator);
@@ -136,7 +136,7 @@ public std::unary_function<Polynomial<Gmpq>,RS_polynomial_1>{
 template<class P>
 struct from_rs_poly:
 public std::unary_function<RS_polynomial_1,P>{
-        P operator()(const RS_polynomial_1 &p){
+        P operator()(const RS_polynomial_1 &p)const{
                 std::cerr<<"can't convert to integer polynomial"<<std::endl;
                 exit(-1);
         }
@@ -145,7 +145,7 @@ public std::unary_function<RS_polynomial_1,P>{
 template<>
 struct from_rs_poly<RS_polynomial_1>:
 public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
-        RS_polynomial_1& operator()(RS_polynomial_1 &p){
+        const RS_polynomial_1& operator()(const RS_polynomial_1 &p)const{
                 return p;
         }
 };
@@ -153,7 +153,7 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
 template<>
 struct from_rs_poly<Polynomial<Gmpz> >:
 public std::unary_function<RS_polynomial_1,Polynomial<Gmpz> >{
-        Polynomial<Gmpz> operator()(const RS_polynomial_1 &p){
+        Polynomial<Gmpz> operator()(const RS_polynomial_1 &p)const{
                 typedef Polynomial_traits_d<Polynomial<Gmpz> >  PT;
                 mpz_t* pcoef=p.get_coefs();
                 std::vector<Gmpz> coeffs;
@@ -171,7 +171,7 @@ public std::unary_function<RS_polynomial_1,Polynomial<Gmpz> >{
 template<>
 struct from_rs_poly<Polynomial<Gmpq> >:
 public std::unary_function<RS_polynomial_1,Polynomial<Gmpq> >{
-        Polynomial<Gmpq> operator()(const RS_polynomial_1 &p){
+        Polynomial<Gmpq> operator()(const RS_polynomial_1 &p)const{
                 typedef Polynomial_traits_d<Polynomial<Gmpq> >  PT;
                 mpz_t* pcoef=p.get_coefs();
                 std::vector<Gmpq> coeffs;

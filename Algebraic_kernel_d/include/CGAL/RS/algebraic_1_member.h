@@ -107,8 +107,8 @@ void Algebraic_1::set_next(mpfi_ptr n){
 }
 
 inline
-void Algebraic_1::set_lefteval(Sign s){
-        ptr()->_lefteval=s;
+void Algebraic_1::set_lefteval(Sign s)const{
+        Ptr()->_lefteval=s;
 }
 
 inline

@@ -37,12 +37,12 @@ bool operator==(const Algebraic_1&,const Algebraic_1&);
 // representation of algebraic numbers
 class Algebraic_1_rep{
 public:
-        mpfi_t _mpfi;
+        mutable mpfi_t _mpfi;
         RS_polynomial_1 *_poly;
         int _nr;
         int _mult;
         mpfi_ptr _prev,_next;
-        Sign _lefteval;
+        mutable Sign _lefteval;
 
         Algebraic_1_rep():
                 _poly(NULL),_nr(-1),_mult(-1),
@@ -81,7 +81,7 @@ public:
         // policy
         Algebraic_1(
                     mpfi_srcptr,
-                    RS_polynomial_1&,
+                    const RS_polynomial_1&,
                     int,
                     int,
                     mpfi_ptr,
@@ -92,8 +92,13 @@ public:
                                      RS_polynomial_1>);
 
         // the another interesting variant
-        Algebraic_1
-        (mpfi_srcptr,RS_polynomial_1&,int,int,mpfi_ptr,mpfi_ptr,CGAL::Sign);
+        Algebraic_1(mpfi_srcptr,
+                    const RS_polynomial_1&,
+                    int,
+                    int,
+                    mpfi_ptr,
+                    mpfi_ptr,
+                    CGAL::Sign);
 
         // functions related to the member data
         mpfi_srcptr mpfi()const;
@@ -113,7 +118,7 @@ public:
         void set_prec(mp_prec_t);
         void set_prev(mpfi_ptr);
         void set_next(mpfi_ptr);
-        void set_lefteval(Sign);
+        void set_lefteval(Sign)const;
         mp_prec_t get_prec()const;
         mpfi_ptr prev()const;
         mpfi_ptr next()const;

@@ -32,7 +32,7 @@ namespace CGAL{
 
 // compute the sign of the polynomial at a given algebraic number
 template <class _Gcd_policy>
-Sign sign_1_no_rs(const RS_polynomial_1 &p,Algebraic_1 &x){
+Sign sign_1_no_rs(const RS_polynomial_1 &p,const Algebraic_1 &x){
         typedef _Gcd_policy     Gcd;
 
         unsigned bisect_steps=4;

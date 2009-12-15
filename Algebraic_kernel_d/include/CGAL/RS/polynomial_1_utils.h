@@ -150,7 +150,8 @@ public std::binary_function<
                 mpz_divexact(q.coef(i),r.coef(i),lcg);
             return std::make_pair(q,RS_polynomial_1());
         }
-        while((i=r.get_degree_static()-degg)>=0){
+        // don't use get_degree_static
+        while((i=r.get_degree()-degg)>=0){
             mpz_divexact(q.coef(i),r.leading_coefficient(),lcg);
             r-=g.times_monomial(q.coef(i),i);
         }
@@ -289,7 +290,8 @@ public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1*>{
         return q;
         */
     // naive implementation
-        return new RS_polynomial_1(Pdiv_1()(f,g).first);
+        RS_polynomial_1 *ret=new RS_polynomial_1(Pdivquo_1()(f,g));
+        return ret;
     }
 };
 
@@ -366,7 +368,8 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1*>{
     typedef _Gcd_policy         Gcd;
     RS_polynomial_1* operator()(const RS_polynomial_1 &P)const{
         if(P.get_degree()){
-            return Ediv_1()(P,Pp()(Gcd()(P,P.derive())));
+            // TODO: not optimal
+            return &Pp()(*Ediv_1()(P,Pp()(Gcd()(P,P.derive()))));
         }else
             return (new RS_polynomial_1(
                             Constantpoly_1()(mpz_sgn(P.coef(0))?1:0)));

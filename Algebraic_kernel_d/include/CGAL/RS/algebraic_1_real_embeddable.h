@@ -84,9 +84,7 @@ public:
     :public  std::unary_function< Type, Type> {
   public: 
     Type operator()(const Type& a) const { 
-      if (Sgn()(a) == CGAL::NEGATIVE) 
-        return -a;
-      return a;      
+      return Sgn()(a)==CGAL::NEGATIVE?-a:a;
     }
   };
 };

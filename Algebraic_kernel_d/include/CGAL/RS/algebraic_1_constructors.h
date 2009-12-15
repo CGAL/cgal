@@ -200,7 +200,7 @@ Algebraic_1::Algebraic_1(const Gmpfr &r){
 inline
 Algebraic_1::Algebraic_1(
                          mpfi_srcptr i,
-                         RS_polynomial_1 &p,
+                         const RS_polynomial_1 &p,
                          int n,
                          int m,
                          mpfi_ptr prevroot,
@@ -224,7 +224,7 @@ Algebraic_1::Algebraic_1(
 // another interesting constructor, where we have already calculated the
 // left evaluation
 inline
-Algebraic_1::Algebraic_1(mpfi_srcptr i,RS_polynomial_1 &p,int n,int m,
+Algebraic_1::Algebraic_1(mpfi_srcptr i,const RS_polynomial_1 &p,int n,int m,
                          mpfi_ptr prevroot,mpfi_ptr nextroot,CGAL::Sign s){
         mpfi_init(mpfi());
         set_mpfi_ptr(i);

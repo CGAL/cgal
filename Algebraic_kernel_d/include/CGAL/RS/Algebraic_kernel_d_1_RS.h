@@ -26,13 +26,12 @@
 
 namespace CGAL{
 
-template <class _C>
+template <class _C,class _G=CGAL::Modgcd_1>
 struct Algebraic_kernel_d_1_RS{
 
     typedef _C                                              Coefficient;
+    typedef _G                                              Gcd;
     typedef Polynomial<Coefficient>                         Polynomial_1;
-    typedef Modgcd_1                                        Gcd;
-    //typedef Cgalgcd_1                                       Gcd;
     typedef RSFunctors::Algebraic                           Algebraic_real_1;
     typedef RSFunctors::Bound                               Bound;
     typedef RSFunctors::Multiplicity                        Multiplicity_type;

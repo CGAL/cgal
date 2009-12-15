@@ -31,7 +31,14 @@ Algebraic_1 Algebraic_1::operator-()const{
         mpfi_t inv;
         mpfi_init2(inv,mpfi_get_prec(mpfi()));
         mpfi_neg(inv,mpfi());
-        return Algebraic_1(inv,pol().minusx(),nr(),mult(),NULL,NULL,lefteval());
+        Algebraic_1 *inverse=new Algebraic_1(inv,
+                                             pol().minusx(),
+                                             nr(),
+                                             mult(),
+                                             NULL,
+                                             NULL,
+                                             -lefteval());
+        return *inverse;
 }
 
 } // namespace CGAL

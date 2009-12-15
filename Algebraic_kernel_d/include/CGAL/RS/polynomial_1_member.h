@@ -242,8 +242,12 @@ inline
 RS_polynomial_1& RS_polynomial_1::minusx()const{
         int d=get_degree();
         RS_polynomial_1 *mx=new RS_polynomial_1(d);
-        for(int x=0;x<=d;x+=2)
-                mpz_neg(mx->coef(x),coef(x));
+        for(int x=0;x<=d;++x){
+                if(x%2==1)
+                        mpz_set(mx->coef(x),coef(x));
+                else
+                        mpz_neg(mx->coef(x),coef(x));
+        }
         return *mx;
 }
 

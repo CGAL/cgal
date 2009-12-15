@@ -39,7 +39,8 @@ namespace RS_COMPARE{
 
 // compare two algebraic numbers, knowing they are not equal
 template <class _Gcd_policy>
-Comparison_result compare_1_unequal(Algebraic_1 &r1,Algebraic_1 &r2){
+Comparison_result
+compare_1_unequal(const Algebraic_1 &r1,const Algebraic_1 &r2){
         typedef _Gcd_policy     Gcd;
         mp_prec_t prec1=r1.get_prec();
         mp_prec_t prec2=r2.get_prec();
@@ -56,7 +57,8 @@ Comparison_result compare_1_unequal(Algebraic_1 &r1,Algebraic_1 &r2){
 }
 
 template <class _Gcd_policy>
-Comparison_result compare_1(Algebraic_1 &r1,Algebraic_1 &r2){
+Comparison_result
+compare_1(const Algebraic_1 &r1,const Algebraic_1 &r2){
         typedef _Gcd_policy     Gcd;
         if(r1.pol()==r2.pol())
                 return(r1.nr()!=r2.nr()?(r1.nr()<r2.nr()?SMALLER:LARGER):EQUAL);
