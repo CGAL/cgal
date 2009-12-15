@@ -14,20 +14,27 @@ fi
 rm -f Biblio/how_to_cite_*.*
 rm -f index.html
 bibtex2html $1
-perl -ni.bak -e '/^   OPT[A-Z]/ or print;' Biblio/how_to_cite_cgal.bib
-perl -pi.bak -e "s/All publications/CGAL Manual Chapters/g" Biblio/how_to_cite_cgal.html
-perl -pi.bak -e 's|-([0-9]{1,2})]|-$1 - <a href="./how_to_cite_cgal.bib">bibtex file</a>]|g' Biblio/how_to_cite_cgal.html
-perl -pi.bak -e "s/#669999/#C0C0D0/g" Biblio/how_to_cite_cgal.html
-perl -pi.bak -e "s/#badfe1/#C0C0D0/g" Biblio/how_to_cite_cgal.html
-perl -pi.bak -e "s/CGAL /{CGAL} /g" Biblio/how_to_cite_cgal.bib
-perl -pi.bak -e "s/{CGAL} Editorial Board/{CGAL Editorial Board}/g" Biblio/how_to_cite_cgal.bib
-perl -pi.bak -e "s/Delaunay /{Delaunay} /g" Biblio/how_to_cite_cgal.bib
-perl -pi.bak -e "s/Voronoi /{Voronoi} /g" Biblio/how_to_cite_cgal.bib
-perl -pi.bak -e "s/Minkowski /{Minkowski} /g" Biblio/how_to_cite_cgal.bib
-perl -pi.bak -e "s/Nef /{Nef} /g" Biblio/how_to_cite_cgal.bib
-perl -pi.bak -e "s/Apollonius /{Apollonius} /g" Biblio/how_to_cite_cgal.bib
-perl -pi.bak -e "s/Boolean /{Boolean} /g" Biblio/how_to_cite_cgal.bib
-perl -pi.bak -e "s|http://www.cgal.org/Manual/[0-9.]*/doc_html/cgal_manual/|../|g" Biblio/how_to_cite_cgal.html
+perl -ni.bak -e '/^   OPT[A-Z]/ && next;
+                 s/CGAL /{CGAL} /g;
+                 s/The {CGAL} Project/{The CGAL Project}/g;
+                 s/{CGAL} Editorial Board/{CGAL Editorial Board}/g;
+                 s/\{([0-9]\.[0-9])\}/{{$1}} /g;
+                 s/3D /{3D} /g;
+                 s/2D /{2D} /g;
+                 s/dD /{dD} /g;
+                 s/Delaunay /{Delaunay} /g;
+                 s/Voronoi /{Voronoi} /g;
+                 s/Minkowski /{Minkowski} /g;
+                 s/Nef /{Nef} /g;
+                 s/Apollonius /{Apollonius} /g;
+                 s/Boolean /{Boolean} /g;
+                 print;' Biblio/how_to_cite_cgal.bib
+
+perl -pi.bak -e 's/All publications/CGAL Manual Chapters/g;
+                 s|-([0-9]{1,2})]|-$1 - <a href="./how_to_cite_cgal.bib">bibtex file</a>]|g;
+                 s/#669999/#C0C0D0/g;
+                 s/#badfe1/#C0C0D0/g;
+                 s|http://www.cgal.org/Manual/[0-9.]*/doc_html/cgal_manual/|../|g;' Biblio/how_to_cite_cgal.html
 rm -f index.html
 
 echo 
