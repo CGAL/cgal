@@ -99,6 +99,18 @@ _test_cls_const_triang_plus_2( const TrP & )
   trp.remove_constraint(vh[10],vh[11]);
   trp.remove_constraint(vh[6],vh[7]);
 
+  std::cerr << " test a special configuration" << std::endl;
+  trp.clear();
+  Vertex_handle v1 = trp.insert(Point(0, 0));
+  Vertex_handle v2 = trp.insert(Point(-1, 0));
+  Vertex_handle v3 = trp.insert(Point(1, 0));
+  trp.insert_constraint(v1, v2);
+  trp.insert_constraint(v2, v3);
+  trp.insert_constraint(v3, v1);
+  trp.remove_constraint(v1, v2);
+  trp.remove_constraint(v2, v3);
+  trp.remove_constraint(v3, v1);
+
   std::cout << std::endl;
   return;
 }
