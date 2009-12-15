@@ -29,6 +29,8 @@ link_directories(../../../Polyhedron/demo/Polyhedron)
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
 
+include_directories(BEFORE ../../../../candidate-packages/Mesh_3/include/)
+
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4 ImageIO)
 include( ${CGAL_USE_FILE} )
@@ -72,11 +74,16 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_add_resources ( RESOURCE_FILES Mesh_3.qrc )
 
   qt4_automoc( Scene_segmented_image_item.cpp )
+  qt4_automoc( Scene_c3t3_item.cpp )
 
   # AUXILIARY LIBRARIES
   add_library(scene_segmented_image_item SHARED
     Scene_segmented_image_item.cpp Scene_segmented_image_item.moc)
   target_link_libraries(scene_segmented_image_item scene_item)
+
+  add_library(scene_c3t3_item SHARED
+    Scene_c3t3_item.cpp Scene_c3t3_item.moc)
+  target_link_libraries(scene_c3t3_item scene_item)
 
   add_definitions(-DUSE_FORWARD_DECL)
   add_definitions(-DQT_STATICPLUGIN)
@@ -135,11 +142,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(image_loader_plugin Mesh_3_image_loader_plugin)
   target_link_libraries(image_loader_plugin scene_segmented_image_item)
 
-  qt4_generate_moc("${CMAKE_CURRENT_SOURCE_DIR}/Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" Scene_c3t3_item.moc )
-
   polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
     Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Scene_c3t3_item.moc)
-  target_link_libraries(mesh_3_plugin scene_polyhedron_item scene_segmented_image_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  target_link_libraries(mesh_3_plugin scene_c3t3_item scene_polyhedron_item scene_segmented_image_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
