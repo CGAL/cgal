@@ -83,7 +83,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(scene_c3t3_item SHARED
     Scene_c3t3_item.cpp Scene_c3t3_item.moc)
-  target_link_libraries(scene_c3t3_item scene_item)
+  target_link_libraries(scene_c3t3_item scene_item ${QGLVIEWER_LIBRARIES} )
+#    target_link_libraries( Mesh_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+
 
   add_definitions(-DUSE_FORWARD_DECL)
   add_definitions(-DQT_STATICPLUGIN)

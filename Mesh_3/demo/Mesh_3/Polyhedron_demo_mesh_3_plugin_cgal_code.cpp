@@ -123,4 +123,3 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
     return 0;
   }
 }
-#include "Scene_c3t3_item.moc"
