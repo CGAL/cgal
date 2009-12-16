@@ -19,6 +19,8 @@ namespace {
   }
 }
 
+enum { DRAW = 0, DRAW_EDGES = 1 };
+
 void draw_triangle(const Kernel::Point_3& pa,
                           const Kernel::Point_3& pb,
                           const Kernel::Point_3& pc) {
@@ -77,6 +79,7 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
       it != end; ++it, ++i) 
   {
     d->colors[*it] = QColor::fromHsvF( 1. / nb_domains * i, 1., 0.8);
+
   }
 }
 
@@ -138,6 +141,16 @@ Scene_c3t3_item::toolTip() const {
 
 void
 Scene_c3t3_item::direct_draw() const {
+  direct_draw(DRAW);
+}
+
+void
+Scene_c3t3_item::direct_draw_edges() const {
+  direct_draw(DRAW_EDGES);
+}
+
+void
+Scene_c3t3_item::direct_draw(int mode) const {
   ::glPushMatrix();
   ::glMultMatrixd(frame->matrix());
   QGLViewer::drawGrid((float)complex_diag(this));
@@ -146,28 +159,16 @@ Scene_c3t3_item::direct_draw() const {
   if(isEmpty())
     return;
 
-  std::cerr << "Direct_draw\n";
+  std::cerr << "Direct_draw " << mode << "\n";
   GLboolean lighting = ::glIsEnabled(GL_LIGHTING);
   GLboolean two_side;
   ::glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE, &two_side);
-  // ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+  ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
   if(!lighting)
     ::glDisable(GL_LIGHTING);
 
   const Kernel::Plane_3& plane = this->plane();
-  GLdouble clip_plane[4];
-  clip_plane[0] = -plane.a();
-  clip_plane[1] = -plane.b();
-  clip_plane[2] = -plane.c();
-  clip_plane[3] = -plane.d();
 
-  GLint i;
-  ::glGetIntegerv(GL_POLYGON_MODE, &i);
-  std::cerr << "Polygon mode: " << i << std::endl;
-  std::cerr << "Lighting: " 
-            << std::boolalpha << (bool)::glIsEnabled(GL_LIGHTING) << std::endl;
-  ::glClipPlane(GL_CLIP_PLANE0, clip_plane);
-  ::glEnable(GL_CLIP_PLANE0);
   ::glBegin(GL_TRIANGLES);
   for(C3t3::Facet_iterator
         fit = c3t3().facets_begin(),
@@ -187,25 +188,26 @@ Scene_c3t3_item::direct_draw() const {
     const Kernel::Point_3& pc = cell->vertex((index+3)&3)->point();
     typedef Kernel::Oriented_side Side;
     using CGAL::ON_ORIENTED_BOUNDARY;
+    using CGAL::ON_NEGATIVE_SIDE;
     const Side sa = plane.oriented_side(pa);
     const Side sb = plane.oriented_side(pb);
     const Side sc = plane.oriented_side(pc);
-    if( sa != ON_ORIENTED_BOUNDARY &&
-        sb != ON_ORIENTED_BOUNDARY &&
-        sc != ON_ORIENTED_BOUNDARY &&
-        sb == sa && sc == sa )
+    if(sa == ON_NEGATIVE_SIDE &&
+       sb == ON_NEGATIVE_SIDE && 
+       sc == ON_NEGATIVE_SIDE)
     {
-      if(cell->subdomain_index() == 0) {
-        CGALglcolor(d->colors[cell->neighbor(index)->subdomain_index()]);
-      }
-      else {
-        CGALglcolor(d->colors[cell->subdomain_index()]);
+      if(mode != DRAW_EDGES) {
+        if(cell->subdomain_index() == 0) {
+          CGALglcolor(d->colors[cell->neighbor(index)->subdomain_index()]);
+        }
+        else {
+          CGALglcolor(d->colors[cell->subdomain_index()]);
+        }
       }
       draw_triangle(pa, pb, pc);
     }
   }
   ::glEnd();
-  ::glDisable(GL_CLIP_PLANE0);
 
   ::glBegin(GL_TRIANGLES);
   // workaround for Qt-4.2.
@@ -217,7 +219,7 @@ Scene_c3t3_item::direct_draw() const {
   for(Tr::Finite_cells_iterator
         cit = c3t3().triangulation().finite_cells_begin(),
         end = c3t3().triangulation().finite_cells_end();
-      false && cit != end; ++cit)
+      cit != end; ++cit)
   {
     if(! c3t3().is_in_complex(cit) )
       continue;
@@ -239,7 +241,9 @@ Scene_c3t3_item::direct_draw() const {
         sd == ON_ORIENTED_BOUNDARY ||
         sb != sa || sc != sa || sd != sa)
     {
-      CGALglcolor(d->colors[cit->subdomain_index()].darker(150));
+      if(mode != DRAW_EDGES) {
+        CGALglcolor(d->colors[cit->subdomain_index()].darker(150));
+      }
       draw_triangle(pa, pb, pc);
       draw_triangle(pa, pb, pd);
       draw_triangle(pa, pc, pd);

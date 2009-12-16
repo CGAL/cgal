@@ -65,8 +65,10 @@ public:
   }
 
   void direct_draw() const;
+  void direct_draw_edges() const;
 
 protected:
+  void direct_draw(int) const;
   Scene_c3t3_item_priv* d;
 
   qglviewer::ManipulatedFrame* frame;
