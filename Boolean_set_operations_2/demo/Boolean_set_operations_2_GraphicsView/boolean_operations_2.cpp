@@ -425,10 +425,14 @@ private:
   
 } ;
 
-typedef std::vector<Curve_set> Curve_set_vector ;
+typedef std::vector<Curve_set> Curve_set_container ;
 
-typedef Curve_set_vector::const_iterator Curve_set_const_iterator ;
-typedef Curve_set_vector::iterator       Curve_set_iterator ;
+typedef Curve_set_container::const_iterator Curve_set_const_iterator ;
+typedef Curve_set_container::iterator       Curve_set_iterator ;
+
+typedef std::vector<Circular_polygon_with_holes> Circular_source_container ;
+typedef std::vector<Bezier_curve>                Bezier_source ;
+typedef std::vector<Bezier_source>               Bezier_source_container ;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -441,7 +445,11 @@ private:
   QGraphicsScene                                           mScene;
   bool                                                     mCircular_active ;
   bool                                                     mBlue_active ;
-  Curve_set_vector                                         mCurve_sets ;
+  Curve_set_container                                      mCurve_sets ;
+  Circular_source_container                                mBlue_circular_sources ;
+  Circular_source_container                                mRed_circular_sources ;
+  Bezier_source_container                                  mBlue_bezier_sources ; 
+  Bezier_source_container                                  mRed_bezier_sources ; 
   CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>* mBezierInput ;
     
 public:
@@ -524,7 +532,25 @@ private:
   int active_group() const { return mBlue_active ? BLUE_GROUP : RED_GROUP ; }
   
   Curve_set& active_set()   { return set(active_group()) ; }
-  
+
+  Circular_source_container const& blue_circular_sources() const { return mBlue_circular_sources ; }
+  Circular_source_container      & blue_circular_sources()       { return mBlue_circular_sources ; }
+
+  Circular_source_container const& red_circular_sources () const { return mRed_circular_sources ; }
+  Circular_source_container      & red_circular_sources ()       { return mRed_circular_sources ; }
+
+  Bezier_source_container const& blue_bezier_sources() const { return mBlue_bezier_sources ; }
+  Bezier_source_container      & blue_bezier_sources()       { return mBlue_bezier_sources ; }
+
+  Bezier_source_container const& red_bezier_sources () const { return mRed_bezier_sources ; }
+  Bezier_source_container      & red_bezier_sources ()       { return mRed_bezier_sources ; }
+
+  Bezier_source_container const& active_bezier_sources() const { return mBlue_active ? mBlue_bezier_sources : mRed_bezier_sources ; }
+  Bezier_source_container      & active_bezier_sources()       { return mBlue_active ? mBlue_bezier_sources : mRed_bezier_sources ; }
+
+  Circular_source_container const& active_circular_sources() const { return mBlue_active ? mBlue_circular_sources : mRed_circular_sources ; }
+  Circular_source_container      & active_circular_sources()       { return mBlue_active ? mBlue_circular_sources : mRed_circular_sources ; }
+
   void SetViewBlue  ( bool aChecked ) { checkboxShowBlue  ->setChecked(aChecked); }  
   void SetViewRed   ( bool aChecked ) { checkboxShowRed   ->setChecked(aChecked); }  
   void SetViewResult( bool aChecked ) { checkboxShowResult->setChecked(aChecked); }  
@@ -666,7 +692,7 @@ Circular_polygon_with_holes linear_2_circ( Linear_polygon_with_holes const& pwh 
   return rCP;
 }
 
-bool read_linear ( QString aFileName, Circular_polygon_set& rSet )
+bool read_linear ( QString aFileName, Circular_polygon_set& rSet, Circular_source_container& rSources )
 {
   bool rOK = false ;
   
@@ -695,7 +721,9 @@ bool read_linear ( QString aFileName, Circular_polygon_set& rSet )
         else holes.push_back( linear_2_circ(p) );
       }
       
-      rSet.join( Circular_polygon_with_holes(outer,holes.begin(),holes.end()) ) ;    
+      Circular_polygon_with_holes pwh(outer,holes.begin(),holes.end());
+      rSources.push_back(pwh);
+      rSet.join(pwh) ;    
       rOK = true ;
     }
     
@@ -704,7 +732,7 @@ bool read_linear ( QString aFileName, Circular_polygon_set& rSet )
   return rOK ;
 }
 
-bool read_dxf ( QString aFileName, Circular_polygon_set& rSet )
+bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, Circular_source_container& rSources )
 {
   bool rOK = false ;
   
@@ -722,10 +750,13 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet )
           ,false
           );
           
-    rSet.join( circ_polygons.begin()           , circ_polygons.end() 
-             , circ_polygons_with_holes.begin(), circ_polygons_with_holes.end()
-             ) ;
-                      
+    for ( std::vector<Circular_polygon>::iterator pit = circ_polygons.begin() ; pit != circ_polygons.end() ; ++ pit )
+      circ_polygons_with_holes.push_back( Circular_polygon_with_holes(*pit) ) ;
+
+    rSet.join( circ_polygons_with_holes.begin(), circ_polygons_with_holes.end() ) ;
+
+    std::copy(circ_polygons_with_holes.begin(), circ_polygons_with_holes.end(), std::back_inserter(rSources) );
+
     rOK = true ;
   }
   
@@ -800,7 +831,7 @@ Bezier_curve read_bezier_curve ( std::istream& is, bool aDoubleFormat )
   return Bezier_curve(ctrl_pts2.begin(),ctrl_pts2.end());
 }
 
-bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
+bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet, Bezier_source_container& rSources  )
 {
   
   bool rOK = false ;
@@ -823,8 +854,9 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
       
       for ( unsigned int r = 0 ; r < n_regions ; ++ r )
       {
-        Bezier_polygon_vector  polygons ;
-        
+        Bezier_polygon_vector bezier_polygons ;
+        Bezier_source         source ;        
+
         // Read the number of bezier curves.
         unsigned int n_boundaries;
         in_file >> n_boundaries;
@@ -850,12 +882,14 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
             Bezier_traits                           traits;
             Bezier_traits::Make_x_monotone_2        make_x_monotone = traits.make_x_monotone_2_object();
         
-            Bezier_curve B = read_bezier_curve(in_file, lDoubleFormat);
-            if ( B.number_of_control_points() >= 2 )
+            Bezier_curve b = read_bezier_curve(in_file, lDoubleFormat);
+            source.push_back(b);
+
+            if ( b.number_of_control_points() >= 2 )
             {
               //TRACE( "region " << r << " boundary " << b << " curve " << k );
                 
-              make_x_monotone (B, std::back_inserter (x_objs));
+              make_x_monotone (b, std::back_inserter (x_objs));
               
               for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
               {
@@ -879,25 +913,25 @@ bool read_bezier ( QString aFileName, Bezier_polygon_set& rSet )
             pgn.reverse_orientation();
           }
             
-          polygons.push_back (pgn);
+          bezier_polygons.push_back (pgn);
         }
       
-        if ( polygons.size() > 0 )
+        if ( bezier_polygons.size() > 0 )
         {
-          Bezier_polygon_with_holes pwh(polygons.front());
+          Bezier_polygon_with_holes pwh(bezier_polygons.front());
           
-          if ( polygons.size() > 1 )
+          if ( bezier_polygons.size() > 1 )
           {
-            for ( Bezier_polygon_vector::const_iterator it = CGAL::successor(polygons.begin())
-                ; it != polygons.end()
+            for ( Bezier_polygon_vector::const_iterator it = CGAL::successor(bezier_polygons.begin())
+                ; it != bezier_polygons.end()
                 ; ++ it 
                 )
               pwh.add_hole(*it);    
           }
           
-          //if ( is_valid_polygon_with_holes(pwh, rSet.traits() ) )
-          if ( true )
+          if ( is_valid_polygon_with_holes(pwh, rSet.traits() ) )
           {
+            rSources.push_back(source);
             rSet.join(pwh) ;      
           }
           else
@@ -950,7 +984,8 @@ void save_bezier_polygon( std::ostream& out_file, Bezier_polygon const& aBP, boo
     }
   }
 }
-bool save_bezier ( QString aFileName, Bezier_polygon_set const& aSet )
+
+bool save_bezier_result ( QString aFileName, Bezier_polygon_set const& aSet )
 {
   bool rOK = false ;
   
@@ -980,6 +1015,42 @@ bool save_bezier ( QString aFileName, Bezier_polygon_set const& aSet )
       
       rOK = true ;
     }
+  }
+  
+  return rOK ;
+  
+}
+
+bool save_bezier_sources ( QString aFileName, Bezier_source_container const& aSources )
+{
+  bool rOK = false ;
+  
+  std::ofstream out_file( qPrintable(aFileName) ) ;
+  if ( out_file )
+  {
+    out_file << "DOUBLE" << std::endl ;
+    
+    out_file << aSources.size() << std::endl ;
+    
+    for( Bezier_source_container::const_iterator it = aSources.begin(); it != aSources.end() ; ++ it )
+    {
+      Bezier_source const& bs = *it ;
+      
+      out_file << 1 << std::endl ;
+  
+      out_file << bs.size() << std::endl ;
+      
+      for ( Bezier_source::const_iterator cit = bs.begin() ; cit != bs.end() ; ++ cit )
+      {
+        Bezier_curve const& bc = *cit ;
+
+        for ( Bezier_curve::Control_point_iterator pit = bc.control_points_begin() ; pit != bc.control_points_end() ; ++ pit )
+        {
+          out_file << CGAL::to_double(pit->x()) << " " << CGAL::to_double(pit->y()) << std::endl ;
+        }
+      }
+    }
+    rOK = true ;
   }
   
   return rOK ;
@@ -1016,9 +1087,9 @@ void MainWindow::on_actionSaveRed_triggered()
   }
   else
   {
-    if ( !save_bezier(QFileDialog::getSaveFileName(this, tr("Save 'P' Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
-                     ,active_set().bezier() 
-                     )
+    if ( !save_bezier_sources(QFileDialog::getSaveFileName(this, tr("Save 'P' Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
+                             ,red_bezier_sources() 
+                             )
        )
     {
       show_error("Cannot save bezier polygon set.");
@@ -1042,9 +1113,9 @@ void MainWindow::on_actionSaveBlue_triggered()
   }
   else
   {
-    if ( !save_bezier(QFileDialog::getSaveFileName(this, tr("Save 'Q' Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
-                     ,active_set().bezier() 
-                     )
+    if ( !save_bezier_sources(QFileDialog::getSaveFileName(this, tr("Save 'Q' Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
+                             ,blue_bezier_sources() 
+                             )
        )
     {
       show_error("Cannot save bezier polygon set.");
@@ -1068,9 +1139,9 @@ void MainWindow::on_actionSaveResult_triggered()
   }
   else
   {
-    if ( !save_bezier(QFileDialog::getSaveFileName(this, tr("Save Result Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
-                     ,result_set().bezier() 
-                     )
+    if ( !save_bezier_result(QFileDialog::getSaveFileName(this, tr("Save Result Bezier Polygon Set"), "../data", tr("Bezier Curve files (*.bps)") )
+                            ,result_set().bezier() 
+                            )
        )
     {
       show_error("Cannot save bezier polygon set.");
@@ -1151,17 +1222,17 @@ void MainWindow::open( QString fileName )
     if(fileName.endsWith(".lps"))
     {
       if ( ensure_circular_mode() )
-        lRead = read_linear(fileName,active_set().circular()) ;
+        lRead = read_linear(fileName,active_set().circular(), active_circular_sources() ) ;
     }
     else if (fileName.endsWith(".dxf"))
     {
       if ( ensure_circular_mode() )
-        lRead = read_dxf(fileName,active_set().circular()) ;
+        lRead = read_dxf(fileName,active_set().circular(), active_circular_sources() ) ;
     }
     else if (fileName.endsWith(".bps"))
     {
       if ( ensure_bezier_mode() )
-        lRead = read_bezier(fileName,active_set().bezier()) ;
+        lRead = read_bezier(fileName,active_set().bezier(), active_bezier_sources() ) ;
     }
      
     if ( lRead )
