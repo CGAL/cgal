@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez, Stephane Tayeb
 
@@ -30,9 +30,9 @@ CGAL_BEGIN_NAMESPACE
 
 namespace internal {
 
-  template <typename FT> 
+  template <typename FT>
   inline
-  bool 
+  bool
   do_intersect_bbox_segment_aux(
                           const FT& px, const FT& py, const FT& pz,
                           const FT& qx, const FT& qy, const FT& qz,
@@ -49,29 +49,29 @@ namespace internal {
       tmax = bxmax - px;
       dmin = qx - px;
     }
-    else 
+    else
     {
       tmin = px - bxmax;
       tmax = px - bxmin;
       dmin = px - qx;
     }
-    
+
     if ( tmax < FT(0) || tmin > dmin )
       return false;
-    
+
     FT dmax = dmin;
     if ( tmin < FT(0) )
-    { 
+    {
       tmin = FT(0);
       dmin = FT(1);
     }
-    
+
     if ( tmax > dmax )
-    { 
+    {
       tmax = FT(1);
       dmax = FT(1);
     }
-    
+
     // -----------------------------------
     // treat y coord
     // -----------------------------------
@@ -88,23 +88,22 @@ namespace internal {
       tmax_ = py - bymin;
       d_ = py - qy;
     }
-    
+
     if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
       return false;
-    
+
     if( (dmin*tmin_) > (d_*tmin) )
-    { 
+    {
       tmin = tmin_;
       dmin = d_;
     }
-    
+
     if( (dmax*tmax_) < (d_*tmax) )
-    { 
+    {
       tmax = tmax_;
       dmax = d_;
     }
-    
-    
+
     // -----------------------------------
     // treat z coord
     // -----------------------------------
@@ -123,20 +122,20 @@ namespace internal {
 
     return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );
   }
-  
+
   template <class K>
-  bool do_intersect(const typename K::Segment_3& segment, 
+  bool do_intersect(const typename K::Segment_3& segment,
     const CGAL::Bbox_3& bbox,
     const K&)
   {
     typedef typename K::FT FT;
     typedef typename K::Point_3 Point_3;
-    
-    const Point_3 source = segment.source();
-    const Point_3 target = segment.target();
-    
+
+    const Point_3& source = segment.source();
+    const Point_3& target = segment.target();
+
     return do_intersect_bbox_segment_aux(
-                          source.x(), source.y(), source.z(), 
+                          source.x(), source.y(), source.z(),
                           target.x(), target.y(), target.z(),
                           FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),
                           FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()) );
@@ -144,7 +143,7 @@ namespace internal {
 
   template <class K>
   bool do_intersect(const CGAL::Bbox_3& bbox,
-                    const typename K::Segment_3& segment, 
+                    const typename K::Segment_3& segment,
                     const K& k)
   {
     return do_intersect(segment, bbox, k);
@@ -153,14 +152,14 @@ namespace internal {
 } // namespace internal
 
 template <class K>
-bool do_intersect(const CGAL::Segment_3<K>& segment, 
+bool do_intersect(const CGAL::Segment_3<K>& segment,
 		  const CGAL::Bbox_3& bbox)
 {
   return typename K::Do_intersect_3()(segment, bbox);
 }
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox, 
+bool do_intersect(const CGAL::Bbox_3& bbox,
 		  const CGAL::Segment_3<K>& segment)
 {
   return typename K::Do_intersect_3()(segment, bbox);

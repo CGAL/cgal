@@ -43,7 +43,7 @@ namespace internal {
     const typename K::Point_3& p = triangle.vertex(0);
     const typename K::Point_3& q = triangle.vertex(1);
     const typename K::Point_3& r = triangle.vertex(2);
-    
+
     for(int i = 0; i < 3; ++i) {
       if(p[i] <= q[i]) {
         if(q[i] <= r[i]) { // pqr
@@ -100,17 +100,17 @@ namespace internal {
           p_min = typename K::Point_3(c.xmin(), c.ymin(),c.zmin());
           p_max = typename K::Point_3(c.xmax(), c.ymax(),c.zmax());
         }
-        else {                   
+        else {
           p_min = typename K::Point_3(c.xmin(), c.ymin(),c.zmax());
           p_max = typename K::Point_3(c.xmax(), c.ymax(),c.zmin());
         }
       }
       else {
-        if(AXE == 2 || pz > 0) { 
+        if(AXE == 2 || pz > 0) {
           p_min = typename K::Point_3(c.xmin(), c.ymax(),c.zmin());
           p_max = typename K::Point_3(c.xmax(), c.ymin(),c.zmax());
         }
-        else {                   
+        else {
           p_min = typename K::Point_3(c.xmin(), c.ymax(),c.zmax());
           p_max = typename K::Point_3(c.xmax(), c.ymin(),c.zmin());
         }
@@ -118,29 +118,29 @@ namespace internal {
     }
     else {
       if(AXE == 1 || py > 0) {
-        if(AXE == 2 || pz > 0) { 
+        if(AXE == 2 || pz > 0) {
           p_min = typename K::Point_3(c.xmax(), c.ymin(),c.zmin());
           p_max = typename K::Point_3(c.xmin(), c.ymax(),c.zmax());
         }
-        else {                   
+        else {
           p_min = typename K::Point_3(c.xmax(), c.ymin(),c.zmax());
           p_max = typename K::Point_3(c.xmin(), c.ymax(),c.zmin());
         }
       }
       else {
-        if(AXE == 2 || pz > 0) { 
+        if(AXE == 2 || pz > 0) {
           p_min = typename K::Point_3(c.xmax(), c.ymax(),c.zmin());
           p_max = typename K::Point_3(c.xmin(), c.ymin(),c.zmax());
         }
-        else {                   
+        else {
           p_min = typename K::Point_3(c.xmax(), c.ymax(),c.zmax());
           p_max = typename K::Point_3(c.xmin(), c.ymin(),c.zmin());
         }
       }
     }
   }
-  
-  
+
+
   template <class K, int AXE, int SIDE>
   inline
   typename K::FT
@@ -157,12 +157,12 @@ namespace internal {
       case 2:
         return -sides[SIDE].y()*alpha + sides[SIDE].x()*beta;
       default:
-        CGAL_kernel_assertion(false);
+        CGAL_error();
         return typename K::FT(0.);
     }
   }
-  
-  
+
+
   template <class K, int AXE, int SIDE>
   inline
   bool do_axis_intersect(const typename K::Triangle_3& triangle,
@@ -171,25 +171,25 @@ namespace internal {
   {
     const typename K::Point_3& j = triangle.vertex(SIDE);
     const typename K::Point_3& k = triangle.vertex((SIDE+2)%3);
-    
+
     typename K::Point_3 p_min, p_max;
     get_min_max<K, AXE>(AXE==0? 0: AXE==1? sides[SIDE].z(): -sides[SIDE].y(),
                         AXE==0? -sides[SIDE].z(): AXE==1? 0: sides[SIDE].x(),
                         AXE==0? sides[SIDE].y(): AXE==1? -sides[SIDE].x(): 0,
                         bbox, p_min, p_max);
-    
+
     switch ( AXE )
     {
     case 0:
       // t_max >= t_min
       if ( do_axis_intersect_aux<K,AXE,SIDE>(k.y()-j.y(), k.z()-j.z(), sides) >= 0 )
       {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-k.y(), p_min.z()-k.z(), sides) <= 0 
+        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-k.y(), p_min.z()-k.z(), sides) <= 0
                 || do_axis_intersect_aux<K,AXE,SIDE>(p_max.y()-j.y(), p_max.z()-j.z(), sides) >= 0 );
       }
       else
       {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-j.y(), p_min.z()-j.z(), sides) <= 0 
+        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-j.y(), p_min.z()-j.z(), sides) <= 0
                 || do_axis_intersect_aux<K,AXE,SIDE>(p_max.y()-k.y(), p_max.z()-k.z(), sides) >= 0 );
       }
       break;
@@ -197,12 +197,12 @@ namespace internal {
       // t_max >= t_min
       if ( do_axis_intersect_aux<K,AXE,SIDE>(k.x()-j.x(), k.z()-j.z(), sides) >= 0 )
       {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-k.x(), p_min.z()-k.z(), sides) <= 0 
+        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-k.x(), p_min.z()-k.z(), sides) <= 0
                 || do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-j.x(), p_max.z()-j.z(), sides) >= 0 );
       }
       else
       {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j.x(), p_min.z()-j.z(), sides) <= 0 
+        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j.x(), p_min.z()-j.z(), sides) <= 0
                 || do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k.x(), p_max.z()-k.z(), sides) >= 0 );
       }
       break;
@@ -210,18 +210,18 @@ namespace internal {
       // t_max >= t_min
       if ( do_axis_intersect_aux<K,AXE,SIDE>(k.x()-j.x(), k.y()-j.y(), sides) >= 0 )
       {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-k.x(), p_min.y()-k.y(), sides) <= 0 
+        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-k.x(), p_min.y()-k.y(), sides) <= 0
                 || do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-j.x(), p_max.y()-j.y(), sides) >= 0 );
       }
       else
       {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j.x(), p_min.y()-j.y(), sides) <= 0 
+        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j.x(), p_min.y()-j.y(), sides) <= 0
                 || do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k.x(), p_max.y()-k.y(), sides) >= 0 );
       }
       break;
     default:
       // Should not happen
-      CGAL_kernel_assertion(false);
+      CGAL_error();
       return false;
     }
   }

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez, Stephane Tayeb
 
@@ -31,7 +31,7 @@ namespace internal {
 
   template <typename FT>
   inline
-  bool 
+  bool
   bbox_ray_do_intersect_aux(const FT& px, const FT& py, const FT& pz,
                  const FT& qx, const FT& qy, const FT& qz,
                  const FT& bxmin, const FT& bymin, const FT& bzmin,
@@ -50,7 +50,7 @@ namespace internal {
       if ( tmax < FT(0) )
         return false;
     }
-    else 
+    else
     {
       tmin = px - bxmax;
       tmax = px - bxmin;
@@ -58,7 +58,7 @@ namespace internal {
       if ( tmax < FT(0) )
         return false;
     }
-    
+
     FT dmax = dmin;
     if ( tmin > FT(0) )
     {
@@ -66,11 +66,11 @@ namespace internal {
         return false;
     }
     else
-    { 
+    {
       tmin = FT(0);
       dmin = FT(1);
     }
-    
+
     // -----------------------------------
     // treat y coord
     // -----------------------------------
@@ -87,23 +87,22 @@ namespace internal {
       tmax_ = py - bymin;
       d_ = py - qy;
     }
-    
+
     if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
       return false;
-    
+
     if( (dmin*tmin_) > (d_*tmin) )
-    { 
+    {
       tmin = tmin_;
       dmin = d_;
     }
-    
+
     if( (dmax*tmax_) < (d_*tmax) )
-    { 
+    {
       tmax = tmax_;
       dmax = d_;
     }
-    
-    
+
     // -----------------------------------
     // treat z coord
     // -----------------------------------
@@ -119,23 +118,23 @@ namespace internal {
       tmax_ = pz - bzmin;
       d_ = pz - qz;
     }
-    
+
     return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );
   }
-  
+
   template <class K>
-  bool do_intersect(const typename K::Ray_3& ray, 
+  bool do_intersect(const typename K::Ray_3& ray,
                     const CGAL::Bbox_3& bbox,
                     const K&)
   {
     typedef typename K::FT FT;
     typedef typename K::Point_3 Point_3;
-    
-    const Point_3 source = ray.source();
-    const Point_3 point_on_ray = ray.point(1);
-    
+
+    const Point_3& source = ray.source();
+    const Point_3& point_on_ray = ray.point(1);
+
     return bbox_ray_do_intersect_aux(
-                          source.x(), source.y(), source.z(), 
+                          source.x(), source.y(), source.z(),
                           point_on_ray.x(), point_on_ray.y(), point_on_ray.z(),
                           FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),
                           FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()) );
@@ -144,14 +143,14 @@ namespace internal {
 } // namespace internal
 
 template <class K>
-bool do_intersect(const CGAL::Ray_3<K>& ray, 
+bool do_intersect(const CGAL::Ray_3<K>& ray,
 		  const CGAL::Bbox_3& bbox)
 {
   return typename K::Do_intersect_3()(ray, bbox);
 }
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox, 
+bool do_intersect(const CGAL::Bbox_3& bbox,
 		  const CGAL::Ray_3<K>& ray)
 {
   return typename K::Do_intersect_3()(ray, bbox);
@@ -160,5 +159,3 @@ bool do_intersect(const CGAL::Bbox_3& bbox,
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_RAY_3_DO_INTERSECT_H
-
-

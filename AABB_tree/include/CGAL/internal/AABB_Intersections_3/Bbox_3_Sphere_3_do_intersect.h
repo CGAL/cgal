@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez
 
@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 namespace internal {
 
     template <class K>
-    bool do_intersect(const typename K::Sphere_3& sphere, 
+    bool do_intersect(const typename K::Sphere_3& sphere,
         const CGAL::Bbox_3& bbox,
         const K&)
     {
@@ -98,14 +98,14 @@ namespace internal {
 } // namespace internal
 
 template <class K>
-bool do_intersect(const CGAL::Sphere_3<K>& sphere, 
+bool do_intersect(const CGAL::Sphere_3<K>& sphere,
                   const CGAL::Bbox_3& bbox)
 {
     return typename K::Do_intersect_3()(sphere, bbox);
 }
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox, 
+bool do_intersect(const CGAL::Bbox_3& bbox,
                   const CGAL::Sphere_3<K>& sphere)
 {
     return typename K::Do_intersect_3()(sphere, bbox);

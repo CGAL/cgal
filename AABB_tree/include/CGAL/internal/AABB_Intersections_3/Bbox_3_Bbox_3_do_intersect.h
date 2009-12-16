@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     :  Laurent Rineau, Camille Wormser, Jane Tournois, Pierre Alliez
 
@@ -26,11 +26,13 @@
 #pragma warning ( disable : 4003 )
 #endif
 
+#include <CGAL/Bbox_3.h>
+
 CGAL_BEGIN_NAMESPACE
 
-bool 
+bool
 inline
-do_intersect(const CGAL::Bbox_3& c, 
+do_intersect(const CGAL::Bbox_3& c,
              const CGAL::Bbox_3& bbox)
 {
   return CGAL::do_overlap(c, bbox);

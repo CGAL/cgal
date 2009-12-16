@@ -15,7 +15,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Adapted from <CGAL/Triangle_3_Plane_3_do_intersect.h>
 //
@@ -32,11 +32,11 @@ namespace CGAL {
 namespace internal {
 
 template <class K>
-inline 
+inline
 typename K::Point_3
-inter_plane_triangle_3_aux(const typename K::Point_3 &p1, 
+inter_plane_triangle_3_aux(const typename K::Point_3 &p1,
                            const typename K::RT & f1,
-                           const typename K::Point_3 &p2, 
+                           const typename K::Point_3 &p2,
                            const typename K::RT & f2)
 {
   return typename K::Point_3(f2 * p1.x() - f1 * p2.x(),
@@ -47,8 +47,8 @@ inter_plane_triangle_3_aux(const typename K::Point_3 &p1,
 
 template <class K>
 Object
-intersection(const typename K::Plane_3  &plane, 
-	     const typename K::Triangle_3 &triangle, 
+intersection(const typename K::Plane_3  &plane,
+	     const typename K::Triangle_3 &triangle,
 	     const K& k)
 {
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(triangle)) ;
@@ -59,17 +59,17 @@ intersection(const typename K::Plane_3  &plane,
   typedef typename K::Object_3 Object_3;
   typedef typename K::RT RT;
   typedef typename Sgn<RT>::result_type SignRT;
- 
+
   typename K::Construct_vertex_3 vertex_on =
     k.construct_vertex_3_object();
-  
+
   //typename K::Oriented_side_3 oriented_side =
     //k.oriented_side_3_object(); // PA: never used
 
   typename K::Construct_segment_3 segment =
     k.construct_segment_3_object();
 
-  typename K::Construct_object_3 make_object = 
+  typename K::Construct_object_3 make_object =
     k.construct_object_3_object();
 
   const Point_3& t0 = vertex_on(triangle,0);
@@ -157,8 +157,8 @@ intersection(const typename K::Plane_3  &plane,
 template <class K>
 inline
 Object
-intersection(const typename K::Triangle_3 &triangle, 
-	     const typename K::Plane_3  &plane, 
+intersection(const typename K::Triangle_3 &triangle,
+	     const typename K::Plane_3  &plane,
 	     const K& k)
 {
   return intersection(plane, triangle, k);
@@ -168,7 +168,7 @@ intersection(const typename K::Triangle_3 &triangle,
 
 template <class K>
 inline
-Object 
+Object
 intersection(const Plane_3<K> &plane, const Triangle_3<K> &triangle)
 {
   return typename K::Intersect_3()(plane, triangle);
@@ -176,7 +176,7 @@ intersection(const Plane_3<K> &plane, const Triangle_3<K> &triangle)
 
 template <class K>
 inline
-Object 
+Object
 intersection(const Triangle_3<K> &triangle, const Plane_3<K> &plane)
 {
   return typename K::Intersect_3()(plane, triangle);

@@ -25,6 +25,7 @@
 #include <string>
 
 
+#include <CGAL/internal/AABB_Intersections_3/Bbox_3_Bbox_3_do_intersect.h>
 #include <CGAL/internal/AABB_Intersections_3/Bbox_3_Ray_3_do_intersect.h>
 #include <CGAL/internal/AABB_Intersections_3/Bbox_3_Line_3_do_intersect.h>
 #include <CGAL/internal/AABB_Intersections_3/Bbox_3_Segment_3_do_intersect.h>
@@ -271,6 +272,9 @@ bool test()
   test_aux(line2, "line2", bbox2, false);
   test_aux(line3, "line3", bbox3, true);
   test_aux(line4, "line4", bbox4, false);
+  
+  // Use do_intersect(bbox,bbox)
+  CGAL::do_intersect(bbox2,bbox4);
 
 	return b;
 }

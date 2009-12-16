@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez, Stephane Tayeb
 
@@ -32,7 +32,7 @@ namespace internal {
 
   template <typename FT>
   inline
-  bool 
+  bool
   bbox_line_do_intersect_aux(const FT& px, const FT& py, const FT& pz,
                              const FT& qx, const FT& qy, const FT& qz,
                              const FT& bxmin, const FT& bymin, const FT& bzmin,
@@ -48,7 +48,7 @@ namespace internal {
       tmax = bxmax - px;
       dmin = qx - px;
     }
-    else 
+    else
     {
       tmin = px - bxmax;
       tmax = px - bxmin;
@@ -60,7 +60,6 @@ namespace internal {
       return false;
     }
     FT dmax = dmin;
- 
 
     // -----------------------------------
     // treat y coord
@@ -78,23 +77,22 @@ namespace internal {
       tmax_ = py - bymin;
       d_ = py - qy;
     }
-    
+
     if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
       return false;
-    
+
     if( (dmin*tmin_) > (d_*tmin) )
-    { 
+    {
       tmin = tmin_;
       dmin = d_;
     }
-    
+
     if( (dmax*tmax_) < (d_*tmax) )
-    { 
+    {
       tmax = tmax_;
       dmax = d_;
     }
-    
-    
+
     // -----------------------------------
     // treat z coord
     // -----------------------------------
@@ -110,24 +108,24 @@ namespace internal {
       tmax_ = pz - bzmin;
       d_ = pz - qz;
     }
-    
+
     return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );
   }
-  
+
   template <class K>
-  bool do_intersect(const typename K::Line_3& line, 
+  bool do_intersect(const typename K::Line_3& line,
                     const CGAL::Bbox_3& bbox,
                     const K&)
   {
     typedef typename K::FT FT;
     typedef typename K::Point_3 Point_3;
     typedef typename K::Vector_3 Vector_3;
-    
-    const Point_3 point = line.point();
-    const Vector_3 v = line.to_vector();
-    
+
+    const Point_3& point = line.point();
+    const Vector_3& v = line.to_vector();
+
     return bbox_line_do_intersect_aux(
-                         point.x(), point.y(), point.z(), 
+                         point.x(), point.y(), point.z(),
                          point.x()+v.x(), point.y()+v.y(), point.z()+v.z(),
                          FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),
                          FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()) );
@@ -136,14 +134,14 @@ namespace internal {
 } // namespace internal
 
 template <class K>
-bool do_intersect(const CGAL::Line_3<K>& line, 
+bool do_intersect(const CGAL::Line_3<K>& line,
 		  const CGAL::Bbox_3& bbox)
 {
   return typename K::Do_intersect_3()(line, bbox);
 }
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox, 
+bool do_intersect(const CGAL::Bbox_3& bbox,
 		  const CGAL::Line_3<K>& line)
 {
   return typename K::Do_intersect_3()(line, bbox);
@@ -152,5 +150,3 @@ bool do_intersect(const CGAL::Bbox_3& bbox,
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_LINE_3_DO_INTERSECT_H
-
-
