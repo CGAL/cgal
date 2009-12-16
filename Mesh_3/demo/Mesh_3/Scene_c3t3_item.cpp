@@ -214,7 +214,9 @@ Scene_c3t3_item::direct_draw(int mode) const {
 #if QT_VERSION < 0x040300
 #  define darker dark
 #endif
-  CGALglcolor(this->color().darker(150));
+  if(mode != DRAW_EDGES) {
+    CGALglcolor(this->color().darker(150));
+  }
 #undef darker
   for(Tr::Finite_cells_iterator
         cit = c3t3().triangulation().finite_cells_begin(),
