@@ -4,6 +4,7 @@
 #include <set>
 #include <map>
 #include <CGAL/tuple.h>
+#include <sstream>
 
 typedef Tr::Geom_traits::FT FT;
 
