@@ -131,6 +131,12 @@ class Object
 	return empty();
     }
 
+    template <class T>
+    bool is() const
+    {
+        return NULL != dynamic_cast<const Wrapper<T> *>(Ptr());
+    }
+
     const std::type_info & type() const
     {
         return empty() ? typeid(void) : Ptr()->type();

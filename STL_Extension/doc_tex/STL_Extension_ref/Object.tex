@@ -40,6 +40,9 @@ Objects of type \ccRefName\ are normally created using the global function
 \ccMethod{bool empty();}{returns true, if \ccVar\ does not 
         contain an object.}
 
+\ccMethod{template<class T> bool is();}
+{returns true, iff \ccVar\ contains an object of type \ccc{T}.}
+
 \ccMethod{const std::type_info & type() const;}
          {returns the type information of the contained type,
           or \ccc{typeid(void)} if empty.}
