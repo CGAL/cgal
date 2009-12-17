@@ -35,14 +35,14 @@ int main(){
   // of which the first constructed number is root
   std::pair<Bound,Bound> isolation1 = isolate_1(frominterval,pol);
   std::cout << "Isolating the second algebraic number gives: ["
-            << isolation1.first << "," << isolation1.second << "\n";
+            << isolation1.first << "," << isolation1.second << "]\n";
 
   // isolate again the same algebraic number, this time with respect to
   // the polynomial 10*x-14 (which has root 1.4, close to this algebraic
   // number)
   std::pair<Bound,Bound> isolation2 = isolate_1(frominterval,10*x-14);
   std::cout << "Isolating again the second algebraic number gives: ["
-            << isolation2.first << "," << isolation2.second << "\n";
+            << isolation2.first << "," << isolation2.second << "]\n";
 
   return 0;
 }
