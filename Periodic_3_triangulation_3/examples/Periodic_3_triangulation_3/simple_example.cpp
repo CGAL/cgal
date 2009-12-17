@@ -61,12 +61,12 @@ int main()
   assert( nc->has_vertex( v, nli ) );
   // nli is the index of v in nc
 
-  std::ofstream oFileT("output",std::ios::out);
+  std::ofstream oFileT("output.tri",std::ios::out);
   // writing file output; 
   oFileT << T; 
 
   PDT T1;
-  std::ifstream iFileT("output",std::ios::in);
+  std::ifstream iFileT("output.tri",std::ios::in);
   // reading file output; 
   iFileT >> T1; 
   assert( T1.is_valid() );

@@ -39,7 +39,7 @@ struct Scene {
 
   Point_3 compute_barycenter_2D(std::vector<Point_3> dual_pts) const {
     T2 t;
-    for (int i=0 ; i<dual_pts.size() ; i++)
+    for (unsigned int i=0 ; i<dual_pts.size() ; i++)
       t.insert(Point_2(dual_pts[i].x(),dual_pts[i].y()));
     FT area(0);
     FT x(0),y(0);
