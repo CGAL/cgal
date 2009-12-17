@@ -25,7 +25,7 @@ The following has been changed since release 3.5.
       parameters in this order.
 
   - 3D Mesh Generation:
-    - Fix a bug in initial points contruction of a polyhedral surface.
+    - Fix a bug in initial points construction of a polyhedral surface.
 
   - 3D Periodic Triangulations:
     - Fix a bug in the I/O operators of
