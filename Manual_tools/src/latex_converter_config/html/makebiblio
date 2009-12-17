@@ -28,7 +28,7 @@ perl -ni.bak -e '/^   OPT[A-Z]/ && next;
                  s/Nef /{Nef} /g;
                  s/Apollonius /{Apollonius} /g;
                  s/Boolean /{Boolean} /g;
-                 s/URL/NOTE/;
+                 s/URL          = {(.*)}/NOTE         = {\\url{$1}}/;
                  print;' Biblio/how_to_cite_cgal.bib
 
 perl -pi.bak -e 's/All publications/CGAL Manual Chapters/g;
