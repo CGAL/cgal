@@ -49,16 +49,16 @@
   InstallDir "$PROGRAMFILES\CGAL-3.5"
 
   ;Get installation folder from registry if available
-  InstallDirRegKey HKCU "Software\CGAL-3.5" ""
+  InstallDirRegKey HKCU "Software\CGAL-3.5.1" ""
   
   BrandingText "The CGAL Project and GeometryFactory - Installer created with NSIS."
 
-  VIProductVersion "3.5.0.0"
+  VIProductVersion "3.5.1.0"
   VIAddVersionKey "ProductName"     "CGAL Windows Installer"
   VIAddVersionKey "CompanyName"     "The CGAL Project and GeometryFactory"
   VIAddVersionKey "LegalCopyright"  "© The CGAL Project and GeometryFactory"
   VIAddVersionKey "FileDescription" "Windows Installer for CGAL"
-  VIAddVersionKey "FileVersion"     "3.5"
+  VIAddVersionKey "FileVersion"     "3.5.1"
   
 ;--------------------------------
 ; Variables
@@ -90,7 +90,7 @@
 
   !define MUI_COMPONENTSPAGE_SMALLDESC
 
-  !define MUI_WELCOMEPAGE_TEXT "This downloads CGAL-3.5 to your machine."
+  !define MUI_WELCOMEPAGE_TEXT "This downloads CGAL-3.5.1 to your machine."
 
   !define MUI_FINISHPAGE_TITLE "Downloading finished"
 
@@ -120,7 +120,7 @@
   
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "CGAL-3.5" 
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY "CGAL-3.5.1" 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
@@ -220,7 +220,7 @@ ${MultiVariantSection} "LAPACK and TAUCS precompiled libs"  Install_LAPACK_TAUCS
 
 Section /o "HTML Manuals" DOC_Idx
   !ifndef FetchLocal
-    !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/3.5/Manual/" "cgal_manual.zip"  "$INSTDIR\doc_html"
+    !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/3.5.1/Manual/" "cgal_manual.zip"  "$INSTDIR\doc_html"
   !endif  
 SectionEnd
 
@@ -272,7 +272,7 @@ Section "Uninstall"
     StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
   startMenuDeleteLoopDone:
 
-  DeleteRegKey /ifempty HKCU "Software\CGAL-3.5"
+  DeleteRegKey /ifempty HKCU "Software\CGAL-3.5.1"
 
 SectionEnd
 
@@ -307,7 +307,7 @@ SectionEnd
 Function .onInit
 
   !ifdef DebugLog
-  ${LogSetFileName} "CGAL-3.5_install_log.txt"
+  ${LogSetFileName} "CGAL-3.5.1_install_log.txt"
   ${LogSetOn}
   !endif	
   
