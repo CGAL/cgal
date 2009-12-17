@@ -6,7 +6,7 @@ The following has been changed since release 3.5.
 
 1 Documentation
 
-  - Minor fixes in the documentation.
+  - Fixes in the documentation.
 
   - Fixes to the bibliographic references.
 
@@ -26,10 +26,6 @@ The following has been changed since release 3.5.
 
   - 3D Mesh Generation:
     - Fix a bug in initial points construction of a polyhedral surface.
-
-  - 3D Periodic Triangulations:
-    - Fix a bug in the I/O operators of
-      CGAL::Periodic_3_Delaunay_triangulation_3<PT,TDS>.
 
 
 
