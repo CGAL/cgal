@@ -94,6 +94,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_nef_polyhedron_item.cpp)
 
   # AUXILIARY LIBRARIES
+
+  # put plugins (which are shared libraries) at the same location as
+  # executable files
+
+  set(LIBRARY_OUTPUT_PATH ${RUNTIME_OUTPUT_PATH})
+
   add_library(scene_item SHARED
     Scene_item.cpp Scene_item.moc
     Scene_item_with_display_list.cpp
