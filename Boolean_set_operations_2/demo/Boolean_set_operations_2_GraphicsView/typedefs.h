@@ -58,6 +58,8 @@ typedef CGAL::General_polygon_set_2<Circular_traits>         Circular_polygon_se
 
 typedef CGAL::Qt::Circular_set_graphics_item<Circular_polygon_set> Circular_GI;
 
+typedef std::vector<Circular_polygon_with_holes> Circular_region_source_container ;
+
 
 
 //
@@ -86,6 +88,9 @@ typedef CGAL::General_polygon_set_2<Bezier_gps_traits>  Bezier_polygon_set ;
 
 typedef CGAL::Qt::Bezier_set_graphics_item<Bezier_polygon_set> Bezier_GI;
 
+typedef std::vector<Bezier_curve>                Bezier_boundary_source ;
+typedef std::vector<Bezier_boundary_source>      Bezier_region_source ;
+typedef std::vector<Bezier_region_source>        Bezier_region_source_container ;
 
 #endif
 
