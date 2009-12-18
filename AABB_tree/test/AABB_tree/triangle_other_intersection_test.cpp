@@ -164,6 +164,8 @@ void random_test()
   typedef typename K::Triangle_3 Triangle;
   typedef typename K::Plane_3 Plane;
   
+  typename K::Is_degenerate_3 is_degenerate = K().is_degenerate_3_object();
+  
   Checker<K> check;
   
   double box_size = 1e12;
@@ -176,6 +178,9 @@ void random_test()
                random_point_in<K>(bbox),
                random_point_in<K>(bbox));
     
+    if ( is_degenerate(t) )
+      continue;
+    
     Plane p = t.supporting_plane();
     
     for ( int j=0 ; j<100 ; ++j )
@@ -187,9 +192,12 @@ void random_test()
       Ray r(a,b);
       Line l (a,b);
       
-      check(s,t);
-      check(r,t);
-      check(l,t);
+      if ( ! is_degenerate(s) )
+        check(s,t);
+      if ( ! is_degenerate(r) )
+        check(r,t);
+      if ( ! is_degenerate(l) )
+        check(l,t);
       
       // Project points on triangle plane to have degenerate queries
       Point c = p.projection(a);
@@ -199,9 +207,12 @@ void random_test()
       Ray r2 (c,d);
       Line l2 (c,d);
       
-      check(s2,t);
-      check(r2,t);
-      check(l2,t);
+      if ( ! is_degenerate(s2) )
+        check(s2,t);
+      if ( ! is_degenerate(r2) )
+        check(r2,t);
+      if ( ! is_degenerate(l2) )
+        check(l2,t);
     }
   }
 }
