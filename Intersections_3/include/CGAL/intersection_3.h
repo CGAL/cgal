@@ -34,5 +34,13 @@
 #include <CGAL/Triangle_3_Tetrahedron_3_do_intersect.h> 
 #include <CGAL/Triangle_3_Triangle_3_do_intersect.h>
 
+#include <CGAL/internal/Intersections_3/Bbox_3_Bbox_3_do_intersect.h>
+#include <CGAL/internal/Intersections_3/Bbox_3_Line_3_do_intersect.h>
+#include <CGAL/internal/Intersections_3/Bbox_3_Ray_3_do_intersect.h>
+#include <CGAL/internal/Intersections_3/Bbox_3_Segment_3_do_intersect.h>
+
+#include <CGAL/internal/Intersections_3/Triangle_3_Line_3_intersection.h>
+#include <CGAL/internal/Intersections_3/Triangle_3_Ray_3_intersection.h>
+#include <CGAL/internal/Intersections_3/Triangle_3_Segment_3_intersection.h>
 
 #endif // CGAL_INTERSECTION_3_H
