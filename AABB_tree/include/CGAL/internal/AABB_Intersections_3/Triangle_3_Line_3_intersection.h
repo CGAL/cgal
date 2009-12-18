@@ -1,9 +1,10 @@
 // Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -16,11 +17,8 @@
 //
 //
 // Author(s)     : Stéphane Tayeb
-//******************************************************************************
-// File Description : Implements triangle_3 line_3 intersection construction.
-// This implementation is adapted from Triangle_3_Line_3_do_intersect.h.
-//******************************************************************************
-
+//
+// Note : This implementation is adapted from Triangle_3_Line_3_do_intersect.h.
 
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_LINE_3_INTERSECTION_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_LINE_3_INTERSECTION_H
