@@ -19,18 +19,11 @@
 
 #include <CGAL/intersections.h>
 
-#include <CGAL/internal/AABB_Intersections_3/Bbox_3_Ray_3_do_intersect.h>
-#include <CGAL/internal/AABB_Intersections_3/Bbox_3_Line_3_do_intersect.h>
-#include <CGAL/internal/AABB_Intersections_3/Bbox_3_Bbox_3_do_intersect.h>
 #include <CGAL/internal/AABB_Intersections_3/Bbox_3_Plane_3_do_intersect.h>
 #include <CGAL/internal/AABB_Intersections_3/Bbox_3_Sphere_3_do_intersect.h>
-#include <CGAL/internal/AABB_Intersections_3/Bbox_3_Segment_3_do_intersect.h>
 #include <CGAL/internal/AABB_Intersections_3/Bbox_3_Triangle_3_do_intersect.h>
 
-#include <CGAL/internal/AABB_Intersections_3/Triangle_3_Ray_3_intersection.h>
-#include <CGAL/internal/AABB_Intersections_3/Triangle_3_Line_3_intersection.h>
 #include <CGAL/internal/AABB_Intersections_3/Triangle_3_Plane_3_intersection.h>
-#include <CGAL/internal/AABB_Intersections_3/Triangle_3_Segment_3_intersection.h>
 
 #include <CGAL/internal/AABB_tree/nearest_point_segment_3.h>
 #include <CGAL/internal/AABB_tree/nearest_point_triangle_3.h>
