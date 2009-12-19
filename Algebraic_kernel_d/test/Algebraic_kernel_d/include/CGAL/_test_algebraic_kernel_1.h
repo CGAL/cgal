@@ -266,7 +266,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
       Algebraic_real_1 root = (CGAL::max)(roots.front(),roots.back());
       BInterval bi = approximate_absolute_1(root,5);
       assert(compare_1(bi.first ,root) != LARGER );
-      assert(compare_1(bi.second,root) != SMALLER);
+      assert(compare_1(Algebraic_real_1(bi.second),root) != SMALLER);
       assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
       assert((bi.second - bi.first) * ipower(Bound(2),5) <= Bound(1) );
     }{
@@ -287,8 +287,8 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
       solve_1((x*x-2),true,std::back_inserter(roots));
       Algebraic_real_1 root = (CGAL::max)(roots.front(),roots.back());
       BInterval bi = approximate_relative_1(root,5);
-      assert(CGAL::compare(bi.first ,root) != LARGER );
-      assert(CGAL::compare(bi.second,root) != SMALLER);
+      assert(compare_1(bi.first ,root) != LARGER );
+      assert(compare_1(bi.second,root) != SMALLER);
       assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
       assert((bi.second - bi.first * ipower(Bound(2),5))
           <= (CGAL::max)(abs(bi.first),abs(bi.second)));
@@ -297,8 +297,8 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
       solve_1((x*x-30),true,std::back_inserter(roots));
       Algebraic_real_1 root = (CGAL::min)(roots.front(),roots.back());
       BInterval bi = approximate_relative_1(root,-5);
-      assert(CGAL::compare(bi.first ,root) != LARGER );
-      assert(CGAL::compare(bi.second,root) != SMALLER);
+      assert(compare_1(bi.first ,root) != LARGER );
+      assert(compare_1(bi.second,root) != SMALLER);
       assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
       assert((bi.second - bi.first)
           <= (CGAL::max)(abs(bi.first),abs(bi.second)) * ipower(Bound(2),5));
@@ -308,8 +308,8 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
       solve_1((300*x*x-2),true,std::back_inserter(roots));
       Algebraic_real_1 root = (CGAL::min)(roots.front(),roots.back());
       BInterval bi = approximate_relative_1(root,5);
-      assert(CGAL::compare(bi.first ,root) != LARGER );
-      assert(CGAL::compare(bi.second,root) != SMALLER);
+      assert(compare_1(bi.first ,root) != LARGER );
+      assert(compare_1(bi.second,root) != SMALLER);
       assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
       assert((bi.second - bi.first) * ipower(Bound(2),5)
           <= (CGAL::max)(abs(bi.first),abs(bi.second)) );

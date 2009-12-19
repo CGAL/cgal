@@ -27,13 +27,14 @@
 #include <CGAL/RS/solve_1.h>
 #include <CGAL/RS/sign_1.h>
 #include <CGAL/RS/sign_1_no_rs.h>
-#include <CGAL/RS/refine_1.h>
+//#include <CGAL/RS/refine_1.h>
+#include <CGAL/RS/refine_1_rs.h>
 #include <CGAL/RS/compare_1.h>
 #include <CGAL/RS/polynomial_converter.h>
 #include <CGAL/Gmpfr.h>
 
 namespace CGAL{
-namespace RSFunctors {
+namespace RSFunctors{
 
 //typedef Gmpz                    Coefficient;
 typedef RS_polynomial_1         Polynomial;
@@ -428,42 +429,49 @@ struct Bound_between_1:
         }
     };  // Bound_between_1
 
-template <class _Gcd_policy>
 struct Approximate_absolute_1:
     public std::binary_function<Algebraic_1,int,std::pair<Bound,Bound> >{
-  typedef _Gcd_policy  Gcd;
 
   std::pair<Bound,Bound>
   operator()(const Algebraic_1& x, int prec) const {
-    Bound error = CGAL::ipower(Bound(2),CGAL::abs(prec));
-    while((prec>0)?((x.sup()-x.inf())*error>Bound(1)):((x.sup()-x.inf())>error))
-      bisect_n_dyadic<Gcd>(x, (unsigned long) 1);
+//--------------------------------------------------
+//     Bound error = CGAL::ipower(Bound(2),CGAL::abs(prec));
+//     while(prec>0?
+//           (x.sup()-x.inf())*error>Bound(1):
+//           (x.sup()-x.inf())>error)
+//       refine_1_rs(x,CGAL::abs(prec)+10);
+//-------------------------------------------------- 
+    refine_1_rs(x,CGAL::abs(prec));
+    CGAL_assertion(prec>0?
+                   (x.sup()-x.inf())*CGAL::ipower(Bound(2),prec)<=Bound(1):
+                   (x.sup()-x.inf())<=CGAL::ipower(Bound(2),-prec)<=Bound(1));
     return std::make_pair(x.inf(),x.sup());
   }
 };
 
-template <class _Gcd_policy>
 struct Approximate_relative_1
   :public std::binary_function<Algebraic_1,int,std::pair<Bound,Bound> >{
 
   std::pair<Bound,Bound> operator()(const Algebraic_1 &x, int prec) const {
     if(CGAL::is_zero(x))
       return std::make_pair(Bound(0),Bound(0));
-    typedef _Gcd_policy  Gcd;
 
     Bound error = CGAL::ipower(Bound(2),CGAL::abs(prec));
     Bound max_b = (CGAL::max)(CGAL::abs(x.sup()),CGAL::abs(x.inf()));
-    while((prec>0)?(
-          (x.sup()-x.inf())*error>max_b):
-          ((x.sup()-x.inf())>error*max_b)){
-      bisect_n_dyadic<Gcd>(x, (unsigned long) 1);
+    while(prec>0?
+          (x.sup()-x.inf())*error>max_b:
+          (x.sup()-x.inf())>error*max_b){
+      refine_1_rs(x,CGAL::abs(prec)+10);
       max_b = (CGAL::max)(CGAL::abs(x.sup()),CGAL::abs(x.inf()));
     }
+    CGAL_assertion(prec>0?
+                   (x.sup()-x.inf())*CGAL::ipower(Bound(2),prec)<=max_b:
+                   (x.sup()-x.inf())<=CGAL::ipower(Bound(2),-prec)*max_b);
     return std::make_pair(x.inf(),x.sup());
   }
 };
 
-}   // namespace RSFunctors
+} // namespace RSFunctors
 } // namespace CGAL
 
 #endif  // RS_FUNCTORS_H

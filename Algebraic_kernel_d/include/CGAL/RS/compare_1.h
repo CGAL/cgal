@@ -24,34 +24,37 @@
 #include <CGAL/RS/algebraic_1.h>
 #include <CGAL/RS/polynomial_1_utils.h>
 #include <CGAL/RS/sign_1.h>
-#include <CGAL/RS/refine_1.h>
-#include <ctime>
+//#include <CGAL/RS/refine_1.h>
+#include <CGAL/RS/refine_1_rs.h>
 
 // default refinement and sign functions
-#define RS_REFINE_N(A,N)        bisect_n<Gcd>(A,N)
+#define RS_REFINE_N(A,N)        refine_1_rs(A)
 #define RS_REFSTEPS             4
 #define RS_SIGNAT(P,M)          RSSign::signat(P,M)
 
 namespace CGAL{
 namespace RS_COMPARE{
 
-//class Algebraic_1;
-
 // compare two algebraic numbers, knowing they are not equal
-template <class _Gcd_policy>
+//template <class _Gcd_policy>
 Comparison_result
 compare_1_unequal(const Algebraic_1 &r1,const Algebraic_1 &r2){
-        typedef _Gcd_policy     Gcd;
+        /*typedef _Gcd_policy     Gcd;
         mp_prec_t prec1=r1.get_prec();
-        mp_prec_t prec2=r2.get_prec();
+        mp_prec_t prec2=r2.get_prec();*/
+        RS_REFINE_N(r1,RS_REFSTEPS);
+        RS_REFINE_N(r2,RS_REFSTEPS);
         while(r1.overlaps(r2)){
-                if(prec1<prec2 || r2.lefteval()==ZERO){
+                /*if(prec1<prec2 || r2.lefteval()==ZERO){
                         RS_REFINE_N(r1,RS_REFSTEPS);
                         prec1=r1.get_prec();
                 }else{
                         RS_REFINE_N(r2,RS_REFSTEPS);
                         prec2=r2.get_prec();
                 }
+                */
+                RS_REFINE_N(r1,RS_REFSTEPS);
+                RS_REFINE_N(r2,RS_REFSTEPS);
         }
         return(mpfr_less_p(r1.right(),r2.left())?SMALLER:LARGER);
 }
@@ -60,8 +63,9 @@ template <class _Gcd_policy>
 Comparison_result
 compare_1(const Algebraic_1 &r1,const Algebraic_1 &r2){
         typedef _Gcd_policy     Gcd;
-        if(r1.pol()==r2.pol())
+        /*if(r1.pol()==r2.pol())
                 return(r1.nr()!=r2.nr()?(r1.nr()<r2.nr()?SMALLER:LARGER):EQUAL);
+        */
         if(mpfr_lessequal_p(r1.left(),r2.left())){
                 if(mpfr_less_p(r1.right(),r2.left()))
                         return SMALLER;
@@ -71,7 +75,7 @@ compare_1(const Algebraic_1 &r1,const Algebraic_1 &r2){
         }
         RS_polynomial_1 gcd=Gcd()(r1.pol(),r2.pol());
         if(!gcd.get_degree())
-                return RS_COMPARE::compare_1_unequal<Gcd>(r1,r2);
+                return RS_COMPARE::compare_1_unequal/*<Gcd>*/(r1,r2);
         Sign sleft,sright;
         if(mpfr_greater_p(r1.left(),r2.left()))
                 sleft=RS_SIGNAT(gcd,r1.left());
@@ -86,7 +90,7 @@ compare_1(const Algebraic_1 &r1,const Algebraic_1 &r2){
         if(sleft!=sright)
                 return EQUAL;
         else
-                return RS_COMPARE::compare_1_unequal<Gcd>(r1,r2);
+                return RS_COMPARE::compare_1_unequal/*<Gcd>*/(r1,r2);
 }
 
 } // namespace RS_COMPARE
@@ -97,5 +101,3 @@ compare_1(const Algebraic_1 &r1,const Algebraic_1 &r2){
 #undef RS_SIGNAT
 
 #endif  // CGAL_RS_COMPARE_1_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

@@ -21,12 +21,8 @@
 
 #include <CGAL/Polynomial.h>
 #include <CGAL/RS/polynomial_1.h>
-#include <CGAL/RS/memory.h>
-#ifdef CGAL_USE_CORE
-#include <CGAL/CORE_BigInt.h>
-#endif
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
+#ifdef CGAL_USE_OLD_RS3
+#  include <CGAL/RS/memory.h>
 #endif
 
 namespace CGAL{
@@ -91,18 +87,10 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
 
 //RS_POLYNOMIAL_CONVERTER_REF(Gmpz,c[i][0]=*(p[i].mpz()));
 RS_POLYNOMIAL_CONVERTER_COPY(Gmpz,mpz_set(c[i],p[i].mpz()));
-#ifdef CGAL_USE_CORE
-RS_POLYNOMIAL_CONVERTER_REF(CORE::BigInt,c[i][0]=*(p[i].get_mp()));
-#endif
 RS_POLYNOMIAL_CONVERTER_COPY(int,mpz_set_si(c[i],(long)p[i]));
 RS_POLYNOMIAL_CONVERTER_COPY(long,mpz_set_si(c[i],p[i]));
 RS_POLYNOMIAL_CONVERTER_COPY(unsigned,mpz_set_ui(c[i],(unsigned long)p[i]));
 RS_POLYNOMIAL_CONVERTER_COPY(unsigned long,mpz_set_ui(c[i],p[i]));
-#ifdef CGAL_USE_LEDA
-RS_POLYNOMIAL_CONVERTER_COPY(
-        leda_integer,
-        mpz_set_str(c[i],p[i].to_string().c_str(),10));
-#endif
 
 #undef RS_POLYNOMIAL_CONVERTER_REF
 #undef RS_POLYNOMIAL_CONVERTER_COPY

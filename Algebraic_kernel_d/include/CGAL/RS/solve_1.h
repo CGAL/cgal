@@ -28,11 +28,11 @@
 #include <CGAL/RS/solve_1.h>
 #include <CGAL/RS/polynomial_1.h>
 #include <CGAL/RS/algebraic_1.h>
-#include <CGAL/RS/memory.h>
 #include <rs_exports.h>
-#ifdef CGAL_USE_RS3
-#define RS_I32 int
-#include <rs_export.h>
+#ifdef CGAL_USE_OLD_RS3
+#  include <CGAL/RS/memory.h>
+#  define RS_I32 int
+#  include <rs_export.h>
 #endif
 
 namespace CGAL{
@@ -53,7 +53,7 @@ inline void init_solver(){
         }
 }
 
-#ifdef CGAL_USE_RS3
+#ifdef CGAL_USE_OLD_RS3
 inline void init_rs3(){
         static bool first=true;
         if(first){
@@ -192,9 +192,9 @@ inline int solve_1(
                    mpfi_ptr *x,
                    const RS_polynomial_1 &p1,
                    unsigned int prec=CGAL_RS_DEF_PREC){
-#ifdef CGAL_USE_RS3
-        //set_gc_session(p1.get_gc_address());
-        set_gc_session(&rs3_gc_session);
+#ifdef CGAL_USE_OLD_RS3
+        set_gc_session(p1.get_gc_address());
+        //set_gc_session(&rs3_gc_session);
 #endif
         rs_reset_all();
         create_rs_upoly(p1.get_coefs(),p1.get_degree(),rs_get_default_up());

@@ -23,7 +23,7 @@
 #include <gmp.h>
 #include <cstdlib>
 #include <rs_exports.h>
-#ifdef CGAL_USE_RS3
+#ifdef CGAL_USE_OLD_RS3
 extern "C"{
 #include <rs_gc.h>
 }
@@ -37,7 +37,7 @@ extern void* RS_gmprealloc(void*,size_t,size_t);
 extern void RS_gmpfree(void*,size_t);
 }
 
-#ifdef CGAL_USE_RS3
+#ifdef CGAL_USE_OLD_RS3
 inline void * rs3_rs_alloc(size_t s) {
   return(rs_alloc(s,&(rs_default_gc_session.default_heap[0])));
 }
@@ -56,7 +56,7 @@ inline void * rs3_rs_gmp_realloc(void * old_p,size_t old_size,size_t new_size){
 }
 
 inline void rs3_rs_gmp_free(void * p,size_t s) {}
-#endif  // CGAL_USE_RS3
+#endif  // CGAL_USE_OLD_RS3
 
 //--------------------------------------------------
 // extern void * (*__cgalrs_allocate_func) (size_t);

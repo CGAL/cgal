@@ -31,11 +31,11 @@ bool is_finite(const Algebraic_1 &n){
         return n.is_finite();
 }
 
-template <class _Gcd_policy>
+//template <class _Gcd_policy>
 inline
 double to_double(Algebraic_1 &n){
-        typedef _Gcd_policy     Gcd;
-        return n.to_double<Gcd>();
+        //typedef _Gcd_policy     Gcd;
+        return n.to_double/*<Gcd>*/();
 }
 
 inline

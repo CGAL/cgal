@@ -142,11 +142,10 @@ Algebraic_1::Algebraic_1(mpq_srcptr q){
 inline
 Algebraic_1::Algebraic_1(mpfr_srcptr src){
         Gmpfr r(src);
-        Gmpfr::Precision_type rp=r.get_precision();
-        mpfi_init(mpfi());
-        if(rp>mpfr_get_prec(left()) || rp>mpfr_get_prec(right()))
-                mpfi_set_prec(mpfi(),rp);
+        mpfi_init2(mpfi(),r.get_precision());
         mpfi_set_fr(mpfi(),r.fr());
+        CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->left));
+        CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->right));
         RS_polynomial_1 *rsp=new RS_polynomial_1(r.to_fraction().mpq());
         set_pol(*rsp);
         set_nr(0);
@@ -185,11 +184,10 @@ Algebraic_1::Algebraic_1(const Gmpq &q){
 
 inline
 Algebraic_1::Algebraic_1(const Gmpfr &r){
-        Gmpfr::Precision_type rp=r.get_precision();
-        mpfi_init(mpfi());
-        if(rp>mpfr_get_prec(left()) || rp>mpfr_get_prec(right()))
-                mpfi_set_prec(mpfi(),rp);
+        mpfi_init2(mpfi(),r.get_precision());
         mpfi_set_fr(mpfi(),r.fr());
+        CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->left));
+        CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->right));
         RS_polynomial_1 *rsp=new RS_polynomial_1(r.to_fraction().mpq());
         set_pol(*rsp);
         set_nr(0);

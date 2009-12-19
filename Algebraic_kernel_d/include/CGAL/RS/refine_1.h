@@ -22,14 +22,12 @@
 #include <gmp.h>
 #include <mpfr.h>
 #include <mpfi.h>
-#include <CGAL/RS/refine_1.h>
 #include <CGAL/RS/polynomial_1.h>
 #include <CGAL/RS/algebraic_1.h>
 #include <CGAL/RS/polynomial_1_utils.h>
 #include <CGAL/RS/dyadic.h>
 #include <CGAL/RS/sign_1.h>
 #include <CGAL/assertions.h>
-
 
 namespace CGAL{
 

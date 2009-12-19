@@ -44,18 +44,17 @@ public:
       return Compare()(a, Type(0));
     }
   };
-    
-  class To_double 
+
+  class To_double
     : public std::unary_function< Type, double > {
   public:
     double operator()(const Type& a) const {
-      // todo use return
-      // return a.to_double<CGAL::Modgcd_1>(); once it is const 
-      std::pair<double,double> interval = To_interval()(a); 
-      return (interval.first + interval.second)/2;
+      return a.to_double/*<CGAL::Modgcd_1>*/();
+      //std::pair<double,double> interval = To_interval()(a);
+      //return (interval.first + interval.second)/2;
     }
   };
-    
+
   class To_interval 
     : public std::unary_function< Type, std::pair<double, double> > {
   public:

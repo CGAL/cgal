@@ -25,12 +25,14 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpfr.h>
 #include <CGAL/RS/dyadic.h>
-#include <CGAL/RS/memory.h>
 #include <gmp.h>
 #include <mpfr.h>
 #include <mpfi.h>
 #include <boost/operators.hpp>
 #include <boost/shared_ptr.hpp>
+#ifdef CGAL_USE_OLD_RS3
+#  include <CGAL/RS/memory.h>
+#endif
 
 namespace CGAL{
 
@@ -61,7 +63,7 @@ class RS_polynomial_1:
                 void *(*_allocf)(size_t);
                 void *(*_reallocf)(void*,size_t,size_t);
                 void (*_freef)(void*,size_t);
-#ifdef CGAL_USE_RS3
+#ifdef CGAL_USE_OLD_RS3
                 // in case of using rs3, _gc_address stores the
                 // address of the memory zone used to allocate this
                 // polynomial (which is generally one of the two
@@ -138,7 +140,7 @@ class RS_polynomial_1:
                 template<class T>RS_polynomial_1& operator*=(const T&);
                 template<class T>RS_polynomial_1& operator/=(const T&);
                 template<class T>RS_polynomial_1 operator/(const T&)const;
-#ifdef CGAL_USE_RS3
+#ifdef CGAL_USE_OLD_RS3
                 gc_session *get_gc_address() const;
 #endif
 };

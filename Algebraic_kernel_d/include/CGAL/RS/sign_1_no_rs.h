@@ -26,7 +26,8 @@
 #include <CGAL/RS/polynomial_1_utils.h>
 #include <CGAL/RS/algebraic_1.h>
 #include <CGAL/RS/sign_1.h>
-#include <CGAL/RS/refine_1.h>
+//#include <CGAL/RS/refine_1.h>
+#include <CGAL/RS/refine_1_rs.h>
 
 namespace CGAL{
 
@@ -35,7 +36,7 @@ template <class _Gcd_policy>
 Sign sign_1_no_rs(const RS_polynomial_1 &p,const Algebraic_1 &x){
         typedef _Gcd_policy     Gcd;
 
-        unsigned bisect_steps=4;
+        unsigned bisect_steps=/*4*/1000;
         rs_sign s;
         Sign sleft,sright;
         RS_polynomial_1 *gcd,*deriv;
@@ -59,7 +60,8 @@ Sign sign_1_no_rs(const RS_polynomial_1 &p,const Algebraic_1 &x){
         // how to assure that p is monotonic: when its derivative is never zero
         deriv=&(sfpart_1<Gcd>()(p).derive());
         while(deriv->sign_mpfi(x.mpfi())==RS_UNKNOWN)
-                bisect_n<Gcd>(x,(bisect_steps*=2));
+                refine_1_rs(x,(bisect_steps*=2));
+                //bisect_n<Gcd>(x,(bisect_steps*=2));
 
         // how to know that the gcd has a root: just evaluating endpoints
         if((sleft=RSSign::exactsignat(*gcd,x.left()))==ZERO
@@ -71,7 +73,7 @@ Sign sign_1_no_rs(const RS_polynomial_1 &p,const Algebraic_1 &x){
 refineandreturn:
         // the sign is not zero, we refine until having a result
         for(;;){
-                bisect_n<Gcd>(x,bisect_steps);
+                refine_1_rs(x,bisect_steps);
                 s=p.sign_mpfi(x.mpfi());
                 if(s==RS_POSITIVE)
                         return POSITIVE;

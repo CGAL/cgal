@@ -24,9 +24,15 @@
 #include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/RS/functors.h>
 
+#ifdef CGAL_USE_RS3
+#  define CGAL_RS_GCD CGAL::Rsgcd_1
+#else
+#  define CGAL_RS_GCD CGAL::Modgcd_1
+#endif
+
 namespace CGAL{
 
-template <class _C,class _G=CGAL::Modgcd_1>
+template <class _C,class _G=CGAL_RS_GCD>
 struct Algebraic_kernel_d_1_RS{
 
     typedef _C                                              Coefficient;
@@ -65,8 +71,8 @@ struct Algebraic_kernel_d_1_RS{
                                                     Is_zero_at_1;
     typedef RSFunctors::Compare_1<Gcd>              Compare_1;
     typedef RSFunctors::Bound_between_1<Gcd>        Bound_between_1;
-    typedef RSFunctors::Approximate_absolute_1<Gcd> Approximate_absolute_1;
-    typedef RSFunctors::Approximate_relative_1<Gcd> Approximate_relative_1;
+    typedef RSFunctors::Approximate_absolute_1      Approximate_absolute_1;
+    typedef RSFunctors::Approximate_relative_1      Approximate_relative_1;
 
 #define CREATE_RS_FUNCTION_OBJECT(T,N) \
         inline T N##_object()const{return T();}
@@ -91,6 +97,8 @@ struct Algebraic_kernel_d_1_RS{
 };  // Algebraic_kernel_d_1_RS
 
 } // namespace CGAL
+
+#undef CGAL_RS_GCD
 
 #endif  // CGAL_ALGEBRAIC_KERNEL_RS_1
 
