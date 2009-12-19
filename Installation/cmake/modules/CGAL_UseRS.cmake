@@ -3,8 +3,6 @@
 
 if( NOT CGAL_RS_SETUP )
 
-  #option( WITH_RS3 "Search for RS3" OFF )
-
   if( RS_FOUND )
 
     message( STATUS "RS include:        ${RS_INCLUDE_DIR}" )
@@ -16,8 +14,12 @@ if( NOT CGAL_RS_SETUP )
       add_definitions( "-DCGAL_RS_NO_TLS" )
     endif(CMAKE_OSX_ARCHITECTURES STREQUAL "ppc")
 
-    # add rs3 parameters, if necessary (rs3 must be always before rsexport)
-    if(WITH_RS3 AND RS3_FOUND)
+    include_directories ( ${RS_INCLUDE_DIR} )
+    add_definitions( ${RS_DEFINITIONS} "-DCGAL_USE_RS" )
+    link_libraries( ${RS_LIBRARIES} )
+
+    # add rs3 parameters, if necessary (rs3 must be always after rsexport)
+    if( RS3_FOUND )
 
       message( STATUS "RS3 include:       ${RS3_INCLUDE_DIR}" )
       message( STATUS "RS3 definitions:   ${RS3_DEFINITIONS}" )
@@ -30,11 +32,7 @@ if( NOT CGAL_RS_SETUP )
         add_definitions( ${RS_DEFINITIONS} "-DCGAL_USE_RS3" )
         link_libraries( ${RS3_LIBRARIES} )
       endif(CMAKE_OSX_ARCHITECTURES STREQUAL "ppc")
-    endif()
-
-    include_directories ( ${RS_INCLUDE_DIR} )
-    add_definitions( ${RS_DEFINITIONS} "-DCGAL_USE_RS" )
-    link_libraries( ${RS_LIBRARIES} )
+    endif( RS3_FOUND )
 
   endif( RS_FOUND )
 

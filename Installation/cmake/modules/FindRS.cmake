@@ -11,7 +11,7 @@ if( MPFI_FOUND )
            )
 
   find_path(RS3_INCLUDE_DIR
-            NAMES rs_export.h
+            NAMES rs3_fncts.h
             PATHS ENV RS_INC_DIR
             DOC "The directory containing the RS3 include files"
            )
