@@ -96,6 +96,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_plane_item.cpp
               Scene_polygon_soup.cpp 
               Scene_polyhedron_item.cpp
+              Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp)
 
@@ -123,6 +124,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
   target_link_libraries(scene_polyhedron_item scene_item)
 
+  if(TAUCS_FOUND)
+  add_library(scene_textured_polyhedron_item SHARED
+    Scene_textured_polyhedron_item.cpp Scene_textured_polyhedron_item.moc)
+  target_link_libraries(scene_textured_polyhedron_item scene_item)
+  endif(TAUCS_FOUND)
+
   add_library(polygon_soup SHARED
     Scene_polygon_soup.cpp Scene_polygon_soup.moc)
   target_link_libraries(polygon_soup scene_item)
@@ -144,7 +151,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       Viewer.cpp
       Scene.cpp
 #      MainWindow_curvature_estimation.cpp
-#      MainWindow_parameterization.cpp
       MainWindow_moc.cpp
       Scene_moc.cpp
       Viewer_moc.cpp
@@ -235,6 +241,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(pca_plugin Polyhedron_demo_pca_plugin)
   target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
+
+  if(TAUCS_FOUND)
+    polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
+    target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
+  endif(TAUCS_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
   target_link_libraries(self_intersection_plugin scene_polyhedron_item)

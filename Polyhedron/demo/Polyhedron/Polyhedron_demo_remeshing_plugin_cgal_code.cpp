@@ -48,11 +48,13 @@ public:
 
   typedef typename CGAL::array<FT, 3> Quality;
   typedef typename Tr::Facet Facet;
+  const FT sq_distance_bound;
 
   Surface_mesh_modified_criteria_3(const FT angle_bound,
                                    const FT radius_bound,
                                    const FT distance_bound)
-    : curvature_size_criterion(distance_bound),
+    : sq_distance_bound(distance_bound*distance_bound/100),
+      curvature_size_criterion(distance_bound),
       uniform_size_criterion(radius_bound),
       aspect_ratio_criterion(angle_bound)
       
@@ -64,6 +66,12 @@ public:
     const typename Tr::Point& pa = f.first->vertex((f.second+1)%4)->point();
     const typename Tr::Point& pb = f.first->vertex((f.second+2)%4)->point();
     const typename Tr::Point& pc = f.first->vertex((f.second+3)%4)->point();
+    if( squared_distance(pa, pb) < sq_distance_bound )
+      return false;
+    if( squared_distance(pc, pb) < sq_distance_bound )
+      return false;
+    if( squared_distance(pa, pc) < sq_distance_bound )
+      return false;
     int nb_protecting_balls = 0;
     if(pa.weight() != FT(0)) ++nb_protecting_balls;
     if(pb.weight() != FT(0)) ++nb_protecting_balls;

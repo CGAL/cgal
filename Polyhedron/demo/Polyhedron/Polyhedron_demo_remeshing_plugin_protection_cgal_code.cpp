@@ -1,3 +1,4 @@
+#include "config.h" // defines *_DEBUG_* macro for the demo
 #include <CGAL/config.h>
 #include "Polyhedron_type.h"
 #include "C2t3_type.h"
@@ -204,12 +205,14 @@ struct Insert_spheres {
     if(v == Tr_vertex_handle()) {
       v = c2t3.triangulation().nearest_power_vertex(p);
       hidden_balls.insert(p);
+#ifdef PROTECTION_DEBUG      
       std::cerr << "Hidden ball " << p << " (id="
                 << polyline_id << "), hidden by the ball "
                 << v->point()
                 << " (" 
                 << print_context(v)
                 << ")\n";
+#endif
     }
     v->info().context()->id = polyline_id;
     return v;
@@ -225,8 +228,10 @@ struct Insert_spheres {
              const FT position_begin,
              const FT position_end)
   {
+#ifdef PROTECTION_DEBUG
     std::cerr << "cover(" << va->point() << ", " 
               << vb->point() << ", " << polyline_id << ")\n";
+#endif
     FT radius_begin = CGAL_NTS sqrt(va->point().weight());
     FT radius_end = CGAL_NTS sqrt(vb->point().weight());
 
@@ -278,11 +283,13 @@ struct Insert_spheres {
     const FT inter_distance = 4 * r / 3;
     const FT r2 = CGAL::square(r);
 
+#ifdef PROTECTION_DEBUG
     std::cerr << "distance = " << distance
               << "\nalpha = " << alpha
               << "\nn = " << n
               << "\nr = " << r
               << std::endl;
+#endif
 
     Point_3 a(begin->point(), r2);
     Point_3 b(end2->point(), r2);
@@ -297,16 +304,22 @@ struct Insert_spheres {
     {
       const Point& a = *it;
       const Point& b = *(it+1);
+#ifdef PROTECTION_DEBUG
       std::cerr << "segment( " << a << ", " << b << ")\n";
       std::cerr << "small_distance_to_go=" << small_distance_to_go << std::endl;
+#endif
       const FT d = CGAL_NTS sqrt(squared_distance(a, b));
+#ifdef PROTECTION_DEBUG
       std::cerr << "d=" << d << std::endl;
+#endif
       FT pos = small_distance_to_go;
       if(pos < d && counter <= n) {
         for(; pos < d && counter <= n;
             pos += inter_distance)
         {
+#ifdef PROTECTION_DEBUG
           std::cerr << "pos=" << pos << "" << std::endl;
+#endif
           const Point p = a +
             pos * ( b - a ) / d;
           ++counter;
@@ -346,15 +359,19 @@ struct Insert_spheres {
       //                va != vb);
       // if(va != Tr_vertex_handle())
       if(va->info().context()->is_corner) {
+#ifdef PROTECTION_DEBUG
         std::cerr << "Corner vertex va " << va->point()
                   << ", neighbor " << *first_non_corner << std::endl;
+#endif
         tr_corner_vertices.insert(std::make_pair(va, 
                                                  Corner_context(polyline_id, begin, first_non_corner)));
-        CGAL_assertion(first_non_corner->info().context()->pred == va);
+        // CGAL_assertion(first_non_corner->info().context()->pred == va);
       }
       if(vb->info().context()->is_corner) {
+#ifdef PROTECTION_DEBUG
         std::cerr << "Corner vertex vb " << vb->point()
                   << ", neighbor " << *last_non_corner << std::endl;
+#endif
         tr_corner_vertices.insert(std::make_pair(vb, 
                                                  Corner_context(polyline_id, end2, last_non_corner)));
       }
@@ -384,11 +401,13 @@ struct Insert_spheres {
         const Tr_vertex_handle& vb = eit->first->vertex(eit->third);
         if(non_adjacent_but_intersect(va, vb))
         {
+#ifdef PROTECTION_DEBUG
           std::cerr << "Balls " << va->point() << " ("
                     << print_context(va)
                     << ") and " << vb->point() << " ("
                     << print_context(vb) 
                     << ") intersect.\n";
+#endif
 
           if(// !va->info().context()->is_corner &&
              va->point().weight() > vb->point().weight()) {
@@ -482,9 +501,11 @@ struct Insert_spheres {
     if(v->info().context()->is_corner) //r.first != r.second)
     {
       Range r = tr_corner_vertices.equal_range(v);
+#ifdef PROTECTION_DEBUG
       std::cerr << "Refine vertex ball " << v->point() << "\n"
                 << "Number of adjacent balls: " << distance(r.first, r.second)
                 << std::endl;
+#endif
       Point_3 new_point(v->point().point(), v->point().weight() / 4);
       Polyline_id id = v->info().context()->id;
       c2t3.triangulation().remove(v);
@@ -493,8 +514,10 @@ struct Insert_spheres {
       for(iterator it = r.first; it != r.second; ++it) {
         Tr_vertex_handle neighbor = get<2>(it->second);
         Ball_context* context = neighbor->info().context();
+#ifdef PROTECTION_DEBUG
         std::cerr << "  adjacent ball: " << neighbor->point() 
                   << ", id=" << context->id << std::endl;
+#endif
         if(v == context->pred)
         {
           context->pred = new_v;
@@ -516,11 +539,15 @@ struct Insert_spheres {
       tr_corner_vertices.erase(r.first, r.second);
     }
     else {
+#ifdef PROTECTION_DEBUG
       std::cerr << "Refine ball " << v->point();
+#endif
       Point_3 new_point(v->point().point(), v->point().weight() / 16);
       Ball_context* context = v->info().context();
       const Polyline_id id = context->id;
+#ifdef PROTECTION_DEBUG
       std::cerr << ", id= " << id << "\n";
+#endif
       const Tr_vertex_handle pred = context->pred;
       const Tr_vertex_handle succ = context->succ;
       const Polyline::const_iterator it = context->iterator;
@@ -542,7 +569,9 @@ struct Insert_spheres {
       if(pred_it != Polyline::const_iterator() && 
          succ_it != Polyline::const_iterator()) 
       {
+#ifdef PROTECTION_DEBUG
         std::cerr << "OK!\n";
+#endif
         if(pred_it > succ_it) {
           std::swap(pred_it, succ_it);
           std::swap(pred_pos, succ_pos);

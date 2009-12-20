@@ -26,11 +26,11 @@ public :
   virtual ~Texture();
 
   // Get Data (explicit inline functions)
-  unsigned char *GetData()     { return m_pData; }
-  unsigned int   GetWidth()    { return m_Width; }
-  unsigned int   GetWidthByte32()    { return m_WidthByte32; }
-  unsigned int   GetHeight()   { return m_Height;}
-  unsigned int   GetDepth()    { return m_Depth; }
+  unsigned char *GetData() const    { return m_pData; }
+  unsigned int   GetWidth() const   { return m_Width; }
+  unsigned int   GetWidthByte32() const   { return m_WidthByte32; }
+  unsigned int   GetHeight() const  { return m_Height;}
+  unsigned int   GetDepth() const   { return m_Depth; }
 
   // Misc
   int IsValid();
