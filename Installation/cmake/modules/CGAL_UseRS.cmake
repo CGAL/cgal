@@ -25,13 +25,10 @@ if( NOT CGAL_RS_SETUP )
       message( STATUS "RS3 definitions:   ${RS3_DEFINITIONS}" )
       message( STATUS "RS3 libraries:     ${RS3_LIBRARIES}" )
 
-      if(CMAKE_OSX_ARCHITECTURES STREQUAL "ppc")
-        message( STATUS "RS3 is not supported on this architecture" )
-      else(CMAKE_OSX_ARCHITECTURES STREQUAL "ppc")
-        include_directories ( ${RS3_INCLUDE_DIR} )
-        add_definitions( ${RS_DEFINITIONS} "-DCGAL_USE_RS3" )
-        link_libraries( ${RS3_LIBRARIES} )
-      endif(CMAKE_OSX_ARCHITECTURES STREQUAL "ppc")
+      include_directories ( ${RS3_INCLUDE_DIR} )
+      add_definitions( ${RS_DEFINITIONS} "-DCGAL_USE_RS3" )
+      link_libraries( ${RS3_LIBRARIES} )
+
     endif( RS3_FOUND )
 
   endif( RS_FOUND )
