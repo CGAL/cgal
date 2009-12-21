@@ -28,14 +28,14 @@
 namespace CGAL{
 
 inline void refine_1_rs(const Algebraic_1 &a,unsigned int s=10000){
+        CGAL_precondition(a.inf()<=a.sup());
         rs3_refine_u_root((mpfi_ptr)a.mpfi(),
                           a.pol().get_coefs(),
                           a.pol().get_degree(),
-                          s,
+                          mpfi_get_prec(a.mpfi())+s,
                           0,
                           0);
-        //std::cout<<"rs refine "<<s<<std::endl;
-        return;
+        CGAL_assertion(a.inf()<=a.sup());
 }
 
 } // namespace CGAL

@@ -28,7 +28,7 @@
 #include <CGAL/RS/refine_1_rs.h>
 
 // default refinement and sign functions
-#define RS_REFINE_N(A,N)        refine_1_rs(A)
+#define RS_REFINE_N(A,N)        refine_1_rs(A,N)
 #define RS_REFSTEPS             4
 #define RS_SIGNAT(P,M)          RSSign::signat(P,M)
 

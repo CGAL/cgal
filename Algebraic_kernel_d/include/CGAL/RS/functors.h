@@ -434,17 +434,19 @@ struct Approximate_absolute_1:
 
   std::pair<Bound,Bound>
   operator()(const Algebraic_1& x, int prec) const {
+    std::cout<<"app abs "<<prec<<std::endl;
 //--------------------------------------------------
 //     Bound error = CGAL::ipower(Bound(2),CGAL::abs(prec));
 //     while(prec>0?
 //           (x.sup()-x.inf())*error>Bound(1):
-//           (x.sup()-x.inf())>error)
-//       refine_1_rs(x,CGAL::abs(prec)+10);
+//           (x.sup()-x.inf())>error){
+//       refine_1_rs(x,CGAL::abs(prec));
+//     }
 //-------------------------------------------------- 
     refine_1_rs(x,CGAL::abs(prec));
     CGAL_assertion(prec>0?
                    (x.sup()-x.inf())*CGAL::ipower(Bound(2),prec)<=Bound(1):
-                   (x.sup()-x.inf())<=CGAL::ipower(Bound(2),-prec)<=Bound(1));
+                   (x.sup()-x.inf())<=CGAL::ipower(Bound(2),-prec));
     return std::make_pair(x.inf(),x.sup());
   }
 };
