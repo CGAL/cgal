@@ -27,7 +27,7 @@
 
 namespace CGAL{
 
-inline int refine_1_rs(const Algebraic_1 &a,unsigned int s=10000){
+inline void refine_1_rs(const Algebraic_1 &a,unsigned int s=10000){
         rs3_refine_u_root((mpfi_ptr)a.mpfi(),
                           a.pol().get_coefs(),
                           a.pol().get_degree(),
@@ -35,6 +35,7 @@ inline int refine_1_rs(const Algebraic_1 &a,unsigned int s=10000){
                           0,
                           0);
         //std::cout<<"rs refine "<<s<<std::endl;
+        return;
 }
 
 } // namespace CGAL
