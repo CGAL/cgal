@@ -862,7 +862,8 @@ std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
                 return std::make_pair(Gmpz(0),0);
         Gmpz z;
         long e=mpfr_get_z_exp(z.mpz(),fr());
-        CGAL_assertion(mpfr_get_emin()<=e && mpfr_get_emax()>=e);
+        CGAL_assertion_msg(mpfr_get_emin()<=e && mpfr_get_emax()>=e,
+                           "exponent out of range");
         if(mpz_sgn(z.mpz())!=0&&mpz_tstbit(z.mpz(),0)==0){
                 unsigned long firstone=mpz_scan1(z.mpz(),0);
                 CGAL_assertion(mpz_divisible_2exp_p(z.mpz(),firstone)!=0);
@@ -873,6 +874,9 @@ std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
                 e+=firstone;
                 CGAL_assertion(mpfr_get_emax()>=e);
         }
+        CGAL_assertion_code(Gmpfr test(z,mpz_sizeinbase(z.mpz(),2));)
+        CGAL_assertion_code(mpfr_mul_2si(test.fr(),test.fr(),e,GMP_RNDN);)
+        CGAL_assertion_msg(mpfr_equal_p(test.fr(),fr())!=0,"conversion error");
         return std::make_pair(z,e);
 }
 
@@ -880,12 +884,22 @@ inline
 Gmpq Gmpfr::to_fraction()const{
         std::pair<Gmpz,long> p=this->to_integer_exp();
         Gmpq q(p.first);
-        if(p.second<0)
-                mpq_div_2exp(q.mpq(),q.mpq(),(unsigned long)(-p.second));
-        else
-                mpq_mul_2exp(q.mpq(),q.mpq(),(unsigned long)(p.second));
+        CGAL_assertion(mpz_cmp(p.first.mpz(),mpq_numref(q.mpq()))==0);
+        CGAL_assertion(mpz_cmp_ui(mpq_denref(q.mpq()),(unsigned long)1)==0);
+        if(p.second<0){
+                mpz_mul_2exp(mpq_denref(q.mpq()),
+                             mpq_denref(q.mpq()),
+                             (unsigned long)(-p.second));
+        }else{
+                mpz_mul_2exp(mpq_numref(q.mpq()),
+                             mpq_numref(q.mpq()),
+                             (unsigned long)(p.second));
+        }
         mpq_canonicalize(q.mpq());
-        CGAL_assertion(mpfr_cmp_q(fr(),q.mpq())==0);
+        CGAL_assertion_msg(mpz_sizeinbase(mpq_denref(q.mpq()),2)==
+                           mpz_scan1(mpq_denref(q.mpq()),0)+1,
+                           "denominator is not a power of 2");
+        CGAL_assertion_msg(mpfr_cmp_q(fr(),q.mpq())==0,"conversion error");
         return q;
 }
 
