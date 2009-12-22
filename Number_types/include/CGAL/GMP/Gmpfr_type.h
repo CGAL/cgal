@@ -869,12 +869,14 @@ std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
                 CGAL_assertion(mpz_divisible_2exp_p(z.mpz(),firstone)!=0);
                 Gmpz d(1);
                 mpz_mul_2exp(d.mpz(),d.mpz(),firstone);
-                CGAL_assertion(mpz_divisible_p(z.mpz(),d.mpz()));
+                CGAL_assertion(mpz_divisible_p(z.mpz(),d.mpz())!=0);
                 mpz_divexact(z.mpz(),z.mpz(),d.mpz());
                 e+=firstone;
                 CGAL_assertion(mpfr_get_emax()>=e);
         }
-        CGAL_assertion_code(Gmpfr test(z,mpz_sizeinbase(z.mpz(),2));)
+        CGAL_assertion_code(Gmpfr::Precision_type p=mpz_sizeinbase(z.mpz(),2);)
+        CGAL_assertion_code(if(MPFR_PREC_MIN>p) p=MPFR_PREC_MIN;)
+        CGAL_assertion_code(Gmpfr test(z,p);)
         CGAL_assertion_code(mpfr_mul_2si(test.fr(),test.fr(),e,GMP_RNDN);)
         CGAL_assertion_msg(mpfr_equal_p(test.fr(),fr())!=0,"conversion error");
         return std::make_pair(z,e);
