@@ -75,7 +75,35 @@ struct Bezier_helper
                             ) ;
     }
   }  
-  
+
+  template<class Bezier_point>
+  static Point_2< Simple_cartesian<double> > get_approximated_bezier_point ( Bezier_point const& aP, double aError = 1e-3 )
+  {
+    bool lCanRefine = !aP.is_exact();
+
+    typedef typename Bezier_point::Bounding_traits Bounding_traits ;
+    typedef typename Bounding_traits::NT           NT ;
+
+    NT min_x, min_y, max_x, max_y ;
+
+    do
+    {
+      aP.get_bbox (min_x, min_y, max_x, max_y);
+
+      if ( std::abs( to_double(max_x - min_x) ) <= aError && std::abs( to_double(max_y - min_y) ) <= aError )
+        break ;
+
+      aP.refine();
+
+    }
+    while ( lCanRefine ) ;
+
+    double x = to_double( min_x + max_x ) / 2.0 ;
+    double y = to_double( min_y + max_y ) / 2.0 ;
+
+    return Point_2< Simple_cartesian<double> >(x,y);
+  }  
+
   template<class Bezier_curve, class Output_iterator>
   static void approximated_clip ( Bezier_curve const& aCurve, double aS, double aT, bool aFwd, Output_iterator aOut )
   {
@@ -106,9 +134,20 @@ struct Bezier_helper
     std::copy(lQ.begin(), lQ.end(), aOut );    
     
   }
-  
+
+    template<class Bezier_curve, class Output_iterator>
+  static void approximated_clip ( Bezier_curve const& aCurve, Bezier_point const& aP, Output_iterator aOut )
+  {
+    typedef typename value_type_traits<Output_iterator>::type Output_point ;
+
+    std::vector<Output_point> lQ ;
+    
+    get_approximated_control_points(aCurve, aFwd, std::back_inserter(lQ) ) ;
+    
+  }
+
   template<class Bezier_X_monotone_curve, class Output_iterator>
-  static void approximated_clip ( Bezier_X_monotone_curve const& aXMCurve, Output_iterator aOut, double aApproxError = 1e-10 )
+  static void approximated_clip ( Bezier_X_monotone_curve const& aXMCurve, Output_iterator aOut, double aApproxError = 1e-3 )
   {
     typedef typename value_type_traits<Output_iterator>::type Output_point ;
 
@@ -134,7 +173,7 @@ struct Bezier_helper
                                                 , NT aMid
                                                 , NT aMax
                                                 , Control_point_out_iterator aOut
-                                                , NT aFlatness = 1e-10
+                                                , NT aFlatness = 1e-4
                                                 )
   {
     typedef typename value_type_traits<Control_point_in_iterator>::type Control_point ;
@@ -162,7 +201,7 @@ struct Bezier_helper
   }
 
   template<class Bezier_curve, class NT, class Output_iterator>
-  static void sample_curve( Bezier_curve const& aCurve, NT aSourceT, NT aTargetT, Output_iterator aOut, double aFlatness = 1e-10 )
+  static void sample_curve( Bezier_curve const& aCurve, NT aSourceT, NT aTargetT, Output_iterator aOut, double aFlatness = 1e-4 )
   {
     typedef typename value_type_traits<Output_iterator>::type Output_point ;
     
@@ -178,18 +217,30 @@ struct Bezier_helper
     NT lMaxT = lFwd ? aTargetT : NT(1.0) - aTargetT ;
     
     approximated_recursive_subdivision(lControlPoints.begin(), lControlPoints.end(), lMinT, ( lMinT + lMaxT ) / NT(2.0) , lMaxT, aOut, aFlatness ) ;
+
   }
 
   template<class Bezier_curve, class Output_iterator>
-  static void sample_curve( Bezier_curve const& aCurve, Output_iterator aOut, double aFlatness = 1e-5 ) { sample_curve(aCurve, 0.0, 1.0, aOut, aFlatness); }
+  static void sample_curve( Bezier_curve const& aCurve, Output_iterator aOut, double aFlatness = 1e-4 ) { sample_curve(aCurve, 0.0, 1.0, aOut, aFlatness); }
 
   template<class Bezier_X_monotone_curve, class Output_iterator>
-  static void sample_X_monotone_curve( Bezier_X_monotone_curve const& aXMCurve, bool aFwd, Output_iterator aOut, double aFlatness = 1e-10, double aEPApproxError = 1e-5 )
+  static void sample_X_monotone_curve( Bezier_X_monotone_curve const& aXMCurve, bool aFwd, Output_iterator aOut, double aFlatness = 1e-4, double aEPApproxError = 1e-3 )  
   {
+    typedef typename value_type_traits<Output_iterator>::type Output_point ;
+
+    //
+    // For a vertical subcurve, the points corresponding to the parameter extremes might not be at the correct vertical positions,
+    // so the end points are added explicitely.
+    //
+
+    *aOut ++ = get_approximated_bezier_point(aXMCurve.source());
+
     double lFromT = get_approximated_endpoint_parameter(aFwd ? aXMCurve.source() : aXMCurve.target(), aXMCurve.supporting_curve(), aXMCurve.xid(), aEPApproxError ) ;
     double lToT   = get_approximated_endpoint_parameter(aFwd ? aXMCurve.target() : aXMCurve.source(), aXMCurve.supporting_curve(), aXMCurve.xid(), aEPApproxError ) ;
     
     sample_curve(aXMCurve.supporting_curve(), lFromT, lToT, aOut, aFlatness ); 
+
+    *aOut ++ = get_approximated_bezier_point(aXMCurve.target());
   }
   
 } ;
@@ -279,7 +330,7 @@ struct Draw_bezier_curve
   }
 } ;
 
-struct Draw_bezier_X_monotone_curve
+struct _Draw_bezier_X_monotone_curve
 {
   template<class Bezier_X_monotone_curve, class Path>
   void operator()( Bezier_X_monotone_curve const& aBXMC, Path& aPath, int aIdx ) const 
@@ -339,6 +390,36 @@ struct Draw_bezier_X_monotone_curve
              aPath.moveTo(lP) ;
         else aPath.lineTo(lP) ; 
       }
+    }
+  }
+} ;
+
+struct Draw_bezier_X_monotone_curve
+{
+  template<class Bezier_X_monotone_curve, class Path>
+  void operator()( Bezier_X_monotone_curve const& aBXMC, Path& aPath, int aIdx ) const 
+  {
+    typedef Simple_cartesian<double> Linear_kernel ;
+       
+    typedef Qt::Converter<Linear_kernel> Converter ;
+        
+    typedef Point_2<Linear_kernel> Linear_point ;
+
+    typedef std::vector<Linear_point> Linear_point_vector ;
+    
+    Converter convert ;
+    
+    Linear_point_vector lSample ;
+    
+    Bezier_helper::sample_X_monotone_curve(aBXMC,true,std::back_inserter(lSample) );
+    
+    for( typename Linear_point_vector::const_iterator it = lSample.begin() ;  it != lSample.end() ; ++ it )
+    {
+      QPointF lP = convert(*it) ;
+      
+      if ( aIdx == 0 && it == lSample.begin() ) 
+           aPath.moveTo(lP) ;
+      else aPath.lineTo(lP) ; 
     }
   }
 } ;
