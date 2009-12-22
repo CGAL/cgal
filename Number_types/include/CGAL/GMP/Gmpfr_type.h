@@ -184,15 +184,18 @@ class Gmpfr:
         }
 
         Gmpfr(mpfr_srcptr f,
-                        std::float_round_style r,
-                        Gmpfr::Precision_type p=0){
-                mpfr_init2(fr(),p?p:mpfr_get_prec(f));
+              std::float_round_style r,
+              Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
+                mpfr_init2(fr(),p);
                 mpfr_set(fr(),f,_gmp_rnd(r));
+                CGAL_assertion(mpfr_get_prec(fr())<mpfr_get_prec(f) ||
+                               mpfr_equal_p(fr(),f)!=0);
         }
 
         Gmpfr(mpfr_srcptr f,Gmpfr::Precision_type p){
                 mpfr_init2(fr(),p);
                 mpfr_set(fr(),f,mpfr_get_default_rounding_mode());
+                CGAL_assertion(p<mpfr_get_prec(f) || mpfr_equal_p(fr(),f)!=0);
         }
 
         Gmpfr(Gmpzf f,
