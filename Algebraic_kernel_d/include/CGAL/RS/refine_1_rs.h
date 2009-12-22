@@ -25,9 +25,9 @@
 #include <CGAL/RS/algebraic_1.h>
 #include <CGAL/assertions.h>
 
-namespace CGAL{
+namespace RS3{
 
-inline void refine_1_rs(const Algebraic_1 &a,unsigned int s=10000){
+inline void refine_1(const CGAL::Algebraic_1 &a,unsigned int s=10000){
         CGAL_precondition(a.inf()<=a.sup());
         rs3_refine_u_root((mpfi_ptr)a.mpfi(),
                           a.pol().get_coefs(),
@@ -38,7 +38,7 @@ inline void refine_1_rs(const Algebraic_1 &a,unsigned int s=10000){
         CGAL_assertion(a.inf()<=a.sup());
 }
 
-} // namespace CGAL
+} // namespace RS3
 
 #endif  // CGAL_RS_REFINE_1_RS_H
 

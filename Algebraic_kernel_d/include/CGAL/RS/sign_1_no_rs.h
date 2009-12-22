@@ -26,7 +26,6 @@
 #include <CGAL/RS/polynomial_1_utils.h>
 #include <CGAL/RS/algebraic_1.h>
 #include <CGAL/RS/sign_1.h>
-//#include <CGAL/RS/refine_1.h>
 #include <CGAL/RS/refine_1_rs.h>
 
 namespace CGAL{
@@ -60,7 +59,7 @@ Sign sign_1_no_rs(const RS_polynomial_1 &p,const Algebraic_1 &x){
         // how to assure that p is monotonic: when its derivative is never zero
         deriv=&(sfpart_1<Gcd>()(p).derive());
         while(deriv->sign_mpfi(x.mpfi())==RS_UNKNOWN)
-                refine_1_rs(x,(bisect_steps*=2));
+                RS3::refine_1(x,(bisect_steps*=2));
                 //bisect_n<Gcd>(x,(bisect_steps*=2));
 
         // how to know that the gcd has a root: just evaluating endpoints
@@ -73,7 +72,7 @@ Sign sign_1_no_rs(const RS_polynomial_1 &p,const Algebraic_1 &x){
 refineandreturn:
         // the sign is not zero, we refine until having a result
         for(;;){
-                refine_1_rs(x,bisect_steps);
+                RS3::refine_1(x,bisect_steps);
                 s=p.sign_mpfi(x.mpfi());
                 if(s==RS_POSITIVE)
                         return POSITIVE;

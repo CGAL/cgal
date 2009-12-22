@@ -27,7 +27,7 @@
 #include <CGAL/RS/solve_1.h>
 #include <CGAL/RS/sign_1.h>
 #include <CGAL/RS/sign_1_no_rs.h>
-//#include <CGAL/RS/refine_1.h>
+//#include <CGAL/RS/sign_1_rs.h>
 #include <CGAL/RS/refine_1_rs.h>
 #include <CGAL/RS/compare_1.h>
 #include <CGAL/RS/polynomial_converter.h>
@@ -36,7 +36,6 @@
 namespace CGAL{
 namespace RSFunctors{
 
-//typedef Gmpz                    Coefficient;
 typedef RS_polynomial_1         Polynomial;
 typedef Algebraic_1             Algebraic;
 typedef Gmpfr                   Bound;
@@ -332,6 +331,7 @@ public std::binary_function<_P,Algebraic,CGAL::Sign>{
 
     CGAL::Sign operator()(const P &p,const Algebraic &a)const{
         return sign_1_no_rs<Gcd>(convert()(p),a);
+        //return RS3::sign_1(convert()(p),a);
     }
 };  // Sign_at_1
 
@@ -434,16 +434,16 @@ struct Approximate_absolute_1:
 
   std::pair<Bound,Bound>
   operator()(const Algebraic_1& x, int prec) const {
-    std::cout<<"app abs "<<prec<<std::endl;
 //--------------------------------------------------
 //     Bound error = CGAL::ipower(Bound(2),CGAL::abs(prec));
 //     while(prec>0?
 //           (x.sup()-x.inf())*error>Bound(1):
 //           (x.sup()-x.inf())>error){
-//       refine_1_rs(x,CGAL::abs(prec));
+//       RS3::refine_1(x,CGAL::abs(prec));
 //     }
 //-------------------------------------------------- 
-    refine_1_rs(x,CGAL::abs(prec));
+    RS3::refine_1(x,std::max<unsigned>(CGAL::abs(prec),
+                                       mpfi_get_prec(x.mpfi())));
     CGAL_assertion(prec>0?
                    (x.sup()-x.inf())*CGAL::ipower(Bound(2),prec)<=Bound(1):
                    (x.sup()-x.inf())<=CGAL::ipower(Bound(2),-prec));
@@ -463,7 +463,8 @@ struct Approximate_relative_1
     while(prec>0?
           (x.sup()-x.inf())*error>max_b:
           (x.sup()-x.inf())>error*max_b){
-      refine_1_rs(x,CGAL::abs(prec)+10);
+      RS3::refine_1(x,std::max<unsigned>(CGAL::abs(prec),
+                                         mpfi_get_prec(x.mpfi())));
       max_b = (CGAL::max)(CGAL::abs(x.sup()),CGAL::abs(x.inf()));
     }
     CGAL_assertion(prec>0?

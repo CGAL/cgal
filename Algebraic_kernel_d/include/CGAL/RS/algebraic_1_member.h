@@ -19,7 +19,6 @@
 #ifndef CGAL_RS_ALGEBRAIC_1_MEMBER_H
 #define CGAL_RS_ALGEBRAIC_1_MEMBER_H
 
-//#include <CGAL/RS/refine_1.h>
 #include <CGAL/RS/refine_1_rs.h>
 #include <CGAL/assertions.h>
 
@@ -210,7 +209,7 @@ double Algebraic_1::to_double()const{
         /*typedef _Gcd_policy     Gcd;
         while(mpfr_get_d(left(),GMP_RNDU)!=mpfr_get_d(right(),GMP_RNDU))
                 bisect_n<Gcd>(*this,33);*/
-        refine_1_rs(*this,100);
+        RS3::refine_1(*this,100);
         CGAL_assertion(mpfr_get_d(left(),GMP_RNDD)==
                        mpfr_get_d(right(),GMP_RNDD));
         CGAL_assertion(mpfr_get_d(left(),GMP_RNDU)==
