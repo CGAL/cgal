@@ -26,8 +26,7 @@
 #include <CGAL/RS/polynomial_1_utils.h>
 #include <CGAL/RS/solve_1.h>
 #include <CGAL/RS/sign_1.h>
-#include <CGAL/RS/sign_1_no_rs.h>
-//#include <CGAL/RS/sign_1_rs.h>
+#include <CGAL/RS/sign_1_rs.h>
 #include <CGAL/RS/refine_1_rs.h>
 #include <CGAL/RS/compare_1.h>
 #include <CGAL/RS/polynomial_converter.h>
@@ -330,8 +329,7 @@ public std::binary_function<_P,Algebraic,CGAL::Sign>{
     typedef to_rs_poly<P>   convert;
 
     CGAL::Sign operator()(const P &p,const Algebraic &a)const{
-        return sign_1_no_rs<Gcd>(convert()(p),a);
-        //return RS3::sign_1(convert()(p),a);
+        return RS3::sign_1(convert()(p),a);
     }
 };  // Sign_at_1
 
