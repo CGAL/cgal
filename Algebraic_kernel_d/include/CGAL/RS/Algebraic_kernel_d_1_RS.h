@@ -24,15 +24,9 @@
 #include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/RS/functors.h>
 
-#ifdef CGAL_USE_RS3
-#  define CGAL_RS_GCD CGAL::Rsgcd_1
-#else
-#  define CGAL_RS_GCD CGAL::Modgcd_1
-#endif
-
 namespace CGAL{
 
-template <class _C,class _G=CGAL_RS_GCD>
+template <class _C,class _G=CGAL::Rsgcd_1>
 struct Algebraic_kernel_d_1_RS{
 
     typedef _C                                              Coefficient;
@@ -97,8 +91,6 @@ struct Algebraic_kernel_d_1_RS{
 };  // Algebraic_kernel_d_1_RS
 
 } // namespace CGAL
-
-#undef CGAL_RS_GCD
 
 #endif  // CGAL_ALGEBRAIC_KERNEL_RS_1
 

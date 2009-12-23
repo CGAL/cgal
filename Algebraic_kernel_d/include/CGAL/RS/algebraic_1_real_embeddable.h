@@ -49,9 +49,7 @@ public:
     : public std::unary_function< Type, double > {
   public:
     double operator()(const Type& a) const {
-      return a.to_double/*<CGAL::Modgcd_1>*/();
-      //std::pair<double,double> interval = To_interval()(a);
-      //return (interval.first + interval.second)/2;
+      return a.to_double();
     }
   };
 
