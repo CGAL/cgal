@@ -215,6 +215,31 @@ provide specializations for \ccc{CGAL::Coercion_traits} in order to
 reflect their interoperability. 
  
 
+\section{Design and Implementation History}
+
+This package was naturally one of the first packages implemented in \cgal.
+It initially contained the \ccc{Quotient}, \ccc{Gmpz} and \ccc{Gmpq} classes,
+together with the interfaces to the number types provided by \leda, which were
+implemented by Stefan Schirra and Andreas Fabri.
+
+Later, around 1998-2002, Sylvain Pion implemented \ccc{Interval_nt}
+\ccc{MP_Float} and \ccc{Lazy_exact_nt}, together with the interfaces to
+the \ccc{mpz_class} and \ccc{mpq_class} types from \gmp.  The \ccc{Root_of_2}
+class was contributed by Sylvain Pion and Monique Teillaud around 2005,
+which was later improved by Pedro Machado Manh\~aes de Castro.
+The class \ccc{Sqrt_extension} was then contributed by Michael Hemmer and Ron Wein.
+
+Number type concepts were then refined, notably by Lutz Kettner and
+Susan Hert, who also contributed utility algorithms.
+This work was further extended within the Exacus project, and was finally
+contributed to \cgal\ by Michael Hemmer in 2006, as what is now the separate
+Algebraic Foundations package~\ref{ChapterAlgebraicFoundations}, together with
+a rewritten interface to operations on number types.
+
+In 2008-2010, Bernd G\"artner added the \ccc{Gmpzf} class, while Luis
+Pe\~naranda and Sylvain Lazard contributed the \ccc{Mpfi} and \ccc{Mpfr}
+classes.
+
 
 % This section has been removed since it is replaced by doc in
 % Algebraic_foundations
