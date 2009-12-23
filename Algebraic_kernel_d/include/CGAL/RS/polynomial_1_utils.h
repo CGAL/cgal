@@ -26,16 +26,6 @@
 #include <CGAL/RS/solve_1.h>
 #include <CGAL/RS/ugcd.h>
 #include <rs_exports.h>
-#ifdef CGAL_USE_OLD_RS3
-extern "C"{
-#  define RS_I32  int
-#  include <rs_export.h>
-#  ifdef CGAL_USE_RS3
-#    include <rs_gc.h>
-#  endif
-}
-#  include <CGAL/RS/memory.h>
-#endif
 
 namespace CGAL{
 
@@ -48,9 +38,6 @@ public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1>{
                                 const RS_polynomial_1 &p2)const{
         int dr,d1,d2;
         mpz_t * r_z;
-#ifdef CGAL_USE_OLD_RS3
-        init_rs3();
-#endif
         d1=p1.get_degree();
         d2=p2.get_degree();
         dr=rs3_up_mz_gcd(
@@ -60,13 +47,6 @@ public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1>{
                         (const mpz_t*)p2.get_coefs(),
                         d2);
         RS_polynomial_1 *result=new RS_polynomial_1(&r_z,dr);
-#ifdef CGAL_USE_OLD_RS3
-        done_with_rs3();
-        mp_set_memory_functions(
-                                __cgalrs_allocate_func,
-                                __cgalrs_reallocate_func,
-                                __cgalrs_free_func);
-#endif
         return *result;
     }
 };
@@ -392,21 +372,11 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1*>{
         if(P.get_degree()){
             int d_sfp;
             mpz_t* sfp_z;
-#ifdef CGAL_USE_OLD_RS3
-            init_rs3();
-#endif
             d_sfp=rs3_up_mz_sfp(
                                &sfp_z,
                                (const mpz_t*)P.get_coefs(),
                                P.get_degree());
             RS_polynomial_1 *result=new RS_polynomial_1(&sfp_z,d_sfp);
-#ifdef CGAL_USE_OLD_RS3
-            done_with_rs3();
-            mp_set_memory_functions(
-                                    __cgalrs_allocate_func,
-                                    __cgalrs_reallocate_func,
-                                    __cgalrs_free_func);
-#endif
             return result;
         }else
             return (new RS_polynomial_1(

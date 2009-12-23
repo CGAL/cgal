@@ -1,1 +1,2 @@
+include/CGAL/RS/memory.h
 include/CGAL/RS/refine_1.h

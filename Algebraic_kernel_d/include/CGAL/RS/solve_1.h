@@ -29,11 +29,6 @@
 #include <CGAL/RS/polynomial_1.h>
 #include <CGAL/RS/algebraic_1.h>
 #include <rs_exports.h>
-#ifdef CGAL_USE_OLD_RS3
-#  include <CGAL/RS/memory.h>
-#  define RS_I32 int
-#  include <rs_export.h>
-#endif
 
 namespace CGAL{
 
@@ -52,34 +47,6 @@ inline void init_solver(){
                 rs_reset_all();
         }
 }
-
-#ifdef CGAL_USE_OLD_RS3
-inline void init_rs3(){
-        static bool first=true;
-        if(first){
-                first=false;
-                init_solver();
-                rs_set_usr_memory_fncts
-                        (rs3_rs_alloc,rs3_rs_realloc,rs3_rs_free);
-                mp_set_memory_functions
-                        (rs3_rs_alloc,rs3_rs_gmp_realloc,rs3_rs_gmp_free);
-                set_gc_session(&rs3_gc_session);
-                rs_internal_init();
-        }else{
-                rs_set_usr_memory_fncts
-                        (rs3_rs_alloc,rs3_rs_realloc,rs3_rs_free);
-                mp_set_memory_functions
-                        (rs3_rs_alloc,rs3_rs_gmp_realloc,rs3_rs_gmp_free);
-                set_gc_session(&rs3_gc_session);
-                rs_internal_reset();
-        }
-}
-
-inline void done_with_rs3(){
-        mp_set_memory_functions(RS_gmpalloc,RS_gmprealloc,RS_gmpfree);
-        set_gc_session(&rs_default_gc_session);
-}
-#endif
 
 // reset RS memory
 inline void reset_solver(){
@@ -192,10 +159,6 @@ inline int solve_1(
                    mpfi_ptr *x,
                    const RS_polynomial_1 &p1,
                    unsigned int prec=CGAL_RS_DEF_PREC){
-#ifdef CGAL_USE_OLD_RS3
-        set_gc_session(p1.get_gc_address());
-        //set_gc_session(&rs3_gc_session);
-#endif
         rs_reset_all();
         create_rs_upoly(p1.get_coefs(),p1.get_degree(),rs_get_default_up());
         set_rs_precisol(prec);

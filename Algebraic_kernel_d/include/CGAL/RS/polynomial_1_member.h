@@ -32,28 +32,14 @@ void RS_polynomial_1::create_storage(int size){
 
 inline
 void RS_polynomial_1::free_storage(){
-#ifdef CGAL_USE_OLD_RS3
-        gc_session *old_address;
-#endif
         void *(*af)(size_t);
         void *(*rf)(void*,size_t,size_t);
         void (*ff)(void*,size_t);
         mp_get_memory_functions(&af,&rf,&ff);
         mp_set_memory_functions(_allocf,_reallocf,_freef);
-#ifdef CGAL_USE_OLD_RS3
-        old_address=_gc_address;
-        //std::cout<<"set _gc_address to "<<_gc_address<<std::flush;
-        set_gc_session(_gc_address);
-        //std::cout<<" ok"<<std::endl;
-#endif
         for(int i=0;i<_degree+1;++i)
                 mpz_clear(coef(i));
         mp_set_memory_functions(af,rf,ff);
-#ifdef CGAL_USE_OLD_RS3
-        //std::cout<<"set _gc_address to "<<old_address<<std::flush;
-        set_gc_session(old_address);
-        //std::cout<<" ok"<<std::endl;
-#endif
         (*_freef)(_coef,sizeof(mpz_t)*_capacity);
         _capacity=0;
 }
@@ -61,16 +47,6 @@ void RS_polynomial_1::free_storage(){
 inline
 void RS_polynomial_1::fetch_gmp_functions(){
         mp_get_memory_functions(&_allocf,&_reallocf,&_freef);
-#ifdef CGAL_USE_OLD_RS3
-        if(_allocf==rs3_rs_alloc){
-                //std::cout<<"alloc by rs3: "<<std::flush;
-                _gc_address=&rs3_gc_session;
-        }else{
-                //std::cout<<"alloc by something else: "<<std::flush;
-                _gc_address=&rs_default_gc_session;
-        }
-        //std::cout<<_gc_address<<std::endl;
-#endif
 }
 
 //////////////////////
@@ -295,13 +271,6 @@ RS_polynomial_1::times_monomial(mpz_srcptr c,int p)const{
                 mpz_mul(r.coef(i),coef(i-p),c);
         return r;
 }
-
-#ifdef CGAL_USE_OLD_RS3
-inline
-gc_session* RS_polynomial_1::get_gc_address() const{
-        return _gc_address;
-}
-#endif
 
 } // namespace CGAL
 
