@@ -43,7 +43,8 @@ inline CGAL::Sign sign_1(const CGAL::RS_polynomial_1 &p,
                           1,sols_u,1,
                           vals_constr,NULL,MPFR_PREC_MIN,1,1,1);
 
-        if(mpfi_is_zero(vals_constr[0][0])>0){
+        if(mpfr_zero_p(&vals_constr[0][0]->left)!=0 &&
+           mpfr_zero_p(&vals_constr[0][0]->right)!=0){
                 return CGAL::ZERO;
         }
         CGAL_assertion(mpfi_has_zero(vals_constr[0][0])<=0);
