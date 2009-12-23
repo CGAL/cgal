@@ -39,7 +39,7 @@ class Ugcd:public Primes{
             size_t modsize,modalloc;
             std::vector<pn* > p;
             pn *mA,*mB,*mG,*mod;
-            pn lc,scaleG;
+            pn lc=0,scaleG;
 
             if(degB>degA){
                 if(!degA){
