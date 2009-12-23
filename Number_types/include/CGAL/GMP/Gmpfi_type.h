@@ -570,7 +570,7 @@ bool Gmpfi::do_overlap(const Gmpfi &b)const{
 
 inline
 Uncertain<bool> Gmpfi::is_zero()const{
-        if(mpfi_is_zero(mpfi())!=0)
+        if(mpfr_zero_p(&mpfi()->left)!=0 && mpfr_zero_p(&mpfi()->right)!=0)
                 return true;
         if(mpfi_has_zero(mpfi())!=0)
                 return Uncertain<bool>::indeterminate();
@@ -657,7 +657,7 @@ Uncertain<bool> Gmpfi::is_square(Gmpfi &y)const{
 
 inline
 Uncertain<bool> Gmpfi::divides(const Gmpfi &n)const{
-        if(mpfi_is_zero(mpfi())!=0)
+        if(mpfr_zero_p(&mpfi()->left)!=0 && mpfr_zero_p(&mpfi()->right)!=0)
                 return false;
         if(mpfi_has_zero(mpfi())!=0)
                 return Uncertain<bool>::indeterminate();
@@ -667,7 +667,7 @@ Uncertain<bool> Gmpfi::divides(const Gmpfi &n)const{
 inline
 Uncertain<bool> Gmpfi::divides(const Gmpfi &n,Gmpfi &c,Gmpfi::Precision_type p
                               )const{
-        if(mpfi_is_zero(mpfi())!=0)
+        if(mpfr_zero_p(&mpfi()->left)!=0 && mpfr_zero_p(&mpfi()->right)!=0)
                 return false;
         if(mpfi_has_zero(mpfi())!=0)
                 return Uncertain<bool>::indeterminate();
