@@ -8,15 +8,27 @@ CGAL 3.6 offers the following improvements and new functionality :
     in its predicates, which can speed up its construction by a factor of about 3
     when Exact_predicates_inexact_constructions_kernel is used.
   - The class Regular_triangulation_filtered_traits_3 is deprecated, the class
-    Regular_triangulation_euclidean_traits_3 must be used instead. The predicates of
-    that traits will be filtered if the kernel given as template parameter of that traits
-    is itself a filtered kernel.
+    Regular_triangulation_euclidean_traits_3 must be used instead. The
+    predicates of that traits will be filtered if the kernel given as template
+    parameter of that traits is itself a filtered kernel.
   - Triangulation_hierarchy_3 is now deprecated, and replaced by a simpler
     CGAL::Fast_location policy template parameter of Delaunay_triangulation_3.
 
 * 3D Alpha shapes:
   - The class Weighted_alpha_shape_euclidean_traits_3 is deprecated, the class
     Regular_triangulation_euclidean_traits_3 must be used instead.
+
+* Arrangement_on_surface_2:
+  - Fixed passing a (const) traits object to the constructor of Arrangement_2.
+  - Introduced Arrangement_2::fictitious_face(), which returns the fictitious
+    face in case of an unbounded arrangement.
+  - Fixed a bug in Bezier-curve handling.
+  - Added (back) iterator, number_of_holes(), holes_begin(), and holes_end()
+    to the default DCEL for backward compatibility.
+
+* Boolean_set_operations_2:
+  - Fixed General_polygon_set_2::arranngement() to return the proper type
+    of object.    
 
 ----------------------------- Release 3.5 ----------------------------------
 CGAL releases will now be published about every six months. As a transition
