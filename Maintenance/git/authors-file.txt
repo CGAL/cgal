@@ -6,6 +6,7 @@ ameyer = Andreas Meyer <Andreas.Meyer@sophia.inria.fr>
 amitgupta = Amit Gupta <amitgupta@cse.iitb.ac.in>
 analekta = Costas Tsirogiannis <analekta@gmail.com>
 andyslj = Le-Jeng Shiue <Andy.Shiue@gmail.com>
+asafpor = Asaf Porat <asafpor@gmail.com>
 asm = Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 baesken = Matthias Bäsken <Matthias.Baesken@mpi-sb.mpg.de>
 baruchzu = Baruch Zukerman <baruchzu@post.tau.ac.il>
