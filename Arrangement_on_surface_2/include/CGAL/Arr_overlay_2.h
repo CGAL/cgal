@@ -27,6 +27,7 @@
 
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Sweep_line_2.h>
+#include <CGAL/Sweep_line_2/Arr_default_overlay_traits_base.h>
 #include <CGAL/Object.h>
 
 #include <vector>
@@ -211,6 +212,29 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   sweep_line.sweep (xcvs_vec.begin(), xcvs_vec.end(),
                     pts_vec.begin(), pts_vec.end());
   return;
+}
+
+/*!
+ * Compute the (simple) overlay of two input arrangements.
+ * \param arr1 The first arrangement.
+ * \param arr2 The second arrangement.
+ * \param arr_res Output: The resulting arrangement.
+ */
+template <class GeomTraitsA,
+          class GeomTraitsB,
+          class GeomTraitsRes,
+          class TopTraitsA,
+          class TopTraitsB,
+          class TopTraitsRes>
+void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
+              const Arrangement_on_surface_2<GeomTraitsB, TopTraitsB>& arr2,
+              Arrangement_on_surface_2<GeomTraitsRes, TopTraitsRes>& arr_res)
+{
+  typedef Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>     ArrA;
+  typedef Arrangement_on_surface_2<GeomTraitsA, TopTraitsB>     ArrB;
+  typedef Arrangement_on_surface_2<GeomTraitsRes, TopTraitsRes> ArrRes;
+  _Arr_default_overlay_traits_base<ArrA, ArrB, ArrRes> ovl_traits;
+  overlay (arr1, arr2, arr_res, ovl_traits);
 }
 
 CGAL_END_NAMESPACE
