@@ -103,15 +103,15 @@ protected:
   // The arrangement with history is based on the representation of an
   // arrangement, templated by the data-traits class and the rebound DCEL.
   typedef Arrangement_on_surface_2<Data_traits_2,
-                                   Data_top_traits>  Base_arr_2;
+                                   Data_top_traits>    Base_arr_2;
 
 public:
-  typedef Arr_traits_adaptor_2<Data_traits_2>        Traits_adaptor_2;
+  typedef Arr_traits_adaptor_2<Data_traits_2>          Traits_adaptor_2;
  
 public:
 
-  typedef Data_top_traits                            Topology_traits;
-  typedef Base_arr_2                                 Base_arrangement_2;
+  typedef Data_top_traits                              Topology_traits;
+  typedef Base_arr_2                                   Base_arrangement_2;
 
   // Types inherited from the base arrangement class:
   typedef typename Base_arr_2::Size                    Size;
@@ -161,8 +161,7 @@ protected:
   /*! \struct
    * Less functor for comparing two halfedge handles.
    */
-  struct Less_halfedge_handle
-  {
+  struct Less_halfedge_handle {
     bool operator() (Halfedge_handle h1, Halfedge_handle h2) const
     {
       return (&(*h1) < &(*h2));
@@ -278,8 +277,7 @@ protected:
    * involving edges and updates the list of halfedges associated with the
    * input curves accordingly.
    */
-  class Curve_halfedges_observer : public Arr_observer<Base_arr_2>
-  {
+  class Curve_halfedges_observer : public Arr_observer<Base_arr_2> {
   public:
 
     typedef typename Base_arr_2::Halfedge_handle     Halfedge_handle;
@@ -470,30 +468,15 @@ public:
 
   /// \name Traversal of the arrangement curves.
   //@{
-  Size number_of_curves () const
-  {
-    return (m_curves.size());
-  }
+  Size number_of_curves () const { return (m_curves.size()); }
 
-  Curve_iterator curves_begin ()
-  {
-    return (m_curves.begin());
-  }
+  Curve_iterator curves_begin () { return (m_curves.begin()); }
 
-  Curve_iterator curves_end ()
-  {
-    return (m_curves.end());
-  }
+  Curve_iterator curves_end () { return (m_curves.end()); }
 
-  Curve_const_iterator curves_begin () const
-  {
-    return (m_curves.begin());
-  }
+  Curve_const_iterator curves_begin () const { return (m_curves.begin()); }
 
-  Curve_const_iterator curves_end () const
-  {
-    return (m_curves.end());
-  }
+  Curve_const_iterator curves_end () const { return (m_curves.end()); }
   //@}
 
   /*! \class
@@ -501,25 +484,20 @@ public:
    * to the halfedge iterator type.
    */
   class Originating_curve_iterator :
-    public I_Dereference_iterator<Data_iterator,
-                                  Curve_2,
+    public I_Dereference_iterator<Data_iterator, Curve_2,
                                   typename Data_iterator::difference_type,
                                   typename Data_iterator::iterator_category>
   {
-    typedef I_Dereference_iterator<Data_iterator,
-                                   Curve_2,
+    typedef I_Dereference_iterator<Data_iterator, Curve_2,
                                    typename Data_iterator::difference_type,
                                    typename Data_iterator::iterator_category>
                                                                           Base;
 
   public:
  
-    Originating_curve_iterator ()
-    {}
+    Originating_curve_iterator () {}
 
-    Originating_curve_iterator (Data_iterator iter) :
-      Base (iter)
-    {}
+    Originating_curve_iterator (Data_iterator iter) : Base (iter) {}
 
     // Casting to a curve iterator.
     operator Curve_iterator () const
@@ -566,16 +544,10 @@ public:
   }
 
   Induced_edge_iterator
-  induced_edges_begin (Curve_const_handle c) const
-  {
-    return (c->_begin());
-  }
+  induced_edges_begin (Curve_const_handle c) const { return (c->_begin()); }
 
   Induced_edge_iterator
-  induced_edges_end (Curve_const_handle c) const
-  {
-    return (c->_end());
-  }
+  induced_edges_end (Curve_const_handle c) const { return (c->_end()); }
   //@}
 
   /// \name Manipulating edges.
@@ -589,8 +561,7 @@ public:
    * \return A handle for the halfedge whose source is the source of the the
    *         original halfedge e, and whose target is the split point.
    */
-  Halfedge_handle split_edge (Halfedge_handle e,
-                              const Point_2& p);
+  Halfedge_handle split_edge (Halfedge_handle e, const Point_2& p);
 
   /*!
    * Merge two edges to form a single edge.
@@ -600,8 +571,7 @@ public:
    *      be mergeable.
    * \return A handle for the merged halfedge.
    */
-  Halfedge_handle merge_edge (Halfedge_handle e1, 
-                              Halfedge_handle e2);
+  Halfedge_handle merge_edge (Halfedge_handle e1, Halfedge_handle e2);
 
   /*!
    * Check if two edges can be merged to a single edge.
@@ -609,8 +579,7 @@ public:
    * \param e2 The second edge (one of the pair of twin halfedges).
    * \return true iff e1 and e2 are mergeable.
    */
-  bool are_mergeable (Halfedge_const_handle e1,
-                      Halfedge_const_handle e2) const;
+  bool are_mergeable (Halfedge_const_handle e1, Halfedge_const_handle e2) const;
 
 protected:
 
@@ -641,8 +610,7 @@ protected:
    * \return A handle to the inserted curve.
    */
   template <class PointLocation>
-  Curve_handle _insert_curve (const Curve_2& cv,
-                              const PointLocation& pl)
+  Curve_handle _insert_curve (const Curve_2& cv, const PointLocation& pl)
   {
     // Allocate an extended curve (with an initially empty set of edges)
     // and store it in the curves' list.
@@ -705,8 +673,7 @@ protected:
     // Create a list of extended curves (with an initially empty sets of edges)
     std::list<Data_curve_2>   data_curves;
 
-    while (begin != end)
-    {
+    while (begin != end) {
       Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
     
       m_curves_alloc.construct (p_cv, *begin);
@@ -719,9 +686,7 @@ protected:
 
     // Perform an aggregated insertion operation into the base arrangement.
     Base_arr_2&        base_arr = *this;
-
     CGAL::insert (base_arr, data_curves.begin(), data_curves.end());
-    return;
   }
 
   /*!
@@ -737,23 +702,20 @@ protected:
     Halfedge_handle                            he;
     Size                                       n_removed = 0;
 
-    while (it != ch->_end())
-    {
+    while (it != ch->_end()) {
       // Check how many curves have originated the current edge.
       // Note we increment the iterator now, as the edge may be removed.
       he = *it;
       ++it;
 
-      if (he->curve().data().size() == 1)
-      {
+      if (he->curve().data().size() == 1) {
         // The edge is induced only by out curve - remove it.
         CGAL_assertion (he->curve().data().front() == p_cv);
 
         Base_arr_2::remove_edge (he);
         n_removed++;
       }
-      else
-      {
+      else {
         // The edge is induced by other curves as well, so we just remove
         // the pointer to out curve from its data container.
         he->curve().data().erase (p_cv);
@@ -819,8 +781,7 @@ public:
     // Duplicate the curves from the first arrangement.
     typename Arr_with_hist1::Curve_const_iterator      ocit1;
 
-    for (ocit1 = arr1.curves_begin(); ocit1 != arr1.curves_end(); ++ocit1)
-    {
+    for (ocit1 = arr1.curves_begin(); ocit1 != arr1.curves_end(); ++ocit1) {
       // Create a duplicate of the current curve.
       dup_c = m_curves_alloc.allocate (1);
     
@@ -835,8 +796,7 @@ public:
     // Duplicate the curves from the second arrangement.
     typename Arr_with_hist2::Curve_const_iterator      ocit2;
 
-    for (ocit2 = arr2.curves_begin(); ocit2 != arr2.curves_end(); ++ocit2)
-    {
+    for (ocit2 = arr2.curves_begin(); ocit2 != arr2.curves_end(); ++ocit2) {
       // Create a duplicate of the current curve.
       dup_c = m_curves_alloc.allocate (1);
     
@@ -860,8 +820,7 @@ public:
     Halfedge_handle                         e;
     const Curve_halfedges                  *org_c;
 
-    for (eit = this->edges_begin(); eit != this->edges_end(); ++eit)
-    {
+    for (eit = this->edges_begin(); eit != this->edges_end(); ++eit) {
       e = eit;
       dup_curves.clear();
       for (dit = e->curve().data().begin();
@@ -955,9 +914,7 @@ void insert (Arrangement_on_surface_with_history_2<GeomTraits, TopTraits>& arr,
   typedef Arrangement_on_surface_with_history_2<GeomTraits,
                                                 TopTraits>     Arr_with_hist_2;
   Arr_with_history_accessor<Arr_with_hist_2>   arr_access (arr);
-
   arr_access.insert_curves (begin, end);
-  return;
 }
 
 /*!
@@ -976,7 +933,6 @@ remove_curve(Arrangement_on_surface_with_history_2<GeomTraits, TopTraits>& arr,
   typedef Arrangement_on_surface_with_history_2<GeomTraits,
                                                 TopTraits>     Arr_with_hist_2;
   Arr_with_history_accessor<Arr_with_hist_2>   arr_access (arr);
-
   return (arr_access.remove_curve (ch));
 }
 
@@ -994,16 +950,37 @@ remove_curve(Arrangement_on_surface_with_history_2<GeomTraits, TopTraits>& arr,
 template <class GeomTraits,
           class TopTraits1, class TopTraits2,
           class ResTopTraits, class OverlayTraits>
-void overlay (const Arrangement_on_surface_with_history_2<GeomTraits,
-                                                          TopTraits1>& arr1,
-              const Arrangement_on_surface_with_history_2<GeomTraits,
-                                                          TopTraits2>& arr2,
-              Arrangement_on_surface_with_history_2<GeomTraits,
-                                                    ResTopTraits>& res,
-              OverlayTraits& traits)
+void
+overlay (const Arrangement_on_surface_with_history_2<GeomTraits, TopTraits1>&
+         arr1,
+         const Arrangement_on_surface_with_history_2<GeomTraits, TopTraits2>&
+         arr2,
+         Arrangement_on_surface_with_history_2<GeomTraits, ResTopTraits>& res,
+         OverlayTraits& ovl_traits)
 {
-  res._overlay (arr1, arr2, traits);
-  return;
+  res._overlay (arr1, arr2, ovl_traits);
+}
+
+/*!
+ * Compute the overlay of two input arrangement.
+ * \param arr1 The first arrangement.
+ * \param arr2 The second arrangement.
+ * \param res Output: The resulting arrangement.
+ */
+template <class GeomTraits,
+          class TopTraits1, class TopTraits2, class ResTopTraits>
+void
+overlay (const Arrangement_on_surface_with_history_2<GeomTraits, TopTraits1>&
+         arr1,
+         const Arrangement_on_surface_with_history_2<GeomTraits, TopTraits2>&
+         arr2,
+         Arrangement_on_surface_with_history_2<GeomTraits, ResTopTraits>& res)
+{
+  typedef Arrangement_on_surface_with_history_2<GeomTraits, TopTraits1> ArrA;
+  typedef Arrangement_on_surface_with_history_2<GeomTraits, TopTraits2> ArrB;
+  typedef Arrangement_on_surface_with_history_2<GeomTraits, ResTopTraits> ArrRes;
+  _Arr_default_overlay_traits_base<ArrA, ArrB, ArrRes> ovl_traits;
+  res._overlay (arr1, arr2, ovl_traits);
 }
 
 CGAL_END_NAMESPACE

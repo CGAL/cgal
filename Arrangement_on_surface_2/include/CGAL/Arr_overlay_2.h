@@ -109,26 +109,20 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
                                                    arr2.number_of_edges());
   unsigned int                           i = 0;
 
-  for (eit1 = arr1.edges_begin(); eit1 != arr1.edges_end(); ++eit1, i++)
-  {
+  for (eit1 = arr1.edges_begin(); eit1 != arr1.edges_end(); ++eit1, i++) {
     he1 = eit1;
     if (he1->direction() != ARR_RIGHT_TO_LEFT)
       he1 = he1->twin();
 
-    xcvs_vec[i] = Ovl_x_monotone_curve_2 (eit1->curve(),
-                                          he1,
-                                          invalid_he2);
+    xcvs_vec[i] = Ovl_x_monotone_curve_2 (eit1->curve(), he1, invalid_he2);
   }
 
-  for (eit2 = arr2.edges_begin(); eit2 != arr2.edges_end(); ++eit2, i++)
-  {
+  for (eit2 = arr2.edges_begin(); eit2 != arr2.edges_end(); ++eit2, i++) {
     he2 = eit2;
     if (he2->direction() != ARR_RIGHT_TO_LEFT)
       he2 = he2->twin();
 
-    xcvs_vec[i] = Ovl_x_monotone_curve_2 (eit2->curve(),
-                                          invalid_he1,
-                                          he2);
+    xcvs_vec[i] = Ovl_x_monotone_curve_2 (eit2->curve(), invalid_he1, he2);
   }
 
   // Obtain a extended traits-class object and define the sweep-line visitor.
@@ -154,10 +148,8 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
        ex_traits(*traits_adaptor);
 
   Ovl_visitor               visitor (&arr1, &arr2, &arr_res, &ovl_tr);
-  Sweep_line_2<Ovl_traits_2,
-               Ovl_visitor,
-    typename Ovl_visitor::Subcurve,
-               typename Ovl_visitor::Event>
+  Sweep_line_2<Ovl_traits_2, Ovl_visitor,
+               typename Ovl_visitor::Subcurve, typename Ovl_visitor::Event>
     sweep_line (&ex_traits, &visitor);
 
   // In case both arrangement do not contain isolated vertices, go on and
@@ -165,11 +157,9 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   const unsigned int  total_iso_verts = arr1.number_of_isolated_vertices() +
                                         arr2.number_of_isolated_vertices();
 
-  if (total_iso_verts == 0)
-  {
+  if (total_iso_verts == 0) {
     // Clear the result arrangement and perform the sweep to construct it.
     arr_res.clear();
-
     sweep_line.sweep (xcvs_vec.begin(), xcvs_vec.end());
     return;
   }
@@ -184,31 +174,24 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   std::vector<Ovl_point_2>              pts_vec (total_iso_verts);
 
   i = 0;
-  for (vit1 = arr1.vertices_begin(); vit1 != arr1.vertices_end(); ++vit1)
-  {
-    if (vit1->is_isolated())
-    {
+  for (vit1 = arr1.vertices_begin(); vit1 != arr1.vertices_end(); ++vit1) {
+    if (vit1->is_isolated()) {
       v1 = vit1;
-      pts_vec[i++] = Ovl_point_2 (vit1->point(),
-                                  CGAL::make_object (v1),
-                                  empty_obj);
+      pts_vec[i++] =
+        Ovl_point_2 (vit1->point(), CGAL::make_object (v1), empty_obj);
     }
   }
 
-  for (vit2 = arr2.vertices_begin(); vit2 != arr2.vertices_end(); ++vit2)
-  {
-    if (vit2->is_isolated())
-    {
+  for (vit2 = arr2.vertices_begin(); vit2 != arr2.vertices_end(); ++vit2) {
+    if (vit2->is_isolated()) {
       v2 = vit2;
-      pts_vec[i++] = Ovl_point_2 (vit2->point(),
-                                  empty_obj,
-                                  CGAL::make_object (v2));
+      pts_vec[i++] =
+        Ovl_point_2 (vit2->point(), empty_obj, CGAL::make_object (v2));
     }
   }
 
   // Clear the result arrangement and perform the sweep to construct it.
   arr_res.clear();
-
   sweep_line.sweep (xcvs_vec.begin(), xcvs_vec.end(),
                     pts_vec.begin(), pts_vec.end());
   return;
