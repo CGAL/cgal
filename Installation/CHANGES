@@ -25,6 +25,8 @@ CGAL 3.6 offers the following improvements and new functionality :
   - Fixed a bug in Bezier-curve handling.
   - Added (back) iterator, number_of_holes(), holes_begin(), and holes_end()
     to the default DCEL for backward compatibility.
+  - Added (simple) versions of the free overlay() function. It employs the
+    default overlay-traits, which practically does nothing.
 
 * Boolean_set_operations_2:
   - Fixed General_polygon_set_2::arranngement() to return the proper type
