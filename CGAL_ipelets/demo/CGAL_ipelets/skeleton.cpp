@@ -155,7 +155,7 @@ void SkeletonIpelet::protected_run(int fn)
     }
     
     if (offsets.size()>1)
-      get_IpePage()->Group(get_IpeletHelper()->CurrentLayer());
+      group_selected_objects_();
   }
 }
 

@@ -117,7 +117,7 @@ void ASphapeIpelet::protected_run(int fn)
       draw_polyline_in_ipe(LP.begin(),LP.end(),true,false,true);
     }
   }
-  get_IpePage()->Group(get_IpeletHelper()->CurrentLayer());
+  group_selected_objects_();
   return;
 }
 

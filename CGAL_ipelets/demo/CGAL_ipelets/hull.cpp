@@ -65,23 +65,22 @@ public:
   enveloppeIpelet()
     : CGAL::Ipelet_base<Kernel,3>("Hulls",sublabel,helpmsg){}
   void protected_run(int);
-  IpeVector tangency_point(double c_radius,double p_radius,const Point_2& current_pt,const Point_2& previous_pt,int f=1);
+  //compute tangency points of the convex hull of 2 circles using pythagore and Thales
+  IpeVector tangency_point(double c_radius,double p_radius,const Point_2& current_pt,const Point_2& previous_pt,int f=1)
+  {
+    int i=(c_radius>=p_radius)?(1):(-1);
+    double angle = atan2(i*(previous_pt.y()-current_pt.y()),i*(previous_pt.x()-current_pt.x()));
+    if(c_radius!=p_radius){
+      double dist = pow(previous_pt.x()-current_pt.x(),2)+pow(previous_pt.y()-current_pt.y(),2);
+      dist = dist*pow(c_radius/(c_radius-p_radius),2);
+      angle = angle - i * f * atan(sqrt(dist-pow(c_radius,2))/c_radius);
+    }
+    else
+      angle = angle - f * M_PI/2.;
+    return IpeVector((current_pt.x()+c_radius*cos(angle)),(current_pt.y()+c_radius*sin(angle)));
+  }      
+
 };
-
-//compute tangency points of the convex hull of 2 circles using pythagore and Thales
-IpeVector enveloppeIpelet::tangency_point(double c_radius,double p_radius,const Point_2& current_pt,const Point_2& previous_pt,int f){
-  int i=(c_radius>=p_radius)?(1):(-1);
-  double angle = atan2(i*(previous_pt.y()-current_pt.y()),i*(previous_pt.x()-current_pt.x()));
-  if(c_radius!=p_radius){
-    double dist = pow(previous_pt.x()-current_pt.x(),2)+pow(previous_pt.y()-current_pt.y(),2);
-    dist = dist*pow(c_radius/(c_radius-p_radius),2);
-    angle = angle - i * f * atan(sqrt(dist-pow(c_radius,2))/c_radius);
-  }
-  else
-    angle = angle - f * M_PI/2.;
-  return IpeVector((current_pt.x()+c_radius*cos(angle)),(current_pt.y()+c_radius*sin(angle)));
-}
-
 
 void enveloppeIpelet::protected_run(int fn)
 {
@@ -120,7 +119,6 @@ void enveloppeIpelet::protected_run(int fn)
         print_error_message("Need more than one mark or one circle");
         return;
       }
-      get_IpePage() -> DeselectAll();
     
       Apollonius::Vertex_circulator Cvert = apo.incident_vertices(apo.infinite_vertex()); //take points incident to infinte vertex
       Apollonius::Vertex_circulator Cvert0 = Cvert;
@@ -136,6 +134,36 @@ void enveloppeIpelet::protected_run(int fn)
       Vsite0.insert(Vsite0.end(),*(Vsite0.begin()+1));
       std::vector<ASite>::iterator Vsiteite0 = Vsite0.begin();
       std::vector<ASite>::iterator Vsiteite00 = Vsite0.end()-2;
+      #ifdef CGAL_USE_IPE_7
+      for(std::vector<ASite>::iterator it=Vsiteite00 ; it!=Vsiteite0 ; --it){//draw precise convex hull computing tangency point to circles
+        double c_rad = it->weight();
+        if(c_rad!=0){
+          Point_2 p_pt = (it-1)->point();  //previous neighbor
+          Point_2 c_pt = it->point();
+          Point_2 n_pt = (it+1)->point(); //next neighbor
+          double p_rad = (it-1)->weight();   
+          double n_rad = (it+1)->weight();
+          IpeVector pt_ipe=tangency_point(c_rad,p_rad,c_pt,p_pt);
+          IpeVector pt_ipe0=tangency_point(c_rad,n_rad,c_pt,n_pt,-1);
+          
+          if(it!=Vsiteite00)
+            SSPseg_ipe->appendSegment(pt_ipe1,pt_ipe0);
+          SSPseg_ipe->appendArc(IpeMatrix(c_rad,0,0,c_rad,c_pt.x(),c_pt.y()),pt_ipe0,pt_ipe);
+          pt_ipe1=pt_ipe;
+        }
+        else{
+          Point_2 c_pt = it->point();
+          IpeVector pt_ipe=IpeVector(c_pt.x(),c_pt.y());
+          if(it!=Vsiteite00)
+            SSPseg_ipe->appendSegment(pt_ipe1,pt_ipe);
+          pt_ipe1=pt_ipe;
+        }
+      }
+      SSPseg_ipe->setClosed(true);
+      ipe::Shape shape;
+      shape.appendSubPath(SSPseg_ipe);      
+      get_IpePage()->append(ipe::EPrimarySelected,CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
+      #else
       for(std::vector<ASite>::iterator it=Vsiteite00 ; it!=Vsiteite0 ; --it){//draw precise convex hull computing tangency point to circles
         double c_rad = it->weight();
         if(c_rad!=0){
@@ -154,7 +182,6 @@ void enveloppeIpelet::protected_run(int fn)
         }
         else{
           Point_2 c_pt = it->point();
-          //~ IpeVector pt_ipe=IpeVector((int)c_pt.x(),(int)c_pt.y());
           IpeVector pt_ipe=IpeVector(c_pt.x(),c_pt.y());
           if(it!=Vsiteite00)
             SSPseg_ipe->AppendSegment(pt_ipe1,pt_ipe);
@@ -165,6 +192,7 @@ void enveloppeIpelet::protected_run(int fn)
       IpePath* obj_ipe1 = new IpePath(get_IpeletHelper()->Attributes());
       obj_ipe1 -> AddSubPath(SSPseg_ipe);
       get_IpePage()->push_back(IpePgObject(IpePgObject::ESecondary,get_IpeletHelper()->CurrentLayer(),obj_ipe1));
+      #endif
     }
     break;
     
@@ -204,7 +232,7 @@ void enveloppeIpelet::protected_run(int fn)
                                     )
                      );
       }
-      get_IpePage()->Group(get_IpeletHelper()->CurrentLayer());
+      group_selected_objects_();
     }
   }
 }

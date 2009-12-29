@@ -71,7 +71,6 @@ public:
 
 void MdelaunayIpelet::protected_run(int fn)
 {
-  IpeRect bbox_ipe;
   Delaunay dt;
   RegularI rti;
   Regular rt;

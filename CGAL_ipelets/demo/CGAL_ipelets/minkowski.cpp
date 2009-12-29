@@ -29,7 +29,7 @@
 namespace CGAL_minkowski{
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel                       Kernel;
-typedef CGAL::Polygon_with_holes_2<Kernel,std::vector<Kernel::Point_2> >          Polygon_with_holes_2;
+typedef CGAL::Polygon_with_holes_2<Kernel,std::vector<Kernel::Point_2> >        Polygon_with_holes_2;
 typedef CGAL::Gps_circle_segment_traits_2<Kernel>                               Gps_traits_2;
 typedef Gps_traits_2::Polygon_2                                                 Offset_polygon_2;
 typedef Gps_traits_2::Polygon_with_holes_2                                      Offset_polygon_with_holes_2;  
@@ -79,7 +79,7 @@ void SubSelectIpelet::protected_run(int fn)
     return;
   }  
   
-  IpeRect bbox_ipe;
+  
   std::list<double> r_offsets;
   for (std::list<Circle_2>::iterator it=cir_list.begin();it!=cir_list.end();++it)
     r_offsets.push_back(sqrt(CGAL::to_double(it->squared_radius())));
@@ -110,9 +110,7 @@ void SubSelectIpelet::protected_run(int fn)
     }
     
     create_polygon_with_holes(true);
-    
-    for (IpePage::iterator it = get_IpePage() -> begin();it!=get_IpePage() -> end(); ++it)
-      if (it->Select()) it->Transform(tfm);
+    transform_selected_objects_(tfm);
   }
   else{
     if (r_offsets.size()==0)

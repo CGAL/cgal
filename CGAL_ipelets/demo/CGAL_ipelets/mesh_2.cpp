@@ -123,7 +123,7 @@ void IpeletMesh2::protected_run(int fn)
     if (it->first->is_in_domain() || it->first->neighbor(it->second)->is_in_domain())
       draw_in_ipe(cdt.segment(*it));
     
-  get_IpePage()->Group(get_IpeletHelper()->CurrentLayer());
+  group_selected_objects_();
 }
 
 }

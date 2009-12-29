@@ -82,6 +82,8 @@ void generator::protected_run(int fn)
     return;
   }
   
+  std::cout << size << " " << nbelements<< std::endl;
+  
   std::vector<Point_2> points;
   std::vector<Segment_2> segments;
   
@@ -90,9 +92,12 @@ void generator::protected_run(int fn)
   else
     segments.reserve(nbelements);
   
-  
+  #ifdef CGAL_USE_IPE_7
+  get_IpePage()->deselectAll();
+  #else
   get_IpePage()->DeselectAll();
-
+  #endif
+  
   switch(fn){
     case 0:{//random point in a circle
       CGAL::Random_points_in_disc_2<Point_2,Creator> gs( size);
@@ -142,7 +147,7 @@ void generator::protected_run(int fn)
     CGAL::Random random;
     for (std::vector<Point_2>::iterator it_pt=points.begin();it_pt!=points.end();++it_pt)
       draw_in_ipe(Circle_2(*it_pt,pow(random.get_double(size/20.,size/2.),2) ));
-    get_IpePage()->Group(get_IpeletHelper()->CurrentLayer());
+    group_selected_objects_();
   }
   else
     if (!points.empty())// Draw points
