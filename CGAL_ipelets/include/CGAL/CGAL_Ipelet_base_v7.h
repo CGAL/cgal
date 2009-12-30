@@ -670,11 +670,7 @@ public:
     
     ipe::Vector 
     get_paper_size() const {
-      #warning handle paper size
-      //~ if (ipelibVersion() >=  60028)
-        //~ return get_IpeletHelper()->StyleSheet()->findLayout().iPaperSize;
-      //~ else
-        return ipe::Vector(595,842);
+        return data_->iDoc->cascade()->findLayout()->iPaperSize;
     }
     
     struct Voronoi_from_tri{  //Class using stream to get the voronoi diagram
