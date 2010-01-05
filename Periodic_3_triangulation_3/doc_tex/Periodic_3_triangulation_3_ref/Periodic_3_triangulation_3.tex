@@ -245,7 +245,7 @@ algorithms.
   \ccc{false} nothing is known. This test runs in constant-time when
   not computing in 1-sheeted covering space. (This test uses the length
 of the longest edge in the triangulation as a
-criterion \cite{cgal:ct-c3dpt-09}.)}
+criterion \cite{cgal:ct-c3pt-09}.)}
 
 \ccMethod{bool is_extensible_triangulation_in_1_sheet_h2() const;}
 {The same as \ccc{is_extensible_triangulation_in_1_sheet_h1()} but with
@@ -253,7 +253,7 @@ a more precise heuristic, i.e.\ it might answer \ccc{true} in cases in which
 \ccc{is_extensible_triangulation_in_1_sheet_h1()} would not. However, it is
 much less time efficient when not computing in 1-sheeted covering
 space. (This test uses the diameter of the largest empty ball in the
-input point set as a criterion \cite{cgal:ct-c3dpt-09}.)}
+input point set as a criterion \cite{cgal:ct-c3pt-09}.)}
 \ccGlue
 \ccMethod{bool is_triangulation_in_1_sheet() const;}
 {Returns \ccc{true} if the current triangulation would still be a

@@ -119,7 +119,7 @@ Some point sets do not admit a triangulation in $\mathbb T_c^3$. In
 this case we use 27 periodic copies of the point set arranged in a
 cube of edge length $3c$. Any point set constructed in this way has a
 triangulation in $\mathbb R^3/G'$ with $G'=(3c\cdot\mathbb Z,+)$
-\cite{cgal:ct-c3dpt-09}. So we compute the triangulation in this
+\cite{cgal:ct-c3pt-09}. So we compute the triangulation in this
 space, which is a \emph{27-sheeted covering space} of $\mathbb T_c^3$
 (see Figure~\ref{P3Triangulation3-fig-covering}).
 
@@ -400,9 +400,13 @@ Section~\ref{l1_SectPeriodicAS3D}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Design and Implementation History}
 
-In 2006, Nico Kruithof started together with Monique Teillaud the
-\ccc{Periodic_3_triangulation_3} package.
+In 2006, Nico Kruithof started to work with Monique Teillaud on the 3D
+Periodic Triangulations package.
 
 In 2007, Manuel Caroli continued work on the
-\ccc{Periodic_3_triangulation_3} package together with Monique
+algorithms~\cite{cgal:ct-c3pt-09} and on the package with Monique
 Teillaud.
+
+The package follows the design of the 3D Triangulations package
+maintained by Sylvain Pion and Monique Teillaud (see
+Chapter~\ref{chapter-Triangulation3}).
