@@ -776,8 +776,9 @@ the perturbations, and more concretely in the implementation of the
 Delaunay hierarchy. 
 
 In 2005, Christophe Delage implemented the vertex removal function for
-regular triangulations, which allowed to release this functionality in
-\cgal\ 3.2.
+regular triangulations, using the symbolic perturbation proposed
+in~\cite{cgal:dt-pvrdr-06}, which allowed to release this
+functionality in \cgal\ 3.2.
 
 In 2006, Nico Kruithof wrote the \ccc{Triangulation_simplex_3} class
 that can store simplices of any dimension and improved the internal 
@@ -792,5 +793,6 @@ the package that were integrated in release~3.4.
 In 2009, Sylvain Pion simplified the design of the Delaunay hierarchy
 so that it became the simple \ccc{Fast_location} policy in release~3.6.
 
-The authors also wish to thank Jean-Daniel Boissonnat for helpful
-discussions \cite{bdty-tcgal-00}.
+The authors wish to thank Lutz Kettner for inspiring discussions about
+the design of CGAL. Jean-Daniel Boissonnat is also acknowledged
+\cite{bdty-tcgal-00}.
