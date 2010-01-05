@@ -94,6 +94,7 @@ sloriot = Sébastien Loriot <Sebastien.Loriot@sophia.inria.fr>
 soudot = Steve Oudot <Steve.Oudot@sophia.inria.fr>
 spion = Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 spostoll = Stéphane Postollec <Stephane.Postollec@sophia.inria.fr>
+sschaeff = Sarah Schäffer <sschaeff@mpi-sb.mpg.de>
 stayeb = Stéphane Tayeb <Stephane.Tayeb@sophia.inria.fr>
 sven = Sven Schönherr <sven@inf.ethz.ch>
 talizvi = Tali Zvi <talizvi@post.tau.ac.il>
