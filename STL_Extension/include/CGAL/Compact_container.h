@@ -407,8 +407,8 @@ public:
   }
 
   void erase(iterator first, iterator last) {
-    for (; first != last; ++first)
-      erase(first);
+    while (first != last)
+      erase(first++);
   }
 
   void clear();
