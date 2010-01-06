@@ -2050,6 +2050,73 @@ Mesh_2/stylesheet.css svneol=native#text/css
 Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text svneol=unset#application/octet-stream
 Mesh_2/test/Mesh_2/fish.edg -text
 Mesh_2/test/Mesh_2/fish.poly -text svneol=unset#application/octet-stream
+Mesh_3/applications/Release/DEFAULT.medit -text
+Mesh_3/applications/data/Polyhedra/bunny00.off -text
+Mesh_3/applications/data/Polyhedra/bunny00.txt -text
+Mesh_3/applications/data/Polyhedra/dino.off -text
+Mesh_3/applications/data/Polyhedra/dino.txt -text
+Mesh_3/applications/data/Polyhedra/elk.off -text
+Mesh_3/applications/data/Polyhedra/elk.txt -text
+Mesh_3/applications/data/Polyhedra/homer.off -text
+Mesh_3/applications/data/Polyhedra/homer.txt -text
+Mesh_3/applications/data/Polyhedra/pinion.off -text
+Mesh_3/applications/data/Polyhedra/pinion.txt -text
+Mesh_3/applications/mesher_tester.cpp -text
+Mesh_3/demo/Mesh_3/MainWindow.ui -text
+Mesh_3/demo/Mesh_3/Mesh_3.qrc -text
+Mesh_3/demo/Mesh_3/resources/about.html svneol=native#text/html
+Mesh_3/demo/Mesh_3/resources/check-off.png -text svneol=unset#image/png
+Mesh_3/demo/Mesh_3/resources/check-off.svg -text
+Mesh_3/demo/Mesh_3/resources/check-on.png -text svneol=unset#image/png
+Mesh_3/demo/Mesh_3/resources/check.svg -text
+Mesh_3/demo/Mesh_3/resources/editcopy.png -text svneol=unset#image/png
+Mesh_3/demo/Mesh_3/resources/minus.png -text svneol=unset#image/png
+Mesh_3/demo/Mesh_3/resources/plus.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/PkgDescription.tex -text
+Mesh_3/doc_tex/Mesh_3/main.tex -text
+Mesh_3/doc_tex/Mesh_3/mesh_3_user.tex -text
+Mesh_3/doc_tex/Mesh_3/pictures/bench_3d.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/bench_polyhedral.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/dihedral_angle_distribution.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_3.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_4.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_5.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/liver.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher_small.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain_2.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3_ref/BisectionGeometricTraits_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Implicit_mesh_domain_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/IntersectionGeometricTraits_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Labeled_image_mesh_domain_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/MeshCellCriteria_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/MeshTriangulation_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_cell_base_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_cell_criteria_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_complex_3_in_triangulation_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_criteria_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_triangulation_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Mesh_vertex_base_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/Polyhedral_mesh_domain_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSETraits_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSEVertexBase_3.tex -text
+Mesh_3/doc_tex/Mesh_3_ref/WSE/make_mesh_3_with_sharp_edges.tex -text
+Mesh_3/examples/Mesh_3/data/elephant.off -text svneol=unset#application/octet-stream
+Mesh_3/examples/Mesh_3/data/liver.inr.gz -text svneol=unset#application/gzip
+Mesh_3/examples/Mesh_3/mesh_3D_image.cpp -text
+Mesh_3/examples/Mesh_3/mesh_implicit_domains.cpp -text
+Mesh_3/examples/Mesh_3/mesh_polyhedral_domain.cpp -text
+Mesh_3/examples/Mesh_3/old_stuff/inputs/cube.mesh -text svneol=unset#application/octet-stream
+Mesh_3/examples/Mesh_3/old_stuff/inputs/tangle.mesh -text svneol=unset#application/octet-stream
+Mesh_3/package_info/Mesh_3/description.txt -text
+Mesh_3/package_info/Mesh_3/long_description.txt -text
+Mesh_3/package_info/Mesh_3/maintainer -text
+Mesh_3/stylesheet.css svneol=native#text/css
+Mesh_3/test/Mesh_3/data/cube.off -text svneol=unset#application/octet-stream
+Mesh_3/test/Mesh_3/data/liver.inr.gz -text
+Mesh_3/test/Mesh_3/data/sphere.off -text svneol=unset#application/octet-stream
 Min_circle_2/demo/Min_circle_2/help/index.html svneol=native#text/html
 Min_circle_2/test/Min_circle_2/test_Min_circle.cmd eol=lf
 Min_ellipse_2/demo/Min_ellipse_2/help/index.html svneol=native#text/html

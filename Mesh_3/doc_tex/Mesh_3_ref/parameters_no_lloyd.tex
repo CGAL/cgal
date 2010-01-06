@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: parameters_no_lloyd.tex
+% +------------------------------------------------------------------------+
+% | 20.10.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSnolloydRev}{$Id$}
+\RCSdefDate{\RCSnolloydDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{parameters::no_lloyd}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ allows the user to tell mesh generation global functions
+\ccc{make_mesh_3} and \ccc{refine_mesh_3} that no lloyd optimization must be done.
+
+\ccInclude{CGAL/refine_mesh_3.h}
+
+\ccGlobalFunction{parameters::internal::Lloyd parameters::no_lloyd();}
+
+\ccParameters
+
+This function takes no parameter.
+
+\ccSeeAlso
+
+\ccc{parameters::lloyd} \\
+\ccc{lloyd_optimize_mesh_3} \\
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3} 
+
+
+\ccExample
+
+\begin{ccExampleCode}
+// Mesh generation without lloyd optimization
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_lloyd());
+\end{ccExampleCode}
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

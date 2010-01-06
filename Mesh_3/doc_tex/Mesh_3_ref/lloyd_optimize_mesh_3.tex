@@ -1,0 +1,130 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: lloyd_optimize_mesh_3.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSlloydoptimizemeshRev}{$Id$}
+\RCSdefDate{\RCSlloydoptimizemeshDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{lloyd_optimize_mesh_3}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ is a mesh optimization process
+based on the minimization of a global energy function.
+
+In \ccRefName, the minimized global energy may be interpreted
+as the $L^1$-norm of the error achieved 
+when  the function $x^2$ is interpolated on the  mesh domain
+using a piecewise linear function which is linear 
+ in  each cell of the Voronoi diagram of  the mesh vertices.
+
+The optimizer \ccRefName\  works in iterative steps.
+At each iteration,  mesh vertices are moved into 
+positions that bring to zero the energy gradient
+and the Delaunay triangulation is updated.
+Vertices on the mesh boundaries are handled
+in a special way so as to preserve an accurate
+representation of the domain boundaries.
+
+
+\ccInclude{CGAL/lloyd_optimize_mesh_3.h}
+
+\ccGlobalFunction{	
+	template<typename C3T3, typename MeshDomain>
+	Mesh_optimization_return_code
+        lloyd_optimize_mesh_3(C3T3& c3t3, MeshDomain domain, 
+          double time_limit=0,
+          std::size_t max_iteration_number=0,
+          double convergence=0.02,
+          double freeze_bound = 0.01);}{
+  \ccPrecond{\ccc{time_limit} $\geq$ 0 and 0 $\leq$ \ccc{convergence} $\leq$ 1 and 0 $\leq$ \ccc{freeze_bound} $\leq$ 1}}
+
+\ccParameters
+
+Parameter \ccc{C3T3} is required to be a model of the concept
+\ccc{MeshComplex_3InTriangulation_3}.
+The argument \ccc{c3t3}, passed by
+reference, provides the initial mesh  
+and is modified  by the algorithm 
+to represent the final optimized mesh.
+
+The function has four optional parameters which are named parameters (we use the Boost.Parameters library). 
+Therefore, when calling the function,  the parameters can be provided in any order 
+provided that the names of the parameters are used
+ (see example at the bottom of this page).
+\begin{itemize}
+\item
+Parameter \ccc{time_limit}, whose name is \ccc{parameters::time_limit},
+ is used to set up, in seconds,
+ a CPU time limit after which the optimization process is stopped. This time is
+ measured using \ccc{CGAL::Timer}.
+The default value is \ccc{0} and means that there is no time limit.
+\item  Parameter \ccc{max_iteration_number}, whose name is 
+ \ccc{parameters::max_iteration_number}, sets a limit on the
+number of performed  iterations. The default value of \ccc{0} means that there is 
+no limit on the number of performed iterations.
+\item  Parameter \ccc{convergence}, whose name is 
+ \ccc{parameters::convergence}, is a stopping  criterion based on convergence: 
+the optimization process is stopped, when at the last iteration,
+the displacement of any vertex is less than a given percentage of the
+length of the shortest  edge incident to that vertex.
+The parameter \ccc{convergence} gives the threshold ratio.
+\item
+Parameter \ccc{freeze_bound}, whose name is \ccc{parameters::freeze_bound},
+is designed to reduce running time of each optimization iteration. Any vertex 
+that has
+a displacement less than a given percentage of the length of its shortest incident edge,   is frozen (i.e. is
+not relocated). The parameter \ccc{freeze_bound} gives the threshold ratio. At each iteration, any vertex that
+moves,  unfreezes all its incident vertices.
+\end{itemize}
+
+\ccHeading{Return Values }
+The function \ccRefName\ returns a value of type \ccc{Mesh_optimization_return_code}
+which is:
+\begin{itemize}
+\item \ccc{TIME_LIMIT_REACHED} when the time limit is reached.
+\item \ccc{MAX_ITERATION_NUMBER_REACHED} when \ccRefName\ stops because it has performed \ccc{max_iteration_number} iterations.
+\item \ccc{CONVERGENCE_REACHED} when \ccRefName\ stops because the convergence criterion
+is achieved.
+\end{itemize}
+
+
+
+
+\ccSeeAlso
+
+\ccc{Mesh_optimization_return_code} \\
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3} \\
+\ccc{exude_mesh_3} \\
+\ccc{perturb_mesh_3} \\
+\ccc{odt_optimize_mesh_3} \\
+
+
+\ccExample 
+
+\begin{ccExampleCode}
+// Lloyd-smoothing until convergence reach 0.01, freezing vertices which
+// move less than 0.001*shortest_incident_edge_length
+lloyd_optimize_mesh_3(c3t3, domain, parameters::convergence=0.01,
+                      parameters::freeze_bound=0.001);
+\end{ccExampleCode}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

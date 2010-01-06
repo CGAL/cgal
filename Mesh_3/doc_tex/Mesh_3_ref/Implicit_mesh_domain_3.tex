@@ -1,0 +1,103 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Implicit_mesh_domain_3.tex
+% +------------------------------------------------------------------------+
+% | 13.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSImplicitmeshdomainRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSImplicitmeshdomainDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Implicit_mesh_domain_3<Function,BGT>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements a domain whose bounding surface is
+described
+implicitly as the zero level set of a function.
+The domain to be discretized is assumed to be the domain where
+the function has negative values.
+This class is a model of the concept \ccc{MeshDomain_3}.
+
+\ccParameters
+Parameter \ccc{BGT} is a geometric traits which provides
+the basic operations to implement
+intersection tests and computations 
+through a bisection method. This parameter must be instantiated
+with a model of the concept \ccc{BisectionGeometricTraits_3}.
+
+ 
+Parameter \ccc{Function} provides the definition of the function.
+This parameter stands for a model of the concept 
+\ccc{ImplicitFunction} described in the
+surface mesh generation package. 
+The number types \ccc{Function::FT}  
+and  \ccc{BGT::FT} are required to match.
+
+The constructor of \ccRefName{}
+takes as argument a bounding sphere which is required
+to circumscribe the surface and to have its center inside the 
+ domain. 
+This domain constructs intersection points  
+between
+the surface and segments/rays/lines by 
+bisection. It needs an 
+\ccc{error_bound} such that the bisection process is stopped
+when the query segment is smaller than the error bound.
+The \ccc{error_bound} passed as argument to the domain constructor
+is a relative error bound expressed as a ratio to the bounding sphere radius.
+
+
+\ccInclude{CGAL/Implicit_mesh_domain_3.h}
+
+\ccIsModel
+\ccc{MeshDomain_3}
+
+
+
+
+\ccCreation
+\ccCreationVariable{domain}
+
+\ccConstructor{
+Implicit_mesh_domain_3(Function f,
+                       BGT::Sphere_3 bounding_sphere,
+                       BGT::FT error_bound = FT(1e-3));}
+{\ccc{f} is the object of type \ccc{Function} that represents the implicit
+  surface.\\
+ \ccc{bounding_sphere} is a bounding sphere of the implicit surface. The
+ value of \ccc{f} at the sphere center \ccc{c} must be
+ negative: $f(c)<0$.\\
+ \ccc{error_bound} is the relative error bound 
+used to  compute intersection points between the implicit surface
+and  query segments.  The
+bisection is stopped when the length of the intersected
+segment  is less than the  product of \ccc{error_bound} by the
+radius of \ccc{bounding_sphere}.}
+
+
+
+
+\ccSeeAlso
+
+\ccc{MeshDomain_3} \\
+\ccc{BisectionGeometricTraits_3} \\
+\ccc{make_mesh_3}.
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

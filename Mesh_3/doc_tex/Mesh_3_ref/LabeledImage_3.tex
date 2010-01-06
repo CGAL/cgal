@@ -1,0 +1,44 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{LabeledImage_3}
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the second template
+parameter of the class \ccc{Labeled_image_mesh_domain_3<Image,BGT>}
+which represents mesh domains defined by 3D labeled images. A 3D labeled
+image is a 3D array of elements of an integral
+type~\ccc{Type}. \ccc{Type} can be \ccc{bool}, \ccc{char}, \ccc{short},
+\ccc{int}, or \ccc{long} (signed or not). Such an array is
+associated to a 3D axis-aligned regular grid, in
+$\mathbb{R}^3$. A cell of this grid is denoted by \textit{voxel}. A voxel is
+an iso-cuboid of size \ccc{vx()}, \ccc{vy()}, and \ccc{vz()}.
+
+\ccTypes
+
+\ccNestedType{Type}{Type of voxel data. Must be an
+  integral type.}
+\ccNestedType{RT}{Ring number type.}
+
+\ccCreationVariable{image}
+\ccOperations
+
+\ccMethod{int xdim();}{First dimension of the 3D array,
+  i.e., the number of voxels along the x coordinate axis.}
+\ccMethod{int ydim();}{Second dimension of the 3D array.}
+\ccMethod{int zdim();}{Third dimension of the 3D array.}
+
+\ccMethod{RT vx();}{Size of each voxel along x coordinate axis.}
+\ccMethod{RT vy();}{Size of each voxel along y coordinate axis.}
+\ccMethod{RT vz();}{Size of each voxel along z coordinate axis.}
+
+\ccMethod{const Type* data();}{Pointer to the first element of the 3D
+  image. The size of the array must be \ccc{xdim()}$\times$\ccc{ydim()}$\times$\ccc{zdim()}.}
+
+\ccHasModels
+\ccc{CGAL::Image_3<Kernel, T>}, for any \cgal{} kernel \ccc{K} and
+any integral type \ccc{T}.
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

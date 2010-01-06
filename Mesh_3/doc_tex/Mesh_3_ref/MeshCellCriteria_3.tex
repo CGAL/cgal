@@ -1,0 +1,76 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshCellCriteria_3.tex
+% +------------------------------------------------------------------------+
+% | 13.02.2009   Author
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshCellCriteriaRev}{$Id: MeshCellsCriteria_3.tex 49286 2009-05-11 12:42:33Z lrineau $}
+\RCSdefDate{\RCSMeshCellCriteriaDate}{$Date: 2009-05-11 14:42:33 +0200 (Mon, 11 May 2009) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectConcept}{MeshCellCriteria_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The Delaunay refinement process involved in the 
+templated functions \ccc{make_mesh_3} and \ccc{refine_mesh_3}
+is guided by a set of elementary refinement criteria
+that concern either mesh tetrahedra or surface facets.
+The concept \ccRefName\ describes the types  that
+handle the refinement criteria for mesh  tetrahedra.
+
+
+\ccTypes
+
+\ccNestedType{Cell_handle}{Handle type for the cells of the
+  triangulation. Must match the \ccc{Cell_handle} type in the
+  triangulation type used by the mesh generation function.}
+
+\ccNestedType{Cell_quality}{Type representing the quality of a
+  cell. Must be a model of CopyConstructible and
+  LessThanComparable. Between two cells, the one which has the lower
+  quality must have the lower \ccc{Cell_quality}.}
+\ccNestedType{Cell_badness}{Type representing if a cell is bad or not. Must
+be convertible to \ccc{bool}. If it converts to \ccc{true} then the cell is bad, otherwise
+the cell is good with regard to the criteria.
+
+In addition, an object of this type must contain an object of type
+\ccc{Cell_quality} if it represents
+a bad cell. \ccc{Cell_quality} must be accessible by \ccc{operator*()}.
+Note that \ccc{boost::optional<Cell_quality>} is a natural model of this concept.}% boost::optional
+
+
+\ccCreationVariable{cell_criteria}
+
+\ccOperations
+
+
+\ccMethod{Cell_badness operator()(Cell_handle c);}
+{Returns \ccc{Cell_badness} value of cell \ccc{c}.}
+
+
+\ccHasModels
+\ccc{Mesh_cell_criteria_3<Tr>}
+
+\ccSeeAlso
+\ccc{MeshFacetCriteria_3}\\
+\ccc{MeshCriteria_3} \\
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3}\\
+
+
+\end{ccRefFunctionObjectConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

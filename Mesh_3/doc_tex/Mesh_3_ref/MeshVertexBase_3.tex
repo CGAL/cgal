@@ -1,0 +1,90 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshVertexBase_3.tex
+% +------------------------------------------------------------------------+
+% | 19.05.2008   Laurent Rineau
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshVertexBaseRev}{$Id$}
+\RCSdefDate{\RCSMeshVertexBaseDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MeshVertexBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the  requirements 
+for the \ccc{Vertex} type  of the triangulation
+used by a 3D mesh generation process. The type \ccRefName\
+refines both the concept \ccc{RegularTriangulationVertexBase_3}
+and 
+ the concept \ccc{SurfaceMeshVertexBase_3}.
+It provides additional members  to store and retrieve
+information about the location of the vertex with respect 
+to the input domain describing the domain to be discretized.
+More specifically, the concept \ccRefName\ provides  read-write access 
+to an integer representing the dimension of the lowest dimensional face
+of the input 3D complex on which the  vertex lies,
+and to an index characteristic of this face.
+
+
+\ccRefines
+\ccc{RegularTriangulationVertexBase_3}\\
+\ccc{SurfaceMeshVertexBase_3} 
+
+\ccTypes
+
+\ccNestedType{Index;}
+{Index type. Must match the type \ccc{MeshDomain_3::Index}.}
+\ccNestedType{FT;}
+{Numerical type.}
+% \ccNestedType{Index}{ Index type. 
+% This type must be a model  of CopyConstructible,
+%   Assignable, DefaultConstructible and  Comparable.
+% This type must be convertible to the nested type \ccc{MeshDomain_3::Index}
+% of the \ccc{MeshDomain} template parameter used by the mesh generation process.}
+
+\ccCreationVariable{vertex}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{int in_dimension() const;}{Returns the dimension of the lowest dimensional face of the input 3D complex that contains the vertex.}
+\ccGlue
+\ccMethod{void set_dimension(int);}{Sets the dimension of the lowest dimensional face of the input 3D complex that contains the vertex.}
+
+\ccMethod{Index index();}{Returns the index of the lowest dimensional face of the input 3D complex that contains the vertex.}
+\ccGlue
+\ccMethod{void set_index(Index);}{Sets the index of the lowest dimensional face of the input 3D complex that contains the vertex.}
+
+\ccHeading{Internal}
+
+\ccMethod{FT meshing_info() const;}{}
+\ccGlue
+\ccMethod{void set_meshing_info(FT);}{}
+{These functions are used internally by mesh optimizers. The user is
+not encouraged to use them directly as they may change in the future.}
+
+\ccHasModels
+\ccc{Mesh_vertex_base_3<MD,Gt,Vb>}
+
+
+\ccSeeAlso
+
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3} \\
+\ccc{MeshDomain_3}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,58 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshWSEVertexBase_3.tex
+% +------------------------------------------------------------------------+
+% | 19.05.2008   Laurent Rineau
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshWSEVertexBaseRev}{$Id: MeshWSEVertexBase_3.tex 43417 2008-06-03 13:33:01Z lrineau $}
+\RCSdefDate{\RCSMeshWSEVertexBaseDate}{$Date: 2008-06-03 15:33:01 +0200 (Tue, 03 Jun 2008) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MeshWSEVertexBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ refines the concept \ccc{SurfaceMeshVertexBase_3}
+and additionally stores two integers. For each vertex of the mesh, the
+meshing algorithm needs to know on which elements of the piecewise smooth
+complex the vertex lie. For that purpose, those two integers are stored in
+the vertex: the first one is the smallest dimension of all element of the
+complex that contain the vertex. The second one is the index of the element
+of smallest dimension that contains the vertex.
+
+\ccRefines
+\ccc{SurfaceMeshVertexBase_3}
+
+\ccTypes
+
+\ccCreationVariable{vertex}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{int dimension() const;}{Gives the smallest dimension of all element
+  of the complex that contain the vertex.}
+\ccGlue
+\ccMethod{void set_dimension(const int);}{Sets the smallest dimension of all element
+  of the complex that contain the vertex.}
+
+\ccMethod{int element_index() const;}{Gives the index of the element of
+  smallest dimension that contains the vertex.}
+\ccGlue
+\ccMethod{void set_element_index(const int);}{Sets the index of the element of
+  smallest dimension that contains the vertex.}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

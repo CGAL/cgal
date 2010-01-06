@@ -1,0 +1,66 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_optimization_return_code.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshoptimizationreturncodeRev}{$Id$}
+\RCSdefDate{\RCSMeshoptimizationreturncodeDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefEnum}{Mesh_optimization_return_code}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[enum]{} %% add further index entries
+
+\ccDefinition
+  
+The enum \ccRefName\ is the output of the global mesh optimization
+functions. This output corresponds to mesh optimization process termination reasons.
+Note that depending on what parameters have been set to the optimizer, each
+return value may represent a failure or a success.
+
+
+\ccInclude{CGAL/Mesh_optimization_return_code.h}
+
+\ccGlobalEnum{enum Mesh_optimization_return_code {
+  BOUND_REACHED = 0,
+  TIME_LIMIT_REACHED,
+  CANT_IMPROVE_ANYMORE,
+  CONVERGENCE_REACHED,
+  MAX_ITERATION_NUMBER_REACHED};}
+
+
+\ccHeading{Values}
+
+The following values are defined:
+\begin{itemize}
+\item \ccc{BOUND_REACHED}: The given lower bound on mesh quality is
+  reached.
+\item \ccc{TIME_LIMIT_REACHED}: The given time limit is reached.
+\item \ccc{CANT_IMPROVE_ANYMORE}: Mesh could not be improved anymore.
+\item \ccc{CONVERGENCE_REACHED}: The given convergence bound is reached.
+\item \ccc{MAX_ITERATION_NUMBER_REACHED}: The given maximum iteration number is reached.
+\end{itemize}
+
+
+
+\ccSeeAlso
+\ccc{exude_mesh_3} \\
+\ccc{perturb_mesh_3} \\
+\ccc{lloyd_optimize_mesh_3} \\
+\ccc{odt_optimize_mesh_3} \\
+
+
+\end{ccRefEnum}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: parameters_no_exude.tex
+% +------------------------------------------------------------------------+
+% | 20.10.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSnoexudeRev}{$Id$}
+\RCSdefDate{\RCSnoexudeDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{parameters::no_exude}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ allows the user to tell mesh generation global functions
+\ccc{make_mesh_3} and \ccc{refine_mesh_3} that no exudation must be done.
+
+\ccInclude{CGAL/refine_mesh_3.h}
+
+\ccGlobalFunction{parameters::internal::Exude parameters::no_exude();}
+
+\ccParameters
+
+This function takes no parameter.
+
+\ccSeeAlso
+
+\ccc{parameters::exude} \\
+\ccc{exude_mesh_3} \\
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3} 
+
+
+\ccExample
+
+\begin{ccExampleCode}
+// Mesh generation without exudation
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_exude());
+\end{ccExampleCode}
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

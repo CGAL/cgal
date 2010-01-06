@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshWSETraits_3.tex
+% +------------------------------------------------------------------------+
+% | 19.05.2008   Laurent Rineau
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshWSETraitsRev}{$Id: MeshWSETraits_3.tex 43417 2008-06-03 13:33:01Z lrineau $}
+\RCSdefDate{\RCSMeshWSETraitsDate}{$Date: 2008-06-03 15:33:01 +0200 (Tue, 03 Jun 2008) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MeshWSETraits_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ refines the concept
+\ccc{SurfaceMeshWSETraits_3} and adds a predicate that tells if
+a given point lies in the volume inside the object to be meshed, or not.
+
+\ccRefines
+
+\ccc{SurfaceWSEMeshTraits_3} 
+
+\ccTypes
+
+\ccNestedType{Point_3}{The type of points.}
+\ccNestedType{Input_complex_cell_label}{The type of labels for cells of the
+  input complex (the object to be meshed). The default value is supposed to
+be the label of the exterior of the object (which contains at least the
+unbounded component).}
+
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{Input_complex_cell_label get_cell_label(const Point_3&p
+  p);}{Returns the label of the cell that contains the point~\ccc{p}. If
+  the point~\ccc{p} lies in the exterior of the object to be meshed, the
+  default value should be returned.}
+
+\ccSeeAlso
+
+\ccc{make_mesh_3_with_sharp_edges}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

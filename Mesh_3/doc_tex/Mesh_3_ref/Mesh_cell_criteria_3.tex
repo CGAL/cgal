@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_cell_criteria_3.tex
+% +------------------------------------------------------------------------+
+% | 16.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSMeshcellcriteriaRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSMeshcellcriteriaDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Mesh_cell_criteria_3<Tr>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of \ccc{MeshCellCriteria_3}. It provides
+uniform size and/or shape criteria for the  mesh tetrahedra.
+
+\ccInclude{CGAL/Mesh_cell_criteria_3.h}
+
+\ccParameters
+The parameter \ccc{Tr} must be identical to the nested type
+\ccc{Triangulation} of the instance used as model of
+\ccc{MeshComplex_3InTriangulation_3}.
+
+\ccIsModel
+\ccc{MeshCellCriteria_3}
+
+
+\ccTypes
+
+\ccTypedef{typedef Tr::FT FT;}{Numerical type}
+
+\ccCreation
+\ccCreationVariable{mcc}  %% choose variable name
+
+\ccConstructor{Mesh_cell_criteria_3(
+  FT radius_edge_bound,
+  FT radius_bound);}
+{Returns an object to serve as default criteria  for cells. The argument 
+\ccc{radius_edge_bound} is the  upper bound for the radius-edge ratio
+of the tetrahedra. The argument \ccc{radius_bound} is a uniform upper bound
+for the circumradii of the tetrahedra in the mesh. See
+section~\ref{introsec:param} for further details.
+Note that if one parameter is set to 0, then its corresponding criteria is ignored.}
+
+
+
+\ccSeeAlso
+
+\ccc{MeshCriteria_3} \\
+\ccc{MeshCellCriteria_3} \\
+\ccc{Mesh_criteria_3<Tr>} \\
+\ccc{make_mesh_3}
+
+
+
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

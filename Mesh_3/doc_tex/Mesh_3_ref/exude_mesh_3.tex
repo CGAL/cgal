@@ -1,0 +1,115 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: exude_mesh_3.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSexudemeshRev}{$Id$}
+\RCSdefDate{\RCSexudemeshDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{exude_mesh_3}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ performs a sliver exudation  process on a  Delaunay mesh.
+
+The sliver exudation process consists in turning the Delaunay triangulation
+into a weighted Delaunay triangulation and  optimizing the weights
+of vertices in such a way that  slivers disappear and
+the  quality of the mesh improves.
+
+% The exuder tries to improve the dihedral angles of the mesh degree by degree: at the
+% end of step \emph{n}, the worst tetrahedron of the mesh has a minimal dihedral
+% angle larger than \emph{n}. The exuder exits if it is not the case.
+
+\ccInclude{CGAL/exude_mesh_3.h}
+
+\ccGlobalFunction{
+	template<typename C3T3>
+        Mesh_optimization_return_code
+        exude_mesh_3(C3T3& c3t3,
+                     double time_limit=0,
+                     double sliver_bound=0);}{
+ \ccPrecond{\ccc{time_limit} $\geq$ 0 and 0 $\leq$ \ccc{sliver_bound} $\leq$ 180} }
+
+\ccParameters
+
+Parameter \ccc{C3T3} is required to be a model of the concept
+\ccc{MeshComplex_3InTriangulation_3}.
+The argument \ccc{c3t3}, passed by
+reference, provides the initial mesh  
+and is modified  by the algorithm 
+to represent the final optimized mesh.
+
+The function has two optional parameters which are named parameters (we use the Boost.Parameters library). 
+Therefore, when calling the function,  the parameters can be provided in any order 
+provided that the names of the parameters are used
+ (see example at the bottom of this page). 
+\begin{itemize}
+\item
+Parameter \ccc{time_limit}, whose name is \ccc{parameters::time_limit},
+ is used to set up, in seconds,
+ a CPU time limit after which the optimization process is stopped. This time is
+ measured using the \ccc{CGAL::Timer} class.
+The default value is \ccc{0} and means that there is no time limit.
+\item 
+Parameter \ccc{sliver_bound}, whose name is \ccc{parameters::sliver_bound},
+is designed to give, in degree,  a targeted
+lower bound on dihedral angles of mesh cells.
+The exudation process considers in turn all the mesh cells 
+that have a smallest dihedral angle less than \ccc{sliver_bound}
+and tries to make them disappear by weighting their vertices.
+The optimization process
+stops when every cell in the mesh achieves this quality.
+The default value is \ccc{0} and means that  there is no targeted bound : 
+the exuder then runs as long as
+it can improve the smallest dihedral angles of the set of cells
+incident to  some vertices.
+\end{itemize}
+
+
+
+
+\ccHeading{Return Values}
+The function \ccRefName{} returns a value of type \ccc{Mesh_optimization_return_code}
+which is:
+\begin{itemize}
+\item \ccc{BOUND_REACHED} when the targeted bound for the smallest dihedral angle in the mesh is reached.
+\item\ccc{TIME_LIMIT_REACHED} when the time limit is reached.
+\item \ccc{CANT_IMPROVE_ANYMORE} when exudation process stops because it can no longer improve
+the smallest dihedral angle of the set of cells incident to some vertex in the mesh.
+\end{itemize}
+
+\ccSeeAlso
+
+\ccc{Mesh_optimization_return_code} \\
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3} \\
+\ccc{perturb_mesh_3} \\
+\ccc{lloyd_optimize_mesh_3} \\
+\ccc{odt_optimize_mesh_3} \\
+
+\ccExample
+
+\begin{ccExampleCode}
+// Exude without sliver_bound, using at most 10s CPU time
+exude_mesh_3(c3t3, parameters::time_limit=10);
+\end{ccExampleCode}
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

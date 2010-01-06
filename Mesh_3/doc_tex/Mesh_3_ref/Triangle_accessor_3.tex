@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangle_accessor_3.tex
+% +------------------------------------------------------------------------+
+% | 11.06.2008  Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSTriangleaccessorRev}{$Id$}
+\RCSdefDate{\RCSTriangleaccessorDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangle_accessor_3<Polyhedron_3<K>,K>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The class \ccRefName{} is a model for concept \ccc{TriangleAccessor_3}. It is
+designed to serve as accessor for objects of type \ccc{CGAL::Polyhedron_3<K>}.
+
+\begin{ccAdvanced}
+Actually, the class \ccRefName{} is a partial specialization of the class
+template \ccc{template<typename Polyhedron, typename K>
+  Triangle_accessor_3<Polyhedron, K>}. One may give another partial
+specialization of this class to handle its own polyhedron data structure.
+\end{ccAdvanced}
+
+\ccInclude{CGAL/Triangle_accessor_3.h}
+
+\ccParameters
+
+Template parameter \ccc{K} is the geometric traits class.
+
+\ccIsModel
+\ccc{TriangleAccessor_3}
+
+
+\ccTypes
+
+\ccTypedef{typedef Polyhedron_3<K>::Facet_const_iterator
+  Triangle_iterator;}{Triangle iterator.}
+\ccGlue
+\ccTypedef{typedef Polyhedron_3<K>::Facet_const_handle Triangle_handle;}{Triangle
+  handle.}
+\ccGlue
+\ccTypedef{typedef K::Triangle_3 Triangle_3;}{Triangle type.}
+
+\ccSeeAlso
+\ccc{TriangleAccessor_3}\\
+\ccc{Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>}\\
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: parameters_no_perturb.tex
+% +------------------------------------------------------------------------+
+% | 20.10.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSnoperturbRev}{$Id$}
+\RCSdefDate{\RCSnoperturbDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{parameters::no_perturb}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ allows the user to tell mesh generation global functions
+\ccc{make_mesh_3} and \ccc{refine_mesh_3} that no perturbation must be done.
+
+\ccInclude{CGAL/refine_mesh_3.h}
+
+\ccGlobalFunction{parameters::internal::Perturb parameters::no_perturb();}
+
+\ccParameters
+
+This function takes no parameter.
+
+\ccSeeAlso
+
+\ccc{parameters::perturb} \\
+\ccc{perturb_mesh_3} \\
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3} 
+
+
+\ccExample
+
+\begin{ccExampleCode}
+// Mesh generation without perturbation
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_perturb());
+\end{ccExampleCode}
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

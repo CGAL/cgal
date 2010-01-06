@@ -1,0 +1,94 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_facet_criteria_3.tex
+% +------------------------------------------------------------------------+
+% | 16.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSMeshfacetcriteriaRev}{$Id$}
+\RCSdefDate{\RCSMeshfacetcriteriaDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Mesh_facet_criteria_3<Tr>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of \ccc{MeshFacetCriteria_3}. It provides
+a uniform  bound for the size criterion and/or 
+for the shape criterion s  and/or
+for thw  approximation error criterion.
+
+
+% \begin{itemize}
+% \item a lower bound on the minimum angle in degrees of the surface
+%   mesh facets.
+% \item an upper bound on the radius of surface Delaunay balls. A
+%   surface Delaunay ball is a ball circumscribing a facet, centered on
+%   the surface and empty of vertices. Such a ball exists for each facet
+%   of the current surface mesh. Indeed the current surface mesh is the
+%   Delaunay triangulation of the current sampling restricted to the
+%   surface which is just the set of facets in the three dimensional
+%   Delaunay triangulation of the sampling that have a Delaunay surface
+%   ball.
+% \item an upper bound on the center-center distances of the surface
+%   mesh facets. The center-center distance of a surface mesh facet is
+%   the distance between the facet circumcenter and the center of its
+%   surface Delaunay ball.
+% \end{itemize}
+
+\ccInclude{CGAL/Mesh_facet_criteria_3.h}
+
+\ccParameters
+The parameter \ccc{Tr} must be identical to the nested type
+\ccc{Triangulation} of the instance used as model of
+\ccc{MeshComplex_3InTriangulation_3}.
+
+\ccIsModel
+\ccc{MeshFacetCriteria_3}
+
+
+\ccTypes
+
+\ccTypedef{typedef Tr::FT FT;}{Numerical type}
+
+\ccCreation
+\ccCreationVariable{mfc}  %% choose variable name
+
+\ccConstructor{Mesh_facet_criteria_3(
+  FT angle_bound,
+  FT radius_bound,
+  FT distance_bound);}
+{Returns an object to serve as default criteria for facets. The argument 
+\ccc{angle_bound} is the lower bound for the angle in degrees of the
+surface mesh facets. The argument \ccc{radius_bound} is a uniform upper bound
+for the radius of the surface Delaunay balls. The argument
+\ccc{distance_bound} is an upper bound for the center-center distances
+of the surface mesh facets. See
+section~\ref{introsec:param} for further details.
+Note that if one parameter is set to 0, then its corresponding criteria is ignored.}
+
+
+
+\ccSeeAlso
+
+\ccc{MeshCriteria_3} \\
+\ccc{MeshFacetCriteria_3} \\
+\ccc{Mesh_criteria_3<Tr>} \\
+\ccc{make_mesh_3}
+
+
+
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

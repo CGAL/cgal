@@ -1,0 +1,82 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Labeled_Image_mesh_domain_3.tex
+% +------------------------------------------------------------------------+
+% | 13.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSLabeledImagemeshdomainRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSLabeledImagemeshdomainDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Labeled_image_mesh_domain_3<Image,BGT>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{} %% add further rules for cross referencing links %%
+%\ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements a domain described by a 3D labeled image.  A 3D
+labeled image is a grid of voxels, where each voxel is associated with an index
+(a subdomain index) characterizing the subdomain in which the voxel lies.  This
+class is a model of the concept \ccc{MeshDomain_3}. The domain to be discretized
+is the union of voxels that have an non-default index (different from the
+default constructed value of the type \ccc{Image::Type}).
+
+This class includes a member function that provides,  by interpolation,  the subdomain index of any
+query point.  An intersection between a segment and bounding
+surfaces is detected when both segment endpoints are associated with different
+values of subdomain indices.  The intersection is then constructed by bisection.
+The bisection stops when the query segment is shorter than a given error bound
+\ccc{e}. This error bound is given by \ccc{e=d}$\times$\ccc{bound} where \ccc{d} is the
+length of the diagonal of the bounding box (in world coordinates) and
+\ccc{bound} is the argument passed to the constructor of \ccRefName{}.
+
+\ccParameters
+
+Parameter \ccc{Image} is the type of the input image.
+This parameter must be a model of the concept
+\ccc{LabeledImage_3}.
+
+Parameter \ccc{BGT} is a geometric traits class which provides
+the basic operations to implement
+intersection tests and  intersection computations
+through a bisection method. This parameter must be instantiated
+with a model of the concept \ccc{BisectionGeometricTraits_3}.
+
+\ccInclude{CGAL/Labeled_image_mesh_domain_3.h}
+
+\ccIsModel
+\ccc{MeshDomain_3}
+
+
+\ccCreation
+\ccCreationVariable{domain}  %% choose variable name
+
+\ccConstructor{Labeled_Image_mesh_domain_3( Image image,
+                                             BGT::FT error_bound = FT(1e-3));}
+{Construction from an image.
+The parameter \ccc{error_bound} is relative to the size of the image.}
+
+
+\ccSeeAlso
+
+\ccc{MeshDomain_3} \\
+\ccc{BisectionGeometricTraits_3} \\
+\ccc{make_mesh_3}.
+
+
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

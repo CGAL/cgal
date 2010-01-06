@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="/cgal/icons" >
+    <file>resources/cgal_logo.xpm</file>
+    <file alias="duplicate" >resources/editcopy.png</file>
+    <file alias="check-on.png" >resources/check-on.png</file>
+    <file alias="plus" >resources/plus.png</file>
+    <file alias="check-off.png" >resources/check-off.png</file>
+    <file alias="minus" >resources/minus.png</file>
+  </qresource>
+  <qresource prefix="/cgal/Mesh_3" >
+    <file alias="about.html" >resources/about.html</file>
+  </qresource>
+</RCC>
