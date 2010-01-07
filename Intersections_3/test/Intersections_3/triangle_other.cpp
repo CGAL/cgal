@@ -47,7 +47,7 @@ bool tl_correct_answer(int k, int i) {
     default:
       return false;
     }
-  };
+  }
 
 bool ts_correct_answer(int k, int i) {
     switch ( k ) {
@@ -64,7 +64,7 @@ bool ts_correct_answer(int k, int i) {
     default:
       return false;
     }
-  };
+  }
 
 bool tr_correct_answer(int k, int i) {
     switch ( k ) {
@@ -82,7 +82,7 @@ bool tr_correct_answer(int k, int i) {
     default:
       return false;
     }
-  };
+  }
 
 
 bool _tr_correct_answer(int k, int i) {
@@ -101,7 +101,7 @@ bool _tr_correct_answer(int k, int i) {
     default:
       return false;
     }
-  };
+  }
 
 
 Point_2 project(const Point & p) {
@@ -877,6 +877,6 @@ main()
 
 
   return 0;
-};
+}
 
 
