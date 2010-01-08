@@ -33,6 +33,7 @@ fransw = Frans Wessendorp <fwessend@iiic.ethz.ch>
 frebufat = François Rebufat <Francois.Rebufat@sophia.inria.fr>
 gaertner = Bernd Gärtner <gaertner@inf.ethz.ch>
 gankit = Ankit Gupta <ankitgupta00@gmail.com>
+gdamiand = Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 geert = Geert-Jan Giezeman <geert@cs.uu.nl>
 ggael = Gaël Guennebaud <gael.guennebaud@inria.fr>
 glisse = Marc Glisse <Marc.Glisse@inria.fr>
