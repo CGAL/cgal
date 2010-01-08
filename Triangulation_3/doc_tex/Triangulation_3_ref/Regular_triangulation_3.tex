@@ -78,7 +78,7 @@ It has the default value \ccc{Triangulation_data_structure_3<Triangulation_verte
 \ccConstructor{template < class InputIterator >
        Regular_triangulation_3 (InputIterator first, InputIterator last,
  const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3())}
-{Equivalent to contructing an empty triangulation with the optional 
+{Equivalent to constructing an empty triangulation with the optional 
 traits class argument and calling \ccc{insert(first,last)}.}
 
 \ccOperations
@@ -123,7 +123,7 @@ The following method allows one to insert several points.
           insert(InputIterator first, InputIterator last);}
 {Inserts the weighted points in the range $\left[\right.$\ccc{first},
 \ccc{last}$\left.\right)$. 
-Note that this function is not garanteed to insert the points
+Note that this function is not guaranteed to insert the points
 following the order of \ccc{InputIterator}.
 It returns the difference of the number of vertices between after and
 before the insertions (it may be negative due to hidden points).
