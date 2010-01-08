@@ -15,16 +15,12 @@ class SCENE_C2T3_ITEM_EXPORT Scene_c2t3_item : public Scene_item
   Q_OBJECT
 public:
   Scene_c2t3_item(const C2t3& c2t3)
-    : sphere_display_list(0), quadric(0), c2t3_(c2t3)
+    : c2t3_(c2t3)
   {
   }
 
   ~Scene_c2t3_item()
   {
-    if(quadric != 0)
-      gluDeleteQuadric(quadric);
-    if(sphere_display_list  != 0)
-      glDeleteLists(sphere_display_list, 1);
   }
 
   C2t3& c2t3() {
@@ -50,13 +46,11 @@ public:
             end = c2t3().triangulation().finite_vertices_end();
           vit != end; ++vit)
       {
-        if(vit->point().weight() > 0) {
-          if(first) {
-            result = vit->point().bbox();
-            first = false;
-          } else { 
-            result = result + vit->point().bbox();
-          }
+        if(first) {
+          result = vit->point().bbox();
+          first = false;
+        } else { 
+          result = result + vit->point().bbox();
         }
       }
       return Bbox(result.xmin(), result.ymin(), result.zmin(),
@@ -101,55 +95,6 @@ public:
     GLenum gl_error = ::glGetError();
     if(gl_error != GL_NO_ERROR)
       std::cerr << "GL error: " << gluErrorString(gl_error) << std::endl;
-
-    if(!draw_spheres)
-      return;
-
-    // force wireframe for protecting spheres
-    GLint polygon_mode[2];
-    ::glGetIntegerv(GL_POLYGON_MODE, &polygon_mode[0]);
-    ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-    for(Tr::Finite_vertices_iterator 
-          vit = c2t3().triangulation().finite_vertices_begin(),
-          end =  c2t3().triangulation().finite_vertices_end();
-        vit != end; ++vit)
-    {
-      draw_sphere(vit->point());
-    }
-    ::glPolygonMode(GL_FRONT_AND_BACK, polygon_mode[0]);
-  }
-
-  void draw_sphere(const Tr::Point p) const 
-  {
-    if(p.weight() > 0) {
-      if(sphere_display_list == 0) {
-        sphere_display_list = glGenLists(1);
-        if(sphere_display_list == 0)
-          std::cerr << "ERROR: Cannot create display list!\n";
-        if(quadric == 0)
-          quadric = gluNewQuadric();
-        if(quadric == 0)
-          std::cerr << "ERROR: Cannot create GLU quadric!\n";
-        glNewList(sphere_display_list, GL_COMPILE);
-        gluSphere(quadric, 1., 10, 10);
-        glEndList();
-        if(glGetError() != GL_NO_ERROR)
-          std::cerr << gluErrorString(glGetError());
-      }
-      glPushMatrix();
-      glTranslated(CGAL::to_double(p.point().x()),
-                   CGAL::to_double(p.point().y()),
-                   CGAL::to_double(p.point().z()));
-      const GLdouble r = CGAL::to_double(CGAL_NTS sqrt(p.weight()));
-      glScaled(r, r, r);
-      glCallList(sphere_display_list);
-      glPopMatrix();
-    }
-  }
-
-public slots:
-  void show_spheres(bool b) {
-    draw_spheres = b;
   }
 
 private:
@@ -167,10 +112,7 @@ private:
   }
 
 private:
-  mutable GLuint sphere_display_list;
-  mutable GLUquadric* quadric;
   C2t3 c2t3_;
-  bool draw_spheres;
 };
 
 #endif // SCENE_C2T3_ITEM

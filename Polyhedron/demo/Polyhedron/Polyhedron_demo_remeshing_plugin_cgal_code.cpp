@@ -72,36 +72,17 @@ public:
       return false;
     if( squared_distance(pa, pc) < sq_distance_bound )
       return false;
-    int nb_protecting_balls = 0;
-    if(pa.weight() != FT(0)) ++nb_protecting_balls;
-    if(pb.weight() != FT(0)) ++nb_protecting_balls;
-    if(pc.weight() != FT(0)) ++nb_protecting_balls;
-    if(nb_protecting_balls == 0)
-    { 
-      if(aspect_ratio_criterion.is_bad(f, q[0]))
-        return true;
-      else {
-        q[0] = 1;
-        if(uniform_size_criterion.is_bad(f, q[1]))
-          return true;
-        else {
-          q[1] = 1;
-          if(curvature_size_criterion.is_bad(f, q[2]))
-            return true;
-        }
-      }
-    }
+    if(aspect_ratio_criterion.is_bad(f, q[0]))
+      return true;
     else {
       q[0] = 1;
-      if(false && nb_protecting_balls == 3)
-        return false;
-      else if(uniform_size_criterion.is_bad(f, q[1]))
+      if(uniform_size_criterion.is_bad(f, q[1]))
         return true;
-      // else {
-      //   q[1] = 1;
-      //   if(nb_protecting_balls == 1 && curvature_size_criterion.is_bad(f, q[2]))
-      //     return true;
-      // }
+      else {
+        q[1] = 1;
+        if(curvature_size_criterion.is_bad(f, q[2]))
+          return true;
+      }
     }
     return false;
   }
@@ -131,8 +112,8 @@ namespace {
 //
 typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel;
 // input surface
-typedef CGAL::Mesh_3::Robust_intersection_traits_3<Kernel> IGT;
-typedef CGAL::AABB_polyhedral_oracle<Polyhedron,IGT,Simple_cartesian_kernel> Input_surface;
+// typedef CGAL::Mesh_3::Robust_intersection_traits_3<Kernel> IGT;
+typedef CGAL::AABB_polyhedral_oracle<Polyhedron,Kernel,Simple_cartesian_kernel> Input_surface;
 
 
 // A base non-templated class, to allow 
@@ -249,16 +230,12 @@ struct Meshing_thread : QThread
 typedef Tr::Geom_traits GT;
 typedef Tr::Geom_traits::FT FT;
 
-#include "Polyhedron_demo_remeshing_plugin_protection_cgal_code.h"
-
 Scene_item* cgal_code_remesh(QWidget* parent, 
                              Polyhedron* pMesh,
                              const double angle,
                              const double sizing,
                              const double approx,
-                             int tag,
-                             bool protect,
-                             bool refine_balls) {
+                             int tag) {
 // };
 
 // class Mesh_process : public QObject {
@@ -312,18 +289,9 @@ Scene_item* cgal_code_remesh(QWidget* parent,
   Input_surface input(*pMesh);
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
-  if(protect) {
-    std::cerr << "Insert protecting balls... ";
-    timer.reset();
-    insert_spheres(c2t3, pMesh, sizing/1.5, refine_balls);
-    std::cerr << "done (" << timer.time() << " ms)" << std::endl;
-  }
-
   // initial point set
   timer.reset();
   std::cerr << "Insert initial point set... ";
-  typedef CGAL::Cartesian_converter<Kernel,GT> Converter;
-  Converter convert;
 
   { // new scope for the initialization, so that the vector
     // polyhedron_points is destroyed as soon as the initialization is
@@ -394,43 +362,30 @@ Scene_item* cgal_code_remesh(QWidget* parent,
 
   if(triangulation.number_of_vertices() > 0)
   {
-    // // add remesh as new polyhedron
-    // Polyhedron *pRemesh = new Polyhedron;
-    // CGAL::Complex_2_in_triangulation_3_polyhedron_builder<C2t3,
-    // Polyhedron> builder(c2t3);
-    return new Scene_c2t3_item(c2t3);
-
-    // try {
-    //   CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
-    //   pRemesh->delegate(builder);
-    // } catch(CGAL::Failure_exception)
-    // {
-    // }
-    // CGAL::set_error_behaviour(CGAL::ABORT);
-
-    // if(c2t3.number_of_facets() != pRemesh->size_of_facets())
-    // {
-    //   delete pRemesh;
-    //   std::stringstream temp_file;
-    //   namespace sm = CGAL::Surface_mesher;
-    //   if(!CGAL::output_surface_facets_to_off(temp_file, c2t3, 
-    //                                          sm::NO_OPTION | sm::IO_VERBOSE))
-    //   {
-    //     std::cerr << "Cannot write the mesh to an off file!\n";
-    //     std::cerr << temp_file.str() << std::endl;
-    //     return 0;
-    //   }
-    //   Scene_polygon_soup* soup = new Scene_polygon_soup();
-    //   if(!soup->load(temp_file))
-    //   {
-    //     std::cerr << "Cannot reload the mesh from an off file!\n";
-    //     return 0;
-    //   }
-    //   else
-    //     return soup;
-    // } else {
-    //   return new Scene_polyhedron_item(pRemesh);
-    // }
+    // add remesh as new polyhedron
+    Polyhedron *pRemesh = new Polyhedron;
+    CGAL::Complex_2_in_triangulation_3_polyhedron_builder<C2t3, Polyhedron> builder(c2t3);
+    pRemesh->delegate(builder);
+    if(c2t3.number_of_facets() != pRemesh->size_of_facets())
+    {
+      delete pRemesh;
+      std::stringstream temp_file;
+      if(!CGAL::output_surface_facets_to_off(temp_file, c2t3))
+      {
+        std::cerr << "Cannot write the mesh to an off file!\n";
+        return 0;
+      }
+      Scene_polygon_soup* soup = new Scene_polygon_soup();
+      if(!soup->load(temp_file))
+      {
+        std::cerr << "Cannot reload the mesh from an off file!\n";
+        return 0;
+      }
+      else
+        return soup;
+    } else {
+      return new Scene_polyhedron_item(pRemesh);
+    }
   }
   else
     return 0;

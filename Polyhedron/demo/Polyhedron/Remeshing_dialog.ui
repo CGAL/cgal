@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>389</width>
-    <height>227</height>
+    <height>173</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -113,23 +113,6 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="protect">
-     <property name="text">
-      <string>&amp;Protect borders with spheres</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="refine_balls">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>&amp;Refine protecting balls</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -185,22 +168,6 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>195</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>protect</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>refine_balls</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>237</x>
-     <y>119</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>241</x>
-     <y>143</y>
     </hint>
    </hints>
   </connection>

@@ -20,9 +20,7 @@ Scene_item* cgal_code_remesh(QWidget* parent,
                              const double angle,
                              const double sizing,
                              const double approx,
-                             int tag,
-                             bool protect,
-                             bool refine_balls);
+                             int tag);
 
 class Polyhedron_demo_remeshing_plugin : 
   public QObject,
@@ -39,18 +37,6 @@ public:
       connect(actionRemeshing, SIGNAL(triggered()),
               this, SLOT(remesh()));
     }
-    actionShowSpheres = new QAction("Show protecting spheres", mw);
-    actionShowSpheres->setCheckable(true);
-    actionShowSpheres->setChecked(false);
-    QMenu* menuView = mw->findChild<QMenu*>("menuView");
-    if(menuView)
-    {
-      menuView->addAction(actionShowSpheres);
-    }
-    else {
-      std::cerr << "Error: cannot find menu \"menuView\" in QMainWindow \"" 
-                << qPrintable(mw->objectName()) << "\"!\n";
-    }
   }
 
   QList<QAction*> actions() const {
@@ -61,7 +47,6 @@ public slots:
 
 private:
   QAction* actionRemeshing;
-  QAction* actionShowSpheres;
 }; // end class Polyhedron_demo_remeshing_plugin
 
 void Polyhedron_demo_remeshing_plugin::remesh()
@@ -109,8 +94,6 @@ void Polyhedron_demo_remeshing_plugin::remesh()
     const double approx = ui.approx->value();
     const double sizing = ui.sizing->value();
     const int tag_index = ui.tags->currentIndex();
-    const bool protect = ui.protect->isChecked();
-    const bool refine_balls = ui.refine_balls->isChecked();
     if(tag_index < 0) return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -121,17 +104,13 @@ void Polyhedron_demo_remeshing_plugin::remesh()
               << "\n  approx=" << approx
               << "\n  tag=" << tag_index
               << std::boolalpha
-              << "\n  protect=" << protect
-              << "\n  refine_balls=" << refine_balls
               << std::endl;
     Scene_item* new_item = cgal_code_remesh(mw, 
                                             pMesh,
                                             angle,
                                             sizing,
                                             approx,
-                                            tag_index,
-                                            protect,
-                                            refine_balls);
+                                            tag_index);
 
     if(new_item)
     {
@@ -144,14 +123,6 @@ void Polyhedron_demo_remeshing_plugin::remesh()
       new_item->setRenderingMode(item->renderingMode());
       item->setVisible(false);
       scene->itemChanged(index);
-      QObject::connect(actionShowSpheres, SIGNAL(toggled(bool)),
-                       new_item, SLOT(show_spheres(bool)));
-      // meta-call, to avoid the inclusing of the CGAL headers
-      QMetaObject::invokeMethod(new_item,
-                                "show_spheres",
-                                Qt::DirectConnection,
-                                Q_ARG(bool, actionShowSpheres->isChecked()));
-
       scene->addItem(new_item);
     }
 
