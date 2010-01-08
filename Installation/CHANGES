@@ -14,9 +14,18 @@ CGAL 3.6 offers the following improvements and new functionality :
   - Triangulation_hierarchy_3 is now deprecated, and replaced by a simpler
     CGAL::Fast_location policy template parameter of Delaunay_triangulation_3.
 
+* 3D Periodic triangulations:
+  - New demo: 3D periodic Lloyd algorithm.
+  - New functionality for Voronoi diagrams: dual of an edge and of a vertex, 
+    volume and centroid of the dual of a vertex. 
+  - The package can now be used with the 3D Alpha Shapes package to compute 
+    periodic alpha shapes. 
+
 * 3D Alpha shapes:
   - The class Weighted_alpha_shape_euclidean_traits_3 is deprecated, the class
     Regular_triangulation_euclidean_traits_3 must be used instead.
+  - The package can now be used together with the 3D Periodic Triangulation 
+    package to compute periodic alpha shapes. 
 
 * Arrangement_on_surface_2:
   - Fixed passing a (const) traits object to the constructor of Arrangement_2.
