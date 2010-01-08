@@ -1,8 +1,15 @@
 Release notes of CGAL.
 
 ----------------------------- Release 3.6 ----------------------------------
-INFO: Will be formatted by the release manager.
+
+*******
+NOTE: The section "Release 3.6" of the current file Will be re-formatted
+by the release manager a few days before the release. For the moment, you
+can simply add your changes with the formating you want.
+*******
+
 CGAL 3.6 offers the following improvements and new functionality : 
+
 * 3D Triangulations :
   - Regular_triangulation_3 : semi-static floating-point filters are now used
     in its predicates, which can speed up its construction by a factor of about 3
