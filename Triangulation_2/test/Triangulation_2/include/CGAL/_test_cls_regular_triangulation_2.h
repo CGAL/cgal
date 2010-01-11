@@ -136,6 +136,12 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   Weighted_point wp29(p9,22);
   Weighted_point wp22(p12,300);
 
+  {
+    Weighted_point p15_bis(p15.x(), p15.y());
+    assert(p15_bis == p15);
+    CGAL::Weighted_point<CGAL::Simple_cartesian<double>::Point_3, double> w3(0, 0, 0);
+  }
+
   Cls T;
   assert(T.power_test(wp1,wp2,wp3) == CGAL::ON_NEGATIVE_SIDE);
   assert(T.power_test(wp1,wp8,wp2) == CGAL::ON_POSITIVE_SIDE);

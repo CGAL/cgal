@@ -21,11 +21,22 @@
 #ifndef CGAL_WEIGHTED_POINT_H
 #define CGAL_WEIGHTED_POINT_H
 
-CGAL_BEGIN_NAMESPACE
+#include <iostream>
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Dimension.h>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits.hpp>
+#include <boost/mpl/and.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/logical.hpp>
+#include <boost/utility.hpp>
+
+namespace CGAL {
 
 template < class Pt, class We >
 class Weighted_point : public Pt
 {
+  typedef typename Kernel_traits<Pt>::Kernel::FT FT;
 public:
   typedef We Weight;
   typedef Pt Point;
@@ -42,6 +53,29 @@ public:
 
   Weighted_point (const Point &p, const Weight &w)
       : Point(p), _weight(w) {}
+
+
+  // Constructors from coordinates are also provided for convenience, except
+  // that they are only from Cartesian coordinates, and with no weight, so as
+  // to avoid any potential ambiguity between the homogeneous weight and the
+  // power weight (it should be easy enough to pass a Point explicitly in those
+  // cases).
+  // The enable_if complexity comes from the fact that we separate dimension 2 and 3.
+
+  template < typename Tx, typename Ty >
+  Weighted_point (const Tx &x, const Ty &y,
+	          typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, FT>,
+					                      boost::is_convertible<Ty, FT>,
+							      boost::mpl::bool_<Ambient_dimension<Point>::value == 2> > >::type* = 0)
+      : Point(x, y), _weight(0) {}
+
+  template < typename Tx, typename Ty, typename Tz >
+  Weighted_point (const Tx &x, const Ty &y, const Tz &z,
+	          typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, FT>,
+					                      boost::is_convertible<Ty, FT>,
+					                      boost::is_convertible<Tz, FT>,
+							      boost::mpl::bool_<Ambient_dimension<Point>::value == 3> > >::type* = 0)
+      : Point(x, y, z), _weight(0) {}
 
   const Point & point() const
   {
@@ -99,6 +133,6 @@ operator>>(std::istream &is, Weighted_point<Point,Weight> &wp)
   return is;
 }
 
-CGAL_END_NAMESPACE
+} // namespace CGAL
 
 #endif // CGAL_WEIGHTED_POINT_H

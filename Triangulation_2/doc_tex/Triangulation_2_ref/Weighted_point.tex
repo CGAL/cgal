@@ -34,9 +34,17 @@ and \ccc{Regular_triangulation_euclidean_traits_3}.
 
 \ccCreation
 \ccCreationVariable{wp}  %% choose variable name
+\ccConstructor{Weighted_point(Weighted_point wq)}{copy constructor.}
+\ccGlue
 \ccConstructor{Weighted_point(Point p=Point(), Weight w= Weight(0))}{}
 \ccGlue
-\ccConstructor{Weighted_point(Weighted_point wq)}{copy constructor.}
+\ccConstructor{Weighted_point(FT x, FT y)}{Constructs the point from \ccc{x}
+and \ccc{y} coordinates, with a weight of 0.  Requires that the ambient
+dimension be 2.}
+\ccGlue
+\ccConstructor{Weighted_point(FT x, FT y, FT z)}{Constructs the point from
+\ccc{x}, \ccc{y} and \ccc{z} coordinates, with a weight of 0.  Requires that
+the ambient dimension be 3.}
 
 \ccAccessFunctions
 \ccMethod{Point point() const;}{}
