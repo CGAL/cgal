@@ -18,30 +18,18 @@
 //
 // Author(s)     : Mariette Yvinec
 
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
 #include <cassert>
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Gmpz.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/_test_cls_regular_euclidean_traits_3.h>
 
-//needs an exact number type to test the traits class
-#ifdef CGAL_USE_GMP
-typedef CGAL::Quotient<CGAL::Gmpz>  NT;
-#else
-typedef CGAL::Quotient<CGAL::MP_Float>  NT;
-#endif
+//needs exact constructions as well to test the traits class
 
-typedef CGAL::Simple_cartesian<NT> K;
+typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
 // Explicit instantiation of the whole class :
 template class CGAL::Regular_triangulation_euclidean_traits_3<K>;
-
-
 
 int main()
 {
