@@ -10,6 +10,9 @@ can simply add your changes with the formating you want.
 
 CGAL 3.6 offers the following improvements and new functionality : 
 
+* 2D/3D Regular triangulations : Weighted_point now has a constructor
+  from Cartesian coordinates.
+
 * 3D Triangulations :
   - Regular_triangulation_3 : semi-static floating-point filters are now used
     in its predicates, which can speed up its construction by a factor of about 3
