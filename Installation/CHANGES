@@ -23,6 +23,8 @@ CGAL 3.6 offers the following improvements and new functionality :
     parameter of that traits is itself a filtered kernel.
   - Triangulation_hierarchy_3 is now deprecated, and replaced by a simpler
     CGAL::Fast_location policy template parameter of Delaunay_triangulation_3.
+  - The old version of remove() (enabled with CGAL_DELAUNAY_3_OLD_REMOVE)
+    has been deleted.
 
 * 3D Periodic triangulations:
   - New demo: 3D periodic Lloyd algorithm.
