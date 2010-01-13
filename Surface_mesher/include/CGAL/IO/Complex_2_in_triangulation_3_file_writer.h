@@ -29,6 +29,7 @@
 
 #include <iomanip>
 #include <stack>
+#include <set>
 
 namespace CGAL { namespace Surface_mesher {
   template < class Tr>
