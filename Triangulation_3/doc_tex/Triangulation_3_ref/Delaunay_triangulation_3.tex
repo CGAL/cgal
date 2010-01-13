@@ -158,11 +158,7 @@ polyhedra that cannot be re-triangulated cannot happen, so \cgal\
 proposes a vertex removal.
 
 \ccMethod{void remove(Vertex_handle v);}
-{Removes the vertex \ccc{v} from the triangulation.\\
-Note that in {\sc Cgal} 3.0 we have implemented a new algorithm for
-re-triangulating the hole after the removal.
-In case that you experience problems when removing a vertex, the old
-code can be enabled with a \ccc{\#define CGAL_DELAUNAY_3_OLD_REMOVE 1}.
+{Removes the vertex \ccc{v} from the triangulation.
 \ccPrecond{\ccc{v} is a finite vertex of the triangulation.}}
 
 \ccMethod{template < typename InputIterator >

@@ -812,10 +812,10 @@ private:
       }
   };
 
-protected:
-  // test_dim_down needs to be protected because it is used by the
-  // ear algorithm in Delaunay_triangulation_3
   bool test_dim_down(Vertex_handle v) const;
+
+protected:
+
   template < class VertexRemover >
   void remove(Vertex_handle v, VertexRemover &remover);
 
