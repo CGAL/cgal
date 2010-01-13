@@ -137,7 +137,7 @@ struct Exact_triangulation_euclidean_traits_xy_3
 
    typedef Exact_intersect_xy_2<Rp,typename Rp::Kernel_tag> Intersect_2;
 
-   Intersect_2 intersect_2_object ()
+   Intersect_2 intersect_2_object () const
       { return Intersect_2(); }
 };
 
