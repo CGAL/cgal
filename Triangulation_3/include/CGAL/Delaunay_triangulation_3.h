@@ -31,6 +31,10 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Location_policy.h>
 
+#ifdef CGAL_DELAUNAY_3_OLD_REMOVE
+#  error "The old remove() code has been removed.  Please report any issue you may have with the current one."
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 template < class Gt,
