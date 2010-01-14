@@ -26,6 +26,7 @@
 #include <iterator>
 #include <algorithm>
 #include <vector>
+#include <cstring>
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
@@ -402,6 +403,9 @@ public:
   {
     CGAL_precondition(type(&*x) == USED);
     alloc.destroy(&*x);
+#ifndef CGAL_NO_ASSERTIONS
+    std::memset(&*x, 0, sizeof(T));
+#endif
     put_on_free_list(&*x);
     --size_;
   }
