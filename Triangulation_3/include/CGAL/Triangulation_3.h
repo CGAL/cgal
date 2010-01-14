@@ -1557,15 +1557,17 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
   // separating p from the rest of the triangulation
   // lt = OUTSIDE_AFFINE_HULL if p is not coplanar with the triangulation
 {
-    if ( dimension() >= 1 ) {
-        // Make sure we continue from here with a finite cell.
-        if ( start == Cell_handle() )
-            start = infinite_cell();
+  CGAL_triangulation_expensive_assertion(start == Cell_handle() || tds().is_simplex(start) );
 
-        int ind_inf;
-        if ( start->has_vertex(infinite, ind_inf) )
-	    start = start->neighbor(ind_inf);
-    }
+  if ( dimension() >= 1 ) {
+      // Make sure we continue from here with a finite cell.
+      if ( start == Cell_handle() )
+          start = infinite_cell();
+
+      int ind_inf;
+      if ( start->has_vertex(infinite, ind_inf) )
+          start = start->neighbor(ind_inf);
+  }
 
   switch (dimension()) {
   case 3:

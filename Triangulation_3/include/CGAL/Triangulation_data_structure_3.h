@@ -283,14 +283,7 @@ public:
 
   void delete_cell( Cell_handle c )
   {
-      CGAL_triangulation_expensive_precondition( dimension() != 3 ||
-                                                 is_cell(c) );
-      CGAL_triangulation_expensive_precondition( dimension() != 2 ||
-                                                 is_facet(c,3) );
-      CGAL_triangulation_expensive_precondition( dimension() != 1 ||
-                                                 is_edge(c,0,1) );
-      CGAL_triangulation_expensive_precondition( dimension() != 0 ||
-                                                 is_vertex(c->vertex(0)) );
+      CGAL_triangulation_expensive_precondition( is_simplex(c) );
       cells().erase(c);
   }
 
@@ -310,6 +303,7 @@ public:
 
   // QUERIES
 
+  bool is_simplex(Cell_handle c) const; // undocumented for now
   bool is_vertex(Vertex_handle v) const;
   bool is_edge(Cell_handle c, int i, int j) const;
   bool is_edge(Vertex_handle u, Vertex_handle v, Cell_handle & c,
@@ -1228,6 +1222,21 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
   tds.print_cells(os, V);
 
   return os;
+}
+
+template < class Vb, class Cb>
+bool
+Triangulation_data_structure_3<Vb,Cb>::
+is_simplex( Cell_handle c ) const
+{
+  switch(dimension()) {
+    case 3 : return is_cell(c);
+    case 2 : return is_facet(c, 3);
+    case 1 : return is_edge(c, 0, 1);
+    case 0 : return is_vertex(c->vertex(0));
+    case -1 : return c == cells().begin();
+  }
+  return false;
 }
 
 template < class Vb, class Cb>
