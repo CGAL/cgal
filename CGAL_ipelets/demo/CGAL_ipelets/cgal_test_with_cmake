@@ -149,7 +149,7 @@ if  ${MAKE_CMD} -f Makefile help | grep "pca" > /dev/null; then
   NEED_CLEAN=y
 fi
 if  ${MAKE_CMD} -f Makefile help | grep "simple_triangulation" > /dev/null; then 
-  compile_and_run CGAL_simple_triangulation
+  compile_and_run simple_triangulation
   NEED_CLEAN=y
 fi
 if  ${MAKE_CMD} -f Makefile help | grep "skeleton" > /dev/null; then 
