@@ -117,7 +117,7 @@ diagram are one-dimensional and that all Voronoi cells are simply
 connected. Moreover, we further distinguish between two cases,
 according to the type of intersecting pair that our input data set
 contains. A pair of sites is called \emph{weakly intersecting} if they
-a single common point and this common point does not lie in the
+have a single common point and this common point does not lie in the
 interior of any of the two sites. A pair of sites is called
 \emph{strongly intersecting} if they intersect and they either have
 more than one common point or their common point lies in the interior
@@ -284,12 +284,12 @@ boolean is equal to \ccc{true}. The segment $s_1q_1$ will also be
 represented by two segments, a point, and a boolean, namely, $t_1$
 (the supporting segment of $s_1q_1$), $t_2$ and \ccc{false} (it is the
 second endpoint of $s_1q_1$ that is an input point). Subsegments
-$p_2s_2$ and $s_2q_2$ are represented analogously.
+$p_2s_1$ and $s_1q_2$ are represented analogously.
 Consider now what happens when we insert $t_3$. The point 
 $s_2$ will again be represented by two segments, but not $s_1q_1$ and
 $t_3$. In fact, it will be represented by $t_1$ (the supporting
 segment of $s_1q_1$) and $t_3$. $s_2q_1$ will be represented
-by two segments, a point, and a boolean ($t_1$, $t_3$ and
+by two segments, a point, and a boolean ($t_1$, $t_3$, $q1$ and
 \ccc{false}), and similarly for $p_3s_2$ and $s_2q_3$. On the other
 hand, both endpoints of $s_1s_2$ are non-input points. In such a
 case we represent the segment by three input segments.
