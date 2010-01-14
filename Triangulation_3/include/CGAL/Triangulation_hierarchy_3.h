@@ -357,7 +357,7 @@ insert(const Point &p, Locate_type lt, Cell_handle loc, int li, int lj)
     int i, j;
     // locate using hierarchy
     locs positions[maxlevel];
-    locate(p, lt, i, j, positions, loc);
+    locate(p, lt, i, j, positions, vertex->cell());
 
     int level = 1;
     while (level <= vertex_level ){
