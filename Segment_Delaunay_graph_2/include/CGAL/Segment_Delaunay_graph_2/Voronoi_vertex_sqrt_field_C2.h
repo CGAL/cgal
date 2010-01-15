@@ -802,7 +802,7 @@ private:
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
 
-  Sign incircle_s(const Site_2& t, int i) const
+  Sign incircle_s(const Site_2& t, int) const
   {
     CGAL_precondition( t.is_segment() );
 
@@ -837,14 +837,9 @@ private:
         // are not in the same halfspace defined by the tangent line through p1
 	Site_2 p2 = other_site(*p1, t);
 	  Point_2 v(x(),y());
-
+        
 	  Compute_scalar_product_2 csp;
-	  if (csp((v - p1->point()), (p2.point()- p1->point())) > 0){
-	    return NEGATIVE;
-	  } else {
-	    return POSITIVE;
-	  }
-
+	  return -CGAL::sign( csp((v - p1->point()), (p2.point()- p1->point())) );
       }
 
     } else if(v_type == PPS){
@@ -871,11 +866,7 @@ private:
 	  Site_2 tp = other_site(*p2, t);
 	  Point_2 v(x(),y());
 	  Compute_scalar_product_2 csp;
-	  if (csp((v - p2->point()), (tp.point()- p2->point())) > 0){
-	    return NEGATIVE;
-	  } else {
-	    return POSITIVE;
-	  }
+          return -CGAL::sign( csp((v - p2->point()), (tp.point()- p2->point())) );
 	}
     }
 
@@ -897,7 +888,7 @@ private:
       }
     }
 
-    return incircle_s_no_easy(t, i);
+    return incircle_s_no_easy(t, 0);
   }
 
   
