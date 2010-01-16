@@ -39,8 +39,8 @@
 #include <CGAL/Polynomial/modular_filter.h>
 #include <CGAL/extended_euclidean_algorithm.h>
 #include <CGAL/Polynomial/resultant.h>
-#include <CGAL/Polynomial/subresultants.h>          // not in release 3.4 
-#include <CGAL/Polynomial/sturm_habicht_sequence.h> // not in release 3.4 
+#include <CGAL/Polynomial/subresultants.h>
+#include <CGAL/Polynomial/sturm_habicht_sequence.h>
 
 
 /*namespace CGAL{
