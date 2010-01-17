@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 template < class Refs, class P, class N >
 class Straight_skeleton_vertex_base_base_2
 {
-  enum Flags { IsSplitBit = 0x01, HasInfiniteTimeBit = 0x02 } ;
+  enum Flags { IsSkeletonBit = 0x01, IsSplitBit = 0x02, HasInfiniteTimeBit = 0x04 } ;
   
 protected :
 
@@ -164,7 +164,7 @@ public:
       mID   (aID)
     , mP    (ORIGIN) 
     , mTime (std::numeric_limits<double>::max())
-    , mFlags(HasInfiniteTimeBit)
+    , mFlags(IsSkeletonBit | HasInfiniteTimeBit)
   {
   }
   
@@ -184,7 +184,7 @@ public:
       mID   ( aID )
     , mP    ( aP )
     , mTime ( aTime )
-    , mFlags( ( aIsSplit ? IsSplitBit : 0 ) | ( aHasInfiniteTime ? HasInfiniteTimeBit : 0 ) )
+    , mFlags( IsSkeletonBit | ( aIsSplit ? IsSplitBit : 0 ) | ( aHasInfiniteTime ? HasInfiniteTimeBit : 0 ) )
  {
  }
 
@@ -200,6 +200,10 @@ public:
   
   bool is_split() const { return ( mFlags & IsSplitBit ) == IsSplitBit ; }
 
+  bool is_skeleton() const { return ( mFlags & IsSkeletonBit ) == IsSkeletonBit ; }
+  
+  bool is_contour () const { return !is_skeleton(); }
+  
   Halfedge_const_handle primary_bisector() const { return halfedge()->next(); }
 
   Halfedge_handle primary_bisector() { return halfedge()->next(); }
@@ -227,8 +231,6 @@ public:
 
   std::size_t degree() const { return CGAL::circulator_size(halfedge_around_vertex_begin()); }
   
-  bool is_skeleton() const { return  halfedge()->is_bisector() ; }
-  bool is_contour () const { return !halfedge()->is_bisector() ; }
   
   const Point_2& point() const { return mP; }
   

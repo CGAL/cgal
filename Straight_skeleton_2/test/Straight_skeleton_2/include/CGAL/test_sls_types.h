@@ -57,17 +57,71 @@ typedef std::vector<double>           Doubles ;
 
 typedef CGAL::Segment_2<IK>           ISegment;
 typedef std::vector<IPoint>           IPolygon;
+typedef std::vector<IFT>              IWeights;
 typedef boost::shared_ptr<IPolygon>   IPolygonPtr;
-typedef std::vector<IPolygonPtr>      IRegion ;
-typedef boost::shared_ptr<IRegion>    IRegionPtr ;
-typedef std::vector<IRegionPtr>       IRegions ;
+typedef boost::shared_ptr<IWeights>   IWeightsPtr;
 
-typedef CGAL::Segment_2<OK>           OSegment;
-typedef std::vector<OPoint>           OPolygon;
-typedef boost::shared_ptr<OPolygon>   OPolygonPtr;
-typedef std::vector<OPolygonPtr>      ORegion ;
-typedef boost::shared_ptr<ORegion>    ORegionPtr ;
-typedef std::vector<ORegionPtr>       ORegions ;
+
+struct IWeightedPolygon 
+{
+  typedef IPolygonPtr polygon_ptr_type ;
+  typedef IWeightsPtr weights_ptr_type ;
+  
+  IWeightedPolygon(IPolygonPtr aPolygonPtr, IWeightsPtr aWeightsPtr, bool aClosed = true) 
+    : polygon(aPolygonPtr), weights(aWeightsPtr), closed(aClosed) {}
+    
+  IWeightedPolygon clone() const
+  {
+    return IWeightedPolygon( IPolygonPtr( new IPolygon(*polygon) ), IWeightsPtr( new IWeights(*weights) ), closed );
+  }
+
+  IPolygonPtr polygon; 
+  IWeightsPtr weights;
+  bool        closed;
+};
+
+IWeightedPolygon revert_weighted_polygon(IWeightedPolygon aWeightedPolygon)
+{
+  IPolygonPtr lPolygonPtr = IPolygonPtr( new IPolygon(aWeightedPolygon.polygon->rbegin(),aWeightedPolygon.polygon->rend()) ) ;  
+  IWeightsPtr lWeightsPtr = IWeightsPtr( new IWeights(aWeightedPolygon.weights->rbegin(),aWeightedPolygon.weights->rend()) ) ;
+  std::rotate(lWeightsPtr->begin(),lWeightsPtr->begin()+(lWeightsPtr->size()-1),lWeightsPtr->end()) ;
+  return IWeightedPolygon(lPolygonPtr, lWeightsPtr, aWeightedPolygon.closed ) ;
+}
+
+IWeightedPolygon invert_weighted_polygon(IWeightedPolygon aWeightedPolygon)
+{
+  IWeightedPolygon rInverseWeightedPolygon = aWeightedPolygon.clone() ;
+  for( IWeights::iterator wi = rInverseWeightedPolygon.weights->begin(), wi_end = rInverseWeightedPolygon.weights->end() ;
+       wi != wi_end ; ++wi )
+  {
+    *wi *= -1.0;
+  }
+  return rInverseWeightedPolygon ;
+}
+
+typedef std::vector<IWeightedPolygon>          IWeightedBoundaries ;
+typedef boost::shared_ptr<IWeightedBoundaries> IWeightedBoundariesPtr ;
+
+typedef std::vector<IPolygonPtr >       IBoundaries ;
+typedef boost::shared_ptr<IBoundaries>  IBoundariesPtr ;
+
+
+IBoundariesPtr extract_polygons_view(IWeightedBoundaries const & aWeightedBoundaries)
+{
+  IBoundariesPtr rBoundaries = IBoundariesPtr(new IBoundaries());
+  for( IWeightedBoundaries::const_iterator iter = aWeightedBoundaries.begin(), iter_end = aWeightedBoundaries.end(); iter != iter_end ; ++iter )
+  {
+    rBoundaries->push_back( iter->polygon );
+  }
+  return rBoundaries;
+}
+
+
+typedef CGAL::Segment_2<OK>            OSegment ;
+typedef std::vector<OPoint>            OPolygon ;
+typedef boost::shared_ptr<OPolygon>    OPolygonPtr ;
+typedef std::vector<OPolygonPtr>       OBoundaries ;
+typedef boost::shared_ptr<OBoundaries> OBoundariesPtr ;
 
 typedef CGAL::Straight_skeleton_2<IK>                             ISls;
 

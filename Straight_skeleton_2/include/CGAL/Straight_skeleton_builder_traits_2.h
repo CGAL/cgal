@@ -23,7 +23,6 @@
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -35,18 +34,24 @@ struct Construct_ss_trisegment_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
   
+  typedef typename Base::FT               FT ;
   typedef typename Base::Segment_2        Segment_2 ;
   typedef typename Base::Trisegment_2     Trisegment_2 ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
   
   typedef Trisegment_2_ptr result_type ;
-  
 
   result_type operator() () const { return cgal_make_optional( Trisegment_2::null() ) ; }
   
-  result_type operator() ( Segment_2 const& aS0, Segment_2 const& aS1, Segment_2 const& aS2 ) const
+  result_type operator() ( Segment_2 const& aS0
+                         , FT        const& aW0
+                         , Segment_2 const& aS1
+                         , FT        const& aW1
+                         , Segment_2 const& aS2
+                         , FT        const& aW2
+                         ) const
   {
-    return construct_trisegment(aS0,aS1,aS2);
+    return construct_trisegment<Trisegment_2>(aS0,aW0,aS1,aW1,aS2,aW2);
   }
 };
 
@@ -75,20 +80,21 @@ struct Is_edge_facing_ss_node_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
+  typedef typename Base::FT               FT ;
   typedef typename Base::Point_2          Point_2 ;
   typedef typename Base::Segment_2        Segment_2 ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef Uncertain<bool> result_type ;
 
-  Uncertain<bool> operator() ( Point_2 const& aContourNode, Segment_2 const& aEdge ) const
+  Uncertain<bool> operator() ( Point_2 const& aContourNode, Segment_2 const& aEdge, FT const& aWeight ) const
   {
-    return is_edge_facing_pointC2(cgal_make_optional(aContourNode),aEdge) ;
+    return is_edge_facing_pointC2(cgal_make_optional(aContourNode),aEdge,aWeight) ;
   }
 
-  Uncertain<bool> operator() ( Trisegment_2_ptr const& aSkeletonNode, Segment_2 const& aEdge ) const
+  Uncertain<bool> operator() ( Trisegment_2_ptr const& aSkeletonNode, Segment_2 const& aEdge, FT const& aWeight ) const
   {
-    return is_edge_facing_offset_lines_isecC2(aSkeletonNode,aEdge) ;
+    return is_edge_facing_offset_lines_isecC2(aSkeletonNode,aEdge,aWeight) ;
   }
 };
 
@@ -116,6 +122,7 @@ struct Oriented_side_of_event_point_wrt_bisector_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
+  typedef typename Base::FT               FT ;
   typedef typename Base::Segment_2        Segment_2 ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
   typedef typename Base::Point_2          Point_2 ;
@@ -124,14 +131,16 @@ struct Oriented_side_of_event_point_wrt_bisector_2 : Functor_base_2<K>
 
   Uncertain<Oriented_side> operator() ( Trisegment_2_ptr const& aEvent
                                       , Segment_2        const& aE0
+                                      , FT               const& aW0
                                       , Segment_2        const& aE1
+                                      , FT               const& aW1
                                       , Trisegment_2_ptr const& aE01Event
                                       , bool                    aE0isPrimary 
                                       ) const
   {
-    Uncertain<Oriented_side> rResult = oriented_side_of_event_point_wrt_bisectorC2(aEvent,aE0,aE1,aE01Event,aE0isPrimary) ;
+    Uncertain<Oriented_side> rResult = oriented_side_of_event_point_wrt_bisectorC2(aEvent,aE0,aW0,aE1,aW1,aE01Event,aE0isPrimary) ;
 
-    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Oriented_side_of_event_point_wrt_bisector_2","Event=" << aEvent << " E0=" << aE0 << " E1=" << aE1 );
+    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Oriented_side_of_event_point_wrt_bisector_2","Event=" << aEvent << " E0=" << aE0 << " W0=" << aW0 << " E1=" << aE1 << " W1=" << aW1 );
 
     return rResult ;
   }
@@ -213,16 +222,6 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
   result_type operator() ( Trisegment_2_ptr const& aTrisegment ) const
   {
-    typename Has_inexact_constructions<K>::type has_inexact_constructions
-    CGAL_SUNPRO_INITIALIZE( = typename Has_inexact_constructions<K>::type()) ;
-    
-    return calc(aTrisegment, has_inexact_constructions);
-  }
- 
-  result_type calc ( Trisegment_2_ptr const& aTrisegment
-                   , Tag_false               // kernel already has exact constructions
-                   ) const
-  {
     bool lOK = false ;
     
     FT      t(0) ;
@@ -237,7 +236,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
       optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment);
       if ( oi )
       {
-        i = *oi ;
+        i = *oi ;  
         CGAL_stskel_intrinsic_test_assertion(!is_point_calculation_clearly_wrong(t,i,aTrisegment));
         lOK = true ;
       } 
@@ -247,58 +246,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 
     return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
   }
-  
-  result_type calc ( Trisegment_2_ptr const& aTrisegment
-                   , Tag_true         // kernel does not provides exact constructions
-                   ) const
-  {
-    bool lOK = false ;
-    
-    FT      t(0) ;
-    Point_2 i = ORIGIN ;
-
-    optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(aTrisegment);
-
-    if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
-    {
-      t = ot->n() / ot->d();
-      
-      optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment);
-      if ( oi )
-      {
-        if ( is_point_calculation_clearly_wrong(t,*oi,aTrisegment)) 
-        {
-          typedef Exact_predicates_exact_constructions_kernel EK ;
-    
-          typedef Cartesian_converter<K,EK> BaseC2E;
-          typedef Cartesian_converter<EK,K> BaseE2C;
-    
-          SS_converter<BaseC2E> C2E ;  
-          SS_converter<BaseE2C> E2C ;  
-    
-          oi = E2C(construct_offset_lines_isecC2(C2E(aTrisegment)));
-          
-          if ( oi )
-          {
-            i   = *oi ;
-            CGAL_stskel_intrinsic_test_assertion(!is_point_calculation_clearly_wrong(t,i,aTrisegment));
-            lOK = true ;
-          }
-        }
-        else
-        {
-          i = *oi ;
-          lOK = true ;
-        }
-      }
-      
-    }
-    
-    CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(lOK,K,"Construct_ss_event_time_and_point_2",aTrisegment);
-
-    return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
-  }
-  
+ 
   bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p, Trisegment_2_ptr const& aTrisegment ) const 
   {
     bool rR = false ;
@@ -352,6 +300,9 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     return rR ;
   }
 };
+
+
+
 
 } // namespace CGAL_SS_i
 
@@ -419,8 +370,8 @@ public:
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_ss_edges_collinear_2>
     Are_ss_edges_collinear_2 ;
     
-  typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
-  typedef typename Unfiltering::Construct_ss_trisegment_2           Construct_ss_trisegment_2 ;
+  typedef typename Unfiltering::Construct_ss_event_time_and_point_2  Construct_ss_event_time_and_point_2 ;
+  typedef typename Unfiltering::Construct_ss_trisegment_2            Construct_ss_trisegment_2 ;
 } ;
 
 template<class K>

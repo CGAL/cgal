@@ -77,6 +77,10 @@ public :
   typedef typename Traits::Point_2 Point_2 ;
   
   typedef boost::optional<Point_2> OptionalPoint_2 ;
+  
+  typedef boost::tuple<Point_2,Point_2> Point_2_twotuple ;
+  
+  typedef boost::optional<Point_2_twotuple> OptionalPoint_2_twotuple ;
 
   typedef boost::shared_ptr<Container> ContainerPtr ;
 
@@ -120,7 +124,7 @@ private:
   void AddOffsetVertex( FT aTime, Halfedge_const_handle aHook, ContainerPtr aPoly ) ;
 
   template<class OutputIterator>
-  OutputIterator TraceOffsetPolygon( FT aTime, Halfedge_const_handle aHook, OutputIterator aOut ) ;
+  OutputIterator TraceOffsetPolygon( FT aTime, Halfedge_const_handle aHook, bool aIsOpen, OutputIterator aOut ) ;
 
   Halfedge_const_handle LocateSeed( FT aTime, Halfedge_const_handle aBorder ) ;
   
@@ -137,6 +141,9 @@ private:
   
   void SetIsUsedSeed( Halfedge_const_handle aBisector ) { GetBisectorData(aBisector).IsUsedSeed = true ; }
 
+  bool IsSeedLeftTerminal( Halfedge_const_handle aBisector ) { return !handle_assigned(aBisector->opposite()->defining_contour_edge()) ; }
+  bool IsHookLeftTerminal( Halfedge_const_handle aBisector ) { return !handle_assigned(aBisector->defining_contour_edge()) ; }
+  
   inline Segment_2 CreateSegment ( Halfedge_const_handle aH ) const
   {
     Point_2 s = aH->opposite()->vertex()->point() ;
@@ -151,8 +158,11 @@ private:
     if ( aTriedge.is_skeleton() )
     {
       return Construct_ss_trisegment_2(mTraits)(CreateSegment(aTriedge.e0())
+                                               ,aTriedge.e0()->weight()
                                                ,CreateSegment(aTriedge.e1())
+                                               ,aTriedge.e1()->weight()
                                                ,CreateSegment(aTriedge.e2())
+                                               ,aTriedge.e2()->weight()
                                                );
     }
     else 
@@ -185,7 +195,7 @@ private:
     return r ;
   }
   
-  boost::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
+  OptionalPoint_2_twotuple Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
   {
     CGAL_assertion(aBisector->is_bisector());
     CGAL_assertion(handle_assigned(aBisector->opposite()));
@@ -212,28 +222,61 @@ private:
       CGAL_POLYOFFSET_TRACE(3,"Seed node for " << e2str(*aBisector) << " is " << v2str(*lSeedNode) << " event=" << lSeedEvent ) ;
     }
 
-    OptionalPoint_2 p = Construct_offset_point_2(mTraits)(aT
-                                                         ,CreateSegment(lBorderA)
-                                                         ,CreateSegment(lBorderB)
-                                                         ,lSeedEvent
-                                                         );
+    OptionalPoint_2_twotuple rResult ;
+    
+    if ( handle_assigned(lBorderA) && handle_assigned(lBorderB) )
+    {
+      rResult = Construct_offset_point_2(mTraits)(aT,CreateSegment(lBorderA),lBorderA->weight(),CreateSegment(lBorderB),lBorderB->weight(),lSeedEvent);
+    }
+    else if ( !handle_assigned(lBorderA) && handle_assigned(lBorderB) )
+    {
+      OptionalPoint_2 lP = Construct_terminal_offset_point_2(mTraits)(aT,true,CreateSegment(lBorderB),lBorderB->weight(),lSeedEvent);
+      if ( lP )
+        rResult = boost::make_tuple(*lP,*lP) ;
+    }
+    else
+    {
+      CGAL_assertion( handle_assigned(lBorderA) && !handle_assigned(lBorderB) );
+      
+      OptionalPoint_2 lP = Construct_terminal_offset_point_2(mTraits)(aT,false,CreateSegment(lBorderA),lBorderA->weight(),lSeedEvent);
+      if ( lP )
+        rResult = boost::make_tuple(*lP,*lP) ;
+    }
+
+    
     CGAL_stskel_intrinsic_test_assertion
     ( 
-      !p 
+      ! rResult
       || 
-      ( p && !CGAL_SS_i::is_possibly_inexact_distance_clearly_not_zero
-              ( CGAL_SS_i::squared_distance_from_point_to_lineC2(p->x()
-                                                                ,p->y()
-                                                                ,lNodeS->point().x()
-                                                                ,lNodeS->point().y()
-                                                                ,lNodeT->point().x()
-                                                                ,lNodeT->point().y()
-                                                                ).to_nt()
-              )
+      ( !!rResult 
+        && !CGAL_SS_i::is_possibly_inexact_distance_clearly_not_zero( CGAL_SS_i::squared_distance_from_point_to_lineC2(boost::tuples::get<0>(*rResult).x()
+                                                                                                                      ,boost::tuples::get<0>(*rResult).y()
+                                                                                                                      ,lNodeS->point().x()
+                                                                                                                      ,lNodeS->point().y()
+                                                                                                                      ,lNodeT->point().x()
+                                                                                                                      ,lNodeT->point().y()
+                                                                                                                      ).to_nt()
+                                                                                  )
       )
     ) ;
     
-    return p ;
+    CGAL_stskel_intrinsic_test_assertion
+    ( 
+      !rResult 
+      || 
+      ( !!rResult
+       && !CGAL_SS_i::is_possibly_inexact_distance_clearly_not_zero( CGAL_SS_i::squared_distance_from_point_to_lineC2(boost::tuples::get<1>(*rResult).x()
+                                                                                                                     ,boost::tuples::get<1>(*rResult).y()
+                                                                                                                     ,lNodeS->point().x()
+                                                                                                                     ,lNodeS->point().y()
+                                                                                                                     ,lNodeT->point().x()
+                                                                                                                     ,lNodeT->point().y()
+                                                                                                                     ).to_nt()
+                                                                                  )
+      )
+    ) ;
+    
+    return rResult ;
   }
 
   void ResetBisectorData();

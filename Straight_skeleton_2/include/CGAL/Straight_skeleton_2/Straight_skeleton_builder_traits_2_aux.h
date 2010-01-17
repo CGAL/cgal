@@ -71,8 +71,8 @@ struct Is_filtering_kernel
   typedef Tag_false type ;
 } ;
 
-template<>
-struct Is_filtering_kernel< Exact_predicates_inexact_constructions_kernel >
+template< class K >
+struct Is_filtering_kernel< CGAL::Filtered_kernel<K> >
 {
   typedef Tag_true type ;
 } ;
@@ -202,6 +202,25 @@ public:
     return From_Exact(er);
 
   }
+  
+  template <class A1, class A2, class A3, class A4, class A5, class A6>
+  result_type
+  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4, const A5 &a5, const A6 &a6) const
+  {
+    try
+    {
+      Protect_FPU_rounding<Protection> P;
+      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2),To_Filtered(a3),To_Filtered(a4),To_Filtered(a5),To_Filtered(a6));
+      if ( fr )
+        return From_Filtered(fr);
+    }
+    catch (Uncertain_conversion_exception) {}
+    
+    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3), To_Exact(a4), To_Exact(a5), To_Exact(a6)) ;
+    return From_Exact(er);
+
+  }
 };
 
 
@@ -265,40 +284,47 @@ class Trisegment_2 : public Ref_counted_base
 {
 public:
 
+  typedef K R ;
+  
   typedef typename K::Segment_2 Segment_2 ;
+  typedef typename K::FT        FT ;
     
-  typedef intrusive_ptr<Trisegment_2> Self_ptr ;
+  typedef intrusive_ptr< Trisegment_2<K> > Self_ptr ;
   
 public:
 
   Trisegment_2 ( Segment_2 const&        aE0
+               , FT        const&        aW0 
                , Segment_2 const&        aE1
+               , FT        const&        aW1 
                , Segment_2 const&        aE2
+               , FT        const&        aW2 
                , Trisegment_collinearity aCollinearity 
                ) 
+     :
+     mCollinearity( aCollinearity ) 
+   , mCSIdxA(-1)
+   , mCSIdxB(-1)
+   , mNCSIdx(-1)
   {
-    mCollinearity = aCollinearity ;
     
     mE[0] = aE0 ;
     mE[1] = aE1 ;
     mE[2] = aE2 ;
+    mW[0] = aW0 ;
+    mW[1] = aW1 ;
+    mW[2] = aW2 ;
     
     switch ( mCollinearity )
     {
       case TRISEGMENT_COLLINEARITY_01:
-        mCSIdx=0; mNCSIdx=2; break ;
+        mCSIdxA=0; mCSIdxB=1; mNCSIdx=2; break ;
         
       case TRISEGMENT_COLLINEARITY_12:
-        mCSIdx=1; mNCSIdx=0; break ;
+        mCSIdxA=1; mCSIdxB=2; mNCSIdx=0; break ;
         
       case TRISEGMENT_COLLINEARITY_02:
-        mCSIdx=0; mNCSIdx=1; break ;
-        
-      case TRISEGMENT_COLLINEARITY_ALL:
-        mCSIdx=-1; mNCSIdx=-1; break ;
-        
-      case TRISEGMENT_COLLINEARITY_NONE:
-        mCSIdx=-1; mNCSIdx=-1; break ;
+        mCSIdxA=0; mCSIdxB=2; mNCSIdx=1; break ;
     }
   }
     
@@ -307,16 +333,26 @@ public:
   Trisegment_collinearity collinearity() const { return mCollinearity ; }
 
   Segment_2 const& e( unsigned idx ) const { CGAL_precondition(idx<3) ; return mE[idx] ; }
+  FT        const& w( unsigned idx ) const { CGAL_precondition(idx<3) ; return mW[idx] ; }
   
   Segment_2 const& e0() const { return e(0) ; }
   Segment_2 const& e1() const { return e(1) ; }
   Segment_2 const& e2() const { return e(2) ; }
+  
+  FT        const& w0() const { return w(0) ; }
+  FT        const& w1() const { return w(1) ; }
+  FT        const& w2() const { return w(2) ; }
 
   // If 2 out of the 3 edges are collinear they can be reclassified as 1 collinear edge (any of the 2) and 1 non-collinear.
   // These methods returns the edges according to that classification.
   // PRECONDITION: Exactly 2 out of 3 edges are collinear
-  Segment_2 const& collinear_edge    () const { return e(mCSIdx) ; }
+  Segment_2 const& collinear_edge_A  () const { return e(mCSIdxA) ; }
+  Segment_2 const& collinear_edge_B  () const { return e(mCSIdxB) ; }
   Segment_2 const& non_collinear_edge() const { return e(mNCSIdx) ; }
+  
+  FT        const& collinear_weight_A  () const { return w(mCSIdxA) ; }
+  FT        const& collinear_weight_B  () const { return w(mCSIdxB) ; }
+  FT        const& non_collinear_weight() const { return w(mNCSIdx) ; }
 
   Self_ptr child_l() const { return mChildL ; }
   Self_ptr child_r() const { return mChildR ; } 
@@ -337,9 +373,9 @@ public:
 
   friend std::ostream& operator << ( std::ostream& os, Trisegment_2<K> const& aTrisegment )
   {
-    return os << "[" << s2str(aTrisegment.e0())
-              << " " << s2str(aTrisegment.e1())
-              << " " << s2str(aTrisegment.e2())
+    return os << "[" << s2str(aTrisegment.e0()) << " ( " << n2str(aTrisegment.w0()) << ")"
+              << " " << s2str(aTrisegment.e1()) << " ( " << n2str(aTrisegment.w1()) << ")"
+              << " " << s2str(aTrisegment.e2()) << " ( " << n2str(aTrisegment.w2()) << ")"
               << " " << trisegment_collinearity_to_string(aTrisegment.collinearity()) 
               << "]";
   }
@@ -371,8 +407,9 @@ public:
 private :
     
   Segment_2               mE[3];
+  FT                      mW[3];
   Trisegment_collinearity mCollinearity ;
-  unsigned                mCSIdx, mNCSIdx ;
+  char                    mCSIdxA, mCSIdxB, mNCSIdx ;
   
   Self_ptr mChildL ;
   Self_ptr mChildR ;
@@ -411,6 +448,9 @@ struct SS_converter : Converter
   typedef boost::tuple<Source_FT,Source_point_2> Source_time_and_point_2 ;
   typedef boost::tuple<Target_FT,Target_point_2> Target_time_and_point_2 ;
   
+  typedef boost::tuple<Source_point_2,Source_point_2> Source_point_2_twotuple ;
+  typedef boost::tuple<Target_point_2,Target_point_2> Target_point_2_twotuple ;
+  
   typedef boost::optional<Source_FT> Source_opt_FT ;
   typedef boost::optional<Target_FT> Target_opt_FT ;
   
@@ -419,6 +459,9 @@ struct SS_converter : Converter
   
   typedef boost::optional<Source_time_and_point_2> Source_opt_time_and_point_2 ;
   typedef boost::optional<Target_time_and_point_2> Target_opt_time_and_point_2 ;
+  
+  typedef boost::optional<Source_point_2_twotuple> Source_opt_point_2_twotuple;
+  typedef boost::optional<Target_point_2_twotuple> Target_opt_point_2_twotuple;
   
   typedef boost::optional<Source_segment_2> Source_opt_segment_2 ;
   typedef boost::optional<Target_segment_2> Target_opt_segment_2 ;
@@ -454,8 +497,11 @@ struct SS_converter : Converter
     CGAL_precondition( tri ) ;
     
     return Target_trisegment_2_ptr ( new Target_trisegment_2(cvt_s(tri->e0())
+                                                            ,cvt_n(tri->w0())
                                                             ,cvt_s(tri->e1())
+                                                            ,cvt_n(tri->w1())
                                                             ,cvt_s(tri->e2())
+                                                            ,cvt_n(tri->w2())
                                                             ,tri->collinearity()
                                                             )
                                    ) ;
@@ -508,6 +554,13 @@ struct SS_converter : Converter
     if ( p ) 
          return Target_opt_point_2(cvt_p(*p));
     else return Target_opt_point_2();
+  }
+  
+  Target_opt_point_2_twotuple operator()( Source_opt_point_2_twotuple const& o) const 
+  {
+    if ( o )
+         return Target_opt_point_2_twotuple( boost::make_tuple( cvt_p( boost::tuples::get<0>(*o) ), cvt_p( boost::tuples::get<1>(*o) ) ) );
+    else return Target_opt_point_2_twotuple();
   }
 
   Target_opt_segment_2 operator()( Source_opt_segment_2 const& s) const 

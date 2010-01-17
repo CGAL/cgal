@@ -23,6 +23,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/optional/optional.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Polygon_offset_builder_traits_2.h>
@@ -49,7 +50,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
   typename Kernel::Compute_squared_distance_2 squared_distance  = kernel.compute_squared_distance_2_object();
   typename Kernel::Construct_segment_2        construct_segment = kernel.construct_segment_2_object();
   
-  typedef boost::optional<Point_2> OptionalPoint_2 ;
+  typedef boost::optional<boost::tuples::tuple<Point_2,Point_2> > OptionalPoints_2 ;
   
   FT lMaxSDist(0.0) ;
   
@@ -67,7 +68,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
       Segment_2 lLEdge = construct_segment(*lPrev,*lCurr);
       Segment_2 lREdge = construct_segment(*lCurr,*lNext);
       
-      OptionalPoint_2 lP = Construct_offset_point_2(aTraits)(aOffset,lLEdge,lREdge, Trisegment_2_ptr() );
+      OptionalPoints_2 lP = Construct_offset_point_2(aTraits)(aOffset,lLEdge,FT(1.0),lREdge,FT(1.0),Trisegment_2_ptr() );
      
       if ( !lP )
       {
@@ -75,7 +76,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
         break ;
       }
        
-      FT lSDist = CGAL::squared_distance(*lCurr,*lP);
+      FT lSDist = CGAL::squared_distance(*lCurr,(*lP).get<0>());
  
       if (    ! CGAL_NTS is_valid ( lSDist )
            || ! CGAL_NTS is_finite( lSDist )

@@ -56,14 +56,14 @@ public:
   
   // Define the kernel objects.
   typedef typename Kernel::FT                    NT;
-  typedef typename Kernel::Point_2               Point_2;
-  typedef typename Kernel::Segment_2             Segment_2;
-  typedef typename Kernel::Ray_2                 Ray_2;
-  typedef typename Kernel::Line_2                Line_2;
-  typedef typename Kernel::Triangle_2            Triangle_2;
-  typedef typename Kernel::Iso_rectangle_2       Iso_rectangle_2;
-  typedef CGAL::Polygon_2<Kernel>                Polygon_2;
-  typedef typename Kernel::Circle_2              Circle_2;
+  typedef typename Kernel::Point_2               Point;
+  typedef typename Kernel::Segment_2             Segment;
+  typedef typename Kernel::Ray_2                 Ray;
+  typedef typename Kernel::Line_2                Line;
+  typedef typename Kernel::Triangle_2            Triangle;
+  typedef typename Kernel::Iso_rectangle_2       Iso_rectangle;
+  typedef CGAL::Polygon_2<Kernel>                Polygon;
+  typedef typename Kernel::Circle_2              Circle;
 
 protected:
 
@@ -194,64 +194,64 @@ public:
   //@{
 
   /*!
-   * Write a 2D segment.
+   * Write a segment.
    */
-  void write_segment_2 (const Segment_2& seg)
+  void write_segment_2 (const Segment& seg)
   {
-    mWriter.add_segment_2( seg.source(), seg.target(), mLayer, mDxfColor ) ;
+    mWriter.add_segment( seg.source(), seg.target(), mLayer, mDxfColor ) ;
   }
 
 
   /*!
-   * Write a 2D polyline.
-   * \param begin An iterator of the control points (of type Point_2).
+   * Write a polyline.
+   * \param begin An iterator of the control points (of type Point).
    * \param end A past-the-end iterator for the control points.
    */
   template <class Input_iterator>
   void write_polyline_2 (const Input_iterator& begin, const Input_iterator& end)
   {
-    mWriter.add_polyline_2( begin, end, false, mLayer, mDxfColor ) ;
+    mWriter.add_polyline( begin, end, false, mLayer, mDxfColor ) ;
   }
 
   /*!
-   * Write a 2D polygon (there is an added segment between the last vertex and the first)
-   * \param begin An iterator of the control points (of type Point_2).
+   * Write a polygon (there is an added segment between the last vertex and the first)
+   * \param begin An iterator of the control points (of type Point).
    * \param end A past-the-end iterator for the control points.
    */
   template <class Input_iterator>
   void write_polygon_2 (const Input_iterator& begin, const Input_iterator& end)
   {
-    mWriter.add_polyline_2( begin, end, true, mLayer, mDxfColor ) ;
+    mWriter.add_polyline( begin, end, true, mLayer, mDxfColor ) ;
   }
   
   /*!
-   * Write a 2D polyline but as a sequence of line segments
-   * \param begin An iterator of the control points (of type Point_2).
+   * Write a polyline but as a sequence of line segments
+   * \param begin An iterator of the control points (of type Point).
    * \param end A past-the-end iterator for the control points.
    */
   template <class Input_iterator>
   void write_open_segment_chain_2 (const Input_iterator& begin, const Input_iterator& end)
   {
-    mWriter.add_segments_2( begin, end, false, mLayer, mDxfColor ) ;
+    mWriter.add_segments( begin, end, false, mLayer, mDxfColor ) ;
   }
 
   /*!
-   * Write a 2D closed polyline but as a sequence of line segments
-   * \param begin An iterator of the control points (of type Point_2).
+   * Write a closed polyline but as a sequence of line segments
+   * \param begin An iterator of the control points (of type Point).
    * \param end A past-the-end iterator for the control points.
    */
   template <class Input_iterator>
   void write_closed_segment_chain_2 (const Input_iterator& begin, const Input_iterator& end)
   {
-    mWriter.add_segments_2( begin, end, true, mLayer, mDxfColor ) ;
+    mWriter.add_segments( begin, end, true, mLayer, mDxfColor ) ;
   }
   
   /*!
-   * Write a 2D (closed) polygon.
+   * Write a (closed) polygon.
    */
-  void write_polygon (const Polygon_2& pgn)
+  void write_polygon_2 (const Polygon& pgn)
   {
-    mWriter.add_polyline_2( pgn.begin(), pgn.end(), true, mLayer, mDxfColor ) ;
+    mWriter.add_polyline( pgn.begin(), pgn.end(), true, mLayer, mDxfColor ) ;
   }
 
 
@@ -283,7 +283,7 @@ public:
   /*!
    * Write a line segment.
    */
-  Dxf_stream& operator<< (const Segment_2& seg)
+  Dxf_stream& operator<< (const Segment& seg)
   {
     write_segment_2 (seg);
     return (*this);
@@ -292,7 +292,7 @@ public:
   /*!
    * Write a polygon.
    */
-  Dxf_stream& operator<< (const Polygon_2& pgn)
+  Dxf_stream& operator<< (const Polygon& pgn)
   {
     write_polygon_2 (pgn);
     return (*this);

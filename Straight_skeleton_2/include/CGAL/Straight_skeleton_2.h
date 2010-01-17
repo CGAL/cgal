@@ -133,7 +133,7 @@ public :
       size_type nb = 0;
       for( ; valid && (begin != end); begin++)
       {
-          CGAL_STSKEL_VALIDITY_TRACE("he["<< id(begin) << "]" << ( begin->is_border() ?  " [border]" : "" ) );
+          CGAL_STSKEL_VALIDITY_TRACE("he["<< id(begin) << "]" << ( begin->has_no_incident_face() ?  " [no-face]" : "" ) );
              
           // Pointer integrity.
           valid = valid && ( begin->next() != Halfedge_const_handle());
@@ -193,7 +193,7 @@ public :
             }
           }
           // face integrity.
-          valid = valid && ( begin->is_border() || begin->face() != Face_const_handle() );
+          valid = valid && ( begin->has_no_incident_face() || begin->face() != Face_const_handle() );
           if ( ! valid) 
           {
             CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->face() == NULL.");
@@ -208,7 +208,7 @@ public :
             break;
           }
           ++n;
-          if ( begin->is_border())
+          if ( begin->has_no_incident_face())
               ++nb;
       }
       CGAL_STSKEL_VALIDITY_TRACE("summe border halfedges (2*nb) = " << 2 * nb );
@@ -303,7 +303,7 @@ public :
       for( ; valid && (fbegin != fend); ++fbegin) 
       {
       
-          valid = valid && ( begin->is_border() || fbegin->halfedge() != Halfedge_const_handle()  );
+          valid = valid && ( begin->has_no_incident_face() || fbegin->halfedge() != Halfedge_const_handle()  );
           if ( ! valid)
           {
             CGAL_STSKEL_VALIDITY_TRACE("ERROR: f["<<id(fbegin)<<"]->halfedge() == NULL." );

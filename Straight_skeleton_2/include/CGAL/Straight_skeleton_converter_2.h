@@ -27,8 +27,8 @@ CGAL_BEGIN_NAMESPACE
 template<class Source_skeleton_
         ,class Target_skeleton_
         ,class NT_converter = typename internal::Default_converter<typename Source_skeleton_::Traits
-                                                               ,typename Target_skeleton_::Traits
-                                                               >::Type 
+                                                                  ,typename Target_skeleton_::Traits
+                                                                  >::Type 
         >
 struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source_skeleton_::Traits
                                                                , typename Target_skeleton_::Traits

@@ -218,27 +218,44 @@ void Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::AddOffsetVertex( FT          
                                                                   , ContainerPtr          aPoly 
                                                                   )
 {
-  Visit(aHook);
 
-  OptionalPoint_2 lP = Construct_offset_point(aTime,aHook);
+  OptionalPoint_2_twotuple lPts = Construct_offset_point(aTime,aHook);
 
-  if ( !lP )
-    lP = mVisitor.on_offset_point_overflowed(aHook) ;
-    
-  CGAL_postcondition(lP);
-  
-  CGAL_POLYOFFSET_TRACE(1,"Found offset point p=" << p2str(*lP) << " at offset " << aTime << " along bisector " << e2str(*aHook) << " reaching " << v2str(*aHook->vertex()) ) ;
-  
-  mVisitor.on_offset_point(*lP);
-  
-  if ( lP != mLastPoint )
+  if ( ! lPts )
   {
-    aPoly->push_back(*lP);
-    mLastPoint = lP ;
+    OptionalPoint_2 lP = mVisitor.on_offset_point_overflowed(aHook) ;
+    if ( lP )
+      lPts = boost::make_tuple(*lP,*lP);
+  }
+    
+  CGAL_postcondition(lPts);
+  
+  Point_2 lP1, lP2 ;
+  boost::tie(lP1,lP2) = *lPts ;
+
+  CGAL_POLYOFFSET_TRACE(1,"Found offset point p=" << p2str(lP1) << " at offset " << aTime << " along bisector " << e2str(*aHook) << " reaching " << v2str(*aHook->vertex()) ) ;
+  
+  mVisitor.on_offset_point(lP1);
+  
+  if ( lP1 != mLastPoint )
+  {
+    aPoly->push_back(lP1);
+    mLastPoint = lP1 ;
   }
   else
   {
     CGAL_POLYOFFSET_TRACE(1,"Duplicate point. Ignored");
+  }
+  
+  if ( lP1 != lP2 )
+  {
+    CGAL_POLYOFFSET_TRACE(1,"TWIN degenerate offset point p=" << p2str(lP2) << " also found" ) ;
+  
+    mVisitor.on_offset_point(lP2);
+  
+    aPoly->push_back(lP2);
+    
+    mLastPoint = lP2 ;
   }
 
   CGAL_POLYOFFSET_DEBUG_CODE( ++ mStepID ) ;
@@ -246,13 +263,18 @@ void Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::AddOffsetVertex( FT          
 
 template<class Ss, class Gt, class Cont, class Visitor>
 template<class OutputIterator>
-OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon( FT aTime, Halfedge_const_handle aSeed, OutputIterator aOut )
+OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon( FT aTime, Halfedge_const_handle aSeed, bool aIsOpen, OutputIterator aOut )
 {
   CGAL_POLYOFFSET_TRACE(1,"\nTracing new offset polygon" ) ;
 
   ContainerPtr lPoly( new Container() ) ;
 
   mVisitor.on_offset_contour_started();
+  
+  if ( aIsOpen)
+  {
+    AddOffsetVertex(aTime,aSeed->opposite(), lPoly);
+ }
   
   Halfedge_const_handle lHook = aSeed ;
 
@@ -267,8 +289,13 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
     
     if ( handle_assigned(lHook) ) 
     {
-      AddOffsetVertex(aTime,lHook, lPoly);
       CGAL_POLYOFFSET_TRACE(1,"B" << lLastHook->id() << " and B" << lHook->id() << " visited." ) ;
+      
+      if ( !aIsOpen || lHook->opposite() != aSeed )
+      {
+        AddOffsetVertex(aTime,lHook, lPoly);
+        Visit(lHook);
+      }  
 
       lHook = lHook->opposite();
     }
@@ -276,11 +303,11 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::TraceOffsetPolygon(
   }
   while ( handle_assigned(lHook) && lHook != aSeed  && !IsVisited(lHook)) ;
 
-  bool lComplete = ( lHook == aSeed )  ;
+  bool lComplete = aIsOpen || ( !aIsOpen && ( lHook == aSeed ) ) ;
   
   CGAL_POLYOFFSET_TRACE(1,"Offset polygon of " << lPoly->size() << " vertices traced." << ( lComplete ? "COMPLETE" : "INCOMPLETE" ) ) ;
   
-  CGAL_assertion ( !lComplete || ( lComplete && lPoly->size() >= 3 ) ) ;
+  CGAL_assertion ( !lComplete || ( lComplete && lPoly->size() >= 2 ) ) ;
   
   mVisitor.on_offset_contour_finished( lComplete );
   
@@ -312,8 +339,10 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::construct_offset_co
 
   CGAL_POLYOFFSET_TRACE(1,"Constructing offset polygons for offset: " << aTime ) ;
   for ( Halfedge_const_handle lSeed = LocateSeed(aTime); handle_assigned(lSeed); lSeed = LocateSeed(aTime) )
-    aOut = TraceOffsetPolygon(aTime,lSeed,aOut);
-  
+  {
+    bool lIsOpen = IsSeedLeftTerminal(lSeed) ;
+    aOut = TraceOffsetPolygon(aTime,lSeed,lIsOpen,aOut);
+  }
   mVisitor.on_construction_finished();
   
   return aOut ;
@@ -387,7 +416,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::GetSeedVertex ( Vertex_const_handl
   {
     rSeed = aBisector->vertex();
     
-    CGAL_POLYOFFSET_TRACE(3,"Seed of N" << aNode->id() << " for vertex (E" << aEa->id() << ",E" << aEb->id() << ") directly found: V" << rSeed->id() ) ;
+    CGAL_POLYOFFSET_TRACE(3,"Seed of N" << aNode->id() << " for vertex (E" << hid(aEa) << ",E" << hid(aEb) << ") directly found: V" << rSeed->id() ) ;
   }
   else 
   {
@@ -401,7 +430,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::GetSeedVertex ( Vertex_const_handl
       if ( Is_bisector_defined_by(lBisector,aEa,aEb) )
       {
         rSeed = lBisector->opposite()->vertex();
-        CGAL_POLYOFFSET_TRACE(3,"Seed of N" << aNode->id() << " for vertex (E" << aEa->id() << ",E" << aEb->id() << ") indirectly found: V" << rSeed->id() ) ;
+        CGAL_POLYOFFSET_TRACE(3,"Seed of N" << aNode->id() << " for vertex (E" << hid(aEa) << ",E" << hid(aEb) << ") indirectly found: V" << rSeed->id() ) ;
       }
     }
     while ( !handle_assigned(rSeed) && ++ c != cb ) ;

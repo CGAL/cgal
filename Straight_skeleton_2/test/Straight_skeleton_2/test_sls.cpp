@@ -64,7 +64,7 @@ double sTimeout = 0.0 ;
 
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING
 
-//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 4
+#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 0
 //#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE    
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE 
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 3
@@ -141,7 +141,7 @@ struct Zone
     ,ContouringTime(0.0)
   {}
     
-  IRegionPtr Input ;
+  IWeightedBoundariesPtr Input ;
   
   ISlsPtr FullSkeleton ;
   ISlsPtr PartialSkeleton ;
@@ -149,7 +149,7 @@ struct Zone
   double  FullSkeletonTime ;
   double  PartialSkeletonTime ;
   
-  ORegion Contours ;
+  OBoundaries Contours ;
   double  ContouringTime ;
   
 } ;
@@ -218,9 +218,9 @@ void check_timeout()
   }  
 }
 
-IRegionPtr load_region( string file, int aShift, int& rStatus )
+IWeightedBoundariesPtr load_boundaries( string file, int aShift, int& rStatus )
 {
-  IRegionPtr rRegion ;
+  IWeightedBoundariesPtr rBoundaries ;
   
   rStatus = cOK ;
 
@@ -231,22 +231,63 @@ IRegionPtr load_region( string file, int aShift, int& rStatus )
     {
       CGAL::set_ascii_mode(in);
   
-      rRegion = IRegionPtr( new IRegion() ) ; 
-  
+      rBoundaries = IWeightedBoundariesPtr( new IWeightedBoundaries() ) ; 
+
+      bool lIgnoreOpenPolygons = false ;
+      
       int ccb_count = 0 ;
       in >> ccb_count ;
       for ( int i = 0 ; i < ccb_count && in ; ++ i )
       {
         IPolygonPtr lPoly( new IPolygon() );
-  
+        IWeightsPtr lWeights( new IWeights() );
+
+
         int v_count = 0 ;
         in >> v_count ;
         if ( sMaxVertexCount == 0 || ( v_count <= sMaxVertexCount ) )
         {
+          std::string lInputFormatOrFirstNumber ;
+          
+          in >> lInputFormatOrFirstNumber ;
+          
+          bool lIsClosed = true ;
+          bool lIncludeWeights = false ;
+          bool lRecoverFirstNumber = true ;
+          
+          if( lInputFormatOrFirstNumber == "o" )
+          {
+            lIsClosed = false ;
+            in >> lInputFormatOrFirstNumber ;
+          }
+          
+          if( lInputFormatOrFirstNumber == "w" )
+          { 
+            lIncludeWeights = true ;
+            lRecoverFirstNumber = false;
+          }
+          
           for ( int j = 0 ; j < v_count && in ; ++ j )
           {
-            double x = 0.0, y = 0.0  ;
-            in >> x >> y ;
+            double x = 0.0, y = 0.0, w = 1.0  ;
+            
+            if ( lRecoverFirstNumber )
+            {
+              lRecoverFirstNumber = false ;
+              x = std::atof( lInputFormatOrFirstNumber.c_str() ) ;
+            }
+            else 
+            { 
+              in >> x ;
+            }
+            
+	    in >> y ;
+            
+            if ( lIncludeWeights )
+            {
+              in >> w ;
+            }
+            
             if ( in )
             {
               x += sDX ;
@@ -255,8 +296,11 @@ IRegionPtr load_region( string file, int aShift, int& rStatus )
               y *= sScale ;
               
               lPoly->push_back( IPoint(x,y) ) ;
+              lWeights->push_back( w ) ;
             }  
           }
+          
+          assert( lPoly->size() == lWeigths->size() );
           
           if ( lPoly->size() >= 3 )
           {
@@ -264,18 +308,40 @@ IRegionPtr load_region( string file, int aShift, int& rStatus )
               
             if ( sAcceptNonSimpleInput || ( !sAcceptNonSimpleInput && lIsSimple ) )
             {
-              Orientation expected = ( i == 0 ? COUNTERCLOCKWISE : CLOCKWISE ) ;
+              if ( !lIsClosed && i != 0 )
+              {
+                continue ;
+              }
+              
+              
+              if ( lIsClosed )
+              {
+                // From now on we will only accept closed polygons
+                lIgnoreOpenPolygons = true;
+                /*
+                Orientation expected = ( i == 0 ? COUNTERCLOCKWISE : CLOCKWISE ) ;
       
-              double area = to_double(polygon_area_2(lPoly->begin(),lPoly->end(),IK()));
+                double area = to_double(polygon_area_2(lPoly->begin(),lPoly->end(),IK()));
       
-              Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
-      
-              if ( aShift > 0 )
-                std::rotate(lPoly->begin(),lPoly->begin()+aShift,lPoly->end());
+                Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
+                */
+                if ( aShift > 0 && lIsClosed ) 
+                {
+                  std::rotate(lPoly->begin(),lPoly->begin()+aShift,lPoly->end());
+                  std::rotate(lWeights->begin(),lWeights->begin()+aShift,lWeights->end());
+                }
+              
+                IWeightedPolygon lWeightedPolygon(lPoly,lWeights,lIsClosed);
+                rBoundaries->push_back( lWeightedPolygon ) ;
+                //rBoundaries->push_back( ( orientation == expected ) ? lWeightedPolygon : revert_weighted_polygon(lWeightedPolygon) ) ;
+              }
+              else if ( ! lIgnoreOpenPolygons ) 
+              {
+                rBoundaries->push_back( IWeightedPolygon(lPoly,lWeights,lIsClosed) );
+                // The algorithm can only process one open polygon, we ignore the rest of the file
+                break ;
+              }
                 
-              if ( orientation == expected )
-                   rRegion->push_back(lPoly);
-              else rRegion->push_back( IPolygonPtr( new IPolygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
               
             }
             else
@@ -286,7 +352,7 @@ IRegionPtr load_region( string file, int aShift, int& rStatus )
           else 
           {
             rStatus = cDegenerateInput ;
-            rRegion = IRegionPtr();
+            rBoundaries = IWeightedBoundariesPtr() ;
             break;
           }  
         }
@@ -312,22 +378,22 @@ IRegionPtr load_region( string file, int aShift, int& rStatus )
     cerr << "Unhandled exception loading file." << endl ;
   }
   
-  if ( rRegion && rRegion->size() == 0 )
+  if ( rBoundaries && rBoundaries->size() == 0 )
   {
     rStatus = cDegenerateInput ;
-    rRegion = IRegionPtr();
+    rBoundaries = IWeightedBoundariesPtr();
   }
   
-  return rRegion ;
+  return rBoundaries ;
 }
 
-void update_bbox ( IRegionPtr const& aRegion, boost::optional<Bbox_2>& rBBox )
+void update_bbox ( IWeightedBoundariesPtr const& aBoundaries, boost::optional<Bbox_2>& rBBox )
 {
-  if ( aRegion )
+  if ( aBoundaries )
   {
-    for ( IRegion::const_iterator bit = aRegion->begin() ; bit != aRegion->end() ; ++ bit )
+    for ( IWeightedBoundaries::const_iterator bit = aBoundaries->begin() ; bit != aBoundaries->end() ; ++ bit )
     {
-      for( IPolygon::const_iterator vit = (*bit)->begin(); vit != (*bit)->end(); ++vit)
+      for( IPolygon::const_iterator vit = (*bit).polygon->begin(); vit != (*bit).polygon->end(); ++vit)
       {
         Bbox_2 lVBBox = vit->bbox() ;
         
@@ -339,15 +405,15 @@ void update_bbox ( IRegionPtr const& aRegion, boost::optional<Bbox_2>& rBBox )
   }
 }
  
-template<class Region>
-void dump_region_to_eps( Region const& aRegion, const char* aType, double aScale, ostream& rOut )
+template<class Boundaries>
+void dump_boundaries_to_eps( Boundaries const& aBoundaries, const char* aType, double aScale, ostream& rOut )
 {
-  typedef typename Region::value_type PolygonPtr ;
+  typedef typename Boundaries::value_type PolygonPtr ;
   typedef typename PolygonPtr::element_type Polygon ;
-  typedef typename Region::const_iterator boundary_const_iterator ;
+  typedef typename Boundaries::const_iterator boundary_const_iterator ;
   typedef typename Polygon::const_iterator vertex_const_iterator ;
     
-  for ( boundary_const_iterator bit = aRegion.begin() ; bit != aRegion.end() ; ++ bit )
+  for ( boundary_const_iterator bit = aBoundaries.begin() ; bit != aBoundaries.end() ; ++ bit )
   {
     vertex_const_iterator beg  = (*bit)->begin(); 
     vertex_const_iterator end  = (*bit)->end  (); 
@@ -445,10 +511,10 @@ void dump_to_eps ( TestCase const& aCase )
           << std::endl;
     
       if ( aCase.Inner.Input )
-        dump_region_to_eps(*aCase.Inner.Input,"border",lScale,lOut);
+        dump_boundaries_to_eps(*extract_polygons_view(*aCase.Inner.Input),"border",lScale,lOut);
         
       if ( aCase.Outer.Input )
-        dump_region_to_eps(*aCase.Inner.Input,"border",lScale,lOut);
+        dump_boundaries_to_eps(*extract_polygons_view(*aCase.Inner.Input),"border",lScale,lOut);
         
       if ( aCase.Inner.PartialSkeleton )
         dump_skeleton_to_eps(*aCase.Inner.PartialSkeleton,lScale,lOut);
@@ -456,8 +522,8 @@ void dump_to_eps ( TestCase const& aCase )
       if ( aCase.Outer.PartialSkeleton )
         dump_skeleton_to_eps(*aCase.Outer.PartialSkeleton,lScale,lOut);
             
-      dump_region_to_eps(aCase.Inner.Contours,"cont",lScale,lOut);
-      dump_region_to_eps(aCase.Outer.Contours,"cont",lScale,lOut);
+      dump_boundaries_to_eps(aCase.Inner.Contours,"cont",lScale,lOut);
+      dump_boundaries_to_eps(aCase.Outer.Contours,"cont",lScale,lOut);
             
       lOut << "grestore\nshowpage" << std::endl;
     }
@@ -473,11 +539,11 @@ void dump_polygon_to_dxf( Polygon const& aPolygon, Color aColor, string aLayer, 
 }
 
 
-template<class Region>
-void dump_region_to_dxf( Region const& aRegion, Color aColor, string aBaseLayer, DxfStream& rDXF )
+template<class Boundaries>
+void dump_boundaries_to_dxf( Boundaries const& aBoundaries, Color aColor, string aBaseLayer, DxfStream& rDXF )
 {
   int lN = 0 ;
-  for ( typename Region::const_iterator bit = aRegion.begin() ; bit != aRegion.end() ; ++ bit )
+  for ( typename Boundaries::const_iterator bit = aBoundaries.begin() ; bit != aBoundaries.end() ; ++ bit )
   {
     ostringstream ss ; ss << aBaseLayer << "_" << lN ;
     string lLayer = ss.str();
@@ -545,7 +611,7 @@ void dump_to_dxf ( TestCase const& aCase )
     {
       if ( sVerbose )
         cout << "    Dumping input region. " << endl ;
-      dump_region_to_dxf(*aCase.Inner.Input,BLUE,"Input",lDxf);
+      dump_boundaries_to_dxf(*extract_polygons_view(*aCase.Inner.Input),BLUE,"Input",lDxf);
     }
     
     if ( aCase.Inner.PartialSkeleton )
@@ -562,75 +628,23 @@ void dump_to_dxf ( TestCase const& aCase )
       dump_skeleton_to_dxf(*aCase.Outer.PartialSkeleton,YELLOW,GREEN,PURPLE,GRAY,"OuterSkeleton",lDxf);
     }
           
-    dump_region_to_dxf(aCase.Inner.Contours,GRAY,"InnerOffset",lDxf);
-    dump_region_to_dxf(aCase.Outer.Contours,GRAY,"OuterOffset",lDxf);
+    dump_boundaries_to_dxf(aCase.Inner.Contours,GRAY,"InnerOffset",lDxf);
+    dump_boundaries_to_dxf(aCase.Outer.Contours,GRAY,"OuterOffset",lDxf);
     
   }
   
 }
 
-IPolygonPtr create_outer_frame ( IPolygon const& aOuter )
-{
-  IPolygonPtr rFrame  ;
-  
-  try
-  {
-    Bbox_2 lBbox = bbox_2(aOuter.begin(),aOuter.end());
-    
-    double w = lBbox.xmax() - lBbox.xmin();
-    double h = lBbox.ymax() - lBbox.ymin();
-    double s = std::sqrt(w*w+h*h);
-    
-    IFT lOffset = s * 0.3 ;
-    
-    boost::optional<IFT> lOptMargin = compute_outer_frame_margin(aOuter.begin(),aOuter.end(),lOffset) ;
-    
-    if ( lOptMargin )
-    {
-      double lMargin = to_double(*lOptMargin);
-      
-      double flx = lBbox.xmin() - lMargin ;
-      double fhx = lBbox.xmax() + lMargin ;
-      double fly = lBbox.ymin() - lMargin ;
-      double fhy = lBbox.ymax() + lMargin ;
-      
-      rFrame = IPolygonPtr( new IPolygon() ) ;
-      
-      rFrame->push_back( IPoint(IFT(flx),IFT(fly)) );
-      rFrame->push_back( IPoint(IFT(fhx),IFT(fly)) );
-      rFrame->push_back( IPoint(IFT(fhx),IFT(fhy)) );
-      rFrame->push_back( IPoint(IFT(flx),IFT(fhy)) );
-    }
-    else 
-    {
-      if ( sVerbose )
-        cout << "  Unable to calculate outer margin for offset " << lOffset << endl ;
-    }
-  
-  }
-  catch ( exception const& x ) 
-  { 
-    if ( sVerbose )
-      cout << "    Failed calculating outer frame margin: std::exception caught: " << x.what() << endl ; 
-  }
-  catch ( ... ) 
-  { 
-    if ( sVerbose )
-      cout << "    Failed calculating outer frame margin: Unhandled exception." << endl ;
-  }
-  
-  return rFrame ;
-}
-
-template<class Region, class Point>
-bool is_point_inside_region( Region const& aRegion, Point const& aP )
+/*
+template<class Boundaries, class Point>
+bool is_point_inside_region( Boundaries const& aBoundaries, Point const& aP )
 {
   bool rR = true ;
   
-  typedef typename Region::value_type PolygonPtr ;
+  typedef typename Boundaries::value_type PolygonPtr ;
   typedef typename PolygonPtr::element_type Polygon ;
   
-  for ( typename Region::const_iterator bit = aRegion.begin() ; bit != aRegion.end() && rR ; ++ bit )
+  for ( typename Boundaries::const_iterator bit = aBoundaries.begin() ; bit != aBoundaries.end() && rR ; ++ bit )
   {
     Polygon const& lPoly = **bit ;
     if ( oriented_side_2(lPoly.begin(),lPoly.end(),aP) == ON_NEGATIVE_SIDE )
@@ -639,8 +653,9 @@ bool is_point_inside_region( Region const& aRegion, Point const& aP )
   
   return rR ;
 }
+*/
 
-bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton )
+bool is_skeleton_valid( IWeightedBoundaries const& aBoundaries, ISls const& aSkeleton )
 {
   bool rValid = aSkeleton.is_valid() ;
   
@@ -658,12 +673,14 @@ bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton )
         Vertex_const_handle v = vit ;
         if ( v->is_skeleton() && ! v->has_infinite_time() )
         {
-          if ( !is_point_inside_region(aRegion,v->point()) )
+          /* This check does not longer holds with weighted skeletons
+          if ( !is_point_inside_region(aBoundaries,v->point()) )
           {
             rValid = false ;
             if ( sVerbose )
               cout << "    Failed: skeleton node misplaced.\n" ; 
           }
+          */
         }
       }  
     }
@@ -694,8 +711,8 @@ int create_skeleton ( Zone& rZone, boost::optional<IFT> const& aMaxTime = boost:
     
     ISlsBuilder builder(aMaxTime, lTraits, lWatchdog) ;
     
-    for( IRegion::const_iterator bit = rZone.Input->begin(), ebit = rZone.Input->end() ; bit != ebit ; ++ bit )
-      builder.enter_contour((*bit)->begin(),(*bit)->end());
+    for( IWeightedBoundaries::const_iterator bit = rZone.Input->begin(), ebit = rZone.Input->end() ; bit != ebit ; ++ bit )
+      builder.enter_contour((*bit).polygon->begin(),(*bit).polygon->end(),(*bit).weights->begin(),(*bit).weights->end());
     
     lSls = builder.construct_skeleton(false) ;
       
@@ -844,7 +861,7 @@ int test_zone ( Zone& rZone )
             if ( sVerbose )
               cout << "    Building offset contours at " << lOffset << endl ; 
               
-            ORegion lContours ;
+            OBoundaries lContours ;
             
             Real_timer t2 ;
             t2.start();
@@ -871,7 +888,7 @@ int test_zone ( Zone& rZone )
             if ( sVerbose )
             {
               cout << "      " << lContours.size() << " contours built." << endl ;
-              for ( ORegion::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
+              for ( OBoundaries::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
               {
                 OPolygonPtr lBdry = *bit ;
                 
@@ -889,7 +906,7 @@ int test_zone ( Zone& rZone )
             
             if ( sDumpOffsetPolygons)
             {
-              for ( ORegion::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
+              for ( OBoundaries::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
               {
                 OPolygonPtr lBdry = *bit ;
                 cout << "          " ;
@@ -901,7 +918,7 @@ int test_zone ( Zone& rZone )
             
             if ( sReportNonSimpleOffset )
             {
-              for ( ORegion::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
+              for ( OBoundaries::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
               {
                 if ( !is_simple_2((*bit)->begin(),(*bit)->end(),OK()) )
                 {
@@ -951,13 +968,13 @@ int test( TestCase& rCase, int aShift )
   
   int lStatus = cLoadException ;
   
-  IRegionPtr lInnerRegion = load_region(rCase.Filename,aShift,lStatus);
+  IWeightedBoundariesPtr lInnerBoundaries = load_boundaries(rCase.Filename,aShift,lStatus);
   
   if ( lStatus == cOK )
   {
-    if ( lInnerRegion )
+    if ( lInnerBoundaries )
     {
-      rCase.Inner.Input = lInnerRegion ;
+      rCase.Inner.Input = lInnerBoundaries ;
       
       if ( !sNoOp )
       {
@@ -974,19 +991,13 @@ int test( TestCase& rCase, int aShift )
         {
           if ( sVerbose )
             cout << "  Testing outer zone" << endl ;
-            
-          IPolygonPtr lOuterPoly = lInnerRegion->front();
-          IPolygonPtr lFrame = create_outer_frame(*lOuterPoly);
-          if ( lFrame )
-          {
-            rCase.Outer.Input = IRegionPtr ( new IRegion ) ;
-            rCase.Outer.Input->push_back(lFrame);
-            rCase.Outer.Input->push_back( IPolygonPtr( new IPolygon(lOuterPoly->rbegin(),lOuterPoly->rend()) ) ) ;
-            
-            int lOuterStatus = test_zone( rCase.Outer ) ;
-            if ( lStatus == cOK )
-              lStatus = lOuterStatus ;
-          }
+          
+          rCase.Outer.Input = IWeightedBoundariesPtr ( new IWeightedBoundaries ) ;
+          rCase.Outer.Input->push_back( invert_weighted_polygon(lInnerBoundaries->front()) ) ; 
+      
+          int lOuterStatus = test_zone( rCase.Outer ) ;
+          if ( lStatus == cOK )
+            lStatus = lOuterStatus ;
         }
         
       }
