@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2004  Utrecht University (The Netherlands),
+// Copyright (c) 1997-2010  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -39,18 +39,27 @@
 #include <CGAL/version.h>
 
 //----------------------------------------------------------------------//
-//             include platform specific workaround flags (CGAL_CFG_...)
+//  platform specific workaround flags (CGAL_CFG_...)
 //----------------------------------------------------------------------//
 
 #include <CGAL/compiler_config.h>
 
 //----------------------------------------------------------------------//
-//        auto-link the CGAL library on platforms that support it
+//  Enable C++0x features with GCC -std=c++0x (even when not specified at build time)
 //----------------------------------------------------------------------//
+
+#if defined __GNUC__ && defined __GXX_EXPERIMENTAL_CXX0X__
+#  include <CGAL/internal/gcc_cpp0x.h>
+#endif
+
+//----------------------------------------------------------------------//
+//  auto-link the CGAL library on platforms that support it
+//----------------------------------------------------------------------//
+
 #include <CGAL/auto_link/CGAL.h>
 
 //----------------------------------------------------------------------//
-//             do some post processing for the flags
+//  do some post processing for the flags
 //----------------------------------------------------------------------//
 
 #ifdef CGAL_CFG_NO_STL
