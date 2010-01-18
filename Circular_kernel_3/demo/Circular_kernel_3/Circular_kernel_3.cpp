@@ -1,40 +1,24 @@
-// Copyright (c) 2008  INRIA Sophia-Antipolis (France).
-// All rights reserved.
-//
-// $URL
-// $Id 
-//
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
-//             Julien Hazebrouck, Damien Leroy
+#include "Viewer.h"
+#include <qapplication.h>
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
-// (ACS -- Algorithms for Complex Shapes)
+int main(int argc, char** argv)
+{
+  // Read command lines arguments.
+  QApplication application(argc,argv);
 
-#include <CGAL/basic.h>
+  // Instantiate the viewer.
+  Viewer viewer;
 
-#include "Circular_kernel_3.moc"
+#if QT_VERSION < 0x040000
+  // Set the viewer as the application main widget.
+  application.setMainWidget(&viewer);
+#else
+  viewer.setWindowTitle("Intersection points of randomly generated circles.");
+#endif
 
-int main (int argc, char** argv) {
-	QApplication app(argc, argv);
-	MyWindow *windows = new MyWindow(1100, 1100);
+  // Make the viewer window visible on screen.
+  viewer.show();
 
-	Sphere_3 laSphere(Point_3(0.,0.,0.), 1.5*1.5);
-	Plane_3 plan;
-	plan = Plane_3(Point_3(1., -1.,  1.), Point_3(1.,  1.,  0.), Point_3(1., -1., -1.));
-	windows->add_cercle(Circle_3(laSphere, plan), 100);
-	plan = Plane_3(Point_3(-1., 1.2,  1.), Point_3( 1., 1.2, -1.), Point_3( 1., 1.2,  1.));
-	windows->add_cercle(Circle_3(laSphere, plan), 100);
-	plan = Plane_3(Point_3(-1., -1.,  1.), Point_3( 1., -1.,  1.), Point_3( 1., -1., -1.));
-	windows->add_cercle(Circle_3(laSphere, plan), 100);
-	plan = Plane_3(Point_3(-1.,  1.,  0.), Point_3( 1., -1.,  1.), Point_3( 1., -1., -1.));
-	windows->add_cercle(Circle_3(laSphere, plan), 100);
-	plan = Plane_3(Point_3(-1., -1.,  1.), Point_3(-1., -1.,  0.), Point_3(-1.,  1., -1.));
-	windows->add_cercle(Circle_3(laSphere, plan), 100);
-	plan = Plane_3(Point_3( 1.,  0.,  0.), Point_3(-1.,  1.,  0.), Point_3(-1., -1.,  0.));
-	windows->add_cercle(Circle_3(laSphere, plan), 100);
-
-	app.setMainWidget(windows);
-	windows->show();
-	return app.exec();
+  // Run main loop.
+  return application.exec();
 }
