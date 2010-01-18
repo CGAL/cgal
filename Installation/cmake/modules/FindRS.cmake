@@ -17,7 +17,7 @@ if( MPFI_FOUND )
            )
 
   find_library(RS_LIBRARIES
-               NAMES rsexport
+               NAMES rsexport_rs
                PATHS ENV RS_LIB_DIR
                DOC "Path to the RS library"
               )
