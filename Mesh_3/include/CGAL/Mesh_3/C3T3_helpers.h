@@ -1193,8 +1193,6 @@ C3T3_helpers<C3T3,MD>::
 min_incident_value(const Vertex_handle& vh,
                    const SliverCriterion& criterion) const
 {
-  CGAL_precondition(tr_.is_vertex(vh));
-  
   Cell_vector incident_cells;
   tr_.finite_incident_cells(vh,std::back_inserter(incident_cells));
   
