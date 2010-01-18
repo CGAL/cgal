@@ -658,8 +658,6 @@ make_pvertex(const Vertex_handle& vh,
              const FT& sliver_bound,
              const typename PVertex::id_type& pv_id) const
 {
-  CGAL_precondition(tr_.is_vertex(vh));
-  
   // Make pvertex in all cases
   PVertex pv(vh,pv_id);
   pv.set_perturbation(&perturbation_vector_.front());
