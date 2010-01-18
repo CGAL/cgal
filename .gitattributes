@@ -1091,15 +1091,8 @@ Circular_kernel_2/include/CGAL/global_functions_circular_kernel_2.h -text
 Circular_kernel_2/test/Circular_kernel_2/test_Circular_kernel_basic.cpp -text
 Circular_kernel_2/test/Circular_kernel_2/test_Exact_circular_kernel_basic.cpp -text
 Circular_kernel_3/changes -text
-Circular_kernel_3/demo/Circular_kernel_3/images/button_axis.gif -text svneol=unset#image/gif
-Circular_kernel_3/demo/Circular_kernel_3/images/button_light.gif -text svneol=unset#image/gif
-Circular_kernel_3/demo/Circular_kernel_3/images/button_line.gif -text svneol=unset#image/gif
-Circular_kernel_3/demo/Circular_kernel_3/images/button_pivot.gif -text svneol=unset#image/gif
-Circular_kernel_3/demo/Circular_kernel_3/images/button_solid.gif -text svneol=unset#image/gif
-Circular_kernel_3/demo/Circular_kernel_3/images/button_texture.gif -text svneol=unset#image/gif
-Circular_kernel_3/demo/Circular_kernel_3/images/button_wire.gif -text svneol=unset#image/gif
-Circular_kernel_3/demo/Circular_kernel_3/images/d_solid_b.gif -text svneol=unset#image/gif
-Circular_kernel_3/demo/Circular_kernel_3/images/d_wire_b.gif -text svneol=unset#image/gif
+Circular_kernel_3/demo/Circular_kernel_3/Viewer.cpp -text
+Circular_kernel_3/demo/Circular_kernel_3/Viewer.h -text
 Circular_kernel_3/doc_tex/Circular_kernel_3/def_circles_extreme_pt.pdf -text
 Circular_kernel_3/doc_tex/Circular_kernel_3/def_circles_extreme_pt.png -text
 Circular_kernel_3/doc_tex/Circular_kernel_3/def_meridian.pdf -text
