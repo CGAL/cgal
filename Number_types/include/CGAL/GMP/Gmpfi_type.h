@@ -310,7 +310,6 @@ _GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpq);
         Uncertain<bool> is_negative()const;
         Uncertain<bool> is_square()const;
         Uncertain<bool> is_square(Gmpfi&)const;
-        Uncertain<bool> divides(const Gmpfi&)const;
         Uncertain<bool> divides(const Gmpfi&,
                                 Gmpfi&,
                                 Gmpfi::Precision_type=
@@ -653,15 +652,6 @@ Uncertain<bool> Gmpfi::is_square(Gmpfi &y)const{
         if(mpfr_sgn(right_mpfr())<0)
                 return false;
         return Uncertain<bool>::indeterminate();
-}
-
-inline
-Uncertain<bool> Gmpfi::divides(const Gmpfi &n)const{
-        if(mpfr_zero_p(&mpfi()->left)!=0 && mpfr_zero_p(&mpfi()->right)!=0)
-                return false;
-        if(mpfi_has_zero(mpfi())!=0)
-                return Uncertain<bool>::indeterminate();
-        return true;
 }
 
 inline
