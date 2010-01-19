@@ -28,9 +28,6 @@
 #include <fstream>
 #include <cassert>
 #include <math.h>
-#ifndef M_PI
-  #define M_PI       3.14159265358979323846
-#endif
 
 
 // ----------------------------------------------------------------------------
@@ -95,7 +92,7 @@ bool verify_normal_direction(const PointList& points, // input points + computed
       avg_normal_deviation += normal_deviation;
 
       // count normal if large deviation
-      bool valid = (normal_deviation <= M_PI/3.); // valid if deviation <= 60 degrees
+      bool valid = (normal_deviation <= CGAL_PI/3.); // valid if deviation <= 60 degrees
       if ( ! valid )
       {
         invalid_normals++;
@@ -103,9 +100,9 @@ bool verify_normal_direction(const PointList& points, // input points + computed
     }
     avg_normal_deviation /= double(points.size());
 
-    std::cerr << "  Min normal deviation=" << min_normal_deviation*180.0/M_PI << " degrees\n";
-    std::cerr << "  Max normal deviation=" << max_normal_deviation*180.0/M_PI << " degrees\n";
-    std::cerr << "  Avg normal deviation=" << avg_normal_deviation*180.0/M_PI << " degrees\n";
+    std::cerr << "  Min normal deviation=" << min_normal_deviation*180.0/CGAL_PI << " degrees\n";
+    std::cerr << "  Max normal deviation=" << max_normal_deviation*180.0/CGAL_PI << " degrees\n";
+    std::cerr << "  Avg normal deviation=" << avg_normal_deviation*180.0/CGAL_PI << " degrees\n";
     if (invalid_normals > 0)
     {
       std::cerr << "  Error: " << invalid_normals << " normals have a deviation > 60 degrees\n";

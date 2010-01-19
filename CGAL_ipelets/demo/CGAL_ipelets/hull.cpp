@@ -76,7 +76,7 @@ public:
       angle = angle - i * f * atan(sqrt(dist-pow(c_radius,2))/c_radius);
     }
     else
-      angle = angle - f * M_PI/2.;
+      angle = angle - f * CGAL_PI/2.;
     return IpeVector((current_pt.x()+c_radius*cos(angle)),(current_pt.y()+c_radius*sin(angle)));
   }      
 

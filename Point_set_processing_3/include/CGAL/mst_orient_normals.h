@@ -32,9 +32,6 @@
 #include <list>
 #include <climits>
 #include <math.h>
-#ifndef M_PI
-  #define M_PI       3.14159265358979323846
-#endif
 
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 104000
@@ -146,11 +143,11 @@ struct Propagate_normal_orientation
     typedef internal::MST_graph<ForwardIterator, NormalPMap, Kernel> MST_graph;
     typedef boost::on_examine_edge event_filter;
 
-    Propagate_normal_orientation(double angle_max = M_PI/2.) ///< max angle to propagate the normal orientation (radians)
+    Propagate_normal_orientation(double angle_max = CGAL_PI/2.) ///< max angle to propagate the normal orientation (radians)
     : m_angle_max(angle_max)
     {
         // Precondition: 0 < angle_max <= PI/2
-        CGAL_point_set_processing_precondition(0 < angle_max && angle_max <= M_PI/2.);
+        CGAL_point_set_processing_precondition(0 < angle_max && angle_max <= CGAL_PI/2.);
     }
 
     template <class Edge>

@@ -23,9 +23,6 @@
 #include <CGAL/point_set_processing_assertions.h>
 
 #include <math.h>
-#ifndef M_PI
-  #define M_PI       3.14159265358979323846
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -110,7 +107,7 @@ radial_orient_normals(
       it->normal() = vec2;
 
       // Is orientation robust?
-      bool oriented = (std::abs(dot) > std::cos(80.*M_PI/180.)); // robust iff angle < 80 degrees
+      bool oriented = (std::abs(dot) > std::cos(80.*CGAL_PI/180.)); // robust iff angle < 80 degrees
       if (oriented)
         oriented_points.push_back(*it);
       else
