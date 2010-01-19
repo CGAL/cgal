@@ -202,11 +202,7 @@ Algebraic_1::Algebraic_1(
                          int n,
                          int m,
                          mpfi_ptr prevroot,
-                         mpfi_ptr nextroot,
-                         boost::function2<
-                                          RS_polynomial_1,
-                                          RS_polynomial_1,
-                                          RS_polynomial_1> Gcd){
+                         mpfi_ptr nextroot){
         mpfi_init(mpfi());
         set_mpfi_ptr(i);
         set_pol(p);
@@ -215,7 +211,7 @@ Algebraic_1::Algebraic_1(
         set_prev(prevroot);
         set_next(nextroot);
         // we don't evaluate in the sf part of p, since p is sf
-        //set_lefteval(RSSign::signat(sfpart_1<Gcd>(p),&i->left));
+        // TODO: add assertion
         set_lefteval(RSSign::signat(p,&i->left));
 }
 

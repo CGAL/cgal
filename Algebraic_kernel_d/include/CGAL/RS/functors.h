@@ -136,10 +136,6 @@ struct Solve_RS_1{
     OutputIterator operator()(const Polynomial &p,OutputIterator res)const{
         int nr,*m;
         mpfi_ptr *x;
-        boost::function2<
-                         RS_polynomial_1,
-                         RS_polynomial_1,
-                         RS_polynomial_1> Gcd_fun=Gcd();
         sqfrvec sfv=Sqfr()(p);
         x=(mpfi_ptr*)malloc(Sfpart()(p).get_degree()*sizeof(mpfi_ptr));
         m=(int*)calloc(Sfpart()(p).get_degree(),sizeof(int));
@@ -161,8 +157,7 @@ struct Solve_RS_1{
         for(int i=0;i<nr;++i){
             *res++=std::make_pair(*new Algebraic(x[i],p,i,m[i],
                                                  i?x[i-1]:NULL,
-                                                 i==nr-1?NULL:x[i+1],
-                                                 Gcd_fun),
+                                                 i==nr-1?NULL:x[i+1]),
                                   m[i]);
         }
         free(m);
@@ -176,10 +171,6 @@ struct Solve_RS_1{
                               OutputIterator res)const{
         int nr,m;
         mpfi_ptr *x;
-        boost::function2<
-                         RS_polynomial_1,
-                         RS_polynomial_1,
-                         RS_polynomial_1> Gcd_fun=Gcd();
         if(known_to_be_square_free){
             p.set_sf();
             x=(mpfi_ptr*)malloc(p.get_degree()*sizeof(mpfi_ptr));
@@ -195,8 +186,7 @@ struct Solve_RS_1{
         for(int i=0;i<nr;++i)
             *res++=*new Algebraic(x[i],p,i,m,
                             i?x[i-1]:NULL,
-                            i==nr-1?NULL:x[i+1],
-                            Gcd_fun);
+                            i==nr-1?NULL:x[i+1]);
         free(x);
         return res;
     }
@@ -292,14 +282,10 @@ struct Construct_alg_1{
     inline
     Algebraic operator()(const Poly &p,Bound l,Bound u){
         mpfi_t i;
-        boost::function2<
-                         RS_polynomial_1,
-                         RS_polynomial_1,
-                         RS_polynomial_1> Gcd_fun=Gcd();
         mpfi_init(i);
         mpfr_set(&i->left,l.fr(),GMP_RNDD);
         mpfr_set(&i->right,u.fr(),GMP_RNDU);
-        return Algebraic(i,convert()(p),0,0,NULL,NULL,Gcd_fun);
+        return Algebraic(i,convert()(p),0,0,NULL,NULL);
     }
 };  // Construct_alg_1
 
