@@ -40,11 +40,11 @@ CGAL 3.6 offers the following improvements and new functionality :
     package to compute periodic alpha shapes. 
 
 * 3D Mesh Generation
-- The mesh generator has been enriched which an optimisation phase to provide 3D meshes
-  with well shaped tetrahedra (and in particular no slivers).  The optimization phase 
-involves four different optimization processes: two global opitimization processes (ODT anf Lloyd),
-a pertuber and an exuder. Each of these processes can be activated or not,  and tuned to the users
-needs and to available computer resources.
+ - The mesh generator has been enriched which an optimisation phase to provide 3D meshes
+    with well shaped tetrahedra (and in particular no slivers).  The optimization phase 
+    involves four different optimization processes: two global opitimization processes (ODT anf Lloyd),
+    a pertuber and an exuder. Each of these processes can be activated or not,  and tuned to the users
+    needs and to available computer resources.
 
 * Arrangement_on_surface_2:
   - Fixed passing a (const) traits object to the constructor of Arrangement_2.
