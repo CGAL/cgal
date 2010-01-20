@@ -66,7 +66,7 @@ public:
   Weighted_point (const Tx &x, const Ty &y,
 	          typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, FT>,
 					                      boost::is_convertible<Ty, FT>,
-							      boost::mpl::bool_<Ambient_dimension<Point>::value == 2> > >::type* = 0)
+							      boost::mpl::bool_<CGAL::Ambient_dimension<Point>::value == 2> > >::type* = 0)
       : Point(x, y), _weight(0) {}
 
   template < typename Tx, typename Ty, typename Tz >
@@ -74,7 +74,7 @@ public:
 	          typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, FT>,
 					                      boost::is_convertible<Ty, FT>,
 					                      boost::is_convertible<Tz, FT>,
-							      boost::mpl::bool_<Ambient_dimension<Point>::value == 3> > >::type* = 0)
+							      boost::mpl::bool_<CGAL::Ambient_dimension<Point>::value == 3> > >::type* = 0)
       : Point(x, y, z), _weight(0) {}
 
   const Point & point() const
