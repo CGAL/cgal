@@ -189,8 +189,13 @@ struct Optimizer
   
   void operator()(int nb) 
   {
+    std::size_t pos = output_prefix_.find_last_of('/');
+    std::string out_pref = output_prefix_.substr(0,pos);
+    std::string filename = output_prefix_.substr(pos+1);
+    
     std::stringstream cout_loc;
-    cout_loc << "[" << nb << "] Launch optimizer with: " << command_line_ << "\n";
+    cout_loc << "[" << nb << "] Launch optimizer[" << filename << mesh_nb_ 
+             << "] with: " << command_line_ << "\n";
     std::cout << cout_loc.str();
 
     // Output
@@ -238,23 +243,21 @@ struct Optimizer
 
     //save mesh
     str_out << "Save mesh...";
-    std::stringstream ssout;
-    ssout << mesh_nb_;				
-    std::string output_filename = output_prefix_ + ssout.str() + "-out.mesh";
-    std::ofstream medit_file(output_filename.c_str());
+    std::stringstream output_filename;
+    output_filename << output_prefix_ << mesh_nb_ << "-out.mesh";
+    std::ofstream medit_file(output_filename.str().c_str());
     c3t3.output_to_medit(medit_file);
     
     //save histogram
     str_out << "done.\nSave histogram...";
-    std::string histo_filename = output_prefix_  + ssout.str() + "-histo.txt";
-    save_histogram<C3T3>(histo_filename, c3t3);
+    std::stringstream histo_filename;
+    histo_filename << output_prefix_  << mesh_nb_ << "-histo.txt";
+    save_histogram<C3T3>(histo_filename.str(), c3t3);
     str_out << "done.\n";
-    
-    std::size_t pos = output_prefix_.find_last_of('/');
-    std::string out_pref = output_prefix_.substr(0,pos);
-    std::string filename = output_prefix_.substr(pos+1);
-    std::string progout_filename ( out_pref + "/ProgramOutput." + filename + ssout.str() + ".txt" );
-    std::ofstream file_out(progout_filename.c_str());
+
+    std::stringstream progout_filename;
+    progout_filename << out_pref << "/ProgramOutput." << filename << mesh_nb_ << ".txt";
+    std::ofstream file_out(progout_filename.str().c_str());
     file_out << str_out.str();
   }
   
