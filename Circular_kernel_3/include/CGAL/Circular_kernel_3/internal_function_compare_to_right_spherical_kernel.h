@@ -142,7 +142,7 @@ Compare_to_right_of_arcs<SK,Traits>::square_norm_tk_normal(
   typename SK::FT ak2;
   typename SK::FT gk=gamma_k(c,rk,R,ak2);
   return ak2 * (R - gk * gk * ak2);
-};
+}
 
 template<class SK,class Traits>
 typename SK::FT 
@@ -154,7 +154,7 @@ Compare_to_right_of_arcs<SK,Traits>::square_norm_tk_threaded(
   typename SK::FT ak2;
   typename SK::FT gk=gamma_k(c,rk,R,ak2);
   return ak2 * (R - gk * gk * ak2);
-};
+}
 
 template<class SK,class Traits>
 void
@@ -200,7 +200,7 @@ Compare_to_right_of_arcs<SK,Traits>::fill_tzk_n(
                             arc.supporting_circle().squared_radius(),
                             sphere_.squared_radius());
   }
-};
+}
 
 
 template<class SK,class Traits>
@@ -223,7 +223,7 @@ Compare_to_right_of_arcs<SK,Traits>::sign_of_delta(
   if (CGAL_NTS sign(tz1)!=CGAL_NTS sign(tz2))
     return CGAL_NTS sign(tz2);
   return CGAL_NTS sign(tz2)*CGAL_NTS sign(n1*CGAL::square(tz2)-n2*CGAL::square(tz1));
-};
+}
 
 
 template<class SK,class Traits>
@@ -232,7 +232,7 @@ Compare_to_right_of_arcs<SK,Traits>::give_rk(
   const typename SK::Circular_arc_3& arc) const
 {
   return (is_arc_an_upper_one(arc,sphere_)?(1):(-1))*arc.supporting_circle().squared_radius();  
-};
+}
 
 template<class SK,class Traits>
 int
@@ -244,7 +244,7 @@ Compare_to_right_of_arcs<SK,Traits>::compare_for_delta_eq_0_threaded(
   if (!is_supporting_circle_threaded)
     return ( is_upper_arc<SK>(arc,sphere_) )?(-1):(1); //IN THAT CASE WE CAN OPTIMIZE AND USE THE Z-COORDINATES OF THE POINT AND CIRCLE THETA-EXTREMAL PT
   return (-CGAL_NTS sign(arc_threaded.supporting_circle().center().z()-arc.supporting_circle().center().z()));
-};
+}
   
 template<class SK,class Traits>
 int 
@@ -264,7 +264,7 @@ Compare_to_right_of_arcs<SK,Traits>::compare_for_delta_eq_0(
   if(CGAL_NTS sign(rc1)*CGAL_NTS sign(rc2)<0)
     return (CGAL_NTS sign(rc1)>0)?(1):(-1);
   return (rc1<rc2)?(1):(-1);
-};
+}
 
 
 template<class SK,class Traits>
@@ -283,7 +283,7 @@ CGAL::Comparison_result Compare_to_right_of_arcs<SK,Traits>::operator()(
   CGAL_precondition(res!=0);
   if (res<0) return CGAL::LARGER;
   return CGAL::SMALLER;
-};
+}
 
 }
 }
