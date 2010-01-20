@@ -24,7 +24,6 @@
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Gmpfi.h>
 #include <boost/operators.hpp>
-#include <boost/function.hpp>
 
 namespace CGAL{
 
@@ -77,19 +76,13 @@ public:
         Algebraic_1(const Gmpq&);
         Algebraic_1(const Gmpfr&);
 
-        // the only interesting constructor, parameterized with the gcd
-        // policy
-        Algebraic_1(
-                    mpfi_srcptr,
+        // the only interesting constructor
+        Algebraic_1(mpfi_srcptr,
                     const RS_polynomial_1&,
                     int,
                     int,
                     mpfi_ptr,
-                    mpfi_ptr,
-                    boost::function2<
-                                     RS_polynomial_1,
-                                     RS_polynomial_1,
-                                     RS_polynomial_1>);
+                    mpfi_ptr);
 
         // the another interesting variant
         Algebraic_1(mpfi_srcptr,

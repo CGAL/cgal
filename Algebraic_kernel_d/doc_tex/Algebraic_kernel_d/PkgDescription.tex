@@ -1,15 +1,15 @@
 \begin{ccPkgDescription}{Algebraic Kernel \label{Pkg:AlgebraicKerneld}}
 \ccPkgHowToCiteCgal{cgal:bht-ak-10}
-\ccPkgSummary{The package introduces a concept for a univariate 
-\ccc{AlgebraicKernel_d_1} and a concept for bivariate \ccc{AlgebraicKernel_d_2}.
-\ccc{AlgebraicKernel_d_1} provides univariate root solving as well as comparison 
-and refinement of the resulting algebraic numbers. 
-\ccc{AlgebraicKernel_d_2} provides about the same for bivariate polynomial. 
-Beside the functionalities related to one bivariate polynomial, it is in 
-particular possible to solve a $2\times2$ system and to compare and approximate 
-the resulting intersection points. The computation of the sign of a 
-polynomial at given point is also provide.}
+\ccPkgSummary{
+Real solving of polynomials is a fundamental problem with a wide application range. 
+This package is targeted to provide black-box implementations of state-of-the-art 
+algorithms to determine, compare and approximate real roots of univariate polynomials
+and bivariate polynomial systems. Such a black-box is called an {\bf Algebraic Kernel}. 
+So far the package only provides models for the univariate kernel. Nevertheless, 
+it already defines concepts for the bivariate kernel, since this settles the interface
+for upcoming implementations.}
 
 \ccPkgIntroducedInCGAL{3.6}
 \ccPkgLicense{LGPL}
+\ccPkgIllustration{Algebraic_kernel_d/Algebraic_kernel_d.png}{Algebraic_kernel_d/Algebraic_kernel_d.png}
 \end{ccPkgDescription}
