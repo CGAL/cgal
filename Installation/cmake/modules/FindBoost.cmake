@@ -254,7 +254,11 @@ MACRO(_Boost_COMPILER_DUMPVERSION _OUTPUT_VERSION)
   STRING(REGEX REPLACE "([0-9])\\.([0-9])(\\.[0-9])?" "\\1\\2"
     _boost_COMPILER_VERSION ${_boost_COMPILER_VERSION})
 
-  SET(${_OUTPUT_VERSION} ${_boost_COMPILER_VERSION} PARENT_SCOPE)
+  IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} LESS 2.6)
+    SET(${_OUTPUT_VERSION} ${_boost_COMPILER_VERSION})
+  ELSE (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} LESS 2.6)
+    SET(${_OUTPUT_VERSION} ${_boost_COMPILER_VERSION} PARENT_SCOPE)
+  ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} LESS 2.6)
 ENDMACRO()
 
 #
@@ -484,12 +488,19 @@ ELSE (_boost_IN_CACHE)
                      "  _boost_PATH_SUFFIXES = ${_boost_PATH_SUFFIXES}")
     endif()
 
-    # Look for a standard boost header file.
+    # Look for a standard boost header file (search in user defined directories first)
     FIND_PATH(Boost_INCLUDE_DIR
       NAMES         boost/config.hpp
       PATHS         ${_boost_INCLUDE_SEARCH_DIRS}
       PATH_SUFFIXES ${_boost_PATH_SUFFIXES}
-      )
+      NO_DEFAULT_PATH
+    )
+    
+    FIND_PATH(Boost_INCLUDE_DIR
+      NAMES         boost/config.hpp
+      PATH_SUFFIXES ${_boost_PATH_SUFFIXES}
+    )
+
   ENDIF( NOT Boost_INCLUDE_DIR )
   
   # ------------------------------------------------------------------------
@@ -693,26 +704,46 @@ ELSE (_boost_IN_CACHE)
       ENDIF(WIN32)
     ENDIF( Boost_USE_STATIC_LIBS )
 
+    # Find libraries (search in user defined directories first)
+    SET ( _boost_${UPPERCOMPONENT}_LIBRARY_RELEASE_NAMES   
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}-${Boost_LIB_VERSION}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}${_boost_STATIC_TAG}-${Boost_LIB_VERSION}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}-${Boost_LIB_VERSION}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_STATIC_TAG}-${Boost_LIB_VERSION}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_STATIC_TAG}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}
+    )
+
     FIND_LIBRARY(Boost_${UPPERCOMPONENT}_LIBRARY_RELEASE
-        NAMES  ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}-${Boost_LIB_VERSION}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}${_boost_STATIC_TAG}-${Boost_LIB_VERSION}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}-${Boost_LIB_VERSION}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_STATIC_TAG}-${Boost_LIB_VERSION}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_STATIC_TAG}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}
+        NAMES  ${_boost_${UPPERCOMPONENT}_LIBRARY_RELEASE_NAMES}
         PATHS  ${_boost_LIBRARIES_SEARCH_DIRS}
+        NO_DEFAULT_PATH
+    )
+
+    FIND_LIBRARY(Boost_${UPPERCOMPONENT}_LIBRARY_RELEASE
+        NAMES   ${_boost_${UPPERCOMPONENT}_LIBRARY_RELEASE_NAMES}
+    )
+
+    
+    SET ( _boost_${UPPERCOMPONENT}_LIBRARY_DEBUG_NAMES
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}-${_boost_ABI_TAG}-${Boost_LIB_VERSION}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}${_boost_STATIC_TAG}${_boost_ABI_TAG}-${Boost_LIB_VERSION}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}-${_boost_ABI_TAG}-${Boost_LIB_VERSION}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_STATIC_TAG}${_boost_ABI_TAG}-${Boost_LIB_VERSION}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}-${_boost_ABI_TAG}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_STATIC_TAG}${_boost_ABI_TAG}
+      ${Boost_LIB_PREFIX}boost_${COMPONENT}-${_boost_ABI_TAG}
     )
 
     FIND_LIBRARY(Boost_${UPPERCOMPONENT}_LIBRARY_DEBUG
-        NAMES  ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}-${_boost_ABI_TAG}-${Boost_LIB_VERSION}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}${_boost_STATIC_TAG}${_boost_ABI_TAG}-${Boost_LIB_VERSION}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}-${_boost_ABI_TAG}-${Boost_LIB_VERSION}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_STATIC_TAG}${_boost_ABI_TAG}-${Boost_LIB_VERSION}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}-${_boost_ABI_TAG}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_STATIC_TAG}${_boost_ABI_TAG}
-               ${Boost_LIB_PREFIX}boost_${COMPONENT}-${_boost_ABI_TAG}
+        NAMES  ${_boost_${UPPERCOMPONENT}_LIBRARY_DEBUG_NAMES}
         PATHS  ${_boost_LIBRARIES_SEARCH_DIRS}
+        NO_DEFAULT_PATH
+    )
+
+    FIND_LIBRARY(Boost_${UPPERCOMPONENT}_LIBRARY_DEBUG
+        NAMES  ${_boost_${UPPERCOMPONENT}_LIBRARY_DEBUG_NAMES} 
     )
 
     _Boost_ADJUST_LIB_VARS(${UPPERCOMPONENT})
