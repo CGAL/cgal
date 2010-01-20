@@ -6,7 +6,7 @@ project( Mesh_3_applications )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
-include_directories(../include ../../AABB_tree/include)
+include_directories(../include)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
  
@@ -25,7 +25,7 @@ if ( CGAL_FOUND )
   if ( Boost_FOUND AND Boost_VERSION GREATER 103400)
     if ( Boost_PROGRAM_OPTIONS_FOUND AND Boost_FILESYSTEM_FOUND )
       include_directories(${Boost_INCLUDE_DIRS})
-      link_libraries(${Boost_LIBRARIES})
+      list(APPEND CGAL_3RD_PARTY_LIBRARIES "${Boost_LIBRARIES}")
     else()
       message(FATAL_ERROR "This program requires libs boost_program_options, boost_filesystem and boost_system")
     endif()
@@ -44,7 +44,9 @@ if ( CGAL_FOUND )
   endif()
   create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
   create_single_source_cgal_program( "output_distribution_to_stdout.cpp" )
-  create_single_source_cgal_program( "mesher_tester.cpp" "../examples/Mesh_3/implicit_functions.cpp" )
+#  create_single_source_cgal_program( "mesher_tester.cpp" "../examples/Mesh_3/implicit_functions.cpp" )
+  create_single_source_cgal_program( "mesher_tester_image.cpp" )
+  create_single_source_cgal_program( "mesher_tester_polyhedron.cpp" )
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
