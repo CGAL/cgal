@@ -138,13 +138,13 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
                                                                      , FT        const& w2
                                                                      )
 {
-  Uncertain<bool> is_01 = ( are_edges_coincident(e0,e1) | are_edges_orderly_collinearC2(e0,e1) ) & w0 == w1 ;
+  Uncertain<bool> is_01 = ( are_edges_coincident(e0,e1) | are_edges_orderly_collinearC2(e0,e1) ) & ( w0 == w1 );
   if ( is_certain(is_01) )
   {
-    Uncertain<bool> is_02 = are_edges_orderly_collinearC2(e0,e2) & w0 == w2 ;
+    Uncertain<bool> is_02 = are_edges_orderly_collinearC2(e0,e2) & ( w0 == w2 );
     if ( is_certain(is_02) )
     {
-      Uncertain<bool> is_12 = ( are_edges_coincident(e1,e2) | are_edges_orderly_collinearC2(e1,e2) ) & w1 == w2 ;
+      Uncertain<bool> is_12 = ( are_edges_coincident(e1,e2) | are_edges_orderly_collinearC2(e1,e2) ) & ( w1 == w2 );
       if ( is_certain(is_12) )
       {
         if ( is_01 & !is_02 & !is_12 )

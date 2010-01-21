@@ -51,7 +51,7 @@ public:
   
 protected:
 
-  Straight_skeleton_halfedge_base_base_2( int aID, unsigned char aFlags, FT aW ) :  mF(Face_handle()), mID(aID), mFlags(aFlags), mW(aW) {}
+  Straight_skeleton_halfedge_base_base_2( int aID, unsigned char aFlags, FT aW ) :  mF(Face_handle()), mW(aW), mID(aID), mFlags(aFlags) {}
   
 public:
 

@@ -300,7 +300,7 @@ IWeightedBoundariesPtr load_boundaries( string file, int aShift, int& rStatus )
             }  
           }
           
-          assert( lPoly->size() == lWeigths->size() );
+          assert( lPoly->size() == lWeights->size() );
           
           if ( lPoly->size() >= 3 )
           {
