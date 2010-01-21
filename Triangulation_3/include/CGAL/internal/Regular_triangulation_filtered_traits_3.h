@@ -40,11 +40,20 @@ struct Weighted_converter_3
   typedef typename Converter::Target_kernel Target_kernel;
 
   typedef typename Source_traits::Weighted_point_3  Source_wp;
-
   typedef typename Target_traits::Weighted_point_3  Target_wp;
+
+  typedef typename Source_kernel::Point_3  Source_p;
+  typedef typename Target_kernel::Point_3  Target_p;
 
   using Converter::operator();
 
+  // Needed for MSVC 2005/2008 to avoid a matching ambiguity  
+  Target_p
+  operator()(const Source_p &p) const
+  {
+    return Converter::operator()(p);
+  }
+  
   Target_wp
   operator()(const Source_wp &wp) const
   {
