@@ -177,12 +177,12 @@ template < typename FK >
 class Skin_surface_traits_3 < FK,true >
   : public Skin_surface_filtered_traits_3 < FK >
 {
-  typedef Skin_surface_filtered_traits_3 < FK > Base;
+  typedef Skin_surface_filtered_traits_3 < FK > Base_;
 public:
   typedef FK                                    Kernel;
   
   Skin_surface_traits_3() {}
-  Skin_surface_traits_3(typename Base::FT s) : Base(s) {}
+  Skin_surface_traits_3(typename Base_::FT s) : Base_(s) {}
 };
 
 
