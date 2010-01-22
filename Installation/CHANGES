@@ -88,7 +88,7 @@ CGAL 3.6 offers the following improvements and new functionality :
   - The mesh generator has been enriched with an optimization phase to
     provide 3D meshes with well shaped tetrahedra (and in particular no
     slivers).  The optimization phase involves four different optimization
-    processes: two global optimization processes (ODT anf Lloyd), a
+    processes: two global optimization processes (ODT and Lloyd), a
     pertuber and an exuder. Each of these processes can be activated or
     not, and tuned to the users needs and to available computer resources.
 
