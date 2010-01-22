@@ -56,6 +56,8 @@ find_package(TAUCS)
 
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
+  find_package(Boost)
+
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
   # Link with BLAS, LAPACK and TAUCS (optional)
@@ -214,11 +216,15 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin Polyhedron_demo_remeshing_plugin_cgal_code.cpp Polyhedron_demo_remeshing_plugin_cgal_code.moc ${remeshingUI_FILES})
   target_link_libraries(remeshing_plugin scene_polyhedron_item polygon_soup scene_c2t3_item)
 
-  qt4_generate_moc("${CMAKE_CURRENT_SOURCE_DIR}/Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" Scene_c3t3_item.moc )
+  if ( Boost_VERSION GREATER 103400 )
+    qt4_generate_moc("${CMAKE_CURRENT_SOURCE_DIR}/Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" Scene_c3t3_item.moc )
 
-  polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
-    Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Scene_c3t3_item.moc)
-  target_link_libraries(mesh_3_plugin scene_polyhedron_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+    polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
+      Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Scene_c3t3_item.moc)
+    target_link_libraries(mesh_3_plugin scene_polyhedron_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  else( Boost_VERSION GREATER 103400 )
+    message(STATUS "warning: the plugin mesh_3_plugin requires Boost>=1.34.1 and will not be compiled.")
+  endif( Boost_VERSION GREATER 103400 )
 
   polyhedron_demo_plugin(inside_out_plugin Polyhedron_demo_inside_out_plugin)
   target_link_libraries(inside_out_plugin scene_polyhedron_item polygon_soup)

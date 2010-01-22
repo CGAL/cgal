@@ -1,17 +1,17 @@
 
 
-\ccAnchor{http://trolltech.com/products/qt}{Qt} is a {\sc Gui} toolkit for
+\ccAnchor{http://qt.nokia.com/}{Qt} is a {\sc Gui} toolkit for
 cross-platform application development.
 
 % +-----------------------------------------------------+
 \section{Introduction}
 
 This chapter describes classes that help to visualize two dimensional \cgal\ objects
-with the \ccAnchor{http://doc.trolltech.com/4.4/graphicsview.html}{Qt Graphics View Framework}.
+with the \ccAnchor{http://doc.qt.nokia.com/4.4/graphicsview.html}{Qt Graphics View Framework}.
 
-This framework uses the model view paradigm. \ccAnchor{http://doc.trolltech.com/4.4/qgraphicsitem.html}{\ccc{QGraphicsItem}}s are stored in a 
-\ccAnchor{http://doc.trolltech.com/4.4/qgraphicsscene.html}{\ccc{QGraphicsScene}} 
-and are displayed in a \ccAnchor{http://doc.trolltech.com/4.4/qgraphicsview.html}{\ccc{QGraphicsView}}. The items 
+This framework uses the model view paradigm. \ccAnchor{http://doc.qt.nokia.com/4.4/qgraphicsitem.html}{\ccc{QGraphicsItem}}s are stored in a 
+\ccAnchor{http://doc.qt.nokia.com/4.4/qgraphicsscene.html}{\ccc{QGraphicsScene}} 
+and are displayed in a \ccAnchor{http://doc.qt.nokia.com/4.4/qgraphicsview.html}{\ccc{QGraphicsView}}. The items 
 have a paint method which is called when an item is in the visible area of a view.
 The framework is also responsible for dispatching events from the view
 via the scene to the items. The framework is extensible in the sense
@@ -46,14 +46,14 @@ brings them together we adopted the following, hybrid naming conventions.
 \section{Overall Design}
 
 In Figure~\ref{graphicsview:uml} you see four classes depicted in grey,
-that come from the Qt Graphics View Framework. The \ccAnchor{http://doc.trolltech.com/4.4/qgraphicsscene.html}{\ccc{QGraphicsScene}}
-contains \ccAnchor{http://doc.trolltech.com/4.4/qgraphicsitem.html}{\ccc{QGraphicsItem}}s, which get displayed in any number
-of \ccAnchor{http://doc.trolltech.com/4.4/qgraphicsview.html}{\ccc{QGraphicsView}}s. The views are widgets, that is they take screen space
+that come from the Qt Graphics View Framework. The \ccAnchor{http://doc.qt.nokia.com/4.4/qgraphicsscene.html}{\ccc{QGraphicsScene}}
+contains \ccAnchor{http://doc.qt.nokia.com/4.4/qgraphicsitem.html}{\ccc{QGraphicsItem}}s, which get displayed in any number
+of \ccAnchor{http://doc.qt.nokia.com/4.4/qgraphicsview.html}{\ccc{QGraphicsView}}s. The views are widgets, that is they take screen space
 in an application.
 
-The fourth class is the \ccAnchor{http://doc.trolltech.com/4.4/qobject.html}{\ccc{QObject}}. It plays an important role in Qt for
-event handling and memory management. First, it allows to add \ccAnchor{http://doc.trolltech.com/4.4/signalsandslots.html}{signals and
-slots}, and to connect them.  Second, it allows to install \ccAnchor{http://doc.trolltech.com/4.4/eventsandfilters.html}{event filters}.
+The fourth class is the \ccAnchor{http://doc.qt.nokia.com/4.4/qobject.html}{\ccc{QObject}}. It plays an important role in Qt for
+event handling and memory management. First, it allows to add \ccAnchor{http://doc.qt.nokia.com/4.4/signalsandslots.html}{signals and
+slots}, and to connect them.  Second, it allows to install \ccAnchor{http://doc.qt.nokia.com/4.4/eventsandfilters.html}{event filters}.
 
 
 \begin{figure}[t]
