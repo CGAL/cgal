@@ -92,6 +92,20 @@ CGAL 3.6 offers the following improvements and new functionality :
     pertuber and an exuder. Each of these processes can be activated or
     not, and tuned to the users needs and to available computer resources.
 
+<h3>Number Types</h3>
+
+  - Two new arbitrary fixed-precision floating-point number types have been
+    added: the scalar type Gmpfr and the interval type Gmpfi, based on the
+    MPFR and MPFI libraries respectively.
+
+<h3>Algebraic Kernel</h3>
+
+  - This new package is targeted to provide black-box implementations of
+  state-of-the-art algorithms to determine, compare and approximate real
+  roots of univariate polynomials and bivariate polynomial systems. It
+  includes models of the univariate algebraic kernel concept, based on the
+  library RS.
+
 <h3>Support library<h3>
 
 <h4>CGAL ipelets</h4>
