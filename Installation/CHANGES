@@ -4,22 +4,22 @@ Release notes of CGAL.
 
 CGAL 3.6 offers the following improvements and new functionality : 
 
-<h3>General</h3>
+1 General
 
   - Boost version 1.34.1 at least is now required.
 
 
-<h3>Geometry Kernels</h3>
+2 Geometry Kernels
 
-<h4>2D and 3D Geometry Kernel</h4>
+2.1 2D and 3D Geometry Kernel
   - Add new do_intersect() and intersection() overloads:
     + do_intersect(Bbox_3, Bbox_3/Line_3/Ray_3/Segment_3)
     + intersection(Triangle_3, Line_3/Ray_3/Segment_3)
 
 
-<h3>Arithmetic and Algebra</h3>
+3 Arithmetic and Algebra
 
-<h3>Algebraic Kernel (new package)</h3>
+3.1 Algebraic Kernel (new package)
 
   - This new package is targeted to provide black-box implementations of
     state-of-the-art algorithms to determine, compare and approximate real
@@ -27,24 +27,24 @@ CGAL 3.6 offers the following improvements and new functionality :
     includes models of the univariate algebraic kernel concept, based on
     the library RS.
 
-<h4>Number Types</h4>
+3.2 Number Types
 
   - Two new arbitrary fixed-precision floating-point number types have been
     added: the scalar type Gmpfr and the interval type Gmpfi, based on the
     MPFR and MPFI libraries respectively.
 
 
-<h3>Polygons</h3>
+4 Polygons
 
-<h4>2D Regularized Boolean Set-Operations</h4>
+4.1 2D Regularized Boolean Set-Operations
 
   - Fixed General_polygon_set_2::arrangement() to return the proper type
     of object.  
 
 
-<h3>Arrangement</h3>
+5 Arrangement
 
-<h4>2D Arrangements</h4>
+5.1 2D Arrangements
 
   - Fixed passing a (const) traits object to the constructor of Arrangement_2.
 
@@ -61,13 +61,13 @@ CGAL 3.6 offers the following improvements and new functionality :
 
 
 
-<h3>Triangulations and Delaunay Triangulations</h3>
+6 Triangulations and Delaunay Triangulations
 
-<h4>2D/3D Regular triangulations</h4>
+6.1 2D/3D Regular triangulations
 
   - Weighted_point now has a constructor from Cartesian coordinates.
 
-<h4>3D Triangulations</h4>
+6.2 3D Triangulations
 
   - Regular_triangulation_3 : semi-static floating-point filters are now used
     in its predicates, which can speed up its construction by a factor of about 3
@@ -84,7 +84,7 @@ CGAL 3.6 offers the following improvements and new functionality :
   - The old version of remove() (enabled with CGAL_DELAUNAY_3_OLD_REMOVE)
     has been deleted.
 
-<h4>3D Periodic triangulations</h4>
+6.3 3D Periodic triangulations
 
   - New demo: 3D periodic Lloyd algorithm.
 
@@ -94,7 +94,7 @@ CGAL 3.6 offers the following improvements and new functionality :
   - The package can now be used with the 3D Alpha Shapes package to compute 
     periodic alpha shapes. 
 
-<h4>3D Alpha shapes</h4>
+6.4 3D Alpha shapes
 
   - The class Weighted_alpha_shape_euclidean_traits_3 is deprecated, the class
     Regular_triangulation_euclidean_traits_3 must be used instead.
@@ -103,9 +103,9 @@ CGAL 3.6 offers the following improvements and new functionality :
     package to compute periodic alpha shapes. 
 
 
-<h3>Mesh Generation</h3>
+7 Mesh Generation
 
-<h4>3D Mesh Generation</h4>
+7.1 3D Mesh Generation
 
   - The mesh generator has been enriched with an optimization phase to
     provide 3D meshes with well shaped tetrahedra (and in particular no
@@ -114,9 +114,9 @@ CGAL 3.6 offers the following improvements and new functionality :
     pertuber and an exuder. Each of these processes can be activated or
     not, and tuned to the users needs and to available computer resources.
 
-<h3>Support library<h3>
+8 Support library<h3>
 
-<h4>CGAL ipelets</h4>
+8.1 CGAL ipelets
 
   - Add support for version 7 of Ipe.
 
