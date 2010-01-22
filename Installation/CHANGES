@@ -4,12 +4,34 @@ Release notes of CGAL.
 
 CGAL 3.6 offers the following improvements and new functionality : 
 
+<h3>General</h3>
+
+  - Boost version 1.34.1 at least is now required.
+
+
 <h3>Geometry Kernels</h3>
 
 <h4>2D and 3D Geometry Kernel</h4>
   - Add new do_intersect() and intersection() overloads:
     + do_intersect(Bbox_3, Bbox_3/Line_3/Ray_3/Segment_3)
     + intersection(Triangle_3, Line_3/Ray_3/Segment_3)
+
+
+<h3>Arithmetic and Algebra</h3>
+
+<h3>Algebraic Kernel (new package)</h3>
+
+  - This new package is targeted to provide black-box implementations of
+    state-of-the-art algorithms to determine, compare and approximate real
+    roots of univariate polynomials and bivariate polynomial systems. It
+    includes models of the univariate algebraic kernel concept, based on
+    the library RS.
+
+<h4>Number Types</h4>
+
+  - Two new arbitrary fixed-precision floating-point number types have been
+    added: the scalar type Gmpfr and the interval type Gmpfi, based on the
+    MPFR and MPFI libraries respectively.
 
 
 <h3>Polygons</h3>
