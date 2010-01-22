@@ -173,17 +173,20 @@ CGAL_END_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-template < typename FK >
-class Skin_surface_traits_3 < FK,true >
-  : public Skin_surface_filtered_traits_3 < FK >
+// Just FK would be nicer, but VC 2005 messes it up with an "FK" in a base class when compiling degenerate_test.cpp
+template < typename Sst3FK >
+class Skin_surface_traits_3 < Sst3FK,true >
+  : public Skin_surface_filtered_traits_3 < Sst3FK >
 {
-  typedef Skin_surface_filtered_traits_3 < FK > Base_;
+  typedef Skin_surface_filtered_traits_3 < Sst3FK > Base;
 public:
-  typedef FK                                    Kernel;
+  typedef Sst3FK                                    Kernel;
   
   Skin_surface_traits_3() {}
-  Skin_surface_traits_3(typename Base_::FT s) : Base_(s) {}
+  Skin_surface_traits_3(typename Base::FT s) :  Base(s) {}
+
 };
+
 
 
 CGAL_END_NAMESPACE
