@@ -1244,10 +1244,7 @@ bool
 Triangulation_data_structure_3<Vb,Cb>::
 is_vertex(Vertex_handle v) const
 {
-    Vertex_iterator vit = vertices_begin();
-    while (vit != vertices_end() && v != vit)
-        ++vit;
-    return v == vit;
+    return vertices().owns_dereferencable(v);
 }
 
 template < class Vb, class Cb>
@@ -1290,18 +1287,17 @@ template < class Vb, class Cb>
 bool
 Triangulation_data_structure_3<Vb,Cb>::
 is_edge(Cell_handle c, int i, int j) const
-  // returns false when dimension <1
 {
+  if (dimension() < 1)
+    return false;
+
   if ( i==j ) return false;
   if ( (i<0) || (j<0) ) return false;
   if ( (dimension() == 1) && ((i>1) || (j>1)) ) return false;
   if ( (dimension() == 2) && ((i>2) || (j>2)) ) return false;
   if ((i>3) || (j>3)) return false;
 
-  for(Cell_iterator cit = cells().begin(); cit != cells_end(); ++cit)
-    if (c == cit)
-	return true;
-  return false;
+  return cells().owns_dereferencable(c);
 }
 
 template < class Vb, class Cb>
@@ -1339,16 +1335,16 @@ template < class Vb, class Cb>
 bool
 Triangulation_data_structure_3<Vb,Cb>::
 is_facet(Cell_handle c, int i) const
-  // returns false when dimension <2
 {
     CGAL_triangulation_precondition(i>=0 && i<4);
+
+    if ( dimension() < 2 )
+        return false;
+
     if ( (dimension() == 2) && (i!=3) )
         return false;
 
-    Cell_iterator cit = cells().begin(); // needs to work in dim 2.
-    while (cit != cells_end() && c != cit)
-        ++cit;
-    return c == cit;
+    return cells().owns_dereferencable(c);
 }
 
 template < class Vb, class Cb>
@@ -1360,10 +1356,7 @@ is_cell( Cell_handle c ) const
     if (dimension() < 3)
         return false;
 
-    Cell_iterator cit = cells_begin();
-    while (cit != cells_end() && c != cit)
-        ++cit;
-    return c == cit;
+    return cells().owns_dereferencable(c);
 }
 
 template < class Vb, class Cb>
