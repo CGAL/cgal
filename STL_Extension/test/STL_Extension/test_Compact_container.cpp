@@ -1,32 +1,4 @@
-// ============================================================================
-//
-// Copyright (c) 2003 The CGAL Consortium
-//
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
-//
-// ----------------------------------------------------------------------------
-//
-// release       : $CGAL_Revision: $
-// release_date  : $CGAL_Date: $
-//
-// file          : test_Compact_container.C
-// chapter       : $CGAL_Chapter: STL Extensions for CGAL $
-// package       : $CGAL_Package: STL_Extension $
-// source        : stl_extension.fw
-// revision      : $Id$
-// revision_date : $Date$
-// author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
-//                 Lutz Kettner <kettner@mpi-sb.mpg.de>
-//                 Sylvain Pion
-//
-// maintainer    : Michael Hoffmann <hoffmann@inf.ethz.ch>
-// coordinator   : ETH
-//
-// Stl_Extensions: Compact container.
-// ============================================================================
-
+// test program for Compact_container.
 
 #include <CGAL/basic.h>
 #include <cassert>
@@ -219,6 +191,17 @@ void test(const Cont &)
   c9.erase(c9.begin());
 
   assert(c9.size() == v1.size() - 2);
+
+  // owns() and owns_dereferencable().
+  for(typename Cont::const_iterator it = c9.begin(), end = c9.end(); it != end; ++it) {
+    assert(c9.owns(it));
+    assert(c9.owns_dereferencable(it));
+    assert(! c10.owns(it));
+    assert(! c10.owns_dereferencable(it));
+  }
+  assert(c9.owns(c9.end()));
+  assert(! c9.owns_dereferencable(c9.end()));
+
 
   c9.erase(c9.begin(), c9.end());
 

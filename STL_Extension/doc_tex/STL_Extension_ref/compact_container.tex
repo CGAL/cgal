@@ -300,7 +300,21 @@
    constructed.}
 
   %% +-----------------------------------+
-  \ccHeading{Special Operation}
+  \ccHeading{Ownership testing}
+
+  The following functions are mostly helpful for efficient debugging, since
+  their complexity is $O(\sqrt{\ccVar.\ccc{capacity()}})$.
+
+  \ccMethod{bool owns(const_iterator pos);}
+  {returns whether \ccc{pos} is in the range [\ccVar.\ccc{begin()}, \ccVar.\ccc{end()}]
+   (\ccVar.\ccc{end()} included).}
+
+  \ccMethod{bool owns_dereferencable(const_iterator pos);}
+  {returns whether \ccc{pos} is in the range [\ccVar.\ccc{begin()}, \ccVar.\ccc{end()})
+   (\ccVar.\ccc{end()} excluded).}
+
+  %% +-----------------------------------+
+  \ccHeading{Merging}
 
   \ccSetThreeColumns{const_iterator}{l.erase( iterator pos);}{}
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2003,2004,2007-2009  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2007-2010  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -79,7 +79,6 @@
 //   Instead of having the blocks linked between them, the start/end pointers
 //   could point back to the container, so that we can do more interesting
 //   things (e.g. freeing empty blocks automatically) ?
-// - Submission to Boost.
 
 CGAL_BEGIN_NAMESPACE
 
@@ -126,8 +125,8 @@ public:
   typedef typename Allocator::const_pointer         const_pointer;
   typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
-  typedef internal::CC_iterator<Self, false>           iterator;
-  typedef internal::CC_iterator<Self, true>            const_iterator;
+  typedef internal::CC_iterator<Self, false>        iterator;
+  typedef internal::CC_iterator<Self, true>         const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
@@ -450,6 +449,43 @@ public:
   allocator_type get_allocator() const
   {
     return alloc;
+  }
+
+  // Returns whether the iterator "cit" is in the range [begin(), end()].
+  // Complexity : O(#blocks) = O(sqrt(capacity())).
+  // This function is mostly useful for purposes of efficient debugging at
+  // higher levels.
+  bool owns(const_iterator cit) const
+  {
+    // We use the block structure to provide an efficient version :
+    // we check if the address is in the range of each block,
+    // and then test whether it is valid (not a free element).
+
+    if (cit == end())
+      return true;
+
+    const_pointer c = &*cit;
+
+    for (typename All_items::const_iterator it = all_items.begin(), end = all_items.end();
+         it != end; ++it) {
+      const_pointer p = it->first;
+      size_type s = it->second;
+
+      // Are we in the address range of this block (excluding first and last
+      // elements) ?
+      if (c <= p || (p+s-1) <= c)
+        continue;
+
+      CGAL_assertion_msg( (c-p)+p == c, "wrong alignment of iterator");
+
+      return type(c) == USED;
+    }
+    return false;
+  }
+
+  bool owns_dereferencable(const_iterator cit) const
+  {
+    return cit != end() && owns(cit);
   }
 
 private:
