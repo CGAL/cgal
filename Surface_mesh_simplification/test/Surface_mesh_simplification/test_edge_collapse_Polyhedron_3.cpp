@@ -308,7 +308,7 @@ public :
   {
     TEST_TRACE( str ( format("S %1% - Collapsing %2% : placement=%3%") % mStep % edge2str(aProfile.v0_v1()) % optpoint2str(aP) ) ) ;
     
-    mBefore = create_edge_link(aProfile);
+    //mBefore = create_edge_link(aProfile);
   }
   
   virtual void OnCollapsed( Profile const& aProfile, Vertex_handle const& aV ) const 
