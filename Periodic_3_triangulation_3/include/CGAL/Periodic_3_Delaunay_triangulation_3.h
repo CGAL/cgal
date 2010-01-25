@@ -784,7 +784,6 @@ move_point(Vertex_handle v, const Point & p) {
 template < class Gt, class Tds >
 void Periodic_3_Delaunay_triangulation_3<Gt,Tds>::remove(Vertex_handle v)
 {
-  CGAL_assertion(is_vertex(v));
   typedef CGAL::Periodic_3_triangulation_remove_traits_3< Gt > P3removeT;
   typedef CGAL::Delaunay_triangulation_3< P3removeT >
     Euclidean_triangulation;
