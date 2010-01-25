@@ -139,19 +139,7 @@ public:
     return number_of_vertices() - n;
   }
 
-  // bool only for backward compatibility, we document void.
-  bool remove(Vertex_handle v);
-
-  template < typename InputIterator >
-  int remove(InputIterator first, InputIterator beyond)
-  {
-    int n = number_of_vertices();
-    while (first != beyond) {
-      remove(*first);
-      ++first;
-    }
-    return n - number_of_vertices();
-  }
+  void remove(Vertex_handle v);
 
   Vertex_handle move_point(Vertex_handle v, const Point & p);
 
@@ -371,7 +359,7 @@ insert(const Point &p, Locate_type lt, Cell_handle loc, int li, int lj)
 }
 
 template <class PTr>
-bool
+void
 Periodic_3_triangulation_hierarchy_3<PTr>::
 remove(Vertex_handle v)
 {
@@ -383,7 +371,6 @@ remove(Vertex_handle v)
 	break;
     v = u;
   }
-  return true;
 }
 
 template < class PTr >
