@@ -140,7 +140,8 @@ polyhedra that cannot be re-triangulated cannot happen, so \cgal\
 proposes a vertex removal.
 
 \ccMethod{void remove(Vertex_handle v);}
-{Removes the vertex \ccc{v} from the triangulation.}
+{Removes the vertex \ccc{v} from the triangulation. When computing in
+  27-sheeted covering space it removes all 27 copies of \ccc{v}.}
 
 \ccHeading{Queries}
 
