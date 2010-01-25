@@ -214,7 +214,6 @@ protected:
   Tds _tds;
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
-  mutable Random rng;
 
   Comparison_result
   compare_xyz(const Point &p, const Point &q) const
@@ -1568,6 +1567,8 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
       if ( start->has_vertex(infinite, ind_inf) )
           start = start->neighbor(ind_inf);
   }
+
+  Random rng (0L);
 
   switch (dimension()) {
   case 3:
