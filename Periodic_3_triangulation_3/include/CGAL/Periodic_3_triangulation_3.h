@@ -2440,7 +2440,7 @@ template < class GT, class TDS >
 template < class PointRemover, class Conflict_tester>
 inline void Periodic_3_triangulation_3<GT,TDS>::remove(Vertex_handle v,
     PointRemover &r, Conflict_tester &t) {
-  CGAL_precondition(is_vertex(v));
+  CGAL_expensive_precondition(is_vertex(v));
   std::vector<Vertex_handle> vhrem;
   if (!is_1_cover()) {
     if (number_of_vertices() == 1) {
