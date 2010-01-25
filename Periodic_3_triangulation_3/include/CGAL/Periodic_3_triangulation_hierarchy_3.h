@@ -364,7 +364,7 @@ Periodic_3_triangulation_hierarchy_3<PTr>::
 remove(Vertex_handle v)
 {
   CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_precondition(is_vertex(v));
+  CGAL_expensive_precondition(is_vertex(v));
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     hierarchy[l]->remove(v);
