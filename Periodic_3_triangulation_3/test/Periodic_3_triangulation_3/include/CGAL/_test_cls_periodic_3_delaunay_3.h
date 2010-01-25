@@ -287,18 +287,6 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   assert(PT1_deg.number_of_sheets() == CGAL::make_array(3,3,3));
   assert(PT1_deg.is_valid());
 
-  std::cout << "  Iterator range removal" << std::endl;
-  P3T3 PT_remall(PT);
-  std::vector<Vertex_handle> vvh;
-  for (Vertex_iterator vit = PT_remall.vertices_begin() ;
-       vit != PT_remall.vertices_end() ; ++vit) {
-    vvh.push_back(vit);
-  }
-
-  PT_remall.remove(vvh.begin(),vvh.end());
-  assert(PT_remall.number_of_vertices() == 0);
-  assert(PT_remall.is_valid());
-
   std::cout << "Queries" << std::endl;
   std::cout << "Side of sphere" << std::endl;
 

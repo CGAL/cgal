@@ -142,13 +142,6 @@ proposes a vertex removal.
 \ccMethod{void remove(Vertex_handle v);}
 {Removes the vertex \ccc{v} from the triangulation.}
 
-\ccMethod{template < class InputIterator >
-          int remove(InputIterator first, InputIterator beyond);}
-{Removes the vertices specified by the iterator range [\ccStyle{first, beyond})
-of value type \ccc{Vertex_handle}.
-\ccc{remove()} is called over each element of the range.
-The number of vertices removed is returned.}
-
 \ccHeading{Queries}
 
 \ccMethod{Bounded_side

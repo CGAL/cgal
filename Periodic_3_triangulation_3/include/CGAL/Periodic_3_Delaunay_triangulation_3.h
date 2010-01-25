@@ -223,16 +223,6 @@ public:
 public:
   /** @name Removal */ //@{
   void remove(Vertex_handle v);
-
-  template < typename InputIterator >
-  int remove(InputIterator first, InputIterator beyond) {
-    int n = number_of_vertices();
-    while (first != beyond) {
-      remove(*first);
-      ++first;
-    }
-    return n - number_of_vertices();
-  }
   //@}
 
 public:
@@ -340,7 +330,7 @@ public:
 	c->vertex(2)->point(), c->vertex(3)->point(),
         get_offset(c,0), get_offset(c,1),
 	get_offset(c,2), get_offset(c,3));
-    
+
     // check that v lies within the domain. If not: translate
     Covering_sheets nos = number_of_sheets();
     Iso_cuboid dom = domain();
@@ -794,7 +784,7 @@ move_point(Vertex_handle v, const Point & p) {
 template < class Gt, class Tds >
 void Periodic_3_Delaunay_triangulation_3<Gt,Tds>::remove(Vertex_handle v)
 {
-  if ( !is_vertex(v) ) return;
+  CGAL_assertion(is_vertex(v));
   typedef CGAL::Periodic_3_triangulation_remove_traits_3< Gt > P3removeT;
   typedef CGAL::Delaunay_triangulation_3< P3removeT >
     Euclidean_triangulation;
