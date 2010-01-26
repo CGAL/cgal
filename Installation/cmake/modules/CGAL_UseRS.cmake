@@ -9,10 +9,18 @@ if( NOT CGAL_RS_SETUP )
     message( STATUS "RS definitions:    ${RS_DEFINITIONS}" )
     message( STATUS "RS libraries:      ${RS_LIBRARIES}" )
 
-    if(CMAKE_OSX_ARCHITECTURES STREQUAL "ppc")
-      message( STATUS "TLS is not supported on this architecture" )
-      add_definitions( "-DCGAL_RS_NO_TLS" )
-    endif(CMAKE_OSX_ARCHITECTURES STREQUAL "ppc")
+    if( APPLE AND CMAKE_COMPILER_IS_GNUCXX )
+      include( CGAL_VersionUtils )
+      EXEC_PROGRAM( ${CMAKE_CXX_COMPILER}
+                    ARGS -dumpversion
+                    OUTPUT_VARIABLE RS_GXX_VERSION )
+      VERSION_DECOMPOSE( ${RS_GXX_VERSION} GXX_MAJ GXX_MIN GXX_PAT GXX_TWE )
+      IS_VERSION_LESS( "${GXX_MAJ}.${GXX_MIN}" "4.3" IS_OLD_GXX )
+      if( IS_OLD_GXX )
+        message( STATUS "TLS is not supported by g++<4.3 on Mac OS X" )
+        add_definitions( "-DCGAL_RS_NO_TLS" )
+      endif( IS_OLD_GXX )
+    endif( APPLE AND CMAKE_COMPILER_IS_GNUCXX )
 
     include_directories ( ${RS_INCLUDE_DIR} )
     add_definitions( ${RS_DEFINITIONS} "-DCGAL_USE_RS" )
