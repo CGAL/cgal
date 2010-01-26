@@ -28,17 +28,52 @@ namespace Qt {
 
 struct Circular_X_monotone_bbox
 {
-  template<class Circular_X_monotone_curve>
-  CGAL::Bbox_2 operator()( Circular_X_monotone_curve const& aCXMC ) const 
+  template<class X_monotone_circle_segment_2>
+  CGAL::Bbox_2 operator()( X_monotone_circle_segment_2 const& aC ) const 
   {
-    return aCXMC.bbox();
+    return aC.bbox();
   }
 } ;
 
+#if 0
+struct Circular_bbox
+{
+  template<class Circle_segment_2>
+  CGAL::Bbox_2 operator()( Circle_segment_2 const& aC ) const 
+  {
+    double x_min = to_double(aC.source().x());
+    double x_max = to_double(aC.target().x());   
+    double y_min = to_double(aC.source().y()); 
+    double y_max = to_double(aC.target().y());
+    if(x_min > x_max)
+    {
+      std::swap(x_min, x_max);
+      std::swap(y_min, y_max);
+    }
+
+    if(y_min > y_max)
+      std::swap(y_min, y_max);
+
+    if(aC.is_circular())
+    {
+      typedef typename Circle_segment_2::Circle_2 Circle_2 ;
+
+      const Circle_2& circ = aC.supporting_circle();
+
+      return circ.bbox();
+    }
+    
+    return Bbox_2(x_min, y_min, x_max, y_max);
+  }
+} ;
+
+#endif
+    
+    
 struct Draw_circular_X_monotone_curve
 {
-  template<class Circular_X_monotone_curve, class Path>
-  void operator()( Circular_X_monotone_curve const& curve, Path& aPath, int aIdx ) const 
+  template<class X_monotone_circle_segment_2, class Path>
+  void operator()( X_monotone_circle_segment_2 const& curve, Path& aPath, int aIdx ) const 
   {
     typedef Simple_cartesian<double> Linear_kernel ;
     
@@ -50,10 +85,10 @@ struct Draw_circular_X_monotone_curve
     
     if ( curve.is_circular() )
     {
-      typename Circular_X_monotone_curve::Circle_2        const& circ   = curve.supporting_circle();
-      typename Circular_X_monotone_curve::Kernel::Point_2 const& center = circ.center();
-      typename Circular_X_monotone_curve::Point_2         const& source = curve.source();
-      typename Circular_X_monotone_curve::Point_2         const& target = curve.target();
+      typename X_monotone_circle_segment_2::Circle_2        const& circ   = curve.supporting_circle();
+      typename X_monotone_circle_segment_2::Kernel::Point_2 const& center = circ.center();
+      typename X_monotone_circle_segment_2::Point_2         const& source = curve.source();
+      typename X_monotone_circle_segment_2::Point_2         const& target = curve.target();
 
       double sx = to_double(source.x());
       double sy = to_double(source.y());
@@ -122,6 +157,112 @@ struct Draw_circular_X_monotone_curve
   }
 } ;
 
+#if 0
+    
+struct Draw_circular_curve
+{
+  template<class Circle_segment_2, class Path>
+  void operator()( Circle_segment_2 const& curve, Path& aPath, int aIdx ) const 
+  {
+    typedef Simple_cartesian<double> Linear_kernel ;
+    
+    typedef Point_2<Linear_kernel> Linear_point ;
+    
+    typedef Qt::Converter<Linear_kernel> Converter ;
+    
+    Converter convert ;
+    
+    if ( curve.is_circular() )
+    {
+      typename X_monotone_circle_segment_2::Circle_2        const& circ   = curve.supporting_circle();
+      typename X_monotone_circle_segment_2::Kernel::Point_2 const& center = circ.center();
+          
+      if ( curve.is_full() )
+      {
+        double cx = to_double(center.x());
+        double cy = to_double(center.y());
+            
+        double rad = std::sqrt( to_double(circ.squared_radius() ) ;
+    
+        if ( aIdx == 0 ) 
+             aPath.moveTo(cx+rad,cy) ;
+        else aPath.lineTo(cx+rad,cy) ;
+
+        QRectF bbox = convert(circ.bbox()) ;
+
+        aPath.arcTo(bbox , 0, 360 );    
+      }
+      else
+      {
+        typename X_monotone_circle_segment_2::Point_2 const& source = curve.source();
+        typename X_monotone_circle_segment_2::Point_2 const& target = curve.target();
+            
+        double sx = to_double(source.x());
+        double sy = to_double(source.y());
+        double tx = to_double(target.x());
+        double ty = to_double(target.y());
+        double cx = to_double(center.x());
+        double cy = to_double(center.y());
+
+        bool degenerate = ( sx == tx ) && ( sy == ty ) ;
+
+        if ( !degenerate )
+        {
+          double sdy = sy - cy ;
+          double sdx = sx - cx ;
+          double tdy = ty - cy ;
+          double tdx = tx - cx ;
+
+          double asource = std::atan2(sdy, sdx ); 
+          double atarget = std::atan2(tdy, tdx );
+
+          if( asource < 0.0)
+            asource += 2 * CGAL_PI;
+
+          if( atarget <= 0.0)
+            atarget += 2 * CGAL_PI;
+
+          if ( atarget  < asource )
+            atarget += 2 * CGAL_PI;
+
+          double aspan = atarget - asource ;  
+
+          const double to_deg = 180.0/CGAL_PI;
+
+          Orientation lO = curve.orientation() ;
+
+          if ( aIdx == 0 ) 
+               aPath.moveTo(sx,sy) ;
+          else aPath.lineTo(sx,sy) ;
+
+          QRectF bbox = convert(circ.bbox()) ;
+
+          double dasource = std::atan2(-sdy, sdx ) * to_deg ;
+
+          double daspan  = aspan * to_deg * ( lO == COUNTERCLOCKWISE ? -1.0 : +1.0) ;
+
+          aPath.arcTo(bbox , dasource, daspan );    
+        }
+      }
+    }
+    else
+    {
+      Linear_point lS( CGAL::to_double(curve.source().x()), CGAL::to_double(curve.source().y()) ) ;
+      Linear_point lT( CGAL::to_double(curve.target().x()), CGAL::to_double(curve.target().y()) ) ;
+      
+      if ( aIdx == 0 ) 
+           aPath.moveTo( convert( lS ) ) ;
+      else aPath.lineTo( convert( lS ) ) ;
+
+      aPath.lineTo( convert( lT ) ) ;
+    }
+
+  }
+} ;  
+
+#endif
+    
+    
 template<class Circular_boundary>
 class Circular_boundary_graphics_item : public Piecewise_boundary_graphics_item<Circular_boundary,Draw_circular_X_monotone_curve,Circular_X_monotone_bbox>
 {

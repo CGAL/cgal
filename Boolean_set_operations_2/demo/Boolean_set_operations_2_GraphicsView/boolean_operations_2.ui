@@ -163,7 +163,8 @@
     </property>
    </widget>
    <addaction name="separator" />
-   <addaction name="actionInsertPWH" />
+   <addaction name="actionInsertBezier" />
+   <addaction name="actionInsertCircular" />
   </widget>
   
   <widget class="QToolBar" name="operationsToolBar" >
@@ -276,8 +277,25 @@
     <string>Red</string>
    </property>
   </action>
-  
-  <action name="actionInsertPWH" >
+
+  <action name="actionInsertBezier" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/Actions/icons/insert_bezier.xpm</normaloff>:/cgal/Actions/icons/insert_bezier.xpm
+    </iconset>
+   </property>
+   <property name="toolTip" >
+    <string>Insert Bezier Polygon With Holes</string>
+   </property>
+  </action>
+
+  <action name="actionInsertCircular" >
    <property name="checkable" >
     <bool>true</bool>
    </property>
@@ -290,7 +308,7 @@
     </iconset>
    </property>
    <property name="toolTip" >
-    <string>Insert Linear Polygon With Holes</string>
+    <string>Insert Circular Polygon With Holes</string>
    </property>
   </action>
   

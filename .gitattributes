@@ -913,6 +913,8 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/diff_P
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/diff_PQ.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/diff_QP.bmp -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/diff_QP.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/insert_bezier.bmp -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/insert_bezier.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/insert_circle.bmp -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/insert_circle.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/insert_polygon.bmp -text

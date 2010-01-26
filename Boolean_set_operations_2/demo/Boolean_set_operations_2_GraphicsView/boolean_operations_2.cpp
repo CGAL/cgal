@@ -84,6 +84,8 @@ void trace( std::string s )
 #include <CGAL/Qt/BezierCurves.h>
 #include <CGAL/Qt/CircularPolygons.h>
 #include <CGAL/Qt/GraphicsViewBezierPolygonInput.h>
+#include <CGAL/Qt/GraphicsViewGpsCircleSegmentInput.h>
+//#include <CGAL/Qt/GraphicsViewGpsCircleInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Qt/utility.h>
@@ -440,15 +442,17 @@ class MainWindow :
   
 private:  
 
-  QGraphicsScene                                           mScene;
-  bool                                                     mCircular_active ;
-  bool                                                     mBlue_active ;
-  Curve_set_container                                      mCurve_sets ;
-  Circular_region_source_container                         mBlue_circular_sources ;
-  Circular_region_source_container                         mRed_circular_sources ;
-  Bezier_region_source_container                           mBlue_bezier_sources ; 
-  Bezier_region_source_container                           mRed_bezier_sources ; 
-  CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>* mBezierInput ;
+  QGraphicsScene                                                mScene;
+  bool                                                          mCircular_active ;
+  bool                                                          mBlue_active ;
+  Curve_set_container                                           mCurve_sets ;
+  Circular_region_source_container                              mBlue_circular_sources ;
+  Circular_region_source_container                              mRed_circular_sources ;
+  Bezier_region_source_container                                mBlue_bezier_sources ; 
+  Bezier_region_source_container                                mRed_bezier_sources ; 
+  CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>*      mBezierInput ;
+  CGAL::Qt::GraphicsViewGpsCircleSegmentInput<Circular_curve>* mCircularInput ;
+  //CGAL::Qt::GraphicsViewGpsCircleInput<Circular_traits>*      mCircleInput ;
     
 public:
 
@@ -487,7 +491,9 @@ public slots:
   void on_actionDeleteBlue_triggered();
   void on_actionDeleteRed_triggered();
   
-  void on_actionInsertPWH_toggled(bool aChecked);
+  void on_actionInsertBezier_toggled  (bool aChecked);
+  void on_actionInsertCircular_toggled(bool aChecked);
+  void on_actionInsertCircle_toggled  (bool aChecked);
   
   void on_checkboxShowBlue_toggled      (bool aChecked) { ToogleView(BLUE_GROUP  ,aChecked); }
   void on_checkboxShowRed_toggled       (bool aChecked) { ToogleView(RED_GROUP   ,aChecked); }
@@ -618,9 +624,13 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   
-  mBezierInput = new CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>(this, &mScene);
+  mBezierInput   = new CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>  (this, &mScene);
+  mCircularInput = new CGAL::Qt::GraphicsViewGpsCircleSegmentInput  <Circular_curve>(this, &mScene);
+  //mCircleInput   = new CGAL::Qt::GraphicsViewCircleInput       <Circular_traits>(this, &mScene);
   
-  QObject::connect(mBezierInput, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
+  QObject::connect(mBezierInput  , SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
+  QObject::connect(mCircularInput, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
+  //QObject::connect(mCircleInput  , SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
 
   QObject::connect(this->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   QObject::connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
@@ -1270,11 +1280,25 @@ void MainWindow::open( QString fileName )
   }  
 }
 
-void MainWindow::on_actionInsertPWH_toggled(bool aChecked)
+void MainWindow::on_actionInsertBezier_toggled(bool aChecked)
 {
   if(aChecked)
        mScene.installEventFilter(mBezierInput);
   else mScene.removeEventFilter (mBezierInput);
+}
+
+void MainWindow::on_actionInsertCircular_toggled(bool aChecked)
+{
+  if(aChecked)
+       mScene.installEventFilter(mCircularInput);
+  else mScene.removeEventFilter (mCircularInput);
+}
+
+void MainWindow::on_actionInsertCircle_toggled(bool aChecked)
+{
+//  if(aChecked)
+//       mScene.installEventFilter(mCircleInput);
+//  else mScene.removeEventFilter (mCircleInput);
 }
 
 void MainWindow::processInput(CGAL::Object o )

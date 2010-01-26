@@ -27,6 +27,9 @@
     <file>icons/diff_QP.xpm</file>
   </qresource>
   <qresource prefix="/cgal/Actions" >
+    <file>icons/insert_bezier.xpm</file>
+  </qresource>
+  <qresource prefix="/cgal/Actions" >
     <file>icons/insert_circle.xpm</file>
   </qresource>
   <qresource prefix="/cgal/Actions" >
