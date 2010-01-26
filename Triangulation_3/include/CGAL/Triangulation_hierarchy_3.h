@@ -21,10 +21,13 @@
 #define CGAL_TRIANGULATION_HIERARCHY_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Random.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 #include <CGAL/Location_policy.h>
+
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/geometric_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -68,8 +71,8 @@ public:
 private:
 
   // here is the stack of triangulations which form the hierarchy
-  Tr_Base*   hierarchy[maxlevel];
-  Random     random; // random generator
+  Tr_Base*       hierarchy[maxlevel];
+  boost::rand48  random;
 
   void set_up_down(Vertex_handle up, Vertex_handle down)
   {
@@ -86,7 +89,7 @@ public:
   template < typename InputIterator >
   Triangulation_hierarchy_3(InputIterator first, InputIterator last,
                             const Geom_traits& traits = Geom_traits())
-    : Tr_Base(traits), random(0L)
+    : Tr_Base(traits)
   {
       hierarchy[0] = this;
       for(int i=1; i<maxlevel; ++i)
@@ -205,7 +208,7 @@ private:
 template <class Tr >
 Triangulation_hierarchy_3<Tr>::
 Triangulation_hierarchy_3(const Geom_traits& traits)
-  : Tr_Base(traits), random(0L)
+  : Tr_Base(traits)
 {
   hierarchy[0] = this;
   for(int i=1;i<maxlevel;++i)
@@ -216,7 +219,7 @@ Triangulation_hierarchy_3(const Geom_traits& traits)
 template <class Tr>
 Triangulation_hierarchy_3<Tr>::
 Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
-    : Tr_Base(tr), random(0L)
+    : Tr_Base(tr)
 {
   hierarchy[0] = this;
   for(int i=1; i<maxlevel; ++i)
@@ -501,11 +504,10 @@ int
 Triangulation_hierarchy_3<Tr>::
 random_level()
 {
-  int l = 0;
-  while ( ! random(ratio) && l < maxlevel-1 )
-    ++l;
+  boost::geometric_distribution<> proba(1.0/ratio);
+  boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
 
-  return l;
+  return std::min(die(), (int)maxlevel)-1;
 }
 
 CGAL_END_NAMESPACE

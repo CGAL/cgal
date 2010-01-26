@@ -41,11 +41,13 @@
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
-#include <CGAL/Random.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Default.h>
 
 #include <boost/bind.hpp>
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_smallint.hpp>
+#include <boost/random/variate_generator.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -214,7 +216,6 @@ protected:
   Tds _tds;
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
-  mutable Random rng;
 
   Comparison_result
   compare_xyz(const Point &p, const Point &q) const
@@ -1569,6 +1570,8 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
           start = start->neighbor(ind_inf);
   }
 
+  boost::rand48 rng;               
+
   switch (dimension()) {
   case 3:
     {
@@ -1585,6 +1588,9 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
       // at the end to decide if p lies on a face/edge/vertex/interior.
       Orientation o[4];
 
+      boost::uniform_smallint<> four(0, 3);
+      boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die4(rng, four);
+
       // Now treat the cell c.
       try_next_cell:
 
@@ -1599,9 +1605,9 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 
         // For the remembering stochastic walk,
         // we need to start trying with a random index :
-	int i = rng.template get_bits<2>();
-        // For the remembering visibility walk (Delaunay only), we don't :
-	// int i = 0;
+        int i = die4();
+        // For the remembering visibility walk (Delaunay and Regular only), we don't :
+        // int i = 0;
 
         for (int j=0; j != 4; ++j, i = (i+1)&3) {
 	    Cell_handle next = c->neighbor(i);
@@ -1675,6 +1681,9 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
       CGAL_triangulation_precondition( ! start->has_vertex(infinite) );
       Cell_handle c = start;
 
+      boost::uniform_smallint<> three(0, 2);
+      boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die3(rng, three);
+
       //first tests whether p is coplanar with the current triangulation
       if ( orientation( c->vertex(0)->point(),
 			c->vertex(1)->point(),
@@ -1699,7 +1708,7 @@ locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	// else c is finite
 	// we test its edges in a random order until we find a
 	// neighbor to go further
-	int i = rng.get_int(0, 3);
+	int i = die3();
 	const Point & p0 = c->vertex( i )->point();
 	const Point & p1 = c->vertex( ccw(i) )->point();
 	const Point & p2 = c->vertex( cw(i) )->point();
