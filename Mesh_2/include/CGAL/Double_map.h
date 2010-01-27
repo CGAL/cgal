@@ -31,6 +31,10 @@
 #  define CGAL_USE_BOOST_BIMAP
 #endif
 
+#if defined(CGAL_USE_BOOST_BIMAP) && BOOST_VERSION == 104100
+#include <CGAL/internal/container_fwd_fixed.hpp>
+#endif
+
 #ifdef CGAL_USE_BOOST_BIMAP
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
