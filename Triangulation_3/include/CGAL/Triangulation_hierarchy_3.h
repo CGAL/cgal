@@ -130,7 +130,6 @@ public:
       int n = number_of_vertices();
 
       std::vector<Point> points (first, last);
-      std::random_shuffle (points.begin(), points.end());
       spatial_sort (points.begin(), points.end(), geom_traits());
 
       // hints[i] is the vertex of the previously inserted point in level i.
