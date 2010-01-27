@@ -48,8 +48,8 @@ message( STATUS "CGAL_MAJOR_VERSION=${CGAL_MAJOR_VERSION}" )
 message( STATUS "CGAL_MINOR_VERSION=${CGAL_MINOR_VERSION}" )
 message( STATUS "CGAL_BUILD_VERSION=${CGAL_BUILD_VERSION}" )
 
-set( CGAL_SONAME_VERSION "4"     CACHE STRING "soname-version" )
-set( CGAL_SOVERSION      "4.0.1" CACHE STRING "soversion" )
+set( CGAL_SONAME_VERSION "5"     CACHE STRING "soname-version" )
+set( CGAL_SOVERSION      "5.0.0" CACHE STRING "soversion" )
 
 mark_as_advanced(CGAL_SONAME_VERSION)
 mark_as_advanced(CGAL_SOVERSION)
