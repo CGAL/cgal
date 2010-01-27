@@ -1303,6 +1303,7 @@ void MainWindow::on_actionInsertCircle_toggled(bool aChecked)
 
 void MainWindow::processInput(CGAL::Object o )
 {
+  Circular_curve lCS ;
   std::pair<Bezier_polygon,Bezier_boundary_source> lBI ;
   
   if(CGAL::assign(lBI, o))
@@ -1319,6 +1320,12 @@ void MainWindow::processInput(CGAL::Object o )
       
       active_bezier_sources().push_back(br);
       
+    }
+  }
+  else if ( CGAL::assign(lCS,o) )
+  {
+    if ( ensure_circular_mode() )
+    {
     }
   }
   modelChanged();  

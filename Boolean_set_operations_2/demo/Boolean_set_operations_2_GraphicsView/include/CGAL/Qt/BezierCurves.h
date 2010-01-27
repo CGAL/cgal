@@ -25,6 +25,8 @@
 #include <CGAL/Qt/BoundaryPiecesGraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
 
+#define USE_CLIPPING
+
 namespace CGAL {
 
 namespace Qt {
@@ -320,7 +322,9 @@ struct Draw_bezier_curve
   }
 } ;
 
-struct _Draw_bezier_X_monotone_curve
+#ifdef USE_CLIPPING
+
+struct Draw_bezier_X_monotone_curve
 {
   template<class Bezier_X_monotone_curve, class Path>
   void operator()( Bezier_X_monotone_curve const& aBXMC, Path& aPath, int aIdx ) const 
@@ -384,6 +388,8 @@ struct _Draw_bezier_X_monotone_curve
   }
 } ;
 
+#else
+
 struct Draw_bezier_X_monotone_curve
 {
   template<class Bezier_X_monotone_curve, class Path>
@@ -414,6 +420,7 @@ struct Draw_bezier_X_monotone_curve
   }
 } ;
 
+#endif
 
 template<class Bezier_boundary_pieces>
 class Bezier_boundary_pieces_graphics_item : public Boundary_pieces_graphics_item<Bezier_boundary_pieces,Draw_bezier_curve,Bezier_bbox>
