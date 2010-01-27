@@ -875,6 +875,27 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T3_0.dimension()==-1);
   assert(T3_0.number_of_vertices()==0);
 
+  // "Determinism" test :
+  // Triangulations built with the same order of input points
+  // must have the same order of the vertex and cell iterator.
+  {
+    Cls Ta (q, q+22), Tb(q, q+22);
+    assert(Ta == Tb);
+    for (Finite_vertices_iterator ita = Ta.finite_vertices_begin(),
+		                  itb = Tb.finite_vertices_begin(),
+		                  end = Ta.finite_vertices_end();
+	 ita != end; ++ita, ++itb)
+      assert(ita->point() == itb->point());
+    for (Finite_cells_iterator ita = Ta.finite_cells_begin(),
+		               itb = Tb.finite_cells_begin(),
+		               end = Ta.finite_cells_end();
+	 ita != end; ++ita, ++itb) {
+      assert(ita->vertex(0)->point() == itb->vertex(0)->point());
+      assert(ita->vertex(1)->point() == itb->vertex(1)->point());
+      assert(ita->vertex(2)->point() == itb->vertex(2)->point());
+      assert(ita->vertex(3)->point() == itb->vertex(3)->point());
+    }
+  }
 }
 
 #endif // CGAL_TEST_CLS_DELAUNAY_C
