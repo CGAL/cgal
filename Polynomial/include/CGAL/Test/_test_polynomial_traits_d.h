@@ -15,7 +15,7 @@
 #include <cmath>
 
 
-CGAL_BEGIN_NAMESPACE;
+namespace CGAL {
 
 
 namespace Test_Pol {
@@ -74,7 +74,7 @@ generate_sparse_random_polynomial(int max_degree = 10){
 
 
 template <class Polynomial_traits_d> class Construct_test_polynomial {
-  CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
+  CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d)
   typedef typename PT::Construct_polynomial Constructor;
 	
 public:
@@ -1823,6 +1823,7 @@ template< class PT >
 void test_polynomial_traits_d(const PT& traits){
   Test_Pol::test_polynomial_traits_d(traits);
 }
-CGAL_END_NAMESPACE;
+
+} // namespace CGAL
 
 #endif 
