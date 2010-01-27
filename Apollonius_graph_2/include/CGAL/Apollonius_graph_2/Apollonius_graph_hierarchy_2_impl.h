@@ -428,15 +428,11 @@ template<class Gt, class Agds, class LTag>
 int
 Apollonius_graph_hierarchy_2<Gt,Agds,LTag>::
 random_level()
-{
-  unsigned int l = 0;
-  while (1) {
-    if ( random(ag_hierarchy_2__ratio) ) break;
-    ++l;
-  }
-  if (l >= ag_hierarchy_2__maxlevel)
-    l = ag_hierarchy_2__maxlevel -1;
-  return l;
+{  
+  boost::geometric_distribution<> proba(1.0/ag_hierarchy_2__ratio);
+  boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
+
+  return (std::min)(die(), (int)ag_hierarchy_2__maxlevel)-1;
 }
 
 template<class Gt, class Agds, class LTag>
