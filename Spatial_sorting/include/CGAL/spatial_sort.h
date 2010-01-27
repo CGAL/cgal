@@ -27,6 +27,11 @@
 
 #include <CGAL/Multiscale_sort.h>
 
+#include <boost/random.hpp>
+#include <boost/random/linear_congruential.hpp>
+
+#include <algorithm>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace internal {
@@ -36,6 +41,10 @@ namespace internal {
                        const Kernel &k, typename Kernel::Point_2 *)
     {
         typedef Hilbert_sort_2<Kernel> Sort;
+
+        boost::random_number_generator<boost::rand48> rng(boost::rand48(0L));
+        std::random_shuffle(begin,end,rng);
+
         (Multiscale_sort<Sort> (Sort (k, 4), 16, 0.25)) (begin, end);
     }
 
@@ -44,6 +53,10 @@ namespace internal {
                        const Kernel &k, typename Kernel::Point_3 *)
     {
         typedef Hilbert_sort_3<Kernel> Sort;
+
+        boost::random_number_generator<boost::rand48> rng(boost::rand48(0L));
+        std::random_shuffle(begin,end, rng);
+
         (Multiscale_sort<Sort> (Sort (k, 8), 64, 0.125)) (begin, end);
     }
 }
