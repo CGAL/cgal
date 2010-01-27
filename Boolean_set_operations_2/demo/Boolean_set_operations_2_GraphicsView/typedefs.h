@@ -46,15 +46,15 @@ typedef Linear_kernel::Point_2 Linear_point ;
 typedef CGAL::Lazy_exact_nt<Base_nt> Coord_type;
 
 
-struct Circular_kernel : public CGAL::Cartesian<Coord_type> {};
+struct Gps_circular_kernel : public CGAL::Cartesian<Coord_type> {};
 
-typedef CGAL::Gps_circle_segment_traits_2<Circular_kernel>   Circular_traits;
-typedef Circular_traits::Curve_2                             Circular_curve;
-typedef Circular_traits::X_monotone_curve_2                  Circular_X_monotone_curve;
-typedef Circular_traits::Point_2                             Circular_point ;
-typedef Circular_traits::Polygon_2                           Circular_polygon;
-typedef CGAL::General_polygon_with_holes_2<Circular_polygon> Circular_polygon_with_holes;
-typedef CGAL::General_polygon_set_2<Circular_traits>         Circular_polygon_set;
+typedef CGAL::Gps_circle_segment_traits_2<Gps_circular_kernel> Circular_traits;
+typedef Circular_traits::Curve_2                               Circular_curve;
+typedef Circular_traits::X_monotone_curve_2                    Circular_X_monotone_curve;
+typedef Circular_traits::Point_2                               Circular_point ;
+typedef Circular_traits::Polygon_2                             Circular_polygon;
+typedef CGAL::General_polygon_with_holes_2<Circular_polygon>   Circular_polygon_with_holes;
+typedef CGAL::General_polygon_set_2<Circular_traits>           Circular_polygon_set;
 
 typedef CGAL::Qt::Circular_set_graphics_item<Circular_polygon_set> Circular_GI;
 

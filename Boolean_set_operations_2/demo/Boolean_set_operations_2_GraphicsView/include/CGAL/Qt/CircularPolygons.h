@@ -35,7 +35,6 @@ struct Circular_X_monotone_bbox
   }
 } ;
 
-#if 0
 struct Circular_bbox
 {
   template<class Circle_segment_2>
@@ -67,9 +66,6 @@ struct Circular_bbox
   }
 } ;
 
-#endif
-    
-    
 struct Draw_circular_X_monotone_curve
 {
   template<class X_monotone_circle_segment_2, class Path>
@@ -157,8 +153,7 @@ struct Draw_circular_X_monotone_curve
   }
 } ;
 
-#if 0
-    
+
 struct Draw_circular_curve
 {
   template<class Circle_segment_2, class Path>
@@ -174,75 +169,56 @@ struct Draw_circular_curve
     
     if ( curve.is_circular() )
     {
-      typename X_monotone_circle_segment_2::Circle_2        const& circ   = curve.supporting_circle();
-      typename X_monotone_circle_segment_2::Kernel::Point_2 const& center = circ.center();
-          
-      if ( curve.is_full() )
+      typename Circle_segment_2::Circle_2        const& circ   = curve.supporting_circle();
+      typename Circle_segment_2::Kernel::Point_2 const& center = circ.center();
+      typename Circle_segment_2::Point_2         const& source = curve.source();
+      typename Circle_segment_2::Point_2         const& target = curve.target();
+
+      double sx = to_double(source.x());
+      double sy = to_double(source.y());
+      double tx = to_double(target.x());
+      double ty = to_double(target.y());
+      double cx = to_double(center.x());
+      double cy = to_double(center.y());
+
+      bool degenerate = ( sx == tx ) && ( sy == ty ) ;
+
+      if ( !degenerate )
       {
-        double cx = to_double(center.x());
-        double cy = to_double(center.y());
-            
-        double rad = std::sqrt( to_double(circ.squared_radius() ) ;
-    
+        double sdy = sy - cy ;
+        double sdx = sx - cx ;
+        double tdy = ty - cy ;
+        double tdx = tx - cx ;
+
+        double asource = std::atan2(sdy, sdx ); 
+        double atarget = std::atan2(tdy, tdx );
+
+        if( asource < 0.0)
+          asource += 2 * CGAL_PI;
+
+        if( atarget <= 0.0)
+          atarget += 2 * CGAL_PI;
+
+        if ( atarget  < asource )
+          atarget += 2 * CGAL_PI;
+
+        double aspan = atarget - asource ;  
+
+        const double to_deg = 180.0/CGAL_PI;
+
+        Orientation lO = curve.orientation() ;
+
         if ( aIdx == 0 ) 
-             aPath.moveTo(cx+rad,cy) ;
-        else aPath.lineTo(cx+rad,cy) ;
+             aPath.moveTo(sx,sy) ;
+        else aPath.lineTo(sx,sy) ;
 
         QRectF bbox = convert(circ.bbox()) ;
 
-        aPath.arcTo(bbox , 0, 360 );    
-      }
-      else
-      {
-        typename X_monotone_circle_segment_2::Point_2 const& source = curve.source();
-        typename X_monotone_circle_segment_2::Point_2 const& target = curve.target();
-            
-        double sx = to_double(source.x());
-        double sy = to_double(source.y());
-        double tx = to_double(target.x());
-        double ty = to_double(target.y());
-        double cx = to_double(center.x());
-        double cy = to_double(center.y());
+        double dasource = std::atan2(-sdy, sdx ) * to_deg ;
 
-        bool degenerate = ( sx == tx ) && ( sy == ty ) ;
+        double daspan  = aspan * to_deg * ( lO == COUNTERCLOCKWISE ? -1.0 : +1.0) ;
 
-        if ( !degenerate )
-        {
-          double sdy = sy - cy ;
-          double sdx = sx - cx ;
-          double tdy = ty - cy ;
-          double tdx = tx - cx ;
-
-          double asource = std::atan2(sdy, sdx ); 
-          double atarget = std::atan2(tdy, tdx );
-
-          if( asource < 0.0)
-            asource += 2 * CGAL_PI;
-
-          if( atarget <= 0.0)
-            atarget += 2 * CGAL_PI;
-
-          if ( atarget  < asource )
-            atarget += 2 * CGAL_PI;
-
-          double aspan = atarget - asource ;  
-
-          const double to_deg = 180.0/CGAL_PI;
-
-          Orientation lO = curve.orientation() ;
-
-          if ( aIdx == 0 ) 
-               aPath.moveTo(sx,sy) ;
-          else aPath.lineTo(sx,sy) ;
-
-          QRectF bbox = convert(circ.bbox()) ;
-
-          double dasource = std::atan2(-sdy, sdx ) * to_deg ;
-
-          double daspan  = aspan * to_deg * ( lO == COUNTERCLOCKWISE ? -1.0 : +1.0) ;
-
-          aPath.arcTo(bbox , dasource, daspan );    
-        }
+        aPath.arcTo(bbox , dasource, daspan );    
       }
     }
     else
@@ -256,12 +232,85 @@ struct Draw_circular_curve
 
       aPath.lineTo( convert( lT ) ) ;
     }
+  }
+} ;
+    
+/*
+struct Draw_circular_curve
+{
+  template<class Circle_segment_2, class Path>
+  void operator()( Circle_segment_2 const& curve, Path& aPath, int aIdx ) const 
+  {
+    if ( !cs_.is_full() )
+    {
+      double sx = to_double(cs_.source().x());
+      double sy = to_double(cs_.source().y());
+      double tx = to_double(cs_.target().x());
+      double ty = to_double(cs_.target().y());
+
+      if( cs_.orientation() == COLLINEAR)
+      {
+        painter->drawLine(sx,sy,tx,ty);
+      }
+      else
+      {
+        double cx = to_double(cs_.supporting_circle().center().x());
+        double cy = to_double(cs_.supporting_circle().center().y());
+
+        double x0, y0, x1, y1 ;
+        if(cs_.orientation() == CLOCKWISE)
+        {
+          x0 = sx ;
+          y0 = sy ;
+          x1 = tx ;
+          y1 = ty ; 
+        }
+        else
+        {
+          x0 = tx ;
+          y0 = ty ;
+          x1 = sx ;
+          y1 = sy ; 
+        }
+        double rad = std::sqrt(CGAL::to_double(cs_.supporting_circle().squared_radius()));
+
+        double a   = std::atan2( y0 - cy, x0 - cx ) ;
+        double a2p = std::atan2( y1 - cy, x1 - cx );
+
+        if (a2p <= a)
+          a2p += 2 * CGAL_PI;
+
+        double alen2 = a2p - a;
+
+        double to_deg = 180 / CGAL_PI ;
+
+        painter->drawArc(cx - rad, cy - rad, 2 * rad, 2 * rad, - a * to_deg * 16, - alen2 * to_deg * 16 );
+      }
+    }
+    else
+    {
+      if( cs_.orientation() != COLLINEAR)
+      {
+        double cx = to_double(cs_.supporting_circle().center().x());
+        double cy = to_double(cs_.supporting_circle().center().y());
+        double rad = std::sqrt(CGAL::to_double(cs_.supporting_circle().squared_radius()));
+        painter->drawArc(cx -rad, cy - rad, 2 * rad, 2 * rad, 0, 360*16);
+      }
+    }
 
   }
 } ;  
+*/
 
-#endif
-    
+template<class Circular_boundary_pieces>
+class Circular_boundary_pieces_graphics_item : public Boundary_pieces_graphics_item<Circular_boundary_pieces,Draw_circular_curve,Circular_bbox>
+{
+  typedef Boundary_pieces_graphics_item<Circular_boundary_pieces,Draw_circular_curve,Circular_bbox> Base ;
+  
+public :
+
+  Circular_boundary_pieces_graphics_item( Circular_boundary_pieces* aPieces ) : Base(aPieces) {}
+} ;
     
 template<class Circular_boundary>
 class Circular_boundary_graphics_item : public Piecewise_boundary_graphics_item<Circular_boundary,Draw_circular_X_monotone_curve,Circular_X_monotone_bbox>

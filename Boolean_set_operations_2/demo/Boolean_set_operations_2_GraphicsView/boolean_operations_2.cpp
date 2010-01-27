@@ -84,7 +84,7 @@ void trace( std::string s )
 #include <CGAL/Qt/BezierCurves.h>
 #include <CGAL/Qt/CircularPolygons.h>
 #include <CGAL/Qt/GraphicsViewBezierPolygonInput.h>
-#include <CGAL/Qt/GraphicsViewGpsCircleSegmentInput.h>
+#include <CGAL/Qt/GraphicsViewCircularPolygonInput.h>
 //#include <CGAL/Qt/GraphicsViewGpsCircleInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -442,16 +442,17 @@ class MainWindow :
   
 private:  
 
-  QGraphicsScene                                                mScene;
-  bool                                                          mCircular_active ;
-  bool                                                          mBlue_active ;
-  Curve_set_container                                           mCurve_sets ;
-  Circular_region_source_container                              mBlue_circular_sources ;
-  Circular_region_source_container                              mRed_circular_sources ;
-  Bezier_region_source_container                                mBlue_bezier_sources ; 
-  Bezier_region_source_container                                mRed_bezier_sources ; 
-  CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>*      mBezierInput ;
-  CGAL::Qt::GraphicsViewGpsCircleSegmentInput<Circular_curve>* mCircularInput ;
+  QGraphicsScene                                                   mScene;
+  bool                                                             mCircular_active ;
+  bool                                                             mBlue_active ;
+  Curve_set_container                                              mCurve_sets ;
+  Circular_region_source_container                                 mBlue_circular_sources ;
+  Circular_region_source_container                                 mRed_circular_sources ;
+  Bezier_region_source_container                                   mBlue_bezier_sources ; 
+  Bezier_region_source_container                                   mRed_bezier_sources ; 
+  CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>*         mBezierInput ;
+  CGAL::Qt::GraphicsViewCircularPolygonInput<Gps_circular_kernel>* mCircularInput ;
+  //CGAL::Qt::GraphicsViewGpsCircleSegmentInput<Circular_curve>* mCircularInput ;
   //CGAL::Qt::GraphicsViewGpsCircleInput<Circular_traits>*      mCircleInput ;
     
 public:
@@ -624,8 +625,8 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   
-  mBezierInput   = new CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>  (this, &mScene);
-  mCircularInput = new CGAL::Qt::GraphicsViewGpsCircleSegmentInput  <Circular_curve>(this, &mScene);
+  mBezierInput   = new CGAL::Qt::GraphicsViewBezierPolygonInput  <Bezier_traits>      (this, &mScene);
+  mCircularInput = new CGAL::Qt::GraphicsViewCircularPolygonInput<Gps_circular_kernel>(this, &mScene);
   //mCircleInput   = new CGAL::Qt::GraphicsViewCircleInput       <Circular_traits>(this, &mScene);
   
   QObject::connect(mBezierInput  , SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
@@ -682,7 +683,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 Circular_polygon linear_2_circ( Linear_polygon const& pgn )
 {
-  CGAL::Cartesian_converter<Linear_kernel,Circular_kernel> convert ;
+  CGAL::Cartesian_converter<Linear_kernel,Gps_circular_kernel> convert ;
   
   Circular_polygon rCP;
   
@@ -753,7 +754,7 @@ bool read_dxf ( QString aFileName, Circular_polygon_set& rSet, Circular_region_s
 
   if ( in_file )
   {
-    CGAL::Dxf_bsop_reader<Circular_kernel>   reader;
+    CGAL::Dxf_bsop_reader<Gps_circular_kernel>   reader;
     std::vector<Circular_polygon>            circ_polygons;
     std::vector<Circular_polygon_with_holes> circ_polygons_with_holes;
     
