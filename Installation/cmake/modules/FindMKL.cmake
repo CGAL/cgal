@@ -183,7 +183,7 @@ else()
       MKL
       SGEMM
       ""
-      "mkl_solver_lp64;mkl_intel_lp64;mkl_intel_thread_lp64;mkl_core;libiomp5md"
+      "mkl_solver_lp64;mkl_intel_lp64;mkl_intel_thread;mkl_core;libiomp5md"
       #"mkl_solver_ilp64_sequential;mkl_intel_ilp64;mkl_sequential;mkl_core"
       "${MKL_LIB_DIR}"
       )
@@ -210,7 +210,7 @@ else()
       MKL
       sgemm
       ""
-      "mkl_solver_lp64;mkl_intel_lp64;mkl_intel_thread_lp64;mkl_core;iomp5;pthread"
+      "mkl_solver_lp64;mkl_intel_lp64;mkl_intel_thread;mkl_core;iomp5;pthread"
       "${MKL_LIB_DIR}"
       )
     endif()

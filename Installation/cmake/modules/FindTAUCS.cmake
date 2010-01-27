@@ -37,7 +37,6 @@ elseif (TAUCS_INCLUDE_DIR AND TAUCS_LIBRARIES)
 else()
 
   # reset variables
-  set( TAUCS_INCLUDE_DIR "" )
   set( TAUCS_DEFINITIONS "" ) # unused (yet)
   set( TAUCS_LIBRARIES "" )
   set( TAUCS_LIBRARIES_DIR "" )
