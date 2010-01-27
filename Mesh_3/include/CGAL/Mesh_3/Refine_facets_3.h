@@ -32,7 +32,7 @@
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
-#include <boost/tuple/tuple.hpp>
+#include <CGAL/tuple.h>
 #include <sstream>
 
 namespace CGAL {
@@ -179,7 +179,7 @@ private:
   typedef typename Gt::Ray_3 Ray_3;
   typedef typename Gt::Line_3 Line_3;
 
-  typedef typename boost::optional<boost::tuple<Surface_index, Index, Point> >
+  typedef typename boost::optional<CGAL::cpp0x::tuple<Surface_index, Index, Point> >
                                                                Facet_properties;
 
 private:
@@ -601,9 +601,9 @@ treat_new_facet(Facet& facet)
   Facet_properties properties = compute_facet_properties(facet);
   if ( properties )
   {
-    const Surface_index& surface_index = boost::get<0>(*properties);
-    const Index& surface_center_index = boost::get<1>(*properties);
-    const Point& surface_center = boost::get<2>(*properties);
+    const Surface_index& surface_index = CGAL::cpp0x::get<0>(*properties);
+    const Index& surface_center_index = CGAL::cpp0x::get<1>(*properties);
+    const Point& surface_center = CGAL::cpp0x::get<2>(*properties);
 
     // Facet is on surface: set facet properties
     set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -677,9 +677,9 @@ compute_facet_properties(const Facet& facet) const
       }
 
       Intersection intersect = construct_intersection(segment);
-      return Facet_properties(boost::make_tuple(*surface,
-                                                boost::get<1>(intersect),
-                                                boost::get<0>(intersect)));
+      return Facet_properties(CGAL::cpp0x::make_tuple(*surface,
+                                                CGAL::cpp0x::get<1>(intersect),
+                                                CGAL::cpp0x::get<0>(intersect)));
     }
   }
   // If the dual is a ray
@@ -700,9 +700,9 @@ compute_facet_properties(const Facet& facet) const
           r_oracle_.construct_intersection_object();
 
       Intersection intersect = construct_intersection(*p_ray);
-      return Facet_properties(boost::make_tuple(*surface,
-                                                boost::get<1>(intersect),
-                                                boost::get<0>(intersect)));
+      return Facet_properties(CGAL::cpp0x::make_tuple(*surface,
+                                                CGAL::cpp0x::get<1>(intersect),
+                                                CGAL::cpp0x::get<0>(intersect)));
     }
   }
   // If the dual is a line
@@ -727,9 +727,9 @@ compute_facet_properties(const Facet& facet) const
       }
 
       Intersection intersect = construct_intersection(line);
-      return Facet_properties(boost::make_tuple(*surface,
-                                                boost::get<1>(intersect),
-                                                boost::get<0>(intersect)));
+      return Facet_properties(CGAL::cpp0x::make_tuple(*surface,
+                                                CGAL::cpp0x::get<1>(intersect),
+                                                CGAL::cpp0x::get<0>(intersect)));
     }
   }
   else

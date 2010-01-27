@@ -5,14 +5,14 @@
 #include <numeric> // std::accumulate
 #include <cmath> // arcsin
 
-#include <boost/tuple/tuple.hpp>
+#include <CGAL/tuple.h>
 
 #include "lanteri_process_results.h"
 #include <CGAL/min_dihedral_angle.h>
 
 template <typename Iterator> // better be RandomAccessIterator, because
                           // std::distance() is used
-boost::tuple<
+CGAL::cpp0x::tuple<
   typename std::iterator_traits<Iterator>::value_type,
   typename std::iterator_traits<Iterator>::value_type,
   typename std::iterator_traits<Iterator>::value_type,
@@ -40,7 +40,7 @@ compute_max_min_sum_size(Iterator begin, Iterator end)
 
   const size_type size = std::distance(begin, end);
 
-	return boost::make_tuple(maximum, minimum,  sum, size);
+	return CGAL::cpp0x::make_tuple(maximum, minimum,  sum, size);
 }
 
 void output_legend(std::ostream* out_stream = &std::cout, std::string prefix = "")
