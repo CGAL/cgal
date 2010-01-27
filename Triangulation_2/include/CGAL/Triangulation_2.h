@@ -38,9 +38,11 @@
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Triangulation_line_face_circulator_2.h>
-#include <CGAL/Random.h>
-
 #include <CGAL/spatial_sort.h>
+
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_smallint.hpp>
+#include <boost/random/variate_generator.hpp>
 
 CGAL_BEGIN_NAMESPACE
 template < class Gt, class Tds > class Triangulation_2;
@@ -179,7 +181,6 @@ protected:
   Gt  _gt;
   Tds _tds;
   Vertex_handle _infinite_vertex;
-  mutable Random rng;
 
 public:
   // CONSTRUCTORS
@@ -437,7 +438,6 @@ int insert(InputIterator first, InputIterator last)
   int n = number_of_vertices();
 
   std::vector<Point> points (first, last);
-  std::random_shuffle (points.begin(), points.end());
   spatial_sort (points.begin(), points.end(), geom_traits());
   Face_handle f;
   for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
@@ -1813,6 +1813,11 @@ march_locate_2D(Face_handle c,
 {
   CGAL_triangulation_assertion(! is_infinite(c));
   
+  boost::rand48 rng;
+
+  boost::uniform_smallint<> two(0, 1);
+  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > coin(rng, two);
+
   Face_handle prev = Face_handle();
   bool first = true;
   while (1) {
@@ -1832,7 +1837,7 @@ march_locate_2D(Face_handle c,
     // We do loop unrolling in order to find out if this is faster.
     // In the very beginning we do not have a prev, but for the first step 
     // we do not need randomness
-    int left_first = rng.template get_bits<1>();
+    int left_first = coin()%2;
     
     const Point & p0 = c->vertex( 0 )->point();
     const Point & p1 = c->vertex( 1 )->point();
@@ -1985,7 +1990,10 @@ march_locate_2D(Face_handle c,
 		int& li) const
 {
   CGAL_triangulation_assertion(! is_infinite(c));
-  
+
+  boost::uniform_smallint<> three(0, 2);
+  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die3(rng, three);  
+
   Face_handle prev = Face_handle();
   while (1) {
     if ( is_infinite(c) ) {
@@ -1999,7 +2007,7 @@ march_locate_2D(Face_handle c,
     // we test its edges in a random order until we find a
     // neighbor to go further
 
-    int i = rng.template get_bits<2>();
+    int i = die3();
     int ccwi = ccw(i);
     int cwi = cw(i);
     const Point & p0 = c->vertex( i )->point();

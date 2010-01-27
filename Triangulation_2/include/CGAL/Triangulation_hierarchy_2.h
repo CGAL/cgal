@@ -22,9 +22,12 @@
 #define CGAL_TRIANGULATION_HIERARCHY_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Random.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 #include <map>
+
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/geometric_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -60,7 +63,7 @@ class Triangulation_hierarchy_2
  private:
   // here is the stack of triangulations which form the hierarchy
   Tr_Base*   hierarchy[Triangulation_hierarchy_2__maxlevel];
-  Random random; // random generator
+  boost::rand48  random;
 
 public:
   Triangulation_hierarchy_2(const Geom_traits& traits = Geom_traits());
@@ -69,7 +72,7 @@ public:
   template<class InputIterator>
   Triangulation_hierarchy_2(InputIterator first, InputIterator beyond,
 			    const Geom_traits& traits = Geom_traits())
-    : Tr_Base(traits), random((long)0)
+    : Tr_Base(traits)
   { 
     hierarchy[0] = this; 
     for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
@@ -102,7 +105,6 @@ public:
       int n = this->number_of_vertices();
 
       std::vector<Point> points (first, last);
-      std::random_shuffle (points.begin(), points.end());
       CGAL::spatial_sort (points.begin(), points.end(), geom_traits());
 
       // hints[i] is the face of the previously inserted point in level i.
@@ -205,7 +207,7 @@ private:
 template <class Tr >
 Triangulation_hierarchy_2<Tr>::
 Triangulation_hierarchy_2(const Geom_traits& traits)
-  : Tr_Base(traits), random((long)0)
+  : Tr_Base(traits)
 { 
   hierarchy[0] = this; 
   for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
@@ -217,7 +219,7 @@ Triangulation_hierarchy_2(const Geom_traits& traits)
 template <class Tr>
 Triangulation_hierarchy_2<Tr>::
 Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Tr> &tr)
-    : Tr_Base(), random((long)0)
+    : Tr_Base()
 { 
   // create an empty triangulation to be able to delete it !
   hierarchy[0] = this; 
@@ -564,16 +566,14 @@ int
 Triangulation_hierarchy_2<Tr>::
 random_level()
 {
-  int l = 0;
-  while (1) {
-    if ( random(Triangulation_hierarchy_2__ratio) ) break;
-    ++l;
-  }
-  if (l >= Triangulation_hierarchy_2__maxlevel)
-    l = Triangulation_hierarchy_2__maxlevel -1;
-  return l;
+  boost::geometric_distribution<> proba(1.0/Triangulation_hierarchy_2__ratio);
+  boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
+
+  return (std::min)(die(), Triangulation_hierarchy_2__maxlevel)-1;
+
 }
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_TRIANGULATION_HIERARCHY_2_H
+

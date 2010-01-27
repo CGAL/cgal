@@ -22,7 +22,9 @@
 
 #include <map>
 
-#include <CGAL/Random.h>
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/geometric_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
@@ -200,7 +202,7 @@ private:
   // class variables
   // here is the stack of graphs which form the hierarchy
   Apollonius_graph_base*   hierarchy[ag_hierarchy_2__maxlevel];
-  Random random; // random generator
+  boost::rand48  random; // random generator
 
 public:
   template<class OutputItFaces, class OutputItBoundaryEdges,

@@ -187,7 +187,6 @@ public:
       int n = number_of_vertices();
 
       std::vector<Point> points (first, last);
-      std::random_shuffle (points.begin(), points.end());
       spatial_sort (points.begin(), points.end(), geom_traits());
       Face_handle f;
       for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
