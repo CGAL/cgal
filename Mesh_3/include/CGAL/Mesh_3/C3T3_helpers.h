@@ -413,7 +413,7 @@ private:
         typename MeshDomain::Construct_intersection intersection =
           domain_.construct_intersection_object();
         
-        Point_3 surface_center = boost::get<0>(intersection(dual));
+        Point_3 surface_center = CGAL::cpp0x::get<0>(intersection(dual));
         facet.first->set_facet_surface_center(facet.second,surface_center);
         
         // Update status in c3t3 
@@ -1111,7 +1111,7 @@ project_on_surface_aux(const Point_3& p,
     return ref_point;
   
   if ( do_intersect(proj_segment) )
-    return boost::get<0>(intersection(proj_segment));
+    return CGAL::cpp0x::get<0>(intersection(proj_segment));
   else
     return ref_point;  
 }

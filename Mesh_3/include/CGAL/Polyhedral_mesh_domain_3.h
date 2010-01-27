@@ -38,7 +38,7 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
-#include <boost/tuple/tuple.hpp>
+#include <CGAL/tuple.h>
 #include <boost/format.hpp>
 
 namespace CGAL {
@@ -92,7 +92,7 @@ public:
   /// complex on which a vertex lie
   typedef boost::variant<Subdomain_index, Surface_index> Index;
 
-  typedef boost::tuple<Point_3,Index,int> Intersection;
+  typedef CGAL::cpp0x::tuple<Point_3,Index,int> Intersection;
 
 
   typedef typename IGT::FT         FT;
