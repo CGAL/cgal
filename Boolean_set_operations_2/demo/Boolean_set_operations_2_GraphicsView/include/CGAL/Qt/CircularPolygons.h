@@ -208,6 +208,9 @@ struct Draw_circular_curve
 
         Orientation lO = curve.orientation() ;
 
+        if ( lO == CLOCKWISE )
+          aspan = 2.0 * CGAL_PI - aspan ;
+ 
         if ( aIdx == 0 ) 
              aPath.moveTo(sx,sy) ;
         else aPath.lineTo(sx,sy) ;

@@ -156,11 +156,6 @@ namespace Qt {
       
       switch (mState)
       {
-//        case PieceStarted:
-//          mState   = FirstHandleOngoing;
-//          rHandled = true;
-//          break;
-          
         case PieceOngoing: 
           mP1 = lP;
           UpdateOngoingPiece();
