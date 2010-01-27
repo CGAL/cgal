@@ -25,6 +25,11 @@
 #include <CGAL/Hilbert_sort_2.h>
 #include <CGAL/Hilbert_sort_3.h>
 
+#include <boost/random.hpp>
+#include <boost/random/linear_congruential.hpp>
+
+#include <algorithm>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace internal {
@@ -33,6 +38,8 @@ namespace internal {
     void hilbert_sort (RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, typename Kernel::Point_2 *)
     {
+        boost::random_number_generator<boost::rand48> rng(boost::rand48(0L));
+        std::random_shuffle(begin,end, rng);
         (Hilbert_sort_2<Kernel> (k)) (begin, end);
     }
 
@@ -40,6 +47,8 @@ namespace internal {
     void hilbert_sort (RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, typename Kernel::Point_3 *)
     {
+        boost::random_number_generator<boost::rand48> rng(boost::rand48(0L));
+        std::random_shuffle(begin,end, rng);
         (Hilbert_sort_3<Kernel> (k)) (begin, end);
     }
 }
