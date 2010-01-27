@@ -1,4 +1,4 @@
-e#! /bin/sh
+#! /bin/sh
 
 #
 # This script is a modified version of cgal_test_with_cmake which:
@@ -83,7 +83,7 @@ can_compile()
         fi
         ;;
     * ) # if make or nmake
-        if ${MAKE_CMD} help | grep "$1" > /dev/null; then
+        if ${MAKE_CMD} help | grep "$1\$" > /dev/null; then
           echo y
         else
           echo n
