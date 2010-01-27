@@ -248,7 +248,6 @@ public:
       int n = number_of_vertices(); 
 
       std::vector<Point> points (first, last);
-      std::random_shuffle (points.begin(), points.end());
       CGAL::spatial_sort (points.begin(), points.end(), geom_traits());
 
       Face_handle hint;

@@ -204,7 +204,6 @@ public:
 
     std::vector<Point> points (first, last);
 
-    std::random_shuffle (points.begin(), points.end());
     spatial_sort (points.begin(), points.end(), geom_traits());
 
     Face_handle hint;
