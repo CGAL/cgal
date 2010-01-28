@@ -38,7 +38,8 @@ namespace internal {
     void hilbert_sort (RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, typename Kernel::Point_2 *)
     {
-        boost::random_number_generator<boost::rand48> rng(boost::rand48(0L));
+        boost::rand48 random;
+        boost::random_number_generator<boost::rand48> rng(random);
         std::random_shuffle(begin,end, rng);
         (Hilbert_sort_2<Kernel> (k)) (begin, end);
     }
@@ -47,7 +48,8 @@ namespace internal {
     void hilbert_sort (RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, typename Kernel::Point_3 *)
     {
-        boost::random_number_generator<boost::rand48> rng(boost::rand48(0L));
+        boost::rand48 random;
+        boost::random_number_generator<boost::rand48> rng(random);
         std::random_shuffle(begin,end, rng);
         (Hilbert_sort_3<Kernel> (k)) (begin, end);
     }

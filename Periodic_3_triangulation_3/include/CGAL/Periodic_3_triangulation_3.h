@@ -32,6 +32,9 @@
 #include <list>
 
 #include <boost/tuple/tuple.hpp>
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_smallint.hpp>
+#include <boost/random/variate_generator.hpp>
 
 #include <CGAL/triangulation_assertions.h>
 
@@ -43,7 +46,6 @@
 
 #include <CGAL/Periodic_3_triangulation_iterators_3.h>
 
-#include <CGAL/Random.h>
 #include <CGAL/Unique_hash_map.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -178,7 +180,6 @@ private:
   Geometric_traits  _gt;
   Triangulation_data_structure _tds; 
   Iso_cuboid _domain;
-  mutable Random rng;
   /// This threshold should be chosen such that if all edges are shorter,
   /// we can be sure that there are no self-edges anymore.
   FT edge_length_threshold;
@@ -1510,12 +1511,16 @@ Periodic_3_triangulation_3<GT,TDS>::locate(const Point & p, const Offset &o_p,
   // at the end to decide if p lies on a face/edge/vertex/interior.
   Orientation o[4];
   
+  boost::rand48 rng;      
+  boost::uniform_smallint<> four(0, 3);
+  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die4(rng, four);
+
   
   // Now treat the cell c.
 try_next_cell:
   // For the remembering stochastic walk,
   // we need to start trying with a random index :
-  int i = rng.template get_bits<2>();
+  int i = die4();
   // For the remembering visibility walk (Delaunay only), we don't :
   // int i = 0;
 
