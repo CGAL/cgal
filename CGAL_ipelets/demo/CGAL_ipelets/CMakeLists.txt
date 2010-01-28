@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.4.5)
 
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
 #path where to build libraries
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY .build/ipelets)
 
