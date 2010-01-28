@@ -19,7 +19,6 @@
 
 #include "assertions.cpp"
 #include "Bbox_2_intersections.cpp"
-#include "Bbox_3_intersections.cpp"
 #include "Color.cpp"
 #include "File_header_extended_OFF.cpp"
 #include "File_header_OFF.cpp"

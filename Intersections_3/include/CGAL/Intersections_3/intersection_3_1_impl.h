@@ -523,7 +523,7 @@ intersection(const typename K::Line_3 &line,
     typedef typename K::Direction_3 Direction_3;
     const Point_3 &linepoint = line.point();
     const Direction_3 &linedir = line.direction();
-    return intersection_bl(box,
+    return intersection_bl<K>(box,
         CGAL::to_double(linepoint.x()),
         CGAL::to_double(linepoint.y()),
         CGAL::to_double(linepoint.z()),
@@ -556,7 +556,7 @@ intersection(const typename K::Ray_3 &ray,
     typedef typename K::Direction_3 Direction_3;
     const Point_3 &linepoint = ray.source();
     const Direction_3 &linedir = ray.direction();
-    return intersection_bl(box,
+    return intersection_bl<K>(box,
         CGAL::to_double(linepoint.x()),
         CGAL::to_double(linepoint.y()),
         CGAL::to_double(linepoint.z()),
@@ -590,7 +590,7 @@ intersection(const typename K::Segment_3 &seg,
     typedef typename K::Vector_3 Vector_3;
     const Point_3 &linepoint = seg.source();
     const Vector_3 &diffvec = seg.target()-linepoint;
-    return intersection_bl(box,
+    return intersection_bl<K>(box,
         CGAL::to_double(linepoint.x()),
         CGAL::to_double(linepoint.y()),
         CGAL::to_double(linepoint.z()),
