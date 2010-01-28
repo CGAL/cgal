@@ -34,30 +34,28 @@ CGAL_BEGIN_NAMESPACE
 // Its essentially a copy of the function that was in Bbox_3_intersections.cpp
 // But it must be a template function since the original kernel must be 
 // taken into account. (Michael.Hemmer@sophia.inria.fr)
-template <class R_cd> 
+template <class K> 
 Object
 intersection_bl(const Bbox_3 &box,
         double lpx, double lpy, double lpz,
         double ldx, double ldy, double ldz,
         bool min_infinite, bool max_infinite)
 {
-  Point_3<R_cd> ref_point(lpx,lpy, lpz);
-  Vector_3<R_cd> dir(ldx, ldy, ldz);
   double seg_min = 0.0, seg_max = 1.0;
-// first on x value
-  if (dir.x() == 0.0) { 
-    if (ref_point.x() < box.xmin())
+  // first on x value
+  if (ldx == 0.0) { 
+    if (lpx < box.xmin())
       return Object();
-    if (ref_point.x() > box.xmax())
+    if (lpx > box.xmax())
       return Object();
   } else {
     double newmin, newmax;
-    if (dir.x() > 0.0) {
-      newmin = (box.xmin()-ref_point.x())/dir.x();
-      newmax = (box.xmax()-ref_point.x())/dir.x();
+    if (ldx > 0.0) {
+      newmin = (box.xmin()-lpx)/ldx;
+      newmax = (box.xmax()-lpx)/ldx;
     } else {
-      newmin = (box.xmax()-ref_point.x())/dir.x();
-      newmax = (box.xmin()-ref_point.x())/dir.x();
+      newmin = (box.xmax()-lpx)/ldx;
+      newmax = (box.xmin()-lpx)/ldx;
     }
     if (min_infinite) {
       min_infinite = false;
@@ -77,19 +75,19 @@ intersection_bl(const Bbox_3 &box,
       return Object();
   }
 // now on y value
-  if (dir.y() == 0.0) {
-    if (ref_point.y() < box.ymin())
+  if (ldy == 0.0) {
+    if (lpy < box.ymin())
       return Object();
-    if (ref_point.y() > box.ymax())
+    if (lpy > box.ymax())
       return Object();
   } else {
     double newmin, newmax;
-    if (dir.y() > 0.0) {
-      newmin = (box.ymin()-ref_point.y())/dir.y();
-      newmax = (box.ymax()-ref_point.y())/dir.y();
+    if (ldy > 0.0) {
+      newmin = (box.ymin()-lpy)/ldy;
+      newmax = (box.ymax()-lpy)/ldy;
     } else {
-      newmin = (box.ymax()-ref_point.y())/dir.y();
-      newmax = (box.ymin()-ref_point.y())/dir.y();
+      newmin = (box.ymax()-lpy)/ldy;
+      newmax = (box.ymin()-lpy)/ldy;
     }
     if (min_infinite) {
       min_infinite = false;
@@ -109,19 +107,19 @@ intersection_bl(const Bbox_3 &box,
       return Object();
   }
 // now on z value
-  if (dir.z() == 0.0) {
-    if (ref_point.z() < box.zmin())
+  if (ldz == 0.0) {
+    if (lpz < box.zmin())
       return Object();
-    if (ref_point.z() > box.zmax())
+    if (lpz > box.zmax())
       return Object();
   } else {
     double newmin, newmax;
-    if (dir.z() > 0.0) {
-      newmin = (box.zmin()-ref_point.z())/dir.z();
-      newmax = (box.zmax()-ref_point.z())/dir.z();
+    if (ldz > 0.0) {
+      newmin = (box.zmin()-lpz)/ldz;
+      newmax = (box.zmax()-lpz)/ldz;
     } else {
-      newmin = (box.zmax()-ref_point.z())/dir.z();
-      newmax = (box.zmin()-ref_point.z())/dir.z();
+      newmin = (box.zmax()-lpz)/ldz;
+      newmax = (box.zmin()-lpz)/ldz;
     }
     if (min_infinite) {
       min_infinite = false;
@@ -145,10 +143,19 @@ intersection_bl(const Bbox_3 &box,
     CGAL_kernel_assertion_msg(true,
         "Zero direction vector of line detected.");
   }
+
+  typedef typename K::FT FT;
+  typedef typename K::Point_3 Point_3;   
+  typedef typename K::Vector_3  Vector_3; 
+  typedef typename K::Segment_3 Segment_3; 
+  
+  Point_3 ref_point = Point_3( FT(lpx), FT(lpy), FT(lpz));
+  Vector_3 dir = Vector_3( FT(ldx), FT(ldy), FT(ldz));
+  
   if (seg_max == seg_min)
-    return make_object(ref_point + dir*seg_max);
-  return make_object(Segment_3<R_cd>(
-                         ref_point + dir*seg_min, ref_point + dir*seg_max));
+    return make_object(ref_point + dir * FT(seg_max));
+  return make_object(
+      Segment_3(ref_point + dir*FT(seg_min), ref_point + dir*FT(seg_max))); 
 }
 
 
