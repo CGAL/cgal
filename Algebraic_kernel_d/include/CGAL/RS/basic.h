@@ -40,7 +40,7 @@
 #define CGAL_RS_MIN_PREC        0
 #endif
 
-#if ( defined CGAL_HAS_THREADS and !defined CGAL_RS_NO_TLS )
+#if ( defined CGAL_HAS_THREADS && !defined CGAL_RS_NO_TLS )
 #  ifdef _MSC_VER
 #    ifdef _WINDLL
 #      error "Can't build CGAL_RS as thread safe."
