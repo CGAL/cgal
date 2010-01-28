@@ -14,15 +14,41 @@ and how to alter the failure behavior.
 
 \input{Preliminaries/thirdparty}
 
-\section{Marking of Advanced Features}
+
+\section{Marking of Special Functionality}
 
 In this manual you will encounter sections marked as follows.
 
+\subsection{Advanced Features}
+
+Some functionality is considered more advanced, for example because it is
+relatively low-level, or requires special care to be properly used.
+
 \begin{ccAdvanced}
-Some functionality is considered more advanced.
-Such functionality is described in sections such as this one that are bounded 
+Such functionality is described in blocks such as this one that are bounded 
 by horizontal brackets.
 \end{ccAdvanced}
+
+\subsection{Deprecated Code}
+
+Sometimes, the \cgal\ project decides that a feature is deprecated.  This means
+that it still works in the current release, but it will be removed in the next,
+or a subsequent release.  This can happen when we have found a better way to do
+something, and we would like to reduce the maintenance cost of \cgal\ at some
+point in the future.  There is a trade-off between maintaining backward
+compatibility and implementing new features more easily.
+
+In order to help users manage the changes to apply to their code, we attempt
+to make \cgal\ code emit warnings when deprecated code is used.  This can be
+done using some compiler specific features.  Those warnings can be disabled
+by defining the macro \ccc{CGAL_NO_DEPRECATION_WARNINGS}.  On top of this, we
+also provide a macro, \ccc{CGAL_NO_DEPRECATED_CODE}, which, when defined,
+disables all deprecated features.  This allows users to easily test if their
+code relies on deprecated features.
+
+\begin{ccDeprecated}
+Deprecated functionality is identified this way in the manual.
+\end{ccDeprecated}
 
 
 \section{Namespace CGAL}
@@ -30,9 +56,9 @@ by horizontal brackets.
 All names introduced by \cgal, especially those documented in these
 manuals, are in a namespace called \ccc{CGAL}, which is in global
 scope. A user can either qualify names from \cgal\ by adding
-\ccc{CGAL::}, e.g., \ccc{CGAL::Point_2< CGAL::Homogeneous< int> >},
+\ccc{CGAL::}, e.g., \ccc{CGAL::Point_2< CGAL::Exact_predicates_inexact_constructions_kernel >},
 make a single name from \cgal\ visible in a scope via a \ccc{using}
-statement, e.g., \ccc{using CGAL::Cartesian;}, and then use this name
+statement, e.g., \ccc{using CGAL::Point_2;}, and then use this name
 unqualified in this scope, or even make all names from namespace
 \ccc{CGAL} visible in a scope with \ccc{using namespace CGAL;}. The
 latter, however, is likely to give raise to name conflicts and is
@@ -48,39 +74,38 @@ programs (or \ccc{CGAL/Cartesian.h}, or \ccc{CGAL/Homogeneous.h}, since they
 include \ccc{CGAL/basic.h} first).
 
 
+\section{Thread Safety}
+
+\cgal\ is progressively being made thread-safe.  The guidelines which are followed
+are:
+\begin{itemize}
+\item it should be possible to use different objects in different threads at
+the same time (of the same type or not),
+\item it is not safe to access the same object from different threads
+at the same time, unless otherwise specified in the class documentation.
+\end{itemize}
+
+If the macro \ccc{CGAL_HAS_THREADS} is not defined, then \cgal\ assumes it can use
+any thread-unsafe code (such as static variables).  By default, this macro is not
+defined, unless \ccc{BOOST_HAS_THREADS} or \ccc{_OPENMP} is defined.  It is possible
+to force its definition on the command line, and it is possible to prevent its default
+definition by setting \ccc{CGAL_HAS_NO_THREADS} from the command line.
 
 
+\section{C++0x Support}
+
+\cgal\ is based on the \CC\ standard released in 1998 (and later refined in 2003).
+A new major version of this standard is being prepared, and is refered to as C++0x.
+Some compilers and standard library implementations already provide some of the
+functionality of this new standard, as a preview.  For example, \gcc\ provides
+a command-line switch \ccc{-std=c++0x} which enables some of those features.
+
+\cgal\ attempts to support this mode progressively, and already makes use of
+some of these features if they are available, although no extensive support has
+been implemented yet.
 
 
-\section{Compile-time Flags to Control Inlining}
-\ccIndexMainItem{code optimization}
-\ccIndexMainItem{inlining}
-\ccIndexMainItem{\tt inline}
-
-Making functions inlined can, at times, improve the efficiency of your code.
-However this is not always the case and it can differ for a single function
-depending on the application in which it is used. Thus \cgal\ defines a set 
-of compile-time macros that can be used to control whether certain functions 
-are designated as inlined functions or not.  The following table lists the 
-macros and their default values, which are set in one of the \cgal\ include
-files.  
-
-\begin{tabular}{l|l}
-               macro name        & default \\ \hline
-\ccc{CGAL_KERNEL_INLINE}         & inline \\
-\ccc{CGAL_KERNEL_MEDIUM_INLINE}  &  \\
-\ccc{CGAL_KERNEL_LARGE_INLINE}   &  \\
-\ccc{CGAL_MEDIUM_INLINE}         & inline \\
-\ccc{CGAL_LARGE_INLINE}          &  \\
-\ccc{CGAL_HUGE_INLINE}           & 
-\end{tabular}
-
-If you wish to change the value of one or more of these macros,
-you can simply give it a new value when compiling.  For example, to make
-functions that use the macro \ccc{CGAL_KERNEL_MEDIUM_INLINE} inline functions,
-you should set the value of this macro to \texttt{inline} instead of the
-default blank. 
-
+\input{Preliminaries/checks} % extra chapter
 
 
 \section{Identifying the Version of CGAL\label{sec:cgal_version}}
@@ -116,43 +141,37 @@ Every release of \cgal\ defines the following preprocessor macros:
 \end{description}
  
 
-\section{Thread Safety}
+\begin{ccAdvanced}
+\section{Compile-time Flags to Control Inlining}
+\ccIndexMainItem{code optimization}
+\ccIndexMainItem{inlining}
+\ccIndexMainItem{\tt inline}
 
-\cgal\ is progressively being made thread-safe.  The guidelines which are followed
-are:
-\begin{itemize}
-\item it should be possible to use different objects in different threads at
-the same time (of the same type or not),
-\item it is not safe to access the same object from different threads
-at the same time, unless otherwise specified in the class documentation.
-\end{itemize}
+Making functions inlined can, at times, improve the efficiency of your code.
+However this is not always the case and it can differ for a single function
+depending on the application in which it is used. Thus \cgal\ defines a set 
+of compile-time macros that can be used to control whether certain functions 
+are designated as inlined functions or not.  The following table lists the 
+macros and their default values, which are set in one of the \cgal\ include
+files.  
 
-If the macro \ccc{CGAL_HAS_THREADS} is not defined, then \cgal\ assumes it can use
-any thread-unsafe code (such as static variables).  By default, this macro is not
-defined, unless \ccc{BOOST_HAS_THREADS} or \ccc{_OPENMP} is defined.  It is possible
-to force its definition on the command line, and it is possible to prevent its default
-definition by setting \ccc{CGAL_HAS_NO_THREADS} from the command line.
+\begin{tabular}{l|l}
+               macro name        & default \\ \hline
+\ccc{CGAL_KERNEL_INLINE}         & inline \\
+\ccc{CGAL_KERNEL_MEDIUM_INLINE}  &  \\
+\ccc{CGAL_KERNEL_LARGE_INLINE}   &  \\
+\ccc{CGAL_MEDIUM_INLINE}         & inline \\
+\ccc{CGAL_LARGE_INLINE}          &  \\
+\ccc{CGAL_HUGE_INLINE}           & 
+\end{tabular}
 
+If you wish to change the value of one or more of these macros,
+you can simply give it a new value when compiling.  For example, to make
+functions that use the macro \ccc{CGAL_KERNEL_MEDIUM_INLINE} inline functions,
+you should set the value of this macro to \texttt{inline} instead of the
+default blank. 
 
-\section{Code Deprecation}
-
-Sometimes, the \cgal\ project decides that a feature is deprecated.  This means
-that it still works in the current release, but it will be removed in the next,
-or a subsequent release.  This can happen when we have found a better way to do
-something, and we would like to reduce the maintenance cost of \cgal\ at some
-point in the future.  There is a trade-off between maintaining backward
-compatibility and implementing new features more easily.
-
-In order to help users manage the changes to apply to their code, we attempt
-to make \cgal\ code emit warnings when deprecated code is used.  This can be
-done using some compiler specific features.  Those warnings can be disabled
-by defining the macro \ccc{CGAL_NO_DEPRECATION_WARNINGS}.  On top of this, we
-also provide a macro, \ccc{CGAL_NO_DEPRECATED_CODE}, which, when defined,
-disables all deprecated features.  This allows users to easily test if their
-code relies on deprecated features.
-
-\begin{ccDeprecated}
-Deprecated functionality is identified this way in the manual.
-\end{ccDeprecated}
-
-\input{Preliminaries/checks} % extra chapter
+Note that setting inline manually is very fragile, especially in a template
+context.  It is usually better to let the compiler select by himself which
+functions should be inlined or not.
+\end{ccAdvanced}
