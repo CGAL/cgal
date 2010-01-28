@@ -22,8 +22,11 @@
 #define CGAL_PERIODIC_3_TRIANGULATION_HIERARCHY_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Random.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
+
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/geometric_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -61,7 +64,7 @@ public:
 private:
   // here is the stack of triangulations which form the hierarchy
   PTr_Base*  hierarchy[maxlevel];
-  Random     random; // random generator
+  boost::rand48 random;
   int level_mult_cover;
 
 public:
@@ -76,7 +79,7 @@ public:
   Periodic_3_triangulation_hierarchy_3(InputIterator first, InputIterator last,
       const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
       const Geom_traits& traits = Geom_traits())
-    : PTr_Base(domain,traits), random((long)0), level_mult_cover(0)
+    : PTr_Base(domain,traits), level_mult_cover(0)
   {
       hierarchy[0] = this; 
       for(int i=1; i<maxlevel; ++i)
@@ -174,7 +177,7 @@ template <class PTr >
 Periodic_3_triangulation_hierarchy_3<PTr>::
 Periodic_3_triangulation_hierarchy_3(
     const Iso_cuboid& domain, const Geom_traits& traits)
-  : PTr_Base(domain, traits), random((long)0), level_mult_cover(0)
+  : PTr_Base(domain, traits), level_mult_cover(0)
 { 
   hierarchy[0] = this; 
   for(int i=1;i<maxlevel;++i)
@@ -186,7 +189,7 @@ template <class PTr>
 Periodic_3_triangulation_hierarchy_3<PTr>::
 Periodic_3_triangulation_hierarchy_3(
     const Periodic_3_triangulation_hierarchy_3<PTr> &tr)
-  : PTr_Base(tr), random((long)0), level_mult_cover(tr.level_mult_cover)
+  : PTr_Base(tr), level_mult_cover(tr.level_mult_cover)
 { 
   hierarchy[0] = this;
   for(int i=1; i<maxlevel; ++i)
@@ -486,11 +489,10 @@ random_level()
       && hierarchy[level_mult_cover]->number_of_sheets() == make_array(1,1,1) )
     ++level_mult_cover;
 
-  int l = 0;
-  while ( ! random(ratio) && l < level_mult_cover )
-    ++l;
-
-  return l;
+   boost::geometric_distribution<> proba(1.0/ratio);
+   boost::variate_generator<boost::rand48&, boost::geometric_distribution<> >
+     die(random, proba);
+  return std::min(die()-1, level_mult_cover);
 }
 
 CGAL_END_NAMESPACE
