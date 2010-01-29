@@ -507,9 +507,27 @@ average_circumradius_length(const Vertex_handle& v) const
   
   // nb == 0 could happen if there is an isolated point.
   if ( 0 != nb )
+  {
     return sum_len/nb;
+  }
   else
-    return FT(0);
+  {
+    // Use outside cells to compute size of point
+    for ( typename Cell_vector::iterator cit = incident_cells.begin() ;
+         cit != incident_cells.end() ;
+         ++cit)
+    {
+      if ( !tr_.is_infinite(*cit) )
+      {
+        sum_len += CGAL::sqrt(sq_circumradius_length(*cit,v));
+        ++nb;
+      }
+    }
+
+    CGAL_assertion(nb!=0);
+    CGAL_assertion(sum_len!=0);
+    return sum_len/nb;
+  }
 }
 
   

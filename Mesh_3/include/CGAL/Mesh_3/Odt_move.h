@@ -124,7 +124,8 @@ private:
     
     Point_3 c = centroid(tr.tetrahedron(cell));
     FT s = sizing_field(c,std::make_pair(cell,true));
-    
+    CGAL_assertion(!is_zero(s));
+
     // Points of cell are positively oriented
     FT abs_volume = volume(tr.tetrahedron(cell));
     CGAL_assertion(abs_volume >= 0);
