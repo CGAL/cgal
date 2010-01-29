@@ -31,7 +31,7 @@
 #include <CGAL/Robust_construction.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
+#include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
 
 namespace CGAL {
 
@@ -68,16 +68,23 @@ public:
     // we know that p,q,r,s are positive oriented
     typename Rt::Side_of_oriented_sphere_3 side_of_oriented_sphere =
       Rt().side_of_oriented_sphere_3_object();
-    
+
     // Compute denominator to swith to exact if it is 0
-    const FT denom = compute_denom(p,q,r,s);
-    if ( ! CGAL_NTS is_zero(denom) )
+    FT num_x, num_y, num_z, den;
+    determinants_for_weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
+                                             q.x(), q.y(), q.z(), q.weight(),
+                                             r.x(), r.y(), r.z(), r.weight(),
+                                             s.x(), s.y(), s.z(), s.weight(),
+                                             num_x,  num_y, num_z, den);
+    
+    if ( ! CGAL_NTS is_zero(den) )
     {
-      result_type point = weighted_circumcenter(p,q,r,s);
+      FT inv = FT(1)/(FT(2) * den);
+      Bare_point res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
       
       // Fast output
-      if ( side_of_oriented_sphere(p,q,r,s,point) == CGAL::ON_POSITIVE_SIDE )
-        return point;
+      if ( side_of_oriented_sphere(p,q,r,s,res) == CGAL::ON_POSITIVE_SIDE )
+        return res;
     }
     
     // Switch to exact
@@ -105,14 +112,20 @@ public:
       Rt().side_of_bounded_sphere_3_object();
     
     // Compute denominator to swith to exact if it is 0
-    const FT denom = compute_denom(p,q,r);
-    if ( ! CGAL_NTS is_zero(denom) )
+    FT num_x, num_y, num_z, den;
+    determinants_for_weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
+                                             q.x(), q.y(), q.z(), q.weight(),
+                                             r.x(), r.y(), r.z(), r.weight(),
+                                             num_x,  num_y, num_z, den);
+    
+    if ( ! CGAL_NTS is_zero(den) );
     {
-      result_type point = weighted_circumcenter(p,q,r);
+      FT inv = FT(1)/(FT(2) * den);
+      Bare_point res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
       
       // Fast output
-      if ( side_of_bounded_sphere(p,q,r,point) == CGAL::ON_BOUNDED_SIDE )
-        return point;
+      if ( side_of_bounded_sphere(p,q,r,res) == CGAL::ON_BOUNDED_SIDE )
+        return res;
     }
     
     // Switch to exact
@@ -151,68 +164,6 @@ public:
     return back_from_exact(exact_weighted_circumcenter(to_exact(p),
                                                        to_exact(q)));
   }
-
-private:
-
-  FT compute_denom(const Weighted_point_3 & p,
-                   const Weighted_point_3 & q,
-                   const Weighted_point_3 & r,
-                   const Weighted_point_3 & s) const
-  {
-    return compute_denom(p.x(),p.y(),p.z(),
-                         q.x(),q.y(),q.z(),
-                         r.x(),r.y(),r.z(),
-                         s.x(),s.y(),s.z());
-  }
-
-  FT compute_denom(const Weighted_point_3 & p,
-                   const Weighted_point_3 & q,
-                   const Weighted_point_3 & r) const
-  {
-    return compute_denom(p.x(),p.y(),p.z(),
-                         q.x(),q.y(),q.z(),
-                         r.x(),r.y(),r.z());
-  }
-
-  FT compute_denom(const FT &px, const FT &py, const FT &pz,
-                   const FT &qx, const FT &qy, const FT &qz,
-                   const FT &rx, const FT &ry, const FT &rz,
-                   const FT &sx, const FT &sy, const FT &sz) const
-  {
-    const FT qpx = qx-px;
-    const FT qpy = qy-py;
-    const FT qpz = qz-pz;
-    const FT rpx = rx-px;
-    const FT rpy = ry-py;
-    const FT rpz = rz-pz;
-    const FT spx = sx-px;
-    const FT spy = sy-py;
-    const FT spz = sz-pz;
-
-    return determinant(qpx,qpy,qpz,
-                       rpx,rpy,rpz,
-                       spx,spy,spz);
-  }
-
-  FT compute_denom(const FT &px, const FT &py, const FT &pz,
-                   const FT &qx, const FT &qy, const FT &qz,
-                   const FT &rx, const FT &ry, const FT &rz) const
-  {
-    const FT qpx = qx-px;
-    const FT qpy = qy-py;
-    const FT qpz = qz-pz;
-    const FT rpx = rx-px;
-    const FT rpy = ry-py;
-    const FT rpz = rz-pz;
-    const FT sx = qpy*rpz-qpz*rpy;
-    const FT sy = qpz*rpx-qpx*rpz;
-    const FT sz = qpx*rpy-qpy*rpx;
-
-    return determinant(qpx,qpy,qpz,
-                       rpx,rpy,rpz,
-                       sx,sy,sz);
-  }
-
 };
 
 /**
