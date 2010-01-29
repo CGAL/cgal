@@ -48,7 +48,7 @@ init_hierarchy(const Geom_traits& gt)
 template<class Gt, class ST, class STag, class D_S, class LTag>
 Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 Segment_Delaunay_graph_hierarchy_2(const Gt& gt)
-  : Base(gt), random((long)0)
+  : Base(gt)
 { 
   init_hierarchy(gt);
 }
@@ -59,7 +59,7 @@ template<class Gt, class ST, class STag, class D_S, class LTag>
 Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 Segment_Delaunay_graph_hierarchy_2
 (const Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag> &sdg)
-    : Base(sdg.geom_traits()), random((long)0)
+    : Base(sdg.geom_traits())
 { 
   // create an empty triangulation to be able to delete it !
   init_hierarchy(sdg.geom_traits());
