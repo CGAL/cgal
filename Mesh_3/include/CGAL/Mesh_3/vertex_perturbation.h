@@ -561,7 +561,7 @@ protected:
     Vector_3 grad_vector = compute_gradient_vector(v,slivers);
     
     // Exit if grad_vector is not relevant
-    if ( Vector_3() == grad_vector )
+    if ( CGAL::NULL_VECTOR == grad_vector )
       return std::make_pair(false,v);
     
     return Base::apply_perturbation(v,
@@ -603,7 +603,7 @@ private:
     }
     
     // May happen if sq_radius_gradient is not relevant for this vertex
-    return Vector_3();
+    return CGAL::NULL_VECTOR;
   }
   
   /**
@@ -642,6 +642,9 @@ private:
     FT dDz_dz = -2*p1.z()*da_dz;
     
     FT a  = p1.x()*da_dx + p1.y()*da_dy + p1.z()*da_dz;
+    if ( CGAL_NTS is_zero(a) )
+      return CGAL::NULL_VECTOR;
+    
     FT Dx = -sq_p1*da_dx + p1.y()*(sq_p2*p3.z() - sq_p3*p2.z()) - p1.z()*(sq_p2*p3.y() - sq_p3*p2.y());
     FT Dy = -sq_p1*da_dy - p1.x()*(sq_p2*p3.z() - sq_p3*p2.z()) + p1.z()*(sq_p2*p3.x() - sq_p3*p2.x());
     FT Dz = -sq_p1*da_dz + p1.x()*(sq_p2*p3.y() - sq_p3*p2.y()) - p1.y()*(sq_p2*p3.x() - sq_p3*p2.x());
@@ -715,7 +718,7 @@ protected:
     Vector_3 grad_vector = compute_gradient_vector(v,slivers);
     
     // Exit if grad_vector is not relevant
-    if ( Vector_3() == grad_vector )
+    if ( CGAL::NULL_VECTOR == grad_vector )
       return std::make_pair(false,v);
     
     return Base::apply_perturbation(v,
@@ -757,7 +760,7 @@ private:
     }
     
     // May happen if volume_gradient is not relevant for this vertex
-    return Vector_3();
+    return CGAL::NULL_VECTOR;
   }
   
   
@@ -854,7 +857,7 @@ protected:
     Vector_3 grad_vector = compute_gradient_vector(v,slivers);
 
     // Exit if grad_vector is not relevant
-    if ( Vector_3() == grad_vector )
+    if ( CGAL::NULL_VECTOR == grad_vector )
       return std::make_pair(false,v);
     
     return Base::apply_perturbation(v,
@@ -896,7 +899,7 @@ private:
     }
     
     // May happen if dihedral gradient is not relevant for this vertex
-    return Vector_3();
+    return CGAL::NULL_VECTOR;
   }
   
   /**
@@ -947,6 +950,7 @@ private:
       = Gt().compute_squared_distance_3_object();
     
     const FT d_p0p1 = CGAL::sqrt(sq_distance(p0,p1));
+    CGAL_assertion(!is_zero(d_p0p1));
     
     return ( (-1./ d_p0p1) * (cotangent(a_02)*n0 + cotangent(a_03)*n1) );
   }
