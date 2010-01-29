@@ -36,7 +36,7 @@ public:
 
   Orthogonal_k_neighbor_search(Tree& tree, const typename Base::Query_item& q,  
                                unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
-    : Base(tree,q,k,Eps,Search_nearest,d,sorted) 
+    : Base(tree,q,k,Eps,Search_nearest,d) 
   {
     if (this->search_nearest) 
       this->distance_to_root = this->distance_instance.min_distance_to_rectangle(q, tree.bounding_box());
