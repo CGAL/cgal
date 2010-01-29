@@ -129,9 +129,14 @@ fill(const std::map<Point_3, FT>& value_map)
       value_map.find(vit->point());
     
     if ( find_result != value_map.end() )
+    {
       vit->set_meshing_info(find_result->second);
+    }
     else
+    {
+      CGAL_assertion(false);
       vit->set_meshing_info(FT(0));
+    }
   }
 }  
 
@@ -192,7 +197,6 @@ interpolate_on_cell_vertices(const Point_3& p, const Cell_handle& cell) const
   const FT acdp = CGAL::abs(volume(a,c,d,p));
   const FT bcdp = CGAL::abs(volume(b,d,c,p));
   
-  // TODO: improve this (static filter ?)
   // If volume is 0, then compute the average value
   if ( is_zero(abcp+abdp+acdp+bcdp) )
     return (va+vb+vc+vd)/4.;
@@ -240,7 +244,6 @@ interpolate_on_facet_vertices(const Point_3& p, const Cell_handle& cell) const
   CGAL_assertion(acp >= 0);
   CGAL_assertion(bcp >= 0);
   
-  // TODO: improve this (static filter ?)
   // If area is 0, then compute the average value
   if ( is_zero(abp+acp+bcp) )
     return (va+vb+vc)/3.;

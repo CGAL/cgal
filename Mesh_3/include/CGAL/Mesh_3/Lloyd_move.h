@@ -274,7 +274,8 @@ private:
     
     FT da = density_1d(a,v,sizing_field);
     FT db = density_1d(b,v,sizing_field);
-    
+
+    CGAL_assertion( !is_zero(da+db) ); 
     return ( (vector(p,a)*da + vector(p,b)*db) / (da+db) );
   }
   
@@ -295,7 +296,8 @@ private:
     FT da = density_2d<true>(a,v,sizing_field);
     FT db = density_2d<false>(b,v,sizing_field);
     FT dc = density_2d<false>(c,v,sizing_field);
-    
+
+    CGAL_assertion( !is_zero(da+db+dc) );
     return ( (da*vector(p,a) + db*vector(p,b) + dc*vector(p,c)) / (da+db+dc) );
   }
   
@@ -441,6 +443,8 @@ private:
                 const Sizing_field& sizing_field) const
   {
     FT s = sizing_field(p,v);
+    CGAL_assertion(!is_zero(s));
+
     // s^(d+2)
     return ( 1/(s*s*s) );
   }
@@ -453,12 +457,9 @@ private:
                 const Vertex_handle& v,
                 const Sizing_field& sizing_field) const
   {
-    FT s;
-    if ( use_v )
-      s = sizing_field(p,v);
-    else
-      s = sizing_field(p);
-    
+    FT s = use_v ? sizing_field(p,v) : sizing_field(p);
+    CGAL_assertion(!is_zero(s));
+
     // s^(d+2)
     return ( 1/(s*s*s*s) );
   }
@@ -472,6 +473,8 @@ private:
                 const Sizing_field& sizing_field) const
   {
     FT s = sizing_field(p,cell);
+    CGAL_assertion(!is_zero(s));
+
     // s^(d+2)
     return ( 1/(s*s*s*s*s) );
   }
