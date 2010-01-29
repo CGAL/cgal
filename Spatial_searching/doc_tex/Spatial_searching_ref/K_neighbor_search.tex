@@ -58,10 +58,11 @@ template argument \ccc{CGAL::Tag_false} makes that the tree is built with unexte
 
 \def\ccLongParamLayout{\ccTrue}
 \ccConstructor{K_neighbor_search(Tree& tree, Query_item q, unsigned int k=1, FT eps=FT(0.0),
-	                         bool search_nearest=true, GeneralDistance d=GeneralDistance());}
+	                         bool search_nearest=true, GeneralDistance d=GeneralDistance(),bool sorted=true);}
 {Constructor for searching approximately $k$ neighbors of the query item \ccc{q} 
 in the points stored in \ccc{tree} using 
-distance class $d$ and approximation factor \ccc{eps}.}
+distance class $d$ and approximation factor \ccc{eps}. \ccc{sorted} indicates
+if the computed sequence of $k$-nearest neighbors need to be sorted.}
 
 \ccOperations
 

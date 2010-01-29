@@ -3137,6 +3137,9 @@ Snap_rounding_2/test/Snap_rounding_2/cgal_test_with_cmake eol=lf
 Spatial_searching/demo/Spatial_searching/help/index.html svneol=native#text/html
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#image/gif
 Spatial_searching/doc_tex/Spatial_searching/windowQuery.png -text
+Spatial_searching/include/CGAL/internal/K_neighbor_search.h -text
+Spatial_searching/include/CGAL/internal/bounded_priority_queue.h -text
+Spatial_searching/test/Spatial_searching/Compare_methods.cpp -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbert.png -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbertLarge.jpg -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_0.poly -text svneol=unset#application/octet-stream
