@@ -124,8 +124,8 @@ namespace Mesh_3 {
      */ 
     template <typename Tr>
     typename Tr::Geom_traits::FT
-    min_incident_edge_length(const typename Tr::Vertex_handle& v,
-                             const Tr& tr)
+    min_incident_edge_sq_length(const typename Tr::Vertex_handle& v,
+                                const Tr& tr)
     {
       CGAL_precondition(!tr.is_infinite(v));
       
@@ -146,39 +146,7 @@ namespace Mesh_3 {
         min_sq_length = (std::min)(min_sq_length, edge_sq_length<Tr>(*eit));
       }
       
-      return CGAL::sqrt(min_sq_length);
-    }
-    
-    /**
-     * @brief Returns the vector \c v with a norm equal to 1 
-     */
-    template <typename K>
-    typename K::Vector_3
-    normalize(const typename K::Vector_3& v, const K& k = K())
-    {
-      typedef typename K::FT FT;
-      
-      typename K::Compute_squared_length_3 sq_length
-        = k.compute_squared_length_3_object();
-      typename K::Construct_scaled_vector_3 scale 
-        = k.construct_scaled_vector_3_object();
-      
-      FT sq_norm = sq_length(v);
-      
-      if( sq_norm != FT(0) )
-        return ( scale(v, FT(1)/CGAL::sqrt(sq_norm)) );
-      else
-        return v; // v == 0 is normalized
-    }
-    
-    /**
-     * @brief Returns the vector \c v with a norm equal to 1 
-     */
-    template <typename Vector_3>
-    Vector_3
-    normalize(const Vector_3& v)
-    {
-      return normalize(v, typename Kernel_traits<Vector_3>::Kernel());
+      return min_sq_length;
     }
     
   } // end namespace details
@@ -337,7 +305,7 @@ protected:
                                     const FT& factor) const
   {
     // We don't care if the shortest edge is inside or outside c3t3
-    return details::min_incident_edge_length(v,c3t3.triangulation());
+    return details::min_incident_edge_sq_length(v,c3t3.triangulation());
   }
   
 private:
@@ -362,26 +330,6 @@ private:
   double total_time_;
 #endif
 };
-  
-//template <typename C3T3, typename MD, typename SC>
-//inline
-//bool
-//operator<(const Abstract_perturbation<C3T3,MD,SC>& lhs,
-//          const Abstract_perturbation<C3T3,MD,SC>& rhs)
-//{
-//  // p_lhs >= p_rhs if p_rhs is in p_lhs previous perturbations
-//  // p_lhs < p_rhs if p_rhs is not in p_lhs previous perturbations
-//  const Abstract_perturbation<C3T3,MD,SC>* p_lhs = &lhs;
-//  while ( NULL != p_lhs )
-//  {
-//    if ( p_lhs == &rhs )
-//      return false;
-//    
-//    p_lhs = p_lhs->previous();
-//  }
-//  
-//  return true;
-//};
   
 template <typename C3T3, typename MD, typename SC>
 inline
@@ -454,9 +402,13 @@ protected:
                      const SliverCriterion& criterion,
                      std::vector<Vertex_handle>& modified_vertices) const
   {
-    typedef typename C3T3::Triangulation::Geom_traits::FT FT;
-    typedef typename C3T3::Triangulation::Geom_traits::Point_3 Point_3;
+    typedef typename C3T3::Triangulation::Geom_traits Gt;
+    typedef typename Gt::FT       FT;
+    typedef typename Gt::Point_3  Point_3;
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
+    
+    typename Gt::Compute_squared_length_3 sq_length =
+      Gt().compute_squared_length_3_object();
     
     // create a helper
     typedef C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
@@ -465,8 +417,9 @@ protected:
     modified_vertices.clear();
     
     // norm depends on the local size of the mesh
-    FT norm = compute_perturbation_amplitude(v, c3t3, step_size_);
-    Point_3 new_loc = v->point() + norm * gradient_vector;
+    FT sq_norm = compute_perturbation_amplitude(v, c3t3, step_size_);
+    FT step_length = CGAL::sqrt(sq_norm/sq_length(gradient_vector));
+    Point_3 new_loc = v->point() + step_length * gradient_vector;
     
     Point_3 final_loc = new_loc;
     if ( c3t3.in_dimension(v) < 3 )
@@ -477,7 +430,7 @@ protected:
     while( Th().no_topological_change(c3t3.triangulation(), v, final_loc) 
           && (++i <= max_step_nb_) )
     {
-      new_loc = new_loc + norm * gradient_vector;
+      new_loc = new_loc + step_length * gradient_vector;
       
       if ( c3t3.in_dimension(v) == 3 )
         final_loc = new_loc;
@@ -587,7 +540,7 @@ private:
     switch (slivers.size())
     {
       case 1:
-        return details::normalize(compute_gradient_vector(slivers.front(),v));
+        return compute_gradient_vector(slivers.front(),v);
         break;
       case 2:
       {
@@ -595,7 +548,7 @@ private:
         Vector_3 v2 = compute_gradient_vector(slivers.back(), v);
         if( v1 * v2 > 0 )
           // "+0.5" because sq_radius has to go up
-          return details::normalize(0.5*(v1 + v2));
+          return 0.5*(v1 + v2);
         break;
       }
       default:
@@ -651,10 +604,9 @@ private:
     
     // compute gradient vector
     FT sum_sqD = Dx*Dx + Dy*Dy + Dz*Dz;
-    FT frac = 1.0 / (2.0*a*a*a);
-    FT gx = frac * ( a * (Dx*dDx_dx + Dy*dDy_dx + Dz*dDz_dx) - da_dx * sum_sqD);
-    FT gy = frac * ( a * (Dx*dDx_dy + Dy*dDy_dy + Dz*dDz_dy) - da_dy * sum_sqD);
-    FT gz = frac * ( a * (Dx*dDx_dz + Dy*dDy_dz + Dz*dDz_dz) - da_dz * sum_sqD);
+    FT gx = (Dx*dDx_dx + Dy*dDy_dx + Dz*dDz_dx) / (2.0*a*a) - (da_dx * sum_sqD) / (2.0*a*a*a);
+    FT gy = (Dx*dDx_dy + Dy*dDy_dy + Dz*dDz_dy) / (2.0*a*a) - (da_dy * sum_sqD) / (2.0*a*a*a);
+    FT gz = (Dx*dDx_dz + Dy*dDy_dz + Dz*dDz_dz) / (2.0*a*a) - (da_dz * sum_sqD) / (2.0*a*a*a);
     
     return Vector_3(gx, gy, gz);
   }
@@ -744,7 +696,7 @@ private:
     switch (slivers.size())
     {
       case 1:
-        return details::normalize(-1*compute_gradient_vector(slivers.front(),v));
+        return -1*compute_gradient_vector(slivers.front(),v);
         break;
       case 2:
       {
@@ -752,7 +704,7 @@ private:
         Vector_3 v2 = compute_gradient_vector(slivers.back(), v);
         if( v1 * v2 > 0 )
           // "-0.5" because volume has to go down
-          return details::normalize(-0.5*(v1 + v2));
+          return -0.5*(v1 + v2);
         break;
       }
       default:
@@ -883,7 +835,7 @@ private:
     switch (slivers.size())
     {
       case 1:
-        return details::normalize(-1*compute_gradient_vector(slivers.front(),v));
+        return -1*compute_gradient_vector(slivers.front(),v);
         break;
       case 2:
       {
@@ -891,7 +843,7 @@ private:
         Vector_3 v2 = compute_gradient_vector(slivers.back(), v);
         if( v1 * v2 > 0 )
           // "-0.5" because angle has to go down
-          return details::normalize(-0.5*(v1 + v2));
+          return -0.5*(v1 + v2);
         break;
       }
       default:
@@ -1069,38 +1021,41 @@ protected:
   }
   
   /**
-   * @brief returns a random vector with normalized size
-   */
-  Vector_3 random_normalized_vector() const
-  {
-    return details::normalize(Vector_3(random_ft(),random_ft(),random_ft()));
-  }
-  
-  /**
    * @brief returns a random vector with size \c vector_size
    */
-  Vector_3 random_vector_fixed_size(const FT& vector_size) const
+  Vector_3 random_vector_fixed_size(const FT& vector_sq_size) const
   {
-    return vector_size * random_normalized_vector();
+    typedef typename C3T3::Triangulation::Geom_traits Gt;
+    
+    typename Gt::Compute_squared_length_3 sq_length =
+      Gt().compute_squared_length_3_object();
+    
+    Vector_3 rnd_vector(random_ft(),random_ft(),random_ft());
+    FT rnd_sq_size = sq_length(rnd_vector);
+    
+    if ( ! CGAL_NTS is_zero(rnd_sq_size) )
+      return CGAL::sqrt(vector_sq_size / rnd_sq_size) * rnd_vector;
+    else
+      return CGAL::NULL_VECTOR;
   }
   
   /**
    * @brief returns a random vector with size between 0 and \c vector_size
    */
-  Vector_3 random_vector_max_size(const FT& vector_max_size) const
+  Vector_3 random_vector_max_size(const FT& vector_max_sq_size) const
   {
-    return random_ft() * vector_max_size * random_normalized_vector();
+    return random_ft() * random_vector_fixed_size(vector_max_sq_size);
   }
   
   /**
    * @brief returns a random vector.
    */
-  Vector_3 random_vector(const FT& vector_size, bool fixed_size) const
+  Vector_3 random_vector(const FT& vector_sq_size, bool fixed_size) const
   {
     if ( fixed_size )
-      return random_vector_fixed_size(vector_size);
+      return random_vector_fixed_size(vector_sq_size);
     else
-      return random_vector_max_size(vector_size);
+      return random_vector_max_size(vector_sq_size);
   }
   
 private:
@@ -1206,7 +1161,7 @@ private:
     C3T3_helpers helper(c3t3, domain);
     
     // norm depends on the local size of the mesh
-    FT norm = compute_perturbation_amplitude(v, c3t3, Base::sphere_radius());
+    FT sq_norm = compute_perturbation_amplitude(v, c3t3, Base::sphere_radius());
     const Point_3 initial_location = v->point();
     
     // Initialize loop variables
@@ -1219,7 +1174,7 @@ private:
     unsigned int try_nb = 0;
     while ( ++try_nb <= Base::max_try_nb() )
     {
-      Vector_3 delta = random_vector(norm,on_sphere_);
+      Vector_3 delta = random_vector(sq_norm,on_sphere_);
       
       // always from initial_location!
       Point_3 new_location = initial_location + delta;
