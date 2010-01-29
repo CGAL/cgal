@@ -27,7 +27,6 @@
 
 // for c++, compile with -lgmpxx
 #ifdef __cplusplus
-#include <gmpxx.h>
 #include <iostream>
 #endif
 
@@ -58,7 +57,7 @@ inline void dyadic_set(dyadic_ptr rop,dyadic_srcptr op){
                 dyadic_set_prec(rop,mpfr_get_prec(op));
                 mpfr_set(rop,op,GMP_RNDN);
         }
-        CGAL_assertion(mpfr_equal_p(rop,op));
+        CGAL_assertion(mpfr_equal_p(rop,op)!=0);
 }
 
 inline void dyadic_set_z(dyadic_ptr rop,mpz_srcptr z){
@@ -85,7 +84,7 @@ inline void dyadic_set_fr(dyadic_ptr rop,mpfr_srcptr op){
         if(rop!=op){
                 dyadic_set_prec(rop,mpfr_get_prec(op));
                 mpfr_set(rop,op,GMP_RNDN);
-                CGAL_assertion(mpfr_equal_p(rop,op));
+                CGAL_assertion(mpfr_equal_p(rop,op)!=0);
         }
 }
 
@@ -106,7 +105,7 @@ inline void dyadic_get_exactfr(mpfr_ptr rop,dyadic_srcptr op){
         if(rop!=op){
                 dyadic_set_prec(rop,mpfr_get_prec(op));
                 mpfr_set(rop,op,GMP_RNDN);
-                CGAL_assertion(mpfr_equal_p(rop,op));
+                CGAL_assertion(mpfr_equal_p(rop,op)!=0);
         }
 }
 
@@ -301,7 +300,7 @@ inline void dyadic_pow_ui(dyadic_ptr rop,dyadic_srcptr op1,unsigned long u){
                 return;
         }
         if(mpfr_zero_p(op1)){
-                CGAL_assertion_msg(u,"0^0");
+                CGAL_assertion_msg(u!=0,"0^0");
                 dyadic_set_ui(rop,0);
                 return;
         }
