@@ -133,12 +133,14 @@ computes its index \ccc{i} in \ccVar.}
 		     	     Cell_handle n2, Cell_handle n3);}
 {Sets the neighbors.}
 
+\begin{ccDebug}
 \ccHeading{Checking}
 \ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
 {Performs any desired geometric test on a cell.\\
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication of the kind of invalidity encountered. \ccc{level}
 increases the level of testing.}
+\end{ccDebug}
 
 \begin{ccAdvanced}
 

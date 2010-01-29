@@ -79,10 +79,12 @@ class of \ccc{Triangulation_data_structure_3::Vertex}.}
 \ccMethod{void set_cell(Cell_handle c);}
 {Sets the incident cell.}
 
+\begin{ccDebug}
 \ccHeading{Checking}
 \ccMethod{bool is_valid(bool verbose=false, int level=0) const;}
 {Performs any desired test on a vertex. Checks that the
 pointer to an incident cell is not the default constructed handle.}
+\end{ccDebug}
 
 \ccHeading{Various}
 

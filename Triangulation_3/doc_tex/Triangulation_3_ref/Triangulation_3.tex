@@ -989,7 +989,7 @@ The infinite vertex is counted.
 \ccMethod{Facet mirror_facet(Facet f) const;}
 {Returns the same facet viewed from the other adjacent cell.}
 
-\begin{ccAdvanced}
+\begin{ccDebug}
 \ccHeading{Checking}
 The responsibility of keeping a valid triangulation belongs to the user
 when using advanced operations allowing a direct manipulation of cells
@@ -1011,8 +1011,7 @@ geometric validity of \ccc{c}, if \ccc{c} is finite. (See
 Section~\pageref{Triangulation3-sec-intro}.)\\ 
 When \ccc{verbose} is set to \ccc{true}, messages are printed to give
 a precise indication of the kind of invalidity encountered.}
-
-\end{ccAdvanced}
+\end{ccDebug}
 
 \ccHeading{I/O}
 
