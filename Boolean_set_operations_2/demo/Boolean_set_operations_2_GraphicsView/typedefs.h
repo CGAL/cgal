@@ -58,8 +58,7 @@ typedef CGAL::General_polygon_set_2<Circular_traits>           Circular_polygon_
 
 typedef CGAL::Qt::Circular_set_graphics_item<Circular_polygon_set> Circular_GI;
 
-typedef std::vector<Circular_polygon_with_holes> Circular_region_source_container ;
-
+typedef std::vector<Circular_polygon_with_holes>  Circular_region_source_container ;
 
 
 //

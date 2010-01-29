@@ -47,6 +47,7 @@ namespace Qt {
     typedef typename Gps_traits::Curve_2            Circular_curve;
     typedef typename Gps_traits::X_monotone_curve_2 Circular_X_monotone_curve;
     typedef typename Gps_traits::Polygon_2          Circular_polygon;
+    typedef typename Kernel::Vector_2               Vector ;
     typedef typename Kernel::Point_2                Point ;
     
     typedef std::vector<Circular_curve> Circular_curve_vector ;
@@ -196,7 +197,7 @@ namespace Qt {
             break;
             
           case HandleOngoing: 
-            UpdateHandle(lP);
+            HideHandle();
             CommitOngoingPiece(lP);
             mState   = PieceEnded;
             rHandled = true;
@@ -208,7 +209,6 @@ namespace Qt {
         switch (mState)
         {
           case PieceOngoing: 
-            CloseCurrBundary();
             CommitCurrCircularPolygon();
             mH = boost::optional<Point>();
             mState = Start ;     
@@ -241,7 +241,17 @@ namespace Qt {
 
     Circular_curve CreatePiece()
     {
-      return mH ? Circular_curve(mP0,*mH,mP1) : Circular_curve(mP0,mP1) ;
+      if ( mH )
+      {
+        Vector lD = *mH - mP1 ;
+        Vector lU = lD * 1.5 ;
+        Point  lH = mP1 - lU ;
+        return Circular_curve(mP0,lH,mP1); 
+      }
+      else
+      {
+        return Circular_curve(mP0,mP1); 
+      }
     }
     
     void UpdateOngoingPiece()
@@ -268,7 +278,7 @@ namespace Qt {
 
     void UpdateHandle(Point const& aP)
     {
-      if ( squared_distance(mP1,aP) >= 9 )
+      if ( squared_distance(mP1,aP) >= 4 )
       {
         mH = aP ;
         
@@ -282,19 +292,14 @@ namespace Qt {
       }
     }
           
-
-    void CloseCurrBundary()
-    {
-      if ( mCircularPolygonPieces.size() > 0 && ongoing_piece()!= NULL )
-      {
-       // mCircularPolygonPieces.push_back( Circular_curve( ongoing_piece()->target(), mCircularPolygonPieces.front().source() ) ) ;
-        
-        mCircularGI->modelChanged() ;
-      }
-    }
+    Point cvt ( typename Circular_curve::Point_2 const& aP ) { return Point( to_double(aP.x()), to_double(aP.y()) ) ; } 
         
     void CommitCurrCircularPolygon()
     {
+      mCircularPolygonPieces.push_back( Circular_curve( cvt(mCircularPolygonPieces.back ().target())
+                                                      , cvt(mCircularPolygonPieces.front().source()) 
+                                                      )
+                                      ) ;
       GenerateCircularPolygon();
 
       mOngoingPieceCtr.clear();

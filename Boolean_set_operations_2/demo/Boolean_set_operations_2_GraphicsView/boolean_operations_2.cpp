@@ -1304,8 +1304,8 @@ void MainWindow::on_actionInsertCircle_toggled(bool aChecked)
 
 void MainWindow::processInput(CGAL::Object o )
 {
-  Circular_curve lCS ;
-  std::pair<Bezier_polygon,Bezier_boundary_source> lBI ;
+  std::pair<Bezier_polygon,Bezier_boundary_source>     lBI ;
+  Circular_polygon lCI ;
   
   if(CGAL::assign(lBI, o))
   {
@@ -1323,10 +1323,18 @@ void MainWindow::processInput(CGAL::Object o )
       
     }
   }
-  else if ( CGAL::assign(lCS,o) )
+  else if ( CGAL::assign(lCI, o) )
   {
     if ( ensure_circular_mode() )
     {
+      CGAL::Orientation o = lCI.orientation();
+      if ( o == CGAL::CLOCKWISE )
+        lCI.reverse_orientation();
+        
+      Circular_polygon_with_holes lCPWH(lCI);
+      active_set().circular().join(lCPWH) ;  
+      
+      active_circular_sources().push_back(lCPWH);
     }
   }
   modelChanged();  
