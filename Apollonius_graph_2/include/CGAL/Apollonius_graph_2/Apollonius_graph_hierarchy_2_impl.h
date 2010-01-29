@@ -40,7 +40,7 @@ init_hierarchy(const Geom_traits& gt)
 template<class Gt, class Agds, class LTag>
 Apollonius_graph_hierarchy_2<Gt,Agds,LTag>::
 Apollonius_graph_hierarchy_2(const Geom_traits& gt)
-  : Apollonius_graph_base(gt), random((long)0)
+  : Apollonius_graph_base(gt)
 { 
   init_hierarchy(gt);
 }
@@ -51,7 +51,7 @@ template<class Gt, class Agds, class LTag>
 Apollonius_graph_hierarchy_2<Gt,Agds,LTag>::
 Apollonius_graph_hierarchy_2
 (const Apollonius_graph_hierarchy_2<Gt,Agds,LTag>& agh)
-    : Apollonius_graph_base(agh.geom_traits()), random((long)0)
+    : Apollonius_graph_base(agh.geom_traits())
 { 
   init_hierarchy(agh.geom_traits());
   copy(agh);
