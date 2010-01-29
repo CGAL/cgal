@@ -102,9 +102,9 @@ CGAL 3.6 offers the following improvements and new functionality :
   - The package can now be used together with the 3D Periodic Triangulation 
     package to compute periodic alpha shapes. 
 
-6.5 2D/3D Triangulations, 2D Segment Voronoi Diagram, Apollonius Graph
+6.5 2D/3D Triangulations, 2D Segment Delaunay Graph, 2D Apollonius Graph
 
-  - The construstor and insert function taking ranges now produce
+  - The constructor and insert function taking ranges now produce
     structures whose iterator orders is now deterministic (same at each
     run).
 
