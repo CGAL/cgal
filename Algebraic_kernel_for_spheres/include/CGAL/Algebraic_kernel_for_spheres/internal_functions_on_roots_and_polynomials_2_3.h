@@ -40,6 +40,7 @@ namespace CGAL {
 	   const typename AK::Polynomial_for_spheres_2_3 &e3,
 	   OutputIterator res )
   {
+	  typedef typename AK::FT FT;
     CGAL_kernel_precondition(!((e1 == e2) && (e2 == e3)));
     // we put as a precondition that the polynomial for spheres represents
     // a sphere and not an isolated point or an empty_space
@@ -72,7 +73,23 @@ namespace CGAL {
       Polynomial_1_3 p1 = plane_from_2_spheres<AK>(e1,e2);
       if(intersect<AK>(e2,e3)) {
         Polynomial_1_3 p2 = plane_from_2_spheres<AK>(e2,e3); 
-        return solve<AK>(p1,p2,e2,res);
+        if(same_solutions<FT>(p1,p2)) {
+	        const FT sq_d1 = CGAL::square(p1.a()*e1.a() + p1.b()*e1.b() +
+	                                p1.c()*e1.c() + p1.d()) /
+							(square(p1.a()) + square(p1.b()) + square(p1.c()));
+					const FT r1_sqr = e1.r_sq() - sq_d1;
+
+	        const FT sq_d2 = CGAL::square(p2.a()*e2.a() + p2.b()*e2.b() +
+	                                p2.c()*e2.c() + p2.d()) /
+							(square(p2.a()) + square(p2.b()) + square(p2.c()));
+					const FT r2_sqr = e2.r_sq() - sq_d2;
+					if(r1_sqr != r2_sqr) return res;
+	        // otherwise there are an infinite number of points
+	        // this is not allowed
+					CGAL_kernel_precondition(r1_sqr == 0);
+					return internal::solve_tangent<AK>(p1,e1,res);
+	      }        
+				return solve<AK>(p1,p2,e2,res);
       } return res;
     } return res;
   }
