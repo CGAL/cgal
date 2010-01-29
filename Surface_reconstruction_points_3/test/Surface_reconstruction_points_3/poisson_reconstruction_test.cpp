@@ -8,9 +8,6 @@
 // poisson_reconstruction_test mesh1.off point_set2.xyz...
 
 // CGAL
-#include <CGAL/AABB_tree.h> // must be included before kernel
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/trace.h>
@@ -60,11 +57,6 @@ typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_fun
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
-
-// AABB tree
-typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
-typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
-typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
 
 // ----------------------------------------------------------------------------
@@ -266,7 +258,7 @@ int main(int argc, char * argv[])
                       << "                    angle="<<sm_angle << " degrees,\n"
                       << "                    triangle size="<<sm_radius<<" * average spacing="<<sm_radius*average_spacing<<",\n"
                       << "                    distance="<<sm_distance<<" * average spacing="<<sm_distance*average_spacing<<",\n"
-                      << "                    dichotomy error=distance/"<<sm_distance*average_spacing/sm_dichotomy_error<<",\n"
+                      << "                    dichotomy = distance/"<<sm_distance*average_spacing/sm_dichotomy_error<<",\n"
                       << "                    Manifold_with_boundary_tag)\n";
 
     // Generates surface mesh with manifold option
@@ -296,31 +288,6 @@ int main(int argc, char * argv[])
 
     // Prints total reconstruction duration
     std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";
-
-    //***************************************
-    // Computes reconstruction error
-    //***************************************
-
-    // Constructs AABB tree and computes internal KD-tree
-    // data structure to accelerate distance queries
-    AABB_tree tree(output_mesh.facets_begin(), output_mesh.facets_end());
-    tree.accelerate_distance_queries();
-
-    // Computes distance from each input point to reconstructed mesh
-    double max_distance = DBL_MIN;
-    double avg_distance = 0;
-    for (PointList::const_iterator p=points.begin(); p!=points.end(); p++)
-    {
-      double distance = std::sqrt(tree.squared_distance(*p));
-
-      max_distance = (std::max)(max_distance, distance);
-      avg_distance += distance;
-    }
-    avg_distance /= double(points.size());
-
-    std::cerr << "Reconstruction error:\n"
-              << "  max = " << max_distance << " = " << max_distance/average_spacing << " * average spacing\n"
-              << "  avg = " << avg_distance << " = " << avg_distance/average_spacing << " * average spacing\n";
 
   } // for each input file
 
