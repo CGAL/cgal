@@ -7,14 +7,14 @@ struct Exact_Kernel;
 
 namespace CGAL {
 
-  class SNC_items;
+  class SNC_indexed_items;
 
   template <typename Kernel_, typename Items_, typename Mark_>
   class Nef_polyhedron_3 ;
 }
 
 typedef CGAL::Nef_polyhedron_3<Exact_Kernel,
-			       CGAL::SNC_items,
+			       CGAL::SNC_indexed_items,
 			       bool> Nef_polyhedron; 
 
 #else //  USE_FORWARD_DECL

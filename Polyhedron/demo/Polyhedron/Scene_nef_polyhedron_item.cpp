@@ -10,6 +10,9 @@
 #include <QObject>
 #include "Scene_nef_rendering.h"
 
+#include <CGAL/minkowski_sum_3.h>
+
+
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
   : Scene_item_with_display_list(),
     nef_poly(new Nef_polyhedron)
@@ -269,5 +272,15 @@ operator-=(const Scene_nef_polyhedron_item& other)
   (*nef_poly) -= (*other.nef_poly);
   return *this;
 }
+
+Scene_nef_polyhedron_item*
+Scene_nef_polyhedron_item::
+sum(const Scene_nef_polyhedron_item& a, 
+    const Scene_nef_polyhedron_item& b)
+{
+  return new Scene_nef_polyhedron_item(CGAL::minkowski_sum_3(*a.nef_poly,
+                                                             *b.nef_poly));
+}
+
 
 #include "Scene_nef_polyhedron_item.moc"

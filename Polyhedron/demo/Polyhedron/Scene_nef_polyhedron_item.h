@@ -55,6 +55,10 @@ public:
   Scene_nef_polyhedron_item&
   operator-=(const Scene_nef_polyhedron_item&); // difference
 
+  static Scene_nef_polyhedron_item*
+  sum(const Scene_nef_polyhedron_item&, 
+      const Scene_nef_polyhedron_item&);
+
 private:
   Nef_polyhedron* nef_poly;
 }; // end class Scene_nef_polyhedron_item
