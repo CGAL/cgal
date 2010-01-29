@@ -25,7 +25,7 @@
 #include <CGAL/Qt/BoundaryPiecesGraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
 
-//#define USE_CLIPPING
+#define USE_CLIPPING
 
 namespace CGAL {
 

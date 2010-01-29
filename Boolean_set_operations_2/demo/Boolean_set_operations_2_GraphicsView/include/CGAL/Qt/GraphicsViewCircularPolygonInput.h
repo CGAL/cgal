@@ -212,8 +212,7 @@ namespace Qt {
         {
           case PieceOngoing: 
             CommitCurrCircularPolygon();
-            mH = boost::optional<Point>();
-            mState = Start ;     
+            ReStart();
             rHandled = true;
             break;
         }    
@@ -226,7 +225,19 @@ namespace Qt {
     {
       bool rHandled = false ;
       
-      
+      if( aEvent->key() == ::Qt::Key_Delete || aEvent->key() == ::Qt::Key_Backspace )
+      {     
+        RemoveLastPiece();
+        mState   = mCircularPolygonPieces.size() > 0 ? PieceEnded : Start ;
+        rHandled = true;
+      }
+      else if( aEvent->key() == ::Qt::Key_Escape)
+      {
+        Reset();
+        mState   = Start;
+        rHandled = true;
+      }
+
       return rHandled ;
     }
 
@@ -235,6 +246,21 @@ namespace Qt {
   private:
 
     Circular_curve const* ongoing_piece() const { return mOngoingPieceCtr.size() == 1 ? &mOngoingPieceCtr[0] : NULL ; }
+
+    void ReStart()
+    {
+      mH = boost::optional<Point>();
+      mState = Start ;     
+    }
+    
+    void Reset()
+    {
+      mCircularPolygonPieces.clear();
+      mOngoingPieceCtr      .clear();
+      mCircularGI    ->modelChanged();
+      mOngoingPieceGI->modelChanged();
+      ReStart();
+    }
     
     void HideHandle()
     {
@@ -255,6 +281,21 @@ namespace Qt {
         return Circular_curve(mP0,mP1); 
       }
     }
+    
+    
+    void RemoveLastPiece()
+    {
+      mCircularPolygonPieces.pop_back();
+      mOngoingPieceCtr      .clear();
+      mCircularGI    ->modelChanged();
+      mOngoingPieceGI->modelChanged();
+      if ( mCircularPolygonPieces.size() > 0 )
+      {
+        mP0 = cvt(mCircularPolygonPieces.back().target());
+        UpdateOngoingPiece();
+      }
+      mH = boost::optional<Point>();
+    }      
     
     void UpdateOngoingPiece()
     {
@@ -313,41 +354,44 @@ namespace Qt {
     
     void GenerateCircularPolygon() 
     {
-      Gps_traits traits ;
-      typename Gps_traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
-      
-      std::vector<Circular_X_monotone_curve> xcvs;
-
-      for ( const_circular_curve_iterator it = mCircularPolygonPieces.begin() ; it != mCircularPolygonPieces.end() ; ++ it )
-      {       
-        std::vector<CGAL::Object>                 x_objs;
-        std::vector<CGAL::Object>::const_iterator xoit;
-        
-        make_x_monotone ( *it, std::back_inserter (x_objs));
-        
-        for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
-        {
-          Circular_X_monotone_curve xcv;
-          if (CGAL::assign (xcv, *xoit))
-            xcvs.push_back (xcv);
-        }    
-      }
-      
-      if ( xcvs.size() > 0 )
+      if ( mCircularPolygonPieces.size() >  0 )
       {
-        Arc_point const& first_point = xcvs.front().source();
-        Arc_point const& last_point =  xcvs.back ().target();
-        CGAL_assertion(first_point.x().is_rational() && first_point.y().is_rational());
-        CGAL_assertion(last_point. x().is_rational() && last_point .y().is_rational());
-        FT fxs = first_point.x().alpha();
-        FT fys = first_point.y().alpha();
-        FT lxs = last_point .x().alpha();
-        FT lys = last_point .y().alpha();
-        xcvs.push_back(Circular_X_monotone_curve( Point(lxs,lys), Point(fxs,fys)));
+        Gps_traits traits ;
+        typename Gps_traits::Make_x_monotone_2 make_x_monotone = traits.make_x_monotone_2_object();
+        
+        std::vector<Circular_X_monotone_curve> xcvs;
 
-        Circular_polygon cp(xcvs.begin(), xcvs.end());
-        emit(generate(CGAL::make_object(cp)));
-      }  
+        for ( const_circular_curve_iterator it = mCircularPolygonPieces.begin() ; it != mCircularPolygonPieces.end() ; ++ it )
+        {       
+          std::vector<CGAL::Object>                 x_objs;
+          std::vector<CGAL::Object>::const_iterator xoit;
+          
+          make_x_monotone ( *it, std::back_inserter (x_objs));
+          
+          for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) 
+          {
+            Circular_X_monotone_curve xcv;
+            if (CGAL::assign (xcv, *xoit))
+              xcvs.push_back (xcv);
+          }    
+        }
+        
+        if ( xcvs.size() > 0 )
+        {
+          Arc_point const& first_point = xcvs.front().source();
+          Arc_point const& last_point =  xcvs.back ().target();
+          CGAL_assertion(first_point.x().is_rational() && first_point.y().is_rational());
+          CGAL_assertion(last_point. x().is_rational() && last_point .y().is_rational());
+          FT fxs = first_point.x().alpha();
+          FT fys = first_point.y().alpha();
+          FT lxs = last_point .x().alpha();
+          FT lys = last_point .y().alpha();
+          xcvs.push_back(Circular_X_monotone_curve( Point(lxs,lys), Point(fxs,fys)));
+
+          Circular_polygon cp(xcvs.begin(), xcvs.end());
+          emit(generate(CGAL::make_object(cp)));
+        }  
+      }
     }
     
   private:

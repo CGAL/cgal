@@ -91,9 +91,6 @@ namespace Qt {
     
     ~GraphicsViewBezierPolygonInput()
     {
-      //mScene->removeItem(mGI);
-      //delete mGI ;
-      //RemoveHandleItems();      
     }
     
     bool eventFilter(QObject *obj, QEvent *aEvent)
@@ -236,8 +233,7 @@ namespace Qt {
           case PieceOngoing: 
             CloseCurrBundary();
             CommitCurrBezierPolygon();
-            mPrevH0 = mH0 = mH1 = boost::optional<Point>();
-            mState = Start ;     
+            ReStart();
             rHandled = true;
             break;
         }    
@@ -250,7 +246,19 @@ namespace Qt {
     {
       bool rHandled = false ;
       
-      
+      if( aEvent->key() == ::Qt::Key_Delete || aEvent->key() == ::Qt::Key_Backspace )
+      {     
+        RemoveLastPiece();
+        mState   = mBezierPolygonPieces.size() > 0 ? PieceEnded : Start ;
+        rHandled = true;
+      }
+      else if( aEvent->key() == ::Qt::Key_Escape)
+      {
+        Reset();
+        mState   = Start;
+        rHandled = true;
+      }
+
       return rHandled ;
     }
 
@@ -260,6 +268,35 @@ namespace Qt {
 
     Bezier_curve const* ongoing_piece() const { return mOngoingPieceCtr.size() == 1 ? &mOngoingPieceCtr[0] : NULL ; }
     
+    void ReStart()
+    {
+      mPrevH0 = mH0 = mH1 = boost::optional<Point>();
+      mState = Start ;     
+    }
+    
+    void Reset()
+    {
+      mBezierPolygonPieces.clear();
+      mOngoingPieceCtr    .clear();
+      mBezierGI      ->modelChanged();
+      mOngoingPieceGI->modelChanged();
+      ReStart();
+    }
+    
+    void RemoveLastPiece()
+    {
+      mBezierPolygonPieces.pop_back();
+      mOngoingPieceCtr      .clear();
+      mBezierGI      ->modelChanged();
+      mOngoingPieceGI->modelChanged();
+      if ( mBezierPolygonPieces.size() > 0 )
+      {
+        mP0 = mBezierPolygonPieces.back().control_point(mBezierPolygonPieces.back().number_of_control_points()-1);
+        UpdateOngoingPiece();
+      }
+      mPrevH0 = mH0 = mH1 = boost::optional<Point>();
+    }      
+
     void HideHandles()
     {
       mHandle0GI->hide();

@@ -513,7 +513,6 @@ private:
   void modelChanged()
   {
     emit(changed());
-    zoomToFit();
   }
   
   bool ask_user_yesno( const char* aTitle, const char* aQuestion )
@@ -1282,7 +1281,9 @@ void MainWindow::open( QString fileName )
     if ( lRead )
     {
       modelChanged();
+      zoomToFit();
       this->addToRecentFiles(fileName);
+      
     }
   }  
 }
