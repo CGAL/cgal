@@ -211,8 +211,9 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
     break;
   case BOOLEAN_DIFFERENCE:
     name = tr("%1 minus %2");
+    break;
   case MINKOWSKI_SUM:
-    name = tr("sum of %1 and %2");
+    name = tr("Minkowski sum of %1 and %2");
   }
   
   new_item->setName(name.arg(itemA->name(), itemB->name()));
