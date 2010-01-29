@@ -124,6 +124,16 @@ div.DeprecatedBlock      {
     background-repeat: no-repeat;
 }
 
+div.DebugBlock {
+    border: solid thin;
+    padding: 1.5em 0em 0em 5px;
+    margin: 1em 0;
+    background-color: #FFCCFF;
+    background-image: url(style/Debug.gif);
+    background-position: top left;
+    background-repeat: no-repeat;
+}
+
 /* ----------------------------------------------------------------------- */
 /* verbatim and example code environments                                  */
 /* ----------------------------------------------------------------------- */
