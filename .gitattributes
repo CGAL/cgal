@@ -2264,7 +2264,6 @@ Nef_3/Visual_hull/Nef_3/mpi_triang.off -text svneol=unset#application/octet-stre
 Nef_3/Visual_hull/Nef_3/octahedron.off -text svneol=unset#application/octet-stream
 Nef_3/demo/Nef_3/CMakeLists.txt -text
 Nef_3/demo/Nef_3/cube.off -text svneol=unset#application/octet-stream
-Nef_3/demo/Nef_3/makefile -text
 Nef_3/demo/Nef_3/mpi.vsh -text
 Nef_3/doc_tex/Nef_3/fig/closeup.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/closeup.pdf -text svneol=unset#application/pdf

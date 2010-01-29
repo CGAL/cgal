@@ -83,6 +83,8 @@
      <addaction name="actionUnion"/>
      <addaction name="actionIntersection"/>
      <addaction name="actionDifference"/>
+     <addaction name="separator"/>
+     <addaction name="actionMinkowskiSum"/>
     </widget>
     <widget class="QMenu" name="menuParameterization">
      <property name="title">
@@ -483,6 +485,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionMinkowskiSum">
+   <property name="text">
+    <string>&amp;Minkowski sum</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O, M</string>
    </property>
   </action>
  </widget>

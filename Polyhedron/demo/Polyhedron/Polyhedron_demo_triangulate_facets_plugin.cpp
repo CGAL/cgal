@@ -44,13 +44,13 @@ typedef CGAL::Constrained_triangulation_plus_2<CDTbase>                CDT;
 
 typedef Polyhedron::HalfedgeDS HDS;
 
-class Modifier : public CGAL::Modifier_base<HDS> {
+class Triangulate_modifier : public CGAL::Modifier_base<HDS> {
   CDT* cdt;
   Polyhedron::Facet_handle fh;
 
 public:
-  Modifier(CDT* cdt,
-           Polyhedron::Facet_handle fh) 
+  Triangulate_modifier(CDT* cdt,
+                       Polyhedron::Facet_handle fh) 
     : cdt(cdt), fh(fh)
   {
   }
@@ -140,18 +140,71 @@ public:
     this->scene = scene_interface;
     this->mw = mainWindow;
     this->messages = m;
-    actionTriangulationFacets = new QAction("Triangulate facets", mw);
-    if(actionTriangulationFacets) {
-      connect(actionTriangulationFacets, SIGNAL(triggered()),
+    actionTriangulateFacets = new QAction("Triangulate facets", mw);
+    if(actionTriangulateFacets) {
+      connect(actionTriangulateFacets, SIGNAL(triggered()),
               this, SLOT(triangulate())); 
+    }
+    actionUnTriangulateFacets = new QAction("Untriangulate facets", mw);
+    if(actionUnTriangulateFacets) {
+      connect(actionUnTriangulateFacets, SIGNAL(triggered()),
+              this, SLOT(untriangulate())); 
     }
   };
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionTriangulationFacets;
+    return QList<QAction*>() << actionTriangulateFacets
+                             << actionUnTriangulateFacets;
   }
 
 public slots:
+  void untriangulate() {
+    CGAL::set_error_behaviour(CGAL::ABORT);
+    const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  
+    Scene_polyhedron_item* item = 
+      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+
+    if(item)
+    {
+      Polyhedron* pMesh = item->polyhedron();
+      if(!pMesh) return;
+
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
+      for(Polyhedron::Edge_iterator 
+            eit = pMesh->edges_begin(),
+            end = pMesh->edges_end();
+          eit != end; /*increment is done manually*/)
+      {
+        std::cerr << (void*)&*eit << std::endl;
+        Polyhedron::Edge_iterator eit_copy = eit++;
+        if(!eit_copy->is_border()) {
+          Polyhedron::Facet_handle fh1 = eit_copy->facet();
+          Polyhedron::Facet_handle fh2 = eit_copy->opposite()->facet();
+          typedef Polyhedron::Facet Facet;
+          if( fh1 != fh2 &&  
+              !eit_copy->vertex()->is_bivalent() && 
+              !eit_copy->opposite()->vertex()->is_bivalent())
+          {
+             Kernel::Vector_3 v1 = compute_facet_normal<Facet, Kernel>(*fh1);
+            Kernel::Vector_3 v2 = compute_facet_normal<Facet, Kernel>(*fh2);
+            if(v1 * v2 > 0.99) {
+              std::cerr << "join\n";
+              // pMesh->is_valid(true);
+              pMesh->join_facet(eit_copy);
+            }
+          }
+        }
+      }
+      CGAL_assertion_code(pMesh->normalize_border());
+      // CGAL_assertion(pMesh->is_valid(true, 3));
+      scene->itemChanged(item);
+      // default cursor
+      QApplication::restoreOverrideCursor();
+    }
+  }
+
   void triangulate() {
     CGAL::set_error_behaviour(CGAL::ABORT);
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -241,7 +294,7 @@ public slots:
           }
         }
         // then modify the polyhedron
-        Modifier modifier(&cdt, fit);
+        Triangulate_modifier modifier(&cdt, fit);
         pMesh->delegate(modifier);
       }
       CGAL_assertion_code(pMesh->normalize_border());
@@ -253,7 +306,8 @@ public slots:
   }
   
 private:
-  QAction* actionTriangulationFacets;
+  QAction* actionTriangulateFacets;
+  QAction* actionUnTriangulateFacets;  
   Messages_interface* messages;
 };
 

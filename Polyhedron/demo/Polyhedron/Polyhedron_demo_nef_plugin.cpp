@@ -25,7 +25,8 @@ public:
                          << "actionToPoly"
                          << "actionUnion"
                          << "actionIntersection"
-                         << "actionDifference";
+                         << "actionDifference"
+                         << "actionMinkowskiSum";
   }
 
 //   QList<QAction*> actions() const {
@@ -45,7 +46,9 @@ public:
 private:
   enum  Boolean_operation { BOOLEAN_UNION,
                             BOOLEAN_INTERSECTION,
-                            BOOLEAN_DIFFERENCE };
+                            BOOLEAN_DIFFERENCE,
+                            MINKOWSKI_SUM
+  };
   void boolean_operation(const Boolean_operation operation);
 
 public slots:
@@ -54,6 +57,7 @@ public slots:
   void on_actionUnion_triggered();
   void on_actionIntersection_triggered();
   void on_actionDifference_triggered();
+  void on_actionMinkowskiSum_triggered();
 }; // end class Polyhedron_demo_nef_plugin
 
 void
@@ -136,6 +140,12 @@ void Polyhedron_demo_nef_plugin::on_actionDifference_triggered()
   boolean_operation(BOOLEAN_DIFFERENCE);
 }
 
+void
+Polyhedron_demo_nef_plugin::on_actionMinkowskiSum_triggered()
+{
+  boolean_operation(MINKOWSKI_SUM);
+}
+
 void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation operation)
 {
   const int indexA = scene->selectionAindex();
@@ -164,8 +174,10 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   // copy itemA
-  Scene_nef_polyhedron_item* new_item = 
-    new Scene_nef_polyhedron_item(*itemA->nef_polyhedron());
+  Scene_nef_polyhedron_item* new_item = 0;
+  if(operation != MINKOWSKI_SUM) {
+    new_item = new Scene_nef_polyhedron_item(*itemA->nef_polyhedron());
+  };
 
  // perform Boolean operation
   std::cout << "Boolean operation...";
@@ -181,6 +193,10 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
     break;
   case BOOLEAN_DIFFERENCE:
     (*new_item) -= (*itemB);
+    break;
+  case MINKOWSKI_SUM:
+    new_item = Scene_nef_polyhedron_item::sum(*itemA, 
+                                              *itemB);
   }
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
@@ -195,6 +211,9 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
     break;
   case BOOLEAN_DIFFERENCE:
     name = tr("%1 minus %2");
+    break;
+  case MINKOWSKI_SUM:
+    name = tr("Minkowski sum of %1 and %2");
   }
   
   new_item->setName(name.arg(itemA->name(), itemB->name()));
