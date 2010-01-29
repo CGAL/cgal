@@ -62,6 +62,14 @@
   <qresource prefix="/cgal" lang="en" >
     <file>help/index.html</file>
   </qresource>
+  <qresource prefix="/cgal/Input" >
+    <file alias="zoom-best-fit" >icons/fit-page-32.png</file>
+  </qresource>
+  <qresource prefix="/cgal/fileToolbar" >
+      <file>icons/fileNew.png</file>
+      <file>icons/fileOpen.png</file>
+      <file>icons/fileSave.png</file>
+  </qresource>
 </RCC>
 
   

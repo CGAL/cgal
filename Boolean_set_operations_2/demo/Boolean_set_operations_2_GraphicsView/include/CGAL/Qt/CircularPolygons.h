@@ -116,27 +116,42 @@ struct Draw_circular_X_monotone_curve
 
         double aspan = atarget - asource ;  
 
+        const double to_deg = 180.0/CGAL_PI;
+
+        Orientation lO = curve.orientation() ;
+
+        if ( lO == CLOCKWISE )
+          aspan = 2.0 * CGAL_PI - aspan ;
+
+        if ( aIdx == 0 ) 
+             aPath.moveTo(sx,sy) ;
+        else aPath.lineTo(sx,sy) ;
+
+        QRectF bbox = convert(circ.bbox()) ;
+
+        double dasource = std::atan2(-sdy, sdx ) * to_deg ;
+
+        double daspan  = aspan * to_deg * ( lO == COUNTERCLOCKWISE ? -1.0 : +1.0) ;
+
         // This is to prevent the approximations to turn a tiny arc into a full circle by
         // inverting the relative ordering of the start, target angles.
         // We use the fact that an X-monotone arc can never span an angle greater than PI.
-        if ( aspan < 3.0 * CGAL_PI / 2.0 )
+        if ( daspan < 270 )
         {
-          const double to_deg = 180.0/CGAL_PI;
-
-          Orientation lO = curve.orientation() ;
-
-          if ( aIdx == 0 ) 
-               aPath.moveTo(sx,sy) ;
-          else aPath.lineTo(sx,sy) ;
-
-          QRectF bbox = convert(circ.bbox()) ;
-
-          double dasource = std::atan2(-sdy, sdx ) * to_deg ;
-
-          double daspan  = aspan * to_deg * ( lO == COUNTERCLOCKWISE ? -1.0 : +1.0) ;
-
           aPath.arcTo(bbox , dasource, daspan );    
         }
+        else
+        {
+         if ( aIdx == 0 ) 
+            aPath.moveTo(sx,sy) ;
+          aPath.lineTo(sx,sy) ;
+        }
+      }
+      else
+      {
+        if ( aIdx == 0 ) 
+          aPath.moveTo(sx,sy) ;
+        aPath.lineTo(sx,sy) ;
       }
     }
     else
@@ -237,73 +252,6 @@ struct Draw_circular_curve
     }
   }
 } ;
-    
-/*
-struct Draw_circular_curve
-{
-  template<class Circle_segment_2, class Path>
-  void operator()( Circle_segment_2 const& curve, Path& aPath, int aIdx ) const 
-  {
-    if ( !cs_.is_full() )
-    {
-      double sx = to_double(cs_.source().x());
-      double sy = to_double(cs_.source().y());
-      double tx = to_double(cs_.target().x());
-      double ty = to_double(cs_.target().y());
-
-      if( cs_.orientation() == COLLINEAR)
-      {
-        painter->drawLine(sx,sy,tx,ty);
-      }
-      else
-      {
-        double cx = to_double(cs_.supporting_circle().center().x());
-        double cy = to_double(cs_.supporting_circle().center().y());
-
-        double x0, y0, x1, y1 ;
-        if(cs_.orientation() == CLOCKWISE)
-        {
-          x0 = sx ;
-          y0 = sy ;
-          x1 = tx ;
-          y1 = ty ; 
-        }
-        else
-        {
-          x0 = tx ;
-          y0 = ty ;
-          x1 = sx ;
-          y1 = sy ; 
-        }
-        double rad = std::sqrt(CGAL::to_double(cs_.supporting_circle().squared_radius()));
-
-        double a   = std::atan2( y0 - cy, x0 - cx ) ;
-        double a2p = std::atan2( y1 - cy, x1 - cx );
-
-        if (a2p <= a)
-          a2p += 2 * CGAL_PI;
-
-        double alen2 = a2p - a;
-
-        double to_deg = 180 / CGAL_PI ;
-
-        painter->drawArc(cx - rad, cy - rad, 2 * rad, 2 * rad, - a * to_deg * 16, - alen2 * to_deg * 16 );
-      }
-    }
-    else
-    {
-      if( cs_.orientation() != COLLINEAR)
-      {
-        double cx = to_double(cs_.supporting_circle().center().x());
-        double cy = to_double(cs_.supporting_circle().center().y());
-        double rad = std::sqrt(CGAL::to_double(cs_.supporting_circle().squared_radius()));
-        painter->drawArc(cx -rad, cy - rad, 2 * rad, 2 * rad, 0, 360*16);
-      }
-    }
-
-  }
-} ;  
-*/
 
 template<class Circular_boundary_pieces>
 class Circular_boundary_pieces_graphics_item : public Boundary_pieces_graphics_item<Circular_boundary_pieces,Draw_circular_curve,Circular_bbox>

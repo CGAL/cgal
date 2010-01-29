@@ -27,7 +27,7 @@
 #endif
 
 
-#include <fstream>
+#include <fstream>   
 #include <string>
 #include <sstream>
 #include <iomanip>
@@ -39,7 +39,7 @@ void trace( std::string s )
   out << s ;
 }
 
-#include <boost/shared_ptr.hpp>
+#include <boost/shared_ptr.hpp>   
 
 #include <QtGui>
 #include <QString>
@@ -491,7 +491,8 @@ public slots:
   void on_actionAllRed_triggered(); 
   void on_actionDeleteBlue_triggered();
   void on_actionDeleteRed_triggered();
-  
+  void on_actionRecenter_triggered();
+
   void on_actionInsertBezier_toggled  (bool aChecked);
   void on_actionInsertCircular_toggled(bool aChecked);
   void on_actionInsertCircle_toggled  (bool aChecked);
@@ -666,6 +667,11 @@ void MainWindow::on_actionNew_triggered()
   
   modelChanged();
   
+}
+
+void MainWindow::on_actionRecenter_triggered()
+{
+  zoomToFit();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)

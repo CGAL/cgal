@@ -66,12 +66,26 @@
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
+   <widget class="QMenu" name="menuTools" >
+    <property name="title" >
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionInsertBezier" />
+    <addaction name="actionInsertCircular" />
+    <addaction name="separator" />
+    <addaction name="actionShowBlue" />
+    <addaction name="actionShowRed" />
+    <addaction name="actionShowResult" />
+    <addaction name="separator" />
+    <addaction name="actionRecenter" />
+   </widget>
    <widget class="QMenu" name="menuHelp" >
     <property name="title" >
      <string>&amp;Help</string>
     </property>
    </widget>
    <addaction name="menuFile" />
+   <addaction name="menuTools" />
    <addaction name="menuHelp" />
   </widget>
 
@@ -124,6 +138,7 @@
     <string>Show the Resulting Curve Set</string>
    </property>
    </widget>
+   <addaction name="actionRecenter" />
   </widget>
   
   <widget class="QToolBar" name="inputToolBar" >
@@ -195,42 +210,70 @@
   </widget>
   
   <action name="actionNew" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
+   </property>
    <property name="text" >
     <string>&amp;New</string>
    </property>
   </action>
   
   <action name="actionOpenLinear" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
    <property name="text" >
     <string>&amp;Open Linear Polygon</string>
    </property>
   </action>
   
   <action name="actionOpenDXF" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
    <property name="text" >
     <string>&amp;Open DXF</string>
    </property>
   </action>
   
   <action name="actionOpenBezier" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
    <property name="text" >
     <string>&amp;Open Bezier Polygon</string>
    </property>
   </action>
 
   <action name="actionSaveBlue" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
+   </property>
    <property name="text" >
     <string>&amp;Save 'P' Set</string>
    </property>
   </action>
 
   <action name="actionSaveRed" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
+   </property>
    <property name="text" >
     <string>&amp;Save 'Q' Set</string>
    </property>
   </action>
 
   <action name="actionSaveResult" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
+   </property>
    <property name="text" >
     <string>&amp;Save Result Set</string>
    </property>
@@ -290,8 +333,11 @@
      <normaloff>:/cgal/Actions/icons/insert_bezier.xpm</normaloff>:/cgal/Actions/icons/insert_bezier.xpm
     </iconset>
    </property>
+   <property name="text" >
+    <string>Insert Bezier Polygon</string>
+   </property>
    <property name="toolTip" >
-    <string>Insert Bezier Polygon With Holes</string>
+    <string>Insert Bezier Polygon</string>
    </property>
   </action>
 
@@ -307,8 +353,11 @@
      <normaloff>:/cgal/Actions/icons/insert_polygon.xpm</normaloff>:/cgal/Actions/icons/insert_polygon.xpm
     </iconset>
    </property>
+   <property name="text" >
+    <string>Insert Circular Polygon</string>
+   </property>
    <property name="toolTip" >
-    <string>Insert Circular Polygon With Holes</string>
+    <string>Insert Circular Polygon</string>
    </property>
   </action>
   
@@ -326,23 +375,6 @@
    </property>
    <property name="toolTip" >
     <string>Insert Circule</string>
-   </property>
-  </action>
-  
-  <action name="actionInsertBezier" >
-   <property name="checkable" >
-    <bool>true</bool>
-   </property>
-   <property name="checked" >
-    <bool>false</bool>
-   </property>
-   <property name="icon" >
-    <iconset resource="boolean_operations_2.qrc" >
-     <normaloff>:/cgal/Actions/icons/insert_circle.xpm</normaloff>:/cgal/Actions/icons/insert_circle.xpm
-    </iconset>
-   </property>
-   <property name="toolTip" >
-    <string>Insert Bezier</string>
    </property>
   </action>
   
@@ -511,6 +543,19 @@
    </property>
    <property name="checked" >
     <bool>false</bool>
+   </property>
+  </action>
+
+  <action name="actionRecenter" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/Input/zoom-best-fit</normaloff>:/cgal/Input/zoom-best-fit</iconset>
+   </property>
+   <property name="text" >
+    <string>Re&amp;center the viewport</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+R</string>
    </property>
   </action>
   

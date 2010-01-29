@@ -47,6 +47,8 @@ namespace Qt {
     typedef typename Gps_traits::Curve_2            Circular_curve;
     typedef typename Gps_traits::X_monotone_curve_2 Circular_X_monotone_curve;
     typedef typename Gps_traits::Polygon_2          Circular_polygon;
+    typedef typename Circular_polygon::Point_2      Arc_point ;
+    typedef typename Kernel::FT                     FT ;
     typedef typename Kernel::Vector_2               Vector ;
     typedef typename Kernel::Point_2                Point ;
     
@@ -296,10 +298,6 @@ namespace Qt {
         
     void CommitCurrCircularPolygon()
     {
-      mCircularPolygonPieces.push_back( Circular_curve( cvt(mCircularPolygonPieces.back ().target())
-                                                      , cvt(mCircularPolygonPieces.front().source()) 
-                                                      )
-                                      ) ;
       GenerateCircularPolygon();
 
       mOngoingPieceCtr.clear();
@@ -337,6 +335,16 @@ namespace Qt {
       
       if ( xcvs.size() > 0 )
       {
+        Arc_point const& first_point = xcvs.front().source();
+        Arc_point const& last_point =  xcvs.back ().target();
+        CGAL_assertion(first_point.x().is_rational() && first_point.y().is_rational());
+        CGAL_assertion(last_point. x().is_rational() && last_point .y().is_rational());
+        FT fxs = first_point.x().alpha();
+        FT fys = first_point.y().alpha();
+        FT lxs = last_point .x().alpha();
+        FT lys = last_point .y().alpha();
+        xcvs.push_back(Circular_X_monotone_curve( Point(lxs,lys), Point(fxs,fys)));
+
         Circular_polygon cp(xcvs.begin(), xcvs.end());
         emit(generate(CGAL::make_object(cp)));
       }  
