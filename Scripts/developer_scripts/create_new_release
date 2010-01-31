@@ -310,7 +310,7 @@ if [ -n "$DO_PUBLIC" ]; then
   sed -i -e "/define *CGAL_SRC/,+20 s/CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}/${public_release_name}/g" ${public_release_name}-NSIS/script_cgal_${MAJOR_NUMBER}_${MINOR_NUMBER}.nsi
   pushd ${public_release_name}-NSIS
   if [ -n "${WINE}" -a -n "${MAKENSIS}" ]; then 
-    "${WINE}" "${MAKENSIS}" "script_cgal_${MAJOR_NUMBER}_${MINOR_NUMBER}.nsi"
+    "${WINE}" "${MAKENSIS}" "script_cgal.nsi"
     mv *.exe "${HTML_DIR}/${release_name}-public/"
   fi
   popd

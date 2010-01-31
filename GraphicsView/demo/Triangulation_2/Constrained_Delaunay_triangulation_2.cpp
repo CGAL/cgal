@@ -458,7 +458,7 @@ MainWindow::on_actionLoadConstraints_triggered()
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Constraint File"),
 						  ".",
-						  tr("Edge files (*.edg)\n"
+						  tr("Edge files (*.edg);;"
 						     "Poly files (*.plg)"));
   open(fileName);
 }
@@ -470,6 +470,7 @@ MainWindow::loadPolygonConstraints(QString fileName)
   CDT::Vertex_handle vp, vq, vfirst;
   std::ifstream ifs(qPrintable(fileName));
   int n;
+  // int counter = 0;
   while(ifs >> n){
     ifs >> first;
     p = first;
@@ -478,11 +479,16 @@ MainWindow::loadPolygonConstraints(QString fileName)
     while(n--){
       ifs >> q;
       vq = cdt.insert(q, vp->face());
-      cdt.insert_constraint(vp,vq);
+      if(vp != vq) {
+        cdt.insert_constraint(vp,vq);
+        // std::cerr << "inserted constraint #" << counter++ << std::endl;
+      }
       p = q;
       vp = vq;
     }
-    cdt.insert_constraint(vp, vfirst);
+    if(vp != vfirst) {
+      cdt.insert_constraint(vp, vfirst);
+    }
   }
   
   
@@ -519,7 +525,9 @@ MainWindow::loadEdgConstraints(QString fileName)
       vp = cdt.insert(p);
     }
     vq = cdt.insert(q, vp->face());
-    cdt.insert_constraint(vp,vq);
+    if(vp != vq) {
+      cdt.insert_constraint(vp,vq);
+    }
     qold = q;
     vqold = vq;
     first = false;
