@@ -280,8 +280,9 @@ if [ -n "$DO_PUBLIC" ]; then
     popd
     cp -a doc_html/* ${public_release_name}/doc_html
     tar -cf "${public_release_name}.tar" "${public_release_name}"
-    gzip "${public_release_name}.tar"
     mkdir "${HTML_DIR}/${release_name}-public"
+    xz --best "${public_release_name}.tar" -c > "${HTML_DIR}/${release_name}-public/${public_release_name}.tar.xz"
+    gzip "${public_release_name}.tar"
     cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/"
     # Do a Zip file as well for the public version.
     zip -q -r ${public_release_name}.zip ${public_release_name}
