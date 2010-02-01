@@ -2154,12 +2154,12 @@ reorient_faces()
   int nf  = std::distance(faces_begin(),faces_end());
 
   while (static_cast<int>(oriented_set.size()) != nf) {
-    while ( oriented_set.find(fit->handle()) != oriented_set.end()){
+    while ( oriented_set.find(fit) != oriented_set.end()){
       ++fit; // find a germ for  non oriented components 
     }
     // orient component
-    oriented_set.insert(fit->handle());
-    st.push(fit->handle());
+    oriented_set.insert(fit);
+    st.push(fit);
     while ( ! st.empty()) {
       Face_handle fh = st.top();
       st.pop();
