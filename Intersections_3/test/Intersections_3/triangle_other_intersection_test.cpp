@@ -626,7 +626,7 @@ int main()
   // -----------------------------------
   // Test random intersection
   // -----------------------------------
-  srand(time(NULL));
+  srand( static_cast<unsigned int>(time(NULL)) );
   std::cout << std::endl << "Test random intersections" << std::endl;
   std::cout << "\tTesting with Simple_cartesian<float>..." << std::endl ;
   random_test<Sc_f>();
