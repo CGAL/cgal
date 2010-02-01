@@ -130,7 +130,7 @@ int RS_polynomial_1::get_degree_static()const{
 
 inline
 bool RS_polynomial_1::has_sfpart()const{
-        return (_is_sf?true:(bool)(_sfpart.get()));
+        return (_is_sf?true:(_sfpart.get()!=NULL?true:false));
 }
 
 inline
@@ -160,7 +160,7 @@ void RS_polynomial_1::set_sf()const{
 
 inline
 bool RS_polynomial_1::has_sqfr()const{
-        return (bool)(_sqfr.get());
+        return (_sqfr.get()!=NULL?true:false);
 }
 
 inline

@@ -28,9 +28,9 @@ namespace RS_MGCD{
 // pn size is 32 bits,
 // the sizes of lpn and spn must be, at least, as twice as the size of pn
 #define PN_BITS 32
-#define pn      uint32_t        // unsigned
-#define lpn     uint64_t        // unsigned long long
-#define spn     int64_t         // long long
+#define pn      _u32    // unsigned
+#define lpn     _u64    // unsigned long long
+#define spn     _s64    // long long
 
 #define p_mpz_set_pn(A,PN)      mpz_set_ui(A,(unsigned long)(PN))
 #define p_mpz_mul_pn(A,B,PN)    mpz_mul_ui(A,B,(unsigned long)(PN))
