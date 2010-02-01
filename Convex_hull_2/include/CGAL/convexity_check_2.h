@@ -127,4 +127,3 @@ CGAL_END_NAMESPACE
 #include <CGAL/Convex_hull_2/convexity_check_2_impl.h>
 
 #endif // CGAL_CONVEXITY_CHECK_2_H
-

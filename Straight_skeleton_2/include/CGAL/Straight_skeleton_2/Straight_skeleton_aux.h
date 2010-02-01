@@ -204,4 +204,3 @@ inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Releas
 
 #endif // CGAL_STRAIGHT_SKELETON_AUX_H //
 // EOF //
-

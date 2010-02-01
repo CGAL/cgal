@@ -28,4 +28,3 @@
 #endif // CGAL_NO_AUTOLINK_IMAGEIO
 
 #endif // CGAL_AUTO_LINK_IMAGEIO_H
-

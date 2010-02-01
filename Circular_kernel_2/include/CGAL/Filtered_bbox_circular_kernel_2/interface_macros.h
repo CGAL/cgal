@@ -69,4 +69,3 @@
 
 #undef CGAL_Filtered_Bbox_Circular_Kernel_pred
 #undef CGAL_Filtered_Bbox_Circular_Kernel_cons
-

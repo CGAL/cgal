@@ -356,4 +356,3 @@ inline bool do_intersect(const Hyperplane_d<R>& h, const Segment_d<R>& s)
 
 CGAL_END_NAMESPACE
 #endif //CGAL_INTERSECTIONS_D_H
-

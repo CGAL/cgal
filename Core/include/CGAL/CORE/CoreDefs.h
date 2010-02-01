@@ -251,4 +251,3 @@ inline void setPositionalFormat(std::ostream& o = std::cout) {
 
 CORE_END_NAMESPACE
 #endif // _CORE_COREDEFS_H_
-

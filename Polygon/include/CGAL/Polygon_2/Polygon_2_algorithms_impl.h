@@ -437,4 +437,3 @@ Orientation orientation_2(ForwardIterator first,
 }
 
 CGAL_END_NAMESPACE
-

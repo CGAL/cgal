@@ -359,5 +359,3 @@
 #  define CGAL_triangulation_expensive_exactness_warning_code(CODE) CODE
 #  define CGAL_triangulation_expensive_exactness_warnings 1
 #endif // CGAL_TRIANGULATION_NO_WARNINGS
-
-

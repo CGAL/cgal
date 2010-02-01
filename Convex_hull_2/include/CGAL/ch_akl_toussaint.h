@@ -53,4 +53,3 @@ CGAL_END_NAMESPACE
 #include <CGAL/Convex_hull_2/ch_akl_toussaint_impl.h>
 
 #endif // CGAL_CH_AKL_TOUSSAINT_H
-

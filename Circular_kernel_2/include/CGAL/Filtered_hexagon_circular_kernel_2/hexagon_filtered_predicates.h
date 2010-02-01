@@ -706,4 +706,3 @@ class Do_overlap_2
 CGAL_END_NAMESPACE  
 
 #endif // CGAL_HEXAGON_FILTERED_PREDICATES_H  
-

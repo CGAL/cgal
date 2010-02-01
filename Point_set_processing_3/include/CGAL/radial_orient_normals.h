@@ -169,4 +169,3 @@ radial_orient_normals(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_RADIAL_ORIENT_NORMALS_H
-

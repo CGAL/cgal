@@ -153,4 +153,3 @@ public:
 }; //Matrix
 
 #endif
-

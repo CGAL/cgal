@@ -353,4 +353,3 @@ struct Pluecker_line_lt {
 
 CGAL_END_NAMESPACE
 #endif //CGAL_PLUECKER_LINE_3_H
-

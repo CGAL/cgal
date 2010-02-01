@@ -270,4 +270,3 @@ void dump(std::ostream& os) const
 
 
 #endif //CGAL_LEDA_SPHERE_MAP_H
-

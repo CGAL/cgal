@@ -110,4 +110,3 @@ public:
 } // namespace CGAL
 
 #endif // CGAL_CHINESE_REMAINDER_TRAITS_H //
-

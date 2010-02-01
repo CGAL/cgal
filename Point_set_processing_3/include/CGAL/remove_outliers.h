@@ -241,4 +241,3 @@ remove_outliers(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_REMOVE_OUTLIERS_H
-

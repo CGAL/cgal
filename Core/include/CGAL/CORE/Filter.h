@@ -189,4 +189,3 @@ inline std::ostream & operator<< (std::ostream & os, const filteredFp& fp) {
 
 CORE_END_NAMESPACE
 #endif // _CORE_FILTER_H_
-

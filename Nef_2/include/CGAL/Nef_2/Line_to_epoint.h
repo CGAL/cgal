@@ -69,4 +69,3 @@ struct Line_to_epoint {
 
 CGAL_END_NAMESPACE
 #endif //CGAL_LINE_TO_EPOINT_H
-

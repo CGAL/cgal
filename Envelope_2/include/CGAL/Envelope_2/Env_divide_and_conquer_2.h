@@ -372,4 +372,3 @@ CGAL_END_NAMESPACE
 #include <CGAL/Envelope_2/Env_divide_and_conquer_2_impl.h>
 
 #endif
-

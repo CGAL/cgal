@@ -78,4 +78,3 @@ in |result|. The returned iterator marks the end of the output.
 
 CGAL_END_NAMESPACE
 #endif // CGAL_CONSTRUCTIONS_D_H
-

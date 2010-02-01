@@ -337,5 +337,3 @@ public:
 
 CGAL_END_NAMESPACE
 #endif // CGAL_SM_ITEMS_H
-
-

@@ -492,4 +492,3 @@ inline Real RealLong::operator-() const {
 
 CORE_END_NAMESPACE
 #endif // _CORE_REAL_H_
-

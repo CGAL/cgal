@@ -222,5 +222,3 @@ public:
 CGAL_END_NAMESPACE
 
 #endif //CGAL_SNC_RAY_SHOOTER_H
-
-

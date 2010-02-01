@@ -24,4 +24,3 @@
 #else
 #include <CGAL/CGAL_Ipelet_base_v6.h>
 #endif
-

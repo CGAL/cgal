@@ -1,4 +1,3 @@
-
 #ifndef CGAL_TEST_POLYNOMIAL
 #define CGAL_TEST_POLYNOMIAL
 

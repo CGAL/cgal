@@ -1019,5 +1019,3 @@ Linear_algebraHd<RT_,AL_>::transpose(const Matrix& M)
 
 CGAL_END_NAMESPACE
 #endif //CGAL_LINEAR_ALGEBRAHD_C
-
-

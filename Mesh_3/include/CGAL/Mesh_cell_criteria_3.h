@@ -81,4 +81,3 @@ private:
 
 
 #endif // CGAL_MESH_CELL_CRITERIA_3_H
-

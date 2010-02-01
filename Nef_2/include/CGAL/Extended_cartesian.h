@@ -440,5 +440,3 @@ const char* output_identifier() const { return "Extended_cartesian"; }
 #undef Polynomial
 CGAL_END_NAMESPACE
 #endif // CGAL_EXTENDED_CARTESIAN_H
-
-

@@ -95,4 +95,3 @@ public:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_K_NEIGHBOR_NEIGHBOR_H
-

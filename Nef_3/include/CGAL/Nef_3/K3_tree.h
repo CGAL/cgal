@@ -1297,4 +1297,3 @@ bool is_point_on_cell( const Point_3& p, const Node* target, const Node* current
 CGAL_END_NAMESPACE
 
 #endif // CGAL_NEF_K3_TREE_H
-

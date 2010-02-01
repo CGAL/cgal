@@ -155,4 +155,3 @@ DEFINE_MAX_TYPE(BigRat, Expr, Expr)
 CORE_END_NAMESPACE
 
 #endif //__PROMOTE_H__
-

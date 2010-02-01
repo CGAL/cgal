@@ -61,4 +61,3 @@ class Point_pair_less_xy_2
 }
 
 #endif // CGAL_POINT_PAIR_LESS_XY_H
-

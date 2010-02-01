@@ -361,5 +361,3 @@
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_warning_code(CODE) CODE
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_warnings 1
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_NO_WARNINGS
-
-

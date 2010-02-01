@@ -153,4 +153,3 @@ ch_w_point( ForwardIterator first, ForwardIterator last,
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CH_SELECTED_EXTREME_POINTS_2_C
-

@@ -1500,5 +1500,3 @@ visible_facets_search(Simplex_handle S, const Point_d& x,
 
 CGAL_END_NAMESPACE
 #endif // CGAL_CONVEX_HULL_D_H
-
-

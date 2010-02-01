@@ -185,4 +185,3 @@ class Search_traits_vertex_handle_3
 CGAL_END_NAMESPACE
 
 #endif // CGAL_SEARCH_TRAITS_VERTEX_HANDLE_3_H
-

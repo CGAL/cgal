@@ -139,4 +139,3 @@ bool is_frame_edge(Halfedge_const_handle e) const
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PM_EXPLORER_H
-

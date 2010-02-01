@@ -516,5 +516,3 @@ on the extended geometric objects.}*/
 
 CGAL_END_NAMESPACE
 #endif // CGAL_EXTENDED_HOMOGENEOUS_H
-
-

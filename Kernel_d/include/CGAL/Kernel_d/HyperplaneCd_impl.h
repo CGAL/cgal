@@ -102,5 +102,3 @@ std::ostream& operator<<(std::ostream& O, const HyperplaneCd<FT,LA>& h)
 
 CGAL_END_NAMESPACE
 #endif // CGAL_HYPERPLANECD_C
-
-

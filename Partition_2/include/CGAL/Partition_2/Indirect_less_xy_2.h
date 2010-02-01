@@ -45,4 +45,3 @@ class Indirect_less_xy_2
 }
 
 #endif // CGAL_INDIRECT_LESS_XY_2_H
-

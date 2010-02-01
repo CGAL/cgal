@@ -231,4 +231,3 @@ pca_estimate_normals(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PCA_ESTIMATE_NORMALS_H
-

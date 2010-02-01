@@ -335,4 +335,3 @@ private:
 }; // namespace OpenNL
 
 #endif // __OPENNL_BICGSTAB__
-

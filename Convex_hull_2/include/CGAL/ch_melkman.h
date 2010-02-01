@@ -48,4 +48,3 @@ CGAL_END_NAMESPACE
 #include <CGAL/Convex_hull_2/ch_melkman_impl.h>
 
 #endif // CGAL_CH_MELKMAN_H
-

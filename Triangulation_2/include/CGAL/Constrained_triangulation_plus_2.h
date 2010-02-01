@@ -642,6 +642,3 @@ vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb)
 CGAL_END_NAMESPACE
 
 #endif //CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
-
-
-

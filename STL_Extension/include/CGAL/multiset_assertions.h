@@ -359,5 +359,3 @@
 #  define CGAL_multiset_expensive_exactness_warning_code(CODE) CODE
 #  define CGAL_multiset_expensive_exactness_warnings 1
 #endif // CGAL_MULTISET_NO_WARNINGS
-
-

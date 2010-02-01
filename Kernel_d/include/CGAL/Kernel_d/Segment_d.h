@@ -248,4 +248,3 @@ $O(|s.dimension()|)$. The space requirement is $O(|s.dimension()|)$.
 CGAL_END_NAMESPACE
 #endif // CGAL_SEGMENT_D_H
 //----------------------- end of file ----------------------------------
-

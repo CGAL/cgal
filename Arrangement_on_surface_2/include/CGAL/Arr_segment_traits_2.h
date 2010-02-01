@@ -1169,4 +1169,3 @@ InputStream& operator>> (InputStream& is, Arr_segment_2<Kernel>& seg)
 CGAL_END_NAMESPACE
 
 #endif
-

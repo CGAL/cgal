@@ -28,4 +28,3 @@
 #endif // CGAL_NO_AUTOLINK_CORE
 
 #endif // CGAL_AUTO_LINK_CORE_H
-

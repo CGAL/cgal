@@ -987,4 +987,3 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
 
 CGAL_END_NAMESPACE
 #endif //CGAL_SNC_DECORATOR_H
-

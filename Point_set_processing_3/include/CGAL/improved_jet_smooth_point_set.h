@@ -351,4 +351,3 @@ improved_jet_smooth_point_set(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_IMPROVED_JET_SMOOTH_POINT_SET_H
-

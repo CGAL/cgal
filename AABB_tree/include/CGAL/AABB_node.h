@@ -194,4 +194,3 @@ AABB_node<Tr>::traversal(const Query& query,
 } // end namespace CGAL
 
 #endif // CGAL_AABB_NODE_H
-

@@ -50,4 +50,3 @@ for(x = (SM).sfaces_begin(); x != (SM).sfaces_end(); ++x)
 for(x = (F)->sface_cycles_begin(); x != (F)->sface_cycles_end(); ++x) 
 
 #endif //CGAL_SM_ITERATION_H
-

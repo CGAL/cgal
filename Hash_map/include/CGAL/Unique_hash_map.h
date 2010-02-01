@@ -171,4 +171,3 @@ namespace boost {
 
 #endif // CGAL_UNIQUE_HASH_MAP_H
 // EOF
-

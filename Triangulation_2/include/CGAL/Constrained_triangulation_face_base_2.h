@@ -155,10 +155,3 @@ cw_permute()
 CGAL_END_NAMESPACE 
   
 #endif //CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_2_H
-
-
-
-
-
-
-

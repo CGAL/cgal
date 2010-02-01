@@ -112,4 +112,3 @@ namespace CGAL {
 
 } // namespace CGAL
 #endif // EUCLIDEAN_DISTANCE_SPHERE_POINT_H
-

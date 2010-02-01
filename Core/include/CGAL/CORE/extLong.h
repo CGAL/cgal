@@ -292,4 +292,3 @@ inline bool extLong::isNaN() const {
 
 CORE_END_NAMESPACE
 #endif // _CORE_EXTLONG_H_
-

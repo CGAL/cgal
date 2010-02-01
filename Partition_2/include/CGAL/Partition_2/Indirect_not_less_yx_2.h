@@ -43,4 +43,3 @@ class Indirect_not_less_yx_2
 }
 
 #endif // CGAL_INDIRECT_NOT_LESS_YX_2_H
-

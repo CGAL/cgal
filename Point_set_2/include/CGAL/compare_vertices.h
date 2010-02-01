@@ -48,4 +48,3 @@ class compare_vertices {
 CGAL_END_NAMESPACE
 
 #endif // CGAL_COMPARE_VERTICES_H
-

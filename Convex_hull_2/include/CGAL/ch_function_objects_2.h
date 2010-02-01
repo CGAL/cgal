@@ -69,4 +69,3 @@ private:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CH_FUNCTION_OBJECTS_2_H	
-

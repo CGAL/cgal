@@ -269,4 +269,3 @@ void Array1D<T>::copy_(T* p, const T* q, int len) const
 }}}
 #endif
 /* TNT_ARRAY1D_H */
-

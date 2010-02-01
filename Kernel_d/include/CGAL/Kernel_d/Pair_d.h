@@ -94,4 +94,3 @@ void print(std::ostream& os, const char* _name) const
 
 CGAL_END_NAMESPACE
 #endif //CGAL_PAIR_D_H
-

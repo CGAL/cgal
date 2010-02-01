@@ -731,4 +731,3 @@ void  Quadratic_program_solution<ET>::add_c
 CGAL_END_NAMESPACE
 
 #endif // CGAL_QP_SOLUTION_IMPL_H
-

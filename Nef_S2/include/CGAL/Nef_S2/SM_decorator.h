@@ -960,5 +960,3 @@ void check_integrity_and_topological_planarity(bool faces=true) const {
 
 CGAL_END_NAMESPACE
 #endif // CGAL_SM_DECORATOR_H
-
-

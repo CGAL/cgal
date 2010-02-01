@@ -178,4 +178,3 @@ OutputStream& operator<<(
 CGAL_END_NAMESPACE
 
 #endif
-

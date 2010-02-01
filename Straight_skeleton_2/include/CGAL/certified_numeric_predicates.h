@@ -142,4 +142,3 @@ inline Uncertain<Sign> certified_sign_of_determinant2x2( const NT& a00
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CERTIFIED_NUMERIC_PREDICATES_H
-

@@ -334,4 +334,3 @@ namespace CGAL {
 
 
 #endif  // end CGAL_SURFACE_MESHER_STANDARD_CRITERIA_H
-

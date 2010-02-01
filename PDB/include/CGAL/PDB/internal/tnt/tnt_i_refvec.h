@@ -230,4 +230,3 @@ i_refvec<T>::~i_refvec()
 
 #endif
 /* TNT_I_REFVEC_H */
-

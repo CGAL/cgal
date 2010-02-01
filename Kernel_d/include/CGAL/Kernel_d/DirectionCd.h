@@ -139,4 +139,3 @@ friend std::ostream& operator<< <>
 CGAL_END_NAMESPACE
 #endif // CGAL_DIRECTIONCD_H
 //----------------------- end of file ----------------------------------
-

@@ -71,4 +71,3 @@ parameterize(ParameterizationMesh_3& mesh,          ///< 3D mesh, model of Param
 CGAL_END_NAMESPACE
 
 #endif //CGAL_PARAMETERIZE_H
-

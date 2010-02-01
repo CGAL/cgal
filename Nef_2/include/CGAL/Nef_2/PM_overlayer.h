@@ -858,4 +858,3 @@ void assert_type_precondition() const
 
 CGAL_END_NAMESPACE
 #endif // CGAL_PM_OVERLAYER_H
-

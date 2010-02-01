@@ -238,4 +238,3 @@ remove_outliers_wrt_median_knn_sq_distance(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_REMOVE_OUTLIERS_WRT_MEDIAN_KNN_SQ_DISTANCE_H
-

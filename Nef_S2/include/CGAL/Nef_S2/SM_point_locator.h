@@ -652,6 +652,3 @@ marks_of_halfspheres(Mark& lower, Mark& upper, int axis) {
 
 CGAL_END_NAMESPACE
 #endif // CGAL_SM_POINT_LOCATOR_H
-
-
-

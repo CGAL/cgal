@@ -457,5 +457,3 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
 
 CGAL_END_NAMESPACE
 #endif //CGAL_SNC_SM_OVERLAYER_H
-
-

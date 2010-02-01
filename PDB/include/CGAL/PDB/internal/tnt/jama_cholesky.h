@@ -1,4 +1,3 @@
-
 #ifndef CGAL_JAMA_CHOLESKY_H
 #define CGAL_JAMA_CHOLESKY_H
 #include <CGAL/PDB/basic.h>

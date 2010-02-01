@@ -1136,4 +1136,3 @@ static const char* const sweepversion = "STL segment overlay sweep";
 
 #include <CGAL/generic_sweep.h>
 #endif // CGAL_SEGMENT_OVERLAY_TRAITS_H
-

@@ -51,4 +51,3 @@ print_wavefront( std::ostream& out,
 CGAL_END_NAMESPACE
 #endif // CGAL_IO_PRINT_WAVEFRONT_H //
 // EOF //
-

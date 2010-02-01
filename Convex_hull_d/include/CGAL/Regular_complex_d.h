@@ -730,4 +730,3 @@ of simplices.  }*/
 
 CGAL_END_NAMESPACE
 #endif // CGAL_REGULAR_COMPLEX_D_H
-

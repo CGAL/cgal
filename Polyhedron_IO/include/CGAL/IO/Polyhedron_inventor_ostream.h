@@ -44,4 +44,3 @@ operator<<( Inventor_ostream_base& out,
 CGAL_END_NAMESPACE
 #endif // CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H //
 // EOF //
-

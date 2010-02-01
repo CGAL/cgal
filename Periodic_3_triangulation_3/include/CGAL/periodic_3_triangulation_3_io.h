@@ -135,4 +135,3 @@ Stream& draw_dual_to_off(Stream &os) {
 #endif
 
 #endif //CGAL_PERIODIC_3_TRIANGULATION_3_IO_H
-

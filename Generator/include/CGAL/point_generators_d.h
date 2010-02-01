@@ -75,4 +75,3 @@ generate_point()
 CGAL_END_NAMESPACE
 #endif // CGAL_POINT_GENERATORS_D_H //
 // EOF //
-

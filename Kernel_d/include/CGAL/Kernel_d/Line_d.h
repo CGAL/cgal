@@ -220,4 +220,3 @@ is $O(|l.dimension()|)$.}*/
 CGAL_END_NAMESPACE
 #endif // CGAL_LINE_D_H
 //----------------------- end of file ----------------------------------
-

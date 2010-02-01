@@ -671,4 +671,3 @@ mst_orient_normals(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_MST_ORIENT_NORMALS_H
-

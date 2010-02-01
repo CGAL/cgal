@@ -462,4 +462,3 @@ struct Approximate_relative_1
 } // namespace CGAL
 
 #endif  // RS_FUNCTORS_H
-

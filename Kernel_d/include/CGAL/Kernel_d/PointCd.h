@@ -185,4 +185,3 @@ FT z()  const { return cartesian(2); }
 CGAL_END_NAMESPACE
 #endif // CGAL_POINTCDXXX_H 
 //----------------------- end of file ----------------------------------
-

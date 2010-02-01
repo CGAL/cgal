@@ -63,4 +63,3 @@ for(x = (V)->shalfedges_begin(); x != (V)->shalfedges_end(); ++x)
 for(x = (V)->sfaces_begin(); x != (V)->sfaces_end(); ++x)
 
 #endif //CGAL_SNC_ITERATION_H
-

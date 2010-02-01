@@ -181,4 +181,3 @@ public:
 } // end namespace CGAL
 
 #endif  // CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_POLYHEDRON_BUILDER_H
-

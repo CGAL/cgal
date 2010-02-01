@@ -215,4 +215,3 @@ operator*() const
 CGAL_END_NAMESPACE
 
 #endif //CGAL_TRIANGULATION_DS_ITERATORS_2_H
-

@@ -309,4 +309,3 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 CGAL_END_NAMESPACE
 
 #endif //CGAL_NEF_POLYHEDRON_3_TO_NEF_3_H
-

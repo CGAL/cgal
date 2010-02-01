@@ -38,4 +38,3 @@ Line_d<R> Ray_d<R>::supporting_line() const
 
 CGAL_END_NAMESPACE
 #endif //CGAL_LINE_D_C
-

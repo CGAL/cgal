@@ -48,4 +48,3 @@ struct value_type_traits<std::back_insert_iterator<T> >
 CGAL_END_NAMESPACE
 
 #endif // CGAL_VALUE_TYPE_TRAITS_H
-

@@ -360,4 +360,3 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 
 #endif //CGAL_INTERNAL_STATIC_FILTERS_COMPARE_WEIGHTED_SQUARED_RADIUS_3_H
-

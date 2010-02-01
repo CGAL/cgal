@@ -253,4 +253,3 @@ get_negative_halfsphere_geometry(int a) const {
 
 CGAL_END_NAMESPACE
 #endif //CGAL_SPHERE_GEOMETRY_H
-

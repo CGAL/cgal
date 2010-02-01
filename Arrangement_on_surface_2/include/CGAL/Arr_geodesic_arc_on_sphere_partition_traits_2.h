@@ -1,4 +1,3 @@
-
 // Copyright (c) 2006 Tel-Aviv University (Israel).
 // All rights reserved.
 //

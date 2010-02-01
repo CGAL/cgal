@@ -118,5 +118,3 @@ void convex_hull_d_to_polyhedron_3(
 
 CGAL_END_NAMESPACE
 #endif //CGAL_CONVEX_HULL_D_TO_POLYHEDRON_3_H
-
-

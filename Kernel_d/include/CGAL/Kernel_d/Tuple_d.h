@@ -281,4 +281,3 @@ int copy_and_count(InputIterator first, InputIterator last,
 #undef PointHd
 CGAL_END_NAMESPACE
 #endif //CGAL_TUPLE_D_H
-

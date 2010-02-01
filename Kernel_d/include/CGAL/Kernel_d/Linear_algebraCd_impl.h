@@ -440,5 +440,3 @@ rank(const Matrix &M)
 
 CGAL_END_NAMESPACE
 #endif // CGAL_LINEAR_ALGEBRACD_C
-
-

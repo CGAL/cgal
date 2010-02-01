@@ -673,5 +673,3 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
 CGAL_END_NAMESPACE
 #undef CGAL_USING
 #endif //CGAL_SM_TRIANGULATOR_H
-
-

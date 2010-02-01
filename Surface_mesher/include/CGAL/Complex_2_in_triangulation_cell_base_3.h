@@ -164,4 +164,3 @@ operator<<(std::ostream &os,
 
 
 #endif  // CGAL_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
-

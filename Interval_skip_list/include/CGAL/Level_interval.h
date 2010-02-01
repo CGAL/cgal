@@ -118,10 +118,3 @@ namespace CGAL {
 } // namespace CGAL
 
 #endif // CGAL_LEVEL_INTERVAL_H
-
-
-
-
-
-
-

@@ -398,4 +398,3 @@ public:
 } // namespace CGAL
 
 #endif // CGAL_HDS_ITEMS_H
-

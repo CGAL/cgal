@@ -252,4 +252,3 @@ void Union_find<T,A>::unify_sets( handle p, handle q) {
 CGAL_END_NAMESPACE
 
 #endif // CGAL_UNION_FIND_H
-

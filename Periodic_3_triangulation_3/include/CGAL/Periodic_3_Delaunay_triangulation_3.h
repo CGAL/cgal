@@ -1,4 +1,3 @@
-
 // Copyright (c) 1999-2004,2006-2009   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //

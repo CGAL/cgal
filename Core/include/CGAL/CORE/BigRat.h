@@ -486,4 +486,3 @@ inline BigInt BigIntValue(const BigRat& a) {
 
 CORE_END_NAMESPACE
 #endif // _CORE_BIGRAT_H_
-

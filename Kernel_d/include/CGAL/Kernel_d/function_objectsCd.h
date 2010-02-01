@@ -463,4 +463,3 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
 
 CGAL_END_NAMESPACE
 #endif //CGAL_FUNCTION_OBJECTSCD_H
-

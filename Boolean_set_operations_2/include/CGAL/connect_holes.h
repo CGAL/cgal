@@ -470,4 +470,3 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
 CGAL_END_NAMESPACE
 
 #endif
-

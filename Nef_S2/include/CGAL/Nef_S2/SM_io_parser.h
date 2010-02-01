@@ -484,4 +484,3 @@ CGAL_END_NAMESPACE
 #endif
 
 #endif //CGAL_SM_IO_PARSER_H
-

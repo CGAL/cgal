@@ -241,4 +241,3 @@ jet_estimate_normals(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_JET_ESTIMATE_NORMALS_H
-

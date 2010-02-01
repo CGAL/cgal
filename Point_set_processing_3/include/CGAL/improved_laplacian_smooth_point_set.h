@@ -333,4 +333,3 @@ improved_laplacian_smooth_point_set(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_IMPROVED_LAPLACIAN_SMOOTH_POINT_SET_H
-

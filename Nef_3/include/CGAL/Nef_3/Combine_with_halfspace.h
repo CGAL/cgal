@@ -170,4 +170,3 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
 
 CGAL_END_NAMESPACE
 #endif //CGAL_COMBINE_WITH_HALFSPACE_H
-

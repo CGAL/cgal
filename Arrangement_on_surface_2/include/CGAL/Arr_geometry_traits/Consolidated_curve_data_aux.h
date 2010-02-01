@@ -198,4 +198,3 @@ struct _Consolidate_unique_lists
 CGAL_END_NAMESPACE
 
 #endif
-

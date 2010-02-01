@@ -157,4 +157,3 @@ void shell_to_nef_3(const Nef_polyhedron& N,
 CGAL_END_NAMESPACE
 
 #endif //CGAL_NEF_SHELL_TO_NEF_3_H
-

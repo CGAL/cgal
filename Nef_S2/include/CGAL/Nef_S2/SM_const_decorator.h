@@ -413,4 +413,3 @@ number_of_connected_components() const
 
 CGAL_END_NAMESPACE
 #endif // CGAL_SM_CONST_DECORATOR_H
-

@@ -806,5 +806,3 @@ bool is_valid_unknown_polygon(const typename Traits_2::Polygon_2& pgn,
 CGAL_END_NAMESPACE
 
 #endif
-
-

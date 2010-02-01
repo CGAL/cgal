@@ -202,4 +202,3 @@ operator<<(std::ostream &os,
 
 
 #endif  // CGAL_SURFACE_MESH_CELL_BASE_3_H
-

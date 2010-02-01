@@ -135,4 +135,3 @@ LineGraphicsItem<CK>::modelChanged()
 } // namespace CGAL
 
 #endif // CGAL_QT_LINE_GRAPHICS_ITEM_H
-

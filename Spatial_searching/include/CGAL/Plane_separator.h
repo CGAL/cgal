@@ -67,4 +67,3 @@ template < class FT> class Plane_separator {
  }
 } // namespace CGAL
 #endif // CGAL_PLANE_SEPARATOR_H
-

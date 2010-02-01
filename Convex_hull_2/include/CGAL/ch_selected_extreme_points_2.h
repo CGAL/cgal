@@ -211,4 +211,3 @@ CGAL_END_NAMESPACE
 #include <CGAL/Convex_hull_2/ch_selected_extreme_points_2_impl.h>
 
 #endif // CGAL_CH_SELECTED_EXTREME_POINTS_2_H
-

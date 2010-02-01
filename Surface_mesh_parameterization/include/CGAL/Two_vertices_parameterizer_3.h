@@ -265,4 +265,3 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 CGAL_END_NAMESPACE
 
 #endif //CGAL_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED
-

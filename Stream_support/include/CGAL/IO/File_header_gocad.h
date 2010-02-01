@@ -59,4 +59,3 @@ inline std::ostream& operator<<( std::ostream& out, const File_header_gocad& h){
 
 CGAL_END_NAMESPACE
 #endif // CGAL_IO_FILE_HEADER_GOCAD_H
-

@@ -820,4 +820,3 @@ std::ostream& operator<<(std::ostream& os,
 
 
 #endif //CGAL_SPHERE_GEOMETRY_OGL_H
-

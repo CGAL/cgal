@@ -83,4 +83,3 @@ std::ostream& operator<<(std::ostream& O, const PointHd<RT,LA>& p)
 #undef PointHd 
 CGAL_END_NAMESPACE
 #endif // CGAL_POINTHD_C
-

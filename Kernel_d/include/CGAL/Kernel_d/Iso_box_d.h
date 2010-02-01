@@ -407,4 +407,3 @@ operator!=(const Iso_box_d<Kernel>& b1, Iso_box_d<Kernel>& b2)
 } // namespace CGAL
 
 #endif // CGAL_ISO_BOX_D_H
-

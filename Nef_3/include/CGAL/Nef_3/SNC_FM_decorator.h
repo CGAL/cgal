@@ -647,5 +647,3 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
 
 CGAL_END_NAMESPACE
 #endif //CGAL_SNC_FM_DECORATOR_H
-
-

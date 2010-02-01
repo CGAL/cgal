@@ -72,4 +72,3 @@ public:
 }  // end namespace CGAL
 
 #endif // CGAL_MESH_TRIANGULATION_3_H
-

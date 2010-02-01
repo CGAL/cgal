@@ -36,4 +36,3 @@ class Polygon_traits_2 : public R_ {};
 CGAL_END_NAMESPACE
 
 #endif // CGAL_POLYGON_TRAITS_2_H
-

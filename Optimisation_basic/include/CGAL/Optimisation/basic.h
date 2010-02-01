@@ -50,5 +50,3 @@ _optimisation_is_valid_fail( CGAL::Verbose_ostream& verr,
 CGAL_END_NAMESPACE
 
 #endif // CGAL_OPTIMISATION_BASIC_H
-
-

@@ -58,5 +58,3 @@ static CGAL::OGLUT_stream& operator<<(CGAL::OGLUT_stream& ogls,
 CGAL_END_NAMESPACE
 
 #endif // CGAL_NEF_POLYHEDRON_S2_OGLUT_STREAM_H
-
-

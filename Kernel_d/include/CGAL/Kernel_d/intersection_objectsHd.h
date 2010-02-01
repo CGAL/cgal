@@ -145,4 +145,3 @@ CGAL_END_NAMESPACE
 #include <CGAL/Kernel_d/intersection_objects_d.h>
 
 #endif //CGAL_INTERSECTION_OBJECTSHD_H
-

@@ -292,4 +292,3 @@ requirement for points is $O(|p.dimension()|)$.}*/
 CGAL_END_NAMESPACE
 #endif // CGAL_POINTHD_H 
 //----------------------- end of file ----------------------------------
-

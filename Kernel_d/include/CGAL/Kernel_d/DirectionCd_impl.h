@@ -76,5 +76,3 @@ std::ostream& operator<<(std::ostream& O, const DirectionCd<FT,LA>& dir)
 CGAL_END_NAMESPACE
 #endif // CGAL_DIRECTIONCD_C
 //----------------------- end of file ----------------------------------
-
-

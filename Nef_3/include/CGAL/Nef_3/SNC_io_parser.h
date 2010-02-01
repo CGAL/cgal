@@ -2042,4 +2042,3 @@ void SNC_io_parser<EW>::add_infi_box() {
 
 CGAL_END_NAMESPACE
 #endif //CGAL_SNC_IO_PARSER_H
-

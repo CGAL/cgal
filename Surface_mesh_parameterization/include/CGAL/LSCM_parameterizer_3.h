@@ -662,4 +662,3 @@ is_one_to_one_mapping(const Adaptor& mesh,
 CGAL_END_NAMESPACE
 
 #endif //CGAL_LSCM_PARAMETERIZER_3_H
-

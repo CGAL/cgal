@@ -28,4 +28,3 @@
 #endif // CGAL_NO_AUTOLINK_QT4
 
 #endif // CGAL_AUTO_LINK_QT4_H
-

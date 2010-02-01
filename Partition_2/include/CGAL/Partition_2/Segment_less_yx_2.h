@@ -158,4 +158,3 @@ class Segment_less_yx_2
 }
 
 #endif // CGAL_SEGMENT_LESS_YX_2_H
-

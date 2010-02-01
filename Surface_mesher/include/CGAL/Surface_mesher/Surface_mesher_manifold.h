@@ -238,4 +238,3 @@ namespace CGAL {
 
 
 #endif // CGAL_SURFACE_MESHER_MANIFOLD_H
-

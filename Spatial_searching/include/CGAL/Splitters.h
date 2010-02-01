@@ -298,6 +298,3 @@ namespace CGAL {
 
 } // namespace CGAL
 #endif // CGAL_SPLITTERS
-
-
-

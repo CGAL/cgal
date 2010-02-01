@@ -71,4 +71,3 @@ std::ostream& operator<<(std::ostream& O, const VectorCd<FT,LA>& v)
 #undef PointCd
 CGAL_END_NAMESPACE
 #endif // CGAL_VECTORCD_C
-

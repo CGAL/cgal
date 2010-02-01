@@ -573,5 +573,3 @@ pointer_update(const Sphere_map<K, I, M>& D)
 
 CGAL_END_NAMESPACE
 #endif // CGAL_SPHERE_MAP_H
-
-

@@ -81,5 +81,3 @@ std::ostream& operator<<(std::ostream& O, const DirectionHd<RT,LA>& dir)
 
 CGAL_END_NAMESPACE
 #endif // CGAL_DIRECTIONHD_C
-
-

@@ -78,4 +78,3 @@ class convex_hull_constructive_traits_2 :
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CONVEX_HULL_CONSTRUCTIVE_TRAITS_2_H
-

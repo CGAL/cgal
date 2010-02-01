@@ -349,4 +349,3 @@ void chained_map<T>::statistics() const
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CHAINED_MAP_H
-

@@ -760,6 +760,3 @@ switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
 CGAL_END_NAMESPACE
 
 #endif //CGAL_MONGE_VIA_JET_FITTING_H_
-
-
-

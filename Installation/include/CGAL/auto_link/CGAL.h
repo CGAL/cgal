@@ -28,4 +28,3 @@
 #endif // CGAL_NO_AUTOLINK_CGAL
 
 #endif // CGAL_AUTO_LINK_CGAL_H
-

@@ -1045,5 +1045,3 @@ all_points() const
 
 CGAL_END_NAMESPACE
 #endif // CGAL_DELAUNAY_D_H
-
-

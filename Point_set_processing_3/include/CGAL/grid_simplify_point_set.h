@@ -217,4 +217,3 @@ grid_simplify_point_set(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_GRID_SIMPLIFY_POINT_SET_H
-

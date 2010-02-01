@@ -1599,16 +1599,3 @@ class Width_3 {
 CGAL_END_NAMESPACE
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

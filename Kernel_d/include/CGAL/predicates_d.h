@@ -218,4 +218,3 @@ bool linearly_independent(
 
 CGAL_END_NAMESPACE
 #endif // CGAL_PREDICATES_D_H
-

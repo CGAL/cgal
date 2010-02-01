@@ -112,4 +112,3 @@ operator >> ( std::istream& is, Min_sphere_d<Traits>& min_sphere)
 CGAL_END_NAMESPACE
 
 // ===== EOF ==================================================================
-

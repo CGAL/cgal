@@ -791,4 +791,3 @@ namespace CGAL {
 
 
 #endif // CGAL_SURFACE_MESHER_SURFACE_MESHER_H
-

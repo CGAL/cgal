@@ -620,4 +620,3 @@ is_one_to_one_mapping(const Adaptor& mesh,
 CGAL_END_NAMESPACE
 
 #endif //CGAL_FIXED_BORDER_PARAMETERIZER_3_H
-

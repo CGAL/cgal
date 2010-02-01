@@ -211,4 +211,3 @@ std::istream& operator>>(
 
 CGAL_END_NAMESPACE
 #endif // CGAL_AFF_TRANSFORMATIONCD_H
-

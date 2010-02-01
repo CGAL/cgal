@@ -2158,4 +2158,3 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
 
 CGAL_END_NAMESPACE
 #endif //CGAL_SNC_CONSTRUCTOR_H
-

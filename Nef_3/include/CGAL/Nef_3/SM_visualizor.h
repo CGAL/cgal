@@ -240,4 +240,3 @@ void show_sphere_map_of(typename Sphere_map::Vertex_const_handle v)
 
 CGAL_END_NAMESPACE
 #endif // CGAL_SM_VISUALIZOR_H
-

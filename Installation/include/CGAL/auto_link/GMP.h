@@ -28,4 +28,3 @@
 #endif // CGAL_NO_AUTOLINK_GMP
 
 #endif // CGAL_AUTO_LINK_GMP_H
-

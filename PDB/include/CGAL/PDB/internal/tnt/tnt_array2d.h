@@ -306,4 +306,3 @@ inline int Array2D<T>::ref_count_dim1()
 }}}
 #endif
 /* TNT_ARRAY2D_H */
-

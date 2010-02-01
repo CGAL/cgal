@@ -754,4 +754,3 @@ Periodic_3_triangulation_3<GT,TDS>::insert_dummy_points() {
 }
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_DUMMY_36_H
-

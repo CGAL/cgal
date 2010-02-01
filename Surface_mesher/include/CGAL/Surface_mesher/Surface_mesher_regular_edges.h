@@ -349,4 +349,3 @@ namespace CGAL {
 
 
 #endif // CGAL_SURFACE_MESHER_REGULAR_EDGES_H
-

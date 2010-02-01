@@ -28,4 +28,3 @@
 #endif // CGAL_NO_AUTOLINK_PDB
 
 #endif // CGAL_AUTO_LINK_PDB_H
-

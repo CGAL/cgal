@@ -320,4 +320,3 @@ public:
 }}}
 #endif
 // JAMA_QR__H
-

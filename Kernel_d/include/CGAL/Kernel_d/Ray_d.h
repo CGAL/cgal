@@ -206,4 +206,3 @@ $O(|r.dimension()|)$.}*/
 CGAL_END_NAMESPACE
 #endif // CGAL_RAYHD_H
 //----------------------- end of file ----------------------------------
-

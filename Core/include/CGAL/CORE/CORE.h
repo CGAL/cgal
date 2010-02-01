@@ -68,5 +68,3 @@ typedef long machine_long;
 #endif
 
 #endif // _CORE_CORE_H_
-
-

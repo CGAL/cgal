@@ -361,5 +361,3 @@
 #  define CGAL_surface_reconstruction_points_expensive_exactness_warning_code(CODE) CODE
 #  define CGAL_surface_reconstruction_points_expensive_exactness_warnings 1
 #endif // CGAL_SURFACE_RECONSTRUCTION_POINTS_NO_WARNINGS
-
-

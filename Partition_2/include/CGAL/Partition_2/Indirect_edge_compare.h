@@ -150,4 +150,3 @@ class Indirect_edge_compare
 
 
 #endif // CGAL_INDIRECT_EDGE_COMPARE_H
-

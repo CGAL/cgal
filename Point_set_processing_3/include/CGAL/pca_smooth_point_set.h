@@ -208,4 +208,3 @@ pca_smooth_point_set(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PCA_SMOOTH_POINT_SET_H
-

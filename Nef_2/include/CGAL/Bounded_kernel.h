@@ -445,6 +445,3 @@ public:
 
 CGAL_END_NAMESPACE
 #endif // CGAL_BOUNDED_KERNEL_H
-
-
-

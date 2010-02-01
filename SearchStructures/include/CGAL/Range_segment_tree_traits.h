@@ -384,7 +384,3 @@ class Range_segment_tree_set_traits_2{
 
 CGAL_END_NAMESPACE
 #endif // CGAL_RANGE_SEGMENT_TREE_TRAITS_H
-
-
-
-

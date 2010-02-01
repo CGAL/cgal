@@ -276,5 +276,3 @@ class Convex_hull_traits_3
 } // namespace CGAL
 
 #endif // CGAL_CONVEX_HULL_TRAITS_3_H
-
-

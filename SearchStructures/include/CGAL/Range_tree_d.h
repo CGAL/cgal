@@ -621,6 +621,3 @@ public:
 
 CGAL_END_NAMESPACE
 #endif // CGAL_RANGE_TREE_D_H
-
-
-

@@ -721,5 +721,3 @@ std::istream& operator>>
 
 CGAL_END_NAMESPACE
 #endif //CGAL_NEF_POLYHEDRON_S2_H
-
-

@@ -511,4 +511,3 @@ inline std::string RealBigFloat::toString(long prec, bool sci) const {
 
 CORE_END_NAMESPACE
 #endif // _CORE_REALREP_H_
-

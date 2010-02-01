@@ -3068,4 +3068,3 @@ CGAL_END_NAMESPACE
 #include <CGAL/Arrangement_2/Arrangement_on_surface_2_global.h>
 
 #endif
-

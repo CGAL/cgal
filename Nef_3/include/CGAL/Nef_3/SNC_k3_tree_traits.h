@@ -631,4 +631,3 @@ Side_of_plane<SNC_decorator>::operator()
 CGAL_END_NAMESPACE
 
 #endif // CGAL_NEF_SNC_K3_TREE_TRAITS_H
-

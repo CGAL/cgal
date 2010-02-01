@@ -110,4 +110,3 @@ CGAL_END_NAMESPACE
 #include <CGAL/Convex_hull_2/ch_graham_andrew_impl.h>
 
 #endif // CGAL_CH_GRAHAM_ANDREW_H
-

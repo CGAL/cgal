@@ -115,4 +115,3 @@ random_simplify_point_set(
 CGAL_END_NAMESPACE
 
 #endif // CGAL_RANDOM_SIMPLIFY_POINT_SET_H
-

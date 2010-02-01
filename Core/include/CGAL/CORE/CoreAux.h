@@ -180,4 +180,3 @@ inline void core_debug(std::string msg){
 
 CORE_END_NAMESPACE
 #endif // _CORE_COREAUX_H_
-

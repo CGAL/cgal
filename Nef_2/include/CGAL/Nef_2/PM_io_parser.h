@@ -389,4 +389,3 @@ void PM_io_parser<PMDEC>::dump(const PMDEC& D, std::ostream& os)
 
 CGAL_END_NAMESPACE
 #endif //CGAL_PM_IO_PARSER_H
-

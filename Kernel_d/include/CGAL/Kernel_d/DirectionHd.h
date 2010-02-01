@@ -222,4 +222,3 @@ requirement is $O(|d.dimension()|)$.  }*/
 CGAL_END_NAMESPACE
 #endif // CGAL_DIRECTIONHD_H
 //----------------------- end of file ----------------------------------
-

@@ -42,6 +42,3 @@ struct Default_items<CGAL::Extended_cartesian<NT> > {
 
 CGAL_END_NAMESPACE
 #endif
-
-
-

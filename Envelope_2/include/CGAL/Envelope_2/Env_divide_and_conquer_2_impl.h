@@ -1337,4 +1337,3 @@ Envelope_divide_and_conquer_2<Traits,Diagram>::_split_edge
 CGAL_END_NAMESPACE
 
 #endif
-

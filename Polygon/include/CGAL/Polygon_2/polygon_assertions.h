@@ -363,5 +363,3 @@
 #  define CGAL_polygon_expensive_exactness_warning_code(CODE) CODE
 #  define CGAL_polygon_expensive_exactness_warnings 1
 #endif // CGAL_POLYGON_NO_WARNINGS
-
-

@@ -698,4 +698,3 @@ collinear_outside() const
 
 CGAL_END_NAMESPACE
 #endif //CGAL_TRIANGULATION_LINE_FACE_CIRCULATOR_2_H
-

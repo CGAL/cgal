@@ -63,5 +63,3 @@ do_intersect(const Circle_2<K> & circ1,
 CGAL_END_NAMESPACE
 
 #endif
-
-

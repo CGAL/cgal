@@ -132,4 +132,3 @@ inline Uncertain<Comparison_result> certified_compare(const Quotient<NT1>& n1, c
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CERTIFIED_QUOTIENT_PREDICATES_H
-

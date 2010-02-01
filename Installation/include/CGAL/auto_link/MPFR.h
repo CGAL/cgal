@@ -28,4 +28,3 @@
 #endif // CGAL_NO_AUTOLINK_MPFR
 
 #endif // CGAL_AUTO_LINK_MPFR_H
-

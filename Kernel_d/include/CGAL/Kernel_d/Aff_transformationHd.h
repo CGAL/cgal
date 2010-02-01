@@ -251,4 +251,3 @@ requirement is $O(|t.dimension()|^2)$. }*/
 
 CGAL_END_NAMESPACE
 #endif // CGAL_AFF_TRANSFORMATIONHD_H
-

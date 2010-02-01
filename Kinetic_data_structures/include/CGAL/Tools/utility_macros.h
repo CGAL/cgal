@@ -399,4 +399,3 @@ template <class A, class B>			\
   }
 
 #endif
-

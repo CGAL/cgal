@@ -93,4 +93,3 @@ Line_d<R> reflect(const Line_d<R>& s, const Line_d<R>& l)
 
 CGAL_END_NAMESPACE
 #endif // CGAL_SIMPLE_TRANSFORMATIONS_D_H
-

@@ -586,4 +586,3 @@ void print_as_leda_graph(std::ostream& os, const PMCDEC& D,
 
 CGAL_END_NAMESPACE
 #endif // CGAL_PM_CONST_DECORATOR_H
-

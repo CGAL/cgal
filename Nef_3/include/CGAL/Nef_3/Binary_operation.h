@@ -658,4 +658,3 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
   };
 CGAL_END_NAMESPACE
 #endif //CGAL_NEF_BINARY_OPERATION_H
-

@@ -338,4 +338,3 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 #if defined(CGAL_LIB_FULL_NAME)
 #  undef CGAL_LIB_FULL_NAME
 #endif
-

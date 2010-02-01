@@ -437,5 +437,3 @@ private:
 } // namespace CGAL
 
 #endif // CGAL_POINT_CONTAINER_H
-
-

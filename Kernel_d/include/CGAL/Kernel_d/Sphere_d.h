@@ -335,4 +335,3 @@ CGAL_END_NAMESPACE
 
 #endif // CGAL_SPHERE_D_H
 //----------------------- end of file ----------------------------------
-

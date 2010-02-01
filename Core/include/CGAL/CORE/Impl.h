@@ -49,4 +49,3 @@
 #include <string>
 
 #endif // _CORE_IMPL_H_
-

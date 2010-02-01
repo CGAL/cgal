@@ -97,5 +97,3 @@ bool do_intersect(const CGAL::Bbox_3& bbox,
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_PLANE_3_DO_INTERSECT_H
-
-

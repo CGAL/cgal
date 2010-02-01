@@ -352,4 +352,3 @@ CGAL_END_NAMESPACE
 #endif // CGAL_HYPERPLANEHD_H
 
 //----------------------- end of file ----------------------------------
-

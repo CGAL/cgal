@@ -52,4 +52,3 @@ class Random_polygon_traits_2
 CGAL_END_NAMESPACE
 
 #endif // CGAL_RANDOM_POLYGON_TRAITS_2_H
-

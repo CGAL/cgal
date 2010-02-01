@@ -75,4 +75,3 @@ public:
 
 CORE_END_NAMESPACE
 #endif // _CORE_TIMER_H_
-

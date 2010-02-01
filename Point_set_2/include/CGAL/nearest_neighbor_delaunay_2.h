@@ -258,5 +258,3 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
 CGAL_END_NAMESPACE
 
 #endif
-
-

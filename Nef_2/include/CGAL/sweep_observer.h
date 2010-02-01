@@ -222,4 +222,3 @@ actions via its visualization methods.}*/
 } // namespace CGAL
 
 #endif // CGAL_SWEEP_OBSERVER_H
-

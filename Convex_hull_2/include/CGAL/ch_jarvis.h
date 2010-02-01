@@ -86,10 +86,3 @@ CGAL_END_NAMESPACE
 #include <CGAL/Convex_hull_2/ch_jarvis_impl.h>
 
 #endif // CGAL_CH_JARVIS_H
-
-
-
-
-
-
-

@@ -42,4 +42,3 @@ public:
 }
 
 #endif // CGAL_PARTITION_2_IS_VALID_TRAITS_H
-

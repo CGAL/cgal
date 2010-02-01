@@ -78,5 +78,3 @@ do_intersect(const Line_2<K> & l,
 CGAL_END_NAMESPACE
 
 #endif
-
-

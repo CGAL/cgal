@@ -74,4 +74,3 @@ struct Default_planar_topology :
 CGAL_END_NAMESPACE
 
 #endif
-
