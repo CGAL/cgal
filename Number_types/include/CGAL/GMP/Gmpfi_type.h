@@ -205,7 +205,7 @@ _GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpq);
 
         template<class L,class R>
         Gmpfi(std::pair<const L&,const R&> endpoints,
-              Gmpfi::Precision_type p=Gmpfi::get_default_precision()){
+              Gmpfi::Precision_type p=get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 Gmpfr l(endpoints.first,std::round_toward_neg_infinity,p),
                       r(endpoints.second,std::round_toward_infinity,p);
@@ -716,9 +716,17 @@ std::pair<std::pair<double,double>,long> Gmpfi::to_interval_exp()const{
         double d_low=mpfr_get_d_2exp(e1,left_mpfr(),GMP_RNDD);
         double d_upp=mpfr_get_d_2exp(e2,right_mpfr(),GMP_RNDU);
         if(e1<e2)
+#ifdef _MSC_VER
+                d_upp=d_upp/pow((double)2.,(double)((*e2)-(*e1)));
+#else
                 d_upp=d_upp/pow(2,(*e2)-(*e1));
+#endif
         else if(e1>e2){
+#ifdef _MSC_VER
+                d_low=d_low/pow((double)2.,(double)((*e1)-(*e2)));
+#else
                 d_low=d_low/pow(2,(*e1)-(*e2));
+#endif
                 *e2=*e1;
         }
         return std::make_pair(std::make_pair(d_low,d_upp),*e1);
