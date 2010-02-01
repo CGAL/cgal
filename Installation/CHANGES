@@ -63,7 +63,7 @@ CGAL 3.6 offers the following improvements and new functionality :
 
 6 Triangulations and Delaunay Triangulations
 
-6.1 2D/3D Regular triangulations
+6.1 2D/3D Regular Triangulations
 
   - Weighted_point now has a constructor from Cartesian coordinates.
 
@@ -84,7 +84,7 @@ CGAL 3.6 offers the following improvements and new functionality :
   - The old version of remove() (enabled with CGAL_DELAUNAY_3_OLD_REMOVE)
     has been deleted.
 
-6.3 3D Periodic triangulations
+6.3 3D Periodic Triangulations
 
   - New demo: 3D periodic Lloyd algorithm.
 
@@ -102,7 +102,8 @@ CGAL 3.6 offers the following improvements and new functionality :
   - The package can now be used together with the 3D Periodic Triangulation 
     package to compute periodic alpha shapes. 
 
-6.5 2D/3D Triangulations, 2D Segment Delaunay Graph, 2D Apollonius Graph
+6.5 2D/3D Triangulations, 2D Segment Delaunay Graph, 2D Apollonius Graph,
+    and 3D Periodic Triangulations
 
   - The constructor and insert function taking ranges now produce
     structures whose iterator orders is now deterministic (same at each
@@ -120,7 +121,7 @@ CGAL 3.6 offers the following improvements and new functionality :
     pertuber and an exuder. Each of these processes can be activated or
     not, and tuned to the users needs and to available computer resources.
 
-8 Support library<h3>
+8 Support library
 
 8.1 CGAL ipelets
 

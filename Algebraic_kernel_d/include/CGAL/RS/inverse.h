@@ -19,7 +19,16 @@
 #ifndef CGAL_RS__INVERSE_H
 #define CGAL_RS__INVERSE_H
 
-#include <stdint.h>
+#ifdef _MSC_VER
+#  define _s64 __int64
+#  define _u64 unsigned __int64
+#  define _u32 unsigned __int32
+#else
+#  include <stdint.h>
+#  define _s64 int64_t
+#  define _u64 uint64_t
+#  define _u32 uint32_t
+#endif
 
 #define n_(A)   (A<0?-A:A)
 //#define u_(A) (A<0?-1:1)
@@ -33,9 +42,9 @@ class Inverse{
     protected:
         // given a and b, returns s such that gcd(a,b)=s*a+t*b (GCL, page 36)
         // s*a+t*q=1 => s is the inverse of a, mod q (pafe 173)
-        static int64_t eea_s(uint32_t a,uint32_t b){
-            int64_t c1,d1,r1;//,c2,d2,r2,t,s;
-            uint32_t r,c,d;//,q;
+        static _s64 eea_s(_u32 a,_u32 b){
+            _s64 c1,d1,r1;//,c2,d2,r2,t,s;
+            _u32 r,c,d;//,q;
             // a and b are positive, so a=n_(a) and b=n_(b)
             //c=n_(a);      d=n_(b);
             c=a;    d=b;

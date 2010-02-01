@@ -28,6 +28,12 @@
 //#define pr_is_prime(N)        (pr_fermat(N)?pr_is_prime_bruteforce(N):0)
 #define pr_is_prime(N)  pr_mrj(N)
 
+#ifdef _MSC_VER
+#  define cgal_rs_random  rand
+#else
+#  define cgal_rs_random  random
+#endif
+
 namespace CGAL{
 namespace RS_MGCD{
 
@@ -47,14 +53,14 @@ class Primes:public Crt{
         // vzGG, p. 507; returns 0 if n is composite
         static int pr_fermat(pn n){
             p_set_prime(n);
-            return(p_pow(2+((pn)random())%(n-4),n-1)==1);
+            return(p_pow(2+((pn)cgal_rs_random())%(n-4),n-1)==1);
         }
 
         // Solovay-Strassen
         static int pr_ss(pn n){
             pn a,x;
             p_set_prime(n);
-            a=1+(pn)random()%(n-2);
+            a=1+(pn)cgal_rs_random()%(n-2);
             x=p_div(a,n);
             return(!x||p_pow(a,n>>1)!=x);
         }
@@ -69,7 +75,7 @@ class Primes:public Crt{
                 d=d>>1;
             }
             p_set_prime(n);
-            a=2+(pn)random()%(n-4);
+            a=2+(pn)cgal_rs_random()%(n-4);
             x=p_pow(a,d);
             if(x==1||x==n-1)
                 return 1; // pobably prime

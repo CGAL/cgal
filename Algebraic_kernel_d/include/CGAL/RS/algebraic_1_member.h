@@ -148,7 +148,7 @@ bool Algebraic_1::is_consistent()const{
 
 inline
 bool Algebraic_1::is_point()const{
-        return(mpfr_equal_p(&(mpfi()->left),&(mpfi()->right)));
+        return(mpfr_equal_p(&(mpfi()->left),&(mpfi()->right))!=0);
 }
 
 inline
@@ -188,9 +188,9 @@ void Algebraic_1::set_mpfi(mpfi_srcptr x){
 inline
 bool Algebraic_1::overlaps(const Algebraic_1&a)const{
         if(mpfr_lessequal_p(left(),a.left()))
-                return mpfr_lessequal_p(a.left(),right());
+                return (mpfr_lessequal_p(a.left(),right())!=0);
         else
-                return mpfr_lessequal_p(left(),a.right());
+                return (mpfr_lessequal_p(left(),a.right())!=0);
 }
 
 inline
