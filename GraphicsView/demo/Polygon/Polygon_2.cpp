@@ -317,7 +317,7 @@ MainWindow::on_actionOuterOffset_triggered()
                                               , def_offset
                                               , 0.0
                                               , s
-                                              , def_offset
+                                              , 2
                                               , &ok
                                               );  
     if ( ok )
