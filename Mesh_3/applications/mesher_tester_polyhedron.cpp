@@ -33,7 +33,10 @@ public:
   ~Domain_builder() { delete domain_; }
   
   Domain& domain() { return *domain_; }
-  
+  Polyhedron::Point_iterator points_begin() { return polyhedron_.points_begin(); } 
+  Polyhedron::Point_iterator points_end() { return polyhedron_.points_end(); }
+  C3t3_polyhedron::Index points_index() { return domain_->index_from_surface_index(domain_->make_surface_index()); } 
+
 private:
   Domain* domain_;
   Polyhedron polyhedron_;
@@ -45,14 +48,16 @@ int main(int argc, char** argv)
 {
   int nb_threads;
   std::string outdir;
+  std::string datadir;
   
 	// options
 	po::options_description generic("Options");
   generic.add_options()
   ("help", "Produce help message")
   ("threads", po::value<int>(&nb_threads)->default_value(2), "Run <arg> threads")
-	("outdir", po::value<std::string>(&outdir)->default_value("tester_output"), "Output directory. <arg> is location");
-	
+  ("outdir", po::value<std::string>(&outdir)->default_value("tester_output"), "Output directory. <arg> is location")
+  ("datadir", po::value<std::string>(&datadir)->default_value("data/Polyhedra"), "Data directory. <arg> is location");
+
 	po::options_description cmdline_options("Usage", 1);
 	cmdline_options.add(generic);
 	
@@ -68,9 +73,11 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	
+  if ( datadir[datadir.size()-1] != '/' )
+    datadir.push_back('/');
+
 	// iterate on data files
-	std::string data_img("data/Polyhedra/"); // or a user defined path...
-  mesh<C3t3_polyhedron,Mesh_criteria_polyhedron,Polyhedral_domain>(data_img,outdir,nb_threads); 
+  mesh<C3t3_polyhedron,Mesh_criteria_polyhedron,Polyhedral_domain>(datadir,outdir,nb_threads); 
   
 	return 0;
 }

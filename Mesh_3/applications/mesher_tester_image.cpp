@@ -31,6 +31,14 @@ public:
   
   Domain& domain() { return *domain_; }
   
+  std::vector<Tr_image::Point>::iterator points_begin()
+  { CGAL_error_msg("No input point in 3D image (wrong --off_vertices option?)"); } 
+  
+  std::vector<Tr_image::Point>::iterator points_end()
+  { CGAL_error_msg("No input point in 3D image (wrong --off_vertices option?)"); } 
+
+  C3t3_image::Index points_index() { return C3t3_image::Index(); }
+
 private:
   Domain* domain_;
   Image image_;

@@ -300,10 +300,8 @@ public:
   Domain_builder(const std::string& str)
   : domain_(NULL)
   {
-    Image image;
-    image.read(str.c_str());
-    delete domain_;
-    domain_ = new Domain(image, 1e-6);
+    image_.read(str.c_str());
+    domain_ = new Domain(image_, 1e-6);
   }
   
   ~Domain_builder() { delete domain_; }
@@ -312,6 +310,7 @@ public:
   
 private:
   Domain* domain_;
+  Image image_;
 };
 
 //template <>
@@ -372,15 +371,19 @@ void mesh(const std::string& data, const po::variables_map& vm)
   for(fs::directory_iterator it(path); it != fs::directory_iterator(); ++it)
   {
     if(fs::is_directory(*it)
-       || (fs::extension(*it) != ".off" && (fs::extension(*it) != ".inr" && fs::extension(*it) != ".gz")) )
+       || (fs::extension(*it) != ".off" && (fs::extension(*it) != ".inr" && ( fs::extension(fs::basename(*it)) != ".inr" || fs::extension(*it) != ".gz"))) )
       continue;
     
     std::string line_param;
-    std::string filename_param(data + fs::basename(*it) + ".txt");
+    std::string filename(fs::basename(*it));
+    if ( fs::extension(*it) == ".gz" )
+      filename = fs::basename(fs::basename(*it));
+    std::string filename_param(data + filename + ".txt");
+    
     std::ifstream file_param(filename_param.data()); //parameters
     if(!file_param) 
     {
-      std::cout << "Could not read parameters in : " << filename_param << ". Next file." << std::endl;
+      std::cout << "Could not read parameters in : '" << filename_param << "'. Next file." << std::endl;
       continue;
     }
     unsigned int i = 1;
@@ -393,14 +396,14 @@ void mesh(const std::string& data, const po::variables_map& vm)
     C3T3 c3t3_save;
     
     //Load the domain
-    std::cout << "****** [" << fs::basename(*it) << "] Create domain...";
+    std::cout << "****** [" << filename << "] Create domain...";
     std::flush(std::cout);
     Domain_builder<Domain> domain_builder(it->string());
     std::cout <<"done (" << timer.time() << "s) ******\n\n";
     
     while(std::getline(file_param,line_param))
     {
-      std::cout << "*** Meshing " << fs::basename(*it) << "[" << i << "] with : " << line_param << std::endl;
+      std::cout << "*** Meshing " << filename << "[" << i << "] with : " << line_param << std::endl;
 
       po::variables_map vm_p;
       Mesh_criteria mcp = get_parameters<Mesh_criteria>(line_param, vm_p);
@@ -414,7 +417,9 @@ void mesh(const std::string& data, const po::variables_map& vm)
         std::cout << "  Generate mesh...";
         std::flush(std::cout);
         c3t3_save = CGAL::make_mesh_3<C3T3>(domain_builder.domain(), mcp, no_exude(), no_perturb());
-        std::cout << "done (" << timer.time() << "s)\n";
+        std::cout << "done (" << timer.time() << "s - "
+                  << c3t3_save.triangulation().number_of_vertices() << " vertices, "
+                  << c3t3_save.number_of_cells() << " cells)\n";
       }
       
       C3T3 c3t3 = c3t3_save;
@@ -447,7 +452,7 @@ void mesh(const std::string& data, const po::variables_map& vm)
       {
         std::cout << "  Perturbation...";
         std::flush(std::cout);
-        CGAL::perturb_mesh_3(c3t3, domain_builder.domain(), vm_p["perturb"].as<double>());
+        CGAL::perturb_mesh_3(c3t3, domain_builder.domain(), time_limit=vm_p["perturb"].as<double>());
         std::cout << "done (" << timer.time() << "s)\n";
       }
       timer.stop();
@@ -468,13 +473,13 @@ void mesh(const std::string& data, const po::variables_map& vm)
       std::cout << "  Save mesh...";
       std::stringstream ssout;
       ssout << i;				
-      std::string output_filename = output_dir +"/" + fs::basename(*it) + "-out-" + ssout.str().c_str() + ".mesh";
+      std::string output_filename = output_dir +"/" + filename + "-out-" + ssout.str().c_str() + ".mesh";
       std::ofstream medit_file(output_filename.c_str());
       c3t3.output_to_medit(medit_file, !vm_p.count("no_label_rebind"), vm_p.count("show_patches"));
       
       //save histogram
       std::cout << "done. \n  Save histogram...";
-      std::string histo_filename = output_dir +"/" + fs::basename(*it) + "-histo-" + ssout.str().c_str() + ".txt";
+      std::string histo_filename = output_dir +"/" + filename + "-histo-" + ssout.str().c_str() + ".txt";
       save_histogram<C3T3>(histo_filename, c3t3);
       i++;
       std::cout << "done.\n\n\n";

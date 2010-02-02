@@ -64,66 +64,72 @@ struct Mesher
     , msg_queue_(&msg_queue) {}
   
   
-  void operator()(int nb)
+  void operator()(unsigned int nb, const std::string& str)
   {
+    if ( (unsigned int)PRINT_ERROR_MSG == nb ) return print(str);
+
     std::vector<std::string>::iterator lit = lines_.begin();
     
     std::stringstream cout_loc;
     cout_loc << "[" << nb << "] Launch mesher[" << filename_ << "_" << mesh_nb_ << "] with: "
              << *lit << std::endl;
     std::cout << cout_loc.str();
-    
-    std::stringstream str_out;
-    str_out << *lit << std::endl;
+   
+    //Prog out
+    std::ofstream file_out(progout_filename().c_str());
+    file_out << *lit << std::endl;
     
     po::variables_map vm_p_mesh;
     MeshCriteria mcp = get_parameters<MeshCriteria>(*lit++, vm_p_mesh);
     
-    // we keep c3t3 between lines
-    std::tr1::shared_ptr<C3T3> pc3t3_save (new C3T3());
-    
     // Mesh generation
     if ( ! vm_p_mesh.count("mesh") )
     { 
-      std::cout << "[" << nb << "] ERR: Bad mesh args: --mesh is missing\n";
+      std::cerr << "[" << nb << "] ERROR: Bad mesh args: --mesh is missing\n";
+      file_out << "ERROR: Bad mesh args: --mesh is missing\n";
       return;
     }
 
     CGAL::Timer timer;
     timer.start();
-    str_out << "Generate mesh...";
-    std::flush(std::cout);
-    
+
+    // we keep c3t3 between lines
+    std::tr1::shared_ptr<C3T3> pc3t3_save (new C3T3());
+
+    // Generate Mesh
+    file_out << "Generate mesh...";
+    std::flush(file_out);    
     // Initialize c3t3
-    *pc3t3_save = CGAL::make_mesh_3<C3T3>(pdomain_builder_->domain(), MeshCriteria(), no_exude(), no_perturb());
-    
+    if ( !vm_p_mesh.count("off_vertices") )
+    {
+      *pc3t3_save = CGAL::make_mesh_3<C3T3>(pdomain_builder_->domain(), MeshCriteria(), no_exude(), no_perturb());
+    }
+    else 
+    {
+      pc3t3_save->insert_surface_points(pdomain_builder_->points_begin(),
+                                        pdomain_builder_->points_end(),
+                                        pdomain_builder_->points_index()); 
+    }
+
     // Mesh
     CGAL::refine_mesh_3<C3T3>(*pc3t3_save, pdomain_builder_->domain(), mcp, no_exude(), no_perturb());
-    str_out << "done (" << timer.time() << "s) - " << pc3t3_save->triangulation().number_of_vertices()
-            << " vertices, " << pc3t3_save->number_of_facets() << " facets, " << pc3t3_save->number_of_cells() << " cells\n";
+    file_out << "done (" << timer.time() << "s)   [" << pc3t3_save->triangulation().number_of_vertices()
+            << " vertices, " << pc3t3_save->number_of_facets() << " facets, " << pc3t3_save->number_of_cells() << " cells]\n";
     
     //save mesh
-    str_out << "Save mesh...";
+    file_out << "Save mesh...";
+    std::flush(file_out);
     std::stringstream output_filename;
     output_filename << output_prefix_ << "_" << mesh_nb_ << "-out.mesh";
     std::ofstream medit_file(output_filename.str().c_str());
     pc3t3_save->output_to_medit(medit_file);
     
     //save histogram
-    str_out << "done.\nSave histogram...";
+    file_out << "done.\nSave histogram...";
     std::stringstream histo_filename;
     histo_filename << output_prefix_ << "_" << mesh_nb_ << "-histo.txt";
     save_histogram<C3T3>(histo_filename.str(), *pc3t3_save);
-    str_out << "done.\n";
-    
-    //Prog out
-    std::size_t pos = output_prefix_.find_last_of('/');
-    std::string out_pref = output_prefix_.substr(0,pos);
-    std::string filename = output_prefix_.substr(pos+1);
-    std::stringstream progout_filename;
-    progout_filename << out_pref << "/ProgramOutput." << filename << "_" << mesh_nb_ << ".txt";
-    std::ofstream file_out(progout_filename.str().c_str());
-    file_out << str_out.str();
+    file_out << "done.\n";
     
     int i=0;
     for ( ; lit != lines_.end() ; ++lit )
@@ -156,6 +162,24 @@ struct Mesher
       msg_queue_->send(optimizer);
     }
   }
+
+  void print(const std::string& str) const
+  {
+    std::ofstream file_out(progout_filename().c_str(), std::ios_base::app);
+    file_out << str;
+  }
+
+private:
+  std::string progout_filename() const
+  {
+    std::size_t pos = output_prefix_.find_last_of('/');
+    std::string out_pref = output_prefix_.substr(0,pos);
+    std::string filename = output_prefix_.substr(pos+1);
+    std::stringstream progout_filename;
+    progout_filename << out_pref << "/ProgramOutput." << filename << "_" << mesh_nb_ << ".txt";
+
+    return progout_filename.str();
+  }
   
 private:
   std::tr1::shared_ptr<Domain_builder<Domain> > pdomain_builder_;
@@ -178,19 +202,28 @@ struct Optimizer
             const std::string& command_line)
     : pc3t3_(pc3t3)
     , pdomain_builder_(pdomain_builder)
-    , mesh_nb_(mesh_nb)
+    , mesh_nb_("")
     , output_prefix_(output)
     , command_line_(command_line)
     , lloyd_(false)
     , odt_(false)
     , perturb_(false)
-    , exude_(false) {}
-  
-  
-  void operator()(int nb) 
+    , exude_(false)
   {
+    std::stringstream mesh_nb_sstr;
+    if ( mesh_nb < 10 )
+      mesh_nb_sstr << "0";
+
+    mesh_nb_sstr << mesh_nb;
+    mesh_nb_ = mesh_nb_sstr.str();
+  }
+  
+  
+  void operator()(unsigned int nb, const std::string& str) 
+  {
+    if ( (unsigned int)PRINT_ERROR_MSG == nb ) return print(str);
+
     std::size_t pos = output_prefix_.find_last_of('/');
-    std::string out_pref = output_prefix_.substr(0,pos);
     std::string filename = output_prefix_.substr(pos+1);
     
     std::stringstream cout_loc;
@@ -199,77 +232,115 @@ struct Optimizer
     std::cout << cout_loc.str();
 
     // Output
-    std::stringstream str_out;
-    str_out << command_line_ << std::endl;
+    std::ofstream file_out(progout_filename().c_str());
+
+    //std::stringstream str_out;
+    file_out << command_line_ << std::endl;
     
     CGAL::Timer timer;
     timer.start();
     
-    str_out << "Copy C3t3...";
+    file_out << "Copy C3t3...";
+    std::flush(file_out);
     C3T3 c3t3 = *pc3t3_;
-    str_out << "done (" << timer.time() << "s)\n";
+    file_out << "done (" << timer.time() << "s)\n";
     
+    CGAL::Mesh_optimization_return_code code;
+
     if(lloyd_)
     {
-      str_out << "Lloyd optimization...";
-      CGAL::lloyd_optimize_mesh_3(c3t3, pdomain_builder_->domain(), max_iteration_number=nb_lloyd_);
-      str_out << "done (" << timer.time() << "s)\n";
+      file_out << "Lloyd optimization...";
+      std::flush(file_out);
+      code = CGAL::lloyd_optimize_mesh_3(c3t3, pdomain_builder_->domain(), max_iteration_number=nb_lloyd_);
+      file_out << "done (" << timer.time() << "s)    [" << translate_code(code) << "]\n";
     }
     timer.stop(); timer.reset(); timer.start();
     
     if(odt_)
     {
-      str_out << "Odt optimization...";
-      CGAL::odt_optimize_mesh_3(c3t3, pdomain_builder_->domain(), max_iteration_number=nb_odt_);
-      str_out << "done (" << timer.time() << "s)\n";
+      file_out << "Odt optimization...";
+      std::flush(file_out);
+      code = CGAL::odt_optimize_mesh_3(c3t3, pdomain_builder_->domain(), max_iteration_number=nb_odt_);
+      file_out << "done (" << timer.time() << "s)    [" << translate_code(code) << "]\n";
     }
     timer.stop(); timer.reset(); timer.start();
     
     if(perturb_)
     {
-      str_out << "Perturbation...";
-      CGAL::perturb_mesh_3(c3t3, pdomain_builder_->domain(), time_limit=nb_perturb_);
-      str_out << "done (" << timer.time() << "s)\n";
+      file_out << "Perturbation...";
+      std::flush(file_out);
+      code = CGAL::perturb_mesh_3(c3t3, pdomain_builder_->domain(), time_limit=nb_perturb_);
+      file_out << "done (" << timer.time() << "s)    [" << translate_code(code) << "]\n";
     }
     timer.stop(); timer.reset(); timer.start();
 
     if(exude_)
     {
-      str_out << "Exudation...";
-      CGAL::exude_mesh_3(c3t3, sliver_bound=20);
-      str_out << "done (" << timer.time() << "s)\n";
+      file_out << "Exudation...";
+      std::flush(file_out);
+      code = CGAL::exude_mesh_3(c3t3, sliver_bound=20);
+      file_out << "done (" << timer.time() << "s)    [" << translate_code(code) << "]\n";
     }
     timer.stop(); timer.reset(); timer.start();
 
     //save mesh
-    str_out << "Save mesh...";
+    file_out << "Save mesh...";
+    std::flush(file_out);
     std::stringstream output_filename;
     output_filename << output_prefix_ << mesh_nb_ << "-out.mesh";
     std::ofstream medit_file(output_filename.str().c_str());
     c3t3.output_to_medit(medit_file);
     
     //save histogram
-    str_out << "done.\nSave histogram...";
+    file_out << "done.\nSave histogram...";
     std::stringstream histo_filename;
     histo_filename << output_prefix_  << mesh_nb_ << "-histo.txt";
     save_histogram<C3T3>(histo_filename.str(), c3t3);
-    str_out << "done.\n";
-
-    std::stringstream progout_filename;
-    progout_filename << out_pref << "/ProgramOutput." << filename << mesh_nb_ << ".txt";
-    std::ofstream file_out(progout_filename.str().c_str());
-    file_out << str_out.str();
+    file_out << "done.\n";
   }
   
   void set_lloyd(int i) { lloyd_=true; nb_lloyd_=i; }
   void set_odt(int i) { odt_=true; nb_odt_=i; }
   void set_perturb(double d) { perturb_=true; nb_perturb_=d; }
   void set_exude() { exude_=true; }
+
+  std::string translate_code(const CGAL::Mesh_optimization_return_code& code) const
+  {
+    switch ( code )
+    {
+    case CGAL::BOUND_REACHED: return std::string("sliver bound");
+    case CGAL::TIME_LIMIT_REACHED: return std::string("time limit");
+    case CGAL::CANT_IMPROVE_ANYMORE: return std::string("can't improve");
+    case CGAL::CONVERGENCE_REACHED: return std::string("convergence");
+    case CGAL::MAX_ITERATION_NUMBER_REACHED: return std::string("max iteration number");
+    }
+
+    return std::string("UNKNOWN CODE");
+  }
+
+  void print(const std::string& str) const
+  {
+    std::ofstream file_out(progout_filename().c_str(), std::ios_base::app);
+    file_out << str;
+  }
+
+private:
+  std::string progout_filename() const
+  {
+    std::size_t pos = output_prefix_.find_last_of('/');
+    std::string out_pref = output_prefix_.substr(0,pos);
+    std::string filename = output_prefix_.substr(pos+1);
+    std::stringstream progout_filename;
+    progout_filename << out_pref << "/ProgramOutput." << filename << mesh_nb_ << ".txt";
+
+    return progout_filename.str();
+  }
+
   
 private:
   std::tr1::shared_ptr<C3T3> pc3t3_;
   std::tr1::shared_ptr<Domain_builder<Domain> > pdomain_builder_;
-  int mesh_nb_;
+  std::string mesh_nb_;
   std::string output_prefix_;
   std::string command_line_;
   bool lloyd_;
@@ -291,12 +362,10 @@ T set_arg(const std::string& param_name,
 	if(vm.count(param_name))
 	{
 		T param_value = vm[param_name].as<T>();
-		//std::cout << param_string << ": " << param_value << "\n";
 		return param_value;
 	}
 	else
 	{
-		//std::cout << param_string << " ignored.\n";
 		return T();
 	}
 }
@@ -321,6 +390,9 @@ void save_histogram(const std::string& filename,
                     const C3t3& c3t3)
 {
 	std::vector<int> histo(181,0);
+
+  double min_value = 180.;
+  double max_value = 0.;
   
 	for (typename C3t3::Cell_iterator cit = c3t3.cells_begin() ;
        cit != c3t3.cells_end() ;
@@ -337,18 +409,40 @@ void save_histogram(const std::string& filename,
 		
 		double a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0,p1,p2,p3)));
 		histo[std::floor(a)] += 1;
+    min_value = (std::min)(min_value, a);
+    max_value = (std::max)(max_value, a);
+
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0, p2, p1, p3)));
 		histo[std::floor(a)] += 1;
+    min_value = (std::min)(min_value, a);
+    max_value = (std::max)(max_value, a);
+
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0, p3, p1, p2)));
 		histo[std::floor(a)] += 1;
+    min_value = (std::min)(min_value, a);
+    max_value = (std::max)(max_value, a);
+
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p1, p2, p0, p3)));
 		histo[std::floor(a)] += 1;
+    min_value = (std::min)(min_value, a);
+    max_value = (std::max)(max_value, a);
+
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p1, p3, p0, p2)));
 		histo[std::floor(a)] += 1;
+    min_value = (std::min)(min_value, a);
+    max_value = (std::max)(max_value, a);
+
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p2, p3, p0, p1)));
 		histo[std::floor(a)] += 1;
+    min_value = (std::min)(min_value, a);
+    max_value = (std::max)(max_value, a);
+
 	}
 	std::ofstream file(filename.c_str());
+
+  file << std::setprecision(4);
+  file << min_value << "\n";
+  file << max_value << "\n";
 	std::copy(histo.begin(), histo.end(), std::ostream_iterator<int>(file, "\n"));	
 }
 
@@ -386,7 +480,7 @@ MeshingCriteria get_parameters(const std::string& param_line,
 	
 	po::options_description additional_options("Options");
 	additional_options.add_options()
-	("off_vertices", po::value<int>(), "Use polyhedron vertices as initialization step")
+	("off_vertices", "Use polyhedron vertices as initialization step")
 	("no_label_rebind", "Don't rebind cell labels in medit output")
 	("show_patches", "Show surface patches in medit output");
 	
