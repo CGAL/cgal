@@ -35,6 +35,10 @@
 #  include<iostream>
 #  include<sstream>
 #  include<iomanip>
+#  include<boost/optional.hpp>
+#  include<boost/intrusive_ptr.hpp>
+#  include<CGAL/MP_Float.h>
+
 #  define CGAL_STSKEL_TRACE(m) \
      { \
        std::ostringstream ss ; \

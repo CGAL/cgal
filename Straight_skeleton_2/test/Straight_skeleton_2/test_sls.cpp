@@ -318,13 +318,13 @@ IWeightedBoundariesPtr load_boundaries( string file, int aShift, int& rStatus )
               {
                 // From now on we will only accept closed polygons
                 lIgnoreOpenPolygons = true;
-                /*
+                
                 Orientation expected = ( i == 0 ? COUNTERCLOCKWISE : CLOCKWISE ) ;
       
                 double area = to_double(polygon_area_2(lPoly->begin(),lPoly->end(),IK()));
       
                 Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
-                */
+                
                 if ( aShift > 0 && lIsClosed ) 
                 {
                   std::rotate(lPoly->begin(),lPoly->begin()+aShift,lPoly->end());
@@ -332,8 +332,8 @@ IWeightedBoundariesPtr load_boundaries( string file, int aShift, int& rStatus )
                 }
               
                 IWeightedPolygon lWeightedPolygon(lPoly,lWeights,lIsClosed);
-                rBoundaries->push_back( lWeightedPolygon ) ;
-                //rBoundaries->push_back( ( orientation == expected ) ? lWeightedPolygon : revert_weighted_polygon(lWeightedPolygon) ) ;
+                //rBoundaries->push_back( lWeightedPolygon ) ;
+                rBoundaries->push_back( ( orientation == expected ) ? lWeightedPolygon : revert_weighted_polygon(lWeightedPolygon) ) ;
               }
               else if ( ! lIgnoreOpenPolygons ) 
               {

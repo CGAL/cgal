@@ -129,11 +129,20 @@ private:
   // Returns the number of common halfedges in the two triedges x and y
   static int CountInCommon( Self const& x, Self const& y )
   {
-    return x.contains(y.e0()) 
-          + ( y.e1() == y.e0() && y.e1() != y.e2() ? x.contains(y.e1()) : 0 ) 
-          + ( y.e2() == y.e0() && y.e2() != y.e1() ? x.contains(y.e2()) : 0 ) ;
-  }
+    Handle lE[3];
 
+    int lC = 1 ;
+
+    lE[0] = y.e0();
+
+    if ( y.e0() != y.e1() )
+      lE[lC++] = y.e1();
+
+    if ( y.e0() != y.e2() && y.e1() != y.e2() )
+       lE[lC++] = y.e2();
+
+    return x.contains(lE[0]) + x.contains(lE[1]) + ( lC > 2 ? x.contains(lE[2]) : 0 ) ;
+  }
   
   Handle mE[3];
 } ;
@@ -162,7 +171,7 @@ static char const* trisegment_collinearity_to_string( Trisegment_collinearity c 
   
   return "!!UNKNOWN COLLINEARITY!!" ;
 }
-namespace internal 
+namespace internal
 {
 
 template <>

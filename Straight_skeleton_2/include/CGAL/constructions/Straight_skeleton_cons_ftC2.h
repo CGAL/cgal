@@ -576,8 +576,8 @@ optional< Rational< typename Kernel_traits<Trisegment_2>::Kernel::FT > > compute
   //   (2)
   //   The bisecting line of e0 and e2 is given by the following SEL
   //
-  //    l0.a*x(t) + l0.b*y(t) + l0.c + w0*t = 0
-  //    l2.a*x(t) + l2.b*y(t) + l2.c + w2*t = 0
+  //    l0.a*x(t) + l0.b*y(t) + l0.c - w0*t = 0
+  //    l2.a*x(t) + l2.b*y(t) + l2.c - w2*t = 0
   //
   //   where (l0.a,l0.b,l0.c) and (l2.a,l2.b,l0.c) are the normalized line coefficientes of e0 and e2 resp.
   //
@@ -596,16 +596,16 @@ optional< Rational< typename Kernel_traits<Trisegment_2>::Kernel::FT > > compute
   //   To solve this system we can reformulate it as the intersection of three non colinear lines.
   //   The two equations from the non colinear edges:
   //
-  //    l0.a*x(t) + l0.b*y(t) + l0.c + w0*t = 0
-  //    l2.a*x(t) + l2.b*y(t) + l2.c + w2*t = 0
+  //    l0.a*x(t) + l0.b*y(t) + l0.c - w0*t = 0
+  //    l2.a*x(t) + l2.b*y(t) + l2.c - w2*t = 0
   //
   //   and if l0 is not vertical, we add:
   //
-  //     x(t) = px + w0*l0.a* t   ==>   1.0*x(t) +  0.0*y(t) -   px - l0.a*w0*t = 0
+  //     x(t) = px + w0*l0.a* t   ==>   (1.0)*x(t) +  (0.0)*y(t) + (-px) - (l0.a*w0)*t = 0
   //
   //   else, because l0 is not horizontal:
   //
-  //     y(t) = py + w0*l0.b* t   ==>   0.0*x(t) +  1.0*y(t) -   py - l0.b*w0*t = 0
+  //     y(t) = py + w0*l0.b* t   ==>   (0.0)*x(t) +  (1.0)*y(t) + (-py) - (l0.b*w0)*t = 0
   //
   
   optional< Rational<FT> > result;

@@ -46,6 +46,7 @@ construct_offset_pointC2 ( P_FT const&                          t
                          , intrusive_ptr< Trisegment_2 > const& tri
                          )
 {
+
   typedef typename Kernel_traits<Trisegment_2>::Kernel K ;
   
   typedef typename K::FT      FT ;
@@ -56,8 +57,8 @@ construct_offset_pointC2 ( P_FT const&                          t
   typedef optional<Line_2>  Optional_line_2 ;
   
   
-  FT x1(0.0), y1(0.0), z1(t) ;
-  FT x2(0.0), y2(0.0), z2(t) ;
+  FT x1(0.0), y1(0.0) ;
+  FT x2(0.0), y2(0.0) ;
 
   FT wt0 = t * w0 ;
   FT wt1 = t * w1 ;
@@ -122,7 +123,7 @@ construct_offset_pointC2 ( P_FT const&                          t
 
   CGAL_STSKEL_TRAITS_TRACE("  RESULT: (" << x << "," << y << ")" << ( ok ? "" : " NONE really" ) ) ;
 
-  return cgal_make_optional(ok, boost::make_tuple( Point_2(x1,y1,z1), Point_2(x2,y2,z2) ) ) ;
+  return cgal_make_optional(ok, boost::make_tuple( Point_2(x1,y1), Point_2(x2,y2) ) ) ;
 }
 
 // Given an offset distance 't' and one oriented line segment e, returns the coordinates (x,y)
@@ -147,7 +148,7 @@ optional< typename Kernel_traits<Trisegment_2>::Kernel::Point_2 > construct_offs
   typedef optional<Point_2> Optional_point_2 ;
   typedef optional<Line_2>  Optional_line_2 ;
   
-  FT x(0.0),y(0.0),z(t) ;
+  FT x(0.0),y(0.0) ;
   
   FT wt = t * w ;
 
@@ -181,7 +182,7 @@ optional< typename Kernel_traits<Trisegment_2>::Kernel::Point_2 > construct_offs
 
   CGAL_STSKEL_TRAITS_TRACE("  RESULT: (" << x << "," << y << ")" << ( ok ? "" : " NONE really" ) ) ;
 
-  return cgal_make_optional(ok, Point_2(x,y,z)) ;
+  return cgal_make_optional(ok, Point_2(x,y)) ;
 }
 
 } // namespace CGAL_SS_i
