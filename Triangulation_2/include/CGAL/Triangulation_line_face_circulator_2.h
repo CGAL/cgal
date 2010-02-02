@@ -335,7 +335,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
 
   // Test whether p lies on a vertex
   for(j = 0; j < 3; j++){
-    if(pos->vertex(j)->point() == p){
+    if(_tr->xy_equal(pos->vertex(j)->point(), p)){
       *this = Line_face_circulator( pos->vertex(j), t, q);
       if( (!is_empty()) && _tr->is_infinite(pos )) --(*this);
       return;
