@@ -913,6 +913,10 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/diff_P
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/diff_PQ.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/diff_QP.bmp -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/diff_QP.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/fileNew.png -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/fileOpen.png -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/fileSave.png -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/fit-page-32.png -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/insert_bezier.bmp -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/insert_bezier.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/insert_circle.bmp -text
@@ -935,6 +939,7 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/symm_d
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/symm_diff.xpm -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/union.bmp -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/union.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/icons/zoom-best-fit.png -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL/Qt/BezierCurves.h -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL/Qt/CircularPolygons.h -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2_GraphicsView/include/CGAL/Qt/GpsCircleSegmentGraphicsItem.h -text
