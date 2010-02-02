@@ -1225,12 +1225,12 @@ int main( int argc, char const* argv[] )
                     
                     if ( soptr != "*" )
                     {
-                      sOffsetCount = atoi(soptr.c_str()) ; 
+                      sOffsetCount = static_cast<size_t>(atoi(soptr.c_str())) ; 
                       cout << "Repeared Offset set at " << sOffset << " " << sOffsetCount << " times." << endl ;
                     }
                     else
                     {
-                      sOffsetCount = -1 ;  
+                      sOffsetCount = static_cast<size_t>(-1) ;  
                       cout << "Repeared Offset set at " << sOffset << " until full depth" << endl ;
                     } 
                   }
