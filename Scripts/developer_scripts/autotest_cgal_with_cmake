@@ -232,11 +232,15 @@ abort_if_latest_already_tested()
 # ----------------------------------------------------------------------------------------
 get_cgal()
 {
-  for i in `cat LATEST`
-  do
-    CGAL_LOCATION="${CGAL_URL}/${i}";
-    CGAL_ZIPFILE="${i}";
-  done
+  if [ -z "$CGAL_LOCATION" ]; then
+    for i in `cat LATEST`
+    do
+      CGAL_LOCATION="${CGAL_URL}/${i}";
+      CGAL_ZIPFILE="${i}";
+    done
+  else
+    CGAL_ZIPFILE=`echo "$CGAL_LOCATION" | sed 's|.*/||'`
+  fi
 
   CGAL_RELEASE_ID=`echo $CGAL_ZIPFILE | sed "s/.tar.gz//"`
   if [ ! "${CGAL_RELEASE_ID}" = "${CGAL_ZIPFILE}" ]; then
@@ -782,29 +786,30 @@ put_on_web()
 # Parse command line arguments
 for arg in "$@"
 do
-  if [ "$arg" = "-c" ]; then
-    echo "Using latest unzipped release instead of getting a new one from the server"
-    USE_LATEST_UNZIPPED="y"
-  fi
-
-  if [ "$arg" = "-l" ]; then
-    echo "Not uploading results to dashboard"
-    DO_NOT_UPLOAD="y"
-  fi
-
-  if [ "$arg" = "-n" ]; then
-    # echo "No testsuite will be launched. Installation only."
-    DO_NOT_TEST="y"
-  fi
-
-  if [ "$arg" = "-s" ]; then
-    echo "Showing progress."
-    SHOW_PROGRESS="y"
-  fi
-  if [ "$arg" = "-k" ]; then
-    echo "Compiled test/ directory will be kept."
-    KEEP_TESTS="y"
-  fi
+  case "$arg" in 
+    "-c")
+      echo "Using latest unzipped release instead of getting a new one from the server"
+      USE_LATEST_UNZIPPED="y"
+      ;;
+    "-l")
+      echo "Not uploading results to dashboard"
+      DO_NOT_UPLOAD="y"
+      ;;
+    "-n")
+      # echo "No testsuite will be launched. Installation only."
+      DO_NOT_TEST="y"
+      ;;
+    "-s")
+      echo "Showing progress."
+      SHOW_PROGRESS="y"
+      ;;
+    "-k")
+      echo "Compiled test/ directory will be kept."
+      KEEP_TESTS="y"
+      ;;
+    *)
+      CGAL_LOCATION=$arg
+  esac
 done
 
 # Load settings
@@ -883,8 +888,10 @@ cd "$CGAL_ROOT"
 # Starts the process
 
 if [ -z "${USE_LATEST_UNZIPPED}" ]; then
-  download_latest
-  abort_if_latest_already_tested
+  if [ -z "$CGAL_LOCATION" ]; then
+    download_latest
+    abort_if_latest_already_tested
+  fi
   get_cgal
   unzip_cgal
 fi
@@ -918,3 +925,7 @@ fi
 rm -f $LOCK_FILE;
 
 # EOF
+
+## Local Variables:
+## sh-basic-offset: 2
+## End:
