@@ -1,7 +1,7 @@
 
 #include "MainWindow.h"
 
-MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
+MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent), nbcube(0)
 {
   setupUi(this);
   this->viewer->setScene(&scene);
@@ -23,6 +23,9 @@ MainWindow::connectActions()
 
   QObject::connect(this->actionSubdivide, SIGNAL(triggered()), 
 		   this, SLOT(subdivide()));
+
+  QObject::connect(this->actionCreateCube, SIGNAL(triggered()), 
+		   this, SLOT(createCube()));
 
   QObject::connect(this, SIGNAL(sceneChanged()), 
 		   this->viewer, SLOT(sceneChanged()));
@@ -46,6 +49,15 @@ MainWindow::open_file()
   }
 }
 
+
+void
+MainWindow::createCube()
+{  
+  make_cube(scene.map, Point_3(nbcube, nbcube, nbcube), 1);
+  ++nbcube;
+  
+  emit (sceneChanged());
+}
 
 void
 MainWindow::subdivide()

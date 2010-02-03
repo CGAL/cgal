@@ -31,8 +31,8 @@ public:
 
 public:
   void draw();
-  void Viewer::drawFace(Dart_handle ADart, int AMark);
-  void Viewer::drawEdges(Dart_handle ADart);
+  void drawFace(Dart_handle ADart, int AMark);
+  void drawEdges(Dart_handle ADart);
 
   virtual void init();
   // void  gl_draw_surface();

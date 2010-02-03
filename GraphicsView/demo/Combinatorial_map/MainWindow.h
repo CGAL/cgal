@@ -8,9 +8,6 @@
 #include <QFileDialog>
 class QWidget;
 
-
-
-
 class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
 {
   Q_OBJECT
@@ -28,9 +25,13 @@ public slots:
   void open(const QString& fileName);
   void open_file();
   void subdivide();
+  void createCube();
 
-  signals:
+ signals:
   void sceneChanged();
+
+ private:
+  unsigned int nbcube;
 };
 
 

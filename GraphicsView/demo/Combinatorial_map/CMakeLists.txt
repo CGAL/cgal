@@ -28,7 +28,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_
   include(${QT_USE_FILE})
 
   include_directories (${QGLVIEWER_INCLUDE_DIR})
-  include_directories (BEFORE ../../include ./ ../../../../svn/experimental-packages/Combinatorial_map/include ../../../../svn/experimental-packages/Combinatorial_map/demo/Combinatorial_map/Combinatorial_map_viewer/ )
+  include_directories (BEFORE ../Combinatorial_map_CGAL/include ../../include ./ ../../../../svn/experimental-packages/Combinatorial_map/include ../../../../svn/experimental-packages/Combinatorial_map/demo/Combinatorial_map/Combinatorial_map_viewer/ )
 
   # ui file, created wih Qt Designer
   qt4_wrap_ui( uis MainWindow.ui )
