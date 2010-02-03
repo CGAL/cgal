@@ -288,7 +288,10 @@ public :
 #endif    
     mStep = 0 ; 
   }
-  
+
+  virtual ~Visitor()
+  {
+  }
   
   virtual void OnStarted( Surface& ) const 
   {

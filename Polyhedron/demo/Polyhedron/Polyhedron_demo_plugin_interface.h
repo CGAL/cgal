@@ -13,6 +13,7 @@ class Messages_interface;
 class Polyhedron_demo_plugin_interface 
 {
 public:
+  virtual ~Polyhedron_demo_plugin_interface() {}
   virtual void init(QMainWindow*, Scene_interface*) {};
   virtual void init(QMainWindow* mw, Scene_interface* sc, Messages_interface*) {
     init(mw, sc);
