@@ -88,13 +88,13 @@ Straight_skeleton_builder_2<Gt,Ss,V>::PopEventFromPQ()
 //
 template<class Gt, class Ss, class V>
 typename Straight_skeleton_builder_2<Gt,Ss,V>::EventPtr
-Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode )
+Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode, Triedge const& aPrevEventTriedge  )
 {
   EventPtr rResult ;
  
   Triedge lTriedge = GetVertexTriedge(aLNode) & GetVertexTriedge(aRNode) ;
   
-  if ( lTriedge.is_valid() )
+  if ( lTriedge.is_valid()  && lTriedge != aPrevEventTriedge )
   {
     Trisegment_2_ptr lTrisegment = CreateTrisegment(lTriedge,aLNode,aRNode);
     
@@ -208,7 +208,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvent( Vertex_handle aNod
 
 // Tests the reflex wavefront emerging from 'aNode' against the other contour edges in search for split events.
 template<class Gt, class Ss, class V>
-void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNode )
+void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNode, Triedge const& aPrevEventTriedge  )
 {
   // lLBorder and lRBorder are the consecutive contour edges forming the reflex wavefront.
   Triedge const& lTriedge = GetVertexTriedge(aNode);
@@ -226,7 +226,14 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNo
     Halfedge_handle lOpposite = *i ;
 
     if ( lOpposite != lLBorder && lOpposite != lRBorder )
-      CollectSplitEvent(aNode, Triedge(lLBorder, lRBorder, lOpposite) ) ;
+    {
+      Triedge lEventTriedge(lLBorder, lRBorder, lOpposite);
+      
+      if ( lEventTriedge != aPrevEventTriedge )
+      {
+        CollectSplitEvent(aNode, lEventTriedge ) ;
+      }
+    }
   }
 }
 
@@ -234,7 +241,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectSplitEvents( Vertex_handle aNo
 // Finds and enques all the new potential events produced by the vertex wavefront emerging from 'aNode' (which can be a reflex wavefront).
 // This new events are simply stored in the priority queue, not processed.
 template<class Gt, class Ss, class V>
-void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode )
+void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode, Triedge const& aPrevEventTriedge )
 {
   // A Straight Skeleton is the trace of the 'grassfire propagation' that corresponds to the inward move of all the vertices 
   // of a polygon along their angular bisectors.
@@ -280,10 +287,10 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CollectNewEvents( Vertex_handle aNode
     ) ;
 
   if ( IsReflex(aNode) )
-    CollectSplitEvents(aNode) ;
+    CollectSplitEvents(aNode, aPrevEventTriedge) ;
     
-  EventPtr lLEdgeEvent = FindEdgeEvent( lPrev , aNode ) ;
-  EventPtr lREdgeEvent = FindEdgeEvent( aNode , lNext ) ;
+  EventPtr lLEdgeEvent = FindEdgeEvent( lPrev , aNode, aPrevEventTriedge ) ;
+  EventPtr lREdgeEvent = FindEdgeEvent( aNode , lNext, aPrevEventTriedge ) ;
 
   bool lAcceptL = !!lLEdgeEvent ;
   bool lAcceptR = !!lREdgeEvent ;
@@ -415,7 +422,7 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::AreBisectorsCoincident ( Halfedge_con
 }
 
 template<class Gt, class Ss, class V>
-void Straight_skeleton_builder_2<Gt,Ss,V>::UpdatePQ( Vertex_handle aNode )
+void Straight_skeleton_builder_2<Gt,Ss,V>::UpdatePQ( Vertex_handle aNode, Triedge const& aPrevEventTriedge )
 {
   Vertex_handle lPrev = GetPrevInLAV(aNode) ;
   Vertex_handle lNext = GetNextInLAV(aNode) ;
@@ -432,17 +439,19 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::UpdatePQ( Vertex_handle aNode )
   if ( AreBisectorsCoincident(lOBisector_C,lOBisector_N) )
     HandleSimultaneousEdgeEvent( aNode, lNext ) ;
   else
-     CollectNewEvents(aNode);
+     CollectNewEvents(aNode,aPrevEventTriedge);
 }
 template<class Gt, class Ss, class V>
 void Straight_skeleton_builder_2<Gt,Ss,V>::CreateInitialEvents()
 {
+  Triedge const cNull_triedge ;
+  
   CGAL_STSKEL_BUILDER_TRACE(0, "Creating initial events...");
   for ( Vertex_iterator v = mSSkel->vertices_begin(); v != mSSkel->vertices_end(); ++ v )
   {
     if ( ! v->has_infinite_time() )
     {
-      UpdatePQ(v);
+      UpdatePQ(v,cNull_triedge);
       mVisitor.on_initial_events_collected(v,IsReflex(v),IsDegenerate(v)) ;
     }
   }
@@ -902,7 +911,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleEdgeEvent( EventPtr aEvent )
       
       SetupNewNode(lNewNode) ;
       
-      UpdatePQ(lNewNode);
+      UpdatePQ(lNewNode, lEvent.triedge());
      
       mVisitor.on_edge_event_processed(lLSeed,lRSeed,lNewNode) ;
     }
@@ -1048,8 +1057,8 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     SetupNewNode(lNewNode_L) ;
     SetupNewNode(lNewNode_R) ;
     
-    UpdatePQ(lNewNode_L);
-    UpdatePQ(lNewNode_R);
+    UpdatePQ(lNewNode_L, lEvent.triedge());
+    UpdatePQ(lNewNode_R, lEvent.triedge());
   
     mVisitor.on_split_event_processed(lSeed,lNewNode_L,lNewNode_R) ;
   }
@@ -1248,8 +1257,8 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandlePseudoSplitEvent( EventPtr aEve
     SetupNewNode(lNewNode_L) ;
     SetupNewNode(lNewNode_R) ;
     
-    UpdatePQ(lNewNode_L);
-    UpdatePQ(lNewNode_R);
+    UpdatePQ(lNewNode_L, lEvent.triedge());
+    UpdatePQ(lNewNode_R, lEvent.triedge());
   
     mVisitor.on_pseudo_split_event_processed(lLSeed,lRSeed,lNewNode_L,lNewNode_R) ;
   }  

@@ -677,14 +677,14 @@ private :
   
   void CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge ) ;
 
-  void CollectSplitEvents( Vertex_handle aNode ) ;
+  void CollectSplitEvents( Vertex_handle aNode, Triedge const& aPrevEventTriedge  ) ;
 
-  EventPtr FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode ) ;
+  EventPtr FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode, Triedge const& aPrevEventTriedge  ) ;
 
   void HandleSimultaneousEdgeEvent( Vertex_handle aA, Vertex_handle aB ) ;
 
-  void CollectNewEvents( Vertex_handle aNode ) ;
-  void UpdatePQ( Vertex_handle aV ) ;
+  void CollectNewEvents( Vertex_handle aNode, Triedge const& aPrevEventTriedge ) ;
+  void UpdatePQ( Vertex_handle aV, Triedge const& aPrevEventTriedge ) ;
   void CreateInitialEvents();
   void CreateContourBisectors();
   void InitPhase();

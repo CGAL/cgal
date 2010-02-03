@@ -3302,6 +3302,7 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/multinode0.poly -text svneol=u
 Straight_skeleton_2/test/Straight_skeleton_2/data/multinode1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/near_degenerate_0.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/near_degenerate_1.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/nearly_collinear.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/parallels0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/parallels0_b.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/parallels_1.poly -text

@@ -48,7 +48,6 @@ template<class K> struct Has_inexact_constructions
                                   >::type type ; 
 } ;
 
-
 //
 // This record encapsulates the defining contour halfedges for a node (both contour and skeleton)
 //
@@ -66,8 +65,8 @@ public:
   // Contour nodes (input polygon vertices) have only 2 defining contour edges    
   Triedge ( Handle aE0, Handle aE1 )
   {
-    mE[0] = aE0 ;
-    mE[1] = aE1 ;
+    mE[0] = aE0 ; 
+    mE[1] = aE1 ; 
     // mE[2] gets default constructed, i.e., "null".
   }              
   
@@ -85,43 +84,26 @@ public:
   Handle e1() const { return e(1); }
   Handle e2() const { return e(2); }
   
-  bool is_valid() const 
-  { 
-    return    handle_assigned(e0())
-           && handle_assigned(e1())
-           && e0() != e1() && e1() != e2() ; 
-  }
+  bool is_valid() const { return handle_assigned(e0()) && handle_assigned(e1()); }
   
   bool is_contour () const { return !handle_assigned(e2()) ; }
   bool is_skeleton() const { return  handle_assigned(e2()) ; }
   
-  // returns 1 if aE is one of the halfedges stored in this triedge, 0 otherwise.
-  int contains ( Handle aE ) const
-  {
-    return aE == e0() || aE == e1() || aE == e2() ? 1 : 0 ;
-  }
+  bool is_contour_terminal() const { return e0() == e1() ; }
   
-  // Returns the number of common halfedges in the two triedges x and y
-  static int CountInCommon( Self const& x, Self const& y )
-  {
-    return x.contains(y.e0()) + x.contains(y.e1()) + x.contains(y.e2()) ; 
-  }
+  bool is_skeleton_terminal() const { return e0() == e1() || e1() == e2() ; }
   
   // Returns true if the triedges store the same 3 halfedges (in any order)
-  friend bool operator == ( Self const& x, Self const& y ) { return CountInCommon(x,y) == 3 ; }
+  friend bool operator == ( Self const& x, Self const& y ) 
+  { 
+    return x.number_of_unique_edges() == y.number_of_unique_edges() && CountInCommon(x,y) == x.number_of_unique_edges() ; 
+  }
   
   friend bool operator != ( Self const& x, Self const& y ) { return !(x==y) ; }
   
   friend Self operator & ( Self const& x, Self const& y )
   {
     return Self(x.e0(), x.e1(), ( x.e0() == y.e0() || x.e1() == y.e0() ) ? y.e1() : y.e0()  ) ;
-  }
-  
-  static void insert_handle_id( std::ostream& ss, Handle aH )
-  {  
-    if ( handle_assigned(aH) )
-         ss << aH->id() ;
-    else ss << "#" ;
   }
   
   friend std::ostream& operator<< ( std::ostream& ss, Self const& t )
@@ -138,9 +120,45 @@ public:
   
 private:
   
+  static void insert_handle_id( std::ostream& ss, Handle aH )
+  {  
+    if ( handle_assigned(aH) )
+         ss << aH->id() ;
+    else ss << "#" ;
+  }
+  
+  // returns 1 if aE is one of the halfedges stored in this triedge, 0 otherwise.
+  int contains ( Handle aE ) const
+  {
+    return aE == e0() || aE == e1() || aE == e2() ? 1 : 0 ;
+  }
+  
+  int number_of_unique_edges() const
+  { 
+    return is_contour() ? ( is_contour_terminal() ? 1 : 2 ) : ( is_skeleton_terminal() ? 2 : 3 ) ;
+  }
+  
+  // Returns the number of common halfedges in the two triedges x and y
+  static int CountInCommon( Self const& x, Self const& y )
+  {
+    Handle lE[3];
 
+    int lC = 1 ;
+
+    lE[0] = y.e0();
+
+    if ( y.e0() != y.e1() )
+      lE[lC++] = y.e1();
+
+    if ( y.e0() != y.e2() && y.e1() != y.e2() )
+       lE[lC++] = y.e2();
+
+    return x.contains(lE[0]) + x.contains(lE[1]) + ( lC > 2 ? x.contains(lE[2]) : 0 ) ;
+  }
+  
   Handle mE[3];
 } ;
+
 
 } // namespace CGAL_SS_i
 
