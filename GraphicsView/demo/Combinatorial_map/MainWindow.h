@@ -22,10 +22,11 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
   Timer timer;
 
 public slots:
-  void open(const QString& fileName);
-  void open_file();
+  void import_off();
+  void add_off();
+  void load_off(const QString& fileName);
   void subdivide();
-  void createCube();
+  void create_cube();
 
  signals:
   void sceneChanged();

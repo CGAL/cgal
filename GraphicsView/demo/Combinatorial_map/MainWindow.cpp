@@ -11,21 +11,24 @@ MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent), nbcu
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+	  this, SLOT(load_off(QString)));
 }
 
 
 void
 MainWindow::connectActions()
 {
-  QObject::connect(this->actionLoad_New_File, SIGNAL(triggered()), 
-		   this, SLOT(open_file()));
+  QObject::connect(this->actionImportOFF, SIGNAL(triggered()), 
+		   this, SLOT(import_off()));
+
+  QObject::connect(this->actionAddOFF, SIGNAL(triggered()), 
+		   this, SLOT(add_off()));
 
   QObject::connect(this->actionSubdivide, SIGNAL(triggered()), 
 		   this, SLOT(subdivide()));
 
   QObject::connect(this->actionCreateCube, SIGNAL(triggered()), 
-		   this, SLOT(createCube()));
+		   this, SLOT(create_cube()));
 
   QObject::connect(this, SIGNAL(sceneChanged()), 
 		   this->viewer, SLOT(sceneChanged()));
@@ -36,22 +39,37 @@ MainWindow::connectActions()
 }
 
 void
-MainWindow::open_file()
+MainWindow::import_off()
 {
-
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open File"),
+						  tr("Import OFF"),
 						  "./off",
 						  tr("off files (*.off)"));
 
-  if(! fileName.isEmpty()){
-    open(fileName);
-  }
+  if(! fileName.isEmpty())
+    {
+      scene.map.clear();
+      load_off(fileName);
+    }
+}
+
+void
+MainWindow::add_off()
+{
+  QString fileName = QFileDialog::getOpenFileName(this,
+						  tr("Add OFF"),
+						  "./off",
+						  tr("off files (*.off)"));
+
+  if(! fileName.isEmpty())
+    {
+      load_off(fileName);
+    }
 }
 
 
 void
-MainWindow::createCube()
+MainWindow::create_cube()
 {  
   make_cube(scene.map, Point_3(nbcube, nbcube, nbcube), 1);
   ++nbcube;
@@ -67,15 +85,13 @@ MainWindow::subdivide()
 }
 
 void
-MainWindow::open(const QString& fileName)
+MainWindow::load_off(const QString& fileName)
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  //scene.map.clear();
 
   std::ifstream ifs(qPrintable(fileName));
 
   CGAL::import_from_polyhedron_flux<Map>(scene.map,ifs);
-
 
   this->addToRecentFiles(fileName);
   QApplication::restoreOverrideCursor();

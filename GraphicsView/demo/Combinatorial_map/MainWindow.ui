@@ -40,8 +40,8 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionLoad_New_File"/>
-    <addaction name="actionLoad_Additional_File"/>
+    <addaction name="actionImportOFF"/>
+    <addaction name="actionAddOFF"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -56,14 +56,14 @@
    <addaction name="menuOperations"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionLoad_New_File">
+  <action name="actionImportOFF">
    <property name="text">
-    <string>Load New File</string>
+    <string>Import OFF</string>
    </property>
   </action>
-  <action name="actionLoad_Additional_File">
+  <action name="actionAddOFF">
    <property name="text">
-    <string>Load Additional File</string>
+    <string>Add OFF</string>
    </property>
   </action>
   <action name="actionQuit">
