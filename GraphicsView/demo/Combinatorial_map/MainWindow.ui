@@ -43,6 +43,8 @@
     <addaction name="actionImportOFF"/>
     <addaction name="actionAddOFF"/>
     <addaction name="separator"/>
+    <addaction name="actionImport3DTDS"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuOperations">
@@ -81,6 +83,11 @@
     <string>Create cube</string>
    </property>
   </action>
+  <action name="actionImport3DTDS">
+   <property name="text">
+    <string>Import 3DTS</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -90,7 +97,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../resources/CGAL.qrc"/>
   <include location="Combinatorial_map_3.qrc"/>
  </resources>
  <connections/>

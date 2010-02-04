@@ -1,5 +1,6 @@
 
 #include "MainWindow.h"
+#include <CGAL/Delaunay_triangulation_3.h>
 
 MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent), nbcube(0)
 {
@@ -23,7 +24,13 @@ MainWindow::connectActions()
 
   QObject::connect(this->actionAddOFF, SIGNAL(triggered()), 
 		   this, SLOT(add_off()));
+  
+  QObject::connect(this->actionImport3DTDS, SIGNAL(triggered()), 
+		   this, SLOT(import_3DTDS()));
 
+  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
+		   qApp, SLOT(quit()));
+  
   QObject::connect(this->actionSubdivide, SIGNAL(triggered()), 
 		   this, SLOT(subdivide()));
 
@@ -33,9 +40,6 @@ MainWindow::connectActions()
   QObject::connect(this, SIGNAL(sceneChanged()), 
 		   this->viewer, SLOT(sceneChanged()));
 
-
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   qApp, SLOT(quit()));
 }
 
 void
@@ -54,6 +58,21 @@ MainWindow::import_off()
 }
 
 void
+MainWindow::import_3DTDS()
+{
+  QString fileName = QFileDialog::getOpenFileName(this,
+						  tr("Import 3DTDS"),
+						  ".",
+						  tr("Data file (*)"));
+
+  if(! fileName.isEmpty())
+    {
+      scene.map.clear();
+      load_3DTDS(fileName);
+    }
+}
+
+void
 MainWindow::add_off()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
@@ -65,23 +84,6 @@ MainWindow::add_off()
     {
       load_off(fileName);
     }
-}
-
-
-void
-MainWindow::create_cube()
-{  
-  make_cube(scene.map, Point_3(nbcube, nbcube, nbcube), 1);
-  ++nbcube;
-  
-  emit (sceneChanged());
-}
-
-void
-MainWindow::subdivide()
-{  
-  // do the subdivision
-  emit (sceneChanged());
 }
 
 void
@@ -98,6 +100,39 @@ MainWindow::load_off(const QString& fileName)
   emit (sceneChanged());
 }
 
+void
+MainWindow::load_3DTDS(const QString& fileName)
+{
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  typedef CGAL::Delaunay_triangulation_3<Kernel>  Triangulation;
+  Triangulation T;
+    
+  std::ifstream ifs(qPrintable(fileName));
+  std::istream_iterator<Point_3> begin(ifs), end;
+  T.insert(begin, end);
+
+  CGAL::import_from_triangulation_3<Map, Triangulation>(scene.map, T);
+
+  QApplication::restoreOverrideCursor();
+  emit (sceneChanged());
+}
+
+void
+MainWindow::create_cube()
+{  
+  make_cube(scene.map, Point_3(nbcube, nbcube, nbcube), 1);
+  ++nbcube;
+  
+  emit (sceneChanged());
+}
+
+void
+MainWindow::subdivide()
+{  
+  // do the subdivision
+  emit (sceneChanged());
+}
 
 #include "MainWindow.moc"
 

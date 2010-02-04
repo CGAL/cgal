@@ -25,6 +25,10 @@ public slots:
   void import_off();
   void add_off();
   void load_off(const QString& fileName);
+
+  void import_3DTDS();
+  void load_3DTDS(const QString& fileName);
+  
   void subdivide();
   void create_cube();
 
