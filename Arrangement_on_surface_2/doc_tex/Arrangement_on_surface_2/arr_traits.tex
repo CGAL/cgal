@@ -827,6 +827,183 @@ Figure~\ref{arr_fig:ex_bez}.
 
 \ccIncludeExampleCode{Arrangement_on_surface_2/Bezier_curves.cpp}
 
+\subsection{A Traits Class for Planar Algebraic Curves
+of Arbitrary Degree\label{arr_ssec:tr_alg}}
+%---------------------------------------------------------
+
+An algebraic curve $C$ in the plane is defined as the (real) zero locus
+of a polynomial $f(x,y)$ in two variables. The curve is uniquely defined
+by $f$ (although several polynomials might define the same curve). 
+We call $f$ a \emph{defining polynomial} of $C$.
+
+%When talking about algebraic curves, 
+%we use the term ``segment'' for a closed continuous subset of an algebraic curve
+%such that each interior point can be parameterized uniquely, as a function in
+%$x$ or $y$. In other words, there is no self-intersection in the interior
+%of a segment. An weakly $x$-monotone segment is therefore a segment that is
+%either vertical, or permits a unique parameterization
+We consider arrangements induced by algebraic curves
+or by (weakly) $x$-monotone segments for algebraic curves
+(Such a segment is not necessarily the maximal possible 
+(weakly) x-monotone segment; see below.)
+When talking about algebraic curves, 
+we use the term ``segment'' for a continuous, possibly non-linear subset 
+of an algebraic curve~-- see the definition below.
+There are no restrictions on the algebraic curve, that means, 
+we support unbounded curves, vertical curves or segments, and isolated points.
+
+The \ccc{Arr_algebraic_curve_traits<Coefficient>} class template 
+is a model of the \ccc{ArrangementTraits_2} concept (but not of the
+\ccc{ArrangementLandmarkTraits_2} concept, so it is not possible
+to use the landmark point-location strategy for arrangements of
+algebraic curves).
+The template argument \ccc{Coefficient} determines 
+the type of the scalar coefficients of the polynomial. 
+Currently supported types are \ccc{leda_integer}, \ccc{CORE::BigInt}, 
+and any instance of \ccc{CGAL::Sqrt_extension<A,B>} 
+instantiated with one of the integral types above.
+
+The traits class defines a type \ccc{Curve_2} for algebraic curves.
+Such a type can be constructed by the \ccc{Construct_curve_2} functor,
+which accepts an instance of \ccc{Polynomial_2} as an argument.
+This polynomial type is also available by the traits class 
+and constitutes a valid model
+of the concept \ccc{Polynomial_d} with two variables (see~??).
+%The \ccc{Construct_curve_2} functor performs a topological-geometric analysis
+%of the defined curve, and caches the result internally.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+  \begin{center}
+  \includegraphics[width=8cm]{Arrangement_on_surface_2/fig/algebraic_curves}
+  \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/algebraic_curves.gif" border=0 alt="An arrangement of algebraic curves">
+  </center>
+\end{ccHtmlOnly}
+\caption{An arrangement of algebraic curves of degrees $1$, $2$, $3$, and $6$,
+as constructed in \ccc{algebraic_curves.cpp}.\label{arr_fig:ex_alg_curves}}
+\end{figure}
+
+The following examples computes the arrangement induced by the four curves
+in Figure~\ref{arr_fig:ex_alg_curves}
+
+\ccIncludeExampleCode{Arrangement_on_surface_2/algebraic_curves.cpp}
+
+We first give a precise definition of segments of algebraic curves.
+A point $p$ on a curve $C_f\subset\mathbb{R}^2$ 
+(with $f$ its defining equation) is called
+\emph{semi-regular}, if locally around $p$, $C_f$ can be written as
+a function graph of some continuous function in $x$ or in $y$
+(we also say that $p$ is parameterizable in $x$ or $y$, respectively).
+The only two cases of non-semi-regular points are isolated points, and
+self-intersections. 
+A \emph{segment} of a curve is a closed and continuous point set 
+such that each interior point is semi-regular.
+It follows that a weakly $x$-monotone segment is either a completely vertical
+segment, or a segment whose interior points are all parameterizable in $x$.
+
+The traits class allows to construct weakly $x$-monotone segments of a curve
+using the \ccc{Construct_x_monotone_segment_2} functor.
+The \ccc{X_monotone_curve_2} type of the traits class represents
+weakly $x$-monotone segments of a curve; however,
+segments may need to be further subdivided into several (sub-)segments,
+for technical reasons. Therefore, \ccc{Construct_x_monotone_segment_2}
+constructs a sequence of \ccc{X_monotone_curve_2} objects, whose union
+represents the weakly $x$-monotone segment that was queried.
+We call a segment \emph{terminal} if it can be represented
+by the type \ccc{X_monotone_curve_2}.
+
+\begin{ccAdvanced}
+The subdivision of segments is due to the internal representation of 
+$x$-monotone segments, which is based on a vertical decomposition.
+We assume the defining polynomial $f$ of the curve $C$
+to be \emph{square-free}, that means, it contains no divisor $g^2$ of total
+degree greater than zero. We define a \emph{(complex) critical point}
+$p\in\mathbb{C}^2$ by
+%
+$$f(p)=0=\frac{\partial f}{\partial y}(p).$$
+%
+An $x$-coordinate $\alpha\in\mathbb{R}$ is \emph{critical}
+if either some critical point has $x$-coordinate $\alpha$,
+or if the leading coefficient of $f$, considered as a polynomial in $y$,
+vanishes. In particular, vertical lines of and isolated point of $C$
+can only take place at critical $x$-coordinates.
+Between two consecutive critical $x$-coordinates, the curve decomposes
+into a finite number of $x$-monotone segments (the same is true on the left
+of the leftmost, and on the right of the rightmost critical $x$-coordinate).
+The type \ccc{X_monotone_curve_2} is only able to represent such segments
+(and sub-segments of them). See Figure~\ref{arr_fig:cylindrical_decomposition} 
+for an example of a decomposition into terminal segments. Formally, 
+a terminal segment is a weakly $x$-monotone segment that is either vertical, or
+its $x$-range contains no critical point in its interior.
+
+\end{ccAdvanced}
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+ \begin{center}
+ \includegraphics[width=8cm]{Arrangement_on_surface_2/fig/cylindrical_decomposition}
+ \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+ <p><center>
+ <img src="./fig/cylindrical_decomposition.gif" border=0 alt="The braic curves">
+ </center>
+\end{ccHtmlOnly}
+\caption{The critical $x$-coordinates of an algebraic curve (dashed lines),
+         and its decomposition into terminal segments (in different colors).
+         The segment from $p$ to $q$ consists of the union of 
+         three terminal segments.
+         \label{arr_fig:cylindrical_decomposition}}
+\end{figure}
+
+Coordinates of points are represented by the type \ccc{Algebraic_real_1},
+which is defined in the traits class. 
+This type is taken from a model of the \ccc{AlgebraicKernel_1} concept,
+which is also available by the type \ccc{Algebraic_kernel_1}.
+One can use this model to create algebraic numbers as roots of univariate
+polynomials, and process them, for instance, 
+compare them, or approximate them to any precision. See the documentation
+of \ccc{AlgebraicKernel_1} for more information.
+One can construct an object of type \ccc{Point_2} by a triple
+($x_0$,cv,i), which means that the $i$-th point (counted from below)
+in the fiber of cv at the $x$-coordinate $x_0$ is constructed.
+This is also how points are presented internally. 
+In the example displayed in Figure~\ref{arr_fig:cylindrical_decomposition},
+if $x_1$ denotes the $x$-coordinate of $p$, and $cv$ represents the algebraic
+curve, then $p$ could be represented by $(x_1,cv,3)$. If $x_2$
+is the $x$-coordinate of $q$, 
+then $(x_2,cv,1)$ is a valid representation of $q$.
+Although the $y$-coordinate of an object of type \ccc{Point_2} can be queried,
+we recommend to be careful with that option, since computing an explicit
+representation of the $y$-coordinate as an \ccc{Algebraic_real_1} object
+can become rather expensive.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+ \begin{center}
+ 
+\includegraphics[width=8cm]{Arrangement_on_surface_2/fig/algebraic_segments}
+ \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+ <p><center>
+ <img src="./fig/algebraic_segments.gif" border=0 alt="An arrangement of algebraic segments">
+ </center>
+\end{ccHtmlOnly}
+\caption{An arrangement of algebraic segments (solid lines),
+as constructed in \ccc{algebraic_segments.cpp}. The supporting curves
+are drawn in dashed lines.\label{arr_fig:ex_alg_segments}}
+\end{figure}
+
+The following code exemplifies various methods to construct
+algebraic segments. The computed arrangement is displayed in
+Figure~\ref{arr_fig:ex_alg_segments}.
+
+\ccIncludeExampleCode{Arrangement_on_surface_2/algebraic_segments.cpp} 
 
 \subsection{Traits-Class Decorators\label{arr_ssec:meta_tr}}
 %-----------------------------------

@@ -242,12 +242,21 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Bezier_arr.pdf -te
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Europe.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Europe.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Europe.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_curves.fig -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_curves.gif -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_curves.png -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_segments.fig -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_segments.gif -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/algebraic_segments.png -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/arr_segs.pdf -text svneol=unset#application/pdf
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/connect_comp.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/connect_comp.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/connect_comp.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/cylindrical_decomposition.fig -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/cylindrical_decomposition.gif -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/cylindrical_decomposition.png -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_1.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_1.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/ex_1.pdf -text svneol=unset#application/pdf
@@ -337,6 +346,7 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/triangle.pdf -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.fig -text svneol=unset#application/octet-stream
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.pdf -text svneol=unset#application/pdf
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_algebraic_segment_traits.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_halfedge_direction.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_do_intersect.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_zone.tex -text
@@ -349,12 +359,15 @@ Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/SweepLineVisitor_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/Sweep_line_2.tex eol=lf
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Bezier.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Europe.dat -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/algebraic_curves.cpp -text
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/algebraic_segments.cpp -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/bounded_planar_vertical_decomposition.cpp -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/coll_points.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/fan_grids.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/io_unbounded.cpp -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/points.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/unb_planar_vertical_decomposition.cpp -text
+Arrangement_on_surface_2/include/CGAL/Arr_algebraic_segment_traits_2.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_geodesic_arc_on_sphere_partition_traits_2.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_point_location/Arr_lm_specified_points_generator.h -text
 Arrangement_on_surface_2/include/CGAL/Arr_spherical_gaussian_map_3/Arr_on_sphere_transformation.h -text
