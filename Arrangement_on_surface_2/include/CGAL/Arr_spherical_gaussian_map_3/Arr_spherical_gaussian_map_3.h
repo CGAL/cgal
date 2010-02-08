@@ -14,7 +14,8 @@
 // $URL$
 // $Id$
 // 
-// Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
+// Author(s): Efi Fogel         <efif@post.tau.ac.il>
+//            Naama mayer       <naamamay@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_H
 #define CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_H

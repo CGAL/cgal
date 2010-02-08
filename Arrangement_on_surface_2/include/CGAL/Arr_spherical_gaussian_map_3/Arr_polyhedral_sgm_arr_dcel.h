@@ -15,7 +15,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
+// Author(s): Efi Fogel         <efif@post.tau.ac.il>
+//            Naama mayer       <naamamay@post.tau.ac.il>
 
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_ARR_DCEL_H
 #define CGAL_ARR_POLYHEDRAL_SGM_ARR_DCEL_H
