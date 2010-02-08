@@ -81,6 +81,46 @@ _test_vertex_iterator( const Triangulation &T )
 
 template < class Triangulation >
 int
+_test_unique_vertex_iterator( const Triangulation &T )
+{
+    typedef typename Triangulation::size_type       size_type;
+    typedef typename Triangulation::Vertex          Vertex;
+    typedef typename Triangulation::Vertex_handle   Vertex_handle;
+    typedef typename Triangulation::Cell_handle     Cell_handle;
+    typedef typename Triangulation::Unique_vertex_iterator
+                                                    Unique_vertex_iterator;
+
+    size_type n = 0;
+
+    for (Unique_vertex_iterator ovit = T.unique_vertices_begin();
+	 ovit != T.unique_vertices_end(); ++ovit)
+	{
+	  Vertex_handle vh = ovit; // Test the conversion.
+	  n++;
+	  const Vertex & v = *ovit; // Test operator*;
+	  Cell_handle c = ovit->cell(); // Test operator->;
+	  (void) vh;
+	  (void) v;
+	  (void) c;
+	}
+    assert( n == T.number_of_vertices() );
+
+    // Test Backward-ness of the iterators.
+    n=0;
+    for (Unique_vertex_iterator ovit = T.unique_vertices_end();
+	 ovit != T.unique_vertices_begin(); --ovit)
+	{
+	  Vertex_handle vh = ovit; // Test the conversion.
+	  (void) vh;
+	  n++;
+	}
+    assert( n == T.number_of_vertices() );
+
+    return n;
+}
+
+template < class Triangulation >
+int
 _test_triangulation_iterator( const Triangulation &T )
 {
   typedef typename Triangulation::Cell_iterator   Cell_iterator;

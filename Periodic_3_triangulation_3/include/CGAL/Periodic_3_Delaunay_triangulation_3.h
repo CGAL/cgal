@@ -222,6 +222,16 @@ public:
 public:
   /** @name Removal */ //@{
   void remove(Vertex_handle v);
+
+  template < typename InputIterator >
+  int remove(InputIterator first, InputIterator beyond) {
+    int n = number_of_vertices();
+    while (first != beyond) {
+      remove(*first);
+      ++first;
+    }
+    return n - number_of_vertices();
+  }
   //@}
 
 public:
@@ -760,12 +770,11 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex_in_cell(
 
 // ############################################################################
 
-
+// TODO: reintroduce the commented lines.
 template < class Gt, class Tds >
 typename Periodic_3_Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
 Periodic_3_Delaunay_triangulation_3<Gt,Tds>::
 move_point(Vertex_handle v, const Point & p) {
-  //CGAL_triangulation_precondition(! is_infinite(v));
   CGAL_triangulation_expensive_precondition(is_vertex(v));
   // Remember an incident vertex to restart
   // the point location after the removal.

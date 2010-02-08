@@ -130,6 +130,8 @@ public:
   typedef Facet_iterator                       All_facets_iterator;
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
+  typedef Periodic_3_triangulation_unique_vertex_iterator_3<Self>
+                                               Unique_vertex_iterator;
 
 private:
   typedef typename GT::FT                      FT;
@@ -987,6 +989,14 @@ public:
     return _tds.facets_end();
   }
   
+  Unique_vertex_iterator unique_vertices_begin() const {
+    return CGAL::filter_iterator(vertices_end(), Domain_tester<Self>(this),
+	                         vertices_begin());
+  }
+  Unique_vertex_iterator unique_vertices_end() const {
+    return CGAL::filter_iterator(vertices_end(), Domain_tester<Self>(this));
+  }
+
   // Geometric iterators
   Periodic_tetrahedron_iterator periodic_tetrahedra_begin(
       Iterator_type it = STORED) const {

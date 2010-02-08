@@ -12,7 +12,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  MainWindow(QWidget* parent = 0) {
+  MainWindow(QWidget* = 0) {
     ui = new Ui::MainWindow;
     ui->setupUi(this);
     s = new Scene(ui);

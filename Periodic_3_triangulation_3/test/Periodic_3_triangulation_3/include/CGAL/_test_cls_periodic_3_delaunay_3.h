@@ -72,6 +72,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   typedef typename P3T3::Facet_iterator       Facet_iterator;
   typedef typename P3T3::Cell_iterator        Cell_iterator;
 
+  typedef typename P3T3::Unique_vertex_iterator Unique_vertex_iterator;
   typedef typename P3T3::Periodic_point_iterator Periodic_point_iterator;
   typedef typename P3T3::Periodic_segment_iterator Periodic_segment_iterator;
 
@@ -286,6 +287,18 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   assert(PT1_deg.number_of_vertices() == 52);
   assert(PT1_deg.number_of_sheets() == CGAL::make_array(3,3,3));
   assert(PT1_deg.is_valid());
+
+  std::cout<< "  Iterator range removal" << std::endl;
+  P3T3 PT_remall(PT);
+  std::vector<Vertex_handle> vvh;
+  for (Unique_vertex_iterator uvit = PT_remall.unique_vertices_begin() ;
+       uvit != PT_remall.unique_vertices_end() ; ++uvit) {
+    vvh.push_back(uvit);
+  }
+
+  PT_remall.remove(vvh.begin(),vvh.end());
+  assert(PT_remall.number_of_vertices() == 0);
+  assert(PT_remall.is_valid());
 
   std::cout << "Queries" << std::endl;
   std::cout << "Side of sphere" << std::endl;

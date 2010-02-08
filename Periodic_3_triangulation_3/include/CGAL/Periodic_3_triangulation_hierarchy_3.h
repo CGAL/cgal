@@ -144,6 +144,16 @@ public:
 
   void remove(Vertex_handle v);
 
+  template < typename InputIterator >
+  int remove(InputIterator first, InputIterator beyond) {
+    int n = number_of_vertices();
+    while (first != beyond) {
+      remove(*first);
+      ++first;
+    }
+    return n-number_of_vertices();
+  }
+
   Vertex_handle move_point(Vertex_handle v, const Point & p);
 
   //LOCATE

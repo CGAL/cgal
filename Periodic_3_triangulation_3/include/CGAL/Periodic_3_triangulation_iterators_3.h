@@ -22,6 +22,7 @@
 #define CGAL_PERIODIC_3_TRIANGULATION_ITERATORS_3_H
 
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/iterator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -72,7 +73,7 @@ public:
     }
   }
 
-  // used to initialize the past-the end iterator
+  // used to initialize the past-the-end iterator
   Periodic_3_triangulation_tetrahedron_iterator_3(const T* t, int,
 					      Iterator_type it = T::STORED)
     : _t(t), pos(_t->cells_end()), _it(it), _off(0) {}
@@ -378,7 +379,7 @@ public:
     }
   }
 
-  // used to initialize the past-the end iterator
+  // used to initialize the past-the-end iterator
   Periodic_3_triangulation_triangle_iterator_3(const T* t, int,
 					      Iterator_type it = T::STORED)
     : _t(t), pos(_t->facets_end()), _it(it), _off(0) {}
@@ -668,7 +669,7 @@ public:
     }
   }
 
-  // used to initialize the past-the end iterator
+  // used to initialize the past-the-end iterator
   Periodic_3_triangulation_segment_iterator_3(const T* t, int,
 					      Iterator_type it = T::STORED)
     : _t(t), pos(_t->edges_end()), _it(it), _off(0) {}
@@ -927,7 +928,7 @@ public:
     }
   }
 
-  // used to initialize the past-the end iterator
+  // used to initialize the past-the-end iterator
   Periodic_3_triangulation_point_iterator_3(const T* t, int,
 					    Iterator_type it = T::STORED)
     : _t(t), pos(_t->vertices_end()), _it(it) {}
@@ -1025,6 +1026,48 @@ private:
     Offset off = _t->get_offset(pos);
     return std::make_pair(pos->point(),off);
   }
+};
+
+template <class T>
+class Domain_tester {  
+  const T *t;
+
+public:
+  Domain_tester() {}
+  Domain_tester(const T *tr) : t(tr) {}
+
+  bool operator()(const typename T::Vertex_iterator & v) const {
+    return (t->get_offset(v) != typename T::Offset(0,0,0));
+  }
+};
+
+// Iterates over the vertices in a periodic triangulation that are
+// located inside the original cube.
+// Derives from Filter_iterator in order to add a conversion to handle
+//
+// Comments:
+// When computing in 1-sheeted covering, there will be no difference
+// between a normal Vertex_iterator and this iterator
+template <class T>
+class Periodic_3_triangulation_unique_vertex_iterator_3
+  : public Filter_iterator<typename T::Vertex_iterator, Domain_tester<T> > {
+
+  typedef typename T::Vertex_handle Vertex_handle;
+  typedef typename T::Vertex_iterator Vertex_iterator;
+
+  typedef Filter_iterator<Vertex_iterator, Domain_tester<T> > Base;
+  typedef Periodic_3_triangulation_unique_vertex_iterator_3 Self;
+public:
+
+  Periodic_3_triangulation_unique_vertex_iterator_3() : Base() {}
+  Periodic_3_triangulation_unique_vertex_iterator_3(const Base &b) : Base(b) {}
+
+  Self & operator++() { Base::operator++(); return *this; }
+  Self & operator--() { Base::operator--(); return *this; }
+  Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+  Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+
+  operator Vertex_handle() const { return Base::base(); }
 };
 
 CGAL_END_NAMESPACE

@@ -429,12 +429,17 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
        == CGAL::ON_UNBOUNDED_SIDE);
    assert(lt == P3T3::EMPTY);
 
-  std::cout << "Testing Iterator   "<< std::endl;
+  std::cout << "Testing Iterators   "<< std::endl;
 
   _test_vertex_iterator(PT3);
   _test_vertex_iterator(PT1);
   _test_vertex_iterator(PT3_deg);
   _test_vertex_iterator(PT1_deg);
+
+  _test_unique_vertex_iterator(PT3);
+  _test_unique_vertex_iterator(PT1);
+  _test_unique_vertex_iterator(PT3_deg);
+  _test_unique_vertex_iterator(PT1_deg);
 
   _test_triangulation_iterator(PT3);
   _test_triangulation_iterator(PT1);
