@@ -143,6 +143,16 @@ proposes a vertex removal.
 {Removes the vertex \ccc{v} from the triangulation. When computing in
   27-sheeted covering space it removes all 27 copies of \ccc{v}.}
 
+\ccMethod{template < class InputIterator >
+  int remove(InputIterator first, InputIterator beyond);}
+{Removes the vertices specified by the iterator range (\ccStyle{first,
+    beyond}) of value type \ccc{Vertex_handle}.
+\ccc{remove()} is called for each element of the range.
+The iterator must not iterate over several periodic copies of the
+same vertex, use e.g.\ the \ccc{Unique_vertex_iterator}.
+The number of vertices removed is returned; this number does not
+account for periodic copies of removed vertices.}
+
 \ccHeading{Queries}
 
 \ccMethod{Bounded_side

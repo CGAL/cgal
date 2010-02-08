@@ -121,6 +121,11 @@ the user can pass them directly as arguments to the functions.
 \ccGlue
 \ccTypedef{typedef Triangulation_data_structure::Vertex_iterator Vertex_iterator;}
 {iterator over vertices}
+\ccGlue
+\ccNestedType{Unique_vertex_iterator}{iterator over the vertices whose
+  corresponding points lie in the original domain, i.e.\ for each set
+  of periodic copies the \ccc{Unique_vertex_iterator} iterates over
+  one \emph{unique} representative.}
 
 \ccTypedef{typedef Triangulation_data_structure::Cell_circulator Cell_circulator;}
 {circulator over all cells incident to a given edge} 
@@ -557,7 +562,7 @@ The periodic triangulation class provides several iterators and circulators
 that allow one to traverse it.
 
 \ccHeading{Cell, Face, Edge and Vertex Iterators}
-\ccThree{Finite_vertices_iterator}{t.finite_vertices_begin()x}{}
+\ccThree{Finite_vertices_iterator}{t.unique_vertices_begin()x}{}
 
 The following iterators allow the user to visit cells,
 facets, edges and vertices of the stored triangulation, i.e.\ in case
@@ -594,6 +599,14 @@ triangulation.
   \ccc{cells_end()} if \ccVar.\ccc{number_of_vertices()} $=0$.} 
 \ccGlue
 \ccMethod{Cell_iterator cells_end() const;}
+{Past-the-end iterator}
+
+\ccMethod{Unique_vertex_iterator unique_vertices_begin() const;}
+{Starts at an arbitrary vertex. Iterates over all vertices whose
+  corresponding points lie in the original domain. Returns
+  \ccc{vertices_end()} if \ccVar.\ccc{number_of_vertices()} $=0$.}
+\ccGlue
+\ccMethod{Unique_vertex_iterator unique_vertices_end() const;}
 {Past-the-end iterator}
 
 \ccHeading{Geometric iterators}
