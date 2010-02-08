@@ -874,6 +874,28 @@ private:
     }
     // code added by Andreas + Monique -- end
 
+
+    // in the code that follows we check whether one endpoint of the
+    // query segment t is the same as the point p of a PSS circle. in
+    // this case the result is known by taking the other point of t
+    // and checking against the tangent to the Voronoi circle at p.
+    if ( v_type == PSS ) {
+      const Site_2* pt;
+      if ( p_.is_point() ) { pt = &p_; }
+      else if ( q_.is_point() ) { pt = &q_; }
+      else if ( r_.is_point() ) { pt = &r_; }
+
+      if ( is_endpoint_of(*pt, t) ) {
+	Site_2 tp = other_site(*pt, t);
+	Point_2 v(x(), y());
+	Compute_scalar_product_2 csp;
+	return
+	  -CGAL::sign( csp(v - pt->point(), tp.point()- pt->point()) );
+      }
+    }
+
+
+
     if ( v_type == PSS ) {
       if ( p_.is_segment() &&
 	   same_segments(p_.supporting_site(),
