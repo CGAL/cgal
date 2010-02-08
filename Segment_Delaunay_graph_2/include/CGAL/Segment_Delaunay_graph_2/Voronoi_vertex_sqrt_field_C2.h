@@ -822,6 +822,9 @@ private:
 	return NEGATIVE;
       }
     }
+
+
+    // code added by Andreas + Monique -- start
     if(v_type == PPP){
       Site_2 const *p1 = NULL;
       if(is_endpoint_of(p_, t)){
@@ -869,6 +872,7 @@ private:
           return -CGAL::sign( csp((v - p2->point()), (tp.point()- p2->point())) );
 	}
     }
+    // code added by Andreas + Monique -- end
 
     if ( v_type == PSS ) {
       if ( p_.is_segment() &&
