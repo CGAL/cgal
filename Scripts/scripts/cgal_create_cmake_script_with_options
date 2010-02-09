@@ -274,7 +274,7 @@ EOF
   # Qt3 or Qt4
   if [ "$qt3" = "y" ]; then
 
-    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvsvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     cat << 'EOF'
 
 # Qt3
@@ -283,7 +283,7 @@ EOF
 # by "QT3_" instead of "QT_".
 find_package(Qt3-patched QUIET )
 
-if ( NOT Qt3-patched_FOUND )
+if ( NOT QT3_FOUND )
 
   message(STATUS "This project requires the Qt3 library, and will not be compiled.")
   return()  
