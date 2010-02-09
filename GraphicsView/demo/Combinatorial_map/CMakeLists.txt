@@ -1,5 +1,6 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
+# cmake ../ -DCMAKE_BUILD_TYPE=Debug
 
 project (Combinatorial_map_3_demo)
 
@@ -38,7 +39,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_
 
   qt4_automoc( MainWindow.cpp Viewer.cpp)
 
-  add_executable  ( Combinatorial_map_3 Combinatorial_map_3.cpp MainWindow.cpp Viewer.cpp ${uis}  ${RESOURCE_FILES} )
+  add_executable  ( Combinatorial_map_3 Combinatorial_map_3.cpp MainWindow.cpp Viewer.cpp map_3_subivision.cpp ${uis}  ${RESOURCE_FILES} )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Combinatorial_map_3 )
 

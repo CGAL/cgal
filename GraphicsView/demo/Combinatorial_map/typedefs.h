@@ -25,6 +25,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef CGAL::Combinatorial_map_3_with_embedding<Kernel> Map;
 typedef Map::Dart_handle Dart_handle;
+typedef Map::Vertex      Vertex;
 
 typedef Kernel::Point_3    Point_3;
 typedef Kernel::Vector_3   Vector_3;

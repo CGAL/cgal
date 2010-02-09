@@ -3,6 +3,7 @@
 #include <vector>
 #include <CGAL/bounding_box.h>
 #include <QGLViewer/vec.h>
+
 template<class Map>
 CGAL::Bbox_3 bbox(Map& amap)
 {
@@ -113,6 +114,7 @@ void Viewer::draw()
 	      Map::Point p = it->vertex()->point();
 		
 	      glBegin(GL_POINTS);
+	      glColor3f(.6,.2,.8);
 	      glVertex3f( p.x(),p.y(),p.z());
 	      glEnd();
 		
@@ -265,8 +267,8 @@ void Viewer::init()
   setKeyDescription(Qt::Key_V, "Toggles vertices display");
 
   // Light default parameters
-  ::glLineWidth(1.0f);
-  ::glPointSize(3.f);
+  ::glLineWidth(1.4f);
+  ::glPointSize(4.f);
   ::glEnable(GL_POLYGON_OFFSET_FILL);
   ::glPolygonOffset(1.0f,1.0f);
   ::glClearColor(1.0f,1.0f,1.0f,0.0f);

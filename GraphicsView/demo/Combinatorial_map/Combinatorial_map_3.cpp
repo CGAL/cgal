@@ -8,8 +8,8 @@
 
 int main(int argc, char** argv)
 {
- QApplication application(argc,argv);
- 
+  QApplication application(argc,argv);
+  
   application.setOrganizationDomain("geometryfactory.com");
   application.setOrganizationName("GeometryFactory");
   application.setApplicationName("3D Combinatorial Map");

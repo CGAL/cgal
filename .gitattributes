@@ -1306,6 +1306,7 @@ GraphicsView/demo/Combinatorial_map/Combinatorial_map_3.qrc -text
 GraphicsView/demo/Combinatorial_map/MainWindow.ui -text
 GraphicsView/demo/Combinatorial_map/about_Combinatorial_map_3.html svneol=native#text/html
 GraphicsView/demo/Combinatorial_map/compute_normal.h -text
+GraphicsView/demo/Combinatorial_map/map_3_subivision.cpp -text
 GraphicsView/demo/Polygon/Polygon_2.qrc -text
 GraphicsView/demo/Polygon/Polygon_2.ui -text
 GraphicsView/demo/Segment_Delaunay_graph_2/Segment_voronoi_2.qrc -text

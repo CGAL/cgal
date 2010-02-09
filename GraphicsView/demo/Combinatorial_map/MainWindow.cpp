@@ -2,6 +2,9 @@
 #include "MainWindow.h"
 #include <CGAL/Delaunay_triangulation_3.h>
 
+// Function defined in map_3_subivision.cpp
+void subdivide_map_3(Map& m);
+  
 MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent), nbcube(0)
 {
   setupUi(this);
@@ -40,6 +43,17 @@ MainWindow::connectActions()
   QObject::connect(this, SIGNAL(sceneChanged()), 
 		   this->viewer, SLOT(sceneChanged()));
 
+  QObject::connect(this->actionDisplayInfo, SIGNAL(triggered()), 
+		   this, SLOT(display_info()));
+
+}
+
+void
+MainWindow::display_info()
+{
+  scene.map.display_characteristics(std::cout)<<std::endl;
+  std::cout<<"Nb vertices:"<< scene.map.size_of_vertices()<<std::endl
+	   <<"Nb Darts:"<< scene.map.size_of_darts()<<std::endl;
 }
 
 void
@@ -52,8 +66,7 @@ MainWindow::import_off()
 
   if(! fileName.isEmpty())
     {
-      scene.map.clear();
-      load_off(fileName);
+      load_off(fileName,true);
     }
 }
 
@@ -67,8 +80,7 @@ MainWindow::import_3DTDS()
 
   if(! fileName.isEmpty())
     {
-      scene.map.clear();
-      load_3DTDS(fileName);
+      load_3DTDS(fileName,true);
     }
 }
 
@@ -82,14 +94,16 @@ MainWindow::add_off()
 
   if(! fileName.isEmpty())
     {
-      load_off(fileName);
+      load_off(fileName,false);
     }
 }
 
 void
-MainWindow::load_off(const QString& fileName)
+MainWindow::load_off(const QString& fileName, bool clear)
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  if (clear) scene.map.clear();
 
   std::ifstream ifs(qPrintable(fileName));
 
@@ -101,9 +115,11 @@ MainWindow::load_off(const QString& fileName)
 }
 
 void
-MainWindow::load_3DTDS(const QString& fileName)
+MainWindow::load_3DTDS(const QString& fileName, bool clear)
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  if (clear) scene.map.clear();
 
   typedef CGAL::Delaunay_triangulation_3<Kernel>  Triangulation;
   Triangulation T;
@@ -130,7 +146,7 @@ MainWindow::create_cube()
 void
 MainWindow::subdivide()
 {  
-  // do the subdivision
+  subdivide_map_3(scene.map);
   emit (sceneChanged());
 }
 

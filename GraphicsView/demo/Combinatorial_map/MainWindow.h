@@ -24,14 +24,16 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
 public slots:
   void import_off();
   void add_off();
-  void load_off(const QString& fileName);
+  void load_off(const QString& fileName, bool clear=true);
 
   void import_3DTDS();
-  void load_3DTDS(const QString& fileName);
+  void load_3DTDS(const QString& fileName, bool clear=true);
   
   void subdivide();
   void create_cube();
 
+  void display_info();
+  
  signals:
   void sceneChanged();
 
