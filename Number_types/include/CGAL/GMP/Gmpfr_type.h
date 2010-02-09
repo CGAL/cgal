@@ -731,12 +731,12 @@ _GMPFR_OBJECT_BINARY_OPERATOR(operator/=,Gmpq,mpq(),mpfr_div_q)
 #include <CGAL/GMP/Gmpfr_type_static.h>
 
 #define _GMPFR_ARITHMETIC_FUNCTION(_name,_fun) \
-        Gmpfr Gmpfr::_name (std::float_round_style r)const{ \
+        inline Gmpfr Gmpfr::_name (std::float_round_style r)const{ \
                 Gmpfr result(0,_GMPFR_MEMBER_PREC()); \
                 _fun(result.fr(),fr(),_gmp_rnd(r)); \
                 return result; \
         } \
-        Gmpfr Gmpfr::_name (Gmpfr::Precision_type p, \
+        inline Gmpfr Gmpfr::_name (Gmpfr::Precision_type p, \
                             std::float_round_style r)const{ \
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 Gmpfr result(0,p); \
@@ -748,13 +748,13 @@ _GMPFR_ARITHMETIC_FUNCTION(abs,mpfr_abs)
 _GMPFR_ARITHMETIC_FUNCTION(sqrt,mpfr_sqrt)
 _GMPFR_ARITHMETIC_FUNCTION(cbrt,mpfr_cbrt)
 
-Gmpfr Gmpfr::kthroot(int k,std::float_round_style r)const{
+inline Gmpfr Gmpfr::kthroot(int k,std::float_round_style r)const{
         Gmpfr result(0,_GMPFR_MEMBER_PREC());
         mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
         return result;
 }
 
-Gmpfr Gmpfr::kthroot(int k,
+inline Gmpfr Gmpfr::kthroot(int k,
                      Gmpfr::Precision_type p,
                      std::float_round_style r)const{
         CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
