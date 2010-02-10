@@ -27,8 +27,14 @@ int main() {
 
     //test additional functions
     NT a(4);
+    assert((a >> 1) == 2); 
+    assert( a == 4); 
+    assert((a << 1) == 8); 
+    assert( a == 4); 
     assert((a >>= 1) == 2); 
+    assert( a == 2); 
     assert((a <<= 1) == 4); 
+    assert( a == 4); 
 
     assert( a++ == 4); 
     assert( a   == 5); 
@@ -38,9 +44,17 @@ int main() {
     assert( a   == 5); 
     assert( --a == 4);
 
-    assert( (NT(5) & NT(4)) == NT(4));
-    assert( (NT(5) | NT(4)) == NT(5));
-    assert( (NT(5) ^ NT(4)) == NT(1));
+    NT b(5);
+    assert( (b & a) == 4);
+    assert( (b | a) == 5);
+    assert( (b ^ a) == 1);
+    assert( a==4 );
+    assert( b==5 ); 
+
+    assert( (b &= NT(4)) == 4);
+    assert( (b |= NT(5)) == 5);
+    assert( (b ^= NT(4)) == 1);
+    assert( b==1 ); 
 }
 
 

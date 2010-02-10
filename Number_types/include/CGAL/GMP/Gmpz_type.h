@@ -19,7 +19,7 @@
 // $Id$
 //
 //
-// Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion
+// Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion, Michael Hemmer 
 
 
 #ifndef CGAL_GMPZ_TYPE_H
@@ -63,8 +63,11 @@ private:
 class Gmpz
   : Handle_for<Gmpz_rep>,
     boost::ordered_euclidian_ring_operators1< Gmpz
-  , boost::ordered_euclidian_ring_operators2< Gmpz, int
-    > >
+  , boost::ordered_euclidian_ring_operators2< Gmpz, int 
+  , boost::shiftable< Gmpz , long 
+  , boost::unit_steppable<Gmpz 
+  , boost::bitwise<Gmpz
+> > > > > 
 {
   typedef Handle_for<Gmpz_rep> Base;
 public:
@@ -137,6 +140,45 @@ public:
   {
     return mpz_size(mpz()) / (mp_bits_per_limb/8);
   }
+  
+  Gmpz operator <<= (const long& i){
+    CGAL_precondition(i >= 0);
+    Gmpz Res;
+    mpz_mul_2exp(Res.mpz(),this->mpz(),i);
+    swap(Res);
+    return *this;
+  }
+  Gmpz operator >>= (const long& i){
+    CGAL_precondition(i >= 0);
+    Gmpz Res;
+    mpz_tdiv_q_2exp(Res.mpz(),this->mpz(),i);
+    swap(Res);
+    return *this; 
+  }
+  
+  Gmpz operator &= (const Gmpz b){
+    Gmpz Res;
+    mpz_and(Res.mpz(),this->mpz(),b.mpz());
+    swap(Res);
+    return *this; 
+  }
+  
+  Gmpz operator |= (const Gmpz b){
+    Gmpz Res;
+    mpz_ior(Res.mpz(),this->mpz(),b.mpz());
+    swap(Res);
+    return *this;
+  }
+  
+  Gmpz operator ^= (const Gmpz b){
+    Gmpz Res;
+    mpz_xor(Res.mpz(),this->mpz(),b.mpz());
+    swap(Res);
+    return *this;
+  }
+  
+  Gmpz operator++(){return *this+=1;}
+  Gmpz operator--(){return *this-=1;}
 };
 
 
