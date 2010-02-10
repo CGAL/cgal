@@ -193,6 +193,14 @@ _GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpq);
                 mpfi_set_fr(mpfi(),f.fr());
         }
 
+        Gmpfi(const Gmpfr &left,
+              const Gmpfr &right,
+              Gmpfi::Precision_type p=Gmpfi::get_default_precision()){
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
+                mpfi_init2(mpfi(),p);
+                mpfi_interv_fr(mpfi(),left.fr(),right.fr());
+        }
+
         Gmpfi(std::pair<const Gmpfr,const Gmpfr> endpoints,
               Gmpfi::Precision_type p=Gmpfi::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);

@@ -63,8 +63,9 @@ constructed interval.
         rounding of the endpoints will guarantee that \ccc{t} is included
         in \ccVar .}
 
-\ccConstructor{Gmpfi(const Gmpfr &left, const Gmpfr &right,
-                        Precision_type p=get_default_precision());}
+\ccConstructor{Gmpfi(const Gmpfr &left,
+                     const Gmpfr &right,
+                     Precision_type p=get_default_precision());}
         {creates a \ccc{Gmpfi} initialized with endpoints \ccc{left}
         and \ccc{right}. The rounding of the endpoints will guarantee
         that \([\ccc{left},\ccc{right}]\) is included in \ccVar .}
@@ -174,14 +175,14 @@ Other arithmetic functions provided by the class are:
 \ccMethod{std::pair<double,long> to_double_exp()const;}
         {Returns \((m,e)\) such that \(m \times 2^e\) is the center of
         \ccVar, rounded to nearest. If one of the endpoints of \ccVar~is
-        \ccc{Nan} or infinity, then the corresponding double is returned,
+        \ccc{NaN} or infinity, then the corresponding double is returned,
         leaving the exponent undefined and setting the appropriate
         error flag.}
 
 \ccMethod{std::pair<std::pair<double,double>,long> to_interval_exp()const;}
         {Returns \(((m_1,m_2),e)\), such that \([m_1 \times 2^e,m_2
         \times 2^e]\) contains \ccVar . If one of the endpoints of
-        \ccVar~is \ccc{Nan} or infinity, then the corresponding doubles
+        \ccVar~is \ccc{NaN} or infinity, then the corresponding doubles
         are returned, leaving the exponent undefined and setting the
         appropriate error flag.}
 
