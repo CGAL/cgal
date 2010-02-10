@@ -46,6 +46,9 @@ MainWindow::connectActions()
   QObject::connect(this->actionDisplayInfo, SIGNAL(triggered()), 
 		   this, SLOT(display_info()));
 
+  QObject::connect(this->actionClear, SIGNAL(triggered()), 
+		   this, SLOT(clear()));
+
 }
 
 void
@@ -137,7 +140,13 @@ MainWindow::load_3DTDS(const QString& fileName, bool clear)
 void
 MainWindow::create_cube()
 {  
-  make_cube(scene.map, Point_3(nbcube, nbcube, nbcube), 1);
+  Dart_handle d1=make_cube(scene.map, Point_3(nbcube, nbcube, nbcube), 1);
+  Dart_handle d2=make_cube(scene.map, Point_3(nbcube+1, nbcube, nbcube), 1);
+  Dart_handle d3=make_cube(scene.map, Point_3(nbcube, nbcube+1, nbcube), 1);
+
+  scene.map.sew3(d1->beta(1,1)->beta(2),d2->beta(2));
+  scene.map.sew3(d1->beta(2)->beta(1,1)->beta(2),d3);
+
   ++nbcube;
   
   emit (sceneChanged());
@@ -147,6 +156,13 @@ void
 MainWindow::subdivide()
 {  
   subdivide_map_3(scene.map);
+  emit (sceneChanged());
+}
+
+void
+MainWindow::clear()
+{  
+  scene.map.clear();
   emit (sceneChanged());
 }
 

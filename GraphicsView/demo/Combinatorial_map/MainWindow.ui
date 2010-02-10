@@ -45,6 +45,8 @@
     <addaction name="separator"/>
     <addaction name="actionImport3DTDS"/>
     <addaction name="separator"/>
+    <addaction name="actionClear"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuOperations">
@@ -92,6 +94,11 @@
   <action name="actionDisplayInfo">
    <property name="text">
     <string>Display info</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="text">
+    <string>Clear</string>
    </property>
   </action>
  </widget>

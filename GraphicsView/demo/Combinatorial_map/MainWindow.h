@@ -33,6 +33,8 @@ public slots:
   void create_cube();
 
   void display_info();
+
+  void clear();
   
  signals:
   void sceneChanged();
