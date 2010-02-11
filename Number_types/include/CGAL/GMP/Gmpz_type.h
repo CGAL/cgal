@@ -141,14 +141,14 @@ public:
     return mpz_size(mpz()) / (mp_bits_per_limb/8);
   }
   
-  Gmpz operator <<= (const long& i){
+  Gmpz& operator <<= (const long& i){
     CGAL_precondition(i >= 0);
     Gmpz Res;
     mpz_mul_2exp(Res.mpz(),this->mpz(),i);
     swap(Res);
     return *this;
   }
-  Gmpz operator >>= (const long& i){
+  Gmpz& operator >>= (const long& i){
     CGAL_precondition(i >= 0);
     Gmpz Res;
     mpz_tdiv_q_2exp(Res.mpz(),this->mpz(),i);
@@ -156,21 +156,21 @@ public:
     return *this; 
   }
   
-  Gmpz operator &= (const Gmpz b){
+  Gmpz& operator &= (const Gmpz b){
     Gmpz Res;
     mpz_and(Res.mpz(),this->mpz(),b.mpz());
     swap(Res);
     return *this; 
   }
   
-  Gmpz operator |= (const Gmpz b){
+  Gmpz& operator |= (const Gmpz b){
     Gmpz Res;
     mpz_ior(Res.mpz(),this->mpz(),b.mpz());
     swap(Res);
     return *this;
   }
   
-  Gmpz operator ^= (const Gmpz b){
+  Gmpz& operator ^= (const Gmpz b){
     Gmpz Res;
     mpz_xor(Res.mpz(),this->mpz(),b.mpz());
     swap(Res);
