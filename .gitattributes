@@ -200,6 +200,20 @@ Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.fig -text svne
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svneol=unset#image/gif
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.png -text svneol=unset#image/png
 Approximate_min_ellipsoid_d/documentation/boundingbox.mw -text svneol=native#application/octet-stream
+Arithmetic_kernel/include/CGAL/Arithmetic_kernel/Arithmetic_kernel_base.h -text
+Arithmetic_kernel/include/CGAL/CORE_arithmetic_kernel.h -text
+Arithmetic_kernel/include/CGAL/GMP_arithmetic_kernel.h -text
+Arithmetic_kernel/include/CGAL/Get_arithmetic_kernel.h -text
+Arithmetic_kernel/include/CGAL/LEDA_arithmetic_kernel.h -text
+Arithmetic_kernel/include/CGAL/OLD/GMP/Gmpfr_interval_type.h -text
+Arithmetic_kernel/include/CGAL/OLD/Gmpfr_interval.h -text
+Arithmetic_kernel/test/Arithmetic_kernel/Arithmetic_kernel.cpp -text
+Arithmetic_kernel/test/Arithmetic_kernel/CMakeLists.txt -text
+Arithmetic_kernel/test/Arithmetic_kernel/CORE_arithmetic_kernel.cpp -text
+Arithmetic_kernel/test/Arithmetic_kernel/GMP_arithmetic_kernel.cpp -text
+Arithmetic_kernel/test/Arithmetic_kernel/LEDA_arithmetic_kernel.cpp -text
+Arithmetic_kernel/test/Arithmetic_kernel/OLD/Gmpfr_interval.cpp -text
+Arithmetic_kernel/test/Arithmetic_kernel/include/CGAL/Test/_test_arithmetic_kernel.h -text
 Arrangement_on_surface_2/benchmarks/data/benchArrAosConics.xml svneol=native#text/xml
 Arrangement_on_surface_2/benchmarks/data/benchArrAosPolylines.xml svneol=native#text/xml
 Arrangement_on_surface_2/benchmarks/data/benchArrAosSegments.xml svneol=native#text/xml
