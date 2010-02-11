@@ -74,10 +74,9 @@ struct Get_arithmetic_kernel<Gmpfi>{
   typedef GMP_arithmetic_kernel Arithmetic_kernel;
 };
 
-#endif //CGAL_USE_MPFI
-#endif //CGAL_USE_GMP  
-
 CGAL_END_NAMESPACE
 
+#endif //CGAL_USE_MPFI
+#endif //CGAL_USE_GMP  
 #endif // CGAL_ARITHMETIC_KERNEL_H
 // EOF
