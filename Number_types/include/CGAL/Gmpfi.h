@@ -21,6 +21,8 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/mpfi_coercion_traits.h>
+#include <CGAL/Interval_traits.h>
+#include <CGAL/Bigfloat_interval_traits.h>
 
 namespace CGAL{
 
@@ -161,7 +163,173 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfi,CGAL::Tag_true>{
                 };
 };
 
-}
+
+
+template<>
+class Interval_traits<Gmpfi>
+{
+public: 
+  typedef Interval_traits<Gmpfi> Self; 
+  typedef Gmpfi Interval; 
+  typedef CGAL::Gmpfr Bound; 
+  typedef CGAL::Tag_false With_empty_interval; 
+  typedef CGAL::Tag_true  Is_interval; 
+
+  struct Construct :public std::binary_function<Bound,Bound,Interval>{
+    Interval operator()( const Bound& l,const Bound& r) const {
+      CGAL_precondition( l < r ); 
+      return Interval(std::make_pair(l,r));
+    }
+  };
+
+  struct Lower :public std::unary_function<Interval,Bound>{
+    Bound operator()( const Interval& a ) const {
+      return a.inf();
+    }
+  };
+
+  struct Upper :public std::unary_function<Interval,Bound>{
+    Bound operator()( const Interval& a ) const {
+      return a.sup();
+    }
+  };
+
+  struct Width :public std::unary_function<Interval,Bound>{
+    Bound operator()( const Interval& a ) const {
+      return Gmpfr::sub(a.sup(),a.inf(),std::round_toward_infinity);
+    }
+  };
+
+  struct Median :public std::unary_function<Interval,Bound>{
+    Bound operator()( const Interval& a ) const {
+      return (a.inf()+a.sup())/2;
+    }
+  };
+    
+  struct Norm :public std::unary_function<Interval,Bound>{
+    Bound operator()( const Interval& a ) const {
+      return a.abs().sup();
+    }
+  };
+
+  struct Singleton :public std::unary_function<Interval,bool>{
+    bool operator()( const Interval& a ) const {
+      return a.inf() == a.sup();
+    }
+  };
+
+  struct Zero_in :public std::unary_function<Interval,bool>{
+    bool operator()( const Interval& a ) const {
+      return a.inf() <= 0  &&  0 <= a.sup();
+    }
+  };
+
+  struct In :public std::binary_function<Bound,Interval,bool>{
+    bool operator()( Bound x, const Interval& a ) const {
+      return a.inf() <= x && x <= a.sup();
+    }
+  };
+
+  struct Equal :public std::binary_function<Interval,Interval,bool>{
+    bool operator()( const Interval& a, const Interval& b ) const {
+      return a.is_same(b);
+    }
+  };
+    
+  struct Overlap :public std::binary_function<Interval,Interval,bool>{
+    bool operator()( const Interval& a, const Interval& b ) const {
+      return a.do_overlap(b);
+    }
+  };
+    
+  struct Subset :public std::binary_function<Interval,Interval,bool>{
+    bool operator()( const Interval& a, const Interval& b ) const {
+      return b.inf() <= a.inf() && a.sup() <= b.sup() ;  
+    }
+  };
+    
+  struct Proper_subset :public std::binary_function<Interval,Interval,bool>{
+    bool operator()( const Interval& a, const Interval& b ) const {
+      return Subset()(a,b) && ! Equal()(a,b); 
+    }
+  };
+    
+  struct Hull :public std::binary_function<Interval,Interval,Interval>{
+    Interval operator()( const Interval& a, const Interval& b ) const {
+      return Interval( std::make_pair(min(a.inf(),b.inf()) , max(a.sup(),b.sup())) ) ;
+    }
+  };
+    
+  
+  struct Empty :public std::unary_function<Interval,bool>{
+    bool operator()( const Interval& a ) const {
+      return false;
+    }
+  };
+  
+  struct Intersection :public std::binary_function<Interval,Interval,Interval>{
+    Interval operator()( const Interval& a, const Interval& b ) const {
+      CGAL_precondition(a.do_overlap(b));
+      return Interval( std::make_pair(max(a.inf(),b.inf()) , min(a.sup(),b.sup()))) ;
+    }
+  };
+};
+
+template<>
+class Bigfloat_interval_traits<Gmpfi>:
+  public Interval_traits<Gmpfi>
+{
+public:
+  typedef Gmpfi NT;
+
+  typedef CGAL::Gmpfr BF;
+
+  struct Get_significant_bits: public std::unary_function<NT,long>{
+
+    long operator()( NT x) const {
+      CGAL_precondition(x.inf() <= x.sup());
+      if(CGAL::zero_in(x)) return -1;
+
+      BF w(CGAL::width(x));
+      // BF labs(CGAL::lower(CGAL::abs(rrx))) ;
+//       std::cout << "get sig " << std::endl; 
+//       std::cout << x.inf() << std::endl; 
+//       std::cout << x.sup() << std::endl; 
+//       std::cout << labs << std::endl; 
+//       std::cout << w << std::endl;
+//       std::cout << err << std::endl;  
+
+      mpfr_div(w.fr(), w.fr(), CGAL::lower(CGAL::abs(x)).fr(), GMP_RNDU);
+      mpfr_log2(w.fr(), w.fr(), GMP_RNDD);
+      return -mpfr_get_si(w.fr(), GMP_RNDU);
+    }
+  };
+  
+  struct Set_precision {
+    // type for the \c AdaptableUnaryFunction concept.
+    typedef long  argument_type;
+    // type for the \c AdaptableUnaryFunction concept.
+    typedef long  result_type;  
+     
+    long operator()( long prec ) const {
+      return Gmpfi::set_default_precision(prec); 
+    }
+  };
+  
+  struct Get_precision {
+    // type for the \c AdaptableGenerator concept.
+    typedef long  result_type;  
+    long operator()() const {
+      return Gmpfi::get_default_precision(); 
+    }
+  };
+
+};
+
+
+
+
+} // namespace CGAL
 
 #include <CGAL/GMP/Gmpfi_type.h>
 
