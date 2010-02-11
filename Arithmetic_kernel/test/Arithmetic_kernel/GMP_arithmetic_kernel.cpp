@@ -2,7 +2,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/GMP_arithmetic_kernel.h>
 
-#ifdef CGAL_HAVE_GMP_ARITHMETIC_KERNEL
+#ifdef CGAL_HAS_GMP_ARITHMETIC_KERNEL
 
 #include <CGAL/Test/_test_arithmetic_kernel.h>
 

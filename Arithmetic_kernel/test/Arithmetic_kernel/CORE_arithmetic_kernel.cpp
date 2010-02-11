@@ -3,7 +3,7 @@
 
 #include <CGAL/CORE_arithmetic_kernel.h>
 
-#ifdef CGAL_HAVE_CORE_ARITHMETIC_KERNEL
+#ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL
 #include <CGAL/Test/_test_arithmetic_kernel.h>
 
 int main() {

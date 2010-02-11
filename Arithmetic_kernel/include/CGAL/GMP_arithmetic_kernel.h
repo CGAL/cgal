@@ -37,7 +37,7 @@
 #ifdef CGAL_USE_GMP 
 #ifdef CGAL_USE_MPFI
 
-#define CGAL_HAVE_GMP_ARITHMETIC_KERNEL 
+#define CGAL_HAS_GMP_ARITHMETIC_KERNEL 
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>

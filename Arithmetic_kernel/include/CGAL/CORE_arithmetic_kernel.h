@@ -32,7 +32,7 @@
 
 #ifdef CGAL_USE_CORE
 
-#define CGAL_HAVE_CORE_ARITHMETIC_KERNEL 
+#define CGAL_HAS_CORE_ARITHMETIC_KERNEL 
 
 #include <CGAL/Arithmetic_kernel/Arithmetic_kernel_base.h>
 #include <CGAL/Get_arithmetic_kernel.h>

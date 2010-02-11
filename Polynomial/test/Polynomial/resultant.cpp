@@ -65,7 +65,7 @@ void test_resultant(){
   //std::cout << "end resultant: " << PT::d << std::endl;
 }
    
-#if CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL
+#if CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
 int main(){
 
@@ -125,6 +125,6 @@ int main(){
   return 0; 
 }
 
-#endif // CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL
+#endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
  
 

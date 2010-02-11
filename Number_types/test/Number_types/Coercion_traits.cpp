@@ -433,9 +433,9 @@ int main(){
 //    test_vector_d();
    
 
-#ifdef CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL
+#ifdef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
     AT_coercion_test_for_cgal_types_fws<CGAL::Arithmetic_kernel>();
-#endif // CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL
+#endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
 #ifdef CGAL_USE_LEDA
   check_type_coercion_at<CGAL::LEDA_arithmetic_kernel>();

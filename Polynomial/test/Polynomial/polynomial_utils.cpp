@@ -256,7 +256,7 @@ void test_canonicalize(){
 
 
 int main(){
-#if CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL 
+#if CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL 
   typedef CGAL::Arithmetic_kernel AK; 
   test_polynomial_utils<AK>();
   test_canonicalize<AK>();

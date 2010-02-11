@@ -2,7 +2,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 
-#if defined(CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL)
+#if defined(CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL)
 
 #include <CGAL/Test/_test_arithmetic_kernel.h>
 

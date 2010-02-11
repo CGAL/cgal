@@ -2,7 +2,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/LEDA_arithmetic_kernel.h>
 
-#ifdef CGAL_HAVE_LEDA_ARITHMETIC_KERNEL
+#ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL
 
 #include <CGAL/Test/_test_arithmetic_kernel.h>
 

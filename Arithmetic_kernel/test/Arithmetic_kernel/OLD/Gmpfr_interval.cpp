@@ -1,6 +1,6 @@
 #include <iostream>
 #include <CGAL/basic.h>
-#ifdef CGAL_HAVE_GMP_ARITHMETIC_KERNEL
+#ifdef CGAL_HAS_GMP_ARITHMETIC_KERNEL
 #include <CGAL/Gmpfr_interval.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>

@@ -30,7 +30,7 @@
 
 #ifdef CGAL_USE_LEDA
 
-#define CGAL_HAVE_LEDA_ARITHMETIC_KERNEL 
+#define CGAL_HAS_LEDA_ARITHMETIC_KERNEL 
 
 #include <CGAL/Arithmetic_kernel/Arithmetic_kernel_base.h>
 #include <CGAL/Get_arithmetic_kernel.h>
