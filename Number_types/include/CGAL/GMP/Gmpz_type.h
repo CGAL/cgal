@@ -144,14 +144,14 @@ public:
   Gmpz& operator <<= (const long& i){
     CGAL_precondition(i >= 0);
     Gmpz Res;
-    mpz_mul_2exp(Res.mpz(),this->mpz(),i);
+    mpz_mul_2exp(Res.mpz(),this->mpz(), (unsigned long) i);
     swap(Res);
     return *this;
   }
   Gmpz& operator >>= (const long& i){
     CGAL_precondition(i >= 0);
     Gmpz Res;
-    mpz_tdiv_q_2exp(Res.mpz(),this->mpz(),i);
+    mpz_tdiv_q_2exp(Res.mpz(),this->mpz(), (unsigned long) i);
     swap(Res);
     return *this; 
   }
