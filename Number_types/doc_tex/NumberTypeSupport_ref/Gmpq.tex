@@ -20,44 +20,54 @@ number based on the {\sc Gnu} Multiple Precision Arithmetic Library.
              {creates an uninitialized \ccc{Gmpq} \ccVar.}
 
 \ccHidden \ccConstructor{Gmpq(const Gmpq& q);}
-            {copy constructor.}
+            {copy constructor.}\ccGlue
+
 
 \ccConstructor{Gmpq(int i)}
             {creates a \ccc{Gmpq} initialized with
-             \ccStyle{i}.}
+             \ccStyle{i}.}\ccGlue
+
 
 \ccConstructor{Gmpq(Gmpz n)}
             {creates a \ccc{Gmpq} initialized with
-             \ccStyle{n}.}
+             \ccStyle{n}.}\ccGlue
+
 
 \ccConstructor{Gmpq(Gmpfr f)}
             {creates a \ccc{Gmpq} initialized with
-             \ccStyle{f}.}
+             \ccStyle{f}.}\ccGlue
+
 
 \ccConstructor{Gmpq(int n, int d)}
             {creates a \ccc{Gmpq} initialized with
-             \ccStyle{n/d}.}
+             \ccStyle{n/d}.}\ccGlue
+
 
 \ccConstructor{Gmpq(signed long n, unsigned long d)}
             {creates a \ccc{Gmpq} initialized with
-             \ccStyle{n/d}.}
+             \ccStyle{n/d}.}\ccGlue
+
 
 \ccConstructor{Gmpq(unsigned long n, unsigned long d)}
             {creates a \ccc{Gmpq} initialized with
-             \ccStyle{n/d}.}
+             \ccStyle{n/d}.}\ccGlue
+
 
 \ccConstructor{Gmpq(Gmpz n, Gmpz d)}
             {creates a \ccc{Gmpq} initialized with
-             \ccStyle{n/d}.}
+             \ccStyle{n/d}.}\ccGlue
+
 
 \ccConstructor{Gmpq(double d)}
             {creates a \ccc{Gmpq} initialized with
              \ccStyle{d}.}
 
+
 \ccConstructor{Gmpq(const std::string& str)}
             {creates a \ccc{Gmpq} initialized with \ccStyle{str}, which can
 	    be an integer like "41" or a fraction like "41/152". White
-	    space is allowed in the string, and ignored.}
+	    space is allowed in the string, and ignored.}\ccGlue
+
 
 \ccConstructor{Gmpq(const std::string& str, int base)}
             {creates a \ccc{Gmpq} initialized with \ccStyle{str} in base
@@ -67,6 +77,7 @@ number based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 %\ccSetTwoOfThreeColumns{5cm}{4cm}
 %SetThreeColumns{std::ostream& }{}{\hspace*{8cm}}
 
+\ccThree{xxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
 \ccOperations
 \ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpq& q);}
 	{writes \ccc{q} to the ostream \ccc{out}, in the form $n/d$.}
