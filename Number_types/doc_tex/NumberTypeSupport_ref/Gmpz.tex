@@ -10,29 +10,52 @@ based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 
 \ccIsModel
 \ccc{EuclideanRing}\\
-\\
 \ccc{RealEmbeddable}
 
 \ccCreation
 \ccCreationVariable{z}
 
+\ccTwo{xxxxxxxxxxxxxxxxxxxxx}{}
+
 \ccConstructor{Gmpz();}
-             {creates an uninitialized multiple precision integer \ccVar.}
+             {creates an uninitialized multiple precision integer \ccVar.}\ccGlue
 
 \ccHidden \ccConstructor{Gmpz(const Gmpz& q);}
             {copy constructor.}
 
 \ccConstructor{Gmpz(int i)}
             {creates a multiple-precision integer initialized with
-             \ccStyle{i}.}
+             \ccStyle{i}.}\ccGlue
 
 \ccConstructor{Gmpz(double d)}
             {creates a multiple-precision integer initialized with
-             the integral part of \ccStyle{d}.}
+             the integral part of \ccStyle{d}.}\ccGlue
 
 \ccOperations
+
+\ccThree{xxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccMethod{Gmpz & operator++();}{prefix increment}\ccGlue
+\ccMethod{Gmpz   operator++(int);}{postfix increment}\ccGlue
+\ccMethod{Gmpz & operator--();}{prefix decrement}\ccGlue
+\ccMethod{Gmpz   operator--(int);}{postfix decrement}
+
+\ccFunction{Gmpz operator>>(const Gmpz& a, long i);}{Rightshift by i, where $i>=0$.}\ccGlue
+\ccFunction{Gmpz operator<<(const Gmpz& a, long i);}{Leftshift by i, where $i>=0$.}\ccGlue
+\ccMethod{Gmpz & operator>>=(const long& i);}{Rightshift by i, where $i>=0$.}\ccGlue
+\ccMethod{Gmpz & operator<<=(const long& i);}{Leftshift by i, where $i>=0$.}
+
+
+\ccFunction{Gmpz operator&(const Gmpz& a, const Gmpz& b);}{Bitwise AND.}\ccGlue
+\ccFunction{Gmpz operator|(const Gmpz& a, const Gmpz& b);}{Bitwise IOR.}\ccGlue
+\ccFunction{Gmpz operator^(const Gmpz& a, const Gmpz& b);}{Bitwise XOR.}\ccGlue
+\ccMethod{Gmpz & operator&=(const Gmpz& b);}{Bitwise AND.}\ccGlue
+\ccMethod{Gmpz & operator|=(const Gmpz& b);}{Bitwise IOR.}\ccGlue
+\ccMethod{Gmpz & operator^=(const Gmpz& b);}{Bitwise XOR.}
+
+
 \ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpz& z);}
-{writes \ccc{z} to the ostream \ccc{out}.}
+{writes \ccc{z} to the ostream \ccc{out}.}\ccGlue
 
 \ccFunction{std::istream& operator>>(std::istream& in, Gmpz& z);}
 {reads an integer from \ccc{in}, then converts it to a \ccc{Gmpz}.}
