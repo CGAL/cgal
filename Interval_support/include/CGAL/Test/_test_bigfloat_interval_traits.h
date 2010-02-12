@@ -60,7 +60,16 @@ void test_bigfloat_interval_traits() {
   
   //TODO: define what get_significant_bits should do and test is. Better name ?
   // just a compile check
-  CGAL::get_significant_bits(BFI(3));
+  assert(CGAL::get_significant_bits(CGAL::hull(BFI(2),BFI(1))));
+  assert(CGAL::get_significant_bits(CGAL::hull(BFI(3),BFI(1))));
+  assert(CGAL::get_significant_bits(CGAL::hull(BFI(4),BFI(1))));
+  assert(CGAL::get_significant_bits(CGAL::hull(BFI(5),BFI(1))));
+
+  assert(CGAL::get_significant_bits(CGAL::hull(BFI(2),BFI(1))));
+  assert(CGAL::get_significant_bits(CGAL::hull(BFI(3),BFI(2))));
+  assert(CGAL::get_significant_bits(CGAL::hull(BFI(5),BFI(4))));
+  assert(CGAL::get_significant_bits(CGAL::hull(BFI(9),BFI(8))));
+  assert(CGAL::get_significant_bits(CGAL::hull(BFI(8),BFI(7))));
 }
 
 CGAL_END_NAMESPACE
