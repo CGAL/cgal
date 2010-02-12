@@ -35,23 +35,23 @@ based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 
 \ccThree{xxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
 
-\ccMethod{Gmpz & operator++();}{prefix increment}\ccGlue
-\ccMethod{Gmpz   operator++(int);}{postfix increment}\ccGlue
-\ccMethod{Gmpz & operator--();}{prefix decrement}\ccGlue
-\ccMethod{Gmpz   operator--(int);}{postfix decrement}
+\ccMethod{Gmpz & operator++();}{prefix increment.}\ccGlue
+\ccMethod{Gmpz   operator++(int);}{postfix increment.}\ccGlue
+\ccMethod{Gmpz & operator--();}{prefix decrement.}\ccGlue
+\ccMethod{Gmpz   operator--(int);}{postfix decrement.}
 
-\ccFunction{Gmpz operator>>(const Gmpz& a, long i);}{Rightshift by i, where $i>=0$.}\ccGlue
-\ccFunction{Gmpz operator<<(const Gmpz& a, long i);}{Leftshift by i, where $i>=0$.}\ccGlue
-\ccMethod{Gmpz & operator>>=(const long& i);}{Rightshift by i, where $i>=0$.}\ccGlue
-\ccMethod{Gmpz & operator<<=(const long& i);}{Leftshift by i, where $i>=0$.}
+\ccFunction{Gmpz operator>>(const Gmpz& a, long i);}{rightshift by i, where $i>=0$.}\ccGlue
+\ccFunction{Gmpz operator<<(const Gmpz& a, long i);}{leftshift by i, where $i>=0$.}\ccGlue
+\ccMethod{Gmpz & operator>>=(const long& i);}{rightshift by i, where $i>=0$.}\ccGlue
+\ccMethod{Gmpz & operator<<=(const long& i);}{leftshift by i, where $i>=0$.}
 
 
-\ccFunction{Gmpz operator&(const Gmpz& a, const Gmpz& b);}{Bitwise AND.}\ccGlue
-\ccFunction{Gmpz operator|(const Gmpz& a, const Gmpz& b);}{Bitwise IOR.}\ccGlue
-\ccFunction{Gmpz operator^(const Gmpz& a, const Gmpz& b);}{Bitwise XOR.}\ccGlue
-\ccMethod{Gmpz & operator&=(const Gmpz& b);}{Bitwise AND.}\ccGlue
-\ccMethod{Gmpz & operator|=(const Gmpz& b);}{Bitwise IOR.}\ccGlue
-\ccMethod{Gmpz & operator^=(const Gmpz& b);}{Bitwise XOR.}
+\ccFunction{Gmpz operator&(const Gmpz& a, const Gmpz& b);}{bitwise AND.}\ccGlue
+\ccFunction{Gmpz operator|(const Gmpz& a, const Gmpz& b);}{bitwise IOR.}\ccGlue
+\ccFunction{Gmpz operator^(const Gmpz& a, const Gmpz& b);}{bitwise XOR.}\ccGlue
+\ccMethod{Gmpz & operator&=(const Gmpz& b);}{bitwise AND.}\ccGlue
+\ccMethod{Gmpz & operator|=(const Gmpz& b);}{bitwise IOR.}\ccGlue
+\ccMethod{Gmpz & operator^=(const Gmpz& b);}{bitwise XOR.}
 
 
 \ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpz& z);}
