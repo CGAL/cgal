@@ -177,8 +177,8 @@ public:
     return *this;
   }
   
-  Gmpz operator++(){return *this+=1;}
-  Gmpz operator--(){return *this-=1;}
+  Gmpz& operator++(){return *this+=1;}
+  Gmpz& operator--(){return *this-=1;}
 };
 
 
