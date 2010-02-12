@@ -305,6 +305,7 @@ template <> struct Coercion_traits< ::leda::real, leda_bigfloat_interval >
 
 template<>
 class Interval_traits<leda_bigfloat_interval>
+  :public internal::Interval_traits_base<leda_bigfloat_interval>
 {
 public: 
     typedef Interval_traits<leda_bigfloat_interval> Self; 
@@ -416,36 +417,39 @@ template<>
 class Bigfloat_interval_traits<leda_bigfloat_interval>
     :public Interval_traits<leda_bigfloat_interval> 
 {
-    
+  typedef leda_bigfloat_interval NT;
+  typedef leda::bigfloat BF; 
 public:
-    typedef Bigfloat_interval_traits<leda_bigfloat_interval> Self;
-    typedef leda_bigfloat_interval NT;
-    typedef leda::bigfloat BF;
+  typedef Bigfloat_interval_traits<leda_bigfloat_interval> Self;
+  typedef CGAL::Tag_true Is_bigfloat_interval; 
+  
 
-    struct Get_significant_bits : public std::unary_function<NT,long>{
+//   struct Get_significant_bits : public std::unary_function<NT,long>{
+//         long operator()( NT x) const {
+//             CGAL_precondition(!Singleton()(x));
+//             leda::bigfloat lower = x.lower();
+//             leda::bigfloat upper = x.upper();
+//             leda::integer lower_m = lower.get_significant();
+//             leda::integer upper_m = upper.get_significant();
+//             leda::integer lower_exp = lower.get_exponent();
+//             leda::integer upper_exp = upper.get_exponent();
+//             long shift = (upper_exp - lower_exp).to_long();
+//             if(shift >= 0 ) upper_m = (upper_m <<  shift);
+//             else            lower_m = (lower_m << -shift);
+//             //CGAL_postcondition(lower_m.length() == upper_m.length());
+//             leda::integer err = upper_m - lower_m; 
+//             std::cout <<"LEDA: " << lower_m << " " << err << " " << std::endl; 
+//             return lower_m.length()-err.length();
+//         }
+//     };
 
-        long operator()( NT x) const {
-            leda::bigfloat lower = x.lower();
-            leda::bigfloat upper = x.upper();
-
-            leda::integer lower_m = lower.get_significant();
-            leda::integer upper_m = upper.get_significant();
-             
-            leda::integer lower_exp = lower.get_exponent();
-            leda::integer upper_exp = upper.get_exponent();
-             
-            long shift = (upper_exp - lower_exp).to_long();
-            if(shift >= 0 ) upper_m = (upper_m <<  shift);
-            else            lower_m = (lower_m << -shift);
-             
-            //CGAL_postcondition(lower_m.length() == upper_m.length());
-             
-            leda::integer err = lower_m-upper_m; 
-             
-            return std::max(lower_m.length()-err.length(),0);
-             
-        }
-    };
+  struct Get_significant_bits: public std::unary_function<NT,long>{
+    long operator()( NT x) const {
+      leda::bigfloat w = Width()(x);
+      w = leda::div(w,Lower()(x),Get_precision()(),leda::TO_P_INF); 
+      return -leda::ilog2(w).to_long();
+    }
+  };
   
     struct Set_precision : public std::unary_function<long,long> {
         long operator()( long prec ) const {
