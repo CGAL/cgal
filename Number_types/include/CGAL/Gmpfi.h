@@ -15,6 +15,7 @@
 // $Id$
 // 
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
+//         Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
 #ifndef CGAL_GMPFI_H
 #define CGAL_GMPFI_H
@@ -167,7 +168,7 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfi,CGAL::Tag_true>{
 
 template<>
 class Interval_traits<Gmpfi>
-{
+  : public internal::Interval_traits_base<Gmpfi>{
 public: 
   typedef Interval_traits<Gmpfi> Self; 
   typedef Gmpfi Interval; 
@@ -256,51 +257,51 @@ public:
     
   struct Hull :public std::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
-      return Interval( std::make_pair(min(a.inf(),b.inf()) , max(a.sup(),b.sup())) ) ;
+      BOOST_USING_STD_MAX();
+      BOOST_USING_STD_MIN();
+      return Interval( 
+          std::make_pair(
+              min BOOST_PREVENT_MACRO_SUBSTITUTION (a.inf(),b.inf()), 
+              max BOOST_PREVENT_MACRO_SUBSTITUTION (a.sup(),b.sup())));
     }
   };
     
   
-  struct Empty :public std::unary_function<Interval,bool>{
-    bool operator()( const Interval& a ) const {
-      return false;
-    }
-  };
+//  struct Empty is Null_functor 
   
   struct Intersection :public std::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
-      CGAL_precondition(a.do_overlap(b));
-      return Interval( std::make_pair(max(a.inf(),b.inf()) , min(a.sup(),b.sup()))) ;
+      BOOST_USING_STD_MAX();
+      BOOST_USING_STD_MIN();
+      Bound l(max BOOST_PREVENT_MACRO_SUBSTITUTION (Lower()(a),Lower()(b)));
+      Bound u(min BOOST_PREVENT_MACRO_SUBSTITUTION (Upper()(a),Upper()(b)));
+      if(u < l ) throw Exception_intersection_is_empty();
+      return Construct()(l,u);
     }
   };
 };
 
 template<>
-class Bigfloat_interval_traits<Gmpfi>:
-  public Interval_traits<Gmpfi>
+class Bigfloat_interval_traits<Gmpfi>
+  :public Interval_traits<Gmpfi>
 {
-public:
   typedef Gmpfi NT;
-
   typedef CGAL::Gmpfr BF;
-
+public:
+  typedef Bigfloat_interval_traits<Gmpfi> Self; 
+  typedef CGAL::Tag_true                  Is_bigfloat_interval; 
+  
   struct Get_significant_bits: public std::unary_function<NT,long>{
 
     long operator()( NT x) const {
+      CGAL_precondition(!Singleton()(x));
       CGAL_precondition(x.inf() <= x.sup());
       if(CGAL::zero_in(x)) return -1;
 
+      // w = |x| * 2^-p (return p)
       BF w(CGAL::width(x));
-      // BF labs(CGAL::lower(CGAL::abs(rrx))) ;
-//       std::cout << "get sig " << std::endl; 
-//       std::cout << x.inf() << std::endl; 
-//       std::cout << x.sup() << std::endl; 
-//       std::cout << labs << std::endl; 
-//       std::cout << w << std::endl;
-//       std::cout << err << std::endl;  
-
       mpfr_div(w.fr(), w.fr(), CGAL::lower(CGAL::abs(x)).fr(), GMP_RNDU);
-      mpfr_log2(w.fr(), w.fr(), GMP_RNDD);
+      mpfr_log2(w.fr(), w.fr(), GMP_RNDU);
       return -mpfr_get_si(w.fr(), GMP_RNDU);
     }
   };
@@ -323,11 +324,7 @@ public:
       return Gmpfi::get_default_precision(); 
     }
   };
-
 };
-
-
-
 
 } // namespace CGAL
 
