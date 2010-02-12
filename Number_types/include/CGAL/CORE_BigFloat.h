@@ -36,13 +36,14 @@ CGAL_BEGIN_NAMESPACE
 template<> 
 class Interval_traits<CORE::BigFloat> 
     : public internal::Interval_traits_base<CORE::BigFloat>{
-
-public: 
-    
-    typedef Interval_traits<CORE::BigFloat> Self; 
     typedef CORE::BigFloat Interval;
+public: 
+    typedef Interval_traits<CORE::BigFloat> Self; 
+    typedef CORE::BigFloat Type;
     typedef CORE::BigFloat Bound;
     typedef CGAL::Tag_true Is_interval; 
+    typedef CGAL::Tag_true Is_bigfloat_interval; 
+  
  
     struct Lower :public std::unary_function<Interval,Bound>{
         Bound operator() ( Interval x ) const {   
@@ -290,12 +291,12 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
 template<> class Bigfloat_interval_traits<CORE::BigFloat> 
 :public Interval_traits<CORE::BigFloat>
 {
-public:
+
     typedef CORE::BigFloat NT;
     typedef CORE::BigFloat BF;
-
-    typedef Bigfloat_interval_traits<NT> Self;
-
+public:
+  typedef Bigfloat_interval_traits<NT> Self;
+  
     // How about retuning 
     struct Get_significant_bits {
         // type for the \c AdaptableUnaryFunction concept.
@@ -303,13 +304,13 @@ public:
         // type for the \c AdaptableUnaryFunction concept.
         typedef long  result_type;
 
-        long operator()( NT x) const {       
-            if(x.err() == 0 ) {            
-                return ::CORE::bitLength(x.m()); 
-            }
-            else {            
-                return ::CORE::bitLength(x.m()) - ::CORE::bitLength(x.err());
-            }  
+        long operator()( NT x) const {  
+          if(x.err() == 0 ) {
+            return ::CORE::bitLength(x.m());
+          }
+          else {
+            return ::CORE::bitLength(x.m()) - ::CORE::bitLength(x.err());
+          }
         }
     };
        
