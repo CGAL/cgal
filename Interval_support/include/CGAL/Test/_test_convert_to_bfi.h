@@ -47,7 +47,11 @@ template <typename BFI, typename From>
 void test_convert_to_bfi_from(BFI,From){
   typedef typename CGAL::Coercion_traits<BFI,From>::Type CT_type;
   BOOST_STATIC_ASSERT(( ::boost::is_same<CT_type, BFI>::value));
-  assert(CGAL::convert_to_bfi(From(1)) == BFI(1));
+  assert(CGAL::convert_to_bfi(From(0))  == BFI(0));
+  assert(CGAL::convert_to_bfi(From(1))  == BFI(1));
+  assert(CGAL::convert_to_bfi(From(2))  == BFI(2));
+  assert(CGAL::convert_to_bfi(From(4))  == BFI(4));
+  assert(CGAL::convert_to_bfi(From(-8)) == BFI(-8));
   return;
 };
 
@@ -58,10 +62,11 @@ void test_convert_to_bfi(){
   typedef typename AK::Rational Rational; 
   typedef typename AK::Field_with_sqrt Field_with_sqrt; // may be Null_tag 
   typedef CGAL::Sqrt_extension<Integer,Integer> EXT;
-  test_convert_to_bfi_from(BFI(),Integer());
-  test_convert_to_bfi_from(BFI(),Rational());
-  test_convert_to_bfi_from(BFI(),Field_with_sqrt());
-  test_convert_to_bfi_from(BFI(),EXT());
+
+  test_convert_to_bfi_from( BFI() , Integer());
+  test_convert_to_bfi_from( BFI() , Rational());
+  test_convert_to_bfi_from( BFI() , Field_with_sqrt());
+  test_convert_to_bfi_from( BFI() , EXT());
 }
 
 CGAL_END_NAMESPACE
