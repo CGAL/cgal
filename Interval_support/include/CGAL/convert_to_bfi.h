@@ -1,4 +1,5 @@
-// Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany),
+// INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -14,7 +15,6 @@
 //
 // $URL$
 // $Id$
-//
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
 

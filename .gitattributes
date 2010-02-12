@@ -1488,8 +1488,13 @@ Intersections_2/include/CGAL/Circle_2_Line_2_intersection.h -text
 Intersections_3/include/CGAL/internal/Intersections_3/Triangle_3_Line_3_intersection.h -text
 Interval_skip_list/doc_tex/Interval_skip_list/query.png -text
 Interval_skip_list/examples/Interval_skip_list/isl_terrain.pts -text
+Interval_support/include/CGAL/Test/_test_bigfloat_interval_traits.h -text
+Interval_support/include/CGAL/Test/_test_convert_to_bfi.h -text
 Interval_support/package_info/Interval_support/description.txt -text
 Interval_support/package_info/Interval_support/maintainer -text
+Interval_support/test/Interval_support/Bigfloat_interval_traits.cpp -text
+Interval_support/test/Interval_support/Interval_traits.cpp -text
+Interval_support/test/Interval_support/convert_to_bfi.cpp -text
 Jet_fitting_3/clean_tree.csh eol=lf
 Jet_fitting_3/demo/Jet_fitting_3/README_visu -text
 Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream

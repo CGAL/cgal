@@ -59,27 +59,27 @@ namespace internal{
 
 template<typename T> struct Interval_traits_base{
     
-    typedef Interval_traits_base<T> Self; 
-    typedef T                  Interval; 
-    typedef CGAL::Null_functor    Bound; 
-    typedef CGAL::Tag_false    Is_interval; 
-    typedef CGAL::Tag_false    With_empty_interval; 
-
-    typedef CGAL::Null_functor Lower;
-    typedef CGAL::Null_functor Upper; 
-    typedef CGAL::Null_functor Width; 
-    typedef CGAL::Null_functor Median;  
-    typedef CGAL::Null_functor Norm; 
-    typedef CGAL::Null_functor Empty;
-    typedef CGAL::Null_functor Singleton;
-    typedef CGAL::Null_functor In;
-    typedef CGAL::Null_functor Zero_in;
-    typedef CGAL::Null_functor Equal;
-    typedef CGAL::Null_functor Overlap;
-    typedef CGAL::Null_functor Subset;
-    typedef CGAL::Null_functor Proper_Subset;
-    typedef CGAL::Null_functor Intersection;
-    typedef CGAL::Null_functor Hull;
+  typedef Interval_traits_base<T> Self; 
+  typedef T                  Type;
+  // typedef T                  Interval; 
+  typedef CGAL::Tag_false    Is_interval; 
+  typedef CGAL::Tag_false    With_empty_interval; 
+  
+  typedef CGAL::Null_functor Lower;
+  typedef CGAL::Null_functor Upper; 
+  typedef CGAL::Null_functor Width; 
+  typedef CGAL::Null_functor Median;  
+  typedef CGAL::Null_functor Norm; 
+  typedef CGAL::Null_functor Empty;
+  typedef CGAL::Null_functor Singleton;
+  typedef CGAL::Null_functor In;
+  typedef CGAL::Null_functor Zero_in;
+  typedef CGAL::Null_functor Equal;
+  typedef CGAL::Null_functor Overlap;
+  typedef CGAL::Null_functor Subset;
+  typedef CGAL::Null_functor Proper_Subset;
+  typedef CGAL::Null_functor Intersection;
+  typedef CGAL::Null_functor Hull;
 };
 }
 
