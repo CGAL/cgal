@@ -50,8 +50,8 @@ void test_bigfloat_interval_traits() {
   const typename BFIT::Construct construct = typename BFIT::Construct();
   const typename BFIT::Set_precision set_precsion = typename BFIT::Set_precision();
   const typename BFIT::Get_precision get_precsion = typename BFIT::Get_precision();
-  const typename BFIT::Get_significant_bits get_significant_bits 
-    = typename BFIT::Get_significant_bits();
+  const typename BFIT::Relative_precision relative_precision 
+    = typename BFIT::Relative_precision();
    
   CGAL::set_precision(BFI(),15);
   assert(CGAL::get_precision(BFI())    == 15);
@@ -60,16 +60,16 @@ void test_bigfloat_interval_traits() {
   
   //TODO: define what get_significant_bits should do and test is. Better name ?
   // just a compile check
-  assert(CGAL::get_significant_bits(CGAL::hull(BFI(2),BFI(1))));
-  assert(CGAL::get_significant_bits(CGAL::hull(BFI(3),BFI(1))));
-  assert(CGAL::get_significant_bits(CGAL::hull(BFI(4),BFI(1))));
-  assert(CGAL::get_significant_bits(CGAL::hull(BFI(5),BFI(1))));
+  assert(CGAL::relative_precision(CGAL::hull(BFI(2),BFI(1)))==0);
+  assert(CGAL::relative_precision(CGAL::hull(BFI(3),BFI(1)))==-1);
+  assert(CGAL::relative_precision(CGAL::hull(BFI(4),BFI(1)))==-2);
+  assert(CGAL::relative_precision(CGAL::hull(BFI(5),BFI(1)))==-2);
 
-  assert(CGAL::get_significant_bits(CGAL::hull(BFI(2),BFI(1))));
-  assert(CGAL::get_significant_bits(CGAL::hull(BFI(3),BFI(2))));
-  assert(CGAL::get_significant_bits(CGAL::hull(BFI(5),BFI(4))));
-  assert(CGAL::get_significant_bits(CGAL::hull(BFI(9),BFI(8))));
-  assert(CGAL::get_significant_bits(CGAL::hull(BFI(8),BFI(7))));
+  assert(CGAL::relative_precision(CGAL::hull(BFI(2),BFI(1)))==0);
+  assert(CGAL::relative_precision(CGAL::hull(BFI(3),BFI(2)))==1);
+  assert(CGAL::relative_precision(CGAL::hull(BFI(5),BFI(4)))==2);
+  assert(CGAL::relative_precision(CGAL::hull(BFI(9),BFI(8)))==3);
+  assert(CGAL::relative_precision(CGAL::hull(BFI(8),BFI(7)))==2);
 }
 
 CGAL_END_NAMESPACE

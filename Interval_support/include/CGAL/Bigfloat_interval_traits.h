@@ -24,7 +24,8 @@
 #define CGAL_BIGFLOAT_INTERVAL_TRAITS_H
 
 #include<CGAL/basic.h>
-
+#include <boost/static_warning.hpp>
+#include <boost/static_assert.hpp>
 CGAL_BEGIN_NAMESPACE
 
 // TODO: rename this into MPFI_traits ? 
@@ -33,9 +34,8 @@ CGAL_BEGIN_NAMESPACE
 template<typename BigfloatInterval> class Bigfloat_interval_traits;
 
 template<typename BFI> inline long get_significant_bits(BFI bfi) {
-    typename Bigfloat_interval_traits<BFI>::Get_significant_bits 
-        get_significant_bits;
-    return get_significant_bits(bfi);
+  typename Bigfloat_interval_traits<BFI>::Relative_precision relative_precision;
+  return  zero_in(bfi) ? -1 : (std::max)(long(0),relative_precision(bfi));
 }
 
 template<typename BFI> inline long set_precision(BFI,long prec) {
@@ -48,6 +48,11 @@ template<typename BFI> inline long get_precision(BFI) {
     return get_precision();
 }
 
+template<typename BFI> inline long relative_precision(const BFI& bfi) {
+    typename Bigfloat_interval_traits<BFI>::Relative_precision 
+      relative_precision;
+    return relative_precision(bfi);
+}
 CGAL_END_NAMESPACE
 
 #endif // CGAL_BIGFLOAT_INTERVAL_TRAITS_H
