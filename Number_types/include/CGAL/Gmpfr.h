@@ -133,7 +133,8 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
                 inline Comparison_result operator()
                         (const Type &x,const Type &y)const{
                                 return x.compare(y);
-                        };
+                        }; 
+          CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,Comparison_result)
         };
 
         struct To_double:
