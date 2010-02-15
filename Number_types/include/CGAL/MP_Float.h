@@ -291,8 +291,7 @@ public:
 
     for (i = v.begin(); i != v.end(); ++i)
     {
-      res += std::ldexp(static_cast<double>(*i),
-                                  static_cast<int>(exp2));
+      res += T(std::ldexp(static_cast<double>(*i),static_cast<int>(exp2)));
       exp2 += log_limb;
     }
 
