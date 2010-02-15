@@ -59,7 +59,7 @@ void check_type_coercion_at(){
     test_coercion_from_to(float(),Rational());
     test_coercion_from_to(double(),Rational());
     test_coercion_from_to(Integer(),Rational());
-    test_coercion_from_to(Bigfloat(),Rational());
+    //test_coercion_from_to(Bigfloat(),Rational()); // not the same for CORE/LEDA/GMP 
     test_coercion_from_to(Rational(),Rational());
 
     test_coercion_from_to(int(),Field_with_sqrt());
@@ -437,17 +437,17 @@ int main(){
     AT_coercion_test_for_cgal_types_fws<CGAL::Arithmetic_kernel>();
 #endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
-#ifdef CGAL_USE_LEDA
+#ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL
   check_type_coercion_at<CGAL::LEDA_arithmetic_kernel>();
   AT_coercion_test_for_cgal_types_fws<CGAL::LEDA_arithmetic_kernel>();
 #endif // CGAL_USE_LEDA
 
-#ifdef CGAL_USE_CORE
+#ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL
   check_type_coercion_at<CGAL::CORE_arithmetic_kernel>();
   AT_coercion_test_for_cgal_types_fws<CGAL::CORE_arithmetic_kernel>();
 #endif // CGAL_USE_CORE
 
-#ifdef CGAL_USE_GMP
+#ifdef CGAL_HAS_GMP_ARITHMETIC_KERNEL
   check_type_coercion_at<CGAL::GMP_arithmetic_kernel>();
   AT_coercion_test_for_cgal_types_rat<CGAL::GMP_arithmetic_kernel>();
 #endif // CGAL_USE_GMP
