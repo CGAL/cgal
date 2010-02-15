@@ -65,10 +65,11 @@ class Gmpz
     boost::ordered_euclidian_ring_operators1< Gmpz
   , boost::ordered_euclidian_ring_operators2< Gmpz, int 
   , boost::ordered_euclidian_ring_operators2< Gmpz, long 
+  , boost::ordered_euclidian_ring_operators2< Gmpz, unsigned long 
   , boost::shiftable< Gmpz , long 
   , boost::unit_steppable<Gmpz 
   , boost::bitwise<Gmpz
-> > > > > >
+> > > > > > >
 {
   typedef Handle_for<Gmpz_rep> Base;
 public:
@@ -105,31 +106,10 @@ public:
   Gmpz(const std::string& str, int base = 10)
   { mpz_init_set_str(mpz(), str.c_str(), base); }
 
-  Gmpz operator+() const;
-  Gmpz operator-() const;
-
-  Gmpz& operator+=(const Gmpz &z);
-  Gmpz& operator+=(int i);
-  Gmpz& operator+=(long i);
-
-  Gmpz& operator-=(const Gmpz &z);
-  Gmpz& operator-=(int i);
-  Gmpz& operator-=(long i);
-
-  Gmpz& operator*=(const Gmpz &z);
-  Gmpz& operator*=(int i);
-  Gmpz& operator*=(long i);
-
-  Gmpz& operator%=(const Gmpz &z);
-
-  Gmpz& operator/=(const Gmpz &z);
-  Gmpz& operator/=(int i);
-  Gmpz& operator/=(long i);
-
   size_t approximate_decimal_length() const;
 
-  double to_double() const;
-  Sign sign() const;
+  double to_double() const {return mpz_get_d(mpz());}
+  Sign sign() const { return static_cast<Sign>(mpz_sgn(mpz()));}
 
   const mpz_t & mpz() const { return Ptr()->mpZ; }
   mpz_t & mpz() { return ptr()->mpZ; }
@@ -146,6 +126,37 @@ public:
     return mpz_size(mpz()) / (mp_bits_per_limb/8);
   }
   
+#define CGAL_GMPZ_OBJECT_OPERATOR(_op,_class,_fun)    \
+  Gmpz& _op(const _class& z){                        \
+    Gmpz Res;                                         \
+    _fun(Res.mpz(), mpz(), z.mpz());                  \
+    swap(Res);                                        \
+    return *this;                                     \
+  }
+  
+  CGAL_GMPZ_OBJECT_OPERATOR(operator+=,Gmpz,mpz_add);
+  CGAL_GMPZ_OBJECT_OPERATOR(operator-=,Gmpz,mpz_sub);
+  CGAL_GMPZ_OBJECT_OPERATOR(operator*=,Gmpz,mpz_mul);
+  CGAL_GMPZ_OBJECT_OPERATOR(operator/=,Gmpz,mpz_tdiv_q);
+  CGAL_GMPZ_OBJECT_OPERATOR(operator%=,Gmpz,mpz_tdiv_r); 
+  CGAL_GMPZ_OBJECT_OPERATOR(operator&=,Gmpz,mpz_and);
+  CGAL_GMPZ_OBJECT_OPERATOR(operator|=,Gmpz,mpz_ior);
+  CGAL_GMPZ_OBJECT_OPERATOR(operator^=,Gmpz,mpz_xor);  
+#undef CGAL_GMPZ_OBJECT_OPERATOR
+ 
+  bool operator<(const Gmpz &b) const 
+  { return mpz_cmp(this->mpz(), b.mpz()) < 0; }
+  bool operator==(const Gmpz &b) const 
+  { return mpz_cmp(this->mpz(), b.mpz()) == 0; }
+
+
+  Gmpz operator+() const {return Gmpz( mpz() );}
+  Gmpz operator-() const {  
+    Gmpz Res;
+    mpz_neg(Res.mpz(), mpz());
+    return Res;
+  }
+
   Gmpz& operator <<= (const unsigned long& i){
     Gmpz Res;
     mpz_mul_2exp(Res.mpz(),this->mpz(), i);
@@ -158,105 +169,58 @@ public:
     swap(Res);
     return *this; 
   }
-  
-  Gmpz& operator &= (const Gmpz b){
-    Gmpz Res;
-    mpz_and(Res.mpz(),this->mpz(),b.mpz());
-    swap(Res);
-    return *this; 
-  }
-  
-  Gmpz& operator |= (const Gmpz b){
-    Gmpz Res;
-    mpz_ior(Res.mpz(),this->mpz(),b.mpz());
-    swap(Res);
-    return *this;
-  }
-  
-  Gmpz& operator ^= (const Gmpz b){
-    Gmpz Res;
-    mpz_xor(Res.mpz(),this->mpz(),b.mpz());
-    swap(Res);
-    return *this;
-  }
-  
+   
   Gmpz& operator++(){return *this+=1;}
   Gmpz& operator--(){return *this-=1;}
+
+
+  // interoperability with int 
+  Gmpz& operator+=(int i);
+  Gmpz& operator-=(int i);
+  Gmpz& operator*=(int i);
+  Gmpz& operator/=(int i);
+  bool  operator==(int i) const {return mpz_cmp_si(this->mpz(), i) == 0;}; 
+  bool  operator< (int i) const {return mpz_cmp_si(this->mpz(), i) < 0;}; 
+  bool  operator> (int i) const {return mpz_cmp_si(this->mpz(), i) > 0;}; 
+
+  // interoperability with long 
+  Gmpz& operator+=(long i);
+  Gmpz& operator-=(long i);
+  Gmpz& operator*=(long i);
+  Gmpz& operator/=(long i);
+  bool  operator==(long i) const {return mpz_cmp_si(this->mpz(), i) == 0;}; 
+  bool  operator< (long i) const {return mpz_cmp_si(this->mpz(), i) < 0;}; 
+  bool  operator> (long i) const {return mpz_cmp_si(this->mpz(), i) > 0;}; 
+
+  // interoperability with unsigned long 
+  Gmpz& operator+=(unsigned long i);
+  Gmpz& operator-=(unsigned long i);
+  Gmpz& operator*=(unsigned long i);
+  Gmpz& operator/=(unsigned long i);
+  bool  operator==(unsigned long i) const {return mpz_cmp_ui(this->mpz(), i) == 0;}; 
+  bool  operator< (unsigned long i) const {return mpz_cmp_ui(this->mpz(), i) < 0;}; 
+  bool  operator> (unsigned long i) const {return mpz_cmp_ui(this->mpz(), i) > 0;}; 
 };
 
 
-inline
-bool
-operator<(const Gmpz &a, const Gmpz &b)
-{ return mpz_cmp(a.mpz(), b.mpz()) < 0; }
 
-inline
-bool
-operator==(const Gmpz &a, const Gmpz &b)
-{ return mpz_cmp(a.mpz(), b.mpz()) == 0; }
-
-
-// mixed operators.
-inline
-bool
-operator<(const Gmpz &a, int b)
-{ return mpz_cmp_si(a.mpz(), b) < 0; }
-
-inline
-bool
-operator==(const Gmpz &a, int b)
-{ return mpz_cmp_si(a.mpz(), b) == 0; }
-
-inline
-bool
-operator>(const Gmpz &a, int b)
-{ return mpz_cmp_si(a.mpz(), b) > 0; }
-
-
-inline
-Gmpz
-Gmpz::operator+() const {
-  return Gmpz( mpz() );
-}
-
-inline
-Gmpz
-Gmpz::operator-() const
-{
-    Gmpz Res;
-    mpz_neg(Res.mpz(), mpz());
-    return Res;
-}
-
-
-#define CGAL_GMPZ_OBJECT_OPERATOR(_op,_class,_fun)  \
-  inline Gmpz& Gmpz::_op(const _class& z) {         \
+#define CGAL_GMPZ_SCALAR_OPERATOR(_op,_type,_fun)   \
+  inline Gmpz& Gmpz::_op(_type z) {                 \
     Gmpz Res;                                       \
-    _fun(Res.mpz(), mpz(), z.mpz());                \
+    _fun(Res.mpz(), mpz(), z);                      \
     swap(Res);                                      \
     return *this;                                   \
   }
 
-CGAL_GMPZ_OBJECT_OPERATOR(operator+=,Gmpz,mpz_add);
-CGAL_GMPZ_OBJECT_OPERATOR(operator-=,Gmpz,mpz_sub);
-CGAL_GMPZ_OBJECT_OPERATOR(operator*=,Gmpz,mpz_mul);
-CGAL_GMPZ_OBJECT_OPERATOR(operator/=,Gmpz,mpz_tdiv_q);
-#undef CGAL_GMPZ_OBJECT_OPERATOR 
+CGAL_GMPZ_SCALAR_OPERATOR(operator*=,int,mpz_mul_si);
+CGAL_GMPZ_SCALAR_OPERATOR(operator*=,long,mpz_mul_si);
 
+CGAL_GMPZ_SCALAR_OPERATOR(operator+=,unsigned long,mpz_add_ui);
+CGAL_GMPZ_SCALAR_OPERATOR(operator-=,unsigned long,mpz_sub_ui);
+CGAL_GMPZ_SCALAR_OPERATOR(operator*=,unsigned long,mpz_mul_ui);
+CGAL_GMPZ_SCALAR_OPERATOR(operator/=,unsigned long,mpz_tdiv_q_ui);
+#undef CGAL_GMPZ_SCALAR_OPERATOR
 
-inline Gmpz& Gmpz::operator*=(int z) {            
-  Gmpz Res;                                         
-  mpz_mul_si(Res.mpz(), mpz(), z);                  
-  swap(Res);                                        
-  return *this;                                     
-}
-
-inline Gmpz& Gmpz::operator*=(long z) {            
-  Gmpz Res;                                         
-  mpz_mul_si(Res.mpz(), mpz(), z);                  
-  swap(Res);                                        
-  return *this;                                     
-}
 
 inline Gmpz& Gmpz::operator+=(int i)
 {
@@ -279,6 +243,7 @@ inline Gmpz& Gmpz::operator+=(long i)
   swap(Res);
   return *this;
 }
+
 
 
 inline Gmpz& Gmpz::operator-=(int  i){return *this+=-i;}
@@ -305,26 +270,6 @@ inline Gmpz& Gmpz::operator/=(long b) {
 }
 
 
-inline
-Gmpz&
-Gmpz::operator%=(const Gmpz &z)
-{
-    Gmpz Res;
-    mpz_tdiv_r(Res.mpz(), mpz(), z.mpz());
-    swap(Res);
-    return *this;
-}
-
-
-inline
-double
-Gmpz::to_double() const
-{ return mpz_get_d(mpz()); }
-
-inline
-Sign
-Gmpz::sign() const
-{ return static_cast<Sign>(mpz_sgn(mpz())); }
 
 inline
 size_t
