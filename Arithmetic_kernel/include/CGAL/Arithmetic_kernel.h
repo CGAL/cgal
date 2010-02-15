@@ -56,7 +56,7 @@ typedef GMP_arithmetic_kernel Arithmetic_kernel;
 #endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
 #ifndef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
-#if defined(CGAL_HAS_LEDA_ARITHMETIC_KERNEL) 
+#if defined(CGAL_HAS_CORE_ARITHMETIC_KERNEL) 
 typedef CORE_arithmetic_kernel Arithmetic_kernel;
 #define CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL 1
 #endif // CGAL_USE_CORE
