@@ -64,10 +64,11 @@ class Gmpz
   : Handle_for<Gmpz_rep>,
     boost::ordered_euclidian_ring_operators1< Gmpz
   , boost::ordered_euclidian_ring_operators2< Gmpz, int 
+  , boost::ordered_euclidian_ring_operators2< Gmpz, long 
   , boost::shiftable< Gmpz , long 
   , boost::unit_steppable<Gmpz 
   , boost::bitwise<Gmpz
-> > > > > 
+> > > > > >
 {
   typedef Handle_for<Gmpz_rep> Base;
 public:
@@ -109,17 +110,21 @@ public:
 
   Gmpz& operator+=(const Gmpz &z);
   Gmpz& operator+=(int i);
+  Gmpz& operator+=(long i);
 
   Gmpz& operator-=(const Gmpz &z);
   Gmpz& operator-=(int i);
+  Gmpz& operator-=(long i);
 
   Gmpz& operator*=(const Gmpz &z);
   Gmpz& operator*=(int i);
+  Gmpz& operator*=(long i);
 
   Gmpz& operator%=(const Gmpz &z);
 
   Gmpz& operator/=(const Gmpz &z);
   Gmpz& operator/=(int i);
+  Gmpz& operator/=(long i);
 
   size_t approximate_decimal_length() const;
 
@@ -224,96 +229,81 @@ Gmpz::operator-() const
 }
 
 
-inline
-Gmpz&
-Gmpz::operator+=(const Gmpz &z)
-{
-    Gmpz Res;
-    mpz_add(Res.mpz(), mpz(), z.mpz());
-    swap(Res);
-    return *this;
+#define CGAL_GMPZ_OBJECT_OPERATOR(_op,_class,_fun)  \
+  inline Gmpz& Gmpz::_op(const _class& z) {         \
+    Gmpz Res;                                       \
+    _fun(Res.mpz(), mpz(), z.mpz());                \
+    swap(Res);                                      \
+    return *this;                                   \
+  }
+
+CGAL_GMPZ_OBJECT_OPERATOR(operator+=,Gmpz,mpz_add);
+CGAL_GMPZ_OBJECT_OPERATOR(operator-=,Gmpz,mpz_sub);
+CGAL_GMPZ_OBJECT_OPERATOR(operator*=,Gmpz,mpz_mul);
+CGAL_GMPZ_OBJECT_OPERATOR(operator/=,Gmpz,mpz_tdiv_q);
+#undef CGAL_GMPZ_OBJECT_OPERATOR 
+
+
+inline Gmpz& Gmpz::operator*=(int z) {            
+  Gmpz Res;                                         
+  mpz_mul_si(Res.mpz(), mpz(), z);                  
+  swap(Res);                                        
+  return *this;                                     
 }
 
-inline
-Gmpz&
-Gmpz::operator+=(int i)
-{
-    Gmpz Res;
-    if (i >= 0)
-        mpz_add_ui(Res.mpz(), mpz(), i);
-    else
-        mpz_sub_ui(Res.mpz(), mpz(), -i);
-    swap(Res);
-    return *this;
+inline Gmpz& Gmpz::operator*=(long z) {            
+  Gmpz Res;                                         
+  mpz_mul_si(Res.mpz(), mpz(), z);                  
+  swap(Res);                                        
+  return *this;                                     
 }
 
-inline
-Gmpz&
-Gmpz::operator-=(const Gmpz &z)
+inline Gmpz& Gmpz::operator+=(int i)
 {
-    Gmpz Res;
-    mpz_sub(Res.mpz(), mpz(), z.mpz());
-    swap(Res);
-    return *this;
+  Gmpz Res;
+  if (i >= 0)
+    mpz_add_ui(Res.mpz(), mpz(), i);
+  else
+    mpz_sub_ui(Res.mpz(), mpz(), -i);
+  swap(Res);
+  return *this;
 }
 
-inline
-Gmpz&
-Gmpz::operator-=(int i)
+inline Gmpz& Gmpz::operator+=(long i)
 {
-    Gmpz Res;
-    if (i >= 0)
-        mpz_sub_ui(Res.mpz(), mpz(), i);
-    else
-        mpz_add_ui(Res.mpz(), mpz(), -i);
-    swap(Res);
-    return *this;
+  Gmpz Res;
+  if (i >= 0)
+    mpz_add_ui(Res.mpz(), mpz(), i);
+  else
+    mpz_sub_ui(Res.mpz(), mpz(), -i);
+  swap(Res);
+  return *this;
 }
 
-inline
-Gmpz&
-Gmpz::operator*=(const Gmpz &z)
-{
+
+inline Gmpz& Gmpz::operator-=(int  i){return *this+=-i;}
+inline Gmpz& Gmpz::operator-=(long i){return *this+=-i;}
+
+inline Gmpz& Gmpz::operator/=(int b) {
+  if (b>0) {
     Gmpz Res;
-    mpz_mul(Res.mpz(), mpz(), z.mpz());
+    mpz_tdiv_q_ui(Res.mpz(), mpz(), b);
     swap(Res);
     return *this;
+  }
+  return *this /= Gmpz(b);
 }
 
-inline
-Gmpz&
-Gmpz::operator*=(int i)
-{
+inline Gmpz& Gmpz::operator/=(long b) {
+  if (b>0) {
     Gmpz Res;
-    mpz_mul_si(Res.mpz(), mpz(), i);
+    mpz_tdiv_q_ui(Res.mpz(), mpz(), b);
     swap(Res);
     return *this;
+  }
+  return *this /= Gmpz(b);
 }
 
-inline
-Gmpz&
-Gmpz::operator/=(const Gmpz &z)
-{
-    CGAL_precondition(z != 0);
-    Gmpz Res;
-    mpz_tdiv_q(Res.mpz(), mpz(), z.mpz());
-    swap(Res);
-    return *this;
-}
-
-inline
-Gmpz&
-Gmpz::operator/=(int b)
-{
-    if (b>0)
-    {
-        Gmpz Res;
-        mpz_tdiv_q_ui(Res.mpz(), mpz(), b);
-        swap(Res);
-        return *this;
-    }
-    return *this /= Gmpz(b);
-}
 
 inline
 Gmpz&
