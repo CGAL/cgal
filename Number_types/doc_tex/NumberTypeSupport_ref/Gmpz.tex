@@ -40,8 +40,8 @@ based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 \ccMethod{Gmpz & operator--();}{prefix decrement.}\ccGlue
 \ccMethod{Gmpz   operator--(int);}{postfix decrement.}
 
-\ccFunction{Gmpz operator>>(const Gmpz& a, long i);}{rightshift by i, where $i>=0$.}\ccGlue
-\ccFunction{Gmpz operator<<(const Gmpz& a, long i);}{leftshift by i, where $i>=0$.}\ccGlue
+\ccFunction{Gmpz operator>>(const Gmpz& a, unsigned long i);}{rightshift by $i$.}\ccGlue
+\ccFunction{Gmpz operator<<(const Gmpz& a, unsigned long i);}{leftshift by $i$.}\ccGlue
 \ccMethod{Gmpz & operator>>=(const long& i);}{rightshift by i, where $i>=0$.}\ccGlue
 \ccMethod{Gmpz & operator<<=(const long& i);}{leftshift by i, where $i>=0$.}
 
