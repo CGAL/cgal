@@ -61,8 +61,10 @@ private:
 class Gmpq
   : Handle_for<Gmpq_rep>,
     boost::ordered_field_operators1< Gmpq
+  , boost::ordered_field_operators2< Gmpq, Gmpz
   , boost::ordered_field_operators2< Gmpq, int
-    > >
+  , boost::ordered_field_operators2< Gmpq, long
+    > > > >
 {
   typedef Handle_for<Gmpq_rep> Base;
 public:
@@ -159,10 +161,13 @@ public:
   Gmpq operator+() const;
   Gmpq operator-() const;
 
-  Gmpq& operator+=(const Gmpq &z);
-  Gmpq& operator-=(const Gmpq &z);
-  Gmpq& operator*=(const Gmpq &z);
-  Gmpq& operator/=(const Gmpq &z);
+  Gmpq& operator+=(const Gmpq &q);
+  Gmpq& operator-=(const Gmpq &q);
+  Gmpq& operator*=(const Gmpq &q);
+  Gmpq& operator/=(const Gmpq &q);
+
+  bool operator==(const Gmpq &q) const { return mpq_equal(this->mpq(), q.mpq()) != 0;}
+  bool operator< (const Gmpq &q) const { return mpq_cmp(this->mpq(), q.mpq()) < 0; }
 
   double to_double() const;
   Sign sign() const;
@@ -175,35 +180,34 @@ public:
      CGAL_HISTOGRAM_PROFILER("[Gmpq sizes in log2 scale]",
                              (unsigned) ( ::log(double(size())) / ::log(double(2)) )  );
   }
+  
+  // Interoperability with int
+  Gmpq& operator+=(int z){return (*this)+= Gmpq(z);}
+  Gmpq& operator-=(int z){return (*this)-= Gmpq(z);}
+  Gmpq& operator*=(int z){return (*this)*= Gmpq(z);}
+  Gmpq& operator/=(int z){return (*this)/= Gmpq(z);}
+  bool  operator==(int z) const {return (*this)== Gmpq(z);}
+  bool  operator< (int z) const {return (*this)<  Gmpq(z);}  
+  bool  operator> (int z) const {return (*this)>  Gmpq(z);}  
+
+  // Interoperability with long
+  Gmpq& operator+=(long z){return (*this)+= Gmpq(z);}
+  Gmpq& operator-=(long z){return (*this)-= Gmpq(z);}
+  Gmpq& operator*=(long z){return (*this)*= Gmpq(z);}
+  Gmpq& operator/=(long z){return (*this)/= Gmpq(z);}
+  bool  operator==(long z) const {return (*this)== Gmpq(z);}
+  bool  operator< (long z) const {return (*this)<  Gmpq(z);}
+  bool  operator> (long z) const {return (*this)>  Gmpq(z);}
+
+  // Interoperability with Gmpz
+  Gmpq& operator+=(const Gmpz &z){return (*this)+= Gmpq(z);}
+  Gmpq& operator-=(const Gmpz &z){return (*this)-= Gmpq(z);}
+  Gmpq& operator*=(const Gmpz &z){return (*this)*= Gmpq(z);}
+  Gmpq& operator/=(const Gmpz &z){return (*this)/= Gmpq(z);}
+  bool  operator==(const Gmpz &z) const {return (*this)== Gmpq(z);}
+  bool  operator< (const Gmpz &z) const {return (*this)<  Gmpq(z);}
+  bool  operator> (const Gmpz &z) const {return (*this)>  Gmpq(z);}
 };
-
-
-inline
-bool
-operator==(const Gmpq &a, const Gmpq &b)
-{ return mpq_equal(a.mpq(), b.mpq()) != 0; }
-
-inline
-bool
-operator<(const Gmpq &a, const Gmpq &b)
-{ return mpq_cmp(a.mpq(), b.mpq()) < 0; }
-
-
-// mixed operators.
-inline
-bool
-operator<(const Gmpq &a, int b)
-{ return mpq_cmp_si(a.mpq(), b, 1) < 0; }
-
-inline
-bool
-operator>(const Gmpq &a, int b)
-{ return mpq_cmp_si(a.mpq(), b, 1) > 0; }
-
-inline
-bool
-operator==(const Gmpq &a, int b)
-{ return mpq_cmp_si(a.mpq(), b, 1) == 0; }
 
 
 inline
