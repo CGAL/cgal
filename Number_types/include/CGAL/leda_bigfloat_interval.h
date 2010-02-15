@@ -44,6 +44,7 @@
 #include <CGAL/leda_bigfloat.h>
 #include <CGAL/Interval_traits.h>
 #include <CGAL/Bigfloat_interval_traits.h>
+#include <CGAL/ipower.h>
 
 CGAL_BEGIN_NAMESPACE
 namespace internal {
@@ -439,23 +440,27 @@ public:
 //             //CGAL_postcondition(lower_m.length() == upper_m.length());
 //             leda::integer err = upper_m - lower_m; 
 //             std::cout <<"LEDA: " << lower_m << " " << err << " " << std::endl; 
-//             return lower_m.length()-err.length();
+//             return CGAL::abs(lower_m.length()-err.length());
 //         }
 //     };
 
-  struct Get_significant_bits: public std::unary_function<NT,long>{
-    long operator()( NT x) const {
+    
+  struct Relative_precision: public std::unary_function<NT,long>{
+    long operator()(const NT& x) const {
+      CGAL_precondition(!Singleton()(x));
+      CGAL_precondition(!CGAL::zero_in(x));
+
       leda::bigfloat w = Width()(x);
       w = leda::div(w,Lower()(x),Get_precision()(),leda::TO_P_INF); 
       return -leda::ilog2(w).to_long();
     }
   };
   
-    struct Set_precision : public std::unary_function<long,long> {
-        long operator()( long prec ) const {
-            return BF::set_precision(prec); 
-        }
-    };
+  struct Set_precision : public std::unary_function<long,long> {
+    long operator()( long prec ) const {
+      return BF::set_precision(prec); 
+    }
+  };
      
     struct Get_precision {
         // type for the \c AdaptableGenerator concept.

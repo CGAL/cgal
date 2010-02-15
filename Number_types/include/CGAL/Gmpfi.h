@@ -147,6 +147,7 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfi,CGAL::Tag_true>{
                         (const Type &x,const Type &y)const{
                                 return x.compare(y);
                         };
+          CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,Comparison_result)
         };
 
         struct To_double:
@@ -291,13 +292,12 @@ public:
   typedef Bigfloat_interval_traits<Gmpfi> Self; 
   typedef CGAL::Tag_true                  Is_bigfloat_interval; 
   
-  struct Get_significant_bits: public std::unary_function<NT,long>{
+  struct Relative_precision: public std::unary_function<NT,long>{
 
-    long operator()( NT x) const {
+    long operator()(const NT& x) const {
       CGAL_precondition(!Singleton()(x));
-      CGAL_precondition(x.inf() <= x.sup());
-      if(CGAL::zero_in(x)) return -1;
-
+      CGAL_precondition(!CGAL::zero_in(x));
+      
       // w = |x| * 2^-p (return p)
       BF w(CGAL::width(x));
       mpfr_div(w.fr(), w.fr(), CGAL::lower(CGAL::abs(x)).fr(), GMP_RNDU);
@@ -305,7 +305,7 @@ public:
       return -mpfr_get_si(w.fr(), GMP_RNDU);
     }
   };
-  
+   
   struct Set_precision {
     // type for the \c AdaptableUnaryFunction concept.
     typedef long  argument_type;

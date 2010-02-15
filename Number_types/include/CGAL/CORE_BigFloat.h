@@ -138,14 +138,14 @@ public:
    
     struct Hull :public std::binary_function<Interval,Interval,Interval>{
 
-/* for debugging
-        void print_bf(CORE::BigFloat bf, std::string s) const {
-
-            std::cout << s << ".m()=" << bf.m() << ","
-                      << s << ".err()=" << bf.err() << ","
-                      << s << ".exp()=" << bf.exp() << ","
-                      << "td=" << bf << std::endl;
-        }
+      // for debugging
+/*      void print_bf(CORE::BigFloat bf, std::string s) const {
+        
+        std::cout << s << ".m()=" << bf.m() << ","
+                  << s << ".err()=" << bf.err() << ","
+                  << s << ".exp()=" << bf.exp() << ","
+                  << "td=" << bf << std::endl;
+      }
 */
 
         Interval operator() ( Interval x, Interval y ) const {
@@ -246,7 +246,7 @@ public:
 // ########### Bigfloat_interval_traits 
 
 
-template<typename BFI> long get_significant_bits(BFI bfi);
+// template<typename BFI> long get_significant_bits(BFI bfi);
 
 CORE::BigFloat 
 inline 
@@ -255,7 +255,7 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
 
     // since there is not rel prec defined if Zero_in(x)
     if (x.isZeroIn()) return x; 
-    if (CGAL::get_significant_bits(x) <= rel_prec) return x;
+    // if (CGAL::get_significant_bits(x) <= rel_prec) return x;
    
 // if 1 
 //    CORE::BigFloat xr;
@@ -271,7 +271,7 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
     long         err = x.err();
     long         exp = x.exp(); 
    
-    long shift = ::CORE::bitLength(m) - rel_prec - 1;
+    long shift = ::CORE::bitLength(m) - rel_prec - 2;
     if( shift > 0 ){    Integer new_m   = m >> shift ; 
         if(err == 0){        xr = BF(new_m,1,0)*BF::exp2(exp*14+shift);
         }else{        xr = BF(new_m,2,0)*BF::exp2(exp*14+shift);
@@ -280,9 +280,8 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
         xr = x; 
     }
 // endif     
-
-    CGAL_postcondition(CGAL::get_significant_bits(xr) - rel_prec >= 0); 
-    CGAL_postcondition(CGAL::get_significant_bits(xr) - rel_prec <= 32);   
+    CGAL_postcondition(singleton(xr) || CGAL::relative_precision(xr) - rel_prec >= 0); 
+    CGAL_postcondition(singleton(xr) || CGAL::relative_precision(xr) - rel_prec <= 32);   
     CGAL_postcondition(BF(xr.m()-xr.err(),0,xr.exp()) <= BF(x.m()-x.err(),0,x.exp()));
     CGAL_postcondition(BF(xr.m()+xr.err(),0,xr.exp()) >= BF(x.m()+x.err(),0,x.exp()));
     return xr;     
@@ -297,20 +296,35 @@ template<> class Bigfloat_interval_traits<CORE::BigFloat>
 public:
   typedef Bigfloat_interval_traits<NT> Self;
   
-    // How about retuning 
-    struct Get_significant_bits {
+//     struct Get_significant_bits {
+//         // type for the \c AdaptableUnaryFunction concept.
+//         typedef NT  argument_type;
+//         // type for the \c AdaptableUnaryFunction concept.
+//         typedef long  result_type;
+//         long operator()( NT x) const {  
+//           if(x.err() == 0 ) {
+//             return ::CORE::bitLength(x.m());
+//           }
+//           else {
+//             return ::CORE::bitLength(x.m()) - ::CORE::bitLength(x.err());
+//           }
+//         }
+//     };
+  
+   struct Relative_precision {
         // type for the \c AdaptableUnaryFunction concept.
         typedef NT  argument_type;
         // type for the \c AdaptableUnaryFunction concept.
         typedef long  result_type;
 
-        long operator()( NT x) const {  
-          if(x.err() == 0 ) {
-            return ::CORE::bitLength(x.m());
-          }
-          else {
-            return ::CORE::bitLength(x.m()) - ::CORE::bitLength(x.err());
-          }
+        long operator()( NT x) const { 
+          CGAL_precondition(!Singleton()(x));
+          CGAL_precondition(!CGAL::zero_in(x));
+          
+          NT w = Width()(x);
+          w /= ::CORE::BigFloat(x.m()-x.err(),0,x.exp()); 
+          w = w.abs();
+          return -(CORE::ceilLg(w.m()+w.err())+w.exp()*14);
         }
     };
        
