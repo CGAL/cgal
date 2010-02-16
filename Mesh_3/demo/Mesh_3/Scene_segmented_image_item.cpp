@@ -5,6 +5,7 @@
 #include <CGAL/gl.h>
 #include <CGAL/ImageIO.h>
 
+
 namespace {
   
   unsigned char image_data(const Image& im,
@@ -23,9 +24,11 @@ Scene_segmented_image_item::Scene_segmented_image_item(Image* im)
   , m_initialized(false)
   , m_draw_edges(true)
 {
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   ::glGenBuffers(3,m_vbo);
   ::glGenBuffers(1,&m_ibo);
-  
+#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+
   initialize_buffers();
 }
 
@@ -95,6 +98,8 @@ Scene_segmented_image_item::supportsRenderingMode(RenderingMode m) const
 void
 Scene_segmented_image_item::initialize_buffers() 
 {
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+
   const unsigned int& xdim = m_image->xdim();
   const unsigned int& ydim = m_image->ydim();
   const unsigned int& zdim = m_image->zdim();
@@ -290,7 +295,9 @@ Scene_segmented_image_item::initialize_buffers()
   delete normals_array;
   delete colors_array;
   delete indices_array;
-  
+
+#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+
   m_initialized = true;
 }
 
@@ -298,6 +305,7 @@ Scene_segmented_image_item::initialize_buffers()
 void
 Scene_segmented_image_item::draw_gl() const
 {
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   ::glShadeModel(GL_SMOOTH);
   
   // Draw faces
@@ -325,12 +333,14 @@ Scene_segmented_image_item::draw_gl() const
   ::glDisableClientState( GL_COLOR_ARRAY );
   ::glDisableClientState( GL_NORMAL_ARRAY );
   ::glDisableClientState( GL_VERTEX_ARRAY );
+#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 }
 
 
 void
 Scene_segmented_image_item::draw_gl_edges() const
 {
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   // Ensure edges are drawn in black
   ::glColor3f( 0.f, 0.f, 0.f );
   
@@ -350,18 +360,23 @@ Scene_segmented_image_item::draw_gl_edges() const
   ::glBindBuffer(GL_ARRAY_BUFFER, 0);
   ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-  ::glDisableClientState( GL_VERTEX_ARRAY );  
+  ::glDisableClientState( GL_VERTEX_ARRAY ); 
+#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 }
 
 
 GLint
 Scene_segmented_image_item::ibo_size() const
 {
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   GLint nb_elts = 0;
   ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
   ::glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &nb_elts);
 
   return nb_elts/sizeof(GLuint);
+#else // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+  return 0;
+#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 }
 
 
