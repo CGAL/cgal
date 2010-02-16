@@ -40,6 +40,7 @@ public slots:
   void open(QString filename);
 
   void selectSceneItem(int i);
+  void selectSceneItem();
 
   void setAddKeyFrameKeyboardModifiers(Qt::KeyboardModifiers);
 
@@ -53,6 +54,7 @@ public slots:
 protected slots:
   void selectionChanged();
   void updateInfo();
+  void updateDisplayInfo();
   void removeManipulatedFrame(Scene_item*);
 
   // settings

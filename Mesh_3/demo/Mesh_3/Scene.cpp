@@ -30,6 +30,8 @@ Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
   entries.push_back(item);
+  connect(this, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
+          item, SLOT(itemAboutToBeDestroyed(Scene_item*)));
 
   emit updated_bbox();
   emit updated();

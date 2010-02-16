@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget* parent)
   // Save some pointers from ui, for latter use.
   treeView = ui->treeView;
   viewer = ui->viewer;
+  viewer->setFPSIsDisplayed(true);
 
   // Setup the submenu of the View menu that can toggle the dockwidgets
   Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
@@ -75,12 +76,18 @@ MainWindow::MainWindow(QWidget* parent)
   // setup connections
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateInfo()));
+  
+  connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
+          this, SLOT(updateDisplayInfo()));
 
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           viewer, SLOT(updateGL()));
 
   connect(scene, SIGNAL(updated()),
           viewer, SLOT(update()));
+  
+  connect(scene, SIGNAL(selectionChanged()),
+          this, SLOT(selectSceneItem()));
 
   connect(scene, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
           this, SLOT(removeManipulatedFrame(Scene_item*)));
@@ -91,6 +98,10 @@ MainWindow::MainWindow(QWidget* parent)
   connect(treeView->selectionModel(), 
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateInfo()));
+  
+  connect(treeView->selectionModel(), 
+          SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
+          this, SLOT(updateDisplayInfo()));
 
   connect(treeView->selectionModel(), 
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
@@ -339,6 +350,12 @@ void MainWindow::selectSceneItem(int i)
                                      QItemSelectionModel::ClearAndSelect);
 }
 
+void
+MainWindow::selectSceneItem()
+{
+  selectSceneItem(scene->mainSelectionIndex());
+}
+
 int MainWindow::getSelectedSceneItemIndex() const
 {
   QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
@@ -354,8 +371,10 @@ void MainWindow::selectionChanged()
   Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item != NULL && item->manipulatable()) {
     viewer->setManipulatedFrame(item->manipulatedFrame());
-    connect(viewer->manipulatedFrame(), SIGNAL(modified()),
-            this, SLOT(updateInfo()));
+//    connect(viewer->manipulatedFrame(), SIGNAL(modified()),
+//            this, SLOT(updateInfo()));
+//    connect(viewer->manipulatedFrame(), SIGNAL(modified()),
+//            this, SLOT(updateDisplayInfo()));
   }
   
   viewer->updateGL();
@@ -375,6 +394,14 @@ void MainWindow::updateInfo() {
     ui->infoLabel->setText(item->toolTip());
   else 
     ui->infoLabel->clear();
+}
+
+void MainWindow::updateDisplayInfo() {
+  Scene_item* item = scene->item(getSelectedSceneItemIndex());
+  if(item)
+    ui->displayLabel->setPixmap(item->graphicalToolTip());
+  else 
+    ui->displayLabel->clear();
 }
 
 void MainWindow::readSettings()

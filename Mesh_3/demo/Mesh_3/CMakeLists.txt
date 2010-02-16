@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the CGAL Mesh_3 demo.
 
-project( Mesh_3 )
+project( Mesh_3_demo )
 
 cmake_minimum_required(VERSION 2.4.5)
 
@@ -14,22 +14,22 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 # Use packages improved since CGAL 3.4
-foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_kernel Profiling_tools Mesh_3 Triangulation_3 )
-  foreach(CGAL_SVN_TRUNK ../../../ ../../trunk ..)
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
-      include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
-      break()
-    endif()
-  endforeach()
-endforeach()
+#foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_kernel Profiling_tools Mesh_3 Triangulation_3 )
+#  foreach(CGAL_SVN_TRUNK ../../../ ../../trunk ..)
+#    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
+#      include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
+#      break()
+#    endif()
+#  endforeach()
+#endforeach()
 
-include_directories(../../../Polyhedron/demo/Polyhedron)
-link_directories(../../../Polyhedron/demo/Polyhedron)
+#include_directories(../../../Polyhedron/demo/Polyhedron)
+#link_directories(../../../Polyhedron/demo/Polyhedron)
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
 
-include_directories(BEFORE ../../../../candidate-packages/Mesh_3/include/)
+#include_directories(BEFORE ../../../../candidate-packages/Mesh_3/include/)
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4 ImageIO)
@@ -51,14 +51,14 @@ if(QT4_FOUND)
   find_package(QGLViewer )
 endif(QT4_FOUND)
 
-# Find LAPACK (optional), for curvatures estimation
-find_package(LAPACK)
 
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
   qt4_wrap_ui( UI_FILES MainWindow.ui )
+  qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui)
+  qt4_wrap_ui( optimUI_FILES  Smoother_dialog.ui LocalOptim_dialog.ui)
 
   include(AddFileDependencies)
 
@@ -73,18 +73,37 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   qt4_add_resources ( RESOURCE_FILES Mesh_3.qrc )
 
+  qt4_automoc( Scene_item.cpp )
+  qt4_automoc( Scene_polyhedron_item.cpp )
+  qt4_automoc( Scene_polygon_soup.cpp )
   qt4_automoc( Scene_segmented_image_item.cpp )
   qt4_automoc( Scene_c3t3_item.cpp )
 
+  # put plugins (which are shared libraries) at the same location as
+  # executable files
+  set(LIBRARY_OUTPUT_PATH ${RUNTIME_OUTPUT_PATH})
+
   # AUXILIARY LIBRARIES
+  add_library(scene_item SHARED
+    Scene_item.cpp Scene_item.moc
+    Scene_item_with_display_list.cpp
+    Polyhedron_demo_plugin_helper.cpp)
+
   add_library(scene_segmented_image_item SHARED
     Scene_segmented_image_item.cpp Scene_segmented_image_item.moc)
   target_link_libraries(scene_segmented_image_item scene_item)
 
+  add_library(scene_polyhedron_item SHARED
+    Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
+  target_link_libraries(scene_polyhedron_item scene_item)
+
+  add_library(polygon_soup SHARED
+    Scene_polygon_soup.cpp Scene_polygon_soup.moc)
+  target_link_libraries(polygon_soup scene_item)
+
   add_library(scene_c3t3_item SHARED
     Scene_c3t3_item.cpp Scene_c3t3_item.moc)
   target_link_libraries(scene_c3t3_item scene_item ${QGLVIEWER_LIBRARIES} )
-#    target_link_libraries( Mesh_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
 
   add_definitions(-DUSE_FORWARD_DECL)
@@ -108,7 +127,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Mesh_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
-  # Link with the scene_item library.
+#  # Link with the scene_item library.
 #  target_link_libraries( Mesh_3 scene_item )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Mesh_3 )
@@ -144,9 +163,17 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(image_loader_plugin Mesh_3_image_loader_plugin)
   target_link_libraries(image_loader_plugin scene_segmented_image_item)
 
+  polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
+  target_link_libraries(off_plugin scene_polyhedron_item polygon_soup)
+
   polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
-    Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Scene_c3t3_item.moc)
+    Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Mesh_3_demo_mesh_plugin_image_cgal_code.cpp Scene_c3t3_item.moc ${meshingUI_FILES})
   target_link_libraries(mesh_3_plugin scene_c3t3_item scene_polyhedron_item scene_segmented_image_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+
+  polyhedron_demo_plugin(mesh_3_optimization_plugin Mesh_3_demo_optimization_plugin 
+    Mesh_3_demo_optimization_plugin_cgal_code.cpp Scene_c3t3_item.moc ${optimUI_FILES})
+  target_link_libraries(mesh_3_optimization_plugin scene_c3t3_item scene_polyhedron_item scene_segmented_image_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 

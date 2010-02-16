@@ -89,9 +89,10 @@ public slots:
   void itemChanged(Item_id i); 
   void itemChanged(Scene_item*);
 
-  void setSelectedItem(Item_id i )
+  virtual void setSelectedItem(Item_id i)
   {
     selected_item = i;
+    emit selectionChanged();
   };
 
   // Accessors (setters)
@@ -103,6 +104,7 @@ signals:
   void updated_bbox();
   void updated();
   void itemAboutToBeDestroyed(Scene_item*);
+  void selectionChanged();
 
 private:
   void draw_aux(bool with_names);

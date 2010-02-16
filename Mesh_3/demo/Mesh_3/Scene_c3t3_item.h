@@ -9,7 +9,7 @@
 #include <QColor>
 #include <map>
 
-#include <Qt/qglobal.h>
+#include <QtCore/qglobal.h>
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
@@ -27,7 +27,8 @@ public:
   ~Scene_c3t3_item();
 
   const C3t3& c3t3() const;
-
+  C3t3& c3t3();
+  
   bool manipulatable() const {
     return true;
   }
@@ -58,6 +59,7 @@ public:
   }
 
   QString toolTip() const;
+  virtual QPixmap graphicalToolTip() const;
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
@@ -66,12 +68,63 @@ public:
 
   void direct_draw() const;
   void direct_draw_edges() const;
+  
+  // data item
+  inline const Scene_item* data_item() const;
+  inline void set_data_item(const Scene_item* data_item);
+  
+  // rebuild histogram
+  inline void update_histogram();
 
+public slots:
+  inline void data_item_destroyed();
+  
+private:
+  void build_histogram();
+  
 protected:
   void direct_draw(int) const;
   Scene_c3t3_item_priv* d;
 
   qglviewer::ManipulatedFrame* frame;
+  
+private:
+  QPixmap histogram_;
+  const Scene_item* data_item_;
 };
+
+inline
+const Scene_item*
+Scene_c3t3_item::data_item() const
+{
+  return data_item_;
+}
+
+inline
+void
+Scene_c3t3_item::set_data_item(const Scene_item* data_item)
+{
+  data_item_ = data_item;
+  
+  if ( NULL != data_item )
+  {
+    connect(data_item, SIGNAL(aboutToBeDestroyed()),
+            this, SLOT(data_item_destroyed()));
+  }
+}
+
+inline
+void
+Scene_c3t3_item::update_histogram()
+{
+  build_histogram();
+}
+
+inline
+void
+Scene_c3t3_item::data_item_destroyed()
+{
+  set_data_item(NULL);
+}
 
 #endif // SCENE_C3T3_ITEM_H

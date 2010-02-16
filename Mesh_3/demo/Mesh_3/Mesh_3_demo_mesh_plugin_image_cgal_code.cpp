@@ -3,7 +3,7 @@
 #include "Scene_c3t3_item.h"
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Labeled_image_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 
 #include <fstream>
@@ -18,7 +18,7 @@ typedef Mesh_criteria::Cell_criteria Cell_criteria;
 
 typedef Tr::Point Point_3;
 
-Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron* pMesh,
+Scene_c3t3_item* cgal_code_mesh_3(const Image* pImage,
                                   const QString filename,
                                   const double angle,
                                   const double sizing,
@@ -30,7 +30,7 @@ Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron* pMesh,
                                   const bool perturb,
                                   const bool exude)
 {
-  if(!pMesh) return 0;
+  if(!pImage) return 0;
 
   // remesh
 
@@ -38,21 +38,19 @@ Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron* pMesh,
 
   // Set mesh criteria
   Facet_criteria facet_criteria(angle, sizing, approx); // angle, size, approximation
-  Cell_criteria cell_criteria(4, tets_sizing); // radius-edge ratio, size
+  Cell_criteria cell_criteria(tet_shape, tets_sizing); // radius-edge ratio, size
   Mesh_criteria criteria(facet_criteria, cell_criteria);
+
+  Image_mesh_domain domain(*pImage);
 
   CGAL::Timer timer;
   timer.start();
   std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
-  std::cerr << "  angle: " << angle << std::endl
+  std::cerr << "  facet angle: " << angle << std::endl
             << "  facets size bound: " << sizing << std::endl
             << "  approximation bound: " << approx << std::endl
-            << "  tetrahedra size bound: " << tets_sizing << std::endl;
-  std::cerr << "Build AABB tree...";
-  // Create domain
-  Mesh_domain domain(*pMesh);
-  std::cerr << "done (" << timer.time() << " s)" << std::endl;
-
+            << "  tetrahedra size bound: " << tets_sizing << std::endl
+            << "  tetrahedra radius-edge: " << tet_shape << std::endl;
   // Meshing
   std::cerr << "Mesh...";
   
@@ -65,10 +63,11 @@ Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   cgpi::Exude_options exude_obj = exude ? cgp::exude() : cgp::no_exude();
   
   Scene_c3t3_item* new_item =
-  new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                              lloyd_obj, odt_obj, perturb_obj, exude_obj));
+    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                                lloyd_obj, odt_obj, perturb_obj, exude_obj));
 
-  std::cerr << "done (" << timer.time() << " s, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
+  std::cerr << "done (" << timer.time() << " s, " 
+            << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
 
   if(new_item->c3t3().triangulation().number_of_vertices() > 0)
   {
