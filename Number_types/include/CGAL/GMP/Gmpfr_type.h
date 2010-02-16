@@ -863,22 +863,24 @@ std::pair<std::pair<double,double>,long> Gmpfr::to_interval_exp()const{
 inline
 std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
 
-  if(this->is_zero()) 
+  if(this->is_zero())
     return std::make_pair(Gmpz(0),long(0));
-  
+
   Gmpz z;
   long e=mpfr_get_z_exp(z.mpz(),this->fr());
-  
+
   long zeros = mpz_scan1(z.mpz(),0);
   z >>= zeros;
   e +=  zeros;
-  
+
   CGAL_postcondition(z % 2 != 0);
+  CGAL_postcondition_code(Gmpfr::Precision_type m=std::max)
+  CGAL_postcondition_code(  (mpz_sizeinbase(z.mpz(),2),(size_t)MPFR_PREC_MIN);)
   CGAL_postcondition_code(if (e >= 0))
-    CGAL_postcondition( (*this) == (Gmpfr(z)) * CGAL::ipower(Gmpfr(2), e));
+    CGAL_postcondition( (*this) == (Gmpfr(z,m) * CGAL::ipower(Gmpfr(2),e)) );
   CGAL_postcondition_code(else)
-    CGAL_postcondition( (*this) == (Gmpfr(z)) / CGAL::ipower(Gmpfr(2),-e));
-  
+    CGAL_postcondition( (*this) == (Gmpfr(z,m) / CGAL::ipower(Gmpfr(2),-e)) );
+
   return std::make_pair(z,e);
 }
 
@@ -1165,7 +1167,7 @@ Gmpfr max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpfr& x,const Gmpfr& y){
         return (x>=y)?x:y;
 }
 
-} // namespace CGAL 
+} // namespace CGAL
 
 //#endif  // version check
 #endif  // CGAL_GMPFR_TYPE_H
