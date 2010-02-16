@@ -43,13 +43,13 @@ private:
   
 #define CGAL_MESH_BOOLEAN_PARAMETER(Class, function_true, function_false)     \
   struct Class : public Base<bool> { Class(bool b) : Base<bool>(b){} };       \
-  Class function_true() { return Class(true); }                               \
-  Class function_false() { return Class(false); }
+  inline Class function_true() { return Class(true); }                        \
+  inline Class function_false() { return Class(false); }
 
 #define CGAL_MESH_DOUBLE_PARAMETER(Class, function, precondition)             \
   struct Class : public Base<double>                                          \
   { Class(double d) : Base<double>(d) { precondition(d); } };                 \
-  Class function(double d) { return Class(d); }                               
+  inline Class function(double d) { return Class(d); }
 
 BOOST_PARAMETER_NAME( c3t3 )
 BOOST_PARAMETER_NAME( domain )

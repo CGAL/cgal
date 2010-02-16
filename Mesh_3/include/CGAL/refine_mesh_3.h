@@ -165,7 +165,7 @@ namespace parameters {
     return options;
   }
   
-  internal::Perturb_options no_perturb() { return internal::Perturb_options(false); }
+  inline internal::Perturb_options no_perturb() { return internal::Perturb_options(false); }
   
   // -----------------------------------
   // Exude
@@ -184,7 +184,7 @@ namespace parameters {
     return options;
   }
   
-  internal::Exude_options no_exude() { return internal::Exude_options(false); }
+  inline internal::Exude_options no_exude() { return internal::Exude_options(false); }
   
   // -----------------------------------
   // Odt
@@ -205,7 +205,7 @@ namespace parameters {
     return options;
   }
   
-  internal::Odt_options no_odt() { return internal::Odt_options(false); }
+  inline internal::Odt_options no_odt() { return internal::Odt_options(false); }
   
   // -----------------------------------
   // Lloyd
@@ -226,7 +226,7 @@ namespace parameters {
     return options;
   }
   
-  internal::Lloyd_options no_lloyd() { return internal::Lloyd_options(false); }
+  inline internal::Lloyd_options no_lloyd() { return internal::Lloyd_options(false); }
   
   
   // -----------------------------------
@@ -340,7 +340,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
   // Perturbation
   if ( perturb )
   {
-    double perturb_time_limit = refine_time/2;
+    double perturb_time_limit = refine_time;
     
     if ( perturb.is_time_limit_set() )
       perturb_time_limit = perturb.time_limit();
@@ -354,7 +354,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
   // Exudation
   if ( exude )
   {
-    double exude_time_limit = refine_time/2;
+    double exude_time_limit = refine_time;
     
     if ( exude.is_time_limit_set() )
       exude_time_limit = exude.time_limit();
