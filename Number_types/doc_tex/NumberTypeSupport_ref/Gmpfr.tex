@@ -77,6 +77,10 @@ This type is \ccc{ImplicitInteroperable} with \ccc{Gmpz}, \ccc{Gmpq},
 \ccConstructor{Gmpfr(const Gmpzf &z);}
         {Creates a MPFR number, initialized with the value of \ccc{z}.}
 
+\ccConstructor{Gmpfr(std::pair<Gmpz,long> ie);}
+        {Creates a MPFR number, initialized with the value of
+        \( ie.first \times 2^{ie.second} \) .}
+
 Note that all constructors can be called with two optional parameters.
 One can specify as second parameter the rounding mode desired for
 the conversion from the source number and as a third parameter the
@@ -342,6 +346,7 @@ compared numbers is \ccc{NaN}, the \ccc{erange} flag is set.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ccHeading{Input/Output}
 
+% TODO: add precision to i/o
 \ccFunction{std::istream& operator>>(std::istream& in, Gmpfr& f);}
         {Reads a floating-point number from \ccc{in}. The number
         \(M \times 2^E\) must be in the form \(MeE\), where the mantissa

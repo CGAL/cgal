@@ -16,16 +16,8 @@
 // 
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
-// TODO:
-//      - add constructor from (integer,exponent)
-//      - move version check to main cmake script (when moving to the trunk)
-
 #ifndef CGAL_GMPFR_TYPE_H
 #define CGAL_GMPFR_TYPE_H
-
-//#if( ( ! defined(MPFR_VERSION) ) || ( MPFR_VERSION<MPFR_VERSION_NUM(2,2,0) ) )
-//#error "Gmpfr requires MPFR 2.2.0 or newer"
-//#else
 
 #include <gmp.h>
 #include <mpfr.h>
@@ -213,6 +205,26 @@ class Gmpfr:
                 mpfr_mul_2si(fr(),
                              fr(),
                              f.exp(),
+                             mpfr_get_default_rounding_mode());
+        }
+
+        Gmpfr(std::pair<Gmpz,long> intexp,
+              std::float_round_style r=Gmpfr::get_default_rndmode(),
+              Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
+                mpfr_init2(fr(),p);
+                mpfr_set_z(fr(),intexp.first.mpz(),_gmp_rnd(r));
+                mpfr_mul_2si(fr(),fr(),intexp.second,_gmp_rnd(r));
+        }
+
+        Gmpfr(std::pair<Gmpz,long> intexp,
+              Gmpfr::Precision_type p){
+                mpfr_init2(fr(),p);
+                mpfr_set_z(fr(),
+                           intexp.first.mpz(),
+                           mpfr_get_default_rounding_mode());
+                mpfr_mul_2si(fr(),
+                             fr(),
+                             intexp.second,
                              mpfr_get_default_rounding_mode());
         }
 
@@ -1169,7 +1181,6 @@ Gmpfr max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpfr& x,const Gmpfr& y){
 
 } // namespace CGAL
 
-//#endif  // version check
 #endif  // CGAL_GMPFR_TYPE_H
 
 // vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab
