@@ -24,7 +24,8 @@ void treat_new_item(Scene_c3t3_item& new_item, const bool create_new_item);
 template <typename Function>
 Scene_c3t3_item* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
                                         const Function& f,
-                                        const bool create_new_item)
+                                        const bool create_new_item,
+                                        CGAL::Mesh_optimization_return_code& return_code)
 {
   // Create result item
   Scene_c3t3_item* p_result_item = create_new_item ? 
@@ -55,7 +56,7 @@ Scene_c3t3_item* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     Image_mesh_domain domain(*p_image);
     
     // Launch
-    f(p_result_item, domain);
+    return_code = f(p_result_item, domain);
     
     // Treat new item and exit
     treat_new_item(*p_result_item, create_new_item);
@@ -79,7 +80,7 @@ Scene_c3t3_item* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     Mesh_domain domain(*p_poly);
     
     // Launch
-    f(p_result_item, domain);
+    return_code = f(p_result_item, domain);
     
     // Treat new item and exit
     treat_new_item(*p_result_item, create_new_item);
@@ -102,16 +103,16 @@ struct Odt_function
   int max_iteration_nb;
   
   template <typename Domain>
-  void 
+  CGAL::Mesh_optimization_return_code 
   operator()(Scene_c3t3_item* p_item, const Domain& domain) const
   {
-    // Perturbation
-    CGAL::odt_optimize_mesh_3(p_item->c3t3(),
-                              domain,
-                              cgp::time_limit = time_limit,
-                              cgp::convergence = convergence_ratio,
-                              cgp::freeze_bound = freeze_ratio,
-                              cgp::max_iteration_number = max_iteration_nb);
+    // Odt
+    return CGAL::odt_optimize_mesh_3(p_item->c3t3(),
+                                     domain,
+                                     cgp::time_limit = time_limit,
+                                     cgp::convergence = convergence_ratio,
+                                     cgp::freeze_bound = freeze_ratio,
+                                     cgp::max_iteration_number = max_iteration_nb);
   }
 };
 
@@ -122,7 +123,8 @@ cgal_code_odt_mesh_3(Scene_c3t3_item& c3t3_item,
                      const double convergence_ratio,
                      const double freeze_ratio,
                      const int max_iteration_number,
-                     const bool create_new_item = true)
+                     const bool create_new_item,
+                     CGAL::Mesh_optimization_return_code& return_code)
 {
   Odt_function f;
   f.time_limit = time_limit;
@@ -130,7 +132,7 @@ cgal_code_odt_mesh_3(Scene_c3t3_item& c3t3_item,
   f.freeze_ratio = freeze_ratio;
   f.max_iteration_nb = max_iteration_number;
   
-  return cgal_code_optimization(c3t3_item, f, create_new_item);
+  return cgal_code_optimization(c3t3_item, f, create_new_item, return_code);
 }
 
 
@@ -146,16 +148,16 @@ struct Lloyd_function
   int max_iteration_nb;
   
   template <typename Domain>
-  void 
+  CGAL::Mesh_optimization_return_code  
   operator()(Scene_c3t3_item* p_item, const Domain& domain) const
   {
-    // Perturbation
-    CGAL::lloyd_optimize_mesh_3(p_item->c3t3(),
-                                domain,
-                                cgp::time_limit = time_limit,
-                                cgp::convergence = convergence_ratio,
-                                cgp::freeze_bound = freeze_ratio,
-                                cgp::max_iteration_number = max_iteration_nb);
+    // Lloyd
+    return CGAL::lloyd_optimize_mesh_3(p_item->c3t3(),
+                                       domain,
+                                       cgp::time_limit = time_limit,
+                                       cgp::convergence = convergence_ratio,
+                                       cgp::freeze_bound = freeze_ratio,
+                                       cgp::max_iteration_number = max_iteration_nb);
   }
 };
 
@@ -166,7 +168,8 @@ cgal_code_lloyd_mesh_3(Scene_c3t3_item& c3t3_item,
                        const double convergence_ratio,
                        const double freeze_ratio,
                        const int max_iteration_number,
-                       const bool create_new_item = true)
+                       const bool create_new_item,
+                       CGAL::Mesh_optimization_return_code& return_code)
 {
   Lloyd_function f;
   f.time_limit = time_limit;
@@ -174,7 +177,7 @@ cgal_code_lloyd_mesh_3(Scene_c3t3_item& c3t3_item,
   f.freeze_ratio = freeze_ratio;
   f.max_iteration_nb = max_iteration_number;
   
-  return cgal_code_optimization(c3t3_item, f, create_new_item);
+  return cgal_code_optimization(c3t3_item, f, create_new_item, return_code);
 }
 
 
@@ -188,14 +191,14 @@ struct Perturb_function
   double sliver_bound;
   
   template <typename Domain>
-  void 
+  CGAL::Mesh_optimization_return_code  
   operator()(Scene_c3t3_item* p_item, const Domain& domain) const
   {
     // Perturbation
-    CGAL::perturb_mesh_3(p_item->c3t3(),
-                         domain,
-                         cgp::sliver_bound = sliver_bound,
-                         cgp::time_limit = time_limit);
+    return CGAL::perturb_mesh_3(p_item->c3t3(),
+                                domain,
+                                cgp::sliver_bound = sliver_bound,
+                                cgp::time_limit = time_limit);
   }
 };
 
@@ -204,13 +207,14 @@ Scene_c3t3_item*
 cgal_code_perturb_mesh_3(Scene_c3t3_item& c3t3_item,
                          const double time_limit,
                          const double sliver_bound,
-                         const bool create_new_item = true)
+                         const bool create_new_item,
+                         CGAL::Mesh_optimization_return_code& return_code)
 {
   Perturb_function f;
   f.sliver_bound = sliver_bound;
   f.time_limit = time_limit;
   
-  return cgal_code_optimization(c3t3_item, f, create_new_item);
+  return cgal_code_optimization(c3t3_item, f, create_new_item, return_code);
 }
 
 
@@ -221,7 +225,8 @@ Scene_c3t3_item*
 cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
                        const double time_limit,
                        const double sliver_bound,
-                       const bool create_new_item = true)
+                       const bool create_new_item,
+                       CGAL::Mesh_optimization_return_code& return_code)
 {
   // Create result item
   Scene_c3t3_item* p_result_item = create_new_item ? 
@@ -233,9 +238,9 @@ cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
   }
   
   // Exudation
-  CGAL::exude_mesh_3(p_result_item->c3t3(),
-                     cgp::sliver_bound = sliver_bound,
-                     cgp::time_limit = time_limit);
+  return_code = CGAL::exude_mesh_3(p_result_item->c3t3(),
+                                   cgp::sliver_bound = sliver_bound,
+                                   cgp::time_limit = time_limit);
   
   // Treat result and exit
   treat_new_item(*p_result_item, create_new_item);

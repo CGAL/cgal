@@ -2,6 +2,7 @@
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
+#include "Messages_interface.h"
 #include "ui_Meshing_dialog.h"
 
 #include <QObject>
@@ -12,12 +13,14 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QFileDialog>
+#include <QTimer>
 
 #include "Scene_polyhedron_item.h"
 #include "Scene_segmented_image_item.h"
 #include "Scene_c3t3_item.h"
 #include "Image_type.h"
 
+#include <iostream>
 #include <fstream>
 #include <math.h>
 
@@ -56,7 +59,9 @@ class Polyhedron_demo_mesh_3_plugin :
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface);
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface)
+  virtual void init(QMainWindow* mainWindow, 
+                    Scene_interface* scene_interface,
+                    Messages_interface* msg_interface)
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
@@ -65,9 +70,11 @@ public:
     {
       connect(actionMesh_3, SIGNAL(triggered()), this, SLOT(mesh_3()));
     }
+    
+    this->msg = msg_interface;
   }
 
-  QList<QAction*> actions() const
+  virtual QList<QAction*> actions() const
   {
     return QList<QAction*>() << actionMesh_3;
   }
@@ -76,6 +83,8 @@ public slots:
 
 private:
   QAction* actionMesh_3;
+  Messages_interface* msg;
+  
 }; // end class Polyhedron_demo_mesh_3_plugin
 
 void Polyhedron_demo_mesh_3_plugin::mesh_3()
@@ -121,24 +130,24 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                                .arg(bbox.height(),0,'g',3)
                                .arg(bbox.depth(),0,'g',3) );
     
-    double diag = scene->len_diagonal();
+    double diag = bbox.diagonal_length();
     int decimals = 0;
     double sizing_default = get_approximate(diag * 0.05, 2, decimals);
     ui.facetSizing->setDecimals(-decimals+2);
-    ui.facetSizing->setSingleStep(std::pow(10,decimals));
+    ui.facetSizing->setSingleStep(std::pow(10.,decimals));
     ui.facetSizing->setRange(diag * 10e-6, // min
                              diag); // max
     ui.facetSizing->setValue(sizing_default); // default value
     
     ui.tetSizing->setDecimals(-decimals+2);
-    ui.tetSizing->setSingleStep(std::pow(10,decimals));
+    ui.tetSizing->setSingleStep(std::pow(10.,decimals));
     ui.tetSizing->setRange(diag * 10e-6, // min
                            diag); // max
     ui.tetSizing->setValue(sizing_default); // default value
     
     double approx_default = get_approximate(diag * 0.005, 2, decimals);
     ui.approx->setDecimals(-decimals+2);
-    ui.approx->setSingleStep(std::pow(10,decimals));
+    ui.approx->setSingleStep(std::pow(10.,decimals));
     ui.approx->setRange(diag * 10e-7, // min
                         diag); // max
     ui.approx->setValue(approx_default);
@@ -170,7 +179,9 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
     }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
+    QTime timer;
+    timer.start();
+    
     Scene_c3t3_item* result_item = 0;
     if(poly_item) {
       Polyhedron* pMesh = poly_item->polyhedron();
@@ -202,6 +213,16 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                                      lloyd, odt, perturb, exude);
     }
     
+    std::stringstream sstr;
+    sstr << "Meshing file \"" << qPrintable(item->name()) << "\" done in "
+         << timer.elapsed()/1000. << "s<br>"
+         << "( facet angle: " << angle << " )<br>"
+         << "( facets size bound: " << facet_sizing << " )<br>"
+         << "( approximation bound: " << approx << " )<br>"
+         << "( tetrahedra size bound: " << tet_sizing << " )<br>"
+         << "( tetrahedra radius-edge: " << radius_edge << " )<br>";
+    msg->information(sstr.str().c_str());
+    
     if (result_item)
     {
       result_item->setName(tr("%1 3d mesh(%2 %3 %4)")
@@ -229,13 +250,13 @@ get_approximate(double d, int precision, int& decimals)
 {
   if ( d<0 ) { return 0; }
   
-  double i = std::pow(10,precision-1);
+  double i = std::pow(10.,precision-1);
   
   decimals = 0;
-  while ( d > i*10 ) { d = d/10; ++decimals; }
-  while ( d < i ) { d = d*10; --decimals; }
+  while ( d > i*10 ) { d = d/10.; ++decimals; }
+  while ( d < i ) { d = d*10.; --decimals; }
   
-  return std::floor(d)*std::pow(10,decimals);;
+  return std::floor(d)*std::pow(10.,decimals);;
 }
 
 

@@ -2,6 +2,7 @@
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
+#include "Messages_interface.h"
 #include "ui_Smoother_dialog.h"
 #include "ui_LocalOptim_dialog.h"
 
@@ -16,9 +17,12 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QTimer>
 
+#include <iostream>
 #include <fstream>
 
+#include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/optimize_mesh_3.h> // to get default values
 
 
@@ -28,25 +32,30 @@ Scene_c3t3_item* cgal_code_odt_mesh_3(Scene_c3t3_item& c3t3_item,
                                       const double convergence_ratio,
                                       const double freeze_ratio,
                                       const int max_iteration_number,
-                                      const bool create_new_item);
+                                      const bool create_new_item,
+                                      CGAL::Mesh_optimization_return_code& return_code);
 
 Scene_c3t3_item* cgal_code_lloyd_mesh_3(Scene_c3t3_item& c3t3_item,
                                         const double time_limit,
                                         const double convergence_ratio,
                                         const double freeze_ratio,
                                         const int max_iteration_number,
-                                        const bool create_new_item);
+                                        const bool create_new_item,
+                                        CGAL::Mesh_optimization_return_code& return_code);
 
 Scene_c3t3_item* cgal_code_perturb_mesh_3(Scene_c3t3_item& c3t3_item,
                                           const double time_limit,
                                           const double sliver_bound,
-                                          const bool create_new_item);
+                                          const bool create_new_item,
+                                          CGAL::Mesh_optimization_return_code& return_code);
 
 Scene_c3t3_item* cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
                                         const double time_limit,
                                         const double sliver_bound,
-                                        const bool create_new_item);
+                                        const bool create_new_item,
+                                        CGAL::Mesh_optimization_return_code& return_code);
 
+std::string translate(CGAL::Mesh_optimization_return_code rc);
 
 // Mesh_3_demo_optimization_plugin class
 class Mesh_3_demo_optimization_plugin : 
@@ -56,8 +65,8 @@ class Mesh_3_demo_optimization_plugin :
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface);
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
-  inline QList<QAction*> actions() const;
+  virtual void init(QMainWindow*, Scene_interface*, Messages_interface*);
+  inline virtual QList<QAction*> actions() const;
   
 public slots:
   void odt();
@@ -74,12 +83,15 @@ private:
   QAction* actionLloyd;
   QAction* actionPerturb;
   QAction* actionExude;
+  Messages_interface* msg;
 }; // end class Mesh_3_demo_optimization_plugin
 
 
 void 
 Mesh_3_demo_optimization_plugin::
-init(QMainWindow* mainWindow, Scene_interface* scene_interface)
+init(QMainWindow* mainWindow,
+     Scene_interface* scene_interface,
+     Messages_interface* msg_interface)
 {
   this->scene = scene_interface;
   this->mw = mainWindow;
@@ -108,6 +120,8 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface)
   {
     connect(actionExude, SIGNAL(triggered()), this, SLOT(exude()));
   }
+  
+  msg = msg_interface;
 }
 
 
@@ -175,19 +189,33 @@ Mesh_3_demo_optimization_plugin::odt()
   // Launch optimization
   // -----------------------------------
   QApplication::setOverrideCursor(Qt::WaitCursor);
-
+  QTime timer;
+  timer.start();
+  
+  CGAL::Mesh_optimization_return_code return_code;
   Scene_c3t3_item* result_item = cgal_code_odt_mesh_3(*item,
                                                       max_time,
                                                       convergence,
                                                       freeze,
                                                       max_iteration_nb,
-                                                      create_new_item);
+                                                      create_new_item,
+                                                      return_code);
   
   if ( NULL == result_item )
   {
     QApplication::restoreOverrideCursor();
     return;
   }
+  
+  std::stringstream sstr;
+  sstr << "Odt-smoothing of \"" << qPrintable(item->name()) << "\" done in "
+       << timer.elapsed()/1000. << "s<br>"
+       << "End reason: '" << translate(return_code) << "'<br>"
+       << "( max time: " << max_time << " )<br>"
+       << "( convergence: " << convergence << " )<br>"
+       << "( freeze bound: " << freeze << " )<br>"
+       << "( max iteration number: " << max_iteration_nb << " )<br>";
+  msg->information(sstr.str().c_str());
     
   // -----------------------------------
   // Treat result
@@ -254,19 +282,33 @@ Mesh_3_demo_optimization_plugin::lloyd()
   // Launch optimization
   // -----------------------------------
   QApplication::setOverrideCursor(Qt::WaitCursor);
+  QTime timer;
+  timer.start();
   
+  CGAL::Mesh_optimization_return_code return_code;
   Scene_c3t3_item* result_item = cgal_code_lloyd_mesh_3(*item,
                                                         max_time,
                                                         convergence,
                                                         freeze,
                                                         max_iteration_nb,
-                                                        create_new_item);
+                                                        create_new_item,
+                                                        return_code);
   
   if ( NULL == result_item )
   {
     QApplication::restoreOverrideCursor();
     return;
   }
+  
+  std::stringstream sstr;
+  sstr << "Lloyd-smoothing of \"" << qPrintable(item->name()) << "\" done in "
+       << timer.elapsed()/1000. << "s<br>"
+       << "End reason: '" << translate(return_code) << "'<br>"
+       << "( max time: " << max_time << " )<br>"
+       << "( convergence: " << convergence << " )<br>"
+       << "( freeze bound: " << freeze << " )<br>"
+       << "( max iteration number: " << max_iteration_nb << " )<br>";
+  msg->information(sstr.str().c_str());
   
   // -----------------------------------
   // Treat result
@@ -327,11 +369,15 @@ Mesh_3_demo_optimization_plugin::perturb()
   // Launch optimization
   // -----------------------------------
   QApplication::setOverrideCursor(Qt::WaitCursor);
+  QTime timer;
+  timer.start();
   
+  CGAL::Mesh_optimization_return_code return_code;
   Scene_c3t3_item* result_item = cgal_code_perturb_mesh_3(*item,
                                                           max_time,
                                                           sliver_bound,
-                                                          create_new_item);
+                                                          create_new_item,
+                                                          return_code);
   
 
   if ( NULL == result_item )
@@ -339,6 +385,14 @@ Mesh_3_demo_optimization_plugin::perturb()
     QApplication::restoreOverrideCursor();
     return;
   }
+  
+  std::stringstream sstr;
+  sstr << "Perturbation of \"" << qPrintable(item->name()) << "\" done in "
+       << timer.elapsed()/1000. << "s<br>"
+       << "End reason: '" << translate(return_code) << "'<br>"
+       << "( max time: " << max_time << " )<br>"
+       << "( sliver bound: " << sliver_bound << " )<br>";
+  msg->information(sstr.str().c_str());
   
   // -----------------------------------
   // Treat result
@@ -393,17 +447,29 @@ Mesh_3_demo_optimization_plugin::exude()
   // Launch optimization
   // -----------------------------------
   QApplication::setOverrideCursor(Qt::WaitCursor);
+  QTime timer;
+  timer.start();
   
+  CGAL::Mesh_optimization_return_code return_code;
   Scene_c3t3_item* result_item = cgal_code_exude_mesh_3(*item,
                                                         max_time,
                                                         sliver_bound,
-                                                        create_new_item);
+                                                        create_new_item,
+                                                        return_code);
 
   if ( NULL == result_item )
   {
     QApplication::restoreOverrideCursor();
     return;
   }
+
+  std::stringstream sstr;
+  sstr << "Exudation of \"" << qPrintable(item->name()) << "\" done in "
+       << timer.elapsed()/1000. << "s<br>"
+       << "End reason: '" << translate(return_code) << "'<br>"
+       << "( max time: " << max_time << " )<br>"
+       << "( sliver bound: " << sliver_bound << " )<br>";
+  msg->information(sstr.str().c_str());
   
   // -----------------------------------
   // Treat result
@@ -445,6 +511,21 @@ treat_result(Scene_c3t3_item& source_item,
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     scene->itemChanged(index);
   }
+}
+
+std::string
+translate(CGAL::Mesh_optimization_return_code rc)
+{
+  switch (rc)
+  {
+    case CGAL::BOUND_REACHED: return std::string("Bound reached");
+    case CGAL::TIME_LIMIT_REACHED: return std::string("Time limit reached");
+    case CGAL::CANT_IMPROVE_ANYMORE: return std::string("Can't improve anymore");
+    case CGAL::CONVERGENCE_REACHED: return std::string("Convergence reached");
+    case CGAL::MAX_ITERATION_NUMBER_REACHED: return std::string("Max iteration number reached");
+  }
+  
+  return std::string("ERROR");
 }
 
 

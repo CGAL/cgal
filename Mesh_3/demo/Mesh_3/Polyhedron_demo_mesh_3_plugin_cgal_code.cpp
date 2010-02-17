@@ -47,13 +47,15 @@ Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   std::cerr << "  angle: " << angle << std::endl
             << "  facets size bound: " << sizing << std::endl
             << "  approximation bound: " << approx << std::endl
-            << "  tetrahedra size bound: " << tets_sizing << std::endl;
+            << "  tetrahedra size bound: " << tets_sizing << std::endl
+            << "  tetrahedron radius-edge: " << tet_shape << std::endl;
   std::cerr << "Build AABB tree...";
   // Create domain
   Mesh_domain domain(*pMesh);
   std::cerr << "done (" << timer.time() << " s)" << std::endl;
 
   // Meshing
+  timer.stop();timer.reset();timer.start();
   std::cerr << "Mesh...";
   
   namespace cgp = CGAL::parameters;
@@ -64,11 +66,12 @@ Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   cgpi::Perturb_options perturb_obj = perturb ? cgp::perturb() : cgp::no_perturb();
   cgpi::Exude_options exude_obj = exude ? cgp::exude() : cgp::no_exude();
   
-  Scene_c3t3_item* new_item =
-  new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                              lloyd_obj, odt_obj, perturb_obj, exude_obj));
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                      lloyd_obj, odt_obj, perturb_obj, exude_obj);
+  
+  std::cerr << "done (" << timer.time() << " s, " << c3t3.triangulation().number_of_vertices() << " vertices)" << std::endl;  
+  Scene_c3t3_item* new_item = new Scene_c3t3_item(c3t3);
 
-  std::cerr << "done (" << timer.time() << " s, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
 
   if(new_item->c3t3().triangulation().number_of_vertices() > 0)
   {
