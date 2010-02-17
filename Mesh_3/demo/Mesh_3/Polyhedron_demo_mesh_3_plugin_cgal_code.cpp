@@ -23,7 +23,7 @@ Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron* pMesh,
                                   const double angle,
                                   const double sizing,
                                   const double approx,
-                                  const double tets_sizing,
+                                  const double tet_sizing,
                                   const double tet_shape,
                                   const bool lloyd,
                                   const bool odt,
@@ -38,7 +38,7 @@ Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron* pMesh,
 
   // Set mesh criteria
   Facet_criteria facet_criteria(angle, sizing, approx); // angle, size, approximation
-  Cell_criteria cell_criteria(4, tets_sizing); // radius-edge ratio, size
+  Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
   CGAL::Timer timer;
@@ -47,7 +47,7 @@ Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   std::cerr << "  angle: " << angle << std::endl
             << "  facets size bound: " << sizing << std::endl
             << "  approximation bound: " << approx << std::endl
-            << "  tetrahedra size bound: " << tets_sizing << std::endl
+            << "  tetrahedra size bound: " << tet_sizing << std::endl
             << "  tetrahedron radius-edge: " << tet_shape << std::endl;
   std::cerr << "Build AABB tree...";
   // Create domain
@@ -66,12 +66,11 @@ Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   cgpi::Perturb_options perturb_obj = perturb ? cgp::perturb() : cgp::no_perturb();
   cgpi::Exude_options exude_obj = exude ? cgp::exude() : cgp::no_exude();
   
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      lloyd_obj, odt_obj, perturb_obj, exude_obj);
+  Scene_c3t3_item* new_item = new Scene_c3t3_item(
+    CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd_obj, odt_obj, perturb_obj, exude_obj));
   
-  std::cerr << "done (" << timer.time() << " s, " << c3t3.triangulation().number_of_vertices() << " vertices)" << std::endl;  
-  Scene_c3t3_item* new_item = new Scene_c3t3_item(c3t3);
-
+  std::cerr << "done (" << timer.time() << " s, "
+            << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;  
 
   if(new_item->c3t3().triangulation().number_of_vertices() > 0)
   {
