@@ -7,7 +7,7 @@
 
 #include <QVector>
 #include <QColor>
-#include <map>
+#include <set>
 
 #include <QtCore/qglobal.h>
 #include <CGAL/gl.h>
@@ -78,9 +78,11 @@ public:
 
 public slots:
   inline void data_item_destroyed();
+  virtual void setColor(QColor c);
   
 private:
   void build_histogram();
+  void compute_color_map(double c);
   
 protected:
   void direct_draw(int) const;
@@ -91,6 +93,9 @@ protected:
 private:
   QPixmap histogram_;
   const Scene_item* data_item_;
+  
+  typedef std::set<int> Indices;
+  Indices indices_;
 };
 
 inline

@@ -64,32 +64,22 @@ struct Scene_c3t3_item_priv {
 
 Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   : d(new Scene_c3t3_item_priv(c3t3)), frame(new ManipulatedFrame())
-  , histogram_(), data_item_(NULL)
+  , histogram_(), data_item_(NULL), indices_()
 {
-  connect(frame, SIGNAL(modified()),
-          this, SLOT(changed()));
-  typedef std::set<int> Indices;
-  typedef Indices::size_type size_type;
-  Indices indices;
+  connect(frame, SIGNAL(modified()), this, SLOT(changed()));
+  
+  // Fill indices map and get max subdomain value
   int max = 0;
-  for(Tr::Finite_cells_iterator
-        cit = this->c3t3().triangulation().finite_cells_begin(),
-        end = this->c3t3().triangulation().finite_cells_end();
+  for(C3t3::Cell_iterator cit = this->c3t3().cells_begin(), end = this->c3t3().cells_end();
       cit != end; ++cit)
   {
     max = (std::max)(max, cit->subdomain_index());
-    indices.insert(cit->subdomain_index());
+    indices_.insert(cit->subdomain_index());
   }
+  
   d->colors.resize(max+1);
-  size_type nb_domains = indices.size();
-  size_type i = 0;
-  for(Indices::iterator
-        it = indices.begin(),
-        end = indices.end();
-      it != end; ++it, ++i) 
-  {
-    d->colors[*it] = QColor::fromHsvF( 1. / nb_domains * i, 1., 0.8);
-  }
+  
+  compute_color_map(0.);
 }
 
 Scene_c3t3_item::~Scene_c3t3_item()
@@ -438,5 +428,28 @@ create_histogram(const C3t3& c3t3, double& min_value, double& max_value)
 }
 
 
+void
+Scene_c3t3_item::setColor(QColor c)
+{
+  color_ = c;
+  compute_color_map(c.hsvHueF());
+}
+
+
+void
+Scene_c3t3_item::compute_color_map(double c)
+{
+  typedef Indices::size_type size_type;
+
+  size_type nb_domains = indices_.size();
+  size_type i = 0;
+  for(Indices::iterator it = indices_.begin(), end = indices_.end();
+      it != end; ++it, ++i)
+  {
+    double hue = c + 1./nb_domains * i;
+    if ( hue > 1 ) { hue -= 1.; }
+    d->colors[*it] = QColor::fromHsvF(hue, 1., 0.8);
+  }
+}
 
 #include "Scene_c3t3_item.moc"
