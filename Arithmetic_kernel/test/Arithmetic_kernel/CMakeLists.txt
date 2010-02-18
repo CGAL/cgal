@@ -21,19 +21,12 @@ if ( CGAL_FOUND )
   include( CGAL_VersionUtils )
   find_package( MPFI )
   IS_VERSION_LESS("${CGAL_GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TO_LOW)
-
   
   include_directories(../../include)
   include_directories(include)
-  include_directories($ENV{CGAL}/trunk/Number_types/include/)
-  include_directories($ENV{CGAL}/trunk/Algebraic_foundations/include/)
-  include_directories($ENV{CGAL}/trunk/Modular_arithmetic/include/)
-  include_directories($ENV{CGAL}/trunk/Polynomial/include/)
-  include_directories($ENV{CGAL}/trunk/Number_types/test/Number_types/include/)
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  create_single_source_cgal_program( "Arithmetic_kernel.cpp" )
   create_single_source_cgal_program( "CORE_arithmetic_kernel.cpp" )
   create_single_source_cgal_program( "LEDA_arithmetic_kernel.cpp" )
 
@@ -46,6 +39,7 @@ if ( CGAL_FOUND )
         "MPFI tests need GMP>=4.2, some of the tests will not be compiled" )
     else( _IS_GMP_VERSION_TO_LOW )
       include( ${MPFI_USE_FILE} )
+        create_single_source_cgal_program( "Arithmetic_kernel.cpp" )
         create_single_source_cgal_program( "GMP_arithmetic_kernel.cpp" )      
     endif( _IS_GMP_VERSION_TO_LOW )
   else( MPFI_FOUND )
