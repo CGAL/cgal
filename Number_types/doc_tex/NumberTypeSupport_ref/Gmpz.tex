@@ -3,8 +3,8 @@
 
 \ccDefinition
 
-An object of the class \ccStyle{Gmpz} is an arbitrary precision integer 
-based on the {\sc Gnu} Multiple Precision Arithmetic Library. 
+An object of the class \ccStyle{Gmpz} is an arbitrary precision integer
+based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 
 \ccInclude{CGAL/Gmpz.h}
 
@@ -53,6 +53,26 @@ based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 \ccMethod{Gmpz & operator|=(const Gmpz& b);}{bitwise IOR.}\ccGlue
 \ccMethod{Gmpz & operator^=(const Gmpz& b);}{bitwise XOR.}
 
+\ccMethod{Sign sign() const;}
+        {Returns the sign of \ccVar.}
+
+\ccMethod{size_t bit_size() const;}
+        {Returns the bit-size (that is, the number of bits needed to
+        represent the mantissa) of \ccVar.}
+
+\ccMethod{size_t size() const;}
+        {Returns the size in limbs of \ccVar. A limb is the type used by
+        {\sc Gmp} to represent the integer (usually \ccc{long}).}
+
+\ccMethod{size_t approximate_decimal_length() const;}
+        {Returns the approximate number of decimal digits needed to
+        represent \ccVar. Approximate means either a correct result, either
+        the correct result plus one.}
+
+\ccMethod{double to_double() const;}
+        {Returns a double approximation of \ccVar. The integer is truncated
+        if needed. If the exponent of the conversion is too big, the result
+        is system dependent (returning infinity where it is supported).}
 
 \ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpz& z);}
 {writes \ccc{z} to the ostream \ccc{out}.}\ccGlue
@@ -63,5 +83,5 @@ based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 \ccImplementation
 \ccc{Gmpz}s are reference counted.
 
-\end{ccRefClass} 
+\end{ccRefClass}
 \ccDefGlobalScope{CGAL::}

@@ -887,7 +887,7 @@ std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
 
   CGAL_postcondition(z % 2 != 0);
   CGAL_postcondition_code(Gmpfr::Precision_type m=std::max)
-  CGAL_postcondition_code(  (mpz_sizeinbase(z.mpz(),2),(size_t)MPFR_PREC_MIN);)
+  CGAL_postcondition_code(  (z.bit_size(),(size_t)MPFR_PREC_MIN);)
   CGAL_postcondition_code(if (e >= 0))
     CGAL_postcondition( (*this) == (Gmpfr(z,m) * CGAL::ipower(Gmpfr(2),e)) );
   CGAL_postcondition_code(else)
@@ -1014,13 +1014,13 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
         while((c=is.get())>='0'&&c<='9')
                 exp=10*exp+(c-'0');
         is.putback(c);
-        if(mpz_sizeinbase(exp.mpz(),2)>8*sizeof(mp_exp_t))
+        if(exp.bit_size()>8*sizeof(mp_exp_t))
                 mpfr_set_erangeflag();
 
         // we have now both exponent and mantissa
         f=Gmpfr(mant,
-                mpz_sizeinbase(mant.mpz(),2)>MPFR_PREC_MIN?
-                mpz_sizeinbase(mant.mpz(),2):
+                mant.bit_size()>MPFR_PREC_MIN?
+                mant.bit_size():
                 MPFR_PREC_MIN);
         mpfr_mul_2si(f.fr(),
                      f.fr(),
@@ -1030,7 +1030,7 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
         // this expensive assertion checks that we didn't lose bits when
         // multiplying or dividing by 2^exp
         CGAL_expensive_assertion_code( \
-                Gmpfr g(mpz_sizeinbase(mant.mpz(),2)); \
+                Gmpfr g(mant.bit_size()); \
                 mpfr_div_2si( \
                         g.fr(), \
                         f.fr, \
