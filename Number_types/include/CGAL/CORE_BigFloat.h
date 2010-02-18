@@ -246,7 +246,7 @@ public:
 // ########### Bigfloat_interval_traits 
 
 
-// template<typename BFI> long get_significant_bits(BFI bfi);
+// template<typename BFI> long relative_precision(BFI bfi);
 
 CORE::BigFloat 
 inline 
@@ -271,14 +271,36 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
     long         err = x.err();
     long         exp = x.exp(); 
    
-    long shift = ::CORE::bitLength(m) - rel_prec - 2;
-    if( shift > 0 ){    Integer new_m   = m >> shift ; 
-        if(err == 0){        xr = BF(new_m,1,0)*BF::exp2(exp*14+shift);
-        }else{        xr = BF(new_m,2,0)*BF::exp2(exp*14+shift);
-        }
+
+    std::cout <<"(" << m << "+-" <<err << ")*2^"<<(14*exp) << std::endl; 
+    if (err != 0) 
+      std::cout <<"current prec: " <<  CGAL::relative_precision(x) << std::endl;
+    else 
+      std::cout <<"current prec: " << " SINGLETON " << std::endl;
+    std::cout <<"desired prec: " << rel_prec << std::endl; 
+    
+//    long shift = ::CORE::bitLength(m) - rel_prec - 1;
+    long shift ;
+    if (err == 0)
+      shift = ::CORE::bitLength(m) - rel_prec - 2;
+    else      
+      shift = CGAL::relative_precision(x) - rel_prec -1; 
+    
+    if( shift > 0 ){    
+      m   >>= shift ; 
+      err >>= shift; 
+      xr = BF(m,err+1,0)*BF::exp2(exp*14+shift);     
     }else{    // noting to do
         xr = x; 
     }
+
+    std::cout <<"(" <<m << "+-" <<err+1 << ")*2^"<<(14*exp) << std::endl; 
+    if (xr.err() != 0) 
+      std::cout <<"current prec: " <<  CGAL::relative_precision(xr) << std::endl;
+    else 
+      std::cout <<"current prec: " << " SINGLETON "<< std::endl;
+    std::cout <<"desired prec: " << rel_prec << std::endl; 
+    
 // endif     
     CGAL_postcondition(singleton(xr) || CGAL::relative_precision(xr) - rel_prec >= 0); 
     CGAL_postcondition(singleton(xr) || CGAL::relative_precision(xr) - rel_prec <= 32);   
@@ -487,10 +509,10 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
                         
             double lb,ub;
            
-            Type x_lower = CGAL::lower(CGAL::round(CGAL::lower(x),52));
-            Type x_upper = CGAL::upper(CGAL::round(CGAL::upper(x),52));
+            Type x_lower = CGAL::lower(CGAL::round(CGAL::lower(x),51));
+            Type x_upper = CGAL::upper(CGAL::round(CGAL::upper(x),51));
             
-            // since matissa has 52 bits only, conversion to double is exact 
+            // since matissa has 51 bits only, conversion to double is exact 
             lb = x_lower.doubleValue();
             CGAL_postcondition(lb == x_lower);
             ub = x_upper.doubleValue();
