@@ -27,16 +27,15 @@ CGAL_BEGIN_NAMESPACE
 template <class Arrangement, class Transformation_3>
 class Arr_polyhedral_sgm_transformation
 {
-
 public:
 
-	typedef typename Arrangement::Face_handle   Face_handle;
+  typedef typename Arrangement::Face_handle   Face_handle;
 
-	void rotate_face(Face_handle f, const Transformation_3 & aff)
-	{			
-		//Transform all the vertices of the original polyhedron.
-		f->set_point(aff.transform(f->point()));
-	}
+  void rotate_face(Face_handle f, const Transformation_3 & aff)
+  {			
+    //Transform all the vertices of the original polyhedron.
+    f->set_point(aff.transform(f->point()));
+  }
 };
 
 CGAL_END_NAMESPACE
