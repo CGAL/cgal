@@ -6,6 +6,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/gen_polynomials.h> 
+#include <CGAL/Sqrt_extension.h> 
 
 //#define WITH_OUTPUT 1
 
