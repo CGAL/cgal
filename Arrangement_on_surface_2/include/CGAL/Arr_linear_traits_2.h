@@ -816,7 +816,7 @@ public:
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2,
-                                  const Point_2& CGAL_precondition_code(p) ) const
+                                  const Point_2& CGAL_precondition_code(p)) const
     {
       CGAL_precondition (! cv1.is_degenerate());
       CGAL_precondition (! cv2.is_degenerate());
@@ -826,8 +826,7 @@ public:
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
       CGAL_precondition_code (
-        typename Kernel::Compare_xy_2 compare_xy = 
-                                                  kernel.compare_xy_2_object();
+        typename Kernel::Compare_xy_2 compare_xy = kernel.compare_xy_2_object();
       );
 
       CGAL_precondition 
@@ -846,8 +845,7 @@ public:
       // Notice we use the supporting lines in order to compare the slopes,
       // and that we swap the order of the curves in order to obtain the
       // correct result to the left of p.
-      return (kernel.compare_slope_2_object()(cv2.supp_line(),
-                                              cv1.supp_line()));
+      return (kernel.compare_slope_2_object()(cv2.supp_line(), cv1.supp_line()));
     }
   };
 
@@ -876,7 +874,7 @@ public:
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2,
-                                  const Point_2& CGAL_precondition_code(p) ) const
+                                  const Point_2& CGAL_precondition_code(p)) const
     {
       CGAL_precondition (! cv1.is_degenerate());
       CGAL_precondition (! cv2.is_degenerate());
@@ -886,8 +884,7 @@ public:
       // Make sure that p lies on both curves, and that both are defined to its
       // right (so their right endpoint is lexicographically larger than p).
       CGAL_precondition_code (
-        typename Kernel::Compare_xy_2 compare_xy = 
-                                                 kernel.compare_xy_2_object();
+        typename Kernel::Compare_xy_2 compare_xy = kernel.compare_xy_2_object();
       );
 
       CGAL_precondition
@@ -922,7 +919,8 @@ public:
   {
   public:
     /*!
-     * Check whether the two x-monotone curves are the same (have the same graph).
+     * Check whether the two x-monotone curves are the same (have the same
+     * graph).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
@@ -937,8 +935,7 @@ public:
       typename Kernel::Equal_2  equal = kernel.equal_2_object();
 
       // Check that the two supporting lines are the same.
-      if (! equal (cv1.supp_line(),
-                   cv2.supp_line()) &&
+      if (! equal (cv1.supp_line(), cv2.supp_line()) &&
           ! equal (cv1.supp_line(), 
                    kernel.construct_opposite_line_2_object()(cv2.supp_line())))
       {
@@ -1246,8 +1243,7 @@ public:
       // Make sure that p lies on the interior of the curve.
       CGAL_precondition_code (
         Kernel                        kernel;
-        typename Kernel::Compare_xy_2 compare_xy = 
-                                                 kernel.compare_xy_2_object();
+        typename Kernel::Compare_xy_2 compare_xy = kernel.compare_xy_2_object();
       );
 
       CGAL_precondition
@@ -1650,7 +1646,7 @@ public:
 
     Kernel     kernel;
     Segment_2  seg = kernel.construct_segment_2_object() (this->ps, this->pt);
-    return (seg);
+    return seg;
   }
 
   /*!
@@ -1658,8 +1654,7 @@ public:
    */
   bool is_ray () const
   {
-    return (! this->is_degen && 
-            (this->has_source != this->has_target));
+    return (! this->is_degen && (this->has_source != this->has_target));
   }
 
   /*!
@@ -1671,16 +1666,11 @@ public:
     CGAL_precondition (is_ray());
 
     Kernel     kernel;
-    Ray_2      ray;
-
-    if (this->has_source)
-      ray = kernel.construct_ray_2_object() (this->ps, this->l);
-    else
-      ray = kernel.construct_ray_2_object()
-        (this->pt, 
-         kernel.construct_opposite_line_2_object()(this->l));
-
-    return (ray);
+    Ray_2      ray = (this->has_source) ?
+      kernel.construct_ray_2_object() (this->ps, this->l) :
+      kernel.construct_ray_2_object()
+        (this->pt, kernel.construct_opposite_line_2_object()(this->l));
+    return ray;
   }
 
   /*!
@@ -1749,6 +1739,13 @@ public:
     Segment_2  seg = kernel.construct_segment_2_object() (this->ps, this->pt);
     return (kernel.construct_bbox_2_object() (seg));
   }
+
+  // Introducing casting operators instead from a curve to
+  // Kernel::Segment_2, Kernel::Ray_2, and Kernel::Line_2 creates an
+  // umbiguity. The compiler will barf on the last one, because there are
+  // 2 constructors of Kernel::Line_2: one from Kernel::Segment_2 and one
+  // from Kernel::Ray_2. Together with the cast to Kernel::Line_2, the
+  // compiler will have 3 equivalent options to choose from.
 };
 
 /*!
