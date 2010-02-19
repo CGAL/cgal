@@ -274,7 +274,7 @@ EOF
   # Qt3 or Qt4
   if [ "$qt3" = "y" ]; then
 
-    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvsvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     cat << 'EOF'
 
 # Qt3
@@ -290,7 +290,7 @@ if ( NOT QT3_FOUND )
 
 endif()
 
-if ( CGAL_Qt3_FOUND AND QT3_FOUND )
+if ( CGAL_Qt3_FOUND )
   
   include( Qt3Macros-patched )
 
