@@ -59,7 +59,7 @@ void check_type_coercion_at(){
     test_coercion_from_to(float(),Rational());
     test_coercion_from_to(double(),Rational());
     test_coercion_from_to(Integer(),Rational());
-    //test_coercion_from_to(Bigfloat(),Rational()); // not the same for CORE/LEDA/GMP 
+    test_coercion_from_to(Bigfloat(),Rational());  
     test_coercion_from_to(Rational(),Rational());
 
     test_coercion_from_to(int(),Field_with_sqrt());
