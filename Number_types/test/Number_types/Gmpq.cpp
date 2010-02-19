@@ -50,7 +50,7 @@ void test_overflow_to_double()
   assert(CGAL_NTS to_double(val) == 0.5);
 }
 
-typedef std::pair<std::string, Gmpq> Test_pair; 
+typedef std::pair<std::string, Gmpq> Test_pair;
 typedef std::vector<Test_pair> Test_set;
 Test_set make_derived_tests (const Test_pair& pair) {
   // generate exponents, signs, and appended letter
@@ -58,7 +58,7 @@ Test_set make_derived_tests (const Test_pair& pair) {
   std::string input = pair.first;
   Gmpq should_be = pair.second;
   std::string minus = "-";
-  for (std::string l = ""; l != "ff"; l += "f") { 
+  for (std::string l = ""; l != "ff"; l += "f") {
     // append char 'f' to test whether it is correctly not eaten
     for (std::string sign = ""; sign != "done";) {
       // prepend signs "", "+", "-"	
@@ -66,7 +66,7 @@ Test_set make_derived_tests (const Test_pair& pair) {
       if (sign == "-") s = -s;
       result.push_back(Test_pair(sign+input+l , s));
       result.push_back(Test_pair(sign+input+"e-2"+l , s/100));
-      result.push_back(Test_pair(sign+input+"e1"+l, s*10));      
+      result.push_back(Test_pair(sign+input+"e1"+l, s*10));
       result.push_back(Test_pair(sign+input+"e+3"+l, s*1000));
       result.push_back(Test_pair(sign+input+"e0"+l , s));
       if (sign == "-") sign = "done";
@@ -75,7 +75,7 @@ Test_set make_derived_tests (const Test_pair& pair) {
     }
   }
   return result;
-} 
+}
 
 void test_input_from_float()
 {
@@ -83,32 +83,32 @@ void test_input_from_float()
 
   Test_set test_set;
   // nonnegative integers
-  test_set.push_back (Test_pair (std::string ("123"), Gmpq(123,1))); 
+  test_set.push_back (Test_pair (std::string ("123"), Gmpq(123,1)));
   test_set.push_back (Test_pair (std::string ("0"), Gmpq(0,1)));
 
   // nonnegative floats, with or without digits before/after .
-  test_set.push_back (Test_pair (std::string ("0.0"), Gmpq(0,1))); 
-  test_set.push_back (Test_pair (std::string ("0.123"), Gmpq(123,1000))); 
-  test_set.push_back (Test_pair (std::string ("00.1"), Gmpq(1,10)));   
-  test_set.push_back (Test_pair (std::string ("01.1"), Gmpq(11,10)));   
-  test_set.push_back (Test_pair (std::string ("0."), Gmpq(0,1)));  
+  test_set.push_back (Test_pair (std::string ("0.0"), Gmpq(0,1)));
+  test_set.push_back (Test_pair (std::string ("0.123"), Gmpq(123,1000)));
+  test_set.push_back (Test_pair (std::string ("00.1"), Gmpq(1,10)));
+  test_set.push_back (Test_pair (std::string ("01.1"), Gmpq(11,10)));
+  test_set.push_back (Test_pair (std::string ("0."), Gmpq(0,1)));
   test_set.push_back (Test_pair (std::string (".0"), Gmpq(0,1)));
   test_set.push_back (Test_pair (std::string ("12.34"), Gmpq(1234,100)));
   test_set.push_back (Test_pair (std::string ("0.56"), Gmpq(56,100)));
   test_set.push_back (Test_pair (std::string (".78"), Gmpq(78,100)));
   test_set.push_back (Test_pair (std::string ("90."), Gmpq(90,1)));
-  test_set.push_back (Test_pair (std::string ("90.0"), Gmpq(90,1))); 
+  test_set.push_back (Test_pair (std::string ("90.0"), Gmpq(90,1)));
   test_set.push_back (Test_pair (std::string ("7.001"), Gmpq(7001,1000)));
 
-  // exponents and signs are automatically generated in 
+  // exponents and signs are automatically generated in
   // make_derived_tests
 
   // now the actual test
-  std::cout << " Running " << test_set.size()  << " master tests..." 
+  std::cout << " Running " << test_set.size()  << " master tests..."
 	    << std::endl;
   for (unsigned int i=0; i<test_set.size(); ++i) {
     Test_set derived = make_derived_tests (test_set[i]);
-    std::cout << " Running " <<derived.size() << " derived tests..." 
+    std::cout << " Running " <<derived.size() << " derived tests..."
 	      << std::endl;
     for (unsigned int j=0; j <derived.size(); ++j) {
       std::stringstream is(derived[j].first);
@@ -117,17 +117,36 @@ void test_input_from_float()
       assert(!is.fail());
       if (!is.eof()) assert(is.peek()=='f');
       if (q != should_be)
-	std::cout << " Error: " << derived[j].first + "  read as " 
+	std::cout << " Error: " << derived[j].first + "  read as "
 		  << q << std::endl;
       assert(q == should_be);
     }
   }
 }
 
+template<class _NT>
+int test_operators(){
+        typedef CGAL::Gmpq      Gmpq;
+        typedef _NT             NT;
+        Gmpq a(5.5);
+        NT b(2);
+        if((-a)==(-5.5)&&(a+b)==7.5&&(a-b)==3.5&&(a*b)==11&&(a/b)==2.75)
+                return 0;
+        else{
+                std::cerr<<"failed!"<<std::endl;
+                exit(-1);
+        }
+}
+
+#define _TEST(_string,_code) \
+        std::cerr<<"testing "<<_string<<": "<<std::flush; \
+        _code; \
+        std::cerr<<"OK"<<std::endl;
+
 int main() {
 
   // Added by Bernd Gaertner
-  test_input_from_float();  
+  test_input_from_float();
 
   // Added by Daniel Russel
   std::cout << "Testing IO" << std::endl;
@@ -238,15 +257,24 @@ int main() {
   test_overflow_to_double();
   test_overflow_to_interval(Gmpz());
   test_overflow_to_interval(Gmpq());
- 
+
 #ifdef CGAL_USE_GMPXX
   test_overflow_to_interval(mpz_class());
   test_overflow_to_interval(mpq_class());
 #endif
 
+  // test operators Gmpq/Gmpfr (added by Luis)
+  _TEST("operators Gmpq",test_operators<CGAL::Gmpq>();)
+  _TEST("operators int",test_operators<int>();)
+  _TEST("operators long",test_operators<long>();)
+  _TEST("operators double",test_operators<double>();)
+  _TEST("operators Gmpz",test_operators<CGAL::Gmpz>();)
+  _TEST("operators Gmpfr",test_operators<CGAL::Gmpfr>();)
+
   return 0;
 }
-#else 
+#undef _TEST
+#else
 int main()
 {
   return 0;

@@ -1,19 +1,19 @@
-// Copyright (c) 2007-2009 Inria Lorraine (France). All rights reserved.
-// 
+// Copyright (c) 2007-2010 Inria Lorraine (France). All rights reserved.
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_GMPFI_TYPE_H
@@ -170,7 +170,20 @@ _GMPFI_CONSTRUCTOR_FROM_SCALAR(int);
 _GMPFI_CONSTRUCTOR_FROM_SCALAR(double);
 _GMPFI_CONSTRUCTOR_FROM_SCALAR(long double);
 _GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
-_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpq);
+
+#undef _GMPFI_CONSTRUCTOR_FROM_SCALAR
+
+        Gmpfi(const Gmpq &q,
+              Gmpfi::Precision_type p=Gmpfi::get_default_precision()){
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
+                Gmpfr l(0,p),r(0,p);
+                mpfr_set_q(l.fr(),q.mpq(),GMP_RNDD);
+                mpfr_set_q(r.fr(),q.mpq(),GMP_RNDU);
+                l.dont_clear_on_destruction();
+                r.dont_clear_on_destruction();
+                mpfi()->left=*(l.fr());
+                mpfi()->right=*(r.fr());
+        }
 
         Gmpfi(mpfi_srcptr i,Gmpfi::Precision_type p=0){
                 if((p==0)||
@@ -1004,5 +1017,3 @@ Uncertain<Gmpfi> max BOOST_PREVENT_MACRO_SUBSTITUTION
 } // namespace CGAL
 
 #endif  // CGAL_GMPFI_TYPE_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

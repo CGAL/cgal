@@ -57,11 +57,10 @@ constructed interval.
 
 \ccConstructor{template <class T>
                 Gmpfi(const T& t,Precision_type p=get_default_precision());}
-        {creates a \ccc{Gmpfi} initialized with the value of \ccc{t}.
-        \ccc{T} is \ccc{Gmpfr}, \ccc{Gmpz}, \ccc{Gmpq}, or any
-        other type from which \ccc{Gmpfr} can be constructed from. The
-        rounding of the endpoints will guarantee that \ccc{t} is included
-        in \ccVar .}
+	{creates a \ccc{Gmpfi} initialized with the value of \ccc{t}.
+	\ccc{T} is \ccc{Gmpfr}, \ccc{Gmpq}, or any type from which
+	\ccc{Gmpfr} can be constructed from. The rounding of the
+	endpoints will guarantee that \ccc{t} is included in \ccVar.}
 
 \ccConstructor{Gmpfi(const Gmpfr &left,
                      const Gmpfr &right,

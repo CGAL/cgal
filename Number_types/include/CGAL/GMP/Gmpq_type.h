@@ -60,11 +60,12 @@ private:
 class Gmpq
   : Handle_for<Gmpq_rep>,
     boost::ordered_field_operators1< Gmpq
-  , boost::ordered_field_operators2< Gmpq, Gmpz
-  , boost::ordered_field_operators2< Gmpq, Gmpfr
   , boost::ordered_field_operators2< Gmpq, int
   , boost::ordered_field_operators2< Gmpq, long
-    > > > > >
+  , boost::ordered_field_operators2< Gmpq, double
+  , boost::ordered_field_operators2< Gmpq, Gmpz
+  , boost::ordered_field_operators2< Gmpq, Gmpfr
+    > > > > > >
 {
   typedef Handle_for<Gmpq_rep> Base;
 public:
@@ -221,14 +222,14 @@ public:
   bool  operator< (long z) const {return mpq_cmp_si(mpq(),z,1)<0;}
   bool  operator> (long z) const {return mpq_cmp_si(mpq(),z,1)>0;}
 
-  // Interoperability with Gmpfr
-  Gmpq& operator+=(const Gmpfr &f){return (*this)+= Gmpq(f);}
-  Gmpq& operator-=(const Gmpfr &f){return (*this)-= Gmpq(f);}
-  Gmpq& operator*=(const Gmpfr &f){return (*this)*= Gmpq(f);}
-  Gmpq& operator/=(const Gmpfr &f){return (*this)/= Gmpq(f);}
-  bool  operator==(const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())==0;}
-  bool  operator< (const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())>0;}
-  bool  operator> (const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())<0;}
+  // Interoperability with double
+  Gmpq& operator+=(double d){return (*this)+= Gmpq(d);}
+  Gmpq& operator-=(double d){return (*this)-= Gmpq(d);}
+  Gmpq& operator*=(double d){return (*this)*= Gmpq(d);}
+  Gmpq& operator/=(double d){return (*this)/= Gmpq(d);}
+  bool  operator==(double d) const {return (*this)== Gmpq(d);}
+  bool  operator< (double d) const {return (*this)<  Gmpq(d);}
+  bool  operator> (double d) const {return (*this)>  Gmpq(d);}
 
   // Interoperability with Gmpz
   Gmpq& operator+=(const Gmpz&);
@@ -238,6 +239,15 @@ public:
   bool  operator==(const Gmpz &z) const {return (*this)== Gmpq(z);}
   bool  operator< (const Gmpz &z) const {return (*this)<  Gmpq(z);}
   bool  operator> (const Gmpz &z) const {return (*this)>  Gmpq(z);}
+
+  // Interoperability with Gmpfr
+  Gmpq& operator+=(const Gmpfr &f){return (*this)+= Gmpq(f);}
+  Gmpq& operator-=(const Gmpfr &f){return (*this)-= Gmpq(f);}
+  Gmpq& operator*=(const Gmpfr &f){return (*this)*= Gmpq(f);}
+  Gmpq& operator/=(const Gmpfr &f){return (*this)/= Gmpq(f);}
+  bool  operator==(const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())==0;}
+  bool  operator< (const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())>0;}
+  bool  operator> (const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())<0;}
 };
 
 

@@ -136,7 +136,6 @@ int main(){
   _TEST("operators Gmpfr",test_operators<NT>();)
   _TEST("operators Gmpzf",test_operators<CGAL::Gmpzf>();)
   _TEST("operators Gmpz",test_operators<CGAL::Gmpz>();)
-  _TEST("operators Gmpq",test_operators<CGAL::Gmpq>();)
   _TEST("operators int",test_operators<int>();)
   _TEST("operators long",test_operators<long>();)
   _TEST("operators unsigned long",test_operators<unsigned long>();)
@@ -146,7 +145,6 @@ int main(){
   _TEST("arithmetic unsigned long",test_arithmetic<unsigned long>();)
   _TEST("arithmetic int",test_arithmetic<int>();)
   _TEST("arithmetic Gmpz",test_arithmetic<CGAL::Gmpz>();)
-  _TEST("arithmetic Gmpq",test_arithmetic<CGAL::Gmpq>();)
   _TEST("arithmetic Gmpzf",test_arithmetic<CGAL::Gmpzf>();)
 
   NT plus_infinity;
