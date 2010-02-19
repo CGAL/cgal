@@ -27,6 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/GMP/Gmpz_type.h>
+#include <CGAL/GMP/Gmpfr_type.h>
 
 #include <gmp.h>
 #include <mpfr.h>
@@ -37,9 +38,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Profile_counter.h>
 
-
 CGAL_BEGIN_NAMESPACE
-// TODO : add mixed operators with Gmpz.
 
 // Wrapper around mpq_t to get the destructor call mpq_clear.
 // Contrary to mpz_t, there are no mpq_init_set_* functions,
@@ -62,9 +61,10 @@ class Gmpq
   : Handle_for<Gmpq_rep>,
     boost::ordered_field_operators1< Gmpq
   , boost::ordered_field_operators2< Gmpq, Gmpz
+  , boost::ordered_field_operators2< Gmpq, Gmpfr
   , boost::ordered_field_operators2< Gmpq, int
   , boost::ordered_field_operators2< Gmpq, long
-    > > > >
+    > > > > >
 {
   typedef Handle_for<Gmpq_rep> Base;
 public:
@@ -128,6 +128,28 @@ public:
     mpq_set_d(mpq(), d);
   }
 
+  Gmpq(Gmpfr f)
+  {
+    std::pair<Gmpz,long> intexp=f.to_integer_exp();
+    mpq_set_z(mpq(),intexp.first.mpz());
+    if(intexp.second>0){
+            mpz_mul_2exp(mpq_numref(mpq()),
+                         mpq_denref(mpq()),
+                         (unsigned long)intexp.second);
+    }else{
+            mpz_mul_2exp(mpq_denref(mpq()),
+                         mpq_denref(mpq()),
+                         (unsigned long)intexp.second);
+    }
+    // mpq_canonicalize is not needed, because:
+    // (i) to_integer_exp returns always an odd number
+    // (ii) the denominator is always a power of 2
+    CGAL_assertion_msg(mpz_tstbit(intexp.first.mpz(),0)==1,
+                       "even numerator in conversion Gmpfr->Gmpq");
+    CGAL_assertion_msg(mpfr_cmp_q(f.fr(),mpq())==0,
+                       "error in conversion Gmpfr->Gmpq");
+  }
+
   Gmpq(const std::string& str, int base = 10)
   {
     mpq_set_str(mpq(), str.c_str(), base);
@@ -180,30 +202,39 @@ public:
      CGAL_HISTOGRAM_PROFILER("[Gmpq sizes in log2 scale]",
                              (unsigned) ( ::log(double(size())) / ::log(double(2)) )  );
   }
-  
+
   // Interoperability with int
   Gmpq& operator+=(int z){return (*this)+= Gmpq(z);}
   Gmpq& operator-=(int z){return (*this)-= Gmpq(z);}
   Gmpq& operator*=(int z){return (*this)*= Gmpq(z);}
   Gmpq& operator/=(int z){return (*this)/= Gmpq(z);}
-  bool  operator==(int z) const {return (*this)== Gmpq(z);}
-  bool  operator< (int z) const {return (*this)<  Gmpq(z);}  
-  bool  operator> (int z) const {return (*this)>  Gmpq(z);}  
+  bool  operator==(int z) const {return mpq_cmp_si(mpq(),z,1)==0;}
+  bool  operator< (int z) const {return mpq_cmp_si(mpq(),z,1)<0;}
+  bool  operator> (int z) const {return mpq_cmp_si(mpq(),z,1)>0;}
 
   // Interoperability with long
   Gmpq& operator+=(long z){return (*this)+= Gmpq(z);}
   Gmpq& operator-=(long z){return (*this)-= Gmpq(z);}
   Gmpq& operator*=(long z){return (*this)*= Gmpq(z);}
   Gmpq& operator/=(long z){return (*this)/= Gmpq(z);}
-  bool  operator==(long z) const {return (*this)== Gmpq(z);}
-  bool  operator< (long z) const {return (*this)<  Gmpq(z);}
-  bool  operator> (long z) const {return (*this)>  Gmpq(z);}
+  bool  operator==(long z) const {return mpq_cmp_si(mpq(),z,1)==0;}
+  bool  operator< (long z) const {return mpq_cmp_si(mpq(),z,1)<0;}
+  bool  operator> (long z) const {return mpq_cmp_si(mpq(),z,1)>0;}
+
+  // Interoperability with Gmpfr
+  Gmpq& operator+=(const Gmpfr &f){return (*this)+= Gmpq(f);}
+  Gmpq& operator-=(const Gmpfr &f){return (*this)-= Gmpq(f);}
+  Gmpq& operator*=(const Gmpfr &f){return (*this)*= Gmpq(f);}
+  Gmpq& operator/=(const Gmpfr &f){return (*this)/= Gmpq(f);}
+  bool  operator==(const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())==0;}
+  bool  operator< (const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())>0;}
+  bool  operator> (const Gmpfr &f) const {return mpfr_cmp_q(f.fr(),mpq())<0;}
 
   // Interoperability with Gmpz
-  Gmpq& operator+=(const Gmpz &z){return (*this)+= Gmpq(z);}
-  Gmpq& operator-=(const Gmpz &z){return (*this)-= Gmpq(z);}
-  Gmpq& operator*=(const Gmpz &z){return (*this)*= Gmpq(z);}
-  Gmpq& operator/=(const Gmpz &z){return (*this)/= Gmpq(z);}
+  Gmpq& operator+=(const Gmpz&);
+  Gmpq& operator-=(const Gmpz&);
+  Gmpq& operator*=(const Gmpz&);
+  Gmpq& operator/=(const Gmpz&);
   bool  operator==(const Gmpz &z) const {return (*this)== Gmpq(z);}
   bool  operator< (const Gmpz &z) const {return (*this)<  Gmpq(z);}
   bool  operator> (const Gmpz &z) const {return (*this)>  Gmpq(z);}
@@ -268,10 +299,79 @@ Gmpq::operator/=(const Gmpq &z)
 }
 
 inline
+Gmpq& Gmpq::operator+=(const Gmpz &z){
+  if(unique()){
+    mpz_addmul(mpq_numref(mpq()),mpq_denref(mpq()),z.mpz());
+    mpq_canonicalize(mpq());
+  }else{
+    Gmpq result;
+    mpz_mul(mpq_numref(result.mpq()),
+            mpq_denref(mpq()),
+            z.mpz());
+    mpz_add(mpq_numref(result.mpq()),
+            mpq_numref(mpq()),
+            mpq_numref(result.mpq()));
+    mpz_set(mpq_denref(result.mpq()),mpq_denref(mpq()));
+    mpq_canonicalize(result.mpq());
+    swap(result);
+  }
+  return *this;
+}
+
+inline
+Gmpq& Gmpq::operator-=(const Gmpz &z){
+  if(unique()){
+    mpz_submul(mpq_numref(mpq()),mpq_denref(mpq()),z.mpz());
+    mpq_canonicalize(mpq());
+  }else{
+    Gmpq result;
+    mpz_mul(mpq_numref(result.mpq()),
+            mpq_denref(mpq()),
+            z.mpz());
+    mpz_sub(mpq_numref(result.mpq()),
+            mpq_numref(mpq()),
+            mpq_numref(result.mpq()));
+    mpz_set(mpq_denref(result.mpq()),mpq_denref(mpq()));
+    mpq_canonicalize(result.mpq());
+    swap(result);
+  }
+  return *this;
+}
+
+inline
+Gmpq& Gmpq::operator*=(const Gmpz &z){
+  if(unique()){
+    mpz_mul(mpq_numref(mpq()),mpq_numref(mpq()),z.mpz());
+    mpq_canonicalize(mpq());
+  }else{
+    Gmpq result;
+    mpz_mul(mpq_numref(result.mpq()),mpq_numref(mpq()),z.mpz());
+    mpz_set(mpq_denref(result.mpq()),mpq_denref(mpq()));
+    mpq_canonicalize(result.mpq());
+    swap(result);
+  }
+  return *this;
+}
+
+inline
+Gmpq& Gmpq::operator/=(const Gmpz &z){
+  if(unique()){
+    mpz_mul(mpq_denref(mpq()),mpq_denref(mpq()),z.mpz());
+    mpq_canonicalize(mpq());
+  }else{
+    Gmpq result;
+    mpz_mul(mpq_denref(result.mpq()),mpq_denref(mpq()),z.mpz());
+    mpz_set(mpq_numref(result.mpq()),mpq_numref(mpq()));
+    mpq_canonicalize(result.mpq());
+    swap(result);
+  }
+  return *this;
+}
+
+inline
 double
 Gmpq::to_double() const
 { return mpq_get_d(mpq()); }
-
 
 inline
 Sign
@@ -426,14 +526,12 @@ operator>>(std::istream& is, Gmpq &z)
 }
 
 inline Gmpq min BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpq& x,const Gmpq& y){
-  return (x<=y)?x:y; 
+  return (x<=y)?x:y;
 }
 inline Gmpq max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpq& x,const Gmpq& y){
-  return (x>=y)?x:y; 
+  return (x>=y)?x:y;
 }
 
-
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_GMPQ_TYPE_H

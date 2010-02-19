@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2007-2010 Inria Lorraine (France). All rights reserved.
 // 
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,6 @@
 #include <boost/operators.hpp>
 #include <CGAL/Handle_for.h>
 #include <CGAL/GMP/Gmpz_type.h>
-#include <CGAL/GMP/Gmpq_type.h>
 #include <CGAL/GMP/Gmpzf_type.h>
 #include <string>
 #include <limits>
@@ -62,10 +61,6 @@ bool operator<(const Gmpfr&,const Gmpz&);
 bool operator>(const Gmpfr&,const Gmpz&);
 bool operator==(const Gmpfr&,const Gmpz&);
 
-bool operator<(const Gmpfr&,const Gmpq&);
-bool operator>(const Gmpfr&,const Gmpq&);
-bool operator==(const Gmpfr&,const Gmpq&);
-
 struct Gmpfr_rep{
         mpfr_t floating_point_number;
         bool clear_on_destruction;
@@ -96,9 +91,8 @@ class Gmpfr:
         boost::ordered_euclidian_ring_operators2<Gmpfr,int,
         boost::totally_ordered2<Gmpfr,double,
         boost::totally_ordered2<Gmpfr,long double,
-        boost::ordered_euclidian_ring_operators2<Gmpfr,Gmpz,
-        boost::ordered_euclidian_ring_operators2<Gmpfr,Gmpq
-        > > > > > > > >
+        boost::ordered_euclidian_ring_operators2<Gmpfr,Gmpz
+        > > > > > > >
 {
         private:
 
@@ -259,7 +253,6 @@ class Gmpfr:
         _GMPFR_CONSTRUCTOR_FROM_TYPE(double,mpfr_set_d);
         _GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
         _GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpz,mpz(),mpfr_set_z);
-        _GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpq,mpq(),mpfr_set_q);
 
 #undef _GMPFR_CONSTRUCTOR_FROM_TYPE
 #undef _GMPFR_CONSTRUCTOR_FROM_OBJECT
@@ -353,7 +346,6 @@ class Gmpfr:
         _GMPFR_DECLARE_OPERATORS(unsigned long)
         _GMPFR_DECLARE_OPERATORS(int)
         _GMPFR_DECLARE_OPERATORS(const Gmpz&)
-        _GMPFR_DECLARE_OPERATORS(const Gmpq&)
 
 #undef _GMPFR_DECLARE_OPERATORS
 
@@ -375,7 +367,6 @@ class Gmpfr:
         _GMPFR_DECLARE_STATIC_FUNCTIONS(unsigned long)
         _GMPFR_DECLARE_STATIC_FUNCTIONS(int)
         _GMPFR_DECLARE_STATIC_FUNCTIONS(const Gmpz&)
-        _GMPFR_DECLARE_STATIC_FUNCTIONS(const Gmpq&)
 
 #undef _GMPFR_DECLARE_STATIC_FUNCTION
 #undef _GMPFR_DECLARE_STATIC_FUNCTIONS
@@ -418,7 +409,6 @@ class Gmpfr:
                 to_double_exp(std::float_round_style=Gmpfr::get_default_rndmode())const;
         std::pair<std::pair<double,double>,long> to_interval_exp()const;
         std::pair<Gmpz,long> to_integer_exp()const;
-        Gmpq to_fraction()const;
 };
 
 
@@ -731,11 +721,6 @@ _GMPFR_OBJECT_BINARY_OPERATOR(operator-=,Gmpz,mpz(),mpfr_sub_z)
 _GMPFR_OBJECT_BINARY_OPERATOR(operator*=,Gmpz,mpz(),mpfr_mul_z)
 _GMPFR_OBJECT_BINARY_OPERATOR(operator/=,Gmpz,mpz(),mpfr_div_z)
 
-_GMPFR_OBJECT_BINARY_OPERATOR(operator+=,Gmpq,mpq(),mpfr_add_q)
-_GMPFR_OBJECT_BINARY_OPERATOR(operator-=,Gmpq,mpq(),mpfr_sub_q)
-_GMPFR_OBJECT_BINARY_OPERATOR(operator*=,Gmpq,mpq(),mpfr_mul_q)
-_GMPFR_OBJECT_BINARY_OPERATOR(operator/=,Gmpq,mpq(),mpfr_div_q)
-
 #undef _GMPFR_OBJECT_BINARY_OPERATOR
 #undef _GMPFR_GMPFR_BINARY_OPERATOR
 #undef _GMPFR_TYPE_BINARY_OPERATOR
@@ -894,29 +879,6 @@ std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
     CGAL_postcondition( (*this) == (Gmpfr(z,m) / CGAL::ipower(Gmpfr(2),-e)) );
 
   return std::make_pair(z,e);
-}
-
-inline
-Gmpq Gmpfr::to_fraction()const{
-        std::pair<Gmpz,long> p=this->to_integer_exp();
-        Gmpq q(p.first);
-        CGAL_assertion(mpz_cmp(p.first.mpz(),mpq_numref(q.mpq()))==0);
-        CGAL_assertion(mpz_cmp_ui(mpq_denref(q.mpq()),(unsigned long)1)==0);
-        if(p.second<0){
-                mpz_mul_2exp(mpq_denref(q.mpq()),
-                             mpq_denref(q.mpq()),
-                             (unsigned long)(-p.second));
-        }else{
-                mpz_mul_2exp(mpq_numref(q.mpq()),
-                             mpq_numref(q.mpq()),
-                             (unsigned long)(p.second));
-        }
-        mpq_canonicalize(q.mpq());
-        CGAL_assertion_msg(mpz_sizeinbase(mpq_denref(q.mpq()),2)==
-                           mpz_scan1(mpq_denref(q.mpq()),0)+1,
-                           "denominator is not a power of 2");
-        CGAL_assertion_msg(mpfr_cmp_q(fr(),q.mpq())==0,"conversion error");
-        return q;
 }
 
 
@@ -1152,21 +1114,6 @@ bool operator>(const Gmpfr &a,const Gmpz &b){
 inline
 bool operator==(const Gmpfr &a,const Gmpz &b){
         return !mpfr_cmp_z(a.fr(),b.mpz());
-}
-
-inline
-bool operator<(const Gmpfr &a,const Gmpq &b){
-        return(mpfr_cmp_q(a.fr(),b.mpq())<0);
-}
-
-inline
-bool operator>(const Gmpfr &a,const Gmpq &b){
-        return(mpfr_cmp_q(a.fr(),b.mpq())>0);
-}
-
-inline
-bool operator==(const Gmpfr &a,const Gmpq &b){
-        return !mpfr_cmp_q(a.fr(),b.mpq());
 }
 
 inline

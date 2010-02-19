@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2007-2010 Inria Lorraine (France). All rights reserved.
 // 
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -104,11 +104,6 @@ _GMPFR_NONCOMMUTATIVE_OPERATION(add,const Gmpz&,b.mpz(),mpfr_add_z)
 _GMPFR_NONCOMMUTATIVE_OPERATION(sub,const Gmpz&,b.mpz(),mpfr_sub_z)
 _GMPFR_NONCOMMUTATIVE_OPERATION(mul,const Gmpz&,b.mpz(),mpfr_mul_z)
 _GMPFR_NONCOMMUTATIVE_OPERATION(div,const Gmpz&,b.mpz(),mpfr_div_z)
-
-_GMPFR_NONCOMMUTATIVE_OPERATION(add,const Gmpq&,b.mpq(),mpfr_add_q)
-_GMPFR_NONCOMMUTATIVE_OPERATION(sub,const Gmpq&,b.mpq(),mpfr_sub_q)
-_GMPFR_NONCOMMUTATIVE_OPERATION(mul,const Gmpq&,b.mpq(),mpfr_mul_q)
-_GMPFR_NONCOMMUTATIVE_OPERATION(div,const Gmpq&,b.mpq(),mpfr_div_q)
 
 #undef _GMPFR_PREC
 #undef _GMPFR_PREC_2 

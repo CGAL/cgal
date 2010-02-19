@@ -19,7 +19,7 @@ can be set to any of the four rounding modes (initially, it is set
 to nearest). To specify rounding modes for operations, the type
 used is \ccc{std::float_round_style}.
 
-This type is \ccc{ImplicitInteroperable} with \ccc{Gmpz}, \ccc{Gmpq},
+This type is \ccc{ImplicitInteroperable} with \ccc{Gmpz}, %\ccc{Gmpq},
 \verb-long-, \verb-unsigned long-, \verb-int-, \verb-double- and
 \verb-long double-.
 
@@ -71,8 +71,10 @@ This type is \ccc{ImplicitInteroperable} with \ccc{Gmpz}, \ccc{Gmpq},
 \ccConstructor{Gmpfr(const Gmpz &z);}
         {Creates a MPFR number, initialized with the value of \ccc{z}.}
 
-\ccConstructor{Gmpfr(const Gmpq &q);}
-        {Creates a MPFR number, initialized with the value of \ccc{q}.}
+%--------------------------------------------------
+% \ccConstructor{Gmpfr(const Gmpq &q);}
+%         {Creates a MPFR number, initialized with the value of \ccc{q}.}
+%-------------------------------------------------- 
 
 \ccConstructor{Gmpfr(const Gmpzf &z);}
         {Creates a MPFR number, initialized with the value of \ccc{z}.}
@@ -197,7 +199,8 @@ as the maximum of the operands precision and the default precision.
 
 The second operand of the former operations can be a \verb=Gmpfr=,
 \verb=int=, \verb=long=, \verb=unsigned=, \verb=unsigned long=,
-\verb=Gmpz= or \verb=Gmpq=. The precision of an operation between a
+%\verb=Gmpz= or \verb=Gmpq=. The precision of an operation between a
+or \verb=Gmpz=. The precision of an operation between a
 \ccc{Gmpfr} and a number of another type is defined as the maximum between
 the number's precision and the default precision.
 
@@ -289,9 +292,11 @@ Other arithmetic functions provided by the class are:
         is not necessarily the smallest possible value of \(m\) (that is,
         it might be that \(2|m\)).}
 
-\ccMethod{Gmpq to_fraction();}
-        {Returns a \ccc{Gmpq} with the same value of \ccVar. This
-        conversion is exact.}
+%--------------------------------------------------
+% \ccMethod{Gmpq to_fraction();}
+%         {Returns a \ccc{Gmpq} with the same value of \ccVar. This
+%         conversion is exact.}
+%-------------------------------------------------- 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -301,7 +306,7 @@ Other arithmetic functions provided by the class are:
 
 Comparison operators \verb-==-, \verb-!=-, \verb->-, \verb-<-, \verb->=-
 \ and \verb-<=- \ are also overloaded. A \ccc{Gmpfr} can be compared
-with other \ccc{Gmpfr}, as well as with a \ccc{Gmpz}, \ccc{Gmpq},
+with other \ccc{Gmpfr}, as well as with a \ccc{Gmpz}, %\ccc{Gmpq},
 \verb=long=, \verb=unsigned long=, \verb=int=, \verb=double= \ or
 \verb=long double=. It is worth noting that the numbers are never
 converted nor rounded before comparison. In the case where one of the

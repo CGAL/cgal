@@ -29,6 +29,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/GMP/Gmpz_type.h>
 #include <CGAL/GMP/Gmpzf_type.h>
+#include <CGAL/GMP/Gmpfr_type.h>
 #include <CGAL/GMP/Gmpq_type.h>
 #include <CGAL/Coercion_traits.h>
 
@@ -43,6 +44,7 @@ CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(Gmpq)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(Gmpz,Gmpzf)
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(Gmpzf,Gmpzq); // todo
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(Gmpz,Gmpq)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(Gmpfr,Gmpq)
 
 // The following definitions reflect the interaction of the Gmp number types
 // with the built in types,
