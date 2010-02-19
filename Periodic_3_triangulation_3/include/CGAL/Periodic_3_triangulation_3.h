@@ -1493,11 +1493,11 @@ Periodic_3_triangulation_3<GT,TDS>::locate(const Point & p, const Offset &o_p,
   cumm_off = start->offset(0) | start->offset(1)
     | start->offset(2) | start->offset(3);
   if (is_1_cover() && cumm_off != 0) {
-    if (((cumm_off & 4) == 4) && (FT(2)*p.x()<(_domain.xmax()-_domain.xmin())))
+    if (((cumm_off & 4) == 4) && (FT(2)*p.x()<(_domain.xmax()+_domain.xmin())))
       off_query += Offset(1,0,0);
-    if (((cumm_off & 2) == 2) && (FT(2)*p.y()<(_domain.ymax()-_domain.ymin())))
+    if (((cumm_off & 2) == 2) && (FT(2)*p.y()<(_domain.ymax()+_domain.ymin())))
       off_query += Offset(0,1,0);
-    if (((cumm_off & 1) == 1) && (FT(2)*p.z()<(_domain.zmax()-_domain.zmin())))
+    if (((cumm_off & 1) == 1) && (FT(2)*p.z()<(_domain.zmax()+_domain.zmin())))
       off_query += Offset(0,0,1);
   }
 
