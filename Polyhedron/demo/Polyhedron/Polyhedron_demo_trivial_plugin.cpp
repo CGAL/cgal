@@ -1,4 +1,4 @@
-#include <Qt/qglobal.h>
+#include <QtCore/qglobal.h>
 
 #include "Scene_item.h"
 #include "Scene_interface.h"

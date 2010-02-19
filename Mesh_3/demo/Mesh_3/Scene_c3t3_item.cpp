@@ -7,7 +7,7 @@
 
 #include "Scene_item_with_display_list.h"
 #include "Scene_interface.h"
-#include <Qt/qglobal.h>
+#include <QtCore/qglobal.h>
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>

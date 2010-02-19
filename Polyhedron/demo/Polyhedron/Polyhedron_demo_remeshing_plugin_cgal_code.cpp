@@ -31,7 +31,7 @@
 
 #include "Scene_item.h"
 
-#include <Qt/qglobal.h>
+#include <QtCore/qglobal.h>
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
