@@ -1,4 +1,4 @@
-// Copyright (c) 2007 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2007-2010 Inria Lorraine (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,9 @@
 // $URL$
 // $Id$
 //
-// Author: Elias Tsigaridas <Elias.Tsigaridas@inria.fr>
+// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+//
+// (the first version of this file was written by Elias Tsigaridas)
 
 #ifndef RS_PARSER_1_H
 #define RS_PARSER_1_H
