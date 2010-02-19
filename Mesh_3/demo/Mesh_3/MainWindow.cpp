@@ -252,6 +252,9 @@ void MainWindow::message(QString message, QString colorName, QString font) {
   statusBar()->showMessage(message, 5000);
   message = "<font color=\"" + colorName + "\" >" + message + "</font><br>";
   message = "[" + QTime::currentTime().toString() + "] " + message;
+  
+  // Moves cursor to the end of the block
+  ui->consoleTextEdit->moveCursor(QTextCursor::EndOfBlock);
   ui->consoleTextEdit->insertHtml(message);
   ui->consoleTextEdit->verticalScrollBar()->setValue(ui->consoleTextEdit->verticalScrollBar()->maximum());
 }

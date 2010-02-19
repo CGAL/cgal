@@ -5,6 +5,7 @@
 #include <CGAL/gl.h>
 #include <CGAL/ImageIO.h>
 
+#define SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 
 namespace {
   
@@ -116,16 +117,23 @@ Scene_segmented_image_item::initialize_buffers()
       for(unsigned int k=0;k<zdim;k+=5)
       {
         unsigned char value = image_data(*m_image,i,j,k);
-        values.insert(std::make_pair(value,QColor()));
+        
+        if ( 0 < value )
+        {
+          values.insert(std::make_pair(value,QColor()));
+        }
       }
     }
   }
   
   int i=0;
+  const double starting_hue = 300./360.; // magenta
   for ( ValueMap::iterator it = values.begin(), end = values.end() ;
        it != end ; ++it, ++i )
   {
-    it->second = QColor::fromHsvF( 1. / values.size() * i, 1., 0.8);
+    double hue =  starting_hue + 1./values.size() * i;
+    if ( hue > 1. ) { hue -= 1.; }
+    it->second = QColor::fromHsvF(hue, 1., 0.8);
   }
   
   
