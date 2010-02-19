@@ -95,7 +95,7 @@ public:
     if(isEmpty())
       return Bbox();
     else {
-      CGAL::Bbox_3 result = c3t3().triangulation().vertices_begin()->point().bbox();
+      CGAL::Bbox_3 result = c3t3().triangulation().finite_vertices_begin()->point().bbox();
       for(Tr::Finite_vertices_iterator
             vit = ++c3t3().triangulation().finite_vertices_begin(),
             end = c3t3().triangulation().finite_vertices_end();
