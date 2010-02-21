@@ -135,18 +135,16 @@ public:
     mpq_set_z(mpq(),intexp.first.mpz());
     if(intexp.second>0){
             mpz_mul_2exp(mpq_numref(mpq()),
-                         mpq_denref(mpq()),
+                         mpq_numref(mpq()),
                          (unsigned long)intexp.second);
     }else{
             mpz_mul_2exp(mpq_denref(mpq()),
                          mpq_denref(mpq()),
-                         (unsigned long)intexp.second);
+                         (unsigned long)(-intexp.second));
     }
-    // mpq_canonicalize is not needed, because:
-    // (i) to_integer_exp returns always an odd number
-    // (ii) the denominator is always a power of 2
-    CGAL_assertion_msg(mpz_tstbit(intexp.first.mpz(),0)==1,
-                       "even numerator in conversion Gmpfr->Gmpq");
+    // mpq_canonicalize is needed only when the numerator is odd and not zero
+    if(mpz_tstbit(intexp.first.mpz(),0)==0 && mpz_sgn(intexp.first.mpz())!=0)
+        mpq_canonicalize(mpq());
     CGAL_assertion_msg(mpfr_cmp_q(f.fr(),mpq())==0,
                        "error in conversion Gmpfr->Gmpq");
   }

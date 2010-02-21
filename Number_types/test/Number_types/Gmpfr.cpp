@@ -116,6 +116,38 @@ int test_to_integer_exp(CGAL::Gmpfr f){
         }
 }
 
+template<class _NT>
+int test_constructors(_NT x){
+        typedef CGAL::Gmpfr     Gmpfr;
+        typedef _NT             NT;
+        bool fail=false;
+        Gmpfr::set_default_precision(70);
+        Gmpfr f(x);
+        // this conversion should be exact
+        if(f!=x){
+                std::cerr<<"failed default construction! (inexact)"<<std::endl;
+                fail=true;
+        }
+        Gmpfr g(x,100);
+        if(g.get_precision()!=100){
+                std::cerr<<"failed construction prec!"<<std::endl;
+                fail=true;
+        }
+        Gmpfr h(x,std::round_toward_infinity);
+        if(h.get_precision()!=Gmpfr::get_default_precision()){
+                std::cerr<<"failed construction rndmode!"<<std::endl;
+                fail=true;
+        }
+        Gmpfr i(x,std::round_toward_infinity,100);
+        if(i.get_precision()!=100){
+                std::cerr<<"failed construction prec/rndmode!"<<std::endl;
+                fail=true;
+        }
+        if(fail)
+                exit(-1);
+        return 0;
+}
+
 int main(){
   typedef CGAL::Gmpfr NT;
   typedef CGAL::Field_with_kth_root_tag Tag;
@@ -132,6 +164,15 @@ int main(){
   _TEST_AS(4,-6,-15)
   _TEST_AS(-4,-6,-15)
   _TEST("real embeddable",CGAL::test_real_embeddable<NT>())
+
+  _TEST("constructors int",test_constructors<int>(-3);)
+  _TEST("constructors long",test_constructors<long>(-456);)
+  _TEST("constructors unsigned long",test_constructors<unsigned long>(78);)
+  _TEST("constructors double",test_constructors<double>(7.5);)
+  _TEST("constructors long double",test_constructors<long double>(-7.5);)
+  _TEST("constructors Gmpz",
+        test_constructors<CGAL::Gmpz>((CGAL::Gmpz(1)<<1000)+CGAL::Gmpz(1));)
+  _TEST("constructors Gmpzf",test_constructors<CGAL::Gmpzf>(1025);)
 
   _TEST("operators Gmpfr",test_operators<NT>();)
   _TEST("operators Gmpzf",test_operators<CGAL::Gmpzf>();)

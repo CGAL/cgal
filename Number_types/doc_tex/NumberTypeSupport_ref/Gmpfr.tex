@@ -19,9 +19,9 @@ can be set to any of the four rounding modes (initially, it is set
 to nearest). To specify rounding modes for operations, the type
 used is \ccc{std::float_round_style}.
 
-This type is \ccc{ImplicitInteroperable} with \ccc{Gmpz}, %\ccc{Gmpq},
-\verb-long-, \verb-unsigned long-, \verb-int-, \verb-double- and
-\verb-long double-.
+This type is \ccc{ImplicitInteroperable} with \ccc{Gmpz}, \verb-long-,
+\verb-unsigned long-, \verb-int-, \verb-double- and \verb-long
+double-.
 
 \ccInclude{CGAL/Gmpfr.h}
 
@@ -71,13 +71,8 @@ This type is \ccc{ImplicitInteroperable} with \ccc{Gmpz}, %\ccc{Gmpq},
 \ccConstructor{Gmpfr(const Gmpz &z);}
         {Creates a MPFR number, initialized with the value of \ccc{z}.}
 
-%--------------------------------------------------
-% \ccConstructor{Gmpfr(const Gmpq &q);}
-%         {Creates a MPFR number, initialized with the value of \ccc{q}.}
-%-------------------------------------------------- 
-
-\ccConstructor{Gmpfr(const Gmpzf &z);}
-        {Creates a MPFR number, initialized with the value of \ccc{z}.}
+\ccConstructor{Gmpfr(const Gmpzf &zf);}
+        {Creates a MPFR number, initialized with the value of \ccc{zf}.}
 
 \ccConstructor{Gmpfr(std::pair<Gmpz,long> ie);}
         {Creates a MPFR number, initialized with the value of
@@ -87,8 +82,10 @@ Note that all constructors can be called with two optional parameters.
 One can specify as second parameter the rounding mode desired for
 the conversion from the source number and as a third parameter the
 precision with which this MPFR number will be created.  If only one
-optional parameter is specified, it can be either the rounding mode or
-the precision.
+optional parameter is specified, it can be either the rounding mode
+or the precision. If no optional parameters are specified, the
+precision of the created object is chosen in such a way that the
+conversion is exact (i.e., no rounding is performed).
 
 These optional parameters, along with other functions which will be
 explained below, allow users to control the rounding and precision.
@@ -103,7 +100,7 @@ explained below, allow users to control the rounding and precision.
 % to \verb-i- one can represent with eight bits.
 %-------------------------------------------------- 
 For example, being \verb-z- \ a \ccc{Gmpz},
-\verb-Gmpfr(g,z,53,std::round_toward_neg_infinity)-\ will construct a
+\verb-Gmpfr g(z,53,std::round_toward_neg_infinity)-\ will construct a
 \ccc{Gmpfr} \verb-g- \ having as value the biggest 53-bit
 floating-point number that is equal or smaller than to \verb-z-.
 
@@ -198,11 +195,10 @@ The precision of an operation between two \ccc{Gmpfr}s is defined
 as the maximum of the operands precision and the default precision.
 
 The second operand of the former operations can be a \verb=Gmpfr=,
-\verb=int=, \verb=long=, \verb=unsigned=, \verb=unsigned long=,
-%\verb=Gmpz= or \verb=Gmpq=. The precision of an operation between a
-or \verb=Gmpz=. The precision of an operation between a
-\ccc{Gmpfr} and a number of another type is defined as the maximum between
-the number's precision and the default precision.
+\verb=int=, \verb=long=, \verb=unsigned=, \verb=unsigned long=, or
+\verb=Gmpz=. The precision of an operation between a \ccc{Gmpfr}
+and a number of another type is defined as the maximum between the
+number's precision and the default precision.
 
 To specify the rounding mode and/or the precision to perform an operation,
 this class provides the four static functions \verb=add=, \verb=sub=,
@@ -292,25 +288,19 @@ Other arithmetic functions provided by the class are:
         is not necessarily the smallest possible value of \(m\) (that is,
         it might be that \(2|m\)).}
 
-%--------------------------------------------------
-% \ccMethod{Gmpq to_fraction();}
-%         {Returns a \ccc{Gmpq} with the same value of \ccVar. This
-%         conversion is exact.}
-%-------------------------------------------------- 
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % comparisons
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ccHeading{Comparisons}
 
-Comparison operators \verb-==-, \verb-!=-, \verb->-, \verb-<-, \verb->=-
-\ and \verb-<=- \ are also overloaded. A \ccc{Gmpfr} can be compared
-with other \ccc{Gmpfr}, as well as with a \ccc{Gmpz}, %\ccc{Gmpq},
+Comparison operators \verb-==-, \verb-!=-, \verb->-, \verb-<-,
+\verb->=- \ and \verb-<=- \ are also overloaded. A \ccc{Gmpfr} can
+be compared with other \ccc{Gmpfr}, as well as with a \ccc{Gmpz},
 \verb=long=, \verb=unsigned long=, \verb=int=, \verb=double= \ or
 \verb=long double=. It is worth noting that the numbers are never
-converted nor rounded before comparison. In the case where one of the
-compared numbers is \ccc{NaN}, the \ccc{erange} flag is set.
+converted nor rounded before comparison. In the case where one of
+the compared numbers is \ccc{NaN}, the \ccc{erange} flag is set.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

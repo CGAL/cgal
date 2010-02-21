@@ -1,19 +1,19 @@
 // Copyright (c) 2007-2010 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_GMPFR_TYPE_H
@@ -186,20 +186,35 @@ class Gmpfr:
         }
 
         Gmpfr(Gmpzf f,
-              std::float_round_style r=Gmpfr::get_default_rndmode(),
+              std::float_round_style r,
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 mpfr_init2(fr(),p);
                 mpfr_set_z(fr(),f.man(),_gmp_rnd(r));
                 mpfr_mul_2si(fr(),fr(),f.exp(),_gmp_rnd(r));
         }
 
         Gmpfr(Gmpzf f,Gmpfr::Precision_type p){
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 mpfr_init2(fr(),p);
                 mpfr_set_z(fr(),f.man(),mpfr_get_default_rounding_mode());
                 mpfr_mul_2si(fr(),
                              fr(),
                              f.exp(),
                              mpfr_get_default_rounding_mode());
+        }
+
+        Gmpfr(Gmpzf f){
+                mpfr_init2(fr(),
+                           mpz_sizeinbase(f.man(),2)<MPFR_PREC_MIN?
+                           MPFR_PREC_MIN:
+                           mpz_sizeinbase(f.man(),2));
+                mpfr_set_z(fr(),f.man(),GMP_RNDN);
+                CGAL_assertion_msg(mpfr_cmp_z(fr(),f.man())==0,
+                                   "inexact conversion of a Gmpzf mantissa");
+                CGAL_assertion_code(int inexact=)
+                mpfr_mul_2si(fr(),fr(),f.exp(),GMP_RNDN);
+                CGAL_assertion_msg(inexact==0,"inexact conversion from Gmpzf");
         }
 
         Gmpfr(std::pair<Gmpz,long> intexp,
@@ -224,7 +239,7 @@ class Gmpfr:
 
 #define _GMPFR_CONSTRUCTOR_FROM_TYPE(_type,_fun) \
         Gmpfr(_type x, \
-              std::float_round_style r=Gmpfr::get_default_rndmode(), \
+              std::float_round_style r, \
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){ \
                 mpfr_init2(fr(),p); \
                 _fun(fr(),x,_gmp_rnd(r)); \
@@ -232,18 +247,10 @@ class Gmpfr:
         Gmpfr(_type x,Gmpfr::Precision_type p){ \
                 mpfr_init2(fr(),p); \
                 _fun(fr(),x,mpfr_get_default_rounding_mode()); \
-        }
-
-#define _GMPFR_CONSTRUCTOR_FROM_OBJECT(_class,_member,_fun) \
-        Gmpfr(const _class &x, \
-              std::float_round_style r=Gmpfr::get_default_rndmode(), \
-              Gmpfr::Precision_type p=Gmpfr::get_default_precision()){ \
-                mpfr_init2(fr(),p); \
-                _fun(fr(),x._member,_gmp_rnd(r)); \
         } \
-        Gmpfr(const _class &z,Gmpfr::Precision_type p){ \
-                mpfr_init2(fr(),p); \
-                _fun(fr(),z._member,mpfr_get_default_rounding_mode()); \
+        Gmpfr(_type x){ \
+                mpfr_init2(fr(),mp_bits_per_limb*sizeof(_type)); \
+                _fun(fr(),x,mpfr_get_default_rounding_mode()); \
         }
 
         _GMPFR_CONSTRUCTOR_FROM_TYPE(int,mpfr_set_si);
@@ -252,9 +259,27 @@ class Gmpfr:
         _GMPFR_CONSTRUCTOR_FROM_TYPE(unsigned long,mpfr_set_ui);
         _GMPFR_CONSTRUCTOR_FROM_TYPE(double,mpfr_set_d);
         _GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
-        _GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpz,mpz(),mpfr_set_z);
 
 #undef _GMPFR_CONSTRUCTOR_FROM_TYPE
+
+#define _GMPFR_CONSTRUCTOR_FROM_OBJECT(_class,_member,_fun,_preccode) \
+        Gmpfr(const _class &x, \
+              std::float_round_style r, \
+              Gmpfr::Precision_type p=Gmpfr::get_default_precision()){ \
+                mpfr_init2(fr(),p); \
+                _fun(fr(),x._member,_gmp_rnd(r)); \
+        } \
+        Gmpfr(const _class &x,Gmpfr::Precision_type p){ \
+                mpfr_init2(fr(),p); \
+                _fun(fr(),x._member,mpfr_get_default_rounding_mode()); \
+        } \
+        Gmpfr(const _class &x){ \
+                mpfr_init2(fr(),_preccode); \
+                _fun(fr(),x._member,GMP_RNDN); \
+        }
+
+        _GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpz,mpz(),mpfr_set_z,x.bit_size());
+
 #undef _GMPFR_CONSTRUCTOR_FROM_OBJECT
 
         // When Gmpfr is refence counted, we inherit the assignment
