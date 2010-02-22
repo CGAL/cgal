@@ -166,6 +166,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
   target_link_libraries(off_plugin scene_polyhedron_item polygon_soup)
 
+  polyhedron_demo_plugin(c3t3_saver_plugin Mesh_3_c3t3_saver_plugin)
+  target_link_libraries(c3t3_saver_plugin scene_c3t3_item)
+
   polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
     Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Mesh_3_demo_mesh_plugin_image_cgal_code.cpp Scene_c3t3_item.moc ${meshingUI_FILES})
   target_link_libraries(mesh_3_plugin scene_c3t3_item scene_polyhedron_item scene_segmented_image_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})

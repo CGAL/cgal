@@ -481,13 +481,13 @@ void MainWindow::on_actionSaveAs_triggered()
                          .arg(item->name()));
     return;
   }
-
+  
   QString filename = 
     QFileDialog::getSaveFileName(this,
                                  tr("Save to File..."),
                                  QString(),
-                                 tr("OFF files (*.off)\n"
-                                    "All files (*)"));
+                                 filters.join(";;"));
+  
   QFileInfo fileinfo(filename);
   if(!fileinfo.isFile() ||
      QMessageBox::warning(this,
