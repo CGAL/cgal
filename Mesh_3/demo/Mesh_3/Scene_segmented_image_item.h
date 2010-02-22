@@ -16,7 +16,7 @@ class SCENE_SEGMENTED_IMAGE_ITEM_EXPORT Scene_segmented_image_item
 public:
 
   Scene_segmented_image_item(Image* im);
-  ~Scene_segmented_image_item() {}
+  ~Scene_segmented_image_item();
 
   bool isFinite() const { return true; }
   bool isEmpty() const { return false; }

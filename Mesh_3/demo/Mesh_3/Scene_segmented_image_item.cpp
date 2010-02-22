@@ -5,8 +5,6 @@
 #include <CGAL/gl.h>
 #include <CGAL/ImageIO.h>
 
-#define SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-
 namespace {
   
   unsigned char image_data(const Image& im,
@@ -31,6 +29,13 @@ Scene_segmented_image_item::Scene_segmented_image_item(Image* im)
 #endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 
   initialize_buffers();
+}
+
+
+Scene_segmented_image_item::~Scene_segmented_image_item()
+{
+  ::glDeleteBuffers(3,m_vbo);
+  ::glDeleteBuffers(1,&m_ibo);
 }
 
 
