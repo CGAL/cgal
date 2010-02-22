@@ -161,6 +161,12 @@ void AT_coercion_test_for_cgal_types_rat(){
 
     typedef typename AT::Integer Integer;
     typedef typename AT::Rational Rational;
+    typedef typename AT::Bigfloat_interval Bigfloat_interval; 
+
+
+    BOOST_STATIC_ASSERT(!(::boost::is_same<Integer, CGAL::Null_tag>::value));
+    BOOST_STATIC_ASSERT(!(::boost::is_same<Rational, CGAL::Null_tag>::value));
+    BOOST_STATIC_ASSERT(!(::boost::is_same<Bigfloat_interval, CGAL::Null_tag>::value));
 
     CGAL::test_explicit_interoperable_from_to<int     ,Rational>();
     CGAL::test_explicit_interoperable_from_to<double  ,Rational>();
@@ -212,8 +218,15 @@ void AT_coercion_test_for_cgal_types_fws(){
     AT_coercion_test_for_cgal_types_rat<AT>();
     
     typedef typename AT::Integer Integer;
-    typedef typename AT::Rational Rational;
+    typedef typename AT::Rational Rational;    
+    typedef typename AT::Bigfloat_interval Bigfloat_interval;
     typedef typename AT::Field_with_sqrt Real;
+
+    BOOST_STATIC_ASSERT(!(::boost::is_same<Integer, CGAL::Null_tag>::value));
+    BOOST_STATIC_ASSERT(!(::boost::is_same<Rational, CGAL::Null_tag>::value));
+    BOOST_STATIC_ASSERT(!(::boost::is_same<Bigfloat_interval, CGAL::Null_tag>::value));
+    BOOST_STATIC_ASSERT(!(::boost::is_same<Real, CGAL::Null_tag>::value));
+
 
     typedef CGAL::Sqrt_extension<Integer  , Integer> Extn_1;  
     typedef CGAL::Sqrt_extension<Extn_1   , Extn_1 > Extn_2n;
@@ -434,7 +447,8 @@ int main(){
    
 
 #ifdef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
-    AT_coercion_test_for_cgal_types_fws<CGAL::Arithmetic_kernel>();
+    // since it might be GMP kernel this can only do the rat test. 
+    AT_coercion_test_for_cgal_types_rat<CGAL::Arithmetic_kernel>();
 #endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
 #ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL
