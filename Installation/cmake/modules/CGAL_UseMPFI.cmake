@@ -13,9 +13,7 @@ if( NOT CGAL_MPFI_SETUP )
     link_directories( ${MPFI_LIBRARIES_DIR} )
     add_definitions( ${MPFI_DEFINITIONS} "-DCGAL_USE_MPFI" )
 
-    if( NOT MSVC )
-      link_libraries( ${MPFI_LIBRARIES} )
-    endif( NOT MSVC )
+    link_libraries( ${MPFI_LIBRARIES} )
 
   endif( MPFI_FOUND )
 
