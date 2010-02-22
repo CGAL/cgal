@@ -125,7 +125,7 @@ the user can pass them directly as arguments to the functions.
 \ccNestedType{Unique_vertex_iterator}{iterator over the vertices whose
   corresponding points lie in the original domain, i.e.\ for each set
   of periodic copies the \ccc{Unique_vertex_iterator} iterates over
-  one \emph{unique} representative.}
+  exactly one representative.}
 
 \ccTypedef{typedef Triangulation_data_structure::Cell_circulator Cell_circulator;}
 {circulator over all cells incident to a given edge} 
@@ -603,8 +603,10 @@ triangulation.
 
 \ccMethod{Unique_vertex_iterator unique_vertices_begin() const;}
 {Starts at an arbitrary vertex. Iterates over all vertices whose
-  corresponding points lie in the original domain. Returns
-  \ccc{vertices_end()} if \ccVar.\ccc{number_of_vertices()} $=0$.}
+  corresponding points lie in the original domain, i.e.\ for each set
+  of periodic copies the \ccc{Unique_vertex_iterator} iterates over
+  exactly one representative. Returns \ccc{unique_vertices_end()} if
+  \ccVar.\ccc{number_of_vertices()} $=0$.}
 \ccGlue
 \ccMethod{Unique_vertex_iterator unique_vertices_end() const;}
 {Past-the-end iterator}
@@ -654,49 +656,49 @@ domain. This can be controlled using the enum \ccc{Iterator_type}, see
 \ccThree{Periodic_tetrahedron_iterator}{XXXXXXX}{}
 
 \ccMethod{Periodic_point_iterator periodic_points_begin(Iterator_type it =
-  AS_STORED) const;}
+  STORED) const;}
 {Iterates over the points of the triangulation. Its behavior is
   defined by the \ccc{Iterator_type} \ccc{it} as described on
   \ccRefPage{CGAL::Periodic_3_triangulation_3::Iterator_type}.}
 \ccGlue
 \ccMethod{Periodic_point_iterator periodic_points_end(Iterator_type it =
-  AS_STORED) const;}
+  STORED) const;}
 {Past-the-end iterator. Note that to match another
   \ccc{Periodic_point_iterator} both must have the same
   \ccc{Iterator_type} \ccc{it}.}
 
 \ccMethod{Periodic_segment_iterator periodic_segments_begin(Iterator_type it =
-  AS_STORED) const;}
+  STORED) const;}
 {Iterates over the segments of the triangulation. Its behavior is
   defined by the \ccc{Iterator_type} \ccc{it} as described on
   \ccRefPage{CGAL::Periodic_3_triangulation_3::Iterator_type}.}
 \ccGlue
 \ccMethod{Periodic_segment_iterator periodic_segments_end(Iterator_type it =
-  AS_STORED) const;}
+  STORED) const;}
 {Past-the-end iterator. Note that to match another
   \ccc{Periodic_segment_iterator} both must have the same
   \ccc{Iterator_type} \ccc{it}.}
 
 \ccMethod{Periodic_triangle_iterator periodic_triangles_begin(Iterator_type it =
-  AS_STORED) const;}
+  STORED) const;}
 {Iterates over the triangles of the triangulation. Its behavior is
   defined by the \ccc{Iterator_type} \ccc{it} as described on
   \ccRefPage{CGAL::Periodic_3_triangulation_3::Iterator_type}.}
 \ccGlue
 \ccMethod{Periodic_triangle_iterator periodic_triangles_end(Iterator_type it =
-  AS_STORED) const;}
+  STORED) const;}
 {Past-the-end iterator. Note that to match another
   \ccc{Periodic_triangle_iterator} both must have the same
   \ccc{Iterator_type} \ccc{it}.}
 
 \ccMethod{Periodic_tetrahedron_iterator periodic_tetrahedra_begin(Iterator_type it =
-  AS_STORED) const;} 
+  STORED) const;} 
 {Iterates over the tetrahedra of the triangulation. Its behavior is
   defined by the \ccc{Iterator_type} \ccc{it} as described on
   \ccRefPage{CGAL::Periodic_3_triangulation_3::Iterator_type}.}
 \ccGlue
 \ccMethod{Periodic_tetrahedron_iterator periodic_tetrahedra_end(Iterator_type it =
-  AS_STORED) const;} 
+  STORED) const;} 
 {Past-the-end iterator. Note that to match another
   \ccc{Periodic_tetrahedron_iterator} both must have the same
   \ccc{Iterator_type} \ccc{it}.} 
