@@ -34,8 +34,10 @@ Scene_segmented_image_item::Scene_segmented_image_item(Image* im)
 
 Scene_segmented_image_item::~Scene_segmented_image_item()
 {
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   ::glDeleteBuffers(3,m_vbo);
   ::glDeleteBuffers(1,&m_ibo);
+#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 }
 
 

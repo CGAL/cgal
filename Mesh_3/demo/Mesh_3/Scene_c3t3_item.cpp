@@ -433,7 +433,7 @@ void
 Scene_c3t3_item::setColor(QColor c)
 {
   color_ = c;
-  compute_color_map(c.hsvHueF());
+  compute_color_map(c.hueF());
 }
 
 
