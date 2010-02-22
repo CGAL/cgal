@@ -2109,6 +2109,7 @@ Mesh_3/applications/data/Polyhedra/homer.txt -text
 Mesh_3/applications/data/Polyhedra/pinion.off -text
 Mesh_3/applications/data/Polyhedra/pinion.txt -text
 Mesh_3/applications/mesher_tester.cpp -text
+Mesh_3/demo/Mesh_3/FindGLEW.cmake -text
 Mesh_3/demo/Mesh_3/LocalOptim_dialog.ui -text
 Mesh_3/demo/Mesh_3/MainWindow.ui -text
 Mesh_3/demo/Mesh_3/Mesh_3.qrc -text

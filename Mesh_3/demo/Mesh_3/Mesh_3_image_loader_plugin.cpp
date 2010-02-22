@@ -1,3 +1,6 @@
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+#  include <GL/glew.h>
+#endif
 #include "Scene_segmented_image_item.h"
 #include "Image_type.h"
 
@@ -12,6 +15,12 @@ class Mesh_3_image_loader_plugin :
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface);
 
 public:
+  Mesh_3_image_loader_plugin() {
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+    glewInit();
+#endif
+  }
+
   QStringList nameFilters() const;
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);

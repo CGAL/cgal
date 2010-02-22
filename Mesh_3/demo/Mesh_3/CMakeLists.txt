@@ -31,6 +31,8 @@ include_directories( BEFORE ./ ./include ../../include )
 
 #include_directories(BEFORE ../../../../candidate-packages/Mesh_3/include/)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} . )
+
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4 ImageIO)
 include( ${CGAL_USE_FILE} )
@@ -45,6 +47,10 @@ find_package(Qt4)
 # Find OpenGL
 find_package(OpenGL)
 
+# Find GLEW (for OpenGL-1.5 and OpenGL extensions)
+find_package(GLEW)
+
+
 # Find QGLViewer
 if(QT4_FOUND)
   include(${QT_USE_FILE})
@@ -53,6 +59,14 @@ endif(QT4_FOUND)
 
 
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+
+  if(GLEW_FOUND)
+    include_directories ( ${GLEW_INCLUDE_DIR} )
+    add_definitions(-DSCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE)
+  else(GLEW_FOUND)
+    message(STATUS "NOTICE: GLEW library is not found. 3D images rendering will not be available.")
+  endif(GLEW_FOUND)
+
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
@@ -92,6 +106,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(scene_segmented_image_item SHARED
     Scene_segmented_image_item.cpp Scene_segmented_image_item.moc)
   target_link_libraries(scene_segmented_image_item scene_item)
+
+  if(GLEW_FOUND)
+    target_link_libraries(scene_segmented_image_item ${GLEW_LIBRARIES})
+  endif()
 
   add_library(scene_polyhedron_item SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
@@ -162,6 +180,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(image_loader_plugin Mesh_3_image_loader_plugin)
   target_link_libraries(image_loader_plugin scene_segmented_image_item)
+
+  if(GLEW_FOUND)
+    target_link_libraries(image_loader_plugin ${GLEW_LIBRARIES})
+  endif()
 
   polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
   target_link_libraries(off_plugin scene_polyhedron_item polygon_soup)

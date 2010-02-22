@@ -1,9 +1,14 @@
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+#  include <GL/glew.h>
+#endif
 #include "Scene_segmented_image_item.h"
 #include "Image_type.h"
 #include <QColor>
 #include <map>
 #include <CGAL/gl.h>
 #include <CGAL/ImageIO.h>
+
+//#define SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 
 namespace {
   
