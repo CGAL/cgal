@@ -174,7 +174,7 @@ Scene_segmented_image_item::initialize_buffers()
   // Get step size
   int steps_max = 75;
   int size_max = (std::max)((std::max)(xdim, ydim), zdim);
-  int d_max = size_max / steps_max;
+  int d_max = (std::max)(1, size_max/steps_max);
   int dx=d_max, dy=d_max, dz=d_max;
   
   // Normals
@@ -190,19 +190,13 @@ Scene_segmented_image_item::initialize_buffers()
   int cube_array[24] = { 0,0,0, 0,0,1, 0,1,1, 0,1,0,
                          1,0,0, 1,0,1, 1,1,1, 1,1,0 };
   
-  // Tester
+  // Tester (avoids drawing of interior cubes)
   int tester[18] = { -1,0,0, 0,-1,0, 0,0,-1, 1,0,0, 0,1,0, 0,0,1 };
                      // 0,1,1, 1,0,1, 1,1,0, 2,1,1, 1,2,1, 1,1,2 };
   
   // Stores Gl elements
-  int elt_guessed_nb = 1/10 * (xdim*ydim*zdim) / (dx*dy*dz) ;
   std::vector<float> vertices, normals, colors;
   std::vector<unsigned int> indices;
-  
-  vertices.reserve(elt_guessed_nb);
-  normals.reserve(elt_guessed_nb);
-  colors.reserve(elt_guessed_nb);
-  indices.reserve(elt_guessed_nb);
   
   unsigned int delta = 0;
   for(unsigned int i=0;i<xdim;i+=dx)
@@ -418,9 +412,9 @@ Scene_segmented_image_item::ibo_size() const
 
     return nb_elts/sizeof(GLuint);
   }
-#else // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  return 0;
 #endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+
+  return 0;
 }
 
 
