@@ -10,6 +10,16 @@
 
 //#define SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+bool gl_vbo_available() {
+  return  glewIsSupported("GL_VERSION_1_4");
+}
+#else
+bool gl_vbo_available() {
+  return false;
+}
+#endif
+
 namespace {
   
   unsigned char image_data(const Image& im,
@@ -29,8 +39,10 @@ Scene_segmented_image_item::Scene_segmented_image_item(Image* im)
   , m_draw_edges(true)
 {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  ::glGenBuffers(3,m_vbo);
-  ::glGenBuffers(1,&m_ibo);
+  if(gl_vbo_available()) {
+    ::glGenBuffers(3,m_vbo);
+    ::glGenBuffers(1,&m_ibo);
+  }
 #endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 
   initialize_buffers();
@@ -40,8 +52,10 @@ Scene_segmented_image_item::Scene_segmented_image_item(Image* im)
 Scene_segmented_image_item::~Scene_segmented_image_item()
 {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  ::glDeleteBuffers(3,m_vbo);
-  ::glDeleteBuffers(1,&m_ibo);
+  if(gl_vbo_available()) {
+    ::glDeleteBuffers(3,m_vbo);
+    ::glDeleteBuffers(1,&m_ibo);
+  }
 #endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 }
 
@@ -112,6 +126,10 @@ void
 Scene_segmented_image_item::initialize_buffers() 
 {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+  if(!gl_vbo_available()) {
+    m_initialized = true;
+    return;
+  }
 
   const unsigned int& xdim = m_image->xdim();
   const unsigned int& ydim = m_image->ydim();
@@ -326,6 +344,8 @@ void
 Scene_segmented_image_item::draw_gl() const
 {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+  if(!gl_vbo_available()) return;
+
   ::glShadeModel(GL_SMOOTH);
   
   // Draw faces
@@ -361,6 +381,8 @@ void
 Scene_segmented_image_item::draw_gl_edges() const
 {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+  if(!gl_vbo_available()) return;
+
   // Ensure edges are drawn in black
   ::glColor3f( 0.f, 0.f, 0.f );
   
@@ -389,11 +411,13 @@ GLint
 Scene_segmented_image_item::ibo_size() const
 {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  GLint nb_elts = 0;
-  ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-  ::glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &nb_elts);
+  if(gl_vbo_available()) {
+    GLint nb_elts = 0;
+    ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+    ::glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &nb_elts);
 
-  return nb_elts/sizeof(GLuint);
+    return nb_elts/sizeof(GLuint);
+  }
 #else // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   return 0;
 #endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
