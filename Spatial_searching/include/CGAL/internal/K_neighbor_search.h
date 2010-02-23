@@ -54,8 +54,9 @@ public:
 
   typedef typename Tree::Point_d_iterator Point_d_iterator;
 
-protected:
+  //undocumented type
   typedef std::pair<Point_d*,FT>  Point_ptr_with_transformed_distance;
+protected:
 
   // Comparison functor to sort a set of points
   // in increasing or decreasing order (key is distance).
@@ -91,8 +92,9 @@ protected:
   };
   
 public:
-
-  typedef boost::transform_iterator<Transform_pair,typename BPqueue::const_iterator> iterator;
+  //non-documented iterator
+  typedef typename BPqueue::const_iterator                            advanced_iterator;
+  typedef boost::transform_iterator<Transform_pair,advanced_iterator> iterator;
 
 protected:
 
@@ -138,6 +140,10 @@ public:
     return iterator(queue.end());
   }
 
+  //non-documented iterator
+  advanced_iterator advanced_begin() const  {return queue.begin();}
+  advanced_iterator advanced_end()   const  {return queue.end();}  
+  
 
   // constructor
   K_neighbor_search(Tree& tree, const Query_item& q,  

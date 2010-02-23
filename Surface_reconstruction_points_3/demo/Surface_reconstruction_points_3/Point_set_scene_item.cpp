@@ -9,7 +9,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
-#include <CGAL/Fast_orthogonal_k_neighbor_search.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 
 #include <QObject>
@@ -239,7 +239,7 @@ void Point_set_scene_item::computes_local_spacing(int k)
   typedef Kernel Geom_traits;
   typedef Geom_traits::FT FT;
   typedef CGAL::Search_traits_3<Geom_traits> TreeTraits;
-  typedef CGAL::Fast_orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
+  typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
   typedef Neighbor_search::Tree Tree;
 
   Point_set::iterator end(m_points->end());
