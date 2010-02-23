@@ -12,6 +12,7 @@ CGAL 3.6 offers the following improvements and new functionality :
 2 Geometry Kernels
 
 2.1 2D and 3D Geometry Kernel
+
   - Add new do_intersect() and intersection() overloads:
     + do_intersect(Bbox_3, Bbox_3/Line_3/Ray_3/Segment_3)
     + intersection(Triangle_3, Line_3/Ray_3/Segment_3)
