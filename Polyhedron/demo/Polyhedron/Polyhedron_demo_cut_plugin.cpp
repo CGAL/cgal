@@ -10,7 +10,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_segment_primitive.h>
+#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/AABB_drawing_traits.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -27,7 +27,7 @@
 //typedef CGAL::Simple_cartesian<double> Epic_kernel;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
-typedef class CGAL::AABB_polyhedron_segment_primitive<
+typedef class CGAL::AABB_polyhedron_triangle_primitive<
                                     Epic_kernel,
                                     Polyhedron>             AABB_primitive;
 typedef class CGAL::AABB_traits<Epic_kernel,
@@ -265,8 +265,8 @@ void Polyhedron_demo_cut_plugin::cut() {
     if(it == trees.end()) {
       it = trees.insert(trees.begin(),
                         std::make_pair(poly_item,
-                                       new AABB_tree(poly_item->polyhedron()->edges_begin(),
-                                                     poly_item->polyhedron()->edges_end() )));
+                                       new AABB_tree(poly_item->polyhedron()->facets_begin(),
+                                                     poly_item->polyhedron()->facets_end() )));
       Scene_aabb_item* aabb_item = new Scene_aabb_item(*it->second);
       aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
       aabb_item->setRenderingMode(Wireframe);
@@ -278,13 +278,17 @@ void Polyhedron_demo_cut_plugin::cut() {
     if(!CGAL::do_intersect(plane, it->second->bbox()))
       continue;
     
-    std::vector<AABB_primitive> intersections;
-    it->second->all_intersected_primitives(plane, std::back_inserter(intersections));
+    std::vector<AABB_tree::Object_and_primitive_id> intersections;
+    it->second->all_intersections(plane, std::back_inserter(intersections));
     
-    for ( std::vector<AABB_primitive>::iterator it = intersections.begin(),
+    for ( std::vector<AABB_tree::Object_and_primitive_id>::iterator it = intersections.begin(),
          end = intersections.end() ; it != end ; ++it )
     {
-      edges_item->edges.push_back(it->datum());
+      const Epic_kernel::Segment_3* inter_seg =
+        CGAL::object_cast<Epic_kernel::Segment_3>(&(it->first));
+      
+      if ( NULL != inter_seg )
+        edges_item->edges.push_back(*inter_seg);
     }
   }
   
