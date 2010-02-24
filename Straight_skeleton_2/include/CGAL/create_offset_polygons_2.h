@@ -63,10 +63,10 @@ create_partial_interior_straight_skeleton_2 ( FT const&     aMaxTime
   
   SsBuilder ssb( lMaxTime ) ;
   
-  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, Converter ) ;
+  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, true, Converter ) ;
   
   for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi )
-    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), Converter ) ;
+    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), true, Converter ) ;
   
   return ssb.construct_skeleton();
 }
