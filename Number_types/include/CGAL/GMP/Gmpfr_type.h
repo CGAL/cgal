@@ -274,7 +274,8 @@ class Gmpfr:
                 _fun(fr(),x._member,mpfr_get_default_rounding_mode()); \
         } \
         Gmpfr(const _class &x){ \
-                mpfr_init2(fr(),_preccode); \
+                Gmpfr::Precision_type p=(_preccode); \
+                mpfr_init2(fr(),MPFR_PREC_MIN<p?p:MPFR_PREC_MIN); \
                 _fun(fr(),x._member,GMP_RNDN); \
         }
 
@@ -286,8 +287,7 @@ class Gmpfr:
         // operator and the copy constructor from Handle_for.
 #ifdef CGAL_GMPFR_NO_REFCOUNT
         Gmpfr& operator=(const Gmpfr &a){
-                if(get_precision()!=a.get_precision())
-                        set_precision(a.get_precision());
+                mpfr_set_prec(fr(),a.get_precision());
                 mpfr_set(fr(),a.fr(),mpfr_get_default_rounding_mode());
                 return *this;
         }
@@ -892,16 +892,15 @@ std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
   long e=mpfr_get_z_exp(z.mpz(),this->fr());
 
   long zeros = mpz_scan1(z.mpz(),0);
+  CGAL_assertion(z==(z>>zeros)<<zeros);
   z >>= zeros;
+  CGAL_assertion(z%2!=0);
   e +=  zeros;
 
-  CGAL_postcondition(z % 2 != 0);
-  CGAL_postcondition_code(Gmpfr::Precision_type m=std::max)
-  CGAL_postcondition_code(  (z.bit_size(),(size_t)MPFR_PREC_MIN);)
   CGAL_postcondition_code(if (e >= 0))
-    CGAL_postcondition( (*this) == (Gmpfr(z,m) * CGAL::ipower(Gmpfr(2),e)) );
+    CGAL_postcondition( (*this) == (Gmpfr(z) * CGAL::ipower(Gmpfr(2),e)) );
   CGAL_postcondition_code(else)
-    CGAL_postcondition( (*this) == (Gmpfr(z,m) / CGAL::ipower(Gmpfr(2),-e)) );
+    CGAL_postcondition( ( (*this) * (Gmpz(1)<<(-e)) ) == z );
 
   return std::make_pair(z,e);
 }
@@ -1154,5 +1153,3 @@ Gmpfr max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpfr& x,const Gmpfr& y){
 } // namespace CGAL
 
 #endif  // CGAL_GMPFR_TYPE_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab
