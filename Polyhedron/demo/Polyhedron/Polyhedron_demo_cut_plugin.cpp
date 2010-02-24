@@ -1,4 +1,5 @@
 #include <QtCore/qglobal.h>
+#include <CGAL/AABB_intersections.h>
 
 #include "Messages_interface.h"
 #include "Scene_item_with_display_list.h"
@@ -11,6 +12,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/AABB_drawing_traits.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/bounding_box.h>
 
@@ -22,12 +24,13 @@
 #include <QMainWindow>
 #include <QApplication>
 
-typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel;
+//typedef CGAL::Simple_cartesian<double> Epic_kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
 typedef class CGAL::AABB_polyhedron_triangle_primitive<
-                                    Simple_cartesian_kernel,
+                                    Epic_kernel,
                                     Polyhedron>             AABB_primitive;
-typedef class CGAL::AABB_traits<Simple_cartesian_kernel,
+typedef class CGAL::AABB_traits<Epic_kernel,
                                 AABB_primitive>             AABB_traits;
 typedef class CGAL::AABB_tree<AABB_traits> AABB_tree;
 
@@ -131,8 +134,8 @@ public:
     for(size_t i = 0, end = edges.size();
         i < end; ++i)
     {
-      const Simple_cartesian_kernel::Point_3& a = edges[i].source();
-      const Simple_cartesian_kernel::Point_3& b = edges[i].target();
+      const Epic_kernel::Point_3& a = edges[i].source();
+      const Epic_kernel::Point_3& b = edges[i].target();
       ::glVertex3d(a.x(), a.y(), a.z());
       ::glVertex3d(b.x(), b.y(), b.z());
     }
@@ -140,7 +143,7 @@ public:
   }
 
 public:
-  std::vector<Simple_cartesian_kernel::Segment_3> edges;
+  std::vector<Epic_kernel::Segment_3> edges;
 }; // end class Scene_edges_item
 
 
@@ -154,6 +157,8 @@ class Polyhedron_demo_cut_plugin :
 public:
   Polyhedron_demo_cut_plugin() : QObject(), edges_item(0) {
   }
+  
+  virtual ~Polyhedron_demo_cut_plugin();
 
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface,
             Messages_interface* m);
@@ -177,6 +182,17 @@ private:
   typedef std::map<QObject*,  AABB_tree*> Trees;
   Trees trees;
 }; // end Polyhedron_demo_cut_plugin
+
+
+Polyhedron_demo_cut_plugin::~Polyhedron_demo_cut_plugin()
+{
+  for ( Trees::iterator it = trees.begin(), end = trees.end() ;
+       it != end ; ++it)
+  {
+    delete it->second;
+  }
+}
+
 
 void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
                                       Scene_interface* scene_interface,
@@ -210,55 +226,75 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
           this, SLOT(cut()));
   scene->addItem(plane_item);
   actionCreateCutPlane->setEnabled(false);
+
+  // Hide polyhedrons and call cut() (avoid that nothing shows up until user
+  // decides to move the plane item)
+  for(size_t i = 0, end = scene->numberOfEntries(); i < end; ++i) {
+    Scene_item* item = scene->item(i);
+    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
+    if ( NULL != poly_item )
+      poly_item->setVisible(false);
+  }
+  cut();
 }
 
 
-// ST 27/04/2009: Function disabled
-// TODO: Fix compilation with AABB_tree 3.5
-
 void Polyhedron_demo_cut_plugin::cut() {
-//  QApplication::setOverrideCursor(Qt::WaitCursor);
-//  if(!edges_item) {
-//    edges_item = new Scene_edges_item;
-//    edges_item->setName("Edges of the cut");
-//    edges_item->setColor(Qt::red);
-//    connect(edges_item, SIGNAL(destroyed()),
-//            this, SLOT(reset_edges()));
-//    scene->addItem(edges_item);
-//  }
-//  const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
-//  const qglviewer::Vec& n =
-//    plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
-//  Simple_cartesian_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
-//  std::cerr << plane << std::endl;
-//  edges_item->edges.clear();
-//  QTime time;
-//  time.start();
-//  for(size_t i = 0, end = scene->numberOfEntries(); i < end; ++i) {
-//    Scene_item* item = scene->item(i);
-//    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
-//    if(!poly_item) continue;
-//    Trees::iterator it = trees.find(poly_item);
-//    if(it == trees.end()) {
-//      it = trees.insert(trees.begin(),
-//                        std::make_pair(poly_item,
-//                                       new AABB_tree(poly_item->polyhedron()->facets_begin(),
-//                                                     poly_item->polyhedron()->facets_end() )));
-//      Scene_aabb_item* aabb_item = new Scene_aabb_item(*it->second);
-//      aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
-//      aabb_item->setRenderingMode(Wireframe);
-//      aabb_item->setVisible(false);
-//      scene->addItem(aabb_item);
-//      std::cerr << "size: " << it->second->size() << std::endl;
-//    }
-//    if(!CGAL::do_intersect(plane, it->second->bbox()))
-//      std::cerr << "no intersection\n";
-//    std::cerr << "all_intersection\n";
-//    //it->second.all_intersection<Simple_cartesian_kernel::Segment_3>(plane, std::back_inserter(edges_item->edges));
-//  }
-//  messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
-//  scene->itemChanged(edges_item);
-//  QApplication::restoreOverrideCursor();
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  if(!edges_item) {
+    edges_item = new Scene_edges_item;
+    edges_item->setName("Edges of the cut");
+    edges_item->setColor(Qt::red);
+    connect(edges_item, SIGNAL(destroyed()),
+            this, SLOT(reset_edges()));
+    scene->addItem(edges_item);
+  }
+  const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
+  const qglviewer::Vec& n =
+    plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+  Epic_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
+  //std::cerr << plane << std::endl;
+  edges_item->edges.clear();
+  QTime time;
+  time.start();
+  for(size_t i = 0, end = scene->numberOfEntries(); i < end; ++i) {
+    Scene_item* item = scene->item(i);
+    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
+    if(!poly_item) continue;
+    Trees::iterator it = trees.find(poly_item);
+    if(it == trees.end()) {
+      it = trees.insert(trees.begin(),
+                        std::make_pair(poly_item,
+                                       new AABB_tree(poly_item->polyhedron()->facets_begin(),
+                                                     poly_item->polyhedron()->facets_end() )));
+      Scene_aabb_item* aabb_item = new Scene_aabb_item(*it->second);
+      aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
+      aabb_item->setRenderingMode(Wireframe);
+      aabb_item->setVisible(false);
+      scene->addItem(aabb_item);
+      //std::cerr << "size: " << it->second->size() << std::endl;
+    }
+    
+    if(!CGAL::do_intersect(plane, it->second->bbox()))
+      continue;
+    
+    std::vector<AABB_tree::Object_and_primitive_id> intersections;
+    it->second->all_intersections(plane, std::back_inserter(intersections));
+    
+    for ( std::vector<AABB_tree::Object_and_primitive_id>::iterator it = intersections.begin(),
+         end = intersections.end() ; it != end ; ++it )
+    {
+      const Epic_kernel::Segment_3* inter_seg =
+        CGAL::object_cast<Epic_kernel::Segment_3>(&(it->first));
+      
+      if ( NULL != inter_seg )
+        edges_item->edges.push_back(*inter_seg);
+    }
+  }
+  
+  messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
+  scene->itemChanged(edges_item);
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_cut_plugin::enableAction() {
