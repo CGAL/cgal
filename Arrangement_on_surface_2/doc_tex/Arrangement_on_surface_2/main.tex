@@ -30,6 +30,15 @@
 \newcommand{\dcel}{{\sc Dcel}}
 \newcommand{\kdtree}{{\sc Kd}-tree}
 
+\lcTex{%
+\ifpdf
+  \pdfstringdefDisableCommands{
+    \renewcommand{\sc}{}
+    \def\dcel{DCEL}
+  }
+\fi%
+}
+
 \input{Arrangement_on_surface_2/arr_intro.tex}
 \input{Arrangement_on_surface_2/arr_class.tex}
 \input{Arrangement_on_surface_2/arr_queries.tex}

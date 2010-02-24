@@ -98,6 +98,15 @@
               pdfborder={0 0 0},
               pdfpagelabels=true,
               plainpages=false]{hyperref}%
+
+  % disable some custom commands, for pdfstrings:
+  \pdfstringdefDisableCommands{%
+    \renewcommand{\stl}{STL}
+    \renewcommand{\leda}{Leda}
+    \renewcommand{\cgal}{CGALPUET}
+    \renewcommand{\galia}{Galia}
+  }
+
 %
 % Enforce same character spacing in PDFLaTeX
 \pdfadjustspacing=1
