@@ -108,6 +108,11 @@ void Scene::update_bbox()
 
 void Scene::draw()
 {
+    if(m_view_plane)
+        ::glEnable(GL_DEPTH_TEST);
+    else
+        ::glDisable(GL_DEPTH_TEST);
+  
     if(m_view_polyhedron)
         draw_polyhedron();
 
@@ -293,7 +298,7 @@ void Scene::draw_plane()
     double dx = m_bbox.xmax()-m_bbox.xmin();
     double dy = m_bbox.ymax()-m_bbox.ymin();
     double dz = m_bbox.zmax()-m_bbox.zmin();
-    double diag = std::sqrt(dx*dx + dy*dy + dz*dz);
+    float diag = .6f * float(std::sqrt(dx*dx + dy*dy + dz*dz));
 
     ::glDisable(GL_LIGHTING);
     ::glLineWidth(1.0f);
@@ -302,7 +307,7 @@ void Scene::draw_plane()
     // draw grid
     ::glPushMatrix();
     ::glMultMatrixd(m_frame->matrix());
-    QGLViewer::drawGrid((float)diag*0.6);
+    QGLViewer::drawGrid(diag);
     ::glPopMatrix();
 
     // draw cut segments
@@ -318,7 +323,24 @@ void Scene::draw_plane()
         ::glVertex3d(a.x(), a.y(), a.z());
         ::glVertex3d(b.x(), b.y(), b.z());
     }
-    ::glEnd();  
+    ::glEnd();
+  
+    // fill grid with transparent blue
+    ::glPushMatrix();
+    ::glMultMatrixd(m_frame->matrix());
+    ::glColor4f(.6f, .85f, 1.f, .65f);
+
+    ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA); 
+    ::glEnable(GL_BLEND);
+    ::glBegin(GL_QUADS);
+    ::glVertex3d(-diag, -diag, 0.);
+    ::glVertex3d(-diag,  diag, 0.);
+    ::glVertex3d( diag,  diag, 0.);
+    ::glVertex3d( diag, -diag, 0.);
+    ::glEnd();
+    ::glDisable(GL_BLEND);
+  
+    ::glPopMatrix();
 }
 
 FT Scene::random_in(const double a,
