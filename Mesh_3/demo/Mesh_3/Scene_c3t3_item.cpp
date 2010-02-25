@@ -18,8 +18,18 @@
 #include <QGLViewer/qglviewer.h>
 
 namespace {
-  void CGALglcolor(QColor c)
+  void CGALglcolor(QColor c, int dv = 0)
   {
+    if ( 0 != dv )
+    {
+// workaround for Qt-4.2.
+#if QT_VERSION < 0x040300
+#  define darker dark
+#endif
+      c = c.darker(dv);
+#undef darker
+    }
+    
     ::glColor4f(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
   }
 }
@@ -218,14 +228,6 @@ Scene_c3t3_item::direct_draw(int mode) const {
   ::glEnd();
 
   ::glBegin(GL_TRIANGLES);
-  // workaround for Qt-4.2.
-#if QT_VERSION < 0x040300
-#  define darker dark
-#endif
-  if(mode != DRAW_EDGES) {
-    CGALglcolor(this->color().darker(150));
-  }
-#undef darker
   for(Tr::Finite_cells_iterator
         cit = c3t3().triangulation().finite_cells_begin(),
         end = c3t3().triangulation().finite_cells_end();
@@ -252,35 +254,20 @@ Scene_c3t3_item::direct_draw(int mode) const {
         sb != sa || sc != sa || sd != sa)
     {
       if(mode != DRAW_EDGES) {
-        CGALglcolor(d->colors[cit->subdomain_index()].darker(150));
+        CGALglcolor(d->colors[cit->subdomain_index()],150);
+      }
+      else
+      {
+        CGALglcolor(d->colors[cit->subdomain_index()],250);
       }
       draw_triangle(pa, pb, pc);
       draw_triangle(pa, pb, pd);
       draw_triangle(pa, pc, pd);
       draw_triangle(pb, pc, pd);
     }
-
-    //       for(int i = 0; i < 4; ++i) {
-    //         if(c3t3().is_in_complex(cit, i)) continue;
-    //         const Point_3& pa = cit->vertex((i+1)&3)->point();
-    //         const Point_3& pb = cit->vertex((i+2)&3)->point();
-    //         const Point_3& pc= cit->vertex((i+3)&3)->point();
-    //         typedef Kernel::Oriented_side Side;
-    //         using CGAL::ON_ORIENTED_BOUNDARY;
-    //         const Side sa = plane.oriented_side(pa);
-    //         const Side sb = plane.oriented_side(pb);
-    //         const Side sc = plane.oriented_side(pc);
-
-    //         if( sa == ON_ORIENTED_BOUNDARY ||
-    //             sb == ON_ORIENTED_BOUNDARY ||
-    //             sc == ON_ORIENTED_BOUNDARY ||
-    //             sb != sa || sc != sa )
-    //         {
-    //           draw_triangle(pa, pb, pc);
-    //         }
-    //       }
   }
   ::glEnd();
+  
   if(!two_side)
     ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
   if(lighting)
