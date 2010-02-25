@@ -823,7 +823,7 @@ private:
       }
     }
 
-#ifdef CGAL_DISABLE_AM_CODE
+#ifndef CGAL_DISABLE_AM_CODE
     // code added by Andreas + Monique -- start
     if(v_type == PPP){
       Site_2 const *p1 = NULL;
@@ -875,7 +875,7 @@ private:
     // code added by Andreas + Monique -- end
 #endif // CGAL_DISABLE_AM_CODE
 
-#ifdef CGAL_DISABLE_M_CODE
+#ifndef CGAL_DISABLE_M_CODE
     // code added by Menelaos -- begin
     // in the code that follows we check whether one endpoint of the
     // query segment t is the same as the point p of a PSS circle. in
