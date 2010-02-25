@@ -1,49 +1,30 @@
-
+//#define  CGAL_DISABLE_AM_CODE 1
+//#define  CGAL_DISABLE_M_CODE 1
 // standard includes
 #include <iostream>
 #include <fstream>
 #include <cassert>
 
-#define USE_FILTERED_TRAITS
-//#define USE_HIERARCHY
-//#undef CGAL_USE_CORE
 
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
-
-#ifdef CGAL_USE_CORE
-#  include <CGAL/CORE_Expr.h>
-#endif
+#include <CGAL/Leda_real.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef  K::Point_2 Point_2;
 
 // typedefs for the traits and the algorithm
-#include <CGAL/Segment_Delaunay_graph_hierarchy_2.h>
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
+#include <CGAL/Segment_Delaunay_graph_2.h>
 
-#ifdef USE_FILTERED_TRAITS
-#ifdef CGAL_USE_CORE
 typedef CGAL::Field_with_sqrt_tag MTag;
 typedef CGAL::Field_with_sqrt_tag EMTag;
-typedef CGAL::Simple_cartesian<CORE::Expr> EK;
-typedef CGAL::Segment_Delaunay_graph_filtered_traits_2<K, MTag, EK, EMTag>  Gt;
-#else
-typedef CGAL::Segment_Delaunay_graph_filtered_traits_2<K> Gt;
-//typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<K> Gt;
-#endif
-#else
-typedef CGAL::Segment_Delaunay_graph_traits_2<K,CGAL::Field_tag>Gt;
-#endif
+typedef CGAL::Simple_cartesian<leda::real> EK;
+typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<K, MTag, EK, EMTag>  Gt;
 
-#ifdef USE_HIERARCHY
-typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt>  SDG2;
-#else 
+
 typedef CGAL::Segment_Delaunay_graph_2<Gt>  SDG2;
-#endif
-
-
 
   
 typedef std::vector<Point_2> Points_container;
@@ -195,30 +176,9 @@ load_cin_file(std::istream& ifs) {
 }
 
 
-void
-load_sites(std::istream& ifs) 
-{
-  std::cerr << "Loading file... ";
-  SDG2::Site_2  site;
-  int n;
-  std::cin >> n;
-  // read the sites and insert them in the segment Delaunay graph
-  while ( std::cin >> site ) {
-    sites.push_back(site);
-  }
-  CGAL::Timer timer;
-  timer.start();
-  for(int i=0; i < sites.size(); i++){
-    sdg.insert(sites[i]);
-  }
-  timer.stop();
-  std::cerr << timer.time() << " sec.\nvalidity test:" << std::endl;
-}
-
 int main() 
 {
   load_cin_file(std::cin);
-  // load_sites(std::cin);
   if(! sdg.is_valid(true, 1) ){
     std::cerr << "invalid data structure" << std::endl;
   } else {
