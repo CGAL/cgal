@@ -845,6 +845,8 @@ void Scene::refine_bisection(const FT max_sqlen)
     Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
     refiner(max_sqlen);
     std::cout << "done (" << m_pPolyhedron->size_of_facets() << " facets)" << std::endl;
+  
+    clear_internal_data();
 }
 
 void Scene::refine_loop()
@@ -857,6 +859,8 @@ void Scene::refine_loop()
     std::cout << "Loop subdivision...";
     CGAL::Subdivision_method_3::Loop_subdivision(*m_pPolyhedron, 1);
     std::cout << "done (" << m_pPolyhedron->size_of_facets() << " facets)" << std::endl;
+  
+    clear_internal_data();
 }
 
 
