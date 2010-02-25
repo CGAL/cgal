@@ -91,6 +91,20 @@ public:
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
  
 
+  class Perturbation_order {
+      const Self *t;
+
+  public:
+      Perturbation_order(const Self *tr)
+	  : t(tr) {}
+
+      bool operator()(const Point *p, const Point *q) const {
+	  return t->compare_xy(*p, *q) == SMALLER;
+      }
+  };
+
+  friend class Perturbation_order;
+
  // This class is used to generate the Finite_*_iterators.
  class Infinite_tester
   {
@@ -363,14 +377,21 @@ public:
  Oriented_side
  oriented_side(Face_handle f, const Point &p) const;
 
+
+Oriented_side
+side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
+	                const Point &p, bool perturb) const;
+
  Oriented_side
- side_of_oriented_circle(Face_handle f, const Point & p) const; 
+ side_of_oriented_circle(Face_handle f, const Point & p, bool perturb = false) const; 
 
  bool 
  collinear_between(const Point& p, const Point& q, const Point& r)
    const;
 
   Comparison_result compare_x(const Point& p, const Point& q) const;
+
+  Comparison_result compare_xy(const Point& p, const Point& q) const;
   Comparison_result compare_y(const Point& p, const Point& q) const;
   bool               xy_equal(const Point& p, const Point& q) const;
   Orientation orientation(const Point& p, 
@@ -1459,7 +1480,8 @@ fill_hole_delaunay(std::list<Edge> & first_hole)
 	  if (orientation(p0,p1,p) == COUNTERCLOCKWISE) {
 	    if (is_infinite(v2)) { v2=vv; v3=vv; cut_after=hit;}
 	    else{
-	      if (in_circle(p0,p1,v3->point(),p) ==  ON_POSITIVE_SIDE){
+              //
+	      if (this->side_of_oriented_circle(p0,p1,v3->point(),p,true) ==  ON_POSITIVE_SIDE){
 		v2=vv; v3=vv; cut_after=hit;}
 	    }
 	  }
@@ -2432,17 +2454,67 @@ oriented_side(Face_handle f, const Point &p) const
 		       p);
 }
 
+
+template <class Gt, class Tds >
+Oriented_side
+Triangulation_2<Gt, Tds>::
+side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
+	                const Point &p, bool perturb) const
+{
+    CGAL_triangulation_precondition( orientation(p0, p1, p2) == POSITIVE );
+
+    Gt::Side_of_oriented_circle_2 pred = geom_traits().side_of_oriented_circle_2_object();
+    Oriented_side os =
+	pred(p0, p1, p2, p);
+    if ((os != ON_ORIENTED_BOUNDARY) || (! perturb))
+	return os;
+
+    // We are now in a degenerate case => we do a symbolic perturbation.
+
+    // We sort the points lexicographically.
+    const Point * points[4] = {&p0, &p1, &p2, &p};
+    std::sort(points, points+4, Perturbation_order(this) );
+
+    // We successively look whether the leading monomial, then 2nd monomial
+    // of the determinant has non null coefficient.
+    // 2 iterations are enough (cf paper)
+    for (int i=3; i>0; --i) {
+        if (points[i] == &p)
+            return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
+	                             // and positively oriented
+        Orientation o;
+        if (points[i] == &p2 && (o = orientation(p0,p1,p)) != COLLINEAR )
+            return Oriented_side(o);
+        if (points[i] == &p1 && (o = orientation(p0,p,p2)) != COLLINEAR )
+            return Oriented_side(o);
+        if (points[i] == &p0 && (o = orientation(p,p1,p2)) != COLLINEAR )
+            return Oriented_side(o);
+    }
+    CGAL_triangulation_assertion(false);
+    return ON_NEGATIVE_SIDE;
+}
+
+
+
+
+
+
 template < class Gt, class Tds >
 Oriented_side
 Triangulation_2<Gt,Tds>::
-side_of_oriented_circle(Face_handle f, const Point & p) const
+side_of_oriented_circle(Face_handle f, const Point & p, bool perturb) const
 {
   if ( ! is_infinite(f) ) {
+    /*
     typename Gt::Side_of_oriented_circle_2 
       in_circle = geom_traits().side_of_oriented_circle_2_object();
     return in_circle(f->vertex(0)->point(),
 		     f->vertex(1)->point(),
 		     f->vertex(2)->point(),p);
+    */
+    return this->side_of_oriented_circle(f->vertex(0)->point(),
+		     f->vertex(1)->point(),
+		     f->vertex(2)->point(),p, perturb);
   }
 
   int i = f->index(infinite_vertex());
@@ -2486,6 +2558,19 @@ Triangulation_2<Gt, Tds>::
 compare_x(const Point& p, const Point& q) const
 {
   return geom_traits().compare_x_2_object()(p,q);
+}
+
+template <class Gt, class Tds >
+inline
+Comparison_result
+Triangulation_2<Gt, Tds>::
+compare_xy(const Point& p, const Point& q) const
+{
+  Comparison_result res = geom_traits().compare_x_2_object()(p,q);
+  if(res == EQUAL){
+    return geom_traits().compare_y_2_object()(p,q);
+  }
+  return res;
 }
 
 template <class Gt, class Tds >

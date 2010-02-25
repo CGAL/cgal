@@ -311,7 +311,8 @@ _test_cls_triangulation_2( const Triangul & )
      assert(!T2_8.is_infinite(ff));
      Face_handle f2 = ff->neighbor(li);
      assert(!T2_8.is_infinite(f2));
-     T2_8.flip(ff,0);
+     int fli = ff->index(f2);
+     T2_8.flip(ff,fli);
      assert( T2_8.is_valid() );
      
   //make_hole star_hole

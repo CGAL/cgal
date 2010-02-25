@@ -555,7 +555,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   assert(fc==fc2);
   n=0;
   do {fc2++ ; n = n+1;} while (fc2 != fc);
-  assert(n==3);
+  assert(n==4);
 
   /*****************************/
   /******** Miscellaneaous *****/

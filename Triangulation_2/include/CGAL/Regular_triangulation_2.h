@@ -25,6 +25,8 @@
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
 
+#include <boost/bind.hpp>
+
 CGAL_BEGIN_NAMESPACE 
 
 template < typename K_ >
@@ -192,14 +194,14 @@ public:
   Oriented_side power_test(const Weighted_point &p,
 			   const Weighted_point &q,
 			   const Weighted_point &r,
-			   const Weighted_point &s) const;
+			   const Weighted_point &s, bool perturb) const;
   Oriented_side power_test(const Weighted_point &p,
 			   const Weighted_point &q,
 			   const Weighted_point &r) const;
   Oriented_side power_test(const Weighted_point &p,
 			   const Weighted_point &r) const;
   Oriented_side power_test(const Face_handle &f, 
-			   const Weighted_point &p) const;
+			   const Weighted_point &p, bool perturb=false) const;
   Oriented_side power_test(const Face_handle& f, int i,
 			   const Weighted_point &p) const;
  
@@ -615,7 +617,7 @@ operator=(const Self &tr)
 template < class Gt, class Tds >
 Oriented_side
 Regular_triangulation_2<Gt,Tds>::
-power_test(const Face_handle &f, const Weighted_point &p) const
+power_test(const Face_handle &f, const Weighted_point &p, bool perturb) const
 {
   // p is supposed to be a finite point
   // if f is a finite face, 
@@ -627,7 +629,7 @@ power_test(const Face_handle &f, const Weighted_point &p) const
   if ( ! f->has_vertex(infinite_vertex(), i) )
     return power_test(f->vertex(0)->point(),
 		      f->vertex(1)->point(),
-		      f->vertex(2)->point(),p);
+		      f->vertex(2)->point(),p, perturb);
 
   Orientation o = orientation(f->vertex(ccw(i))->point(),
 			      f->vertex( cw(i))->point(),
@@ -662,12 +664,48 @@ template < class Gt, class Tds >
 inline
 Oriented_side
 Regular_triangulation_2<Gt,Tds>::
-power_test(const Weighted_point &p,
-	   const Weighted_point &q,
-	   const Weighted_point &r,
-	   const Weighted_point &s) const
+power_test(const Weighted_point &p0,
+	   const Weighted_point &p1,
+	   const Weighted_point &p2,
+	   const Weighted_point &p,
+           bool perturb) const
 {
-  return geom_traits().power_test_2_object()(p,q,r,s);
+    CGAL_triangulation_precondition( orientation(p0, p1, p2) == POSITIVE );
+
+    using namespace boost;
+
+    Oriented_side os = geom_traits().power_test_2_object()(p0, p1, p2, p);
+
+    if ( (os != ON_ORIENTED_BOUNDARY) || (! perturb))
+        return os;
+
+    // We are now in a degenerate case => we do a symbolic perturbation.
+
+    // We sort the points lexicographically.
+    const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
+    std::sort(points, points + 4,
+              bind(geom_traits().compare_xy_2_object(),
+                   bind(Dereference<Weighted_point>(), _1),
+                   bind(Dereference<Weighted_point>(), _2)) == SMALLER);
+
+    // We successively look whether the leading monomial, then 2nd monomial
+    // of the determinant has non null coefficient.
+    // 2 iterations are enough (cf paper)
+    for (int i=3; i>1; --i) {
+        if (points[i] == &p)
+            return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
+                                     // and positively oriented
+	Orientation o;
+        if (points[i] == &p2 && (o = orientation(p0,p1,p)) != COLLINEAR )
+            return o;
+        if (points[i] == &p1 && (o = orientation(p0,p,p2)) != COLLINEAR )
+            return o;
+        if (points[i] == &p0 && (o = orientation(p,p1,p2)) != COLLINEAR )
+            return o;
+    }
+
+    CGAL_triangulation_assertion(false);
+    return ON_NEGATIVE_SIDE;
 }
 
 template < class Gt, class Tds >
@@ -1090,7 +1128,7 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
         {
             CGAL_precondition (dimension() >= 1);
             Oriented_side os = dimension() == 1 ? power_test (loc, li, p) :
-                                                  power_test (loc, p);
+                                                  power_test (loc, p, true);
 
             if (os < 0) {
                 if (is_infinite (loc)) loc = loc->neighbor (li);
@@ -1103,7 +1141,7 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
     case Base::FACE:
         {
             CGAL_precondition (dimension() >= 2);
-            if (power_test (loc, p) < 0) {
+            if (power_test (loc, p, true) < 0) {
                 return hide_new_vertex(loc,p);
             }
             v = insert_in_face (p, loc);
@@ -1514,7 +1552,7 @@ fill_hole_regular(std::list<Edge> & first_hole)
 		      p2=p;
 		      cut_after=hit;
 		    }
-		  else if (power_test(p0,p1,p2,p) == 
+		  else if (power_test(p0,p1,p2,p,true) == 
 			   ON_POSITIVE_SIDE)
 		    {
 		      v2=vv;
@@ -1824,7 +1862,7 @@ stack_flip(Vertex_handle v, Faces_around_stack &faces_around)
   // now dimension() == 2
   //test the regularity of edge (f,i)
   //if( power_test(n, v->point()) == ON_NEGATIVE_SIDE)
-  if( power_test(n, v->point()) != ON_POSITIVE_SIDE)
+  if( power_test(n, v->point(), true) != ON_POSITIVE_SIDE)
     return;
     
   if(is_infinite(f,i))

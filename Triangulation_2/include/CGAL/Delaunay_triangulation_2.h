@@ -275,7 +275,7 @@ protected:
       int mi = this->_tds.mirror_index(f, i);
       Vertex_handle vm = this->_tds.mirror_vertex(f, i);
       if(this->is_infinite(vm)) continue;
-      if(this->side_of_oriented_circle(f, vm->point()) == ON_POSITIVE_SIDE) {
+      if(this->side_of_oriented_circle(f, vm->point(),true) == ON_POSITIVE_SIDE) {
         this->_tds.flip(f, i);
         edges.push_back(Edge(f, i));
         edges.push_back(Edge(f, this->cw(i)));
@@ -296,7 +296,7 @@ test_conflict(const Point  &p, Face_handle fh) const
   // return true  if P is inside the circumcircle of fh
   // if fh is infinite, return true when p is in the positive
   // halfspace or on the boundary and in the  finite edge of fh
-  Oriented_side os = side_of_oriented_circle(fh,p);
+  Oriented_side os = side_of_oriented_circle(fh,p,true);
   if (os == ON_POSITIVE_SIDE) return true;
  
   if (os == ON_ORIENTED_BOUNDARY && is_infinite(fh)) {
@@ -339,7 +339,7 @@ is_valid(bool verbose, int level) const
     for(int i=0; i<3; i++) {
       if ( ! is_infinite( this->mirror_vertex(it,i))) {
 	result = result &&  ON_POSITIVE_SIDE != 
-	  side_of_oriented_circle( it, this->mirror_vertex(it,i)->point());
+	  side_of_oriented_circle( it, this->mirror_vertex(it,i)->point(), false);
       }
       CGAL_triangulation_assertion( result );
     }
@@ -420,7 +420,7 @@ look_nearest_neighbor(const Point& p,
 		      Vertex_handle& nn) const
 {
   Face_handle  ni=f->neighbor(i);
-  if ( ON_POSITIVE_SIDE != side_of_oriented_circle(ni,p) ) return;
+  if ( ON_POSITIVE_SIDE != side_of_oriented_circle(ni,p,true) ) return;
 
   typename Geom_traits::Compare_distance_2 
     compare_distance =  this->geom_traits().compare_distance_2_object();
@@ -576,7 +576,7 @@ propagating_flip(Face_handle& f,int i)
   Face_handle n = f->neighbor(i);
       
   if ( ON_POSITIVE_SIDE != 
-       side_of_oriented_circle(n,  f->vertex(i)->point()) ) {          
+       side_of_oriented_circle(n,  f->vertex(i)->point(), true) ) {          
     return;
   }
   flip(f, i);
