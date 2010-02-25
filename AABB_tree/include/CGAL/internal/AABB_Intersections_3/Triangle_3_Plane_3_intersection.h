@@ -104,7 +104,13 @@ intersection(const typename K::Plane_3  &plane,
     }
     else {
       // s0 zero
-      return make_object(t0);
+      if(s1 == s2){
+        return make_object(t0);
+      } else {
+        return make_object(segment(t0,
+                                   inter_plane_triangle_3_aux<K>(t1, f1,
+                                                                 t2, f2)));
+      }
     }
   }
   else {
@@ -115,12 +121,24 @@ intersection(const typename K::Plane_3  &plane,
       }
       else {
         // s1 zero
-        return make_object(t1);
+        if(s0 == s2){
+          return make_object(t1);
+        } else {
+          return make_object(segment(t1,
+                                     inter_plane_triangle_3_aux<K>(t0, f0,
+                                                                   t2, f2)));
+        }
       }
     }
     else if( s2 == ZERO ) {
       // s2 zero
-      return make_object(t2);
+      if(s0 == s1){
+        return make_object(t2);
+      } else {
+        return make_object(segment(t2,
+                                   inter_plane_triangle_3_aux<K>(t0, f0,
+                                                              t1, f1)));
+      }
     }
     else {
       // all non-zero
