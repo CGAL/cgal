@@ -30,7 +30,15 @@
 namespace CGAL {
 namespace internal{
 
-
+/**
+  * A priority queue with fixed maximum capacity.
+  * While the queue has not reached its maximum capacity, elements are
+  * inserted as they will be in a heap, the root (top()) being such that
+  * Compare(top(),x)=false for any x in the queue.
+  * Once the queue is full, trying to insert x in the queue will have no effect if 
+  * Compare(x,top())=false. Otherwise, the element at the root of the heap is removed
+  * and x is inserted so as to keep the heap property.
+  */
 template <typename T, typename Compare = std::less<T> >
 class bounded_priority_queue
 {
@@ -74,6 +82,8 @@ public:
     {
       if (m_comp(x, top()))
       {
+        //insert x in the heap at the correct place,
+        //going down in the tree.
         unsigned int j(1), k(2);
         while (k <= m_count)
         {
@@ -85,17 +95,18 @@ public:
             break;
           data1[j] = *z;
           j = k;
-          k = j << 1;
+          k = j << 1; //a son of j in the tree
         }
         data1[j] = x;
       }
     }
     else
     {
+      //insert element as in a heap
       int i(++m_count), j;
       while (i >= 2)
       {
-        j = i >> 1;
+        j = i >> 1; //father of i in the tree
         value_type& y = data1[j];
         if (m_comp(x, y))
           break;
