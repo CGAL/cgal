@@ -10,13 +10,8 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-foreach(INCDIR ../../include ../../../STL_Extension/include ../../../GraphicsView/include ../../../filtered_kernel/include )
-  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
-    include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
-  endif()
-endforeach()
-
-include_directories( ./ )
+# Include this package's headers first
+include_directories( BEFORE ./ ./include ../../include )
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)
@@ -38,7 +33,7 @@ if(QT4_FOUND)
   find_package(QGLViewer )
 endif(QT4_FOUND)
 
-if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if(CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
@@ -52,11 +47,16 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" Viewer_moc.cpp )
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
+  qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" Scene_moc.cpp )
+  add_file_dependencies( Scene_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" )
+
   qt4_add_resources ( RESOURCE_FILES AABB_demo.qrc )
 
-    add_file_dependencies( AABB_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
-                                         "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
-    add_executable  ( AABB_demo AABB_demo.cpp ${UI_FILES} ${RESOURCE_FILES} )
+  add_file_dependencies( AABB_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
+                                       "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp"
+                                       "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
+
+  add_executable  ( AABB_demo AABB_demo.cpp ${UI_FILES} ${RESOURCE_FILES} )
 
   # Link with Qt libraries
   target_link_libraries( AABB_demo ${QT_LIBRARIES} )
@@ -70,9 +70,13 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS AABB_demo )
 
 
-else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else (CGAL_FOUND AND CGAL_CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(AABB_MISSING_DEPS "")
+
+  if(NOT CGAL_FOUND)
+    set(AABB_MISSING_DEPS "the CGAL library, ${AABB_MISSING_DEPS}")
+  endif()
 
   if(NOT CGAL_Qt4_FOUND)
     set(AABB_MISSING_DEPS "the CGAL Qt4 library, ${AABB_MISSING_DEPS}")
@@ -92,4 +96,4 @@ else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   message(STATUS "NOTICE: This demo requires ${AABB_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)

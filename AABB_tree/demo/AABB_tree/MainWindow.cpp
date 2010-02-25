@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget* parent)
 	// setups scene
 	m_pScene = new Scene;
 	m_pViewer->setScene(m_pScene);
+  m_pViewer->setManipulatedFrame(m_pScene->manipulatedFrame());
 
 	// connects actionQuit (Ctrl+Q) and qApp->quit()
 	connect(ui->actionQuit, SIGNAL(triggered()),
@@ -288,6 +289,15 @@ void MainWindow::on_actionSigned_distance_function_to_facets_triggered()
   m_pViewer->update();
 }
 
+void MainWindow::on_actionCutting_plane_triggered()
+{
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_pScene->activate_cutting_plane();
+  m_pScene->cutting_plane();
+  QApplication::restoreOverrideCursor();
+  m_pViewer->update();
+}
+
 void MainWindow::on_actionView_polyhedron_triggered()
 {
 	m_pScene->toggle_view_poyhedron();
@@ -312,6 +322,12 @@ void MainWindow::on_actionView_distance_function_triggered()
   m_pViewer->update();
 }
 
+void MainWindow::on_actionView_cutting_plane_triggered()
+{
+  m_pScene->toggle_view_plane();
+  m_pViewer->update();
+}
+
 void MainWindow::on_actionClear_points_triggered()
 {
 	m_pScene->clear_points();
@@ -327,6 +343,12 @@ void MainWindow::on_actionClear_segments_triggered()
 void MainWindow::on_actionClear_distance_function_triggered()
 {
 	m_pScene->clear_distance_function();
+  m_pViewer->update();
+}
+
+void MainWindow::on_actionClear_cutting_plane_triggered()
+{
+  m_pScene->clear_cutting_plane();
   m_pViewer->update();
 }
 

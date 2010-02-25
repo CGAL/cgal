@@ -57,6 +57,7 @@ int main(int argc, char **argv)
 }
 
 #  include "Scene.cpp"
+#  include "Scene_moc.cpp"
 #  include "benchmarks.cpp"
 #  include "Viewer.cpp"
 #  include "Viewer_moc.cpp"

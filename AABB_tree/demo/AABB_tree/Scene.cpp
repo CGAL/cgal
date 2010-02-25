@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 
+#include <QtCore/qglobal.h>
 #include <QString>
 #include <QTextStream>
 #include <QFileInfo>
@@ -16,6 +17,8 @@
 #include <CGAL/Subdivision_method_3.h>
 
 Scene::Scene()
+  : m_frame (new ManipulatedFrame())
+  , m_view_plane(false)
 {
     m_pPolyhedron = NULL;
 
@@ -35,6 +38,7 @@ Scene::Scene()
 Scene::~Scene()
 {
     delete m_pPolyhedron;
+    delete m_frame;
 }
 
 int Scene::open(QString filename)
@@ -69,6 +73,9 @@ int Scene::open(QString filename)
 
         return -1;
     }
+    
+    // clear tree
+    clear_internal_data();
 
     QApplication::restoreOverrideCursor();
     return 0;
@@ -116,6 +123,11 @@ void Scene::draw()
             draw_signed_distance_function();
         else
             draw_unsigned_distance_function();
+    }
+  
+    if (m_view_plane)
+    {  
+        draw_plane();      
     }
 }
 
@@ -276,6 +288,39 @@ void Scene::draw_signed_distance_function()
     ::glEnd();
 }
 
+void Scene::draw_plane()
+{
+    double dx = m_bbox.xmax()-m_bbox.xmin();
+    double dy = m_bbox.ymax()-m_bbox.ymin();
+    double dz = m_bbox.zmax()-m_bbox.zmin();
+    double diag = std::sqrt(dx*dx + dy*dy + dz*dz);
+
+    ::glDisable(GL_LIGHTING);
+    ::glLineWidth(1.0f);
+    ::glColor3f(.6f, .6f, .6f);
+
+    // draw grid
+    ::glPushMatrix();
+    ::glMultMatrixd(m_frame->matrix());
+    QGLViewer::drawGrid((float)diag*0.6);
+    ::glPopMatrix();
+
+    // draw cut segments
+    ::glLineWidth(2.0f);
+    ::glColor3f(1.f, 0.f, 0.f);
+    ::glBegin(GL_LINES);
+    for ( std::vector<Segment>::iterator it = m_cut_segments.begin(), 
+          end = m_cut_segments.end() ; it != end ; ++it )
+    {
+        const Point& a = it->source();
+        const Point& b = it->target();
+      
+        ::glVertex3d(a.x(), a.y(), a.z());
+        ::glVertex3d(b.x(), b.y(), b.z());
+    }
+    ::glEnd();  
+}
+
 FT Scene::random_in(const double a,
                     const double b)
 {
@@ -325,6 +370,49 @@ Plane Scene::random_plane(const CGAL::Bbox_3& bbox)
     Point p = random_point(bbox);
     Vector vec = random_vector();
     return Plane(p,vec);
+}
+
+Plane Scene::frame_plane() const
+{
+    const qglviewer::Vec& pos = m_frame->position();
+    const qglviewer::Vec& n = m_frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+
+    return Plane(n[0], n[1],  n[2], - n * pos);
+}
+
+void Scene::build_facet_tree()
+{
+    if ( NULL == m_pPolyhedron )
+    {
+        std::cerr << "Build facet tree failed: load polyhedron first." << std::endl;
+        return;
+    }
+  
+    // ensure tree is empty
+    m_facet_tree.clear();
+  
+    // build tree
+    CGAL::Timer timer;
+    timer.start();
+    std::cout << "Construct AABB tree...";
+    m_facet_tree.rebuild(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+    std::cout << "done (" << timer.time() << " s)" << std::endl;
+}
+
+void Scene::clear_internal_data()
+{
+    m_facet_tree.clear();
+
+    clear_points();
+    clear_segments();
+    clear_distance_function();
+    clear_cutting_plane();
+}
+
+void Scene::clear_cutting_plane()
+{
+    m_cut_segments.clear();
+    deactivate_cutting_plane();
 }
 
 void Scene::generate_points_in(const unsigned int nb_points,
@@ -693,6 +781,34 @@ unsigned_distance : m_max_distance_function;
     m_signed_distance_function = true;
 }
 
+void Scene::cutting_plane()
+{
+    // Build tree if needed
+    if ( m_facet_tree.empty() )
+    {
+        build_facet_tree();
+    }
+
+    Plane plane = frame_plane();
+
+    // Compute intersections
+    std::vector<Object_and_primitive_id> intersections;
+    m_facet_tree.all_intersections(plane, std::back_inserter(intersections));
+
+    // Fill data structure
+    m_cut_segments.clear();
+    for ( std::vector<Object_and_primitive_id>::iterator it = intersections.begin(),
+         end = intersections.end() ; it != end ; ++it )
+    {
+        const Segment* inter_seg = CGAL::object_cast<Segment>(&(it->first));
+        
+        if ( NULL != inter_seg )
+        {
+            m_cut_segments.push_back(*inter_seg);
+        }
+    }
+}
+
 void Scene::toggle_view_poyhedron()
 {
     m_view_polyhedron = !m_view_polyhedron;
@@ -711,6 +827,11 @@ void Scene::toggle_view_points()
 void Scene::toggle_view_distance_function()
 {
     m_view_distance_function = !m_view_distance_function;
+}
+
+void Scene::toggle_view_plane()
+{
+    m_view_plane = !m_view_plane;
 }
 
 void Scene::refine_bisection(const FT max_sqlen)
@@ -736,4 +857,17 @@ void Scene::refine_loop()
     std::cout << "Loop subdivision...";
     CGAL::Subdivision_method_3::Loop_subdivision(*m_pPolyhedron, 1);
     std::cout << "done (" << m_pPolyhedron->size_of_facets() << " facets)" << std::endl;
+}
+
+
+void Scene::activate_cutting_plane()
+{
+    connect(m_frame, SIGNAL(modified()), this, SLOT(cutting_plane()));
+    m_view_plane = true;
+}
+
+void Scene::deactivate_cutting_plane()
+{
+    disconnect(m_frame, SIGNAL(modified()), this, SLOT(cutting_plane()));
+    m_view_plane = false;
 }

@@ -14,11 +14,16 @@
 #include <CGAL/AABB_polyhedron_segment_primitive.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
-class Scene
+#include <QtCore/qglobal.h>
+#include <QGLViewer/manipulatedFrame.h>
+#include <QGLViewer/qglviewer.h>
+
+class Scene : public QObject
 {
+    Q_OBJECT
 public:
     Scene();
-    ~Scene();
+    virtual ~Scene();
 public:
     // types
     typedef CGAL::Bbox_3 Bbox;
@@ -27,11 +32,14 @@ public:
     typedef CGAL::AABB_tree<Traits> Facet_tree;
     typedef Facet_tree::Object_and_primitive_id Object_and_primitive_id;
     typedef Facet_tree::Primitive_id Primitive_id;
-
+  
+    typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  
 public:
     void draw(); 
     void update_bbox();
     Bbox bbox() { return m_bbox; }
+    ManipulatedFrame* manipulatedFrame() const { return m_frame; }
 
 private:
     // member data
@@ -39,6 +47,7 @@ private:
     Polyhedron *m_pPolyhedron;
     std::list<Point> m_points;
     std::list<Segment> m_segments;
+    std::vector<Segment> m_cut_segments;
 
     // distance functions (simple 2D arrays)
     Color_ramp m_red_ramp;
@@ -49,7 +58,14 @@ private:
     bool m_signed_distance_function;
     typedef std::pair<Point,FT> Point_distance;
     Point_distance m_distance_function[100][100];
+  
+    // frame
+    ManipulatedFrame* m_frame;
+    bool m_view_plane;
 
+    // An aabb_tree indexing polyhedron facets
+    Facet_tree m_facet_tree;
+  
 private:
     // utility functions
     Vector random_vector();
@@ -59,6 +75,9 @@ private:
     Plane random_plane(const Bbox& bbox);
     Segment random_segment(const Bbox& bbox);
     FT random_in(const double a,const double b);
+    Plane frame_plane() const;
+    void build_facet_tree();
+    void clear_internal_data();
 
 public:
     // file menu
@@ -68,6 +87,7 @@ public:
     void clear_points() { m_points.clear(); }
     void clear_segments() { m_segments.clear(); }
     void clear_distance_function() { m_max_distance_function = 0.0; }
+    void clear_cutting_plane();
 
     // algorithms
     void generate_edge_points(const unsigned int nb_points);
@@ -91,6 +111,7 @@ public:
     void toggle_view_segments();
     void toggle_view_poyhedron();
     void toggle_view_distance_function();
+    void toggle_view_plane();
 
     // view options
     bool m_view_points;
@@ -135,7 +156,16 @@ public:
     void draw_polyhedron();
     void draw_signed_distance_function();
     void draw_unsigned_distance_function();
+    void draw_plane();
+  
+    // cutting plane activation/deactivation
+    void activate_cutting_plane();
+    void deactivate_cutting_plane();
+  
+public slots:
+    // cutting plane
+    void cutting_plane();
+  
 }; // end class Scene
-
 
 #endif // SCENE_H

@@ -47,6 +47,7 @@ public:
 			void on_actionClear_points_triggered();
 			void on_actionClear_segments_triggered();
 			void on_actionClear_distance_function_triggered();
+      void on_actionClear_cutting_plane_triggered();
 
 			// algorithm menu
       void on_actionRefine_loop_triggered();
@@ -59,6 +60,7 @@ public:
 			void on_actionSigned_distance_function_to_facets_triggered();
 			void on_actionUnsigned_distance_function_to_edges_triggered();
 			void on_actionUnsigned_distance_function_to_facets_triggered();
+      void on_actionCutting_plane_triggered();
 
 			// benchmark menu
 			void on_actionBench_memory_triggered();
@@ -75,6 +77,7 @@ public:
 			void on_actionView_segments_triggered();
 			void on_actionView_polyhedron_triggered();
 			void on_actionView_distance_function_triggered();
+      void on_actionView_cutting_plane_triggered();
 
 private:
 	Scene* m_pScene;
