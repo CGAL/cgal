@@ -23,7 +23,7 @@ $k$-simplices either do not intersect or share a common $j$-face,
 $j<k$. The occurring simplices of dimension up to three are called
 \emph{vertex}, \emph{edge}, \emph{facet}, and \emph{cell}, respectively.
 
-\section{The flat torus\label{P3Triangulation3-sec-space}}
+\section{The Flat Torus\label{P3Triangulation3-sec-space}}
 The 3D Periodic Triangulation package computes triangulations in the
 space $\mathbb T_c^3$, which is defined as follows: Let $c\in\mathbb
 R\setminus\{0\}$ and $G$ be the group $(c\cdot\mathbb Z^3, +)$, where
@@ -138,8 +138,8 @@ space, which is a \emph{27-sheeted covering space} of $\mathbb T_c^3$
   align=middle alt="STORED">
 </CENTER>
 \end{ccHtmlOnly}
-\caption{The same periodic triangulation in 1-sheeted covering space
-  and 27-sheeted covering space.
+\caption{The same periodic triangulation in the 1-sheeted covering space
+  and the 27-sheeted covering space.
 \label{P3Triangulation3-fig-covering}}
 \end{figure} 
 
@@ -155,11 +155,11 @@ adjacency relations. In case it is desired to have only one periodic
 copy of each primitive, we provide \emph{geometric} iterators. They
 return geometric primitives of the triangulation without relations
 between them. Another effect is that when the algorithm switches from
-27-sheeted covering to 1-sheeted covering the \ccc{Vertex_handle}s and
+the 27-sheeted covering space to the 1-sheeted covering space, the \ccc{Vertex_handle}s and
 \ccc{Cell_handle}s referencing deleted items become invalid.
 
 In the data structure each vertex stores the input point it
-corresponds to. If we are computing in 27-sheeted covering 
+corresponds to. If we are computing in the 27-sheeted covering 
 space, each vertex stores the representative \emph{inside} the
 original domain it corresponds to. So, the 27 vertices corresponding
 to the same element of $\mathbb T_c^3$ all store the same
@@ -333,7 +333,7 @@ as the following example shows.
 
 \ccIncludeExampleCode{Periodic_3_triangulation_3/periodic_adding_handles.cpp}
 
-\subsection{27-sheeted Covering}
+\subsection{The 27-sheeted Covering Space}
 The user can check at any time whether a triangulation would be a
 simplicial complex in $\mathbb T_c^3$ and force a conversion if
 so. However this should be done very carefully in order to be sure
@@ -341,9 +341,9 @@ that the internal structure always remains a simplicial complex and
 thus a triangulation.
 
 In this example we construct a triangulation that can be converted to
-the 1-sheeted covering. However, we can insert new points such that the
+the 1-sheeted covering space. However, we can insert new points such that the
 point set does not have a Delaunay triangulation in the 1-sheeted
-covering anymore, so the triangulation is not \emph{extensible}.
+covering space anymore, so the triangulation is not \emph{extensible}.
 
 \ccIncludeExampleCode{Periodic_3_triangulation_3/covering.cpp}
 
@@ -355,14 +355,14 @@ there is spatial sorting that sorts the input points according to a
 Hilbert curve, see chapter~\ref{sec:spatial_sorting}\lcTex{ on
 \ccRefPage{sec:spatial_sorting}}.
 The second one inserts 36 appropriately chosen dummy points to avoid
-the use of a 27-sheeted covering in the beginning. The 36 dummy
+the use of a 27-sheeted covering space in the beginning. The 36 dummy
 points are deleted in the end. If the point set turns out to not have
-a Delaunay triangulation in 1-sheeted covering, the triangulation is
-converted to 27-sheeted covering during the removal of the 36 dummy
+a Delaunay triangulation in the 1-sheeted covering space, the triangulation is
+converted to the 27-sheeted covering space during the removal of the 36 dummy
 points. This might take even longer than computing the triangulation
 without using this optimization. In general, uniformly distributed
 random point sets of more than 1000 points have a Delaunay
-triangulation in 1-sheeted covering.
+triangulation in the 1-sheeted covering space.
 
 It is recommended to run this example only when compiled in release
 mode because of the relatively large number of points. 
@@ -390,7 +390,7 @@ exact.
 
 \ccIncludeExampleCode{Periodic_3_triangulation_3/geometric_access.cpp}
 
-\subsection{Periodic alpha shapes}
+\subsection{Periodic Alpha Shapes}
 
 It is possible to use \ccc{Periodic_3_Delaunay_triangulation_3}
 as underlying triangulation for computing alpha shapes (cf.\

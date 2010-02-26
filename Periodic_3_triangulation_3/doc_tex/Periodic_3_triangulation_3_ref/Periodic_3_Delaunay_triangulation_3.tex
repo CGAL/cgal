@@ -76,7 +76,7 @@ chooses a particular Delaunay triangulation using a symbolic perturbation
 scheme~\cite{cgal:dt-pvr3d-03}.
 
 Note that insertion of a new point can cause a switch from computing
-in 27-sheeted covering space to computing in 1-sheeted covering space,
+in the 27-sheeted covering space to computing in the 1-sheeted covering space,
 which invalidates some \ccc{Vertex_handle}s and \ccc{Cell_handle}s.
 
 \ccThree{Vertex_handle}{dt.remove()}{}
@@ -141,7 +141,7 @@ proposes a vertex removal.
 
 \ccMethod{void remove(Vertex_handle v);}
 {Removes the vertex \ccc{v} from the triangulation. When computing in
-  27-sheeted covering space it removes all 27 copies of \ccc{v}.}
+  the 27-sheeted covering space it removes all 27 copies of \ccc{v}.}
 
 \ccMethod{template < class InputIterator >
   int remove(InputIterator first, InputIterator beyond);}

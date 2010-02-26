@@ -225,7 +225,7 @@ a permutation of their vertices).}
 
 \begin{ccAdvanced}
 \ccMethod{Covering_sheets number_of_sheets() const;}
-{Returns the number of sheets of the covering the triangulation is
+{Returns the number of sheets of the covering space the triangulation is
   currently computed in.} 
 
 \ccHeading{Non const access}
@@ -244,11 +244,11 @@ algorithms.
 \ccThree{bool}{t.is_extensible_triangulation_in_1_sheet_h2()x}{}
 \ccHeading{Non-constant-time queries and conversions}
 \ccMethod{bool is_extensible_triangulation_in_1_sheet_h1() const;}
-{The current triangulation remains a triangulation in 1-sheeted
-  covering even after adding points if this method returns
+{The current triangulation remains a triangulation in the 1-sheeted
+  covering space even after adding points if this method returns
   \ccc{true}. This test relies on a heuristic, i.e.\ if it answers
   \ccc{false} nothing is known. This test runs in constant-time when
-  not computing in 1-sheeted covering space. (This test uses the length
+  not computing in the 1-sheeted covering space. (This test uses the length
 of the longest edge in the triangulation as a
 criterion \cite{cgal:ct-c3pt-09}.)}
 
@@ -256,24 +256,25 @@ criterion \cite{cgal:ct-c3pt-09}.)}
 {The same as \ccc{is_extensible_triangulation_in_1_sheet_h1()} but with
 a more precise heuristic, i.e.\ it might answer \ccc{true} in cases in which
 \ccc{is_extensible_triangulation_in_1_sheet_h1()} would not. However, it is
-much less time efficient when not computing in 1-sheeted covering
+much less time efficient when not computing in the 1-sheeted covering
 space. (This test uses the diameter of the largest empty ball in the
 input point set as a criterion \cite{cgal:ct-c3pt-09}.)}
 \ccGlue
 \ccMethod{bool is_triangulation_in_1_sheet() const;}
 {Returns \ccc{true} if the current triangulation would still be a
-  triangulation in 1-sheeted covering, returns \ccc{false} otherwise.}
+  triangulation in the 1-sheeted covering space, returns \ccc{false} otherwise.}
 
 It is not recommended to interfere with the built-in covering
-management. Especially a premature conversion to a 1-sheeted covering
+management. Especially a premature conversion to the 1-sheeted
+covering space
 might lead to problems when modifying the triangulation later.
 \ccMethod{void convert_to_1_sheeted_covering() const;}
 {Converts the current triangulation into the same periodic
-  triangulation in 1-sheeted covering.}
+  triangulation in the 1-sheeted covering space.}
 \ccGlue
 \ccMethod{void convert_to_27_sheeted_covering() const;}
 {Converts the current triangulation into the same periodic
-  triangulation in 27-sheeted covering.}
+  triangulation in the 27-sheeted covering space.}
 
 \end{ccAdvanced}
 
@@ -324,17 +325,17 @@ might lead to problems when modifying the triangulation later.
 
 \ccMethod{Periodic_point periodic_point(const Vertex_handle v) const;}
 {Returns the periodic point given by vertex \ccc{v}. If \ccVar\ is
-  represented in 1-sheeted covering space, the offset is always
+  represented in the 1-sheeted covering space, the offset is always
   zero. Otherwise \ccc{v} can correspond to a periodic copy outside
   \ccc{domain} of an input point.}
 \ccGlue
 \ccMethod{Periodic_point periodic_point(const Cell_handle c, int i)
   const;}
-{If \ccVar\ is represented in 1-sheeted covering space, this function
+{If \ccVar\ is represented in the 1-sheeted covering space, this function
   returns the periodic point given by the $i$-th vertex of cell
   \ccc{c}, that is the point in the original domain and the offset of
   the vertex in \ccc{c}.
-  If \ccVar\ is represented in 27-sheeted covering space,
+  If \ccVar\ is represented in the 27-sheeted covering space,
   this offset is possibly added to another offset determining the periodic copy.
 \ccPrecond{$i \in \{0,1,2,3\}$}}
 \ccGlue
@@ -566,7 +567,7 @@ that allow one to traverse it.
 
 The following iterators allow the user to visit cells,
 facets, edges and vertices of the stored triangulation, i.e.\ in case
-of computing in multiply sheeted covering space all stored periodic
+of computing in a multiply sheeted covering space all stored periodic
 copies of each item are returned.
 These iterators are non-mutable, bidirectional and
 their value types are respectively \ccc{Cell}, \ccc{Facet}, \ccc{Edge}
@@ -619,7 +620,7 @@ These iterators are non-mutable, bidirectional and their value types
 are respectively \ccc{Periodic_point}, \ccc{Periodic_segment},
 \ccc{Periodic_triangle}, and \ccc{Periodic_tetrahedron}. They are all
 invalidated by any change in the triangulation. If the periodic
-triangulation is not computed in 1-sheeted covering these iterators
+triangulation is not computed in the 1-sheeted covering space, these iterators
 can be used to retain only the geometric primitives in the original
 domain. This can be controlled using the enum \ccc{Iterator_type}, see
 \ccRefPage{CGAL::Periodic_3_triangulation_3::Iterator_type}. 
@@ -647,7 +648,7 @@ domain. This can be controlled using the enum \ccc{Iterator_type}, see
 \end{ccHtmlOnly}
 \caption{The four different modes of the geometric iterators: STORED,
   STORED\_COVER\_DOMAIN, UNIQUE, UNIQUE\_COVER\_DOMAIN. Note that in
-  case of computing in 1-sheeted covering STORED and UNIQUE give the
+  case of computing in the 1-sheeted covering space, STORED and UNIQUE give the
   same result.
 \label{P3Triangulation3-fig-geom_iterators}}
 \end{figure} 
@@ -841,7 +842,7 @@ a precise indication of the kind of invalidity encountered.}
 The information in the \ccc{iostream} is:
 \begin{itemize}
 \item the original domain
-\item the number of sheets of the covering as in
+\item the number of sheets of the covering space as in
   \ccc{number_of_sheets()}
 \item the number of vertices
 \item the non-combinatorial information of vertices (point
