@@ -2463,7 +2463,7 @@ side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
 {
     CGAL_triangulation_precondition( orientation(p0, p1, p2) == POSITIVE );
 
-    Gt::Side_of_oriented_circle_2 pred = geom_traits().side_of_oriented_circle_2_object();
+    typename Gt::Side_of_oriented_circle_2 pred = geom_traits().side_of_oriented_circle_2_object();
     Oriented_side os =
 	pred(p0, p1, p2, p);
     if ((os != ON_ORIENTED_BOUNDARY) || (! perturb))
