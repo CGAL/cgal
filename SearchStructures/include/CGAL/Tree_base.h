@@ -28,8 +28,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Tree_assertions.h>
 
-#ifndef TREE_BASE_NULL
-#define TREE_BASE_NULL 0
+#ifndef CGAL_TREE_BASE_NULL
+#define CGAL_TREE_BASE_NULL 0
 #endif
 
 #define stlvector

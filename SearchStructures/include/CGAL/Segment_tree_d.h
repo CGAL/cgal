@@ -1,4 +1,4 @@
-// Copyright (c) 1997  ETH Zurich (Switzerland).
+// Copyright (c) 1997  ETH Zurich (SwitzerlanBd).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -153,7 +153,7 @@ protected:
   {
     if ((is_less_equal(m_interface.get_left(element), v->left_key) && 
 	 is_less_equal(v->right_key, m_interface.get_right(element)))
-	|| left(v)==TREE_BASE_NULL)
+	|| left(v)==CGAL_TREE_BASE_NULL)
       v->objects.push_back( element);
     else
      {
@@ -168,7 +168,7 @@ protected:
   // elements is created.
    void build_next_dimension(link_type v)
    {
-     if(left(v)!=TREE_BASE_NULL)
+     if(left(v)!=CGAL_TREE_BASE_NULL)
      {
        build_next_dimension(left(v));
        build_next_dimension(right(v));
@@ -243,7 +243,7 @@ protected:
        leftchild = vleft;
        rightchild = vright;
        prevchild = vparent;
-       if(leftmostlink == TREE_BASE_NULL)
+       if(leftmostlink == CGAL_TREE_BASE_NULL)
 	 leftmostlink = leftchild;
      }
      else
@@ -270,7 +270,7 @@ protected:
 	 build_segment_tree(n - (int)n/2, leftchild, rightchild, 
 			 prevchild, leftmostlink, index, last, keys);
 	 link_type vparent = new_Segment_tree_node_t
-	   (prevchild, TREE_BASE_NULL, prevchild->left_key, prevchild->left_key);
+	   (prevchild, CGAL_TREE_BASE_NULL, prevchild->left_key, prevchild->left_key);
 	 prevchild->parent_link   = vparent;
 	 build_segment_tree((int)n/2, leftchild, rightchild, 
 			 prevchild, leftmostlink, index, last, keys);
@@ -283,7 +283,7 @@ protected:
 
   void delete_tree(link_type v)
   {
-    if(v->left_link!=TREE_BASE_NULL)
+    if(v->left_link!=CGAL_TREE_BASE_NULL)
     { 
       delete_tree(left(v));
       delete_tree(right(v));
@@ -433,7 +433,7 @@ protected:
       if(! T->is_valid())
 	return false;
     }
-    if(left(v)!=TREE_BASE_NULL)
+    if(left(v)!=CGAL_TREE_BASE_NULL)
     {
       if(!is_valid(left(v)))
 	return false;
@@ -469,19 +469,19 @@ public:
 
   // construction of a tree
   Segment_tree_d(Segment_tree_d const &sub_tree, bool):
-    sublayer_tree(sub_tree.sublayer_tree->clone()), is_built(false), header(TREE_BASE_NULL)
+    sublayer_tree(sub_tree.sublayer_tree->clone()), is_built(false), header(CGAL_TREE_BASE_NULL)
   {}
 
   // construction of a tree, definition of the prototype of sublayer tree
   Segment_tree_d(Tree_base<C_Data, C_Window> const &sub_tree):
-    sublayer_tree(sub_tree.clone()), is_built(false), header(TREE_BASE_NULL)
+    sublayer_tree(sub_tree.clone()), is_built(false), header(CGAL_TREE_BASE_NULL)
   {}
 
   // destruction 
   ~Segment_tree_d()
   {
     link_type v=root();
-    if(v!=TREE_BASE_NULL)
+    if(v!=CGAL_TREE_BASE_NULL)
       delete_tree(v);
     if (header!=0)  
       delete_node(header);
@@ -565,7 +565,7 @@ public:
     link_type leftchild;
     link_type rightchild;
     link_type prevchild;
-    link_type leftmostlink = TREE_BASE_NULL;
+    link_type leftmostlink = CGAL_TREE_BASE_NULL;
 
     int start = 0;
     build_segment_tree(num-1, leftchild, rightchild, prevchild, 
@@ -636,7 +636,7 @@ public:
       return result;
     }
     link_type v = root();
-    if(v!=TREE_BASE_NULL)
+    if(v!=CGAL_TREE_BASE_NULL)
       return window_query(win, result, v);  
     return result;
   }
@@ -689,7 +689,7 @@ public:
       return result;
     }
     link_type v = root();
-    if(v!=TREE_BASE_NULL)
+    if(v!=CGAL_TREE_BASE_NULL)
       return enclosing_query(win, result, v);
     return result;
   }
@@ -697,7 +697,7 @@ public:
   bool is_valid() const
   {
     link_type v= root();
-    if(v!=TREE_BASE_NULL)
+    if(v!=CGAL_TREE_BASE_NULL)
       return is_valid(v);
     return true;
   }
