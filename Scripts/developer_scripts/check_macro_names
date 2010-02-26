@@ -20,7 +20,7 @@ file.
 =item B<-l, --list>
 
 Print to standard output the names of all macros defined in the file that
-do not follow the naming rules, preceded by the file name.
+do not follow the naming rules, preceded by the file name and the line number.
 
 =Head1 DESCRIPTION
 
@@ -74,12 +74,14 @@ sub process() {
         foreach my $line (sort {$a <=> $b} (keys(%macros))) {
             print STDERR "  $line: $macros{$line}\n";
         }
+        print STDERR "\n";
     } else {
         if( $listmacros && %bad_macros ) {
             print STDOUT "$filename\n";
             foreach my $line (sort {$a <=> $b} (keys(%bad_macros))) {
                 print STDOUT "  $line: $bad_macros{$line}\n";
             }
+            print STDOUT "\n";
         }
     }
     close(FILE)
