@@ -273,8 +273,8 @@ namespace Subdivision_method_3 {
 
 
   // ======================================================================
-//#define _EULER_DQQ_SPLITTING // should be CGAL_ prefixed
-//#define _EULER_DQQ_TILTING   // Tilting is faster // commented out since unused and not CGAL_ prefixed
+//#define CGAL_EULER_DQQ_SPLITTING
+//#define CGAL_EULER_DQQ_TILTING   // Tilting is faster
   template <class Poly, template <typename> class Mask>
   void DQQ_1step(Poly& p, Mask<Poly> mask) {
 
@@ -314,7 +314,7 @@ namespace Subdivision_method_3 {
     Point* point_buffer = new Point[num_e*2];
 
     //
-#ifdef _EULER_DQQ_SPLITTING
+#ifdef CGAL_EULER_DQQ_SPLITTING
     //
     // Splitting
 
@@ -480,7 +480,7 @@ namespace Subdivision_method_3 {
       p.erase_center_vertex(vh->vertex_begin());
     }
 
-#endif //_EULER_DQQ_SPLITTING
+#endif //CGAL_EULER_DQQ_SPLITTING
 
     delete []point_buffer;
   }
