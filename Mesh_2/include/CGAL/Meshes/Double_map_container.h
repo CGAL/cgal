@@ -70,6 +70,7 @@ namespace CGAL {
 
       void pop_next_element_impl()
       {
+        m.pop_front();
       }
 
       void remove_element(Element& e)
