@@ -33,6 +33,7 @@ rules. The script can process several files simultaneously.
 
 use strict;
 use warnings;
+use English;
 
 use Getopt::Long qw(:config permute);
 use Pod::Usage;
@@ -53,21 +54,35 @@ sub process() {
     my $filename = shift;
     my $errcode=1;
     my $FILE;
+    my %macros;
+    my %bad_macros;
 
     open(FILE, $filename) or die "Cannot read file $filename";
 
     while (<FILE>) {
         my $macro;
-	if( ($macro) = ($_ =~ /# *define +([^[:space:]]+)/) ) { 
-            print STDERR "$filename: $macro\n" if $debug;
+	if( ($macro) = ($_ =~ /# *define +([^[:space:]()]+)/) ) { 
+            $macros{$NR} = $macro;
             if( $macro !~ /^CGAL/ ) {
 		$global_errcode = 1;
-                if( $listmacros && ! $debug ) {
-                    print STDOUT "$filename: $macro\n";
-                }
+                $bad_macros{$NR} = $macro;
 	    }
 	}
     }
+    if($debug && %macros) {
+        print STDERR "$filename\n";
+        foreach my $line (sort {$a <=> $b} (keys(%macros))) {
+            print STDERR "  $line: $macros{$line}\n";
+        }
+    } else {
+        if( $listmacros && %bad_macros ) {
+            print STDOUT "$filename\n";
+            foreach my $line (sort {$a <=> $b} (keys(%bad_macros))) {
+                print STDOUT "  $line: $bad_macros{$line}\n";
+            }
+        }
+    }
+    close(FILE)
 }
 
 exit $global_errcode;
