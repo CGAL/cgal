@@ -22,8 +22,8 @@
 // Author(s)     : Stefan Schirra
 
 
-#ifndef LEDA_IN_CGAL_H
-#define LEDA_IN_CGAL_H
+#ifndef CGAL_LEDA_IN_CGAL_2_H
+#define CGAL_LEDA_IN_CGAL_2_H
 
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
@@ -121,4 +121,4 @@ cmp_signed_dist_to_line( const leda_point & p, const leda_point & q,
 
 CGAL_END_NAMESPACE
 
-#endif // LEDA_IN_CGAL_H
+#endif // CGAL_LEDA_IN_CGAL_2_H

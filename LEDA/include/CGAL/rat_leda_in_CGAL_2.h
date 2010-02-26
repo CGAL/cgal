@@ -22,8 +22,8 @@
 // Author(s)     : Stefan Schirra
 
 
-#ifndef RAT_LEDA_IN_CGAL_H
-#define RAT_LEDA_IN_CGAL_H
+#ifndef CGAL_RAT_LEDA_IN_CGAL_2_H
+#define CGAL_RAT_LEDA_IN_CGAL_2_H
 
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
@@ -193,4 +193,5 @@ has_larger_signed_dist_to_line(const leda_rat_point& p,
 
 CGAL_END_NAMESPACE
 
-#endif // RAT_LEDA_IN_CGAL_H
+#endif // CGAL_RAT_LEDA_IN_CGAL_2_H
+
