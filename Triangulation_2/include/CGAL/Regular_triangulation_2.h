@@ -684,9 +684,13 @@ power_test(const Weighted_point &p0,
     // We sort the points lexicographically.
     const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
     std::sort(points, points + 4,
-              bind(geom_traits().compare_xy_2_object(),
-                   bind(Dereference<Weighted_point>(), _1),
-                   bind(Dereference<Weighted_point>(), _2)) == SMALLER);
+              boost::bind(&Self::compare_xy, this,
+                          boost::bind(Dereference<Weighted_point>(), _1),
+                          boost::bind(Dereference<Weighted_point>(), _2)) == SMALLER);
+
+
+
+
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
