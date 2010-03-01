@@ -237,7 +237,7 @@ class Gmpfr:
                              mpfr_get_default_rounding_mode());
         }
 
-#define _GMPFR_CONSTRUCTOR_FROM_TYPE(_type,_fun) \
+#define CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(_type,_fun) \
         Gmpfr(_type x, \
               std::float_round_style r, \
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){ \
@@ -253,16 +253,16 @@ class Gmpfr:
                 _fun(fr(),x,mpfr_get_default_rounding_mode()); \
         }
 
-        _GMPFR_CONSTRUCTOR_FROM_TYPE(int,mpfr_set_si);
-        _GMPFR_CONSTRUCTOR_FROM_TYPE(long,mpfr_set_si);
-        _GMPFR_CONSTRUCTOR_FROM_TYPE(unsigned,mpfr_set_ui);
-        _GMPFR_CONSTRUCTOR_FROM_TYPE(unsigned long,mpfr_set_ui);
-        _GMPFR_CONSTRUCTOR_FROM_TYPE(double,mpfr_set_d);
-        _GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
+        CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(int,mpfr_set_si);
+        CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long,mpfr_set_si);
+        CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(unsigned,mpfr_set_ui);
+        CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(unsigned long,mpfr_set_ui);
+        CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(double,mpfr_set_d);
+        CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
 
-#undef _GMPFR_CONSTRUCTOR_FROM_TYPE
+#undef CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE
 
-#define _GMPFR_CONSTRUCTOR_FROM_OBJECT(_class,_member,_fun,_preccode) \
+#define CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT(_class,_member,_fun,_preccode) \
         Gmpfr(const _class &x, \
               std::float_round_style r, \
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){ \
@@ -279,9 +279,9 @@ class Gmpfr:
                 _fun(fr(),x._member,GMP_RNDN); \
         }
 
-        _GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpz,mpz(),mpfr_set_z,x.bit_size());
+        CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpz,mpz(),mpfr_set_z,x.bit_size());
 
-#undef _GMPFR_CONSTRUCTOR_FROM_OBJECT
+#undef CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT
 
         // When Gmpfr is refence counted, we inherit the assignment
         // operator and the copy constructor from Handle_for.
@@ -359,60 +359,60 @@ class Gmpfr:
         Gmpfr operator+()const;
         Gmpfr operator-()const;
 
-#define _GMPFR_DECLARE_OPERATORS(_type) \
+#define CGAL_GMPFR_DECLARE_OPERATORS(_type) \
         Gmpfr& operator+=(_type); \
         Gmpfr& operator-=(_type); \
         Gmpfr& operator*=(_type); \
         Gmpfr& operator/=(_type);
 
-        _GMPFR_DECLARE_OPERATORS(const Gmpfr&)
+        CGAL_GMPFR_DECLARE_OPERATORS(const Gmpfr&)
         Gmpfr& operator%=(const Gmpfr&);
-        _GMPFR_DECLARE_OPERATORS(long)
-        _GMPFR_DECLARE_OPERATORS(unsigned long)
-        _GMPFR_DECLARE_OPERATORS(int)
-        _GMPFR_DECLARE_OPERATORS(const Gmpz&)
+        CGAL_GMPFR_DECLARE_OPERATORS(long)
+        CGAL_GMPFR_DECLARE_OPERATORS(unsigned long)
+        CGAL_GMPFR_DECLARE_OPERATORS(int)
+        CGAL_GMPFR_DECLARE_OPERATORS(const Gmpz&)
 
-#undef _GMPFR_DECLARE_OPERATORS
+#undef CGAL_GMPFR_DECLARE_OPERATORS
 
-#define _GMPFR_DECLARE_STATIC_FUNCTION(_f,_t1,_t2) \
+#define CGAL_GMPFR_DECLARE_STATIC_FUNCTION(_f,_t1,_t2) \
         static Gmpfr _f (_t1,_t2,std::float_round_style=Gmpfr::get_default_rndmode()); \
         static Gmpfr _f (_t1, \
                          _t2, \
                          Gmpfr::Precision_type, \
                          std::float_round_style=Gmpfr::get_default_rndmode());
 
-#define _GMPFR_DECLARE_STATIC_FUNCTIONS(_t2) \
-        _GMPFR_DECLARE_STATIC_FUNCTION(add,const Gmpfr&,_t2) \
-        _GMPFR_DECLARE_STATIC_FUNCTION(sub,const Gmpfr&,_t2) \
-        _GMPFR_DECLARE_STATIC_FUNCTION(mul,const Gmpfr&,_t2) \
-        _GMPFR_DECLARE_STATIC_FUNCTION(div,const Gmpfr&,_t2)
+#define CGAL_GMPFR_DECLARE_STATIC_FUNCTIONS(_t2) \
+        CGAL_GMPFR_DECLARE_STATIC_FUNCTION(add,const Gmpfr&,_t2) \
+        CGAL_GMPFR_DECLARE_STATIC_FUNCTION(sub,const Gmpfr&,_t2) \
+        CGAL_GMPFR_DECLARE_STATIC_FUNCTION(mul,const Gmpfr&,_t2) \
+        CGAL_GMPFR_DECLARE_STATIC_FUNCTION(div,const Gmpfr&,_t2)
 
-        _GMPFR_DECLARE_STATIC_FUNCTIONS(const Gmpfr&)
-        _GMPFR_DECLARE_STATIC_FUNCTIONS(long)
-        _GMPFR_DECLARE_STATIC_FUNCTIONS(unsigned long)
-        _GMPFR_DECLARE_STATIC_FUNCTIONS(int)
-        _GMPFR_DECLARE_STATIC_FUNCTIONS(const Gmpz&)
+        CGAL_GMPFR_DECLARE_STATIC_FUNCTIONS(const Gmpfr&)
+        CGAL_GMPFR_DECLARE_STATIC_FUNCTIONS(long)
+        CGAL_GMPFR_DECLARE_STATIC_FUNCTIONS(unsigned long)
+        CGAL_GMPFR_DECLARE_STATIC_FUNCTIONS(int)
+        CGAL_GMPFR_DECLARE_STATIC_FUNCTIONS(const Gmpz&)
 
-#undef _GMPFR_DECLARE_STATIC_FUNCTION
-#undef _GMPFR_DECLARE_STATIC_FUNCTIONS
+#undef CGAL_GMPFR_DECLARE_STATIC_FUNCTION
+#undef CGAL_GMPFR_DECLARE_STATIC_FUNCTIONS
 
-#define _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(_f) \
+#define CGAL_GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(_f) \
         Gmpfr _f (std::float_round_style=Gmpfr::get_default_rndmode()) const; \
         Gmpfr _f (Gmpfr::Precision_type,\
                   std::float_round_style=Gmpfr::get_default_rndmode()) const;
 
-        _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(abs)
-        _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(sqrt)
-        _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(cbrt)
+        CGAL_GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(abs)
+        CGAL_GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(sqrt)
+        CGAL_GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(cbrt)
         Gmpfr kthroot
                 (int,std::float_round_style=Gmpfr::get_default_rndmode()) const;
         Gmpfr kthroot
                 (int,
                  Gmpfr::Precision_type,
                  std::float_round_style=Gmpfr::get_default_rndmode()) const;
-        _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(square)
+        CGAL_GMPFR_DECLARE_NO_ARGUMENT_FUNCTION(square)
 
-#undef _GMPFR_DECLARE_NO_ARGUMENT_FUNCTION
+#undef CGAL_GMPFR_DECLARE_NO_ARGUMENT_FUNCTION
 
         // comparison and query functions
 
@@ -428,10 +428,11 @@ class Gmpfr:
 
         // conversion functions
 
-        double to_double(std::float_round_style=Gmpfr::get_default_rndmode())const;
+        double to_double(std::float_round_style=Gmpfr::get_default_rndmode())
+                const;
         std::pair<double,double> to_interval()const;
-        std::pair<double,long>
-                to_double_exp(std::float_round_style=Gmpfr::get_default_rndmode())const;
+        std::pair<double,long> to_double_exp(std::float_round_style=
+                                             Gmpfr::get_default_rndmode())const;
         std::pair<std::pair<double,double>,long> to_interval_exp()const;
         std::pair<Gmpz,long> to_integer_exp()const;
 };
@@ -450,7 +451,8 @@ std::float_round_style Gmpfr::get_default_rndmode(){
 }
 
 inline
-std::float_round_style Gmpfr::set_default_rndmode(std::float_round_style rnd_mode){
+std::float_round_style
+Gmpfr::set_default_rndmode(std::float_round_style rnd_mode){
         std::float_round_style old_rnd_mode=Gmpfr::get_default_rndmode();
         mpfr_set_default_rounding_mode(_gmp_rnd(rnd_mode));
         return old_rnd_mode;
@@ -528,19 +530,19 @@ Gmpfr Gmpfr::operator-()const{
         return result;
 }
 
-// _GMPFR_MEMBER_PREC returns the precision to be used to operate between
+// CGAL_GMPFR_MEMBER_PREC returns the precision to be used to operate between
 // *this and a number of another type or class. Currently, the maximum of
 // *this' precision and the default precision is returned.
-#define _GMPFR_MEMBER_PREC() \
+#define CGAL_GMPFR_MEMBER_PREC() \
         (get_precision()>Gmpfr::get_default_precision()? \
          get_precision(): \
          Gmpfr::get_default_precision())
 
-// _GMPFR_MEMBER_PREC_2 returns the precision for the operation between Gmpfr
+// CGAL_GMPFR_MEMBER_PREC_2 returns the precision for the operation between Gmpfr
 // objects *this and _b. Currently, it is the maximum of the precisions of
 // *this and _b and the default precision.
 // TODO: maybe we can rewrite this define optimally, maybe with an inline
-#define _GMPFR_MEMBER_PREC_2(_b) \
+#define CGAL_GMPFR_MEMBER_PREC_2(_b) \
         ( get_precision() >= mpfr_get_prec(_b.fr()) ? \
                 ( get_precision()>(Gmpfr::get_default_precision())? \
                         get_precision():(Gmpfr::get_default_precision())): \
@@ -549,12 +551,12 @@ Gmpfr Gmpfr::operator-()const{
                         (Gmpfr::get_default_precision())) \
         )
 
-// _GMPFR_OBJECT_BINARY_OPERATOR defines an overloaded binary operator of
+// CGAL_GMPFR_OBJECT_BINARY_OPERATOR defines an overloaded binary operator of
 // the Gmpfr class, where the second parameter of the operator is an
 // object. It behaves differently when the Gmpfr class is reference-counted
 // or not.
 #ifdef CGAL_GMPFR_NO_REFCOUNT
-#define _GMPFR_OBJECT_BINARY_OPERATOR(_op,_class,_member,_fun) \
+#define CGAL_GMPFR_OBJECT_BINARY_OPERATOR(_op,_class,_member,_fun) \
         inline \
         Gmpfr& Gmpfr::_op(const _class &b){ \
                 if(get_precision()>=Gmpfr::get_default_precision()) { \
@@ -573,7 +575,7 @@ Gmpfr Gmpfr::operator-()const{
                 return *this; \
         }
 #else
-#define _GMPFR_OBJECT_BINARY_OPERATOR(_op,_class,_member,_fun) \
+#define CGAL_GMPFR_OBJECT_BINARY_OPERATOR(_op,_class,_member,_fun) \
         inline \
         Gmpfr& Gmpfr::_op(const _class &b){ \
                 if(unique()){ \
@@ -591,7 +593,7 @@ Gmpfr Gmpfr::operator-()const{
                                 swap(_temp); \
                         } \
                 }else{ \
-                        Gmpfr result(0,_GMPFR_MEMBER_PREC()); \
+                        Gmpfr result(0,CGAL_GMPFR_MEMBER_PREC()); \
                         _fun(result.fr(), \
                              fr(), \
                              b._member, \
@@ -602,15 +604,15 @@ Gmpfr Gmpfr::operator-()const{
         }
 #endif
 
-// _GMPFR_GMPFR_BINARY_OPERATOR is analogous to
-// _GMPFR_OBJECT_BINARY_OPERATOR, and it is used when the second operand is
+// CGAL_GMPFR_GMPFR_BINARY_OPERATOR is analogous to
+// CGAL_GMPFR_OBJECT_BINARY_OPERATOR, and it is used when the second operand is
 // another Gmpfr. The difference is the computation of the operation
 // precision.
 #ifdef CGAL_GMPFR_NO_REFCOUNT
-#define _GMPFR_GMPFR_BINARY_OPERATOR(_op,_fun) \
+#define CGAL_GMPFR_GMPFR_BINARY_OPERATOR(_op,_fun) \
         inline \
         Gmpfr& Gmpfr::_op(const Gmpfr &b){ \
-                Gmpfr::Precision_type _p=_GMPFR_MEMBER_PREC_2(b); \
+                Gmpfr::Precision_type _p=CGAL_GMPFR_MEMBER_PREC_2(b); \
                 if(_p==get_precision()) { \
                         _fun(fr(), \
                              fr(), \
@@ -627,10 +629,10 @@ Gmpfr Gmpfr::operator-()const{
                 return *this; \
         }
 #else
-#define _GMPFR_GMPFR_BINARY_OPERATOR(_op,_fun) \
+#define CGAL_GMPFR_GMPFR_BINARY_OPERATOR(_op,_fun) \
         inline \
         Gmpfr& Gmpfr::_op(const Gmpfr &b){ \
-                Gmpfr::Precision_type _p=_GMPFR_MEMBER_PREC_2(b); \
+                Gmpfr::Precision_type _p=CGAL_GMPFR_MEMBER_PREC_2(b); \
                 if(unique()&&(_p==get_precision())){ \
                         _fun(fr(), \
                              fr(), \
@@ -648,11 +650,11 @@ Gmpfr Gmpfr::operator-()const{
         }
 #endif
 
-// _GMPFR_TYPE_BINARY_OPERATOR is analogous to the
-// _GMPFR_OBJECT_BINARY_OPERATOR, where the second parameter is a type
+// CGAL_GMPFR_TYPE_BINARY_OPERATOR is analogous to the
+// CGAL_GMPFR_OBJECT_BINARY_OPERATOR, where the second parameter is a type
 // instead of an object.
 #ifdef CGAL_GMPFR_NO_REFCOUNT
-#define _GMPFR_TYPE_BINARY_OPERATOR(_op,_type,_fun) \
+#define CGAL_GMPFR_TYPE_BINARY_OPERATOR(_op,_type,_fun) \
         inline \
         Gmpfr& Gmpfr::_op(_type x){ \
                 if(get_precision()>=Gmpfr::get_default_precision()) { \
@@ -668,7 +670,7 @@ Gmpfr Gmpfr::operator-()const{
                 return *this; \
         }
 #else
-#define _GMPFR_TYPE_BINARY_OPERATOR(_op,_type,_fun) \
+#define CGAL_GMPFR_TYPE_BINARY_OPERATOR(_op,_type,_fun) \
         inline \
         Gmpfr& Gmpfr::_op(_type x){ \
                 if(unique()){ \
@@ -686,7 +688,7 @@ Gmpfr Gmpfr::operator-()const{
                                 swap(_temp); \
                         } \
                 }else{ \
-                        Gmpfr result(0,_GMPFR_MEMBER_PREC()); \
+                        Gmpfr result(0,CGAL_GMPFR_MEMBER_PREC()); \
                         _fun(result.fr(), \
                              fr(), \
                              x, \
@@ -697,17 +699,17 @@ Gmpfr Gmpfr::operator-()const{
         }
 #endif
 
-_GMPFR_GMPFR_BINARY_OPERATOR(operator+=,mpfr_add)
-_GMPFR_GMPFR_BINARY_OPERATOR(operator-=,mpfr_sub)
-_GMPFR_GMPFR_BINARY_OPERATOR(operator*=,mpfr_mul)
-_GMPFR_GMPFR_BINARY_OPERATOR(operator/=,mpfr_div)
+CGAL_GMPFR_GMPFR_BINARY_OPERATOR(operator+=,mpfr_add)
+CGAL_GMPFR_GMPFR_BINARY_OPERATOR(operator-=,mpfr_sub)
+CGAL_GMPFR_GMPFR_BINARY_OPERATOR(operator*=,mpfr_mul)
+CGAL_GMPFR_GMPFR_BINARY_OPERATOR(operator/=,mpfr_div)
 #if(defined(MPFR_VERSION)&&(MPFR_VERSION>=MPFR_VERSION_NUM(2,3,0)))
-_GMPFR_GMPFR_BINARY_OPERATOR(operator%=,mpfr_remainder)
+CGAL_GMPFR_GMPFR_BINARY_OPERATOR(operator%=,mpfr_remainder)
 #else
 //#  warning "Gmpfr::operator%= is optimized in MPFR 2.3.0."
 inline
 Gmpfr& Gmpfr::operator%=(const Gmpfr &b){
-        Gmpfr::Precision_type _p=_GMPFR_MEMBER_PREC_2(b);
+        Gmpfr::Precision_type _p=CGAL_GMPFR_MEMBER_PREC_2(b);
         Gmpfr result(*this,_p);
         result/=b;
         mpfr_trunc(result.fr(),result.fr());
@@ -726,36 +728,36 @@ Gmpfr& Gmpfr::operator%=(const Gmpfr &b){
 }
 #endif
 
-_GMPFR_TYPE_BINARY_OPERATOR(operator+=,long,mpfr_add_si)
-_GMPFR_TYPE_BINARY_OPERATOR(operator-=,long,mpfr_sub_si)
-_GMPFR_TYPE_BINARY_OPERATOR(operator*=,long,mpfr_mul_si)
-_GMPFR_TYPE_BINARY_OPERATOR(operator/=,long,mpfr_div_si)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator+=,long,mpfr_add_si)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator-=,long,mpfr_sub_si)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator*=,long,mpfr_mul_si)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator/=,long,mpfr_div_si)
 
-_GMPFR_TYPE_BINARY_OPERATOR(operator+=,unsigned long,mpfr_add_ui)
-_GMPFR_TYPE_BINARY_OPERATOR(operator-=,unsigned long,mpfr_sub_ui)
-_GMPFR_TYPE_BINARY_OPERATOR(operator*=,unsigned long,mpfr_mul_ui)
-_GMPFR_TYPE_BINARY_OPERATOR(operator/=,unsigned long,mpfr_div_ui)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator+=,unsigned long,mpfr_add_ui)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator-=,unsigned long,mpfr_sub_ui)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator*=,unsigned long,mpfr_mul_ui)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator/=,unsigned long,mpfr_div_ui)
 
-_GMPFR_TYPE_BINARY_OPERATOR(operator+=,int,mpfr_add_si)
-_GMPFR_TYPE_BINARY_OPERATOR(operator-=,int,mpfr_sub_si)
-_GMPFR_TYPE_BINARY_OPERATOR(operator*=,int,mpfr_mul_si)
-_GMPFR_TYPE_BINARY_OPERATOR(operator/=,int,mpfr_div_si)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator+=,int,mpfr_add_si)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator-=,int,mpfr_sub_si)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator*=,int,mpfr_mul_si)
+CGAL_GMPFR_TYPE_BINARY_OPERATOR(operator/=,int,mpfr_div_si)
 
-_GMPFR_OBJECT_BINARY_OPERATOR(operator+=,Gmpz,mpz(),mpfr_add_z)
-_GMPFR_OBJECT_BINARY_OPERATOR(operator-=,Gmpz,mpz(),mpfr_sub_z)
-_GMPFR_OBJECT_BINARY_OPERATOR(operator*=,Gmpz,mpz(),mpfr_mul_z)
-_GMPFR_OBJECT_BINARY_OPERATOR(operator/=,Gmpz,mpz(),mpfr_div_z)
+CGAL_GMPFR_OBJECT_BINARY_OPERATOR(operator+=,Gmpz,mpz(),mpfr_add_z)
+CGAL_GMPFR_OBJECT_BINARY_OPERATOR(operator-=,Gmpz,mpz(),mpfr_sub_z)
+CGAL_GMPFR_OBJECT_BINARY_OPERATOR(operator*=,Gmpz,mpz(),mpfr_mul_z)
+CGAL_GMPFR_OBJECT_BINARY_OPERATOR(operator/=,Gmpz,mpz(),mpfr_div_z)
 
-#undef _GMPFR_OBJECT_BINARY_OPERATOR
-#undef _GMPFR_GMPFR_BINARY_OPERATOR
-#undef _GMPFR_TYPE_BINARY_OPERATOR
+#undef CGAL_GMPFR_OBJECT_BINARY_OPERATOR
+#undef CGAL_GMPFR_GMPFR_BINARY_OPERATOR
+#undef CGAL_GMPFR_TYPE_BINARY_OPERATOR
 
 // the static arithmetic functions are defined in a separate file
 #include <CGAL/GMP/Gmpfr_type_static.h>
 
-#define _GMPFR_ARITHMETIC_FUNCTION(_name,_fun) \
+#define CGAL_GMPFR_ARITHMETIC_FUNCTION(_name,_fun) \
         inline Gmpfr Gmpfr::_name (std::float_round_style r)const{ \
-                Gmpfr result(0,_GMPFR_MEMBER_PREC()); \
+                Gmpfr result(0,CGAL_GMPFR_MEMBER_PREC()); \
                 _fun(result.fr(),fr(),_gmp_rnd(r)); \
                 return result; \
         } \
@@ -767,12 +769,12 @@ _GMPFR_OBJECT_BINARY_OPERATOR(operator/=,Gmpz,mpz(),mpfr_div_z)
                 return result; \
         }
 
-_GMPFR_ARITHMETIC_FUNCTION(abs,mpfr_abs)
-_GMPFR_ARITHMETIC_FUNCTION(sqrt,mpfr_sqrt)
-_GMPFR_ARITHMETIC_FUNCTION(cbrt,mpfr_cbrt)
+CGAL_GMPFR_ARITHMETIC_FUNCTION(abs,mpfr_abs)
+CGAL_GMPFR_ARITHMETIC_FUNCTION(sqrt,mpfr_sqrt)
+CGAL_GMPFR_ARITHMETIC_FUNCTION(cbrt,mpfr_cbrt)
 
 inline Gmpfr Gmpfr::kthroot(int k,std::float_round_style r)const{
-        Gmpfr result(0,_GMPFR_MEMBER_PREC());
+        Gmpfr result(0,CGAL_GMPFR_MEMBER_PREC());
         mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
         return result;
 }
@@ -786,11 +788,11 @@ inline Gmpfr Gmpfr::kthroot(int k,
         return result;
 }
 
-_GMPFR_ARITHMETIC_FUNCTION(square,mpfr_sqr)
+CGAL_GMPFR_ARITHMETIC_FUNCTION(square,mpfr_sqr)
 
-#undef _GMPFR_ARITHMETIC_FUNCTION
-#undef _GMPFR_MEMBER_PREC
-#undef _GMPFR_MEMBER_PREC_2
+#undef CGAL_GMPFR_ARITHMETIC_FUNCTION
+#undef CGAL_GMPFR_MEMBER_PREC
+#undef CGAL_GMPFR_MEMBER_PREC_2
 
 // comparison and query functions
 

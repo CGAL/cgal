@@ -83,9 +83,9 @@ struct Gmpfi_rep{
 
 // the default precision of Gmpfi is the size of a double's mantissa
 #ifdef IEEE_DBL_MANT_DIG
-#  define _GMPFI_DEFAULT_PRECISION IEEE_DBL_MANT_DIG
+#  define CGAL_GMPFI_DEFAULT_PRECISION IEEE_DBL_MANT_DIG
 #else
-#  define _GMPFI_DEFAULT_PRECISION 53
+#  define CGAL_GMPFI_DEFAULT_PRECISION 53
 #endif
 
 // the default precision is a variable local to each thread in multithreaded
@@ -93,7 +93,7 @@ struct Gmpfi_rep{
 #ifdef CGAL_HAS_THREADS
         boost::thread_specific_ptr<mp_prec_t> Gmpfi_default_precision_;
 #else
-        mp_prec_t Gmpfi_default_precision=_GMPFI_DEFAULT_PRECISION;
+        mp_prec_t Gmpfi_default_precision=CGAL_GMPFI_DEFAULT_PRECISION;
 #endif
 
 class Gmpfi:
@@ -152,7 +152,7 @@ class Gmpfi:
                 mpfi_init(mpfi());
         }
 
-#define _GMPFI_CONSTRUCTOR_FROM_SCALAR(_type) \
+#define CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(_type) \
         Gmpfi(const _type &t, \
               Gmpfi::Precision_type p=Gmpfi::get_default_precision()){ \
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
@@ -164,14 +164,14 @@ class Gmpfi:
                 mpfi()->right=*(r.fr()); \
         }
 
-_GMPFI_CONSTRUCTOR_FROM_SCALAR(long);
-_GMPFI_CONSTRUCTOR_FROM_SCALAR(unsigned long);
-_GMPFI_CONSTRUCTOR_FROM_SCALAR(int);
-_GMPFI_CONSTRUCTOR_FROM_SCALAR(double);
-_GMPFI_CONSTRUCTOR_FROM_SCALAR(long double);
-_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
+CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(long);
+CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(unsigned long);
+CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(int);
+CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(double);
+CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(long double);
+CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
 
-#undef _GMPFI_CONSTRUCTOR_FROM_SCALAR
+#undef CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR
 
         Gmpfi(const Gmpq &q,
               Gmpfi::Precision_type p=Gmpfi::get_default_precision()){
@@ -269,44 +269,46 @@ _GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
         Gmpfi operator+()const;
         Gmpfi operator-()const;
 
-#define _GMPFI_DECLARE_OPERATORS(_type) \
+#define CGAL_GMPFI_DECLARE_OPERATORS(_type) \
         Gmpfi& operator+=(_type); \
         Gmpfi& operator-=(_type); \
         Gmpfi& operator*=(_type); \
         Gmpfi& operator/=(_type);
 
-        _GMPFI_DECLARE_OPERATORS(const Gmpfi&)
-        _GMPFI_DECLARE_OPERATORS(const Gmpfr&)
-        _GMPFI_DECLARE_OPERATORS(long)
-        _GMPFI_DECLARE_OPERATORS(unsigned long)
-        _GMPFI_DECLARE_OPERATORS(int)
-        _GMPFI_DECLARE_OPERATORS(const Gmpz&)
-        _GMPFI_DECLARE_OPERATORS(const Gmpq&)
+        CGAL_GMPFI_DECLARE_OPERATORS(const Gmpfi&)
+        CGAL_GMPFI_DECLARE_OPERATORS(const Gmpfr&)
+        CGAL_GMPFI_DECLARE_OPERATORS(long)
+        CGAL_GMPFI_DECLARE_OPERATORS(unsigned long)
+        CGAL_GMPFI_DECLARE_OPERATORS(int)
+        CGAL_GMPFI_DECLARE_OPERATORS(const Gmpz&)
+        CGAL_GMPFI_DECLARE_OPERATORS(const Gmpq&)
 
-#undef _GMPFI_DECLARE_OPERATORS
+#undef CGAL_GMPFI_DECLARE_OPERATORS
 
-#define _GMPFI_DECLARE_STATIC_FUNCTION(_f,_t1,_t2) \
+#define CGAL_GMPFI_DECLARE_STATIC_FUNCTION(_f,_t1,_t2) \
         static Gmpfi _f (_t1,_t2,Gmpfi::Precision_type=0);
 
-#define _GMPFI_DECLARE_STATIC_FUNCTIONS(_t1,_t2) \
-        _GMPFI_DECLARE_STATIC_FUNCTION(add,_t1,_t2) \
-        _GMPFI_DECLARE_STATIC_FUNCTION(sub,_t1,_t2) \
-        _GMPFI_DECLARE_STATIC_FUNCTION(mul,_t1,_t2) \
-        _GMPFI_DECLARE_STATIC_FUNCTION(div,_t1,_t2)
+#define CGAL_GMPFI_DECLARE_STATIC_FUNCTIONS(_t1,_t2) \
+        CGAL_GMPFI_DECLARE_STATIC_FUNCTION(add,_t1,_t2) \
+        CGAL_GMPFI_DECLARE_STATIC_FUNCTION(sub,_t1,_t2) \
+        CGAL_GMPFI_DECLARE_STATIC_FUNCTION(mul,_t1,_t2) \
+        CGAL_GMPFI_DECLARE_STATIC_FUNCTION(div,_t1,_t2)
 
-#define _GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(_t) \
-        _GMPFI_DECLARE_STATIC_FUNCTIONS(const Gmpfi&,_t) \
-        _GMPFI_DECLARE_STATIC_FUNCTIONS(_t,const Gmpfi&)
+#define CGAL_GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(_t) \
+        CGAL_GMPFI_DECLARE_STATIC_FUNCTIONS(const Gmpfi&,_t) \
+        CGAL_GMPFI_DECLARE_STATIC_FUNCTIONS(_t,const Gmpfi&)
 
-        _GMPFI_DECLARE_STATIC_FUNCTIONS(const Gmpfi&,const Gmpfi&)
-        _GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(const Gmpfr&)
-        _GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(long)
-        _GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(unsigned long)
-        _GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(int)
-        _GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(const Gmpz&)
-        _GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(const Gmpq&)
+        CGAL_GMPFI_DECLARE_STATIC_FUNCTIONS(const Gmpfi&,const Gmpfi&)
+        CGAL_GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(const Gmpfr&)
+        CGAL_GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(long)
+        CGAL_GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(unsigned long)
+        CGAL_GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(int)
+        CGAL_GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(const Gmpz&)
+        CGAL_GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS(const Gmpq&)
 
-#undef _GMPFI_DECLARE_STATIC_FUNCTION
+#undef CGAL_GMPFI_DECLARE_STATIC_FUNCTION
+#undef CGAL_GMPFI_DECLARE_STATIC_FUNCTIONS
+#undef CGAL_GMPFI_DECLARE_TWO_WAY_STATIC_FUNCTIONS
 
         Gmpfi abs(Gmpfi::Precision_type=Gmpfi::get_default_precision())const;
         Gmpfi sqrt(Gmpfi::Precision_type=Gmpfi::get_default_precision())const;
@@ -358,7 +360,7 @@ _GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
 void Gmpfi::init_precision_for_thread(){
         CGAL_precondition(Gmpfi_default_precision_.get()==NULL);
         Gmpfi_default_precision_.reset(
-                new mp_prec_t(_GMPFI_DEFAULT_PRECISION));
+                new mp_prec_t(CGAL_GMPFI_DEFAULT_PRECISION));
 }
 #endif
 
@@ -412,10 +414,10 @@ Gmpfi Gmpfi::operator-()const{
         return result;
 }
 
-// _GMPFI_BALANCE_ENDPOINTS checks if both endpoints of the interval have
+// CGAL_GMPFI_BALANCE_ENDPOINTS checks if both endpoints of the interval have
 // the same precision. If not, it rounds the one with the smallest
 // precision.
-#define _GMPFI_BALANCE_ENDPOINTS \
+#define CGAL_GMPFI_BALANCE_ENDPOINTS \
         if(mpfr_get_prec(left_mpfr())<mpfr_get_prec(right_mpfr())){\
                 mpfr_round_prec(&(mpfi()->left), \
                                 GMP_RNDD, \
@@ -428,7 +430,7 @@ Gmpfi Gmpfi::operator-()const{
                 } \
         }
 
-// _GMPFI_OBJECT_BINARY_OPERATOR defines an overloaded binary operator of
+// CGAL_GMPFI_OBJECT_BINARY_OPERATOR defines an overloaded binary operator of
 // the Gmpfi class, where the operated object belongs to another class,
 // which represents a point (as opposition to an interval). The operation
 // will be performed using the biggest precision of the endpoints of this
@@ -436,11 +438,11 @@ Gmpfi Gmpfi::operator-()const{
 // of them (the one with the biggest precision) will be rounded. This is
 // not a problem when the object is not unique, since a new Gmpfi object
 // will be created with the endpoints having the correct precision.
-#define _GMPFI_OBJECT_BINARY_OPERATOR(_op,_class,_member,_fun) \
+#define CGAL_GMPFI_OBJECT_BINARY_OPERATOR(_op,_class,_member,_fun) \
         inline \
         Gmpfi& Gmpfi::_op(const _class &b){ \
                 if(unique()){ \
-                        _GMPFI_BALANCE_ENDPOINTS \
+                        CGAL_GMPFI_BALANCE_ENDPOINTS \
                         _fun(mpfi(),mpfi(),b._member); \
                 }else{ \
                         Gmpfi result(0,get_precision()); \
@@ -450,19 +452,19 @@ Gmpfi Gmpfi::operator-()const{
                 return(*this); \
         }
 
-// _GMPFI_GMPFI_BINARY_OPERATOR defines an overloaded binary operator of
+// CGAL_GMPFI_GMPFI_BINARY_OPERATOR defines an overloaded binary operator of
 // the Gmpfi class, where the operated object is also a Gmpfi object.
 // The operation will be performed using the biggest precision of the
 // endpoints of both intervals. The endpoints of target object will be
 // rounded accordingly before the operation.
-#define _GMPFI_GMPFI_BINARY_OPERATOR(_op,_fun) \
+#define CGAL_GMPFI_GMPFI_BINARY_OPERATOR(_op,_fun) \
         inline \
         Gmpfi& Gmpfi::_op(const Gmpfi &fi){ \
                 if(unique()){ \
                         if(get_precision()<fi.get_precision()){ \
                                 mpfi_round_prec(mpfi(),fi.get_precision()); \
                         }else{ \
-                                _GMPFI_BALANCE_ENDPOINTS \
+                                CGAL_GMPFI_BALANCE_ENDPOINTS \
                         } \
                         _fun(mpfi(),mpfi(),fi.mpfi()); \
                 }else{ \
@@ -476,15 +478,15 @@ Gmpfi Gmpfi::operator-()const{
                 return(*this); \
         }
 
-// _GMPFI_TYPE_BINARY_OPERATOR defines an overloaded binary operator of
+// CGAL_GMPFI_TYPE_BINARY_OPERATOR defines an overloaded binary operator of
 // the Gmpfi class, where the operated belongs to a c++ type. Precision of
 // the operation is defined in the same manner that in
-// _GMPFI_OBJECT_BINARY_OPERATOR.
-#define _GMPFI_TYPE_BINARY_OPERATOR(_op,_type,_fun) \
+// CGAL_GMPFI_OBJECT_BINARY_OPERATOR.
+#define CGAL_GMPFI_TYPE_BINARY_OPERATOR(_op,_type,_fun) \
         inline \
         Gmpfi& Gmpfi::_op(_type x){ \
                 if(unique()){ \
-                        _GMPFI_BALANCE_ENDPOINTS \
+                        CGAL_GMPFI_BALANCE_ENDPOINTS \
                         _fun(mpfi(),mpfi(),x); \
                 }else{ \
                         Gmpfi result(0,get_precision()); \
@@ -494,49 +496,50 @@ Gmpfi Gmpfi::operator-()const{
                 return *this; \
         }
 
-_GMPFI_GMPFI_BINARY_OPERATOR(operator+=,mpfi_add)
-_GMPFI_GMPFI_BINARY_OPERATOR(operator-=,mpfi_sub)
-_GMPFI_GMPFI_BINARY_OPERATOR(operator*=,mpfi_mul)
-_GMPFI_GMPFI_BINARY_OPERATOR(operator/=,mpfi_div)
+CGAL_GMPFI_GMPFI_BINARY_OPERATOR(operator+=,mpfi_add)
+CGAL_GMPFI_GMPFI_BINARY_OPERATOR(operator-=,mpfi_sub)
+CGAL_GMPFI_GMPFI_BINARY_OPERATOR(operator*=,mpfi_mul)
+CGAL_GMPFI_GMPFI_BINARY_OPERATOR(operator/=,mpfi_div)
 
-_GMPFI_OBJECT_BINARY_OPERATOR(operator+=,Gmpfr,fr(),mpfi_add_fr)
-_GMPFI_OBJECT_BINARY_OPERATOR(operator-=,Gmpfr,fr(),mpfi_sub_fr)
-_GMPFI_OBJECT_BINARY_OPERATOR(operator*=,Gmpfr,fr(),mpfi_mul_fr)
-_GMPFI_OBJECT_BINARY_OPERATOR(operator/=,Gmpfr,fr(),mpfi_div_fr)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator+=,Gmpfr,fr(),mpfi_add_fr)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator-=,Gmpfr,fr(),mpfi_sub_fr)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator*=,Gmpfr,fr(),mpfi_mul_fr)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator/=,Gmpfr,fr(),mpfi_div_fr)
 
-_GMPFI_TYPE_BINARY_OPERATOR(operator+=,long,mpfi_add_si)
-_GMPFI_TYPE_BINARY_OPERATOR(operator-=,long,mpfi_sub_si)
-_GMPFI_TYPE_BINARY_OPERATOR(operator*=,long,mpfi_mul_si)
-_GMPFI_TYPE_BINARY_OPERATOR(operator/=,long,mpfi_div_si)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator+=,long,mpfi_add_si)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator-=,long,mpfi_sub_si)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator*=,long,mpfi_mul_si)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator/=,long,mpfi_div_si)
 
-_GMPFI_TYPE_BINARY_OPERATOR(operator+=,unsigned long,mpfi_add_ui)
-_GMPFI_TYPE_BINARY_OPERATOR(operator-=,unsigned long,mpfi_sub_ui)
-_GMPFI_TYPE_BINARY_OPERATOR(operator*=,unsigned long,mpfi_mul_ui)
-_GMPFI_TYPE_BINARY_OPERATOR(operator/=,unsigned long,mpfi_div_ui)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator+=,unsigned long,mpfi_add_ui)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator-=,unsigned long,mpfi_sub_ui)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator*=,unsigned long,mpfi_mul_ui)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator/=,unsigned long,mpfi_div_ui)
 
-_GMPFI_TYPE_BINARY_OPERATOR(operator+=,int,mpfi_add_si)
-_GMPFI_TYPE_BINARY_OPERATOR(operator-=,int,mpfi_sub_si)
-_GMPFI_TYPE_BINARY_OPERATOR(operator*=,int,mpfi_mul_si)
-_GMPFI_TYPE_BINARY_OPERATOR(operator/=,int,mpfi_div_si)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator+=,int,mpfi_add_si)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator-=,int,mpfi_sub_si)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator*=,int,mpfi_mul_si)
+CGAL_GMPFI_TYPE_BINARY_OPERATOR(operator/=,int,mpfi_div_si)
 
-_GMPFI_OBJECT_BINARY_OPERATOR(operator+=,Gmpz,mpz(),mpfi_add_z)
-_GMPFI_OBJECT_BINARY_OPERATOR(operator-=,Gmpz,mpz(),mpfi_sub_z)
-_GMPFI_OBJECT_BINARY_OPERATOR(operator*=,Gmpz,mpz(),mpfi_mul_z)
-_GMPFI_OBJECT_BINARY_OPERATOR(operator/=,Gmpz,mpz(),mpfi_div_z)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator+=,Gmpz,mpz(),mpfi_add_z)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator-=,Gmpz,mpz(),mpfi_sub_z)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator*=,Gmpz,mpz(),mpfi_mul_z)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator/=,Gmpz,mpz(),mpfi_div_z)
 
-_GMPFI_OBJECT_BINARY_OPERATOR(operator+=,Gmpq,mpq(),mpfi_add_q)
-_GMPFI_OBJECT_BINARY_OPERATOR(operator-=,Gmpq,mpq(),mpfi_sub_q)
-_GMPFI_OBJECT_BINARY_OPERATOR(operator*=,Gmpq,mpq(),mpfi_mul_q)
-_GMPFI_OBJECT_BINARY_OPERATOR(operator/=,Gmpq,mpq(),mpfi_div_q)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator+=,Gmpq,mpq(),mpfi_add_q)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator-=,Gmpq,mpq(),mpfi_sub_q)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator*=,Gmpq,mpq(),mpfi_mul_q)
+CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator/=,Gmpq,mpq(),mpfi_div_q)
 
-#undef _GMPFI_GMPFI_BINARY_OPERATOR
-#undef _GMPFI_OBJECT_BINARY_OPERATOR
-#undef _GMPFI_TYPE_BINARY_OPERATOR
+#undef CGAL_GMPFI_BALANCE_ENDPOINTS
+#undef CGAL_GMPFI_GMPFI_BINARY_OPERATOR
+#undef CGAL_GMPFI_OBJECT_BINARY_OPERATOR
+#undef CGAL_GMPFI_TYPE_BINARY_OPERATOR
 
 // the static arithmetic functions are defined in a separate file
 #include <CGAL/GMP/Gmpfi_type_static.h>
 
-#define _GMPFI_ARITHMETIC_FUNCTION(_name,_fun) \
+#define CGAL_GMPFI_ARITHMETIC_FUNCTION(_name,_fun) \
         inline \
         Gmpfi Gmpfi::_name (Gmpfi::Precision_type p)const{ \
                 Gmpfi result(0,p); \
@@ -544,8 +547,8 @@ _GMPFI_OBJECT_BINARY_OPERATOR(operator/=,Gmpq,mpq(),mpfi_div_q)
                 return result; \
         }
 
-_GMPFI_ARITHMETIC_FUNCTION(abs,mpfi_abs)
-_GMPFI_ARITHMETIC_FUNCTION(sqrt,mpfi_sqrt)
+CGAL_GMPFI_ARITHMETIC_FUNCTION(abs,mpfi_abs)
+CGAL_GMPFI_ARITHMETIC_FUNCTION(sqrt,mpfi_sqrt)
 
 inline
 Gmpfi Gmpfi::cbrt(Gmpfi::Precision_type p)const{
@@ -565,7 +568,9 @@ Gmpfi Gmpfi::kthroot(int k,Gmpfi::Precision_type p)const{
         return result;
 }
 
-_GMPFI_ARITHMETIC_FUNCTION(square,mpfi_sqr)
+CGAL_GMPFI_ARITHMETIC_FUNCTION(square,mpfi_sqr)
+
+#undef CGAL_GMPFI_ARITHMETIC_FUNCTION
 
 // comparison and query functions
 
