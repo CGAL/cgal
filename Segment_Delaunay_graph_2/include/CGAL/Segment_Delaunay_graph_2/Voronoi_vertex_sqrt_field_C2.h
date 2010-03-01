@@ -932,7 +932,7 @@ private:
       const Site_2* pt;
       if ( p_.is_point() ) { pt = &p_; }
       else if ( q_.is_point() ) { pt = &q_; }
-      else if ( r_.is_point() ) { pt = &r_; }
+      else { pt = &r_; }
 
       if ( is_endpoint_of(*pt, t) ) {
 	Site_2 tp = other_site(*pt, t);
