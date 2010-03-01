@@ -29,6 +29,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
+#include <CGAL/Segment_Delaunay_graph_2/Check_exact.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -84,8 +85,6 @@ private:
 
     Point_2 p = sp.point(), q = sq.point(), r = sr.point();
 
-    v_type = PPP;
-
     FT np = CGAL::square(p.x()) + CGAL::square(p.y());
     FT nq = CGAL::square(q.x()) + CGAL::square(q.y());
     FT nr = CGAL::square(r.x()) + CGAL::square(r.y());
@@ -102,10 +101,22 @@ private:
   void
   compute_pss(const Site_2& p, const Site_2& q, const Site_2& r)
   {
+#ifdef CGAL_PROFILE
+    // In case CGAL profile is called then output the sites in case of
+    // a filter failure
+    if ( Check_exact<FT>()() ) {
+      std::ofstream ofs("vv-failure-log.cin", std::ios_base::app);
+      ofs.precision(16);
+      ofs << p << std::endl;
+      ofs << q << std::endl;
+      ofs << r << std::endl;
+      ofs << "=======" << std::endl;
+      ofs.close();
+    }
+#endif
+
     CGAL_precondition( p.is_point() && q.is_segment() &&
 		       r.is_segment() );
-
-    v_type = PSS;
 
     bool pq =
       same_points(p, q.source_site()) || same_points(p, q.target_site());
@@ -252,8 +263,6 @@ private:
   {
     CGAL_precondition( p.is_point() && q.is_point() &&
 		       r.is_segment() );
-    v_type = PPS;
-
     FT a, b, c;
     compute_supporting_line(r.supporting_site(), a, b, c);
 
@@ -271,6 +280,11 @@ private:
       cq_ = FT(0);
     }
 
+#if 0
+    // MK:: 1/3/2010
+    // eliminatine the following code seems to have no effect. the
+    // analysis supports this; this code is to be removed after some
+    // testing.
     Sign s = CGAL::sign(c_);
 
     if ( s == NEGATIVE ) {
@@ -283,6 +297,7 @@ private:
 	a = -a;  b = -b;  c = -c;  c_ = -c_;  cq_ = -cq_;
       }
     }
+#endif
 
     FT nl = CGAL::square(a) + CGAL::square(b);
 
@@ -290,7 +305,22 @@ private:
     FT y_ = qq.y() - pp.y();
     FT n_ = CGAL::square(x_) + CGAL::square(y_);
 
-    if ( c_ == cq_ ) {
+    // the following lines of code check whether the line of the two
+    // points is parallel to the supporting line of the segment, and
+    // parallel to the x or y axis.
+
+    Point_2 r_src = r.source_site().point();
+    Point_2 r_trg = r.target_site().point();
+
+    bool pq_xaligned = pp.y() == qq.y();
+    bool r_xaligned = r_src.y() == r_trg.y();
+
+    bool pq_yaligned = pp.x() == qq.x();
+    bool r_yaligned = r_src.x() == r_trg.x();
+
+    bool parallel = (pq_xaligned && r_xaligned) || (pq_yaligned && r_yaligned);
+
+    if ( parallel || c_ == cq_ ) {
       FT e1 = CGAL::square(c_);
       FT J = nl * (a * n_ + FT(4) * c_ * x_) - FT(4) * a * e1;
       FT I = nl * (b * n_ + FT(4) * c_ * y_) - FT(4) * b * e1;
@@ -547,8 +577,6 @@ private:
     CGAL_precondition( p.is_segment() && q.is_segment() &&
 		       r.is_segment() );
 
-    v_type = SSS;
-
     FT a[3], b[3], c[3];
     FT cx[3], cy[3], cz[3], sqrt_D[3];
 
@@ -573,31 +601,50 @@ private:
   void
   compute_vertex(const Site_2& s1, const Site_2& s2, const Site_2& s3)
   {
-    if ( s1.is_point() && s2.is_point() && s3.is_point() ) {
-      compute_ppp(s1, s2, s3);
+    int npts = 0;
+    if ( s1.is_point() ) ++npts;
+    if ( s2.is_point() ) ++npts;
+    if ( s3.is_point() ) ++npts;
 
-    } else if ( s1.is_segment() && s2.is_point() && s3.is_point() ) {
-      compute_vertex(s2, s3, s1);
-      pps_idx = 1;
-
-    } else if ( s1.is_point() && s2.is_segment() && s3.is_point() ) {
-      compute_vertex(s3, s1, s2);
-      pps_idx = 2;
-
-    } else if ( s1.is_point() && s2.is_point() && s3.is_segment() ) {
-      compute_pps(s1, s2, s3);
-      pps_idx = 0;
-
-    } else if ( s1.is_point() && s2.is_segment() && s3.is_segment() ) {
-      compute_pss(s1, s2, s3);
-    } else if ( s1.is_segment() && s2.is_point() && s3.is_segment() ) {
-      compute_vertex(s2, s3, s1);
-    } else if ( s1.is_segment() && s2.is_segment() && s3.is_point() ) {
-      compute_vertex(s3, s1, s2);
-    } else {
-      compute_sss(s1, s2, s3);
+    switch ( npts ) {
+    case 0:
+      v_type = SSS;
+      break;
+    case 1:
+      v_type = PSS;
+      break;
+    case 2:
+      v_type = PPS;
+      break;
+    default:
+      v_type = PPP;
     }
 
+
+    if ( v_type == PPP ) {
+      compute_ppp(s1, s2, s3);
+    } else if ( v_type == SSS ) {
+      compute_sss(s1, s2, s3);
+    } else if ( v_type == PPS ) {
+      if ( s1.is_segment() ) {
+	compute_pps(s2, s3, s1);
+	pps_idx = 1;
+      } else if ( s2.is_segment() ) {
+	compute_pps(s3, s1, s2);
+	pps_idx = 2;
+      } else {
+	compute_pps(s1, s2, s3);
+	pps_idx = 0;
+      }
+    } else {
+      if ( s1.is_point() ) {
+	compute_pss(s1, s2, s3);
+      } else if ( s2.is_point() ) {
+	compute_pss(s2, s3, s1);
+      } else {
+	compute_pss(s3, s1, s2);
+      }
+    }
   }
 
   //--------------------------------------------------------------------------
