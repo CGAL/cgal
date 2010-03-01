@@ -451,7 +451,7 @@ public:
 #ifdef CGAL_PROFILE
     // In case CGAL profile is called then output the sites in case of
     // a filter failure
-    if ( check_tag(typename Algebraic_structure_traits<FT>::Is_exact()) ) {
+    if ( Algebraic_structure_traits<FT>::Is_exact::value ) {
       int np = 0;
       if ( p.is_point() ) ++np;
       if ( q.is_point() ) ++np;
@@ -493,7 +493,7 @@ public:
 #ifdef CGAL_PROFILE
     // In case CGAL profile is called then output the sites in case of
     // a filter failure
-    if ( check_tag(typename Algebraic_structure_traits<FT>::Is_exact()) ) {
+    if ( Algebraic_structure_traits<FT>::Is_exact::value ) {
       std::ofstream ofs("failure-log.cin", std::ios_base::app);
       ofs.precision(16);
       ofs << p << std::endl;
