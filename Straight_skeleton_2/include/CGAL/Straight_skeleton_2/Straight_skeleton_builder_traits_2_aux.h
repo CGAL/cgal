@@ -314,6 +314,8 @@ public:
     mW[0] = aW0 ;
     mW[1] = aW1 ;
     mW[2] = aW2 ;
+
+    CGAL_assertion( (mCollinearity==TRISEGMENT_COLLINEARITY_01) || (mCollinearity==TRISEGMENT_COLLINEARITY_12) || (mCollinearity==TRISEGMENT_COLLINEARITY_02) ) ;
     
     switch ( mCollinearity )
     {
@@ -325,6 +327,10 @@ public:
         
       case TRISEGMENT_COLLINEARITY_02:
         mCSIdxA=0; mCSIdxB=2; mNCSIdx=1; break ;
+        
+      default:
+        mCSIdxA=-1; mCSIdxB=-1; mNCSIdx=-1; break ;
+        
     }
   }
     

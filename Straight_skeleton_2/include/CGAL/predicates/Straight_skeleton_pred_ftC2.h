@@ -147,13 +147,13 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
       Uncertain<bool> is_12 = ( are_edges_coincident(e1,e2) | are_edges_orderly_collinearC2(e1,e2) ) & ( w1 == w2 );
       if ( is_certain(is_12) )
       {
-        if ( is_01 & !is_02 & !is_12 )
+        if ( is_01 & (!is_02) & (!is_12) )
           return TRISEGMENT_COLLINEARITY_01;
-        else if ( is_02 & !is_01 & !is_12 )
+        else if ( is_02 & (!is_01) & (!is_12) )
           return TRISEGMENT_COLLINEARITY_02;
-        else if ( is_12 & !is_01 & !is_02 )
+        else if ( is_12 & (!is_01) & (!is_02) )
           return TRISEGMENT_COLLINEARITY_12;
-        else if ( !is_01 & !is_02 & !is_12 )
+        else if ( (!is_01) & (!is_02) & (!is_12) )
           return TRISEGMENT_COLLINEARITY_NONE;
         else 
           return TRISEGMENT_COLLINEARITY_ALL;
