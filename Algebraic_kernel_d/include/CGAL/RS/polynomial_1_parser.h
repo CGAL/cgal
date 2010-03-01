@@ -18,8 +18,8 @@
 //
 // (the first version of this file was written by Elias Tsigaridas)
 
-#ifndef RS_PARSER_1_H
-#define RS_PARSER_1_H
+#ifndef CGAL_RS_PARSER_1_H
+#define CGAL_RS_PARSER_1_H
 
 #include <iostream>
 #include <string>
@@ -358,6 +358,6 @@ struct Convert_to_Gmpz
 
 #undef CGAL_BOOST_SPIRIT
 
-#endif  // RS_PARSER_1_H
+#endif  // CGAL_RS_PARSER_1_H
 
 // vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

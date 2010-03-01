@@ -1,19 +1,19 @@
 // Copyright (c) 2007 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS__CRT_H
@@ -32,10 +32,10 @@ class Crt:public Prime_polynomial{
 
         // chinese remainder torture (GCL, page 180)
         static
-        void cra(mpz_ptr r,pn * m,pn *u,int n){
+        void cra(mpz_ptr r,CGALRS_PN * m,CGALRS_PN *u,int n){
             int k,i;
-            pn product,temp;
-            std::vector<pn> v(n);
+            CGALRS_PN product,temp;
+            std::vector<CGALRS_PN> v(n);
 
             v[0]=u[0];
             for(k=1;k<n;++k){
@@ -54,10 +54,10 @@ class Crt:public Prime_polynomial{
                 v[k]=p_convsubdiv(u[k],temp,product);
             }
             // step 3: operations are done in Zm, not in Z
-            p_mpz_set_spn(r,p_pntospn(v[n-1]));
+            CGALRS_mpz_set_spn(r,p_pntospn(v[n-1]));
             for(k=n-2;k>=0;--k){
-                p_mpz_mul_pn(r,r,m[k]);
-                p_mpz_add_pn(r,r,v[k]);
+                CGALRS_mpz_mul_pn(r,r,m[k]);
+                CGALRS_mpz_add_pn(r,r,v[k]);
             }
             return;
         };
@@ -69,12 +69,16 @@ class Crt:public Prime_polynomial{
         // polynomial);
         // size_y is what is called n in the book
         static
-        void pcra(mpz_t *r,pn *m,std::vector<pn* > p,int size_x,int size_y){
-            typedef boost::multi_array<pn,2> pn_matrix;
+        void pcra(mpz_t *r,
+                  CGALRS_PN *m,
+                  std::vector<CGALRS_PN* > p,
+                  int size_x,
+                  int size_y){
+            typedef boost::multi_array<CGALRS_PN,2> pn_matrix;
             typedef pn_matrix::index pn_matrix_index;
             pn_matrix v(boost::extents[size_x+1][size_y]);
             pn_matrix_index i,j,k;
-            pn product,temp;
+            CGALRS_PN product,temp;
 
             for(j=0;j<=size_x;++j){
                 v[j][0]=p[0][j];
@@ -94,10 +98,10 @@ class Crt:public Prime_polynomial{
             // step 3
             // be careful: operations are done in Zm, not in Z
             for(j=0;j<=size_x;++j){
-                p_mpz_set_spn(r[j],p_pntospn(v[j][size_y-1]));
+                CGALRS_mpz_set_spn(r[j],p_pntospn(v[j][size_y-1]));
                 for(k=size_y-2;k>=0;--k){
-                    p_mpz_mul_pn(r[j],r[j],m[k]);
-                    p_mpz_add_pn(r[j],r[j],v[j][k]);
+                    CGALRS_mpz_mul_pn(r[j],r[j],m[k]);
+                    CGALRS_mpz_add_pn(r[j],r[j],v[j][k]);
                 }
             }
         };
