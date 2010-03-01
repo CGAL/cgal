@@ -26,6 +26,8 @@
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
+#include <CGAL/Segment_Delaunay_graph_2/Check_exact.h>
+
 CGAL_BEGIN_NAMESPACE
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
@@ -448,6 +450,37 @@ public:
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& t) const
   {
+#ifdef CGAL_PROFILE
+    // In case CGAL profile is called then output the sites in case of
+    // a filter failure
+    if ( Check_exact<FT>()() ) {
+      int np = 0;
+      if ( p.is_point() ) ++np;
+      if ( q.is_point() ) ++np;
+      if ( r.is_point() ) ++np;
+      std::string suffix("-failure-log.cin");
+      std::string fname;
+      if ( np == 3 ) {
+	fname = "ppp";
+      } else if ( np == 2 ) {
+	fname = "pps";
+      } else if ( np == 1 ) {
+	fname = "pss";
+      } else {
+	fname = "sss";
+      }
+      fname += suffix;
+      std::ofstream ofs(fname.c_str(), std::ios_base::app);
+      ofs.precision(16);
+      ofs << p << std::endl;
+      ofs << q << std::endl;
+      ofs << r << std::endl;
+      ofs << t << std::endl;
+      ofs << "=======" << std::endl;
+      ofs.close();
+    }
+#endif
+
     Voronoi_vertex_2 v(p, q, r);
 
     return v.incircle(t);
@@ -459,6 +492,20 @@ public:
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& t) const
   {
+#ifdef CGAL_PROFILE
+    // In case CGAL profile is called then output the sites in case of
+    // a filter failure
+    if ( Check_exact<FT>()() ) {
+      std::ofstream ofs("failure-log.cin", std::ios_base::app);
+      ofs.precision(16);
+      ofs << p << std::endl;
+      ofs << q << std::endl;
+      ofs << t << std::endl;
+      ofs << "=======" << std::endl;
+      ofs.close();
+    }
+#endif
+
     CGAL_assertion( !(p.is_segment() && q.is_segment()) );
 
     if ( p.is_point() && q.is_segment() ) {
