@@ -1,19 +1,19 @@
 // Copyright (c) 2007-2009 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_POLYNOMIAL_1_UTILS_H
@@ -267,7 +267,7 @@ public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1*>{
             //--------------------------------------------------
             // mpz_mul(r,q->coef(i),lcg);
             // mpz_sub(r,f.coef(i+degf-degg-1),r);
-            //-------------------------------------------------- 
+            //--------------------------------------------------
             mpz_mul(r,q->coef(i),g.coef(degg-1));
             mpz_sub(r,f.coef(i+degf-degg-1),r);
             std::cout<<"i="<<i<<", q[i]="<<q->coef(i)<<", r="<<Gmpz(r)<<std::endl;

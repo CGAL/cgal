@@ -1,19 +1,19 @@
 // Copyright (c) 2009 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_POLYNOMIAL_CONVERTER
@@ -44,7 +44,7 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
 // The conversions using this macro are efficient, since this construct an
 // RS polynomial only by copying pointers. The only implementation detail
 // is that it should not free the occuped by the pointed coefficients.
-#define RS_POLYNOMIAL_CONVERTER_REF(_T,_CONVERT) \
+#define CGALRS_POLYNOMIAL_CONVERTER_REF(_T,_CONVERT) \
         template<> \
         struct to_rs_poly<Polynomial<_T> >: \
         public std::unary_function<Polynomial<_T>,RS_polynomial_1>{ \
@@ -67,7 +67,7 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
 // The conversions using this macro are not intended to be efficient, since
 // there is no direct way to convert from these types to mpz_t and we need
 // thus to create new mpz_t's.
-#define RS_POLYNOMIAL_CONVERTER_COPY(_T,_CONVERT) \
+#define CGALRS_POLYNOMIAL_CONVERTER_COPY(_T,_CONVERT) \
         template<> \
         struct to_rs_poly<Polynomial<_T> >: \
         public std::unary_function<Polynomial<_T>,RS_polynomial_1>{ \
@@ -82,15 +82,15 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
                 } \
         }
 
-//RS_POLYNOMIAL_CONVERTER_REF(Gmpz,c[i][0]=*(p[i].mpz()));
-RS_POLYNOMIAL_CONVERTER_COPY(Gmpz,mpz_set(c[i],p[i].mpz()));
-RS_POLYNOMIAL_CONVERTER_COPY(int,mpz_set_si(c[i],(long)p[i]));
-RS_POLYNOMIAL_CONVERTER_COPY(long,mpz_set_si(c[i],p[i]));
-RS_POLYNOMIAL_CONVERTER_COPY(unsigned,mpz_set_ui(c[i],(unsigned long)p[i]));
-RS_POLYNOMIAL_CONVERTER_COPY(unsigned long,mpz_set_ui(c[i],p[i]));
+//CGALRS_POLYNOMIAL_CONVERTER_REF(Gmpz,c[i][0]=*(p[i].mpz()));
+CGALRS_POLYNOMIAL_CONVERTER_COPY(Gmpz,mpz_set(c[i],p[i].mpz()));
+CGALRS_POLYNOMIAL_CONVERTER_COPY(int,mpz_set_si(c[i],(long)p[i]));
+CGALRS_POLYNOMIAL_CONVERTER_COPY(long,mpz_set_si(c[i],p[i]));
+CGALRS_POLYNOMIAL_CONVERTER_COPY(unsigned,mpz_set_ui(c[i],(unsigned long)p[i]));
+CGALRS_POLYNOMIAL_CONVERTER_COPY(unsigned long,mpz_set_ui(c[i],p[i]));
 
-#undef RS_POLYNOMIAL_CONVERTER_REF
-#undef RS_POLYNOMIAL_CONVERTER_COPY
+#undef CGALRS_POLYNOMIAL_CONVERTER_REF
+#undef CGALRS_POLYNOMIAL_CONVERTER_COPY
 
 // convert a Gmpz rational polynomial to an integer one
 template<>

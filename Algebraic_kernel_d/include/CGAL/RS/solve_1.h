@@ -1,19 +1,19 @@
 // Copyright (c) 2006-2009 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_SOLVE_1_H
@@ -35,7 +35,7 @@ namespace CGAL{
 class RS_polynomial_1;
 class Algebraic_1;
 
-#define cstr(S) ((char*)(S))
+#define CGALRS_CSTR(S) ((char*)(S))
 
 // initialize RS solver
 inline void init_solver(){
@@ -134,7 +134,7 @@ inline Sign affiche_signs_constr(const Algebraic_1 &a){
 
 inline void create_rs_upoly (mpz_t *poly, const int deg, const int ident_pol) {
         int ident_mon, ident_coeff, i;
-        rs_import_uppring(cstr("T"));
+        rs_import_uppring(CGALRS_CSTR("T"));
         for (i=0; i<=deg; ++i)
                 if (mpz_sgn (poly[i]))  {       // don't add if == 0
                         ident_mon = rs_export_new_mon_upp_bz ();
@@ -163,7 +163,7 @@ inline int solve_1(
         create_rs_upoly(p1.get_coefs(),p1.get_degree(),rs_get_default_up());
         set_rs_precisol(prec);
         set_rs_verbose(CGAL_RS_VERB);
-        rs_run_algo(cstr("UISOLE"));
+        rs_run_algo(CGALRS_CSTR("UISOLE"));
         return affiche_sols_eqs(x);
 }
 
@@ -187,7 +187,7 @@ inline Sign sign_1_rs(
         create_rs_uconstr (constr, degs, rs_get_default_ineqs_u ());
         set_rs_precisol (prec);
         set_rs_verbose (CGAL_RS_VERB);
-        rs_run_algo(cstr("UISOLES"));
+        rs_run_algo(CGALRS_CSTR("UISOLES"));
         //Sign s=affiche_signs_constr(a);
         //std::cout<<"sign of "<<p1<<" in the root of "<<a.pol()<<" = "<<s<<std::endl;
         //return s;

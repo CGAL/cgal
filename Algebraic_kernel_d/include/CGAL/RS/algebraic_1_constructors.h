@@ -1,19 +1,19 @@
 // Copyright (c) 2006-2008 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_ALGEBRAIC_1_CONSTRUCTORS_H
@@ -146,7 +146,7 @@ Algebraic_1::Algebraic_1(mpfr_srcptr src){
         mpfi_set_fr(mpfi(),r.fr());
         CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->left)!=0);
         CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->right)!=0);
-        RS_polynomial_1 *rsp=new RS_polynomial_1(r.to_fraction().mpq());
+        RS_polynomial_1 *rsp=new RS_polynomial_1(Gmpq(r).mpq());
         set_pol(*rsp);
         set_nr(0);
         set_lefteval(CGAL::NEGATIVE);
@@ -188,7 +188,7 @@ Algebraic_1::Algebraic_1(const Gmpfr &r){
         mpfi_set_fr(mpfi(),r.fr());
         CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->left)!=0);
         CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->right)!=0);
-        RS_polynomial_1 *rsp=new RS_polynomial_1(r.to_fraction().mpq());
+        RS_polynomial_1 *rsp=new RS_polynomial_1(Gmpq(r).mpq());
         set_pol(*rsp);
         set_nr(0);
         set_lefteval(CGAL::NEGATIVE);

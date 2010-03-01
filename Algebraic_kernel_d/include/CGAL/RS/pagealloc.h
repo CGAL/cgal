@@ -1,19 +1,19 @@
 // Copyright (c) 2007 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS__PAGEALLOC_H
@@ -25,42 +25,42 @@
 namespace CGAL{
 namespace RS_MGCD{
 
-#define PAGESIZE        4194304
-#define TABLESIZE       2048
-#define PAGES           8
-#define VOIDSCAST       unsigned long
+#define CGALRS_PAGESIZE        4194304
+#define CGALRS_TABLESIZE       2048
+#define CGALRS_PAGES           8
+#define CGALRS_VOIDSCAST       unsigned long
 
 struct pinfo{
     void *start;
     size_t size;
 };
 
-RS_THREAD_ATTR void**  pages_startptr;
-RS_THREAD_ATTR size_t  pages_max;//=PAGES;
-RS_THREAD_ATTR size_t  pages_allocated;
-RS_THREAD_ATTR size_t  pages_current;
+CGALRS_THREAD_ATTR void**  pages_startptr;
+CGALRS_THREAD_ATTR size_t  pages_max;//=CGALRS_PAGES;
+CGALRS_THREAD_ATTR size_t  pages_allocated;
+CGALRS_THREAD_ATTR size_t  pages_current;
 
-RS_THREAD_ATTR size_t  page_remainingbytes;
-RS_THREAD_ATTR void*   page_currentptr;
+CGALRS_THREAD_ATTR size_t  page_remainingbytes;
+CGALRS_THREAD_ATTR void*   page_currentptr;
 
-RS_THREAD_ATTR struct pinfo    *nodes_allocated;
-RS_THREAD_ATTR size_t          nodes_total;
-RS_THREAD_ATTR size_t          nodes_assigned;
+CGALRS_THREAD_ATTR struct pinfo    *nodes_allocated;
+CGALRS_THREAD_ATTR size_t          nodes_total;
+CGALRS_THREAD_ATTR size_t          nodes_assigned;
 
 class Page_alloc{
 
     protected:
         static
         void* meminit(){
-            pages_startptr=(void**)malloc(PAGES*sizeof(void*));
-            pages_startptr[0]=malloc(PAGESIZE);
+            pages_startptr=(void**)malloc(CGALRS_PAGES*sizeof(void*));
+            pages_startptr[0]=malloc(CGALRS_PAGESIZE);
             pages_allocated=1;
             pages_current=0;
-            page_remainingbytes=PAGESIZE;
+            page_remainingbytes=CGALRS_PAGESIZE;
             page_currentptr=pages_startptr[0];
-            nodes_total=TABLESIZE;
+            nodes_total=CGALRS_TABLESIZE;
             nodes_allocated=
-                (struct pinfo*)malloc(TABLESIZE*sizeof(struct pinfo));
+                (struct pinfo*)malloc(CGALRS_TABLESIZE*sizeof(struct pinfo));
             nodes_assigned=0;
             return page_currentptr;
         };
@@ -72,15 +72,15 @@ class Page_alloc{
                 ++pages_current;
                 r=pages_startptr[pages_current];
                 page_currentptr=r;
-                page_remainingbytes=PAGESIZE;
+                page_remainingbytes=CGALRS_PAGESIZE;
                 return r;
             }
             // iso c++ forbids to initialize a static member (pages_max),
             // so we have to start using pages_max when the amount of
-            // allocated pages reaches the value PAGES (this is not of
+            // allocated pages reaches the value CGALRS_PAGES (this is not of
             // course the cleanest way to do it)
-            if(pages_allocated==PAGES)
-                pages_max=2*PAGES;
+            if(pages_allocated==CGALRS_PAGES)
+                pages_max=2*CGALRS_PAGES;
             else
                 pages_max=0;
             if(pages_allocated==pages_max){
@@ -88,11 +88,11 @@ class Page_alloc{
                 pages_startptr=
                     (void**)realloc(pages_startptr,pages_max*sizeof(void*));
             }
-            r=malloc(PAGESIZE);
+            r=malloc(CGALRS_PAGESIZE);
             pages_startptr[pages_allocated]=r;
             page_currentptr=r;
             ++pages_allocated;
-            page_remainingbytes=PAGESIZE;
+            page_remainingbytes=CGALRS_PAGESIZE;
             return r;
         };
 
@@ -112,7 +112,7 @@ class Page_alloc{
             }
             page_remainingbytes-=size;
             r=page_currentptr;
-            page_currentptr=(void*)((VOIDSCAST)page_currentptr+size);
+            page_currentptr=(void*)((CGALRS_VOIDSCAST)page_currentptr+size);
             // c++ does not support nodes_allocated[nodes_assigned]={r,s}
             nodes_allocated[nodes_assigned].start=r;
             nodes_allocated[nodes_assigned].size=size;
@@ -135,8 +135,8 @@ class Page_alloc{
             return ptr;
         };
 
-        #define pfree(X)        {}
-        //void pfree(void* ptr){
+        #define CGALRS_PFREE(X)        {}
+        //void CGALRS_PFREE(void* ptr){
         //  size_t i=0;
         //  while(nodes_allocated[i].start!=ptr)
         //      ++i;
@@ -147,7 +147,7 @@ class Page_alloc{
         static
         void* memclear(){
             pages_current=0;
-            page_remainingbytes=PAGESIZE;
+            page_remainingbytes=CGALRS_PAGESIZE;
             page_currentptr=pages_startptr[0];
             nodes_assigned=0;
             return page_currentptr;

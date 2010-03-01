@@ -1,19 +1,19 @@
 // Copyright (c) 2007 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS__UGCD_H
@@ -23,7 +23,7 @@
 #include <CGAL/RS/primes.h>
 
 // let's assume that 300 is enougn for degree 500 gcds
-#define MOD_QTY 300
+#define CGALRS_MOD_QTY 300
 
 namespace CGAL{
 namespace RS_MGCD{
@@ -37,9 +37,9 @@ class Ugcd:public Primes{
             // dG is initialized to zero only to avoid compiler complaints
             int dA,dB,dG=0,maxd,i,maxA,maxB;
             size_t modsize,modalloc;
-            std::vector<pn* > p;
-            pn *mA,*mB,*mG,*mod;
-            pn lc=0,scaleG;
+            std::vector<CGALRS_PN* > p;
+            CGALRS_PN *mA,*mB,*mG,*mod;
+            CGALRS_PN lc=0,scaleG;
 
             if(degB>degA){
                 if(!degA){
@@ -106,14 +106,14 @@ class Ugcd:public Primes{
             mpz_mul_2exp(bound,bound,1);
             mpz_setbit(bound,0);
 
-            mA=(pn*)palloc((1+degA)*sizeof(pn));
-            mB=(pn*)palloc((1+degB)*sizeof(pn));
+            mA=(CGALRS_PN*)palloc((1+degA)*sizeof(CGALRS_PN));
+            mB=(CGALRS_PN*)palloc((1+degB)*sizeof(CGALRS_PN));
             maxd=degA;      // we know that degA>=degB
-            mG=(pn*)palloc((1+maxd)*sizeof(pn));
+            mG=(CGALRS_PN*)palloc((1+maxd)*sizeof(CGALRS_PN));
             pr_init();
             mpz_set_ui(m,1);
-            mod=(pn*)palloc(MOD_QTY*sizeof(pn));
-            modalloc=MOD_QTY;
+            mod=(CGALRS_PN*)palloc(CGALRS_MOD_QTY*sizeof(CGALRS_PN));
+            modalloc=CGALRS_MOD_QTY;
             modsize=0;
 
             while(mpz_cmp(m,bound)<=0){
@@ -131,7 +131,7 @@ class Ugcd:public Primes{
                         ||mpz_divisible_ui_p(B[degB],p_prime()));
                 // now we calculate the gcd mod p_prime
                 dG=pp_gcd(mG,mA,degA,mB,degB);
-                scaleG=p_div(lc,mG[dG]);
+                scaleG=CGALRS_P_DIV(lc,mG[dG]);
                 mG[dG]=lc;
                 for(i=0;i<dG;++i)
                     mG[i]=p_mul(mG[i],scaleG);
@@ -141,25 +141,26 @@ class Ugcd:public Primes{
                     goto cleanandexit;
                 }
                 if(dG<maxd){
-                    p_mpz_set_pn(m,p_prime());
+                    CGALRS_mpz_set_pn(m,p_prime());
                     maxd=dG;
                     p.clear();
                     p.push_back(mG);
                     mod[0]=p_prime();
                     modsize=1;
-                    mG=(pn*)palloc((1+maxd)*sizeof(pn));
-                    // TODO: clean the  pn* that are in p
+                    mG=(CGALRS_PN*)palloc((1+maxd)*sizeof(CGALRS_PN));
+                    // TODO: clean the  CGALRS_PN* that are in p
                 }else{
                     if(dG==maxd){
-                        p_mpz_mul_pn(m,m,p_prime());
+                        CGALRS_mpz_mul_pn(m,m,p_prime());
                         if(modsize==modalloc){
                             modalloc*=2;
-                            mod=(pn*)prealloc(mod,modalloc*sizeof(pn));
+                            mod=(CGALRS_PN*)
+                                prealloc(mod,modalloc*sizeof(CGALRS_PN));
                         }
                         mod[modsize]=p_prime();
                         ++modsize;
                         p.push_back(mG);
-                        mG=(pn*)palloc((1+maxd)*sizeof(pn));
+                        mG=(CGALRS_PN*)palloc((1+maxd)*sizeof(CGALRS_PN));
                     }
                 }
             }
@@ -168,11 +169,11 @@ class Ugcd:public Primes{
 
             cleanandexit:
 
-            pfree(mA);
-            pfree(mB);
-            pfree(mG);
-            pfree(mod);
-            // TODO: clean the pn* that are in p
+            CGALRS_PFREE(mA);
+            CGALRS_PFREE(mB);
+            CGALRS_PFREE(mG);
+            CGALRS_PFREE(mod);
+            // TODO: clean the CGALRS_PN* that are in p
             for(i=0;i<=degA;++i)
                 mpz_clear(A[i]);
             for(i=0;i<=degB;++i)

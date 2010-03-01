@@ -1,19 +1,19 @@
 // Copyright (c) 2007-2008 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS__PRIMES_H
@@ -22,28 +22,28 @@
 #include <CGAL/RS/crt.h>
 
 // I borrowed these numbers from Fabrice, this leaves us around 250000 primes
-#define PR_MIN 2145338339
-#define PR_MAX 2147483647
+#define CGALRS_PR_MIN 2145338339
+#define CGALRS_PR_MAX 2147483647
 
-//#define pr_is_prime(N)        (pr_fermat(N)?pr_is_prime_bruteforce(N):0)
-#define pr_is_prime(N)  pr_mrj(N)
+//#define CGALRS_PR_IS_PRIME(N)        (pr_fermat(N)?pr_is_prime_bruteforce(N):0)
+#define CGALRS_PR_IS_PRIME(N)  pr_mrj(N)
 
 #ifdef _MSC_VER
-#  define cgal_rs_random  rand
+#  define CGAL_RS_RANDOM  rand
 #else
-#  define cgal_rs_random  random
+#  define CGAL_RS_RANDOM  random
 #endif
 
 namespace CGAL{
 namespace RS_MGCD{
 
-RS_THREAD_ATTR pn currentprime;
+CGALRS_THREAD_ATTR CGALRS_PN currentprime;
 
 class Primes:public Crt{
     private:
-        static int pr_is_prime_bruteforce(pn n){
+        static int pr_is_prime_bruteforce(CGALRS_PN n){
             int i,sqrtn;
-            sqrtn=(pn)(sqrt((double)n));
+            sqrtn=(CGALRS_PN)(sqrt((double)n));
             for(i=3;i<=sqrtn;++i)
                 if(!(n%i))
                     return 0;
@@ -51,23 +51,23 @@ class Primes:public Crt{
         }
 
         // vzGG, p. 507; returns 0 if n is composite
-        static int pr_fermat(pn n){
+        static int pr_fermat(CGALRS_PN n){
             p_set_prime(n);
-            return(p_pow(2+((pn)cgal_rs_random())%(n-4),n-1)==1);
+            return(p_pow(2+((CGALRS_PN)CGAL_RS_RANDOM())%(n-4),n-1)==1);
         }
 
         // Solovay-Strassen
-        static int pr_ss(pn n){
-            pn a,x;
+        static int pr_ss(CGALRS_PN n){
+            CGALRS_PN a,x;
             p_set_prime(n);
-            a=1+(pn)cgal_rs_random()%(n-2);
-            x=p_div(a,n);
+            a=1+(CGALRS_PN)CGAL_RS_RANDOM()%(n-2);
+            x=CGALRS_P_DIV(a,n);
             return(!x||p_pow(a,n>>1)!=x);
         }
 
         // Miller-Rabin
-        static int pr_mr(pn n){
-            pn s,d,a,x,r;
+        static int pr_mr(CGALRS_PN n){
+            CGALRS_PN s,d,a,x,r;
             s=1;
             d=(n-1)>>1;
             while(!(d&1)){
@@ -75,7 +75,7 @@ class Primes:public Crt{
                 d=d>>1;
             }
             p_set_prime(n);
-            a=2+(pn)cgal_rs_random()%(n-4);
+            a=2+(CGALRS_PN)CGAL_RS_RANDOM()%(n-4);
             x=p_pow(a,d);
             if(x==1||x==n-1)
                 return 1; // pobably prime
@@ -90,8 +90,8 @@ class Primes:public Crt{
         }
 
         // Miller-Rabin-Jaeschke
-        static int pr_mrj(pn n){
-            pn s,d,a[3],r;//,x;
+        static int pr_mrj(CGALRS_PN n){
+            CGALRS_PN s,d,a[3],r;//,x;
             int index;
             a[0]=2;
             a[1]=7;
@@ -117,20 +117,20 @@ class Primes:public Crt{
             return 0; // composite
         }
 
-        static pn pr_actual(){
+        static CGALRS_PN pr_actual(){
             return currentprime;
         }
 
     protected:
         static int pr_init(){
-            currentprime=PR_MIN;
+            currentprime=CGALRS_PR_MIN;
             return 0;
         }
 
-        static pn pr_next(){
+        static CGALRS_PN pr_next(){
             do{
                 currentprime+=2;
-            }while(!pr_is_prime(currentprime));
+            }while(!CGALRS_PR_IS_PRIME(currentprime));
             return currentprime;
         }
 

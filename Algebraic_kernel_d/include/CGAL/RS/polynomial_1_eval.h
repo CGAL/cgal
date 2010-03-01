@@ -1,19 +1,19 @@
 // Copyright (c) 2006-2008 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_POLYNOMIAL_1_EVAL_H
@@ -23,12 +23,13 @@ namespace CGAL{
 
 // This function uses the Horner's method to evaluate the polynomial.
 inline
-void RS_polynomial_1::eval_dyadic(dyadic_ptr h,dyadic_srcptr x)const{
+void RS_polynomial_1::eval_dyadic(CGALRS_dyadic_ptr h,
+                                  CGALRS_dyadic_srcptr x)const{
         int d=get_degree();
-        dyadic_set_z(h,leading_coefficient());
+        CGALRS_dyadic_set_z(h,leading_coefficient());
         for(int i=1;i<d+1;++i){
-                dyadic_mul(h,h,x);
-                dyadic_add_z(h,h,coef(d-i));
+                CGALRS_dyadic_mul(h,h,x);
+                CGALRS_dyadic_add_z(h,h,coef(d-i));
         }
 }
 
@@ -63,20 +64,20 @@ void RS_polynomial_1::eval_mpfi(mpfi_ptr y,mpfi_srcptr x)const{
 // Sign determination is essentially the same that evaluation. As we only
 // want to know the sign, we don't finish the Horner's evaluation.
 inline
-Sign RS_polynomial_1::sign_dyadic(dyadic_srcptr x)const{
+Sign RS_polynomial_1::sign_dyadic(CGALRS_dyadic_srcptr x)const{
         int d,s;
-        dyadic_t h;
+        CGALRS_dyadic_t h;
         if(!(d=get_degree())){
                 s=mpz_sgn(coef(0));
                 return(s?(s>0?POSITIVE:NEGATIVE):ZERO);
         }
-        dyadic_init_set_z(h,leading_coefficient());
+        CGALRS_dyadic_init_set_z(h,leading_coefficient());
         for(int i=1;i<d;++i){
-                dyadic_mul(h,h,x);
-                dyadic_add_z(h,h,coef(d-i));
+                CGALRS_dyadic_mul(h,h,x);
+                CGALRS_dyadic_add_z(h,h,coef(d-i));
         }
-        dyadic_mul(h,h,x);
-        dyadic_neg(h,h);
+        CGALRS_dyadic_mul(h,h,x);
+        CGALRS_dyadic_neg(h,h);
         s=mpfr_cmp_z(h,coef(0));
         return(s?(s>0?NEGATIVE:POSITIVE):ZERO);
 }
@@ -97,9 +98,9 @@ rs_sign RS_polynomial_1::sign_mpfi(mpfi_srcptr x)const{
                 l=mpz_sgn(coef(0));
                 return(l?(l>0?RS_POSITIVE:RS_NEGATIVE):RS_ZERO);
         }
-        // TODO: fijarse si está bien la precisión (Fabrice dijo que perdemos
-        // un bit por operación, hay 2*d operaciones y con tres estaríamos
-        // seguros pero dos anda mejor)
+        // TODO: check if the precision is ok (Fabrice said that we lose
+        // one bit per operation, there are 2*d operations and with three
+        // we are on the safe side, but with two it works better)
         mpfi_init2(y,mpfi_get_prec(x)+2*d);
         mpfi_set_z(y,leading_coefficient());
         for(int i=d-1;i>=0;--i){

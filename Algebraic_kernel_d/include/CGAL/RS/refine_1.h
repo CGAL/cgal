@@ -1,19 +1,19 @@
 // Copyright (c) 2006-2008 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_REFINE_1_H
@@ -69,7 +69,7 @@ Comparison_result bisect_at(const Algebraic_1 &a,mpfr_srcptr p){
         }
 }
 
-// refines b until having either only one point in common with a or 
+// refines b until having either only one point in common with a or
 // all points inside a; the result will be zero when all points of
 // b result to be in a, negative when a<b and positive when a>b
 // precondition: a and b overlap
@@ -150,27 +150,27 @@ int bisect_n_dyadic(const Algebraic_1 &a,unsigned long n=1){
 
         typedef _Gcd_policy     Gcd;
         Sign sl,sc;
-        dyadic_t center;
+        CGALRS_dyadic_t center;
         unsigned  long i;
         sl=a.lefteval();
         if(sl==ZERO)
                 return 0;
-        dyadic_init(center);
+        CGALRS_dyadic_init(center);
         for(i=0;i<n;++i){
-                dyadic_midpoint(center,a.left(),a.right());
+                CGALRS_dyadic_midpoint(center,a.left(),a.right());
                 sc=RSSign::signat(sfpart_1<Gcd>()(a.pol()),center);
                 if(sc==ZERO){   // we have a root
-                        dyadic_set((dyadic_ptr)a.left(),center);
-                        dyadic_swap((dyadic_ptr)a.right(),center);
+                        CGALRS_dyadic_set((CGALRS_dyadic_ptr)a.left(),center);
+                        CGALRS_dyadic_swap((CGALRS_dyadic_ptr)a.right(),center);
                         a.set_lefteval(ZERO);
                         break;
                 }
                 if(sc==sl)
-                        dyadic_swap((dyadic_ptr)a.left(),center);
+                        CGALRS_dyadic_swap((CGALRS_dyadic_ptr)a.left(),center);
                 else
-                        dyadic_swap((dyadic_ptr)a.right(),center);
+                        CGALRS_dyadic_swap((CGALRS_dyadic_ptr)a.right(),center);
         }
-        dyadic_clear(center);
+        CGALRS_dyadic_clear(center);
         return i;
 }
 
@@ -196,47 +196,47 @@ int bisect(const Algebraic_1 &a,mp_exp_t s){
 // calculate the value of kappa
 //--------------------------------------------------
 // unsigned long calc_kappa(const RS_polynomial_1 &p,
-//                 dyadic_ptr f_lo,dyadic_ptr f_hi,
+//                 CGALRS_dyadic_ptr f_lo,CGALRS_dyadic_ptr f_hi,
 //                 unsigned n){
 //         unsigned long ret;
-//         dyadic_t temp;
+//         CGALRS_dyadic_t temp;
 //         mpfr_t numerator,denominator;
 //         mpfr_inits2(MPFR_PREC_MIN,numerator,denominator,NULL);
-//         dyadic_init(temp);
-// 
-//         dyadic_sub(temp,f_lo,f_hi);
-//         dyadic_get_exactfr(denominator,temp);
-//         dyadic_mul_2exp(temp,f_lo,n);
-//         dyadic_get_exactfr(numerator,temp);
-// 
+//         CGALRS_dyadic_init(temp);
+//
+//         CGALRS_dyadic_sub(temp,f_lo,f_hi);
+//         CGALRS_dyadic_get_exactfr(denominator,temp);
+//         CGALRS_dyadic_mul_2exp(temp,f_lo,n);
+//         CGALRS_dyadic_get_exactfr(numerator,temp);
+//
 //         mpfr_div(numerator,numerator,denominator,GMP_RNDN);
 //         ret=1+mpfr_get_ui(numerator,GMP_RNDN);
-// 
-//         dyadic_clear(temp);
+//
+//         CGALRS_dyadic_clear(temp);
 //         mpfr_clears(numerator,denominator,NULL);
 //         return ret;
 // }
-//-------------------------------------------------- 
+//--------------------------------------------------
 unsigned long calc_kappa(const RS_polynomial_1 &p,
-                dyadic_ptr f_lo,dyadic_ptr f_hi,
+                CGALRS_dyadic_ptr f_lo,CGALRS_dyadic_ptr f_hi,
                 unsigned n){
         unsigned long ret;
         //--------------------------------------------------
-        // dyadic_t numerator,denominator;
-        // dyadic_init(numerator);
-        // dyadic_init(denominator);
-        //-------------------------------------------------- 
+        // CGALRS_dyadic_t numerator,denominator;
+        // CGALRS_dyadic_init(numerator);
+        // CGALRS_dyadic_init(denominator);
+        //--------------------------------------------------
 
-        dyadic_sub(f_hi,f_lo,f_hi);
-        dyadic_mul_2exp(f_lo,f_lo,n);
+        CGALRS_dyadic_sub(f_hi,f_lo,f_hi);
+        CGALRS_dyadic_mul_2exp(f_lo,f_lo,n);
 
         mpfr_div(f_lo,f_lo,f_hi,GMP_RNDN);
         ret=mpfr_get_ui(f_lo,GMP_RNDN);
 
         //--------------------------------------------------
-        // dyadic_clear(numerator);
-        // dyadic_clear(denominator);
-        //-------------------------------------------------- 
+        // CGALRS_dyadic_clear(numerator);
+        // CGALRS_dyadic_clear(denominator);
+        //--------------------------------------------------
         return ret;
 }
 
@@ -247,40 +247,43 @@ unsigned long calc_kappa(const RS_polynomial_1 &p,
 //                 unsigned n){
 //         return(1+(int)nearbyint(f_lo*pow(2,n)/(f_lo-f_hi)));
 // }
-//-------------------------------------------------- 
+//--------------------------------------------------
 
 // returns 0 for success, -1 for failure and 1 if it finds the root;
 // the "N" of the paper is represented here as 2^n
-int refine_interval_by_factor(dyadic_ptr x_lo,dyadic_ptr x_hi,
-                dyadic_ptr f_lo,dyadic_ptr f_hi,
+int refine_interval_by_factor(CGALRS_dyadic_ptr x_lo,CGALRS_dyadic_ptr x_hi,
+                CGALRS_dyadic_ptr f_lo,CGALRS_dyadic_ptr f_hi,
                 const RS_polynomial_1 &p,unsigned n){
         Sign sl=RSSign::signat(p,x_lo);
         unsigned long kappa;
-        dyadic_t xkappa,xside,w;
+        CGALRS_dyadic_t xkappa,xside,w;
         Sign s1,s2;
         kappa=calc_kappa(p,f_lo,f_hi,n);
-        //kappa=calc_kappa(p,dyadic_get_d(f_lo),dyadic_get_d(f_hi),n);
+        //kappa=calc_kappa(p,
+        //                 CGALRS_dyadic_get_d(f_lo),
+        //                 CGALRS_dyadic_get_d(f_hi),
+        //                 n);
         if(n==2){       // N==4: bisect twice
                 unsigned b[2],inter;
                 // we will use first xkappa as bisection point
-                dyadic_init(xkappa);
+                CGALRS_dyadic_init(xkappa);
                 for(int i=0;i<2;++i){
-                        dyadic_midpoint(xkappa,x_lo,x_hi);
+                        CGALRS_dyadic_midpoint(xkappa,x_lo,x_hi);
                         if((s1=RSSign::signat(p,xkappa))==ZERO){        //exact
-                                dyadic_set(x_lo,xkappa);
-                                dyadic_swap(x_hi,xkappa);
-                                dyadic_clear(xkappa);
+                                CGALRS_dyadic_set(x_lo,xkappa);
+                                CGALRS_dyadic_swap(x_hi,xkappa);
+                                CGALRS_dyadic_clear(xkappa);
                                 return 1;
                         }
                         if(sl==s1){     // we take the right half
                                 b[i]=2-i;
-                                dyadic_swap(x_lo,xkappa);
+                                CGALRS_dyadic_swap(x_lo,xkappa);
                         }else{  // we take the left half
                                 b[i]=0;
-                                dyadic_swap(x_hi,xkappa);
+                                CGALRS_dyadic_swap(x_hi,xkappa);
                         }
                 }
-                dyadic_clear(xkappa);
+                CGALRS_dyadic_clear(xkappa);
                 inter=b[0]+b[1];
                 switch(inter){
                         case 0:p.inexact_eval_mpfr(f_hi,x_hi);break;
@@ -295,71 +298,71 @@ int refine_interval_by_factor(dyadic_ptr x_lo,dyadic_ptr x_hi,
                         return -2;      // failure (but we refined anyway)
         }else{  // N!=4
                 // calculate w, the width of every interval
-                dyadic_init(w);
-                dyadic_sub(w,x_hi,x_lo);
-                dyadic_div_2exp(w,w,n);
+                CGALRS_dyadic_init(w);
+                CGALRS_dyadic_sub(w,x_hi,x_lo);
+                CGALRS_dyadic_div_2exp(w,w,n);
                 // calculate x[kappa]
-                dyadic_init_set(xkappa,x_lo);
-                dyadic_addmul_ui(xkappa,w,kappa);
+                CGALRS_dyadic_init_set(xkappa,x_lo);
+                CGALRS_dyadic_addmul_ui(xkappa,w,kappa);
                 if((s1=RSSign::signat(p,xkappa))==ZERO){
-                        dyadic_set(x_lo,xkappa);
-                        dyadic_swap(x_hi,xkappa);
-                        dyadic_clear(xkappa);
-                        dyadic_clear(w);
+                        CGALRS_dyadic_set(x_lo,xkappa);
+                        CGALRS_dyadic_swap(x_hi,xkappa);
+                        CGALRS_dyadic_clear(xkappa);
+                        CGALRS_dyadic_clear(w);
                         return 1;       // exact root
                 }
                 if(s1==sl){
                         // calculate x[kappa+1]
-                        dyadic_init(xside);
-                        dyadic_add(xside,xkappa,w);
+                        CGALRS_dyadic_init(xside);
+                        CGALRS_dyadic_add(xside,xkappa,w);
                         if((s2=RSSign::signat(p,xside))==ZERO){
-                                dyadic_set(x_lo,xside);
-                                dyadic_swap(x_hi,xside);
-                                dyadic_clear(xkappa);
-                                dyadic_clear(w);
-                                dyadic_clear(xside);
+                                CGALRS_dyadic_set(x_lo,xside);
+                                CGALRS_dyadic_swap(x_hi,xside);
+                                CGALRS_dyadic_clear(xkappa);
+                                CGALRS_dyadic_clear(w);
+                                CGALRS_dyadic_clear(xside);
                                 return 1;       // exact root
                         }
                         if(s2==sl){
-                                dyadic_clear(xkappa);
-                                dyadic_clear(w);
-                                dyadic_clear(xside);
+                                CGALRS_dyadic_clear(xkappa);
+                                CGALRS_dyadic_clear(w);
+                                CGALRS_dyadic_clear(xside);
                                 return -1;      // failure
                         }else{  // s2!=sl && s2!=0
-                                dyadic_set(x_lo,xkappa);
-                                dyadic_swap(x_hi,xside);
+                                CGALRS_dyadic_set(x_lo,xkappa);
+                                CGALRS_dyadic_swap(x_hi,xside);
                                 p.inexact_eval_mpfr(f_lo,x_lo);
                                 p.inexact_eval_mpfr(f_hi,x_hi);
-                                dyadic_clear(xkappa);
-                                dyadic_clear(w);
-                                dyadic_clear(xside);
+                                CGALRS_dyadic_clear(xkappa);
+                                CGALRS_dyadic_clear(w);
+                                CGALRS_dyadic_clear(xside);
                                 return 0;       // success
                         }
                 }else{  // s1!=sl && s1!=ZERO
                         // we calculate x[kappa-1];
-                        dyadic_init(xside);
-                        dyadic_sub(xside,xkappa,w);
+                        CGALRS_dyadic_init(xside);
+                        CGALRS_dyadic_sub(xside,xkappa,w);
                         if((s2=RSSign::signat(p,xside))==ZERO){
-                                dyadic_set(x_lo,xside);
-                                dyadic_swap(x_hi,xside);
-                                dyadic_clear(xkappa);
-                                dyadic_clear(w);
-                                dyadic_clear(xside);
+                                CGALRS_dyadic_set(x_lo,xside);
+                                CGALRS_dyadic_swap(x_hi,xside);
+                                CGALRS_dyadic_clear(xkappa);
+                                CGALRS_dyadic_clear(w);
+                                CGALRS_dyadic_clear(xside);
                                 return 1;       // exact root
                         }
                         if(s2==sl){
-                                dyadic_swap(x_lo,xside);
-                                dyadic_swap(x_hi,xkappa);
+                                CGALRS_dyadic_swap(x_lo,xside);
+                                CGALRS_dyadic_swap(x_hi,xkappa);
                                 p.inexact_eval_mpfr(f_lo,x_lo);
                                 p.inexact_eval_mpfr(f_hi,x_hi);
-                                dyadic_clear(xkappa);
-                                dyadic_clear(w);
-                                dyadic_clear(xside);
+                                CGALRS_dyadic_clear(xkappa);
+                                CGALRS_dyadic_clear(w);
+                                CGALRS_dyadic_clear(xside);
                                 return 0;       // success
                         }else{  // s2!=sl && s2!=ZERO
-                                dyadic_clear(xkappa);
-                                dyadic_clear(w);
-                                dyadic_clear(xside);
+                                CGALRS_dyadic_clear(xkappa);
+                                CGALRS_dyadic_clear(w);
+                                CGALRS_dyadic_clear(xside);
                                 return -1;      // failure
                         }
                 }
@@ -374,24 +377,24 @@ int qir_n(const Algebraic_1 &a,unsigned t=1){
         typedef _Gcd_policy     Gcd;
         unsigned count=0;
         unsigned n=2;   // N=2^n
-        dyadic_t x_lo,x_hi,f_lo,f_hi;   // endpoints and their evaluations
+        CGALRS_dyadic_t x_lo,x_hi,f_lo,f_hi; // endpoints and their evaluations
         if(a.is_point())
                 return 0;
-        dyadic_init_set_fr(x_lo,a.left());
-        dyadic_init_set_fr(x_hi,a.right());
-        dyadic_init(f_lo);
-        dyadic_init(f_hi);
+        CGALRS_dyadic_init_set_fr(x_lo,a.left());
+        CGALRS_dyadic_init_set_fr(x_hi,a.right());
+        CGALRS_dyadic_init(f_lo);
+        CGALRS_dyadic_init(f_hi);
         sfpart_1<Gcd>()(a.pol()).eval_dyadic(f_lo,x_lo);
         sfpart_1<Gcd>()(a.pol()).eval_dyadic(f_hi,x_hi);
-        if(!dyadic_sgn(f_lo)){
-                dyadic_get_exactfr(&(a.mpfi()->right),x_lo);
+        if(!CGALRS_dyadic_sgn(f_lo)){
+                CGALRS_dyadic_get_exactfr(&(a.mpfi()->right),x_lo);
                 return 0;
         }
-        if(!dyadic_sgn(f_hi)){
-                dyadic_get_exactfr(&(a.mpfi()->left),x_hi);
+        if(!CGALRS_dyadic_sgn(f_hi)){
+                CGALRS_dyadic_get_exactfr(&(a.mpfi()->left),x_hi);
                 return 0;
         }
-        CGAL_assertion(dyadic_sgn(f_lo)!=dyadic_sgn(f_hi));
+        CGAL_assertion(CGALRS_dyadic_sgn(f_lo)!=CGALRS_dyadic_sgn(f_hi));
         while(t>count){
                 switch(refine_interval_by_factor(x_lo,x_hi,f_lo,f_hi,
                                         sfpart_1<Gcd>()(a.pol()),n))
@@ -403,12 +406,12 @@ int qir_n(const Algebraic_1 &a,unsigned t=1){
                 }
         }
         endloop:
-        dyadic_get_exactfr(&(a.mpfi()->left),x_lo);
-        dyadic_get_exactfr(&(a.mpfi()->right),x_hi);
-        dyadic_clear(x_lo);
-        dyadic_clear(x_hi);
-        dyadic_clear(f_lo);
-        dyadic_clear(f_hi);
+        CGALRS_dyadic_get_exactfr(&(a.mpfi()->left),x_lo);
+        CGALRS_dyadic_get_exactfr(&(a.mpfi()->right),x_hi);
+        CGALRS_dyadic_clear(x_lo);
+        CGALRS_dyadic_clear(x_hi);
+        CGALRS_dyadic_clear(f_lo);
+        CGALRS_dyadic_clear(f_hi);
 
         a.set_lefteval(RSSign::signat(sfpart_1<Gcd>()(a.pol()),a.left()));
 
@@ -422,33 +425,39 @@ int qir(const Algebraic_1 &a,mp_exp_t t){
         int count=0;
         long ed;
         unsigned n=2;   // N=2^n
-        dyadic_t d,f_lo,f_hi;
+        CGALRS_dyadic_t d,f_lo,f_hi;
         if(a.is_point())
                 return 0;
-        dyadic_init(f_lo);
-        dyadic_init(f_hi);
-        sfpart_1<Gcd>()(a.pol()).eval_dyadic(f_lo,(dyadic_ptr)(a.left()));
-        sfpart_1<Gcd>()(a.pol()).eval_dyadic(f_hi,(dyadic_ptr)(a.right()));
+        CGALRS_dyadic_init(f_lo);
+        CGALRS_dyadic_init(f_hi);
+        sfpart_1<Gcd>()
+                (a.pol()).eval_dyadic(f_lo,(CGALRS_dyadic_ptr)(a.left()));
+        sfpart_1<Gcd>()
+                (a.pol()).eval_dyadic(f_hi,(CGALRS_dyadic_ptr)(a.right()));
         // we make sure we have a nice interval
-        if(!dyadic_sgn(f_lo)){
-                dyadic_set((dyadic_ptr)a.right(),(dyadic_srcptr)a.left());
+        if(!CGALRS_dyadic_sgn(f_lo)){
+                CGALRS_dyadic_set((CGALRS_dyadic_ptr)a.right(),
+                                  (CGALRS_dyadic_srcptr)a.left());
                 return 0;
         }
-        if(!dyadic_sgn(f_hi)){
-                dyadic_set((dyadic_ptr)a.left(),(dyadic_srcptr)a.right());
+        if(!CGALRS_dyadic_sgn(f_hi)){
+                CGALRS_dyadic_set((CGALRS_dyadic_ptr)a.left(),
+                                  (CGALRS_dyadic_srcptr)a.right());
                 return 0;
         }
-        CGAL_assertion(dyadic_sgn(f_lo)!=dyadic_sgn(f_hi));
+        CGAL_assertion(CGALRS_dyadic_sgn(f_lo)!=CGALRS_dyadic_sgn(f_hi));
         // calculate ed, such that 2^(ed-1)<diam<2^ed
-        dyadic_init(d);
-        dyadic_sub(d,(dyadic_ptr)a.right(),(dyadic_ptr)a.left());
+        CGALRS_dyadic_init(d);
+        CGALRS_dyadic_sub(d,
+                          (CGALRS_dyadic_ptr)a.right(),
+                          (CGALRS_dyadic_ptr)a.left());
         mpfr_log2((mpfr_ptr)d,(mpfr_ptr)d,GMP_RNDU);
         ed=mpfr_get_si((mpfr_ptr)d,GMP_RNDU);
         while(ed<t){
                 ++count;
                 switch(refine_interval_by_factor(
-                                (dyadic_ptr)a.left(),
-                                (dyadic_ptr)a.right(),
+                                (CGALRS_dyadic_ptr)a.left(),
+                                (CGALRS_dyadic_ptr)a.right(),
                                 f_lo,
                                 f_hi,
                                 sfpart_1<Gcd>()(a.pol()),
@@ -459,14 +468,14 @@ int qir(const Algebraic_1 &a,mp_exp_t t){
                         default:t=0;    // end the loop, we found the root
                 }
         }
-        CGAL_assertion(dyadic_sgn(f_lo)!=dyadic_sgn(f_hi));
+        CGAL_assertion(CGALRS_dyadic_sgn(f_lo)!=CGALRS_dyadic_sgn(f_hi));
         a.set_lefteval(
-                dyadic_sgn(f_lo)==0?
+                CGALRS_dyadic_sgn(f_lo)==0?
                 ZERO:
-                (dyadic_sgn(f_lo)<0?NEGATIVE:POSITIVE));
-        dyadic_clear(d);
-        dyadic_clear(f_lo);
-        dyadic_clear(f_hi);
+                (CGALRS_dyadic_sgn(f_lo)<0?NEGATIVE:POSITIVE));
+        CGALRS_dyadic_clear(d);
+        CGALRS_dyadic_clear(f_lo);
+        CGALRS_dyadic_clear(f_hi);
 
         return count;
 }

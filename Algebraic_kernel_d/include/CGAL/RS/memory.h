@@ -1,19 +1,19 @@
 // Copyright (c) 2009 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_MEMORY_H
@@ -62,7 +62,7 @@ inline void rs3_rs_gmp_free(void * p,size_t s) {}
 // extern void * (*__cgalrs_allocate_func) (size_t);
 // extern void * (*__cgalrs_reallocate_func) (void *, size_t, size_t);
 // extern void   (*__cgalrs_free_func) (void *, size_t);
-//-------------------------------------------------- 
+//--------------------------------------------------
 inline void* __cgalrs_default_allocate(size_t s){
         return malloc(s);
 }
@@ -75,13 +75,13 @@ inline void __cgalrs_default_free(void *a,size_t s){
         return free(a);
 }
 
-RS_THREAD_ATTR void * (*__cgalrs_allocate_func) (size_t) =
+CGALRS_THREAD_ATTR void * (*__cgalrs_allocate_func) (size_t) =
                 __cgalrs_default_allocate;
 
-RS_THREAD_ATTR void * (*__cgalrs_reallocate_func) (void *, size_t, size_t) =
+CGALRS_THREAD_ATTR void * (*__cgalrs_reallocate_func) (void *, size_t, size_t) =
                 __cgalrs_default_reallocate;
 
-RS_THREAD_ATTR void   (*__cgalrs_free_func) (void *, size_t) =
+CGALRS_THREAD_ATTR void   (*__cgalrs_free_func) (void *, size_t) =
                 __cgalrs_default_free;
 
 inline void __cgalrs_dummy_free(void *p,size_t s){}

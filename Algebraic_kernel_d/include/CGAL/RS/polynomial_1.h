@@ -1,19 +1,19 @@
 // Copyright (c) 2006-2009 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
 // See the file LICENSE.LGPL distributed with CGAL.
-// 
+//
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
-// 
+//
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
 // $URL$
 // $Id$
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_POLYNOMIAL_1_H
@@ -102,11 +102,11 @@ class RS_polynomial_1:
                 void get_upper_bound(mpfr_ptr)const;
                 RS_polynomial_1 times_monomial(mpz_srcptr,int)const;
                 // member evaluation and sign functions
-                void eval_dyadic(dyadic_ptr,dyadic_srcptr)const;
+                void eval_dyadic(CGALRS_dyadic_ptr,CGALRS_dyadic_srcptr)const;
                 void eval_mpfr(mpfr_ptr,mpfr_srcptr)const;
                 void inexact_eval_mpfr(mpfr_ptr,mpfr_srcptr)const;
                 void eval_mpfi(mpfi_ptr,mpfi_srcptr)const;
-                Sign sign_dyadic(dyadic_srcptr)const;
+                Sign sign_dyadic(CGALRS_dyadic_srcptr)const;
                 Sign sign_mpfr(mpfr_srcptr)const;
                 rs_sign sign_mpfi(mpfi_srcptr)const;
                 double operator()(double)const;
