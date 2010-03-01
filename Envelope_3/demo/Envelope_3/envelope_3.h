@@ -114,7 +114,7 @@ private:
     unsigned int num_of_surfaces = 0;
     in_file >> num_of_surfaces;
     CGAL::Random rand;
-    for (int i=0 ; i<num_of_surfaces; i++) {
+    for (unsigned int i=0 ; i<num_of_surfaces; i++) {
       int r = rand.get_int(128, 256);
       int g = rand.get_int(0, 256);
       int b = rand.get_int(0, 256);
