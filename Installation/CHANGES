@@ -22,11 +22,11 @@ CGAL 3.6 offers the following improvements and new functionality :
 
 3.1 Algebraic Kernel (new package)
 
-  - This new package implementations of algorithms to determine, compare
-    and approximate real roots of univariate polynomials and bivariate
-    polynomial systems. It includes models of the univariate algebraic
-    kernel concept, based on the library RS (available only on Linux and
-    MacOS for the moment).
+  - This new package provides implementations of algorithms to determine,
+    compare and approximate real roots of univariate polynomials and
+    bivariate polynomial systems. It includes models of the univariate
+    algebraic kernel concept, based on the library RS (available only on
+    Linux and MacOS for the moment).
 
 3.2 Number Types
 
