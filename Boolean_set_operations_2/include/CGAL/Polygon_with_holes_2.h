@@ -62,6 +62,8 @@ public:
     Base (pgn_boundary, h_begin, h_end)
   {}
 
+  /*! Obtain the bounding box of the polygon with holes */
+  Bbox_2 bbox() const { return this->outer_boundary().bbox(); }  
 };
 
 //-----------------------------------------------------------------------//
