@@ -17,6 +17,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
+//                 Efi Fogel       <efif@post.tau.ac.il>
 
 #ifndef CGAL_BOOLEAN_SET_OPERATIONS_H
 #define CGAL_BOOLEAN_SET_OPERATIONS_H
@@ -195,8 +196,7 @@ template <class Kernel, class Container, class OutputIterator, class Traits>
 inline OutputIterator
 intersection (const Polygon_2<Kernel, Container>& pgn1, 
               const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                                   OutputIterator out,
-                                   Traits& tr)
+              OutputIterator out, Traits& tr)
 {
   return (_intersection(pgn1, pgn2, out, tr));
 }
@@ -214,8 +214,7 @@ template <class Kernel, class Container, class OutputIterator, class Traits>
 inline OutputIterator
 intersection (const Polygon_with_holes_2<Kernel, Container>& pgn1,
               const Polygon_2<Kernel, Container>& pgn2,
-              OutputIterator out,
-              Traits& tr)
+              OutputIterator out, Traits& tr)
 {
   return (_intersection(pgn1, pgn2, out, tr));
 }
@@ -271,8 +270,7 @@ inline OutputIterator
 intersection (const General_polygon_2<Arr_traits>& pgn1, 
               const General_polygon_with_holes_2
                     <General_polygon_2<Arr_traits> >& pgn2,
-              OutputIterator out,
-              Traits& tr)
+              OutputIterator out, Traits& tr)
 {
   return (_intersection(pgn1, pgn2, out, tr));
 }
@@ -292,8 +290,7 @@ inline OutputIterator
 intersection (const General_polygon_with_holes_2
                     <General_polygon_2<Arr_traits> >& pgn1,
               const General_polygon_2<Arr_traits>& pgn2,
-              OutputIterator out,
-              Traits& tr)
+              OutputIterator out, Traits& tr)
 {
   return (_intersection(pgn1, pgn2, out, tr));
 }
@@ -311,8 +308,7 @@ template <class Polygon_, class OutputIterator, class Traits>
 inline OutputIterator
 intersection (const General_polygon_with_holes_2<Polygon_>& pgn1,
               const General_polygon_with_holes_2<Polygon_>& pgn2,
-              OutputIterator out,
-              Traits& tr)
+              OutputIterator out, Traits& tr)
 {
   return (_intersection(pgn1, pgn2, out, tr));
 }
@@ -332,8 +328,7 @@ inline bool join (const Polygon_2<Kernel, Container>& pgn1,
 template <class Kernel, class Container, class Traits>
 inline bool join (const Polygon_2<Kernel, Container>& pgn1, 
                   const Polygon_2<Kernel, Container>& pgn2,
-                  Polygon_with_holes_2<Kernel, Container>& res,
-                  Traits& tr)
+                  Polygon_with_holes_2<Kernel, Container>& res, Traits& tr)
 {
   return (_join(pgn1, pgn2, res, tr));
 }
@@ -341,7 +336,7 @@ inline bool join (const Polygon_2<Kernel, Container>& pgn1,
 template <class Kernel, class Container>
 inline bool join (const Polygon_2<Kernel, Container>& pgn1, 
                   const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                  Polygon_with_holes_2<Kernel, Container>& res )
+                  Polygon_with_holes_2<Kernel, Container>& res)
 {
   return (_join(pgn1, pgn2, res));
 }
@@ -349,8 +344,7 @@ inline bool join (const Polygon_2<Kernel, Container>& pgn1,
 template <class Kernel, class Container, class Traits>
 inline bool join (const Polygon_2<Kernel, Container>& pgn1, 
                   const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                  Polygon_with_holes_2<Kernel, Container>& res,
-                  Traits& tr)
+                  Polygon_with_holes_2<Kernel, Container>& res, Traits& tr)
 {
   return (_join(pgn1, pgn2, res, tr));
 }
@@ -366,8 +360,7 @@ inline bool join (const Polygon_with_holes_2<Kernel, Container>& pgn1,
 template <class Kernel, class Container, class Traits>
 inline bool join (const Polygon_with_holes_2<Kernel, Container>& pgn1,
                   const Polygon_2<Kernel, Container>& pgn2,
-                  Polygon_with_holes_2<Kernel, Container>& res,
-                  Traits& tr)
+                  Polygon_with_holes_2<Kernel, Container>& res, Traits& tr)
 {
   return (_join(pgn1, pgn2, res, tr));
 }
@@ -383,8 +376,7 @@ inline bool join (const Polygon_with_holes_2<Kernel, Container>& pgn1,
 template <class Kernel, class Container, class Traits>
 inline bool join (const Polygon_with_holes_2<Kernel, Container>& pgn1,
                   const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                  Polygon_with_holes_2<Kernel, Container>& res,
-                  Traits& tr)
+                  Polygon_with_holes_2<Kernel, Container>& res, Traits& tr)
 {
   return (_join(pgn1, pgn2, res, tr));
 }
@@ -403,7 +395,7 @@ inline bool
 join (const General_polygon_2<Arr_traits>& pgn1, 
       const General_polygon_2<Arr_traits>& pgn2,
       General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& res,
-                 Traits& tr)
+      Traits& tr)
 {
   return (_join(pgn1, pgn2, res, tr));
 }
@@ -457,8 +449,7 @@ inline bool join (const General_polygon_with_holes_2<Polygon_>& pgn1,
 template <class Polygon_, class Traits>
 inline bool join (const General_polygon_with_holes_2<Polygon_>& pgn1,
                   const General_polygon_with_holes_2<Polygon_>& pgn2,
-                  General_polygon_with_holes_2<Polygon_>& res,
-                  Traits& tr)
+                  General_polygon_with_holes_2<Polygon_>& res, Traits& tr)
 {
   return (_join(pgn1, pgn2, res, tr));
 }
@@ -478,8 +469,7 @@ inline OutputIterator difference (const Polygon_2<Kernel, Container>& pgn1,
 template <class Kernel, class Container, class OutputIterator, class Traits>
 inline OutputIterator difference (const Polygon_2<Kernel, Container>& pgn1, 
                                   const Polygon_2<Kernel, Container>& pgn2,
-                                  OutputIterator oi,
-                                  Traits& tr)
+                                  OutputIterator oi, Traits& tr)
 {
   return(_difference(pgn1, pgn2, oi, tr));
 }
@@ -497,8 +487,7 @@ template <class Kernel, class Container, class OutputIterator, class Traits>
 inline OutputIterator
 difference (const Polygon_2<Kernel, Container>& pgn1, 
             const Polygon_with_holes_2<Kernel, Container>& pgn2,
-            OutputIterator oi,
-            Traits& tr)
+            OutputIterator oi, Traits& tr)
 {
   return(_difference(pgn1, pgn2, oi, tr));
 }
@@ -535,8 +524,7 @@ template <class Kernel, class Container, class OutputIterator, class Traits>
 inline OutputIterator
 difference (const Polygon_with_holes_2<Kernel, Container>& pgn1,
             const Polygon_with_holes_2<Kernel, Container>& pgn2,
-            OutputIterator oi,
-            Traits& tr)
+            OutputIterator oi, Traits& tr)
 {
   return (_difference(pgn1, pgn2, oi, tr));
 }
@@ -571,8 +559,7 @@ template <class Arr_traits, class OutputIterator, class Traits>
 inline OutputIterator difference (const General_polygon_2<Arr_traits>& pgn1, 
                                   const General_polygon_with_holes_2
                                         <General_polygon_2<Arr_traits> >& pgn2,
-                                  OutputIterator oi,
-                                  Traits& tr)
+                                  OutputIterator oi, Traits& tr)
 {
   return (_difference(pgn1, pgn2, oi, tr));
 }
@@ -590,8 +577,7 @@ template <class Arr_traits, class OutputIterator, class Traits>
 inline OutputIterator difference (const General_polygon_with_holes_2
                                         <General_polygon_2<Arr_traits> >& pgn1,
                                   const General_polygon_2<Arr_traits>& pgn2,
-                                  OutputIterator oi,
-                                  Traits& tr)
+                                  OutputIterator oi, Traits& tr)
 {
   return (_difference(pgn1, pgn2, oi, tr));
 }
@@ -609,8 +595,7 @@ template <class Polygon_, class OutputIterator, class Traits>
 inline OutputIterator
 difference (const General_polygon_with_holes_2<Polygon_>& pgn1,
             const General_polygon_with_holes_2<Polygon_>& pgn2,
-            OutputIterator oi,
-            Traits& tr)
+            OutputIterator oi, Traits& tr)
 {
   return (_difference(pgn1, pgn2, oi, tr));
 }
@@ -623,8 +608,7 @@ template <class Kernel, class Container, class OutputIterator, class Traits>
 inline OutputIterator
 symmetric_difference (const Polygon_2<Kernel, Container>& pgn1, 
                       const Polygon_2<Kernel, Container>& pgn2,
-                      OutputIterator oi,
-                      Traits& tr)
+                      OutputIterator oi, Traits& tr)
 {
   return (_symmetric_difference(pgn1, pgn2, oi, tr));
 }
@@ -642,8 +626,7 @@ template <class Kernel, class Container, class OutputIterator, class Traits>
 inline OutputIterator
 symmetric_difference (const Polygon_2<Kernel, Container>& pgn1, 
                       const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                      OutputIterator oi,
-                      Traits& tr)
+                      OutputIterator oi, Traits& tr)
 {
   return (_symmetric_difference(pgn1, pgn2, oi, tr));
 }
@@ -662,8 +645,7 @@ template <class Kernel, class Container, class OutputIterator, class Traits>
 inline OutputIterator
 symmetric_difference (const Polygon_with_holes_2<Kernel, Container>& pgn1,
                       const Polygon_2<Kernel, Container>& pgn2,
-                      OutputIterator oi,
-                      Traits& tr)
+                      OutputIterator oi, Traits& tr)
 {
   return (_symmetric_difference(pgn1, pgn2, oi, tr));
 }
@@ -681,8 +663,7 @@ template <class Kernel, class Container, class OutputIterator, class Traits>
 inline OutputIterator
 symmetric_difference (const Polygon_with_holes_2<Kernel, Container>& pgn1,
                       const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                      OutputIterator oi,
-                      Traits& tr)
+                      OutputIterator oi, Traits& tr)
 {
   return (_symmetric_difference(pgn1, pgn2, oi, tr));
 }
@@ -720,8 +701,7 @@ inline OutputIterator
 symmetric_difference (const General_polygon_2<Arr_traits>& pgn1, 
                       const General_polygon_with_holes_2
                             <General_polygon_2<Arr_traits> >& pgn2,
-                      OutputIterator oi,
-                      Traits& tr)
+                      OutputIterator oi, Traits& tr)
 {
   return (_symmetric_difference(pgn1, pgn2, oi, tr));
 }
@@ -739,10 +719,9 @@ symmetric_difference(const General_polygon_2<Arr_traits>& pgn1,
 template <class Arr_traits, class OutputIterator, class Traits>
 inline OutputIterator
 symmetric_difference (const General_polygon_with_holes_2
-                            <General_polygon_2<Arr_traits> >& pgn1,
+                        <General_polygon_2<Arr_traits> >& pgn1,
                       const General_polygon_2<Arr_traits>& pgn2,
-                      OutputIterator oi,
-                      Traits& tr)
+                      OutputIterator oi, Traits& tr)
 {
   return (_symmetric_difference(pgn1, pgn2, oi, tr));
 }
@@ -814,8 +793,7 @@ void complement (const General_polygon_2<Arr_traits>& pgn,
 
 template <class Kernel, class Container, class OutputIterator, class Traits>
 OutputIterator complement (const Polygon_with_holes_2<Kernel, Container>& pgn,
-                           OutputIterator oi,
-                           Traits& tr)
+                           OutputIterator oi, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
   gps.insert(pgn);
@@ -833,8 +811,7 @@ OutputIterator complement (const Polygon_with_holes_2<Kernel, Container>& pgn,
 
 template <class Arr_traits, class OutputIterator, class Traits>
 OutputIterator complement (const General_polygon_with_holes_2<Arr_traits>& pgn,
-                           OutputIterator oi,
-                           Traits& tr)
+                           OutputIterator oi, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
   gps.insert(pgn);
@@ -863,12 +840,10 @@ struct map_iterator_to_traits
 };
 
 template <class InputIterator, class OutputIterator, class Traits>
-inline OutputIterator join(InputIterator begin,
-                           InputIterator end,
-                           OutputIterator oi,
-                           Traits& )
+inline OutputIterator join(InputIterator begin, InputIterator end,
+                           OutputIterator oi, Traits& )
 {
-  if(begin == end)
+  if (begin == end)
     return (oi);
 
   General_polygon_set_2<Traits> gps(*begin);
@@ -877,8 +852,7 @@ inline OutputIterator join(InputIterator begin,
 }
 
 template <class InputIterator, class OutputIterator>
-inline OutputIterator join(InputIterator begin,
-                           InputIterator end,
+inline OutputIterator join(InputIterator begin, InputIterator end,
                            OutputIterator oi)
 {
   typename map_iterator_to_traits<InputIterator>::Traits          tr;
@@ -888,14 +862,11 @@ inline OutputIterator join(InputIterator begin,
 // Join two ranges of simple polygons and polygons with holes.
 template <class InputIterator1, class InputIterator2,
           class OutputIterator, class Traits>
-inline OutputIterator join(InputIterator1 begin1,
-                           InputIterator1 end1,
-                           InputIterator2 begin2,
-                           InputIterator2 end2,
-                           OutputIterator oi,
-                           Traits&        tr)
+inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
+                           InputIterator2 begin2, InputIterator2 end2,
+                           OutputIterator oi, Traits& tr)
 {
-  if(begin1 == end1)
+  if (begin1 == end1)
     return (join(begin2, end2, oi, tr));
 
   General_polygon_set_2<Traits> gps(*begin1);
@@ -904,10 +875,8 @@ inline OutputIterator join(InputIterator1 begin1,
 }
 
 template <class InputIterator1, class InputIterator2, class OutputIterator>
-inline OutputIterator join(InputIterator1 begin1,
-                           InputIterator1 end1,
-                           InputIterator2 begin2,
-                           InputIterator2 end2,
+inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
+                           InputIterator2 begin2, InputIterator2 end2,
                            OutputIterator oi)
 {
   typename map_iterator_to_traits<InputIterator1>::Traits  tr;
@@ -918,12 +887,10 @@ inline OutputIterator join(InputIterator1 begin1,
 /// \name Aggregated intersection() functions.
 //@{
 template <class InputIterator, class OutputIterator, class Traits>
-inline OutputIterator intersection (InputIterator begin,
-                                    InputIterator end,
-                                    OutputIterator oi,
-                                    Traits&)
+inline OutputIterator intersection (InputIterator begin, InputIterator end,
+                                    OutputIterator oi, Traits&)
 {
-  if(begin == end)
+  if (begin == end)
     return (oi);
 
   General_polygon_set_2<Traits> gps(*begin);
@@ -932,8 +899,7 @@ inline OutputIterator intersection (InputIterator begin,
 }
 
 template <class InputIterator, class OutputIterator>
-inline OutputIterator intersection (InputIterator begin,
-                                    InputIterator end,
+inline OutputIterator intersection (InputIterator begin, InputIterator end,
                                     OutputIterator oi)
 {
   typename map_iterator_to_traits<InputIterator>::Traits          tr;
@@ -943,14 +909,11 @@ inline OutputIterator intersection (InputIterator begin,
 // Inersect two ranges of simple polygons and polygons with holes.
 template <class InputIterator1, class InputIterator2,
           class OutputIterator, class Traits>
-inline OutputIterator intersection(InputIterator1 begin1,
-                                   InputIterator1 end1,
-                                   InputIterator2 begin2,
-                                   InputIterator2 end2,
-                                   OutputIterator oi,
-                                   Traits&        tr)
+inline OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
+                                   InputIterator2 begin2, InputIterator2 end2,
+                                   OutputIterator oi, Traits& tr)
 {
-  if(begin1 == end1)
+  if (begin1 == end1)
     return (intersection(begin2, end2, oi, tr));
 
   General_polygon_set_2<Traits> gps(*begin1);
@@ -960,10 +923,8 @@ inline OutputIterator intersection(InputIterator1 begin1,
 }
 
 template <class InputIterator1, class InputIterator2, class OutputIterator>
-inline OutputIterator intersection(InputIterator1 begin1,
-                                   InputIterator1 end1,
-                                   InputIterator2 begin2,
-                                   InputIterator2 end2,
+inline OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
+                                   InputIterator2 begin2, InputIterator2 end2,
                                    OutputIterator oi)
 {
   typename map_iterator_to_traits<InputIterator1>::Traits  tr;
@@ -974,12 +935,11 @@ inline OutputIterator intersection(InputIterator1 begin1,
 /// \name Aggregated symmetric_difference() functions.
 //@{
 template <class InputIterator, class OutputIterator, class Traits>
-inline OutputIterator symmetric_difference(InputIterator begin,
-                                           InputIterator end,
-                                           OutputIterator oi,
-                                           Traits&        tr)
+inline
+OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
+                                    OutputIterator oi, Traits& tr)
 {
-  if(begin == end)
+  if (begin == end)
     return (oi);
 
   General_polygon_set_2<Traits> gps(tr);
@@ -989,9 +949,9 @@ inline OutputIterator symmetric_difference(InputIterator begin,
 }
 
 template <class InputIterator, class OutputIterator>
-inline OutputIterator symmetric_difference (InputIterator begin,
-                                            InputIterator end,
-                                            OutputIterator oi)
+inline
+OutputIterator symmetric_difference (InputIterator begin, InputIterator end,
+                                     OutputIterator oi)
 {
   typename map_iterator_to_traits<InputIterator>::Traits          tr;
   return symmetric_difference(begin, end, oi, tr);
@@ -1000,14 +960,12 @@ inline OutputIterator symmetric_difference (InputIterator begin,
 // Xor two ranges of simple polygons and polygons with holes.
 template <class InputIterator1, class InputIterator2,
           class OutputIterator, class Traits>
-inline OutputIterator symmetric_difference (InputIterator1 begin1,
-                                            InputIterator1 end1,
-                                            InputIterator2 begin2,
-                                            InputIterator2 end2,
-                                            OutputIterator oi,
-                                            Traits&        tr)
+inline
+OutputIterator symmetric_difference (InputIterator1 begin1, InputIterator1 end1,
+                                     InputIterator2 begin2, InputIterator2 end2,
+                                     OutputIterator oi, Traits& tr)
 {
-  if(begin1 == end1)
+  if (begin1 == end1)
     return (symmetric_difference(begin2, end2, oi, tr));
 
   General_polygon_set_2<Traits> gps(tr);
@@ -1018,11 +976,10 @@ inline OutputIterator symmetric_difference (InputIterator1 begin1,
 }
 
 template <class InputIterator1, class InputIterator2, class OutputIterator>
-inline OutputIterator symmetric_difference (InputIterator1 begin1,
-                                            InputIterator1 end1,
-                                            InputIterator2 begin2,
-                                            InputIterator2 end2,
-                                            OutputIterator oi)
+inline
+OutputIterator symmetric_difference (InputIterator1 begin1, InputIterator1 end1,
+                                     InputIterator2 begin2, InputIterator2 end2,
+                                     OutputIterator oi)
 {
   typename map_iterator_to_traits<InputIterator1>::Traits  tr;
   return symmetric_difference(begin1, end1, begin2, end2, oi, tr);
@@ -1035,7 +992,7 @@ inline OutputIterator symmetric_difference (InputIterator1 begin1,
 template <class InputIterator, class Traits>
 inline bool do_intersect(InputIterator begin, InputIterator end, Traits& tr)
 {
-  if(begin == end)
+  if (begin == end)
     return false;
 
   General_polygon_set_2<Traits> gps(tr);
@@ -1056,7 +1013,7 @@ inline bool do_intersect (InputIterator1 begin1, InputIterator1 end1,
                           InputIterator2 begin2, InputIterator2 end2,
                           Traits& tr)
 {
-  if(begin1 == end1)
+  if (begin1 == end1)
     return (do_intersect(begin2, end2, tr));
 
   General_polygon_set_2<Traits> gps(tr);
@@ -1073,6 +1030,212 @@ inline bool do_intersect (InputIterator1 begin1, InputIterator1 end1,
 }
 
 //@}
+
+/// \name oriented_side() functions.
+//@{
+
+template <class Kernel, class Container>
+inline Oriented_side oriented_side(const Polygon_2<Kernel, Container>& pgn1, 
+                                   const Polygon_2<Kernel, Container>& pgn2)
+{
+  return (_oriented_side(pgn1, pgn2));
+}
+
+template <class Kernel, class Container, class Traits>
+inline Oriented_side oriented_side(const Polygon_2<Kernel, Container>& pgn1, 
+                                   const Polygon_2<Kernel, Container>& pgn2,
+                                   Traits& tr)
+{
+  return (_oriented_side(pgn1, pgn2, tr));
+}
+
+template <class Kernel, class Container>
+inline
+Oriented_side oriented_side(const Polygon_2<Kernel, Container>& pgn1, 
+                            const Polygon_with_holes_2<Kernel, Container>& pgn2)
+{
+  return (_oriented_side(pgn1, pgn2));
+}
+
+template <class Kernel, class Container, class Traits>
+inline
+Oriented_side oriented_side(const Polygon_2<Kernel, Container>& pgn1, 
+                            const Polygon_with_holes_2<Kernel, Container>& pgn2,
+                            Traits& tr)
+{
+  return (_oriented_side(pgn1, pgn2, tr));
+}
+
+template <class Kernel, class Container>
+inline
+Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                            const Polygon_2<Kernel, Container>& pgn2)
+{
+  return (_oriented_side(pgn1, pgn2));
+}
+
+template <class Kernel, class Container, class Traits>
+inline
+Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                            const Polygon_2<Kernel, Container>& pgn2,
+                            Traits& tr)
+{
+  return (_oriented_side(pgn1, pgn2, tr));
+}
+
+template <class Kernel, class Container>
+inline
+Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                            const Polygon_with_holes_2<Kernel, Container>& pgn2)
+{
+  return (_oriented_side(pgn1, pgn2));
+}
+
+template <class Kernel, class Container, class Traits>
+inline
+Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                            const Polygon_with_holes_2<Kernel, Container>& pgn2,
+                            Traits& tr)
+{
+  return (_oriented_side(pgn1, pgn2, tr));
+}
+
+template <class Arr_traits>
+inline Oriented_side oriented_side(const General_polygon_2<Arr_traits>& pgn1, 
+                                   const General_polygon_2<Arr_traits>& pgn2)
+{
+  return (_oriented_side(pgn1, pgn2));
+}
+
+template <class Arr_traits, class Gps_traits>
+inline Oriented_side oriented_side(const General_polygon_2<Arr_traits>& pgn1, 
+                                   const General_polygon_2<Arr_traits>& pgn2,
+                                   Gps_traits& tr)
+{
+  return (_oriented_side(pgn1, pgn2, tr));
+}
+
+template <class Arr_traits>
+inline Oriented_side oriented_side(const General_polygon_2<Arr_traits>& pgn1, 
+                                   const General_polygon_with_holes_2
+                                   <General_polygon_2<Arr_traits> >& pgn2)
+{
+  return (_oriented_side(pgn1, pgn2));
+}
+
+template <class Arr_traits, class Gps_traits>
+inline Oriented_side oriented_side(const General_polygon_2<Arr_traits>& pgn1, 
+                                   const General_polygon_with_holes_2
+                                   <General_polygon_2<Arr_traits> >& pgn2,
+                                   Gps_traits& tr)
+{
+  return (_oriented_side(pgn1, pgn2, tr));
+}
+
+
+
+template <class Arr_traits>
+inline Oriented_side oriented_side(const General_polygon_with_holes_2
+                                   <General_polygon_2<Arr_traits> >& pgn1,
+                                   const General_polygon_2<Arr_traits>& pgn2)
+{
+  return (_oriented_side(pgn1, pgn2));
+}
+
+template <class Arr_traits, class Gps_traits>
+inline Oriented_side oriented_side(const General_polygon_with_holes_2
+                                   <General_polygon_2<Arr_traits> >& pgn1,
+                                   const General_polygon_2<Arr_traits>& pgn2,
+                                   Gps_traits& tr)
+{
+  return (_oriented_side(pgn1, pgn2, tr));
+}
+
+template <class Polygon_>
+inline
+Oriented_side oriented_side(const General_polygon_with_holes_2<Polygon_>& pgn1,
+                            const General_polygon_with_holes_2<Polygon_>& pgn2)
+{
+  return (_oriented_side(pgn1, pgn2));
+}
+
+template <class Polygon_, class Traits>
+inline
+Oriented_side oriented_side(const General_polygon_with_holes_2<Polygon_>& pgn1,
+                            const General_polygon_with_holes_2<Polygon_>& pgn2,
+                            Traits& tr)
+{
+  return (_oriented_side(pgn1, pgn2, tr));
+}
+
+// Point Query:
+
+template <class Kernel, class Container>
+inline Oriented_side oriented_side(const typename Kernel::Point_2& p, 
+                                   const Polygon_2<Kernel, Container>& pgn)
+{
+  return (_oriented_side(p, pgn));
+}
+
+template <class Kernel, class Container, class Traits>
+inline Oriented_side oriented_side(const typename Kernel::Point_2& p, 
+                                   const Polygon_2<Kernel, Container>& pgn,
+                                   Traits& tr)
+{
+  return (_oriented_side(p, pgn, tr));
+}
+
+template <class Kernel, class Container>
+inline
+Oriented_side oriented_side(const typename Kernel::Point_2& p, 
+                            const Polygon_with_holes_2<Kernel, Container>& pgn)
+{
+  return (_oriented_side(p, pgn));
+}
+
+template <class Kernel, class Container, class Traits>
+inline
+Oriented_side oriented_side(const typename Kernel::Point_2& p, 
+                            const Polygon_with_holes_2<Kernel, Container>& pgn,
+                            Traits& tr)
+{
+  return (_oriented_side(p, pgn, tr));
+}
+
+template <class Arr_traits>
+inline Oriented_side oriented_side(const typename Arr_traits::Point_2& p, 
+                                   const General_polygon_2<Arr_traits>& pgn)
+{
+  return (_oriented_side(p, pgn));
+}
+
+template <class Arr_traits, class Gps_traits>
+inline Oriented_side oriented_side(const typename Arr_traits::Point_2& p, 
+                                   const General_polygon_2<Arr_traits>& pgn,
+                                   Gps_traits& tr)
+{
+  return (_oriented_side(p, pgn, tr));
+}
+
+template <class Polygon_>
+inline
+Oriented_side oriented_side(const typename Polygon_::Point_2& p,
+                            const General_polygon_with_holes_2<Polygon_>& pgn)
+{
+  return (_oriented_side(p, pgn));
+}
+
+template <class Polygon_, class Traits>
+inline
+Oriented_side oriented_side(const typename Polygon_::Point_2& p,
+                            const General_polygon_with_holes_2<Polygon_>& pgn,
+                            Traits& tr)
+{
+  return (_oriented_side(p, pgn, tr));
+}
+
+//@}
+
 
 CGAL_END_NAMESPACE
 
