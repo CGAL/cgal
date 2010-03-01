@@ -18,5 +18,7 @@
 1
 0  0 
 
+-1
+
 # P1 = empty polygon
 # P2 = empty polygon

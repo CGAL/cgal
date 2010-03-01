@@ -41,6 +41,7 @@ COMP_RES  # the same as in intersection
 # ~P2 (complement of p2)
 COMP_RES # the same as in intersection
 
+# (oriented_side of P1 and P2)
 
 example:
 --------
@@ -132,15 +133,5 @@ example:
 1/1 2/1
 0
 
-
-
-
-
-
-
-
-
-
-
-
-   
+# oriented side of P1 and P2
+1

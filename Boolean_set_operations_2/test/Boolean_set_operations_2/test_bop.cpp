@@ -46,19 +46,20 @@ typedef CGAL::General_polygon_set_2<General_traits>   Gps;
 
 
 void read_file(std::istream& inp,
-               bool& intresect,
+               bool& intersect,
                Polygon_with_holes_2& join_res,
                std::vector<Polygon_with_holes_2>&  intersection_res,
                std::vector<Polygon_with_holes_2>&  diff1_res,
                std::vector<Polygon_with_holes_2>&  diff2_res,
                std::vector<Polygon_with_holes_2>&  symm_diff_res,
                std::vector<Polygon_with_holes_2>&  comp1_res,
-               std::vector<Polygon_with_holes_2>&  comp2_res)
+               std::vector<Polygon_with_holes_2>&  comp2_res,
+               CGAL::Oriented_side& or_side)
 {
   unsigned int x;
   inp >> x;
-  intresect = (x!=0);
-  if (intresect)
+  intersect = (x != 0);
+  if (intersect)
     inp >> join_res;
   
   unsigned int n_pgns;
@@ -92,6 +93,10 @@ void read_file(std::istream& inp,
   comp2_res.resize(n_pgns);
   for (i = 0; i < n_pgns; ++i)
     inp >> comp2_res[i];
+
+  int or_side_int;
+  inp >> or_side_int;
+  or_side = CGAL::sign(or_side_int);
 }
 
 template <class Container>
@@ -99,19 +104,16 @@ bool are_equal(const Container& l1, Container& l2)
 {
   bool eq = ((l1.size() == l2.size()) &&
              (std::equal(l1.begin(), l1.end(), l2.begin())));
-  if (!eq) 
-  {
+  if (!eq) {
     std::ostream_iterator<Polygon_with_holes_2> osi(std::cout, "\n");
     std::cout << "infile: " << std::endl;
     std::copy(l1.begin(), l1.end(), osi);
     std::cout<<std::endl<<"calculated: " <<std::endl;
     std::copy(l2.begin(), l2.end(), osi);
-
-
   }
   l2.clear();
 
-  return (eq);
+  return eq;
 }
 
 template <class Traits_>
@@ -132,9 +134,7 @@ void my_complement(const typename Traits_::Polygon_with_holes_2& p,
 }
 
 template <class Polygon1, class Polygon2>
-bool test(std::istream& inp,
-          const Polygon1& p1,
-          const Polygon2& p2)
+bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
 {
   std::vector<Polygon_with_holes_2>  intersection_res_from_file;
   std::vector<Polygon_with_holes_2>  diff1_res_from_file;
@@ -146,6 +146,9 @@ bool test(std::istream& inp,
   Polygon_with_holes_2 join_res_from_file;
 
   bool intersect;
+
+  CGAL::Oriented_side or_side_from_file;
+  
   read_file(inp,
             intersect,
             join_res_from_file,
@@ -154,7 +157,8 @@ bool test(std::istream& inp,
             diff2_res_from_file,
             symm_diff_res_from_file,
             comp1_res_from_file,
-            comp2_res_from_file);
+            comp2_res_from_file,
+            or_side_from_file);
 
   std::vector<Polygon_with_holes_2>  temp_result;
   std::back_insert_iterator<std::vector<Polygon_with_holes_2> > oi(temp_result);
@@ -162,14 +166,14 @@ bool test(std::istream& inp,
   CGAL::intersection(p1, p2, oi);
   if (! are_equal(intersection_res_from_file, temp_result))
   {
-    std::cout << "intersection failed..." << std::endl;
+    std::cout << "intersection 1 failed..." << std::endl;
     return false;
   }
 
   CGAL::intersection(p2, p1, oi);
   if (! are_equal(intersection_res_from_file, temp_result))
   {
-    std::cout << "intersection failed..." << std::endl;
+    std::cout << "intersection 2 failed..." << std::endl;
     return false;
   }
 
@@ -179,14 +183,14 @@ bool test(std::istream& inp,
   do_x = CGAL::join(p1, p2, join_res);
   if (do_x != intersect)
   {
-    std::cout << "join failed..." << std::endl;
+    std::cout << "join 11 failed..." << std::endl;
     return false;
   }
   if (do_x)
   {
     if (join_res != join_res_from_file)
     {
-      std::cout << "join failed..." << std::endl;
+      std::cout << "join 12 failed..." << std::endl;
       return false;
     }  
   }
@@ -194,14 +198,14 @@ bool test(std::istream& inp,
   do_x = CGAL::join(p2, p1, join_res);
   if (do_x != intersect)
   {
-    std::cout << "join failed..." << std::endl;
+    std::cout << "join 21 failed..." << std::endl;
     return false;
   }
   if (do_x)
   {
     if (join_res != join_res_from_file)
     {
-      std::cout << "join failed..." << std::endl;
+      std::cout << "join 22 failed..." << std::endl;
       return false;
     }  
   }
@@ -209,7 +213,7 @@ bool test(std::istream& inp,
   CGAL::difference(p1 ,p2, oi);
   if (! are_equal(diff1_res_from_file, temp_result))
   {
-    std::cout << "diff1 failed..." << std::endl;
+    std::cout << "diff 1 failed..." << std::endl;
     return false;
   }
 
@@ -217,21 +221,21 @@ bool test(std::istream& inp,
   
   if (! are_equal(diff2_res_from_file, temp_result))
   {
-    std::cout << "diff2 failed" << std::endl;
+    std::cout << "diff 2 failed" << std::endl;
     return false;
   }
 
   CGAL::symmetric_difference(p1 ,p2, oi);
   if (! are_equal(symm_diff_res_from_file, temp_result))
   {
-    std::cout << "symmetric_difference failed" << std::endl;
+    std::cout << "symmetric_difference 1 failed" << std::endl;
     return false;
   }
 
   CGAL::symmetric_difference(p2 ,p1, oi);
   if (! are_equal(symm_diff_res_from_file, temp_result))
   {
-    std::cout << "symmetric_difference failed" << std::endl;
+    std::cout << "symmetric_difference 2 failed" << std::endl;
     return false;
   }
 
@@ -240,17 +244,29 @@ bool test(std::istream& inp,
 
   if (! are_equal(comp1_res_from_file, temp_result))
   {
-    std::cout << "complement1 failed" << std::endl;
+    std::cout << "complement 1 failed" << std::endl;
     return false;
   }
 
   my_complement(p2, temp_result, tr);
   if (! are_equal(comp2_res_from_file, temp_result))
   {
-    std::cout << "complement2 failed" << std::endl;
+    std::cout << "complement 2 failed" << std::endl;
     return false;
   }
 
+  CGAL::Oriented_side or_side = CGAL::oriented_side(p1, p2);
+  if (or_side != or_side_from_file) {
+    std::cout << "oriented_side 1 failed" << std::endl;
+    return false;
+  }
+
+  or_side = CGAL::oriented_side(p2, p1);
+  if (or_side != or_side_from_file) {
+    std::cout << "oriented_side 2 failed" << std::endl;
+    return false;
+  }
+    
   /////////////////////////////////////////
 
   Ps ps;

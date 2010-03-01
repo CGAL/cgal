@@ -19,6 +19,7 @@
 1
 0  0 
 
+-1
 
 # P1 = entire plane polygon
 # P2 = empty polygon
