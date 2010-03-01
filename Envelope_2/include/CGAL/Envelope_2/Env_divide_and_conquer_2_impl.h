@@ -435,15 +435,13 @@ _merge_single_interval (Edge_const_handle e, Edge_const_handle other_edge,
   {
     new_v = _append_vertex (out_d, v->point(), e);
     new_v->add_curves (v->curves_begin(), v->curves_end());
+
+    if (res == EQUAL)
+      {
+        // In case of equality, append e's curves to those of the new vertex.
+        new_v->add_curves (e->curves_begin(), e->curves_end());
+      }
   }
-  
-  if (res == EQUAL)
-  {
-    // In case of equality, append e's curves to those of the new vertex.
-    new_v->add_curves (e->curves_begin(), e->curves_end());
-  }
-  
-  return;
 }
 
 //! \brief Functions that should be on Arr_traits_adaptor.
