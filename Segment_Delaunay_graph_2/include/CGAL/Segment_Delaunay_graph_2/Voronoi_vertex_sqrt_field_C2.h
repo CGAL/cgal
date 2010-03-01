@@ -29,8 +29,6 @@
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
-#include <CGAL/Segment_Delaunay_graph_2/Check_exact.h>
-
 CGAL_BEGIN_NAMESPACE
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
@@ -104,7 +102,7 @@ private:
 #ifdef CGAL_PROFILE
     // In case CGAL profile is called then output the sites in case of
     // a filter failure
-    if ( Check_exact<FT>()() ) {
+    if ( check_tag(typename Algebraic_structure_traits<FT>::Is_exact()) ) {
       std::ofstream ofs("vv-failure-log.cin", std::ios_base::app);
       ofs.precision(16);
       ofs << p << std::endl;
