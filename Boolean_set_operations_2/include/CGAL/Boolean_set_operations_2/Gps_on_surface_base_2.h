@@ -260,18 +260,18 @@ public:
   // insert a range of polygons that can be either simple polygons
   // or polygons with holes
   // precondition: the polygons are disjoint and simple
-  template <class PolygonIterator>
-    void insert(PolygonIterator pgn_begin, PolygonIterator pgn_end);
+  template <typename PolygonIterator>
+  void insert(PolygonIterator pgn_begin, PolygonIterator pgn_end);
 
 
   // insert two ranges of : the first one for simple polygons,
   // the second one for polygons with holes
   // precondition: the first range is disjoint simple polygons 
   //               the second range is disjoint polygons with holes
-  template <class PolygonIterator, class PolygonWithHolesIterator>
-    void insert(PolygonIterator pgn_begin, PolygonIterator pgn_end,
-                PolygonWithHolesIterator pgn_with_holes_begin,
-                PolygonWithHolesIterator pgn_with_holes_end);
+  template <typename PolygonIterator, typename PolygonWithHolesIterator>
+  void insert(PolygonIterator pgn_begin, PolygonIterator pgn_end,
+              PolygonWithHolesIterator pgn_with_holes_begin,
+              PolygonWithHolesIterator pgn_with_holes_end);
 
   // test for intersection with a simple polygon
   bool do_intersect(const Polygon_2 &pgn) const
@@ -304,24 +304,6 @@ public:
     overlay(*m_arr, *(other.m_arr), res_arr, func);
     return func.found_reg_intersection();
   }
-
-  template <class InputIterator>
-    bool do_intersect(InputIterator begin, InputIterator end)
-  {
-    Self other(*this);
-    other.intersection(begin, end);
-    return (other.is_empty());
-  }
-
-  template <class InputIterator1, class InputIterator2>
-    bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
-                      InputIterator2 begin2, InputIterator2 end2)
-  {
-    Self other(*this);
-    other.intersection(begin1, end1, begin2, end2);
-    return (other.is_empty());
-  }
-
 
   // intersection with a simple polygon
   void intersection(const Polygon_2& pgn)
@@ -593,12 +575,31 @@ public:
   }
 
   // get the simple polygons, takes O(n)
-  template <class OutputIterator>
-    OutputIterator polygons_with_holes(OutputIterator out) const;
+  template <typename OutputIterator>
+  OutputIterator polygons_with_holes(OutputIterator out) const;
+
+  // test for intersection of a range of polygons
+  template <typename InputIterator>
+  bool do_intersect(InputIterator begin, InputIterator end, unsigned int k = 5)
+  {
+    Self other(*this);
+    other.intersection(begin, end, k);
+    return (other.is_empty());
+  }
+
+  template <typename InputIterator1, typename InputIterator2>
+  bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
+                    InputIterator2 begin2, InputIterator2 end2,
+                    unsigned int k = 5)
+  {
+    Self other(*this);
+    other.intersection(begin1, end1, begin2, end2, k);
+    return (other.is_empty());
+  }
 
   // join a range of polygons
-  template <class InputIterator>
-    void join(InputIterator begin, InputIterator end, unsigned int k = 5)
+  template <typename InputIterator>
+  void join(InputIterator begin, InputIterator end, unsigned int k = 5)
   {
     typename std::iterator_traits<InputIterator>::value_type pgn;
     this->join(begin, end, pgn, k);
@@ -610,17 +611,15 @@ public:
   // 5 is the magic number in which we switch to a sweep-based algorithm
   // instead of a D&C algorithm. This point should be further studies, as
   // it is hard to believe that this is the best value for all applications.
-  template <class InputIterator>
-    inline void join(InputIterator begin,
-                     InputIterator end,
-                     Polygon_2&,
-                     unsigned int k=5)
+  template <typename InputIterator>
+  inline void join(InputIterator begin, InputIterator end, Polygon_2&,
+                   unsigned int k = 5)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
  
     arr_vec[0].first = this->m_arr;
     unsigned int i = 1;
-    for (InputIterator itr = begin; itr!=end; ++itr, ++i)
+    for (InputIterator itr = begin; itr != end; ++itr, ++i)
     {
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr, *(arr_vec[i].first));
@@ -636,9 +635,9 @@ public:
   }
 
   //join range of polygons with holes (see previous comment about k=5).
-  template <class InputIterator>
-    inline void join(InputIterator begin, InputIterator end,
-                     Polygon_with_holes_2&, unsigned int k=5)
+  template <typename InputIterator>
+  inline void join(InputIterator begin, InputIterator end,
+                   Polygon_with_holes_2&, unsigned int k = 5)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
@@ -660,10 +659,10 @@ public:
   }
 
   // (see previous comment about k=5).
-  template <class InputIterator1, class InputIterator2>
-    inline void join(InputIterator1 begin1, InputIterator1 end1,
-                     InputIterator2 begin2, InputIterator2 end2,
-                     unsigned int k=5)
+  template <typename InputIterator1, typename InputIterator2>
+  inline void join(InputIterator1 begin1, InputIterator1 end1,
+                   InputIterator2 begin2, InputIterator2 end2,
+                   unsigned int k = 5)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin1, end1)+
                                     std::distance(begin2, end2)+1);
@@ -696,9 +695,9 @@ public:
 
 
   // intersect range of polygins (see previous comment about k=5).
-  template <class InputIterator>
-    inline void intersection(InputIterator begin, InputIterator end,
-                             unsigned int k=5)
+  template <typename InputIterator>
+  inline void intersection(InputIterator begin, InputIterator end,
+                           unsigned int k = 5)
   {
     typename std::iterator_traits<InputIterator>::value_type pgn;
     this->intersection(begin, end, pgn, k);
@@ -708,9 +707,9 @@ public:
   
   
   // intersect range of simple polygons
-  template <class InputIterator>
-    inline void intersection(InputIterator begin, InputIterator end,
-                             Polygon_2&, unsigned int k)
+  template <typename InputIterator>
+  inline void intersection(InputIterator begin, InputIterator end,
+                           Polygon_2&, unsigned int k)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
@@ -733,9 +732,9 @@ public:
   }
   
   //intersect range of polygons with holes
-  template <class InputIterator>
-    inline void intersection(InputIterator begin, InputIterator end,
-                             Polygon_with_holes_2&, unsigned int k)
+  template <typename InputIterator>
+  inline void intersection(InputIterator begin, InputIterator end,
+                           Polygon_with_holes_2&, unsigned int k)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
@@ -758,10 +757,10 @@ public:
   }
   
   
-  template <class InputIterator1, class InputIterator2>
-    inline void intersection(InputIterator1 begin1, InputIterator1 end1,
-                             InputIterator2 begin2, InputIterator2 end2,
-                             unsigned int k=5)
+  template <typename InputIterator1, typename InputIterator2>
+  inline void intersection(InputIterator1 begin1, InputIterator1 end1,
+                           InputIterator2 begin2, InputIterator2 end2,
+                           unsigned int k = 5)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin1, end1)+
                                     std::distance(begin2, end2)+1);
@@ -797,9 +796,9 @@ public:
   
   // symmetric_difference of a range of polygons (similar to xor)
   // (see previous comment about k=5).
-  template <class InputIterator>
+  template <typename InputIterator>
     inline void symmetric_difference(InputIterator begin, InputIterator end,
-                                     unsigned int k=5)
+                                     unsigned int k = 5)
   {
     typename std::iterator_traits<InputIterator>::value_type pgn;
     this->symmetric_difference(begin, end, pgn, k);
@@ -809,9 +808,9 @@ public:
   
   
   // intersect range of simple polygons (see previous comment about k=5).
-  template <class InputIterator>
-    inline void symmetric_difference(InputIterator begin, InputIterator end,
-                                     Polygon_2&, unsigned int k=5)
+  template <typename InputIterator>
+  inline void symmetric_difference(InputIterator begin, InputIterator end,
+                                   Polygon_2&, unsigned int k = 5)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
@@ -834,9 +833,9 @@ public:
   }
   
   //intersect range of polygons with holes (see previous comment about k=5).
-  template <class InputIterator>
+  template <typename InputIterator>
     inline void symmetric_difference(InputIterator begin, InputIterator end,
-                                     Polygon_with_holes_2&, unsigned int k=5)
+                                     Polygon_with_holes_2&, unsigned int k = 5)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
@@ -859,10 +858,10 @@ public:
   }
   
   // (see previous comment about k=5).
-  template <class InputIterator1, class InputIterator2>
-    inline void symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
-                                     InputIterator2 begin2, InputIterator2 end2,
-                                     unsigned int k=5)
+  template <typename InputIterator1, typename InputIterator2>
+  inline void symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
+                                   InputIterator2 begin2, InputIterator2 end2,
+                                   unsigned int k = 5)
   {
     std::vector<Arr_entry> arr_vec (std::distance(begin1, end1)+
                                     std::distance(begin2, end2)+1);
@@ -900,7 +899,7 @@ public:
   bool is_hole_of_face(Face_const_handle f, Halfedge_const_handle he) const;
   
   Ccb_halfedge_const_circulator
-    get_boundary_of_polygon(Face_const_iterator f) const;
+  get_boundary_of_polygon(Face_const_iterator f) const;
   
   void remove_redundant_edges()
   {
@@ -1017,9 +1016,9 @@ protected:
   }
   
   template <class Merge>
-    void _divide_and_conquer (unsigned int lower, unsigned int upper,
-                              std::vector<Arr_entry>& arr_vec,
-                              unsigned int k, Merge merge_func)
+  void _divide_and_conquer (unsigned int lower, unsigned int upper,
+                            std::vector<Arr_entry>& arr_vec,
+                            unsigned int k, Merge merge_func)
   {
     if ((upper - lower) < k)
     {
@@ -1060,27 +1059,28 @@ protected:
 
   void _insert(const Polygon_2& pgn, Aos_2& arr);
   
-// The function below is public because are_holes_and_boundary_pairwise_disjoint
-// of Gps_polygon_validation is using it.
-// I have tried to define it as friend function, but with no success (probably
-// did something wrong with templates and friend.) Besides, it was like this
-// before I touched it, so I did not have the energy.
+  // The function below is public because
+  // are_holes_and_boundary_pairwise_disjoint of Gps_polygon_validation is
+  // using it.
+  // I have tried to define it as friend function, but with no success
+  // (probably did something wrong with templates and friend.) Besides,
+  // it was like this before I touched it, so I did not have the energy.
 public:  
   void _insert(const Polygon_with_holes_2& pgn, Aos_2& arr);
   
 protected:
-  template<class PolygonIter>
-    void _insert(PolygonIter p_begin, PolygonIter p_end, Polygon_2& pgn);
+  template<typename PolygonIter>
+  void _insert(PolygonIter p_begin, PolygonIter p_end, Polygon_2& pgn);
   
-  template<class PolygonIter>
-    void _insert(PolygonIter p_begin, PolygonIter p_end,
-                 Polygon_with_holes_2& pgn);
+  template<typename PolygonIter>
+  void _insert(PolygonIter p_begin, PolygonIter p_end,
+               Polygon_with_holes_2& pgn);
   
-  template <class OutputIterator>
-    void _construct_curves(const Polygon_2& pgn, OutputIterator oi);
+  template <typename OutputIterator>
+  void _construct_curves(const Polygon_2& pgn, OutputIterator oi);
   
-  template <class OutputIterator>
-    void _construct_curves(const Polygon_with_holes_2& pgn, OutputIterator oi);
+  template <typename OutputIterator>
+  void _construct_curves(const Polygon_with_holes_2& pgn, OutputIterator oi);
   
   
   bool _is_empty(const Polygon_2& pgn) const
@@ -1123,9 +1123,7 @@ protected:
     remove_redundant_edges();
   }
   
-  void _intersection(const Aos_2& arr1,
-                     const Aos_2& arr2,
-                     Aos_2& res) 
+  void _intersection(const Aos_2& arr1, const Aos_2& arr2, Aos_2& res) 
   {
     Gps_intersection_functor<Aos_2> func;
     overlay(arr1, arr2, res, func);
@@ -1134,7 +1132,7 @@ protected:
   }
   
   template <class Polygon_>
-    void _intersection(const Polygon_& pgn)
+  void _intersection(const Polygon_& pgn)
   {
     if (_is_empty(pgn))
       this->clear();
@@ -1183,8 +1181,7 @@ protected:
     remove_redundant_edges();
   }
   
-  void _join(const Aos_2& arr1, const Aos_2& arr2,
-             Aos_2& res) 
+  void _join(const Aos_2& arr1, const Aos_2& arr2, Aos_2& res) 
   {
     Gps_join_functor<Aos_2> func;
     overlay(arr1, arr2, res, func);
@@ -1193,7 +1190,7 @@ protected:
   }
   
   template <class Polygon_>
-    void _join(const Polygon_& pgn)
+  void _join(const Polygon_& pgn)
   {
     if (_is_empty(pgn)) return;
     if (_is_plane(pgn))
@@ -1258,8 +1255,7 @@ protected:
     fix_curves_direction();
   }
   
-  void _difference(const Aos_2& arr1, const Aos_2& arr2,
-                   Aos_2& res) 
+  void _difference(const Aos_2& arr1, const Aos_2& arr2, Aos_2& res) 
   {
     Gps_difference_functor<Aos_2> func;
     overlay(arr1, arr2, res, func);
@@ -1269,7 +1265,7 @@ protected:
   }
   
   template <class Polygon_>
-    void _difference(const Polygon_& pgn)
+  void _difference(const Polygon_& pgn)
   {
     if (_is_empty(pgn)) return;
     if (_is_plane(pgn))
@@ -1325,9 +1321,7 @@ protected:
     fix_curves_direction();
   }
   
-  void _symmetric_difference(const Aos_2& arr1,
-                             const Aos_2& arr2,
-                             Aos_2& res) 
+  void _symmetric_difference(const Aos_2& arr1, const Aos_2& arr2, Aos_2& res) 
   {
     Gps_sym_diff_functor<Aos_2> func;
     overlay(arr1, arr2, res, func);
@@ -1336,7 +1330,7 @@ protected:
   }
   
   template <class Polygon_>
-    void _symmetric_difference(const Polygon_& pgn)
+  void _symmetric_difference(const Polygon_& pgn)
   {
     if (_is_empty(pgn)) return;
     
@@ -1394,7 +1388,6 @@ protected:
     
     _symmetric_difference(*(other.m_arr));
   }
-  
 };
 
 #include <CGAL/Boolean_set_operations_2/Gps_on_surface_base_2_impl.h>
