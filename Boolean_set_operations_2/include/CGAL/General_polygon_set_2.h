@@ -33,10 +33,10 @@ CGAL_BEGIN_NAMESPACE
 // General_polygon_set_2
 template <class Traits_, class Dcel_ = Gps_default_dcel<Traits_> >
 class General_polygon_set_2 : public General_polygon_set_on_surface_2
-  <Traits_, typename Default_planar_topology<Traits_, Dcel_ >::Traits>
+  <Traits_, typename Default_planar_topology<Traits_, Dcel_>::Traits>
 {
 protected:
-  typedef General_polygon_set_2< Traits_, Dcel_ >         Self;
+  typedef General_polygon_set_2<Traits_, Dcel_>           Self;
   
 public:
   typedef Traits_                                         Traits_2;
@@ -60,8 +60,7 @@ public:
   General_polygon_set_2(Traits_2& tr) : Base(tr)
   {}
 
-  explicit General_polygon_set_2(const Polygon_2& pgn) : 
-    Base(pgn)
+  explicit General_polygon_set_2(const Polygon_2& pgn) : Base(pgn)
   { }
 
   explicit General_polygon_set_2(const Polygon_with_holes_2& pgn_with_holes): 
@@ -86,14 +85,13 @@ public:
 
   inline void join(const Self& ps1, const Self& ps2)
   {
-    Base::join(static_cast<const Base&>(ps1),
-                       static_cast<const Base&>(ps2));
+    Base::join(static_cast<const Base&>(ps1), static_cast<const Base&>(ps2));
   }
 
   inline void symmetric_difference(const Self& ps1, const Self& ps2)
   {
     Base::symmetric_difference(static_cast<const Base&>(ps1),
-                       static_cast<const Base&>(ps2));
+                               static_cast<const Base&>(ps2));
   }
 
   //@{
