@@ -107,9 +107,9 @@ member function compare provides this comparison.
 \ccConstructor{Sqrt_extension (const NT &x);}
         {Constructor from type NT.}
 \ccConstructor{Sqrt_extension (int a0, int a1, int r);}
- 	{Constructor from int: \ccVar $= a0 +a1 \cdot sqrt(r)$.}
+ 	{Constructor from int: \ccVar $= a0 +a1 \cdot sqrt(r)$. \ccPrecond{$r \neq 0$}}
 \ccConstructor{Sqrt_extension (NT a0, NT a1, ROOT r);}
- 	{General constructor: \ccVar $= a0 + a1 \cdot sqrt(r)$.}
+ 	{General constructor: \ccVar $= a0 + a1 \cdot sqrt(r)$. \ccPrecond{$r \neq 0$}}
 
 \ccOperations
 
