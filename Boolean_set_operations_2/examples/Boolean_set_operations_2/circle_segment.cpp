@@ -6,7 +6,6 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
-#include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/Lazy_exact_nt.h>
 
 #include <list>
