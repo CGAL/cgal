@@ -5,7 +5,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <boost/property_map.hpp>
+#include <CGAL/property_map.h>
 #include <boost/graph/properties.hpp>
 
 

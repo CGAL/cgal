@@ -21,7 +21,7 @@
 #ifndef CGAL_BOOST_GRAPH_BGL_PROPERTIES_H
 #define CGAL_BOOST_GRAPH_BGL_PROPERTIES_H
 
-#include <boost/property_map.hpp>
+#include <CGAL/property_map.h>
 #include <boost/graph/properties.hpp>
 
 #include <CGAL/basic.h>

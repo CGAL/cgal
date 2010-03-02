@@ -26,7 +26,7 @@
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 
-#include <boost/property_map.hpp>
+#include <CGAL/property_map.h>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 

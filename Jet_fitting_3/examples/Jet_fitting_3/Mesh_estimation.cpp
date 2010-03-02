@@ -6,7 +6,7 @@
 #include <fstream>
 #include <cassert>
 
-#include <boost/property_map.hpp>
+#include <CGAL/property_map.h>
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
