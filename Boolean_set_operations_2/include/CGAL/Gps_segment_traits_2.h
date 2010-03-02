@@ -25,7 +25,6 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2/Polygon_2_curve_iterator.h>
-#include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_polygon_validation.h>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
 
