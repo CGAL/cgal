@@ -256,22 +256,22 @@ struct Construct_alg_1{
     typedef Solve_1<Poly,Gcd>   Solve;
 
     inline
-    Algebraic operator()(int a){
+    Algebraic operator()(int a) const {
         return Algebraic(a);
     }
 
     inline
-    Algebraic operator()(const Bound a){
+    Algebraic operator()(const Bound a) const {
         return Algebraic(a);
     }
 
     inline
-    Algebraic operator()(const Coeff a){
+    Algebraic operator()(const Coeff a) const {
         return Algebraic(a);
     }
 
     inline
-    Algebraic operator()(const Poly &p,int i){
+    Algebraic operator()(const Poly &p,int i) const {
       CGAL_precondition(CGAL::is_square_free(p));
       std::vector<Algebraic> roots;
       std::back_insert_iterator<std::vector<Algebraic> > rootsit(roots);
@@ -280,7 +280,7 @@ struct Construct_alg_1{
     }
 
     inline
-    Algebraic operator()(const Poly &p,Bound l,Bound u){
+    Algebraic operator()(const Poly &p,Bound l,Bound u) const {
         mpfi_t i;
         mpfi_init(i);
         mpfr_set(&i->left,l.fr(),GMP_RNDD);
