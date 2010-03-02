@@ -20,8 +20,7 @@ to nearest). To specify rounding modes for operations, the type
 used is \ccc{std::float_round_style}.
 
 This type is \ccc{ImplicitInteroperable} with \ccc{Gmpz}, \verb-long-,
-\verb-unsigned long-, \verb-int-, \verb-double- and \verb-long
-double-.
+\verb-unsigned long-, \verb-int-, \verb-double- and \verb-long double-.
 
 \ccInclude{CGAL/Gmpfr.h}
 
@@ -51,7 +50,7 @@ double-.
 %         a MPFR number used in a C implementation. The data structure
 %         containing \ccc{p} will not be cleared after object's
 %         destruction.}
-%-------------------------------------------------- 
+%--------------------------------------------------
 
 \ccConstructor{Gmpfr(long si);}
         {Creates a MPFR number, initialized with the value of \ccc{si}.}
@@ -98,7 +97,7 @@ explained below, allow users to control the rounding and precision.
 % this lack of precision. If we do \verb-Gmpfr(i,8,std::round_to_nearest)-,
 % \verb-i- will have the value of \(1000\), because it is the closest value
 % to \verb-i- one can represent with eight bits.
-%-------------------------------------------------- 
+%--------------------------------------------------
 For example, being \verb-z- \ a \ccc{Gmpz},
 \verb-Gmpfr g(z,53,std::round_toward_neg_infinity)-\ will construct a
 \ccc{Gmpfr} \verb-g- \ having as value the biggest 53-bit
@@ -361,7 +360,5 @@ to be thread-safe, this interface is designed to keep the thread-safety.
 \ccRefIdfierPage{RealEmbeddable}\\
 \ccRefIdfierPage{FieldWithKthRoot}
 
-\end{ccRefClass} 
+\end{ccRefClass}
 \ccDefGlobalScope{CGAL::}
-
-% vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab
