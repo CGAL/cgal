@@ -37,8 +37,8 @@
 #include <CGAL/number_type_basic.h>
 #include <boost/operators.hpp>
 
-//#define SQRT_EXT_USE_FILTER 1
-#ifdef SQRT_EXT_USE_FILTER
+//#define CGAL_SQRT_EXT_USE_FILTER 1
+#ifdef CGAL_SQRT_EXT_USE_FILTER
   #include <CGAL/Interval_arithmetic.h> 
 #endif
 
@@ -231,7 +231,7 @@ public:
         if (! is_extended_)
             return CGAL_NTS sign(a0());
 
-#ifdef SQRT_EXT_USE_FILTER
+#ifdef CGAL_SQRT_EXT_USE_FILTER
         const std::pair<double, double>&  x_in = this->to_interval(); 
 
         if (x_in.first > 0)
@@ -409,7 +409,7 @@ compare (const NT& num) const {
     if (! is_extended_)
         return (CGAL::compare (a0_, num));
 
-#ifdef SQRT_EXT_USE_FILTER
+#ifdef CGAL_SQRT_EXT_USE_FILTER
     const std::pair<double, double>&  x_in = this->to_interval(); 
     const std::pair<double, double>&  y_in = CGAL::to_interval (num); 
     
@@ -436,7 +436,7 @@ compare(const Self& y, bool in_same_extension = true ) const
     if (in_same_extension)
         return ((*this) - y).sign();
 
-#ifdef SQRT_EXT_USE_FILTER
+#ifdef CGAL_SQRT_EXT_USE_FILTER
     const std::pair<double, double>&  x_in = this->to_interval(); 
     const std::pair<double, double>&  y_in = y.to_interval(); 
     
