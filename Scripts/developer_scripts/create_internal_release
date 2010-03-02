@@ -301,8 +301,8 @@ sub create_version_tex_file()
         $newver = $VERSION;
     }
 
-# And here we also strip the -I-... part to get the public version number
-    if ($result = $VERSION =~ /CGAL-(.*)-I-/){
+# And here we also strip the -I- (or -Ic-)... part to get the public version number
+    if ($result = $VERSION =~ /CGAL-(.*)-Ic?-/){
         $publicver = $1;
     } else {
         $publicver = $VERSION;
