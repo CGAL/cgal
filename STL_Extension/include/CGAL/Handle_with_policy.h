@@ -179,9 +179,10 @@ class Handle_policy_union_and_reset;
 // ================================
 
 //! the base class for bodies of reference counted representations \c T.
-template <class T>
+template <class T_>
 class Reference_counted {
 public:
+    typedef T_ T;
     typedef Reference_counted<T> Self;
     typedef T*  Rep_pointer;
 private:
@@ -205,9 +206,10 @@ public:
  * Base class for bodies of reference counted representations \c T
  * with a forwarding pointer for identical representations.
  */
-template <class T>
+template <class T_>
 class Reference_counted_with_forwarding {
 public:
+    typedef T_ T;
     typedef Reference_counted_with_forwarding<T> Self;
     typedef T*  Rep_pointer;
     friend class Handle_policy_union;
@@ -707,11 +709,15 @@ public:
           has the default \c CGAL_ALLOCATOR(T).
 
 */
-template <class T, 
+template <class T_, 
           class HandlePolicy = Handle_policy_no_union, 
-          class Allocator_ = CGAL_ALLOCATOR(T)>
+          class Allocator_ = CGAL_ALLOCATOR(T_)>
 class Handle_with_policy {
 public:
+
+    //! first template parameter
+    typedef T_ T;
+
     //! the handle type itself.
     typedef Handle_with_policy< T, HandlePolicy, Allocator_>    Self;
 
@@ -1132,9 +1138,13 @@ typename Handle_with_policy<T, Policy, Alloc>::Rep_allocator
     counted representations.
     Uses \c LEDA_MEMORY if available.
 */
-template <class T, class Allocator_>
-class Handle_with_policy<T, Handle_policy_in_place, Allocator_> {
+template <class T_, class Allocator_>
+class Handle_with_policy<T_, Handle_policy_in_place, Allocator_> {
 public:
+
+    //! first template paramter
+    typedef T_ T;
+
     //! the handle type itself.
     typedef Handle_with_policy< T, Handle_policy_in_place, Allocator_>   Self;
 
