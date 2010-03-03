@@ -146,7 +146,7 @@ Algebraic_1::Algebraic_1(mpfr_srcptr src){
         mpfi_set_fr(mpfi(),r.fr());
         CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->left)!=0);
         CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->right)!=0);
-        RS_polynomial_1 *rsp=new RS_polynomial_1(Gmpq(r).mpq());
+        RS_polynomial_1 *rsp=new RS_polynomial_1(r.to_fraction().mpq());
         set_pol(*rsp);
         set_nr(0);
         set_lefteval(CGAL::NEGATIVE);
@@ -188,7 +188,7 @@ Algebraic_1::Algebraic_1(const Gmpfr &r){
         mpfi_set_fr(mpfi(),r.fr());
         CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->left)!=0);
         CGAL_assertion(mpfr_equal_p(r.fr(),&mpfi()->right)!=0);
-        RS_polynomial_1 *rsp=new RS_polynomial_1(Gmpq(r).mpq());
+        RS_polynomial_1 *rsp=new RS_polynomial_1(r.to_fraction().mpq());
         set_pol(*rsp);
         set_nr(0);
         set_lefteval(CGAL::NEGATIVE);
