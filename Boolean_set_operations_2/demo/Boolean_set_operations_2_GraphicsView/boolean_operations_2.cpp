@@ -62,7 +62,6 @@ void trace( std::string s )
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Polygon_set_2.h>
-#include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
