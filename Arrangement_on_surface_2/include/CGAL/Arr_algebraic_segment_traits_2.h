@@ -1,5 +1,6 @@
 #include <CGAL/basic.h>
 
+#include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_curve_kernel_2.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2.h>
