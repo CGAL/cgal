@@ -28,6 +28,8 @@
 
 create_cmake_script_with_options()
 {
+  mpfi='n'
+  rs='n'
   qt3='n'
   qt4='n'
 
@@ -161,10 +163,18 @@ EOF
     OLDIFS="$IFS"
     IFS=':'
     for cgal_component in $CGAL_COMPONENTS; do
-      if [ "$cgal_component" = "Qt3" ]; then
+      COMPONENT=`echo $cgal_component | tr '[:upper:]' '[:lower:]'`
+      if [ "$COMPONENT" = "mpfi" ]; then
+        mpfi='y'
+      fi
+      if [ "$COMPONENT" = "rs" ]; then
+        rs='y'
+      fi
+
+      if [ "$COMPONENT" = "qt3" ]; then
         qt3='y'
       fi
-      if [ "$cgal_component" = "Qt4" ]; then
+      if [ "$COMPONENT" = "qt4" ]; then
         qt4='y'
       fi
     done
@@ -270,6 +280,44 @@ EOF
 include( ${CGAL_USE_FILE} )
 EOF
   #---------------------------------------------------------------------------
+
+  # mpfi
+  if [ "$mpfi" = "y" ]; then
+
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
+
+find_package( MPFI )
+if ( MPFI_FOUND )
+ include( ${MPFI_USE_FILE} )
+else()
+  message(STATUS "This project requires the MPFI library, and will not be compiled.")
+  return()  
+endif( MPFI_FOUND ) 
+
+EOF
+  #---------------------------------------------------------------------------
+  fi
+
+
+  # rs
+  if [ "$rs" = "y" ]; then
+
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
+
+find_package( RS )
+if ( RS_FOUND )
+ include( ${RS_USE_FILE} )
+else()
+  message(STATUS "This project requires the RS library, and will not be compiled.")
+  return()  
+endif( RS_FOUND ) 
+
+EOF
+  #---------------------------------------------------------------------------
+  fi
+
 
   # Qt3 or Qt4
   if [ "$qt3" = "y" ]; then
