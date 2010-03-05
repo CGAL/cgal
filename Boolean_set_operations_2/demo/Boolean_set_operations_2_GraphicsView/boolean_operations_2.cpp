@@ -983,22 +983,22 @@ bool save_circular ( QString aFileName, Circular_polygon_set& rSet )
 
 void save_bezier_polygon( std::ostream& out_file, Bezier_polygon const& aBP )
 {
+  typedef std::vector<Bezier_rat_point> Bezier_rat_point_vector ;
+  
   int cc = aBP.size() ;
   int lc = cc - 1 ;
   
   out_file << "  " <<  cc << std::endl ;
   
-  Linear_point lFirstP, lPrevP ;
+  Bezier_rat_point lFirstP, lPrevP ;
  
   int i = 0 ;
   
   for ( Bezier_polygon::Curve_const_iterator cit = aBP.curves_begin() ; cit != aBP.curves_end() ; ++ cit, ++ i  )
   {
-    typedef std::vector<Linear_point> Linear_point_vector ;
-    
-    Linear_point_vector lQ ;
+    Bezier_rat_point_vector lQ ;
 
-    CGAL::Qt::Bezier_helper::approximated_clip(*cit,std::back_inserter(lQ));  
+    CGAL::Qt::Bezier_helper::clip(*cit,lQ);  
     
     out_file << "   " << lQ.size() << std::endl ;
     
@@ -1008,11 +1008,11 @@ void save_bezier_polygon( std::ostream& out_file, Bezier_polygon const& aBP )
     if ( i == lc )  
       lQ.back() = lFirstP ;
       
-    for ( Linear_point_vector::const_iterator pit = lQ.begin() ; pit != lQ.end() ; ++ pit )
+    for ( Bezier_rat_point_vector::const_iterator pit = lQ.begin() ; pit != lQ.end() ; ++ pit )
     {
-      Linear_point lP = pit == lQ.begin() && i > 0 ? lPrevP : *pit ;
+      Bezier_rat_point lP = pit == lQ.begin() && i > 0 ? lPrevP : *pit ;
       
-      out_file << "    " << lP.x() << " " << lP.y() << std::endl ;
+      out_file << "    " << CGAL::to_double(lP.x()) << " " << CGAL::to_double(lP.y()) << std::endl ;
       
       lPrevP = lP ;
     }
