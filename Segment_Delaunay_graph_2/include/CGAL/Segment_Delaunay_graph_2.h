@@ -1324,6 +1324,18 @@ protected:
   inline
   Sign incircle(const Storage_site_2 &t1, const Storage_site_2 &t2,
 		const Storage_site_2 &t3, const Storage_site_2 &q) const {
+#ifdef CGAL_PROFILE_SDG_DUMP_INCIRCLE
+    typedef typename Geom_traits::FT  FT;
+    if ( !Algebraic_structure_traits<FT>::Is_exact::value ) {
+      std::ofstream ofs("incircle.cin", std::ios_base::app);
+      ofs.precision(16);
+      ofs << t1.site() << " ";
+      ofs << t2.site() << " ";
+      ofs << t3.site() << " ";
+      ofs <<  q.site() << std::endl;
+      ofs.close();
+    }
+#endif
     return geom_traits().vertex_conflict_2_object()(t1.site(),
 						    t2.site(),
 						    t3.site(),
@@ -1516,6 +1528,18 @@ protected:
   inline
   Sign incircle(const Site_2 &t1, const Site_2 &t2,
 		const Site_2 &t3, const Site_2 &q) const {
+#ifdef CGAL_PROFILE_SDG_DUMP_INCIRCLE
+    typedef typename Geom_traits::FT  FT;
+    if ( !Algebraic_structure_traits<FT>::Is_exact::value ) {
+      std::ofstream ofs("incircle.cin", std::ios_base::app);
+      ofs.precision(16);
+      ofs << t1 << " ";
+      ofs << t2 << " ";
+      ofs << t3 << " ";
+      ofs <<  q << std::endl;
+      ofs.close();
+    }
+#endif
     return geom_traits().vertex_conflict_2_object()(t1, t2, t3, q);
   }
 
