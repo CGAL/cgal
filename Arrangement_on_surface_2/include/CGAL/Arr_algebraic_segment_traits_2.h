@@ -3,7 +3,7 @@
 #include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_curve_kernel_2.h>
 
-#include <CGAL/Curved_kernel_via_analysis_2.h>
+#include <CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_impl.h>
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
