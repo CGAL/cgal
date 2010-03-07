@@ -272,12 +272,12 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
     long         exp = x.exp(); 
    
 
-    std::cout <<"(" << m << "+-" <<err << ")*2^"<<(14*exp) << std::endl; 
-    if (err != 0) 
-      std::cout <<"current prec: " <<  CGAL::relative_precision(x) << std::endl;
-    else 
-      std::cout <<"current prec: " << " SINGLETON " << std::endl;
-    std::cout <<"desired prec: " << rel_prec << std::endl; 
+//    std::cout <<"(" << m << "+-" <<err << ")*2^"<<(14*exp) << std::endl; 
+//    if (err != 0) 
+//      std::cout <<"current prec: " <<  CGAL::relative_precision(x) << std::endl;
+//    else 
+//      std::cout <<"current prec: " << " SINGLETON " << std::endl;
+//    std::cout <<"desired prec: " << rel_prec << std::endl; 
     
 //    long shift = ::CORE::bitLength(m) - rel_prec - 1;
     long shift ;
@@ -294,12 +294,12 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
         xr = x; 
     }
 
-    std::cout <<"(" <<m << "+-" <<err+1 << ")*2^"<<(14*exp) << std::endl; 
-    if (xr.err() != 0) 
-      std::cout <<"current prec: " <<  CGAL::relative_precision(xr) << std::endl;
-    else 
-      std::cout <<"current prec: " << " SINGLETON "<< std::endl;
-    std::cout <<"desired prec: " << rel_prec << std::endl; 
+//    std::cout <<"(" <<m << "+-" <<err+1 << ")*2^"<<(14*exp) << std::endl; 
+//    if (xr.err() != 0) 
+//      std::cout <<"current prec: " <<  CGAL::relative_precision(xr) << std::endl;
+//    else 
+//      std::cout <<"current prec: " << " SINGLETON "<< std::endl;
+//    std::cout <<"desired prec: " << rel_prec << std::endl; 
     
 // endif     
     CGAL_postcondition(singleton(xr) || CGAL::relative_precision(xr) - rel_prec >= 0); 
