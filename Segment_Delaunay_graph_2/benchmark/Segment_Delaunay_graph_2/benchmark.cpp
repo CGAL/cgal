@@ -6,7 +6,7 @@
 #include <cassert>
 
 // add this to profile
-#define CGAL_PROFILE 1
+//#define CGAL_PROFILE 1
 
 // add this to dump quadruples of sites for which the incircle test is called
 //#define CGAL_PROFILE_SDG_DUMP_INCIRCLE 1
