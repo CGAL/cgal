@@ -26,6 +26,11 @@
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
+#ifdef CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
+#include <CGAL/Segment_Delaunay_graph_2/Incircle_sqrt_field_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Incircle_operator_sqrt_field_C2.h>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
@@ -479,9 +484,32 @@ public:
     }
 #endif
 
+#ifdef CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
+    typedef Incircle_sqrt_field_C2<K>   Alternative1_Voronoi_vertex_2;
+    typedef Incircle_operator_sqrt_field_C2<K>   Alternative2_Voronoi_vertex_2;
+
+    Voronoi_vertex_2 v(p, q, r);
+    Alternative1_Voronoi_vertex_2 valt1(p, q, r);
+    Alternative2_Voronoi_vertex_2 valt2(p, q, r);
+
+    Sign s = v.incircle(t);
+    Sign salt1 = valt1.incircle(t);
+    Sign salt2 = valt2.incircle(t);
+
+    if ( s != salt1 || s != salt2 ) {
+      std::cerr << "different results" << std::endl;
+      std::cerr << p << std::endl;
+      std::cerr << q << std::endl;
+      std::cerr << r << std::endl;
+      std::cerr << t << std::endl;
+    }
+
+    return s;
+#else
     Voronoi_vertex_2 v(p, q, r);
 
     return v.incircle(t);
+#endif
   }
 
 
