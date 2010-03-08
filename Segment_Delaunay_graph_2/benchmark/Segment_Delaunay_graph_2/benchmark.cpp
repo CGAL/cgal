@@ -5,11 +5,27 @@
 #include <fstream>
 #include <cassert>
 
+// add this to profile
+#define CGAL_PROFILE 1
+
+// add this to dump quadruples of sites for which the incircle test is called
+//#define CGAL_PROFILE_SDG_DUMP_INCIRCLE 1
+
+// add this to test if both old and new incircle tests give the same result
+//#define CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY 1
+
+// add this to use the old incircle test
+//#define CGAL_SDG_USE_OLD_INCIRCLE 1
 
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
-#include <CGAL/Leda_real.h>
+#ifdef CGAL_USE_LEDA
+#  include <CGAL/Leda_real.h>
+#else
+//#  include <CGAL/CORE_Expr.h>
+#  include <CGAL/Gmpq.h>
+#endif
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef  K::Point_2 Point_2;
@@ -19,8 +35,15 @@ typedef  K::Point_2 Point_2;
 #include <CGAL/Segment_Delaunay_graph_2.h>
 
 typedef CGAL::Field_with_sqrt_tag MTag;
+#ifdef CGAL_USE_LEDA
 typedef CGAL::Field_with_sqrt_tag EMTag;
 typedef CGAL::Simple_cartesian<leda::real> EK;
+#else
+//typedef CGAL::Field_with_sqrt_tag EMTag;
+//typedef CGAL::Simple_cartesian<CORE::Expr> EK;
+typedef CGAL::Integral_domain_without_division_tag EMTag;
+typedef CGAL::Simple_cartesian<CGAL::Gmpq> EK;
+#endif
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<K, MTag, EK, EMTag>  Gt;
 
 
@@ -121,7 +144,7 @@ insert_constraints_using_spatial_sort(SDG& sdg)
   timer.stop();
   std::cerr << " done (" << timer.time() << "s)\n";
 
-  std::cerr << "Inserting constraints...\n";
+  std::cerr << "Inserting constraints...";
     
   timer.reset();
   timer.start();
