@@ -27,9 +27,10 @@
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
 #ifdef CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
-#include <CGAL/Segment_Delaunay_graph_2/Incircle_sqrt_field_C2.h>
-#include <CGAL/Segment_Delaunay_graph_2/Incircle_operator_sqrt_field_C2.h>
-#endif
+#ifndef CGAL_SDG_USE_OLD_INCIRCLE
+#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_sqrt_field_C2.h>
+#endif // CGAL_SDG_USE_OLD_INCIRCLE
+#endif // CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
 
 CGAL_BEGIN_NAMESPACE
 
@@ -485,23 +486,26 @@ public:
 #endif
 
 #ifdef CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
-    typedef Incircle_sqrt_field_C2<K>   Alternative1_Voronoi_vertex_2;
-    typedef Incircle_operator_sqrt_field_C2<K>   Alternative2_Voronoi_vertex_2;
+#ifdef CGAL_SDG_USE_OLD_INCIRCLE
+    typedef Voronoi_vertex_sqrt_field_new_C2<K>   Alt_Voronoi_vertex_2;
+#else
+    typedef Voronoi_vertex_sqrt_field_C2<K>       Alt_Voronoi_vertex_2;
+#endif
 
     Voronoi_vertex_2 v(p, q, r);
-    Alternative1_Voronoi_vertex_2 valt1(p, q, r);
-    Alternative2_Voronoi_vertex_2 valt2(p, q, r);
+    Alt_Voronoi_vertex_2 v_alt(p, q, r);
 
     Sign s = v.incircle(t);
-    Sign salt1 = valt1.incircle(t);
-    Sign salt2 = valt2.incircle(t);
+    Sign s_alt = v_alt.incircle(t);
 
-    if ( s != salt1 || s != salt2 ) {
+    if ( s != s_alt ) {
       std::cerr << "different results" << std::endl;
       std::cerr << p << std::endl;
       std::cerr << q << std::endl;
       std::cerr << r << std::endl;
       std::cerr << t << std::endl;
+      CGAL_assertion( s == s_alt );
+      exit(1);
     }
 
     return s;
@@ -509,7 +513,7 @@ public:
     Voronoi_vertex_2 v(p, q, r);
 
     return v.incircle(t);
-#endif
+#endif // CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
   }
 
 

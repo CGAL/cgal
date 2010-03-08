@@ -25,14 +25,11 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_ring_C2.h>
-#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_sqrt_field_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_sqrt_field_new_C2.h>
 
-#ifdef USE_NEW_INCIRCLE
-#include <CGAL/Segment_Delaunay_graph_2/Incircle_sqrt_field_C2.h>
-#ifdef USE_OPERATOR_VERSION
-#include <CGAL/Segment_Delaunay_graph_2/Incircle_operator_sqrt_field_C2.h>
-#endif
-#endif
+#ifdef CGAL_SDG_USE_OLD_INCIRCLE
+#include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_sqrt_field_C2.h>
+#endif // CGAL_SDG_USE_OLD_INCIRCLE
 
 CGAL_BEGIN_NAMESPACE
 
@@ -51,15 +48,11 @@ namespace Internal {
   template<class K>
   struct Which_Voronoi_vertex_base_C2<K,Field_with_sqrt_tag>
   {
-#ifdef USE_NEW_INCIRCLE
-#ifdef USE_OPERATOR_VERSION
-    typedef Incircle_operator_sqrt_field_C2<K> Base;
+#ifdef CGAL_SDG_USE_OLD_INCIRCLE
+    typedef Voronoi_vertex_sqrt_field_C2<K>        Base;
 #else
-    typedef Incircle_sqrt_field_C2<K>          Base;
-#endif
-#else
-    typedef Voronoi_vertex_sqrt_field_C2<K>    Base;
-#endif
+    typedef Voronoi_vertex_sqrt_field_new_C2<K>    Base;
+#endif // CGAL_SDG_USE_OLD_INCIRCLE
   };
 } // namespace Internal
 
