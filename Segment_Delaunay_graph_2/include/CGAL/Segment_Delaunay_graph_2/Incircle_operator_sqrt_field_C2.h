@@ -29,8 +29,6 @@
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
-#include <boost/tuple/tuple.hpp>
-
 CGAL_BEGIN_NAMESPACE
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
@@ -72,7 +70,6 @@ private:
   Are_same_points_2     same_points;
   Are_same_segments_2   same_segments;
 
-
 private:
   //--------------------------------------------------------------------------
   // helpful methods
@@ -113,12 +110,16 @@ private:
   // the Voronoi vertex of three points
   //--------------------------------------------------------------------------
 
-  Point_2
+  void
   compute_vv(const Site_2& sp, const Site_2& sq, const Site_2& sr,
 	     const PPP_Type&) const
   {
     CGAL_precondition( sp.is_point() && sq.is_point() &&
 		       sr.is_point() );
+
+    // the following check is not really needed in this
+    if ( is_vv_computed ) { return; }
+    is_vv_computed = true;
 
     Point_2 p = sp.point(), q = sq.point(), r = sr.point();
 
@@ -134,7 +135,7 @@ private:
 		   (r.x() * p.y() - p.x() * r.y()) +
 		   (p.x() * q.y() - q.x() * p.y()) );
 
-    return Point_2(ux / uz, uy / uz);
+    vv = Point_2(ux / uz, uy / uz);
   }
 
 
@@ -142,12 +143,16 @@ private:
   // the Voronoi vertex of two points and a segment
   //--------------------------------------------------------------------------
 
-  Point_2
+  void
   compute_vv(const Site_2& sp, const Site_2& sq, const Site_2& sr,
 	     const PPS_Type&) const
   {
     CGAL_precondition( sp.is_point() && sq.is_point() &&
 		       sr.is_segment() );
+
+    if ( is_vv_computed ) { return; }
+    is_vv_computed = true;
+
     FT a, b, c;
     compute_supporting_line(sr.supporting_site(), a, b, c);
 
@@ -212,10 +217,11 @@ private:
       FT I = nl * (b * n_ + FT(4) * c_ * y_) - FT(4) * b * e1;
       FT X = FT(8) * nl * c_;
 
-      //      FT ux = J + pp.x() * X;
-      //      FT uy = I + pp.y() * X;
-      //      FT uz = X;
-      return Point_2(J / X + pp.x(), I / X + pp.y());
+      // the homogeneous coordinates of the Voronoi vertex are:
+      //          (J + pp.x() * X, I + pp.y() * X, X)
+
+      vv = Point_2(J / X + pp.x(), I / X + pp.y());
+      return;
     }
 
     FT e1 = a * x_ + b * y_;
@@ -231,7 +237,7 @@ private:
     FT ux = J + pp.x() * X - FT(2) * y_ * sqrt_S;
     FT uy = I + pp.y() * X + FT(2) * x_ * sqrt_S;
 
-    return Point_2(ux / X, uy / X);
+    vv = Point_2(ux / X, uy / X);
   }
 
 
@@ -241,7 +247,7 @@ private:
   //--------------------------------------------------------------------------
 
 
-  Point_2
+  void
   compute_vv(const Site_2& sp, const Site_2& sq, const Site_2& sr,
 	     const PSS_Type&) const
   {
@@ -262,13 +268,17 @@ private:
     CGAL_precondition( sp.is_point() && sq.is_segment() &&
 		       sr.is_segment() );
 
+    if ( is_vv_computed ) { return; }
+    is_vv_computed = true;
+
     bool pq = is_endpoint_of(sp, sq);
     bool pr = is_endpoint_of(sp, sr);
 
     Point_2 pp = sp.point();
 
     if ( pq && pr ) {
-      return pp;
+      vv = pp;
+      return;
     }
 
 
@@ -321,10 +331,10 @@ private:
 
       FT uz = -a1 * a2 - b1 * b2 + CGAL::sqrt(D1D2);
 
-      //      FT ux = J + pp.x() * uz;
-      //      FT uy = I + pp.y() * uz;
+      // the homogeneous coordinates of the Voronoi vertex are:
+      //       (J + pp.x() * uz, uy = I + pp.y() * uz, uz)
 
-      return Point_2(J / uz + pp.x(), I / uz + pp.y());
+      vv = Point_2(J / uz + pp.x(), I / uz + pp.y());
 
     } else if ( pr ) {
       FT J = a2 * c1_;
@@ -337,20 +347,20 @@ private:
 
       FT uz = -a1 * a2 - b1 * b2 + CGAL::sqrt(D1D2);
 
-      //      FT ux = J + pp.x() * uz;
-      //      FT uy = I + pp.y() * uz;
+      // the homogeneous coordinates of the Voronoi vertex are:
+      //      (J + pp.x() * uz, I + pp.y() * uz, uz)
 
-      return Point_2(J / uz + pp.x(), I / uz + pp.y());
+      vv = Point_2(J / uz + pp.x(), I / uz + pp.y());
 
     } else {
       Line_2 lq(a1, b1, c1_);
       Line_2 lr(a2, b2, c2_);
-      return compute_pll(pp, lq, lr);
+      compute_pll(pp, lq, lr);
     }
   }
 
 
-  Point_2
+  void
   compute_pll(const Point_2& p, const Line_2& lq, const Line_2& lr) const
   {
     FT a1 = lq.a(), b1 = lq.b(), c1_ = lq.c();
@@ -396,7 +406,7 @@ private:
     FT ux = J + p.x() * uz + sigma * CGAL::sqrt(u1);
     FT uy = I + p.y() * uz - rho * CGAL::sqrt(u2);
 
-    return Point_2(ux / uz, uy / uz);
+    vv = Point_2(ux / uz, uy / uz);
   }
 
 
@@ -625,12 +635,15 @@ private:
   }
 
 
-  Point_2
+  void
   compute_vv(const Site_2& sp, const Site_2& sq, const Site_2& sr,
 	     const SSS_Type&) const
   {
     CGAL_precondition( sp.is_segment() && sq.is_segment() &&
 		       sr.is_segment() );
+
+    if ( is_vv_computed ) { return; }
+    is_vv_computed = true;
 
     FT a[3], b[3], c[3];
     FT cx[3], cy[3], cz[3], sqrt_D[3];
@@ -650,7 +663,7 @@ private:
     FT uy = cy[0] * sqrt_D[0] + cy[1] * sqrt_D[1] + cy[2] * sqrt_D[2];
     FT uz = cz[0] * sqrt_D[0] + cz[1] * sqrt_D[1] + cz[2] * sqrt_D[2];
 
-    return Point_2(ux / uz, uy / uz);
+    vv = Point_2(ux / uz, uy / uz);
   }
 
 
@@ -761,7 +774,7 @@ private:
 
     // easy degeneracies --- end
 
-    Point_2 vv = compute_vv(p, q, r, type);
+    compute_vv(p, q, r, type);
     return incircle_p(vv, p, q, r, t, type);
   }
 
@@ -799,7 +812,7 @@ private:
 
     // easy degeneracies --- end
 
-    Point_2 vv = compute_vv(p, q, r, type);
+    compute_vv(p, q, r, type);
     return incircle_p(vv, p, q, r, t, type);
   }
 
@@ -826,7 +839,7 @@ private:
 
     // easy degeneracies --- end
 
-    Point_2 vv = compute_vv(p, q, r, type);
+    compute_vv(p, q, r, type);
     return incircle_p(vv, p, q, r, t, type);
   }
 
@@ -904,7 +917,7 @@ private:
     if (  !is_certain( d2 == NEGATIVE )  ) { return indeterminate<Sign>(); }
 
     Line_2 l = compute_supporting_line(t.supporting_site());
-    Point_2 vv = compute_vv(p, q, r, type);
+    compute_vv(p, q, r, type);
     Sign sl = incircle_xxxl(vv, p, q, r, l, type);
     
     if (  certainly( sl == POSITIVE )  ) { return sl; }
@@ -930,8 +943,8 @@ private:
   // the first three objects are points and the query object is a segment
   //--------------------------------------------------------------------------
 
-  Sign incircle_ppps(const Site_2& p, const Site_2& q, const Site_2& r,
-		     const Site_2& t) const
+  Sign incircle_s(const Site_2& p, const Site_2& q, const Site_2& r,
+		  const Site_2& t, const PPP_Type& type) const
   {
     CGAL_precondition( p.is_point() );
     CGAL_precondition( q.is_point() );
@@ -952,9 +965,12 @@ private:
     CGAL_assertion( n_ends < 3 );
     if ( n_ends == 2 ) { return NEGATIVE; }
 
+#ifndef CGAL_DISABLE_AM_CODE
+    // code added in previous version by Andreas + Monique -- start
     Site_2 const *pp1 = NULL;
     if ( end_pt ) pp1 = &p;
     else if ( end_qt ) pp1 = &q;
+    else if ( end_rt ) pp1 = &r;
     if ( pp1 != NULL ) {
       // As the Voronoi circle and the segment t touch in p1,
       // it is enough to check that the center and the non-touching
@@ -962,15 +978,17 @@ private:
       // are not in the same halfspace defined by the tangent line through p1
       Point_2 p1 = pp1->point();
       Point_2 p2 = other_site(*pp1, t).point();
-      Point_2 vv = compute_vv(p, q, r, PPP_Type());
+      compute_vv(p, q, r, type);
         
       Compute_scalar_product_2 csp;
       return -CGAL::sign( csp(vv - p1, p2 - p1) );
-    }    
+    }
+    // code added in previous version by Andreas + Monique -- end
+#endif // CGAL_DISABLE_AM_CODE
 
     // easy degeneracies --- end
 
-    return incircle_xxxs(p, q, r, t, PPP_Type());
+    return incircle_xxxs(p, q, r, t, type);
   }
 
   //--------------------------------------------------------------------------
@@ -978,8 +996,8 @@ private:
   // query object is a segment
   //--------------------------------------------------------------------------
 
-  Sign incircle_ppss(const Site_2& p, const Site_2& q, const Site_2& r,
-		     const Site_2& t) const
+  Sign incircle_s(const Site_2& p, const Site_2& q, const Site_2& r,
+		  const Site_2& t, const PPS_Type& type) const
   {
     CGAL_precondition( p.is_point() );
     CGAL_precondition( q.is_point() );
@@ -994,22 +1012,25 @@ private:
 
     if ( end_pt && end_qt ) { return NEGATIVE; }
 
-
-    Site_2 const *pp1 = &p, *pp2 = &q, *seg = &r;
+#ifndef CGAL_DISABLE_AM_CODE
+    // code added in previous version by Andreas + Monique -- start
+    Site_2 const *pp1 = &p, *pp2 = &q;
     if ( !end_qt ) { std::swap(pp1, pp2); }
 
     if ( is_endpoint_of(*pp2, t) ) {
       Point_2 p1 = other_site(*pp2, t).point();
       Point_2 p2 = pp2->point();
-      Point_2 vv = compute_vv(p, q, r, PPS_Type());
+      compute_vv(p, q, r, type);
 
       Compute_scalar_product_2 csp;
       return -CGAL::sign( csp(vv - p2, p1 - p2) );
     }
+    // code added in previous version by Andreas + Monique -- end
+#endif // CGAL_DISABLE_AM_CODE
 
     // easy degeneracies --- end
 
-    return incircle_xxxs(p, q, r, t, PPS_Type());
+    return incircle_xxxs(p, q, r, t, type);
   }
 
   //--------------------------------------------------------------------------
@@ -1017,8 +1038,8 @@ private:
   // object is a segment
   //--------------------------------------------------------------------------
 
-  Sign incircle_psss(const Site_2& p, const Site_2& q, const Site_2& r,
-		     const Site_2& t) const
+  Sign incircle_s(const Site_2& p, const Site_2& q, const Site_2& r,
+		  const Site_2& t, const PSS_Type& type) const
   {
     CGAL_precondition( p.is_point() );
     CGAL_precondition( q.is_segment() );
@@ -1059,6 +1080,9 @@ private:
       return ZERO;
     }
 
+#ifndef CGAL_DISABLE_M_CODE
+    // code added by Menelaos -- begin
+
     // in the code that follows we check whether one endpoint of the
     // query segment t is the same as the point p of a PSS circle. in
     // this case the result is known by taking the other point of t
@@ -1066,11 +1090,12 @@ private:
     if ( is_endpoint_of(p, t) ) {
       Point_2 p1 = p.point();
       Point_2 p2 = other_site(p, t).point();
-      Point_2 vv = compute_vv(p, q, r, PSS_Type());
+      compute_vv(p, q, r, type);
       Compute_scalar_product_2 csp;
       return -CGAL::sign( csp(vv - p1, p2 - p1) );
     }
-
+    // code added by Menelaos -- end
+#endif // CGAL_DISABLE_M_CODE
 
     // check if t has the same support as either q or r
     if ( same_segments(q.supporting_site(), t.supporting_site()) ) {
@@ -1083,7 +1108,7 @@ private:
 
     // easy degeneracies --- end
 
-    return incircle_xxxs(p, q, r, t, PSS_Type());
+    return incircle_xxxs(p, q, r, t, type);
   }
 
 
@@ -1093,15 +1118,15 @@ private:
   //--------------------------------------------------------------------------
 
   inline
-  Sign incircle_ssss(const Site_2& p, const Site_2& q, const Site_2& r,
-		     const Site_2& t) const
+  Sign incircle_s(const Site_2& p, const Site_2& q, const Site_2& r,
+		  const Site_2& t, const SSS_Type& type) const
   {
     CGAL_precondition( p.is_segment() );
     CGAL_precondition( q.is_segment() );
     CGAL_precondition( r.is_segment() );
     CGAL_precondition( t.is_segment() );
 
-    return incircle_xxxs(p, q, r, t, SSS_Type());
+    return incircle_xxxs(p, q, r, t, type);
   }
 
   //--------------------------------------------------------------------------
@@ -1141,8 +1166,6 @@ private:
   {
     CGAL_precondition( t.is_point() );
 
-    vertex_t v_type = compute_type(p, q, r);
-
     switch ( v_type ) {
     case PPP:
       return incircle_p(p, q, r, t, PPP_Type());
@@ -1175,29 +1198,27 @@ private:
   {
     CGAL_precondition( t.is_segment() );
 
-    vertex_t v_type = compute_type(p, q, r);
-
     switch ( v_type ) {
     case PPP:
-      return incircle_ppps(p, q, r, t);
+      return incircle_s(p, q, r, t, PPP_Type());
     case PPS:
       if ( p.is_segment() ) {
-	return incircle_ppss(q, r, p, t);
+	return incircle_s(q, r, p, t, PPS_Type());
       } else if ( q_.is_segment() ) {
-	return incircle_ppss(r, p, q, t);
+	return incircle_s(r, p, q, t, PPS_Type());
       } else {
-	return incircle_ppss(p, q, r, t);
+	return incircle_s(p, q, r, t, PPS_Type());
       }
     case PSS:
       if ( p.is_point() ) {
-	return incircle_psss(p, q, r, t);
+	return incircle_s(p, q, r, t, PSS_Type());
       } else if ( q.is_point() ) {
-	return incircle_psss(q, r, p, t);
+	return incircle_s(q, r, p, t, PSS_Type());
       } else {
-	return incircle_psss(r, p, q, t);
+	return incircle_s(r, p, q, t, PSS_Type());
       }
     default: // case SSS
-      return incircle_ssss(p, q, r, t);
+      return incircle_s(p, q, r, t, SSS_Type());
     }
   }
 
@@ -1205,48 +1226,10 @@ private:
 public:
   Incircle_operator_sqrt_field_C2(const Site_2& p,
 				  const Site_2& q, const Site_2& r)
-#if 0
-    : p_(p), q_(q), r_(r) {}
-#else
-    : p_(const_cast<Site_2&>(p)),
-      q_(const_cast<Site_2&>(q)),
-      r_(const_cast<Site_2&>(r))
+    : p_(p), q_(q), r_(r), is_vv_computed(false)
   {
-    vertex_t v_type = compute_type(p, q, r);
-
-    switch ( v_type ) {
-    case PPS:
-      if ( p.is_segment() ) {
-	p_ = const_cast<Site_2&>(q);
-	q_ = const_cast<Site_2&>(r);
-	r_ = const_cast<Site_2&>(p);
-      } else if ( q.is_segment() ) {
-	p_ = const_cast<Site_2&>(r);
-	q_ = const_cast<Site_2&>(p);
-	r_ = const_cast<Site_2&>(q);
-      } else {
-	p_ = const_cast<Site_2&>(p);
-	q_ = const_cast<Site_2&>(q);
-	r_ = const_cast<Site_2&>(r);
-      }
-      break;
-    case PSS:
-      if ( p.is_point() ) {
-	p_ = const_cast<Site_2&>(p);
-	q_ = const_cast<Site_2&>(q);
-	r_ = const_cast<Site_2&>(r);
-      } else if ( q.is_point() ) {
-	p_ = const_cast<Site_2&>(q);
-	q_ = const_cast<Site_2&>(r);
-	r_ = const_cast<Site_2&>(p);
-      } else {
-	p_ = const_cast<Site_2&>(r);
-	q_ = const_cast<Site_2&>(p);
-	r_ = const_cast<Site_2&>(q);
-      }
-    }
+    v_type = compute_type(p, q, r);
   }
-#endif
 
 
   inline bool is_degenerate_Voronoi_circle() const
@@ -1313,9 +1296,6 @@ private:
   Sign incircle_p_no_easy(const Site_2& p, const Site_2& q, const Site_2& r,
 			  const Site_2& t) const
   {
-    vertex_t v_type = compute_type(p, q, r);
-    Point_2 vv;
-
     Sign s(ZERO);
     switch ( v_type ) {
     case PPP:
@@ -1324,32 +1304,32 @@ private:
     case PPS:
       PPS_Type pps;
       if ( p.is_segment() ) {
-	vv = compute_vv(q, r, p, pps);
+	compute_vv(q, r, p, pps);
 	s = incircle_p_no_easy(vv, q, r, p, t, pps);
       } else if ( q.is_segment() ) {
-	vv = compute_vv(r, p, q, pps);
+	compute_vv(r, p, q, pps);
 	s = incircle_p_no_easy(vv, r, p, q, t, pps);
       } else {
-	vv = compute_vv(p, q, r, pps);
+	compute_vv(p, q, r, pps);
 	s = incircle_p_no_easy(vv, p, q, r, t, pps);
       }
       break;
     case PSS:
       PSS_Type pss;
       if ( p.is_point() ) {
-	vv = compute_vv(p, q, r, pss);
+	compute_vv(p, q, r, pss);
 	s = incircle_p_no_easy(vv, p, q, r, t, pss);
       } else if ( q.is_point() ) {
-	vv = compute_vv(q, r, p, pss);
+	compute_vv(q, r, p, pss);
 	s = incircle_p_no_easy(vv, q, r, p, t, pss);
       } else {
-	vv = compute_vv(r, p, q, pss);
+	compute_vv(r, p, q, pss);
 	s = incircle_p_no_easy(vv, r, p, q, t, pss);
       }
       break;
     case SSS:
       SSS_Type sss;
-      vv = compute_vv(p, q, r, sss);
+      compute_vv(p, q, r, sss);
       s = incircle_p_no_easy(vv, p, q, r, t, sss);
       break;
     }
@@ -1361,8 +1341,6 @@ private:
   Sign incircle_s_no_easy(const Site_2& p, const Site_2& q, const Site_2& r,
 			  const Site_2& t) const 
   {
-    vertex_t v_type = compute_type(p, q, r);
-
     switch ( v_type ) {
     case PPP:
       return incircle_xxxs(p, q, r, t, PPP_Type());
@@ -1407,33 +1385,30 @@ public:
 
   Orientation orientation(const Line_2& l) const
   {
-    vertex_t v_type = compute_type(p_, q_, r_);
-    Point_2 vv;
-
     switch ( v_type ) {
     case PPP:
-      vv = compute_vv(p_, q_, r_, PPP_Type());
+      compute_vv(p_, q_, r_, PPP_Type());
       break;
     case PPS:
       if ( p_.is_segment() ) {
-	vv = compute_vv(q_, r_, p_, PPS_Type());
+	compute_vv(q_, r_, p_, PPS_Type());
       } else if ( q_.is_segment() ) {
-	vv = compute_vv(r_, p_, q_, PPS_Type());
+	compute_vv(r_, p_, q_, PPS_Type());
       } else {
-	vv = compute_vv(p_, q_, r_, PPS_Type());
+	compute_vv(p_, q_, r_, PPS_Type());
       }
       break;
     case PSS:
       if ( p_.is_point() ) {
-	vv = compute_vv(p_, q_, r_, PSS_Type());
+	compute_vv(p_, q_, r_, PSS_Type());
       } else if ( q_.is_point() ) {
-	vv = compute_vv(q_, r_, p_, PSS_Type());
+	compute_vv(q_, r_, p_, PSS_Type());
       } else {
-	vv = compute_vv(r_, p_, q_, PSS_Type());
+	compute_vv(r_, p_, q_, PSS_Type());
       }
       break;
     default: // case SSS:
-      vv = compute_vv(p_, q_, r_, SSS_Type());
+      compute_vv(p_, q_, r_, SSS_Type());
       break;
     }
 
@@ -1447,8 +1422,17 @@ public:
   }
 
 private:
-  Site_2 p_, q_, r_;
+  // the defining sites of the Voronoi vertex
+  const Site_2& p_, &q_, &r_;
 
+  // indicates whether the Voronoi vertex has been computed
+  mutable bool is_vv_computed; 
+
+  // the type of the Voronoi vertex
+  vertex_t v_type;
+
+  // the computed Voronoi vertex is cached in this variable
+  mutable Point_2 vv;
 };
 
 
