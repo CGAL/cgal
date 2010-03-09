@@ -236,18 +236,11 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
                 mpfi()->right=*(r.fr());
         }
 
-        // copy constructor
+        // copy constructor with precision
         Gmpfi(const Gmpfi &a,Gmpfi::Precision_type p){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
-                if(p==mpfr_get_prec(a.left_mpfr())&&
-                                p==mpfr_get_prec(a.right_mpfr())){
-                        Gmpfi temp(a);
-                        dont_clear_on_destruction();
-                        swap(temp);
-                }else{
-                        mpfi_init2(mpfi(),p);
-                        mpfi_set(mpfi(),a.mpfi());
-                }
+                mpfi_init2(mpfi(),p);
+                mpfi_set(mpfi(),a.mpfi());
         }
 
         // default precision
@@ -255,8 +248,8 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
 #ifdef CGAL_HAS_THREADS
         static void init_precision_for_thread();
 #endif
-        static inline Gmpfi::Precision_type get_default_precision();
-        static inline Gmpfi::Precision_type set_default_precision(
+        static Gmpfi::Precision_type get_default_precision();
+        static Gmpfi::Precision_type set_default_precision(
                                                 Gmpfi::Precision_type prec);
 
         // precision of a single Gmpfi object
@@ -357,6 +350,7 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
 
 // default precision
 #ifdef CGAL_HAS_THREADS
+inline
 void Gmpfi::init_precision_for_thread(){
         CGAL_precondition(Gmpfi_default_precision_.get()==NULL);
         Gmpfi_default_precision_.reset(
