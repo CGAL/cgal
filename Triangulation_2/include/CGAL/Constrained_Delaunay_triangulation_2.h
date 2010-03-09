@@ -481,7 +481,7 @@ test_conflict(const Point& p, Face_handle fh) const
   // return true  if P is inside the circumcircle of fh
   // if fh is infinite, return true when p is in the positive
   // halfspace or on the boundary and in the  finite edge of fh
-  Oriented_side os = side_of_oriented_circle(fh,p);
+  Oriented_side os = side_of_oriented_circle(fh,p,true);
   if (os == ON_POSITIVE_SIDE) return true;
  
   if (os == ON_ORIENTED_BOUNDARY && is_infinite(fh)) {

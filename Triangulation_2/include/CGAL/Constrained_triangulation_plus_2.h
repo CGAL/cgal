@@ -183,6 +183,11 @@ public:
   size_type number_of_subconstraints(){
     return static_cast<size_type> (hierarchy.number_of_subconstraints());}
 
+  // public member, used by Mesh_2::Refine_edges
+  void split_constraint(Vertex_handle v1, Vertex_handle v2,
+                        Vertex_handle va) {
+    hierarchy.split_constraint(v1,v2,va);
+  }
 
 protected:
   void insert_subconstraint(Vertex_handle va,Vertex_handle vb);
