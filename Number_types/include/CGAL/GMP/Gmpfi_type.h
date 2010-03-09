@@ -91,9 +91,9 @@ struct Gmpfi_rep{
 // the default precision is a variable local to each thread in multithreaded
 // environments, or a global variable otherwise
 #ifdef CGAL_HAS_THREADS
-        boost::thread_specific_ptr<mp_prec_t> Gmpfi_default_precision_;
+        static boost::thread_specific_ptr<mp_prec_t> Gmpfi_default_precision_;
 #else
-        mp_prec_t Gmpfi_default_precision=CGAL_GMPFI_DEFAULT_PRECISION;
+        static mp_prec_t Gmpfi_default_precision=CGAL_GMPFI_DEFAULT_PRECISION;
 #endif
 
 class Gmpfi:
