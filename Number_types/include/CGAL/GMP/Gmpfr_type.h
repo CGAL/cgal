@@ -158,13 +158,15 @@ class Gmpfr:
         }
 
         Gmpfr(mpfr_srcptr f){
-                mpfr_custom_init_set(
-                        fr(),
-                        mpfr_custom_get_kind(f),
-                        mpfr_custom_get_exp(f),
-                        mpfr_get_prec(f),
-                        mpfr_custom_get_mantissa(f));
-                dont_clear_on_destruction();
+                //mpfr_custom_init_set(
+                //        fr(),
+                //        mpfr_custom_get_kind(f),
+                //        mpfr_custom_get_exp(f),
+                //        mpfr_get_prec(f),
+                //        mpfr_custom_get_mantissa(f));
+                //dont_clear_on_destruction();
+                mpfr_init2(fr(),mpfr_get_prec(f));
+                mpfr_set(fr(),f,GMP_RNDN);
                 CGAL_assertion((mpfr_nan_p(f)!=0 && mpfr_nan_p(fr())!=0) ||
                                (mpfr_unordered_p(f,fr())==0 &&
                                 mpfr_equal_p(f,fr())!=0));
