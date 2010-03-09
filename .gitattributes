@@ -2424,6 +2424,7 @@ Number_types/include/CGAL/mpfr_coercion_traits.h -text
 Number_types/test/Number_types/CMakeLists.txt -text
 Number_types/test/Number_types/Gmpfi.cpp -text
 Number_types/test/Number_types/Gmpfr.cpp -text
+Number_types/test/Number_types/Gmpfr_bug.cpp -text
 Number_types/test/Number_types/include/CGAL/_test_io.h -text
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.pdf -text svneol=unset#application/pdf

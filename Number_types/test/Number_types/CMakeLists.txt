@@ -84,6 +84,7 @@ if ( CGAL_FOUND )
     else( _IS_GMP_VERSION_TOO_LOW )
       include( ${MPFI_USE_FILE} )
       create_single_source_cgal_program( "Gmpfi.cpp" )
+      create_single_source_cgal_program( "Gmpfr_bug.cpp" )
     endif( _IS_GMP_VERSION_TOO_LOW )
   else( MPFI_FOUND )
     message( STATUS
