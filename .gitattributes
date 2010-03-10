@@ -252,6 +252,34 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_zoomin.bmp -te
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_zoomout.bmp -text svneol=unset#image/bmp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/lower_env_xpm.bmp -text svneol=unset#image/bmp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/upper_env_xpm.bmp -text svneol=unset#image/bmp
+Arrangement_on_surface_2/demo/xalci/axis.xpm -text
+Arrangement_on_surface_2/demo/xalci/data/bad_sing_asym_cont_7 -text
+Arrangement_on_surface_2/demo/xalci/data/covertical_sings_8 -text
+Arrangement_on_surface_2/demo/xalci/data/degenerate_intersection -text
+Arrangement_on_surface_2/demo/xalci/data/grid_arrangement -text
+Arrangement_on_surface_2/demo/xalci/data/heart_curve -text
+Arrangement_on_surface_2/demo/xalci/data/huge_cusp_example -text
+Arrangement_on_surface_2/demo/xalci/data/intro_curve_10 -text
+Arrangement_on_surface_2/demo/xalci/data/intro_curve_13 -text
+Arrangement_on_surface_2/demo/xalci/data/intro_curve_7 -text
+Arrangement_on_surface_2/demo/xalci/data/isolated_point -text
+Arrangement_on_surface_2/demo/xalci/data/lots_of_circles -text
+Arrangement_on_surface_2/demo/xalci/data/nicolash8 -text
+Arrangement_on_surface_2/demo/xalci/data/rand_12_64 -text
+Arrangement_on_surface_2/demo/xalci/data/rand_8_512 -text
+Arrangement_on_surface_2/demo/xalci/data/shoal -text
+Arrangement_on_surface_2/demo/xalci/data/ten_circles -text
+Arrangement_on_surface_2/demo/xalci/data/ten_sings_9 -text
+Arrangement_on_surface_2/demo/xalci/data/test_sequence -text
+Arrangement_on_surface_2/demo/xalci/data/three_conics -text
+Arrangement_on_surface_2/demo/xalci/data/three_cusps_three_flex_9 -text
+Arrangement_on_surface_2/demo/xalci/data/two_lines -text
+Arrangement_on_surface_2/demo/xalci/data/various_degree_arrangement -text
+Arrangement_on_surface_2/demo/xalci/include/misc.h -text
+Arrangement_on_surface_2/demo/xalci/include/xalci.h -text
+Arrangement_on_surface_2/demo/xalci/misc.cpp -text
+Arrangement_on_surface_2/demo/xalci/poly2ntl.cpp -text
+Arrangement_on_surface_2/demo/xalci/xalci.cpp -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Arrangement_2.png -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Bezier_arr.gif -text svneol=unset#image/gif
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/Bezier_arr.pdf -text svneol=unset#application/pdf
