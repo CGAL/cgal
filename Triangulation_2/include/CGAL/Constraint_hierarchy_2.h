@@ -625,7 +625,7 @@ typename Constraint_hierarchy_2<T,Data>::H_edge
 Constraint_hierarchy_2<T,Data>::
 make_edge(T va, T vb) const
 {
-   return (va<vb) ? H_edge(va,vb) : H_edge(vb,va);
+  return (va->point()<vb->point()) ? H_edge(va,vb) : H_edge(vb,va);
 }
 
 template <class T, class Data>
