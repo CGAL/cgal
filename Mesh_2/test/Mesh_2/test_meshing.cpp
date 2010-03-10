@@ -65,7 +65,7 @@ struct Tester2 {
     std::cerr << "Reading fish-and-rectangle.poly...";
     std::ifstream poly_file("fish-and-rectangle.poly");
     CGAL::read_triangle_poly_file(cdt, poly_file, std::back_inserter(seeds));
-
+    assert(cdt.is_valid());
     const size_type inititial_number_of_vertices = cdt.number_of_vertices();
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
               << "\nNumber of seeds: " << seeds.size() << "\n\n";
@@ -147,6 +147,7 @@ struct Tester2 {
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() 
               << "\n\n";
 
+    assert(cdt.is_valid());
     assert( number_of_vertices2 == number_of_vertices1bis );
 
     cdt = cdt2;
