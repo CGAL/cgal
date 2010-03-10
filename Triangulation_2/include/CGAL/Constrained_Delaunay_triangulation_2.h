@@ -377,7 +377,7 @@ is_flipable(Face_handle f, int i) const
   Face_handle ni = f->neighbor(i); 
   if (is_infinite(f) || is_infinite(ni)) return false; 
   if (f->is_constrained(i)) return false;
-  return (side_of_oriented_circle(ni, f->vertex(i)->point()) 
+  return (side_of_oriented_circle(ni, f->vertex(i)->point(), true) 
                                         == ON_POSITIVE_SIDE);
 }
 
