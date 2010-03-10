@@ -85,17 +85,22 @@ struct Tester {
 
     std::cout << "Conforming...\n";
     CDT cdt2=cdt;
+    assert(cdt.is_valid());
 
     // Gabriel for cdt
     make_conforming_Gabriel_2(cdt);
+    assert(cdt.is_valid());
     // Delaunay, then Gabriel for cdt2
     make_conforming_Delaunay_2(cdt2);
+    assert(cdt2.is_valid());
     std::cout << "Number of vertices after make_conforming_Delaunay_2: "
               << cdt2.number_of_vertices() << "\n";
     assert( cdt2.number_of_vertices() == 17 );
+    assert(cdt2.is_valid());
     make_conforming_Gabriel_2(cdt2);
     std::cout << "Number of vertices after make_conforming_Gabriel_2: "
               << cdt2.number_of_vertices() << "\n";
+    assert(cdt2.is_valid());
     assert( cdt2.number_of_vertices() == 45 );
 
     // check that numbers of vertices are the same in cdt and cdt2
