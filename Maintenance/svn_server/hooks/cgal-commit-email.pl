@@ -416,7 +416,7 @@ my @body;
     # Write summary
     push(@body, "*Summary*\n");
     push(@body, "\n");
-    push(@body, "Revision in ViewVC <$viewvc_url?rev=$rev&root=$project_name&view=rev>\n");
+    push(@body, "Revision in ViewVC <$viewvc_url?revision=$rev&root=$project_name&view=rev>\n");
     push(@body, "\n");
     push(@body, "New Revision: $rev\n");
     push(@body, "Author: $author\n");
@@ -432,7 +432,7 @@ my @body;
         @adds = sort @adds;
         push(@body, "*Added files*\n");
         push(@body, "\n");
-        push(@body, map { /\/$/ ? "$_\n" : "$_ <$viewvc_url/$_?root=$project_name&rev=$rev&view=markup>\n" } @adds);
+        push(@body, map { /\/$/ ? "$_\n" : "$_ <$viewvc_url/$_?root=$project_name&revision=$rev&view=markup>\n" } @adds);
         push(@body, "\n");
     }
 
@@ -452,7 +452,7 @@ my @body;
         @mods = sort @mods;
         push(@body, "*Modified files*\n");
         push(@body, "\n");
-        push(@body, map { "$_ <$viewvc_url/$_?root=$project_name&rev=$rev&r1=$prev_rev&r2=$rev>\n" } @mods);
+        push(@body, map { "$_ <$viewvc_url/$_?root=$project_name&revision=$rev&r1=$prev_rev&r2=$rev>\n" } @mods);
         push(@body, "\n");
     }
     push(@body, "\n");
@@ -481,7 +481,7 @@ my @body_html;
 
     # Write summary
     push(@body_html, "<H3>Summary</H3>\n");
-    push(@body_html, "<a href=\"$viewvc_url?rev=$rev&amp;root=$project_name&amp;view=rev\">Revision in ViewVC</a><br>\n");
+    push(@body_html, "<a href=\"$viewvc_url?revision=$rev&amp;root=$project_name&amp;view=rev\">Revision in ViewVC</a><br>\n");
     push(@body_html, "<br>\n");
     push(@body_html, "New Revision: $rev<br>\n");
     push(@body_html, "Author: $author<br>\n");
@@ -497,7 +497,7 @@ my @body_html;
     {
         @adds = sort @adds;
         push(@body_html, "<H3>Added files</H3>\n");
-        push(@body_html, map { /\/$/ ? "$_<br>\n" : "<a href=\"$viewvc_url/$_?root=$project_name&amp;rev=$rev&amp;view=markup\">$_</a><br>\n" } @adds);
+        push(@body_html, map { /\/$/ ? "$_<br>\n" : "<a href=\"$viewvc_url/$_?root=$project_name&amp;revision=$rev&amp;view=markup\">$_</a><br>\n" } @adds);
     }
 
     # Deleted files list
@@ -513,7 +513,7 @@ my @body_html;
     {
         @mods = sort @mods;
         push(@body_html, "<H3>Modified files</H3>\n");
-        push(@body_html, map { "<a href=\"$viewvc_url/$_?root=$project_name&amp;rev=$rev&amp;r1=$prev_rev&amp;r2=$rev\">$_</a><br>\n" } @mods);
+        push(@body_html, map { "<a href=\"$viewvc_url/$_?root=$project_name&amp;revision=$rev&amp;r1=$prev_rev&amp;r2=$rev\">$_</a><br>\n" } @mods);
     }
 
     # Write svn log (as plain text)
