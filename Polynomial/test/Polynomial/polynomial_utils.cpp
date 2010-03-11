@@ -15,6 +15,7 @@
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/Exponent_vector.h>
+#include <CGAL/Sqrt_extension.h>
 
 
 template <typename AK>
