@@ -113,7 +113,12 @@ CGAL 3.6 offers the following improvements and new functionality :
 
 7 Mesh Generation
 
-7.1 3D Mesh Generation
+7.2 2D Mesh Generation
+
+  - The 2D mesh generator can now be used with a constrained Delaunay
+    triangulation with constraints hierarchy (Constrained_triangulation_plus_2).
+
+7.2 3D Mesh Generation
 
   - The mesh generator has been enriched with an optimization phase to
     provide 3D meshes with well shaped tetrahedra (and in particular no
@@ -121,6 +126,7 @@ CGAL 3.6 offers the following improvements and new functionality :
     processes: two global optimization processes (ODT and Lloyd), a
     pertuber and an exuder. Each of these processes can be activated or
     not, and tuned to the users needs and to available computer resources.
+
 
 8 Support library
 
