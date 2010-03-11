@@ -39,13 +39,14 @@ if ( CGAL_FOUND )
         "MPFI tests need GMP>=4.2, some of the tests will not be compiled" )
     else( _IS_GMP_VERSION_TO_LOW )
       include( ${MPFI_USE_FILE} )
-        create_single_source_cgal_program( "Arithmetic_kernel.cpp" )
         create_single_source_cgal_program( "GMP_arithmetic_kernel.cpp" )      
     endif( _IS_GMP_VERSION_TO_LOW )
   else( MPFI_FOUND )
     message( STATUS
       "MPFI is not present, some of the tests will not be compiled." )
   endif( MPFI_FOUND )
+
+  create_single_source_cgal_program( "Arithmetic_kernel.cpp" )
 
 else()
   
