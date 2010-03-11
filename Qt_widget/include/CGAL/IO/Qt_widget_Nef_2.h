@@ -55,7 +55,7 @@ d_to_q(double x)
 
       { mantissa *= width; // shift double mantissa
         mantissa = std::modf(mantissa, &intpart);
-        num *= shift_pow;
+        num *= (long)shift_pow;
         num += (long)intpart;
         exponent -= shift;
       }
