@@ -1685,6 +1685,8 @@ Maintenance/rpm/SOURCES/CGAL_manual_tools-perl.patch svneol=native#text/x-diff
 Maintenance/rpm/SOURCES/CGAL_manual_tools-rpm.patch svneol=native#text/x-diff
 Maintenance/rpm/get_cgal_trunk_url -text
 Maintenance/rpm/rpmbuild -text
+Maintenance/svn_server/hooks/Mail/Sender.pm -text
+Maintenance/svn_server/hooks/Mail/Sender/CType/Ext.pm -text
 Maintenance/svn_server/hooks/post-commit -text
 Maintenance/svn_server/hooks/post-commit.tmpl -text
 Maintenance/svn_server/hooks/post-lock.tmpl -text
