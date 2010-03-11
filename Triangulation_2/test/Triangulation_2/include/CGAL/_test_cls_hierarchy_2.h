@@ -1,8 +1,18 @@
 #include <CGAL/Constraint_hierarchy_2.h>
 
+class Vertex {
+  int i;
+public:
+  int point() const {
+    return i;
+  }
+  Vertex(const int i) {
+    this->i = i;
+  }
+};
 
-typedef  int Vh;
-typedef  bool Data;
+typedef Vertex* Vh;
+typedef bool Data;
 typedef CGAL::Constraint_hierarchy_2<Vh, Data>  Hierarchy;
 typedef Hierarchy::H_constraint                 H_constraint;
 typedef Hierarchy::H_vertex                     H_vertex;
@@ -19,7 +29,7 @@ void
 _test_cls_hierarchy_2()
 {
   Vh v[10];
-  for(int i=0; i <10; i++) {v[i] = i;}
+  for(int i=0; i <10; i++) { v[i] = new Vertex(i);}
 
   Hierarchy h;
   h.insert_constraint(v[1],v[2]);
