@@ -63,7 +63,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "NT_checker.cpp" )
   create_single_source_cgal_program( "Quotient.cpp" )
   create_single_source_cgal_program( "quotient_io.cpp" )
-  create_single_source_cgal_program( "Quotient_new.cpp" )
   create_single_source_cgal_program( "root_of_2.cpp" )
   create_single_source_cgal_program( "Root_of_traits.cpp" )
   create_single_source_cgal_program( "rounding_modes.cpp" )
@@ -92,6 +91,8 @@ if ( CGAL_FOUND )
   endif( MPFI_FOUND )
   # all the programs below will be linked against MPFI in case it is
   # present and the version check did not fail
+
+  create_single_source_cgal_program( "Quotient_new.cpp" )
   create_single_source_cgal_program( "Coercion_traits.cpp" )
 
 else( CGAL_FOUND )

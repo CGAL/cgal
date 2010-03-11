@@ -67,13 +67,13 @@ void test_quotient() {
 }
 
 int main() {
-#ifdef CGAL_USE_LEDA
+#ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL
   test_quotient<CGAL::LEDA_arithmetic_kernel>();
 #endif
-#ifdef CGAL_USE_CORE
+#ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL
   test_quotient<CGAL::CORE_arithmetic_kernel>();
 #endif
-#ifdef CGAL_USE_GMP
+#ifdef CGAL_HAS_GMP_ARITHMETIC_KERNEL
   test_quotient<CGAL::GMP_arithmetic_kernel>();
 #endif
   return 0;
