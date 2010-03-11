@@ -103,7 +103,7 @@ public:
   
 
   // FLIPS
-  bool is_flipable(Face_handle f, int i) const;
+  bool is_flipable(Face_handle f, int i, bool perturb = true) const;
   void flip(Face_handle& f, int i);
   void flip_around(Vertex_handle va);
   void flip_around(List_vertices & new_vertices);
@@ -371,13 +371,13 @@ public:
 template < class Gt, class Tds, class Itag >
 bool 
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
-is_flipable(Face_handle f, int i) const
+is_flipable(Face_handle f, int i, bool perturb) const
   // determines if edge (f,i) can be flipped 
 {
   Face_handle ni = f->neighbor(i); 
   if (is_infinite(f) || is_infinite(ni)) return false; 
   if (f->is_constrained(i)) return false;
-  return (side_of_oriented_circle(ni, f->vertex(i)->point(), true) 
+  return (side_of_oriented_circle(ni, f->vertex(i)->point(), perturb) 
                                         == ON_POSITIVE_SIDE);
 }
 
@@ -672,7 +672,7 @@ is_valid(bool verbose, int level) const
     Finite_faces_iterator fit= finite_faces_begin();
     for (; fit != finite_faces_end(); fit++) {
       for(int i=0;i<3;i++) {
-	result = result && !is_flipable(fit,i);
+	result = result && !is_flipable(fit,i, false);
 	CGAL_triangulation_assertion( result );
       }
     }
