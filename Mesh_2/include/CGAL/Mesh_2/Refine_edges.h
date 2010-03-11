@@ -417,16 +417,50 @@ public:
 
     const Face_handle& f = edge.first;
     const int i = edge.second;
-    *faces_out++ = f;
+
+    zone.fh = triangulation_ref_impl().locate(p, zone.locate_type, zone.i, edge.first);
+
     const Face_handle n = f->neighbor(i);
-    *faces_out++ = n;
+
+    const bool f_does_conflict = (zone.locate_type == Tr::EDGE) ||
+      triangulation_ref_impl().test_conflict(p, f);
+
+    if(f_does_conflict) {
+       *faces_out++ = f;
+    } else {
+      CGAL_assertion(n == zone.fh);
+    }
+
+    const bool n_does_conflict = (zone.locate_type == Tr::EDGE) ||
+      triangulation_ref_impl().test_conflict(p, n);
+
+    CGAL_assertion(f_does_conflict || 
+                   n_does_conflict);
+
     const int ni = triangulation_ref_impl().tds().mirror_index(f, i);
-    std::pair<OutputItFaces,OutputItEdges>
-    pit = std::make_pair(faces_out,edges_out);
-    pit = triangulation_ref_impl().propagate_conflicts(p,f,Tr::ccw(i),pit);
-    pit = triangulation_ref_impl().propagate_conflicts(p,f,Tr:: cw(i),pit);
-    pit = triangulation_ref_impl().propagate_conflicts(p,n,Tr::ccw(ni),pit);
-    pit = triangulation_ref_impl().propagate_conflicts(p,n,Tr:: cw(ni),pit);
+
+    if(n_does_conflict) {
+       *faces_out++ = n;
+       if(!f_does_conflict) {
+         *edges_out++ = std::make_pair(f, i);
+       }
+    } else {
+      CGAL_assertion(f_does_conflict);
+      *edges_out++ = std::make_pair(n, ni);
+    }
+
+    std::pair<OutputItFaces,OutputItEdges> pit = 
+      std::make_pair(faces_out,edges_out);
+
+    if(f_does_conflict) {
+      pit = triangulation_ref_impl().propagate_conflicts(p,f,Tr::ccw(i),pit);
+      pit = triangulation_ref_impl().propagate_conflicts(p,f,Tr:: cw(i),pit);
+    }
+
+    if(n_does_conflict) {
+      pit = triangulation_ref_impl().propagate_conflicts(p,n,Tr::ccw(ni),pit);
+      pit = triangulation_ref_impl().propagate_conflicts(p,n,Tr:: cw(ni),pit);
+    }
     return zone; 
   }
 
