@@ -25,6 +25,7 @@
 # - Email content modified to be closer to CVS commit email format
 # - Email sent in both HTML + text
 
+use lib "/home/groups/cgal/hooks/";
 use Mail::Sender;
 require 5.004; # This is when locale support was added.
 
