@@ -1023,7 +1023,7 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                 Gmpfr g(mant.bit_size()); \
                 mpfr_div_2si( \
                         g.fr(), \
-                        f.fr, \
+                        f.fr(),                                         \
                         neg_exp?-mpz_get_ui(exp.mpz()):mpz_get_ui(exp.mpz()),
                         GMP_RNDN);)
         CGAL_expensive_assertion(g==mant);
