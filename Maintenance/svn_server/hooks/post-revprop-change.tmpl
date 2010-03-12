@@ -53,5 +53,5 @@ USER="$3"
 PROPNAME="$4"
 ACTION="$5"
 
-/usr/lib/subversion/hook-scripts/propchange-email.pl "$REPOS" "$REV" "$USER" "$PROPNAME" watchers@example.org
+/usr/lib/subversion/hook-scripts/commit-email.pl --revprop-change "$REPOS" "$REV" "$USER" "$PROPNAME" watchers@example.org
 
