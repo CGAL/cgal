@@ -72,6 +72,7 @@
      <property name="title" >
       <string>Cut plane</string>
      </property>
+     <addaction name="actionNone" />
      <addaction name="actionCutting_plane" />
      <addaction name="actionSigned_distance_function_to_facets" />
      <addaction name="actionUnsigned_distance_function_to_facets" />
@@ -280,6 +281,11 @@
   <action name="actionClear_cutting_plane" >
    <property name="text" >
     <string>Clear cutting plane</string>
+   </property>
+  </action>
+  <action name="actionNone" >
+   <property name="text" >
+    <string>None</string>
    </property>
   </action>
  </widget>
