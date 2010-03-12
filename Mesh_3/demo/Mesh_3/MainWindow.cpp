@@ -38,7 +38,6 @@ MainWindow::MainWindow(QWidget* parent)
   // Save some pointers from ui, for latter use.
   treeView = ui->treeView;
   viewer = ui->viewer;
-  viewer->setFPSIsDisplayed(true);
 
   // Setup the submenu of the View menu that can toggle the dockwidgets
   Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
