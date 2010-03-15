@@ -127,7 +127,7 @@ namespace CGAL {
     
 
       // constructor
-      Iterator_implementation(Tree& tree, Query_item& q, const Distance& tr,
+      Iterator_implementation(Tree& tree,const Query_item& q, const Distance& tr,
 			      FT Eps=FT(0.0), bool search_nearest=true)
 	: number_of_neighbours_computed(0), number_of_internal_nodes_visited(0), 
 	number_of_leaf_nodes_visited(0), number_of_items_visited(0),
@@ -344,7 +344,7 @@ namespace CGAL {
 
     // constructor
     Orthogonal_incremental_neighbor_search(Tree& tree,  
-					   Query_item& q, FT Eps = FT(0.0), 
+					   const Query_item& q, FT Eps = FT(0.0), 
 					   bool search_nearest=true, const Distance& tr=Distance()) 
       : start(tree,q,tr,Eps,search_nearest),
         past_the_end()
@@ -402,7 +402,7 @@ namespace CGAL {
       }
 
       // constructor
-      iterator(Tree& tree, Query_item& q, const Distance& tr=Distance(), FT eps=FT(0.0), 
+      iterator(Tree& tree,const Query_item& q, const Distance& tr=Distance(), FT eps=FT(0.0), 
 	       bool search_nearest=true)
 	: Ptr_implementation(new Iterator_implementation(tree, q, tr, eps, search_nearest))
 	{}
