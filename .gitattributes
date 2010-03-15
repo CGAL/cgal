@@ -1366,6 +1366,7 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#applic
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
 HalfedgeDS/examples/HalfedgeDS/hds_prog_default_with_ccb.cpp -text
 HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
+Installation/CHANGES_from_3.6-beta1 -text
 Installation/INSTALL -text
 Installation/LICENSE.FREE_USE -text
 Installation/auxiliary/cgal_create_cmake_script.1 -text

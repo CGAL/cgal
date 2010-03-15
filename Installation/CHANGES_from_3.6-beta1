@@ -1,0 +1,34 @@
+Here are the list of detailled changes between CGAL-3.6-beta1 and CGAL-3.6
+finale version, at a high level of details.
+
+The file CHANGES describes the changes between
+CGAL-3.5 and CGAL-3.6.
+
+The following has been changed since the release of CGAL-3.6-beta1:
+
+
+1 General
+
+  - Fix incompatibilities with Boost >= 1.42 (new path of
+    <boost/property_map.hpp>).
+
+
+2 Algebraic Kernel
+
+  - Fixes so that the macros defined by CGAL headers cannot interfere with
+    users code.
+
+
+3 Polyhedra
+
+  - Fix the plugin "cut_plugin" of the polyhedron demo.
+
+
+4 2D Mesh Generation
+
+  - The 2D mesh generator can now be used with a constrained Delaunay
+    triangulation with constraints hierarchy (Constrained_triangulation_plus_2).
+
+  - In some cases (refinement of a constrained edge that is on the convex
+    hull), the 2D mesh generator from CGAL-3.4 and CGAL-3.5 could create
+    invalid triangulations. This bug is now fixed.
