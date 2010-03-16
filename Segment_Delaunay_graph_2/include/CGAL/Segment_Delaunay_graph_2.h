@@ -36,7 +36,11 @@
 #include <CGAL/Segment_Delaunay_graph_storage_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_vertex_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
+#ifdef CGAL_SDG_NO_FACE_MAP
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#else
 #include <CGAL/Triangulation_face_base_2.h>
+#endif
 
 #include <CGAL/in_place_edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/edge_list.h>
@@ -265,6 +269,9 @@ protected:
   Point_container pc_;
   Input_sites_container isc_;
   Storage_traits st_;
+#ifdef CGAL_SDG_NO_FACE_MAP
+  std::vector<Face_handle> fhc_;
+#endif
 
 protected:
   // MORE LOCAL TYPES
@@ -1221,8 +1228,12 @@ protected:
 
   void expand_conflict_region(const Face_handle& f, const Site_2& t,
 			      const Storage_site_2& ss,
+#ifdef CGAL_SDG_NO_FACE_MAP
+			      List& l,
+#else
 			      List& l, Face_map& fm,
 			      std::map<Face_handle,Sign>& sign_map,
+#endif
 			      Triple<bool, Vertex_handle,
 			      Arrangement_type>& vcross);
 
@@ -1230,8 +1241,12 @@ protected:
   Vertex_list   add_bogus_vertices(List& l);
   void          remove_bogus_vertices(Vertex_list& vl);
 
+#ifdef CGAL_SDG_NO_FACE_MAP
+  void retriangulate_conflict_region(Vertex_handle v, List& l);
+#else
   void retriangulate_conflict_region(Vertex_handle v, List& l,
 				     Face_map& fm);
+#endif
 
 
 protected:

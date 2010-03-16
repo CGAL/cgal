@@ -379,14 +379,20 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
   Face_handle start_f;
   Sign s;
 
+#ifndef CGAL_SDG_NO_FACE_MAP
   std::map<Face_handle,Sign> sign_map;
+#endif
 
   do {
     Face_handle f(fc);
 
     s = incircle(f, t);
 
+#ifdef CGAL_SDG_NO_FACE_MAP
+    f->tds_data().set_incircle_sign(s);
+#else
     sign_map[f] = s;
+#endif
 
     if ( s == NEGATIVE ) {
       start_f = f;
@@ -406,8 +412,13 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
     do {
       e = *ec;
 
+#ifdef CGAL_SDG_NO_FACE_MAP
+      Sign s1 = e.first->tds_data().incircle_sign();
+      Sign s2 = e.first->neighbor(e.second)->tds_data().incircle_sign();
+#else
       Sign s1 = sign_map[e.first];
       Sign s2 = sign_map[e.first->neighbor(e.second)];
+#endif
 
       if ( s1 == s2 ) {
 	interior_in_conflict = edge_interior(e, t, s1);
@@ -422,7 +433,9 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
       ++ec;
     } while ( ec != ec_start );
 
+#ifndef CGAL_SDG_NO_FACE_MAP
     sign_map.clear();
+#endif
 
     CGAL_assertion( interior_in_conflict );
 
@@ -433,7 +446,9 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
   // we are in conflict with a Voronoi vertex; start from that and 
   // find the entire conflict region and then repair the diagram
   List l;
+#ifndef CGAL_SDG_NO_FACE_MAP
   Face_map fm;
+#endif
 
   Triple<bool, Vertex_handle, Arrangement_type>
     vcross(false, Vertex_handle(), AT2::DISJOINT);
@@ -443,13 +458,21 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
   // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
+#ifdef CGAL_SDG_NO_FACE_MAP
+  expand_conflict_region(start_f, t, ss, l, vcross);
+#else
   expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross);
+#endif
 
   CGAL_assertion( !vcross.first );
 
   Vertex_handle v = create_vertex(ss);
 
+#ifdef CGAL_SDG_NO_FACE_MAP
+  retriangulate_conflict_region(v, l);
+#else
   retriangulate_conflict_region(v, l, fm);
+#endif
 
   return v;
 }
@@ -779,14 +802,20 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   Face_handle start_f;
   Sign s;
 
+#ifndef CGAL_SDG_NO_FACE_MAP
   std::map<Face_handle,Sign> sign_map;
+#endif
 
   do {
     Face_handle f(fc);
 
     s = incircle(f, t);
 
+#ifdef CGAL_SDG_NO_FACE_MAP
+    f->tds_data().set_incircle_sign(s);
+#else
     sign_map[f] = s;
+#endif
 
     if ( s == NEGATIVE ) {
       start_f = f;
@@ -801,7 +830,9 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // we are in conflict with a Voronoi vertex; start from that and 
   // find the entire conflict region and then repair the diagram
   List l;
+#ifndef CGAL_SDG_NO_FACE_MAP
   Face_map fm;
+#endif
 
   Triple<bool, Vertex_handle, Arrangement_type>
     vcross(false, Vertex_handle(), AT2::DISJOINT);
@@ -811,7 +842,11 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
+#ifdef CGAL_SDG_NO_FACE_MAP
+  expand_conflict_region(start_f, t, ss, l, vcross);
+#else
   expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross);
+#endif
 
   CGAL_assertion( vcross.third == AT2::DISJOINT ||
 		  vcross.third == AT2::CROSSING ||
@@ -844,7 +879,11 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // usual...
   Vertex_handle v = create_vertex(ss);
 
+#ifdef CGAL_SDG_NO_FACE_MAP
+  retriangulate_conflict_region(v, l);
+#else
   retriangulate_conflict_region(v, l, fm);
+#endif
 
   return v;
 }
@@ -930,11 +969,19 @@ void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 expand_conflict_region(const Face_handle& f, const Site_2& t,
 		       const Storage_site_2& ss,
+#ifdef CGAL_SDG_NO_FACE_MAP
+		       List& l,
+#else
 		       List& l, Face_map& fm,
 		       std::map<Face_handle,Sign>& sign_map,
+#endif
 		       Triple<bool,Vertex_handle,Arrangement_type>& vcross)
 {
+#ifdef CGAL_SDG_NO_FACE_MAP
+  if ( f->tds_data().is_in_conflict() ) { return; }
+#else
   if ( fm.find(f) != fm.end() ) { return; }
+#endif
 
   // this is done to stop the recursion when intersecting segments
   // are found
@@ -944,14 +991,23 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
   // that the face is available for recycling. If we do not want the
   // face to be available for recycling we must set this flag to
   // false.
+#ifdef CGAL_SDG_NO_FACE_MAP
+  f->tds_data().mark_in_conflict();
+  fhc_.push_back(f);
+#else
   fm[f] = true;
+#endif
 
   //  CGAL_assertion( fm.find(f) != fm.end() );
 
   for (int i = 0; i < 3; i++) {
     Face_handle n = f->neighbor(i);
 
+#ifdef CGAL_SDG_NO_FACE_MAP
+    bool face_registered = n->tds_data().is_in_conflict();
+#else
     bool face_registered = (fm.find(n) != fm.end());
+#endif
 
     if ( !face_registered ) {
       for (int j = 0; j < 3; j++) {
@@ -975,7 +1031,11 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 	    vcross.second = vf;
 	    vcross.third = AT2::CROSSING;
 	    l.clear();
+#ifdef CGAL_SDG_NO_FACE_MAP
+	    fhc_.clear();
+#else
 	    fm.clear();
+#endif
 	    return;
 	  } else {
 	    CGAL_assertion ( at_res == AT2::DISJOINT ||
@@ -994,7 +1054,11 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 	    vcross.second = vf;
 	    vcross.third = AT2::INTERIOR;
 	    l.clear();
+#ifdef CGAL_SDG_NO_FACE_MAP
+	    fhc_.clear();
+#else
 	    fm.clear();
+#endif
 	    return;
 	  }
 	}
@@ -1003,9 +1067,15 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 
     Sign s = incircle(n, t);
 
+#ifdef CGAL_SDG_NO_FACE_MAP
+    n->tds_data().set_incircle_sign(s);
+
+    Sign s_f = f->tds_data().incircle_sign();
+#else
     sign_map[n] = s;
 
     Sign s_f = sign_map[f];
+#endif
 
     if ( s == POSITIVE ) { continue; }
     if ( s != s_f ) { continue; }
@@ -1030,7 +1100,11 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
     }
     l.remove(e);
 
+#ifdef CGAL_SDG_NO_FACE_MAP
+    expand_conflict_region(n, t, ss, l, vcross);
+#else
     expand_conflict_region(n, t, ss, l, fm, sign_map, vcross);
+#endif
 
     // this is done to stop the recursion when intersecting segments
     // are found
@@ -1085,6 +1159,42 @@ typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_list
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 add_bogus_vertices(List& l)
 {
+#if defined(USE_INPLACE_LIST) && defined(CGAL_SDG_NO_FACE_MAP)
+  Vertex_list vertex_list;
+
+  Edge e_start = l.front();
+  Edge e = e_start;
+
+  std::list<Edge> edge_list;
+
+  do {
+    Edge esym = sym_edge(e);
+    if ( l.is_in_list(esym) ) {
+      if ( !esym.first->is_selected(esym.second) ) {
+	e.first->mark_selected(e.second);
+	edge_list.push_back(e);
+      }
+    }
+    e = l.next(e);
+  } while ( e != e_start );
+
+  e_start = l.front();
+  e = e_start;
+  do {
+    if ( e.first->is_selected(e.second) ) {
+      e.first->mark_unselected(e.second);
+    }
+  } while ( e != e_start );
+
+  typename std::list<Edge>::iterator it;
+
+  for (it = edge_list.begin();  it != edge_list.end(); ++it) {
+    Vertex_handle v = add_bogus_vertex(*it, l);
+    vertex_list.push_back(v);
+  }
+
+  return vertex_list;
+#else
   Vertex_list vertex_list;
 
   std::set<Edge> edge_list;
@@ -1111,6 +1221,7 @@ add_bogus_vertices(List& l)
   }
 
   return vertex_list;
+#endif
 }
 
 template<class Gt, class ST, class D_S, class LTag>
@@ -1129,8 +1240,13 @@ remove_bogus_vertices(Vertex_list& vl)
 template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
-retriangulate_conflict_region(Vertex_handle v, List& l, 
+#ifdef CGAL_SDG_NO_FACE_MAP
+retriangulate_conflict_region(Vertex_handle v, List& l)
+#else
+retriangulate_conflict_region(Vertex_handle v, List& l,
 			      Face_map& fm)
+#endif
+
 {
   // 1. add the bogus vetrices
   Vertex_list dummy_vertices = add_bogus_vertices(l);
@@ -1143,19 +1259,27 @@ retriangulate_conflict_region(Vertex_handle v, List& l,
     Face_handle f = eit.first;
     int k = eit.second;
     CGAL_assertion( !l.is_in_list(esym) );
+#ifdef CGAL_SDG_NO_FACE_MAP
+    CGAL_assertion( !f->tds_data().is_in_conflict() );
+#else
     CGAL_assertion( fm.find(f) == fm.end() );
+#endif
     f->vertex(ccw(k))->set_face(f);
     f->vertex( cw(k))->set_face(f);
     eit = l.next(eit);
   } while ( eit != e_start );
 
   // 3. copy the edge list to a vector of edges and clear the edge list
-  std::vector<Edge> ve;
+  // MK:: here I actually need to copy the edges to an std::list<Edge>, or
+  // even better add iterators to the list of type List
+  std::vector<Edge> ve(l.size());
 
   Edge efront = l.front();
   Edge e = efront;
+  unsigned int k = 0;
   do {
-    ve.push_back(e);
+    ve[k] = e;
+    ++k;
     e = l.next(e);
   } while ( e != efront );
 
@@ -1168,6 +1292,15 @@ retriangulate_conflict_region(Vertex_handle v, List& l,
   remove_bogus_vertices(dummy_vertices);
 
   // 6. remove the unused faces
+#ifdef CGAL_SDG_NO_FACE_MAP
+  typename std::vector<Face_handle>::iterator it;
+  for (it = fhc_.begin(); it != fhc_.end(); ++it) {
+    (*it)->tds_data().clear();
+    this->_tds.delete_face( *it );
+  }
+
+  fhc_.clear();
+#else
   typename Face_map::iterator it;
   for (it = fm.begin(); it != fm.end(); ++it) {
     Face_handle fh = (*it).first;
@@ -1175,6 +1308,7 @@ retriangulate_conflict_region(Vertex_handle v, List& l,
   }
 
   fm.clear();
+#endif
 
   // 7. DONE!!!!
 }
