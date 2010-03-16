@@ -4,13 +4,13 @@
 \ccDefinition
 
 An object of the class \ccc{Gmpfr} is a fixed precision floating-point
-number, based on the MPFR library. This type is inexact, due to the fact
+number, based on the \mpfr\ library. This type is inexact, due to the fact
 that the mantissa of each number is represented by a fixed amount of bits
 (this amount is called \emph{precision}). If an operation needs more bits
 than the precision of the result number, the results are rounded following
 different possible criteria (called \emph{rounding modes}).
 
-Currently, MPFR supports four rounding modes: round to nearest,
+Currently, \mpfr\ supports four rounding modes: round to nearest,
 round toward zero, round down (or toward \(-\infty\)) and round up
 (or toward \(+\infty\)).  When not specified explicitly, the
 operations use the default rounding mode, which is in practice a
@@ -46,41 +46,41 @@ This type is \ccc{ImplicitInteroperable} with \ccc{Gmpz}, \verb-long-,
 
 %--------------------------------------------------
 % \ccConstructor{Gmpfr(mpfr_srcptr p);}
-%         {Creates a MPFR number, initialized with the value of \ccc{p},
-%         a MPFR number used in a C implementation. The data structure
+%         {Creates a \mpfr\ number, initialized with the value of \ccc{p},
+%         a \mpfr\ number used in a C implementation. The data structure
 %         containing \ccc{p} will not be cleared after object's
 %         destruction.}
 %--------------------------------------------------
 
 \ccConstructor{Gmpfr(long si);}
-        {Creates a MPFR number, initialized with the value of \ccc{si}.}
+        {Creates \ccc{Gmpfr}, initialized with the value of \ccc{si}.}
 
 \ccConstructor{Gmpfr(unsigned long ui);}
-        {Creates a MPFR number, initialized with the value of \ccc{ui}.}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{ui}.}
 
 \ccConstructor{Gmpfr(int i);}
-        {Creates a MPFR number, initialized with the value of \ccc{i}.}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{i}.}
 
 \ccConstructor{Gmpfr(double d);}
-        {Creates a MPFR number, initialized with the value of \ccc{d}.}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{d}.}
 
 \ccConstructor{Gmpfr(long double ld);}
-        {Creates a MPFR number, initialized with the value of \ccc{ld}.}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{ld}.}
 
 \ccConstructor{Gmpfr(const Gmpz &z);}
-        {Creates a MPFR number, initialized with the value of \ccc{z}.}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{z}.}
 
 \ccConstructor{Gmpfr(const Gmpzf &zf);}
-        {Creates a MPFR number, initialized with the value of \ccc{zf}.}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{zf}.}
 
 \ccConstructor{Gmpfr(std::pair<Gmpz,long> ie);}
-        {Creates a MPFR number, initialized with the value of
+        {Creates a \ccc{Gmpfr}, initialized with the value of
         \( ie.first \times 2^{ie.second} \) .}
 
 Note that all constructors can be called with two optional parameters.
 One can specify as second parameter the rounding mode desired for
 the conversion from the source number and as a third parameter the
-precision with which this MPFR number will be created.  If only one
+precision with which this \ccc{Gmpfr} will be created.  If only one
 optional parameter is specified, it can be either the rounding mode
 or the precision. If no optional parameters are specified, the
 precision of the created object is chosen in such a way that the
@@ -116,25 +116,25 @@ floating-point number that is equal or smaller than to \verb-z-.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Each Gmpfr object has a precision associated to it. The precision is the
-amount of bits needed to represent the mantissa. MPFR has a default
+amount of bits needed to represent the mantissa. \mpfr\ has a default
 precision value, which can be controlled by static functions of the Gmpfr
 class (in practice, this default value is a variable local to each
 execution thread). There are also functions to get and set the precision of
 each Gmpfr object.
 
 \ccFunction{static Precision_type get_default_precision();}
-        {This returns the current precision used in MPFR creation
-        by default.}
+        {This returns the current precision used in \ccc{Gmpfr}
+        creation by default.}
 
 \ccFunction{static Precision_type set_default_precision(Precision_type p);}
-        {This function sets the default MPFR precision to p, and returns
+        {This function sets the default \mpfr\ precision to p, and returns
         the old one.}
 
 \ccMethod{Precision_type get_precision()const;}
         {Returns the precision of \ccVar.}
 
 \ccMethod{Gmpfr round(Precision_type p, std::float_round_style r)const;}
-        {Returns the value of the number, rounded with precision \ccc{p}
+        {Returns the value of \ccVar, rounded with precision \ccc{p}
         in the direction \ccc{r}.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,11 +142,11 @@ each Gmpfr object.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \ccFunction{static std::float_round_style get_default_rndmode();}
-        {This function returns the current rounding mode used by MPFR.}
+        {This function returns the current rounding mode used by \mpfr.}
 
 \ccFunction{static std::float_round_style
             set_default_rndmode(std::float_round_style r);}
-        {This function sets the MPFR rounding mode to \ccc{r} and returns
+        {This function sets the \mpfr\ rounding mode to \ccc{r} and returns
         the old one.}
 
 
@@ -154,7 +154,7 @@ each Gmpfr object.
 %% inexact flags handling functions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-MPFR provides some flags to know whether performed operations were exact
+\mpfr\ provides some flags to know whether performed operations were exact
 or not, or they incurred in overflow or underflow, if the exponent is
 out of range, or the result was \ccc{NaN} (not-a-number). One can clear the
 flags before a set of operations and inspect them afterward, in order to
@@ -162,7 +162,7 @@ see if something unexpected happened during the operations. The static
 functions used to handle flags are:
 
 \ccFunction{static void clear_flags();}
-        {Clears all the flags set by MPFR, (they are not cleared
+        {Clears all the flags set by \mpfr (they are not cleared
         automatically).}
 
 \ccFunction{static bool underflow_flag();}
@@ -179,7 +179,7 @@ functions used to handle flags are:
 
 \ccFunction{static bool erange_flag();}
         {Returns \ccc{true} iff a range error occurred. Such an exception
-        occurs when some function which does not return an MPFR number
+        occurs when some function which does not return a \ccc{Gmpfr}
         has an invalid result. For example, this flag will be set if
         one of the operands of a comparison is \ccc{NaN}.}
 
@@ -353,7 +353,7 @@ the compared numbers is \ccc{NaN}, the \ccc{erange} flag is set.
 
 
 \ccImplementation
-\ccc{Gmpfr}s are reference counted. Since the MPFR library can be compiled
+\ccc{Gmpfr}s are reference counted. Since the \mpfr\ library can be compiled
 to be thread-safe, this interface is designed to keep the thread-safety.
 
 \ccSeeAlso

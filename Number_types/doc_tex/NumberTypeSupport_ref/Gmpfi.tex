@@ -4,7 +4,7 @@
 \ccDefinition
 
 An object of the class \ccc{Gmpfi} is a closed interval, whith
-endpoints represented as MPFR floating-point numbers.  An interval can
+endpoints represented as \mpfr\ floating-point numbers.  An interval can
 have finite or infinite endpoints and its meaning is straightforward.
 It can also have one (or both) NaN endpoint(s): this indicates that an
 invalid operation has been performed and that the resulting interval
@@ -32,8 +32,8 @@ and \verb-long double-.
 \ccCreation
 
 All the constructors accept an optional last argument: a precision
-(a \ccc{Precision_type}, which can be used to specify the precision
-of the Gmpfr endpoints. If none is specified, the default precision
+(a \ccc{Precision_type}, which can be used to specify the precision of
+the \ccc{Gmpfr} endpoints. If none is specified, the default precision
 will be used. As the endpoints are represented with a fixed number of
 bits, they may need to be rounded. In this case, the number from which
 the \ccc{Gmpfi} was constructed is guaranteed to be included in the
@@ -49,18 +49,18 @@ constructed interval.
 
 %--------------------------------------------------
 % \ccConstructor{Gmpfi(mpfi_srcptr p);}
-%         {creates an MPFI interval, initialized with the value of
-%         \ccstyle{p}, a MPFI number used in a C implementation. The data
+%         {creates a \ccc{Gmpfi} interval, initialized with the value of
+%         \ccstyle{p}, a \mpfi\ number used in a C implementation. The data
 %         structure containing \ccc{p} will not be cleared after object's
 %         destruction.}
-%-------------------------------------------------- 
+%--------------------------------------------------
 
 \ccConstructor{template <class T>
                 Gmpfi(const T& t,Precision_type p=get_default_precision());}
-	{creates a \ccc{Gmpfi} initialized with the value of \ccc{t}.
-	\ccc{T} is \ccc{Gmpfr}, \ccc{Gmpq}, or any type from which
-	\ccc{Gmpfr} can be constructed from. The rounding of the
-	endpoints will guarantee that \ccc{t} is included in \ccVar.}
+        {creates a \ccc{Gmpfi} initialized with the value of \ccc{t}.
+        \ccc{T} is \ccc{Gmpfr}, \ccc{Gmpq}, or any type from which
+        \ccc{Gmpfr} can be constructed from. The rounding of the
+        endpoints will guarantee that \ccc{t} is included in \ccVar.}
 
 \ccConstructor{Gmpfi(const Gmpfr &left,
                      const Gmpfr &right,
@@ -273,7 +273,7 @@ of comparisons:
 %         the numbers in interval \ccc{y}, \ccc{indeterminate} if
 %         \ccVar~contains the squares of some numbers in \ccc{y} but not
 %         of all of them, and \ccc{false} otherwise.}
-%-------------------------------------------------- 
+%--------------------------------------------------
 
 %--------------------------------------------------
 % \ccMethod{Uncertain<bool> divides(const Gmpfi &n,Gmpfi &c,
@@ -281,7 +281,7 @@ of comparisons:
 %         {Returns \ccVar \ccc{.divides(n)}. If it is \ccc{true}, sets
 %         \ccc{c} such that \( \ccc{n} = \ccVar \times \ccc{c} \), with
 %         precision \ccc{p}.}
-%-------------------------------------------------- 
+%--------------------------------------------------
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -309,7 +309,5 @@ of comparisons:
 \ccRefIdfierPage{RealEmbeddable}\\
 \ccRefIdfierPage{FieldWithKthRoot}\\
 
-\end{ccRefClass} 
+\end{ccRefClass}
 \ccDefGlobalScope{CGAL::}
-
-% vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab
