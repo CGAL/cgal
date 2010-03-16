@@ -1257,8 +1257,12 @@ public:
   }
 
 
-  const Point_2& point() const
+  Point_2 point() const
   {
+    if ( is_degenerate_Voronoi_circle() ) {
+      return degenerate_point();
+    }
+
     if ( !is_vv_computed ) {
       switch ( v_type ) {
       case PPP:
