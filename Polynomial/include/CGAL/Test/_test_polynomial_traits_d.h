@@ -11,6 +11,7 @@
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/ipower.h>
 #include <CGAL/Random.h>
+#include <CGAL/Polynomial_traits_d.h>
 #include <cmath>
 
 
