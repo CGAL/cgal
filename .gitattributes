@@ -1687,6 +1687,7 @@ Maintenance/rpm/get_cgal_trunk_url -text
 Maintenance/rpm/rpmbuild -text
 Maintenance/svn_server/hooks/Mail/Sender.pm -text
 Maintenance/svn_server/hooks/Mail/Sender/CType/Ext.pm -text
+Maintenance/svn_server/hooks/check-capabilities.pl -text
 Maintenance/svn_server/hooks/post-commit -text
 Maintenance/svn_server/hooks/post-commit.tmpl -text
 Maintenance/svn_server/hooks/post-lock.tmpl -text
@@ -1699,6 +1700,7 @@ Maintenance/svn_server/hooks/pre-lock.tmpl -text
 Maintenance/svn_server/hooks/pre-revprop-change -text
 Maintenance/svn_server/hooks/pre-revprop-change.tmpl -text
 Maintenance/svn_server/hooks/pre-unlock.tmpl -text
+Maintenance/svn_server/hooks/start-commit -text
 Maintenance/svn_server/hooks/start-commit.tmpl -text
 Maintenance/test_handling/testresult.css svneol=native#text/css
 Manual/doc_html/cgal.css -text
