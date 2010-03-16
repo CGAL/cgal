@@ -59,6 +59,25 @@ class Triangulation_data_structure_2
   friend class Triangulation_ds_face_circulator_2<Tds>;
   friend class Triangulation_ds_edge_circulator_2<Tds>;
   friend class Triangulation_ds_vertex_circulator_2<Tds>;
+
+#ifdef CGAL_TDS2_DATA
+public:
+
+  class Face_data {
+    bool in_conflict_;
+    Sign incircle_sign_;
+  public:
+    Face_data() : in_conflict_(false), incircle_sign_(ZERO) {}
+
+    inline void clear()                    { in_conflict_ = false; }
+    inline void mark_in_conflict()         { in_conflict_ = true; }
+    inline void set_incircle_sign(Sign s)  { incircle_sign_ = s; }
+
+    inline bool is_clear()       const { return !in_conflict_; }
+    inline bool is_in_conflict() const { return in_conflict_; }
+    inline Sign incircle_sign()  const { return incircle_sign_; }
+  };
+#endif
                 
 public:
   typedef Vertex_base                                Vertex;

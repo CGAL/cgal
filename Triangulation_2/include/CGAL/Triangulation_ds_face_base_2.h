@@ -34,6 +34,9 @@ public:
   typedef TDS                          Triangulation_data_structure;
   typedef typename TDS::Vertex_handle  Vertex_handle;
   typedef typename TDS::Face_handle    Face_handle;
+#ifdef CGAL_TDS2_DATA
+  typedef typename TDS::Face_data      TDS_data;
+#endif
 
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_face_base_2<TDS2> Other; }; 
@@ -41,6 +44,9 @@ public:
 private:
   Vertex_handle V[3];
   Face_handle   N[3];
+#ifdef CGAL_TDS2_DATA
+  TDS_data      _tds_data;
+#endif
 
 public:
   Triangulation_ds_face_base_2();
@@ -89,6 +95,11 @@ public:
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
   static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
 
+#ifdef CGAL_TDS2_DATA
+  // TDS internal data access functions.
+        TDS_data& tds_data()       { return _tds_data; }
+  const TDS_data& tds_data() const { return _tds_data; }
+#endif
 };
 
 template <class TDS>
