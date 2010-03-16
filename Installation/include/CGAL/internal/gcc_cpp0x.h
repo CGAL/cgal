@@ -25,7 +25,7 @@
 
 #if defined __GNUC__ && defined __GXX_EXPERIMENTAL_CXX0X__
 
-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ 3) // GCC >= 4.3
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3) // GCC >= 4.3
 
 // (tested with Fedora 10's g++ 4.3.2)
 
@@ -40,7 +40,7 @@
 
 #endif // GCC >= 4.3
 
-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ 4) // GCC >= 4.4
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) // GCC >= 4.4
 
 #undef CGAL_CFG_NO_CPP0X_AUTO
 #undef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
@@ -48,7 +48,7 @@
 
 #endif // GCC >= 4.4
 
-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ 5) // GCC >= 4.5
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5) // GCC >= 4.5
 
 #undef CGAL_CFG_NO_CPP0X_LAMBDAS
 
