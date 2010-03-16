@@ -669,6 +669,9 @@ sub format_curly_brace_pairs_expressions
     $buf =~ s/\\ccMethod\{.*?~\Q$item_to_document\E\s.*?\}\n\{.*?\}\n\\ccGlue\n//smg;
     $buf =~ s/\\ccMethod\{.*?operator\s*=\s*\(.*?\}\n\{.*?\}\n\\ccGlue\n//smg;
 
+    # replace operator-\/ by operator-
+    $buf =~ s/(\\ccMethod\{[^\}]*operator-)\\\//$1/smg;
+
     # Security: remove blank lines before/after curly braces pairs
     $buf =~ s/\{\n+/\{\n/g;
     $buf =~ s/\n+\}/\n\}/g;
