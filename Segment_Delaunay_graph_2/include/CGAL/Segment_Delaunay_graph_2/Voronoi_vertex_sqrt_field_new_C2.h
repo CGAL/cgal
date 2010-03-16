@@ -1257,6 +1257,41 @@ public:
   }
 
 
+  const Point_2& point() const
+  {
+    if ( !is_vv_computed ) {
+      switch ( v_type ) {
+      case PPP:
+	compute_vv(p_, q_, r_, PPP_Type());
+	break;
+      case PPS:
+	if ( p_.is_segment() ) {
+	  compute_vv(q_, r_, p_, PPS_Type());
+	} else if ( q_.is_segment() ) {
+	  compute_vv(r_, p_, q_, PPS_Type());
+	} else {
+	  compute_vv(p_, q_, r_, PPS_Type());
+	}
+	break;
+      case PSS:
+	if ( p_.is_point() ) {
+	  compute_vv(p_, q_, r_, PSS_Type());
+	} else if ( q_.is_point() ) {
+	  compute_vv(q_, r_, p_, PSS_Type());
+	} else {
+	  compute_vv(r_, p_, q_, PSS_Type());
+	}
+	break;
+      default: // case SSS:
+	compute_vv(p_, q_, r_, SSS_Type());
+	break;
+      }
+    }
+
+    return vv;
+  }
+
+
   inline Sign incircle(const Site_2& t) const
   {
     if ( t.is_point() ) {
