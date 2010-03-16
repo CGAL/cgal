@@ -1,5 +1,24 @@
 Release notes of CGAL.
 
+----------------------------- Release 3.7 ----------------------------------
+
+CGAL 3.7 offers the following improvements and new functionality : 
+
+x Triangulations and Delaunay Triangulations
+
+x.y 2D Triangulations
+
+  - The Delaunay and regular 2D triangulations now use a symbolic
+    perturbation to choose a particular triangulation in co-circular cases.
+
+
+x Mesh Generation
+
+x.y 2D Mesh Generation
+
+  - The execution of the 2D mesh generator is now deterministic (same at
+    each run).
+
 ----------------------------- Release 3.6 ----------------------------------
 
 CGAL 3.6 offers the following improvements and new functionality : 

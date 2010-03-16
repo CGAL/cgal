@@ -44,6 +44,19 @@ public:
   typedef typename std::list<T>::iterator               H_vertex_it;
   typedef typename std::list<H_constraint>::iterator    H_constraint_it;
 
+  struct Pair_compare {
+    bool operator()(const H_edge& e1, const H_edge& e2) const {
+      if(e1.first->point() < e2.first->point()) {
+        return true;
+      } else if(e1.first->point() == e2.first->point() && 
+                e1.second->point() < e2.second->point()) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  };
+
   class H_context {
     friend class Constraint_hierarchy_2<T,Data>;
   private:
@@ -59,8 +72,10 @@ public:
   typedef typename std::list<H_context>::iterator       H_context_iterator;
 
   typedef std::map<T, Data>                             H_vertex_map;
-  typedef std::map<H_constraint, H_vertex_list*>        H_c_to_sc_map;
-  typedef std::map<H_edge,   H_context_list* >          H_sc_to_c_map;
+  typedef std::map<H_constraint, H_vertex_list*, 
+                   Pair_compare>                        H_c_to_sc_map;
+  typedef std::map<H_edge,   H_context_list*, 
+                   Pair_compare >                       H_sc_to_c_map;
 
   typedef typename H_c_to_sc_map::const_iterator        H_c_iterator;
   typedef typename H_sc_to_c_map::const_iterator        H_sc_iterator;
