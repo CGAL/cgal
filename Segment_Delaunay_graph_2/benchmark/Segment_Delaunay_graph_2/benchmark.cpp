@@ -17,6 +17,10 @@
 // add this to use the old incircle test
 //#define CGAL_SDG_USE_OLD_INCIRCLE 1
 
+#define CGAL_SDG_NO_FACE_MAP 1
+#define CGAL_TDS2_DATA 1
+#define USE_INPLACE_LIST 1
+
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
@@ -47,8 +51,18 @@ typedef CGAL::Simple_cartesian<CGAL::Gmpq> EK;
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<K, MTag, EK, EMTag>  Gt;
 
 
-typedef CGAL::Segment_Delaunay_graph_2<Gt>  SDG2;
+#ifdef USE_INPLACE_LIST
 
+#include <CGAL/Triangulation_face_base_with_in_place_edge_list_2.h>
+
+typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt> ST;
+typedef CGAL::Segment_Delaunay_graph_vertex_base_2<ST>    Vb;
+typedef CGAL::Triangulation_face_base_with_in_place_edge_list_2<Gt> Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>       TDS;
+typedef CGAL::Segment_Delaunay_graph_2<Gt,ST,TDS,CGAL::Tag_true>  SDG2;
+#else
+typedef CGAL::Segment_Delaunay_graph_2<Gt>  SDG2;
+#endif
   
 typedef std::vector<Point_2> Points_container;
 
