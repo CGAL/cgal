@@ -468,6 +468,20 @@ void test_routine() {
       CGAL_assertion(sres[i]==coP[i]*f + coQ[i]*g);
     }
   }
+
+    { // bug reported by Eric Berberich
+      Poly_int2 x = CGAL::shift(Poly_int2(1),1,0);
+      Poly_int2 y = CGAL::shift(Poly_int2(1),1,1);
+      Poly_int2 P = y*y + (x*x + (-2));
+      Poly_int2 Q = (-1)*y*y + (x*x);
+      std::vector<Poly_int2> res,coP,coQ;
+      CGAL::polynomial_subresultants_with_cofactors(
+          P,Q,
+          std::back_inserter(res),
+          std::back_inserter(coP),
+          std::back_inserter(coQ)); 
+    }
+
   return;
 }
 
