@@ -16,14 +16,17 @@
 //
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
-#include <cassert>
 #include <mpfi.h>
 
 int main(){
         mpfi_t a;
         mpfi_init_set_si(a,-100);
         mpfi_add_ui(a,a,101);
-        assert(mpfi_cmp_ui(a,1)==0);
-        mpfi_clear(a);
-        return 0;
+        if(mpfi_cmp_ui(a,1)==0) {
+          mpfi_clear(a);
+          return 0;
+        }
+        else {
+          return 1;
+        }
 }

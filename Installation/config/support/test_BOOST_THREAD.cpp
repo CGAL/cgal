@@ -21,7 +21,6 @@
 // Tests if BOOST.THREAD is available.
 
 #include <iostream>
-#include <cassert>
 #include <boost/version.hpp>
 #include <boost/thread/tss.hpp>
 
@@ -35,7 +34,10 @@ int main()
   if (z.get() == NULL) {
     z.reset(new int(1));
   }
-  assert(*z.get() == 1);
-
-  return 0;
+  if(*z.get() == 1) {
+    return 0;
+  }
+  else {
+    return 1;
+  }  
 }
