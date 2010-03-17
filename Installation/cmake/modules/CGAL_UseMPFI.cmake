@@ -9,11 +9,28 @@ if( NOT CGAL_MPFI_SETUP )
     message( STATUS "MPFI libraries:    ${MPFI_LIBRARIES}" )
     message( STATUS "MPFI definitions:  ${MPFI_DEFINITIONS}" )
 
-    include_directories( ${MPFI_INCLUDE_DIR} )
-    link_directories( ${MPFI_LIBRARIES_DIR} )
-    add_definitions( ${MPFI_DEFINITIONS} "-DCGAL_USE_MPFI" )
+    try_run( MPFI_TEST_RESULT
+             COMPILED_MPFI_TEST
+             "${CMAKE_BINARY_DIR}"
+             "${CMAKE_SOURCE_DIR}/../../config/support/test_MPFI.cpp"
+             CMAKE_FLAGS
+               "-DINCLUDE_DIRECTORIES:
+                 STRING=${MPFI_INCLUDE_DIR};${CGAL_3RD_PARTY_INCLUDE_DIRS}"
+               "-DLINK_LIBRARIES:
+                 STRING=${MPFI_LIBRARIES};${CGAL_3RD_PARTY_LIBRARIES}"
+               "-DLINK_DIRECTORIES:
+                 STRING=${MPFI_LIBRARIES_DIR};${CGAL_3RD_PARTY_LIBRARIES_DIRS}"
+             COMPILE_OUTPUT_VARIABLE MPFI_TEST_COMPILATION_OUTPUT
+           )
 
-    link_libraries( ${MPFI_LIBRARIES} )
+    if( COMPILED_MPFI_TEST AND MPFI_TEST_RESULT EQUAL 0)
+      include_directories( ${MPFI_INCLUDE_DIR} )
+      link_directories( ${MPFI_LIBRARIES_DIR} )
+      add_definitions( ${MPFI_DEFINITIONS} "-DCGAL_USE_MPFI" )
+      link_libraries( ${MPFI_LIBRARIES} )
+    else( COMPILED_MPFI_TEST AND MPFI_TEST_RESULT EQUAL 0)
+      message( STATUS "MPFI was incorrectly configured on this system" )
+    endif( COMPILED_MPFI_TEST AND MPFI_TEST_RESULT EQUAL 0)
 
   endif( MPFI_FOUND )
 
