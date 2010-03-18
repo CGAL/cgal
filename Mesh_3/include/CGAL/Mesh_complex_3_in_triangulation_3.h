@@ -27,6 +27,7 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/Bbox_3.h>
 #include <iostream>
 #include <fstream>
 
@@ -300,7 +301,10 @@ public:
     tr_.swap(rhs.tr_);
     std::swap(rhs.number_of_cells_, number_of_cells_);
   }
-
+  
+  /// Returns bbox
+  Bbox_3 bbox() const;
+  
   //-------------------------------------------------------
   // MeshComplex_2InTriangulation3 traversal
   //-------------------------------------------------------
@@ -438,6 +442,32 @@ Mesh_complex_3_in_triangulation_3<Tr>::remove_from_complex(const Facet& facet)
     set_surface_index(mirror.first, mirror.second, Surface_index());
     --number_of_facets_;
   }
+}
+  
+
+// -----------------------------------
+// Undocumented
+// -----------------------------------
+template <typename Tr>
+Bbox_3
+Mesh_complex_3_in_triangulation_3<Tr>::
+bbox() const
+{
+  if ( 0 == number_of_vertices() )
+  {
+    return Bbox_3();
+  }
+  
+  typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
+  Bbox_3 result = (vit++)->point().bbox();
+  
+  for(typename Tr::Finite_vertices_iterator end = tr_.finite_vertices_end();
+      vit != end ; ++vit)
+  {
+    result = result + vit->point().bbox();
+  }
+  
+  return result;
 }
 
 }  // end namespace CGAL

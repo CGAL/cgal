@@ -53,6 +53,7 @@ private:
   QStringList nameFilters() const;
   bool save(const Scene_item*, QFileInfo fileinfo);  
   void init_maps(const C3t3& c3t3, const QColor& color);
+  void init_point_radius(const C3t3& c3t3);
   
   Point_3 camera_coordinates(const Point_3& p) const;
   
@@ -96,6 +97,7 @@ private:
   Vertex_map vertices_;
   
   double zmax_;
+  double point_radius_;
   
   // Cache data to avoid writing too much lines in rib file
   QColor prev_color_;
@@ -108,6 +110,7 @@ Mesh_3_rib_exporter_plugin()
   : actionCreateRib(NULL)
   , viewer_(NULL)
   , zmax_(0)
+  , point_radius_(0)
   , prev_color_(0,0,0)
   , prev_alpha_(1)
 {
@@ -179,6 +182,7 @@ Mesh_3_rib_exporter_plugin::save(const Scene_item* item, QFileInfo fileInfo)
   }
   
   init_maps(c3t3_item->c3t3(), c3t3_item->color());
+  init_point_radius(c3t3_item->c3t3());
   
   QString path = fileInfo.absoluteFilePath();
   std::ofstream obj_file (qPrintable(path));
@@ -209,7 +213,7 @@ Mesh_3_rib_exporter_plugin::save(const Scene_item* item, QFileInfo fileInfo)
   
   write_facets(c3t3_item->c3t3(), c3t3_item->plane(), obj_file);
   
-  obj_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.85 \"Ks\" 0.25 \"roughness\" 0.1" << std::endl
+  obj_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.65 \"Ks\" 0.35 \"roughness\" 0.2" << std::endl;
   write_cells(c3t3_item->c3t3(), c3t3_item->plane(), obj_file);
   
   obj_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.85 \"Ks\" 0.25 \"roughness\" 0.1" << std::endl;
@@ -265,6 +269,24 @@ Mesh_3_rib_exporter_plugin::init_maps(const C3t3& c3t3, const QColor& color)
     if ( hue > 1 ) { hue -= 1.; }
     it->second = QColor::fromHsvF(hue, color.saturationF(), color.valueF());
   }
+}
+
+
+void
+Mesh_3_rib_exporter_plugin::
+init_point_radius(const C3t3& c3t3)
+{
+  const CGAL::Bbox_3 bbox = c3t3.bbox();
+  
+  const double xdelta = bbox.xmax() - bbox.xmin();
+  const double ydelta = bbox.ymax() - bbox.ymin();
+  const double zdelta = bbox.zmax() - bbox.zmin();
+  
+  const double diag = std::sqrt(xdelta*xdelta +
+                                ydelta*ydelta +
+                                zdelta*zdelta);
+  
+  point_radius_ =  diag * 0.0025;
 }
 
 
@@ -403,7 +425,7 @@ write_point_sphere(const Point_3& p, std::ofstream& out)
   Point_3 p_cam = camera_coordinates(p);
   
   // radius
-  const double r = 0.6;
+  const double r = point_radius_;
   
   out << "Translate " << -p_cam.x() << " " << -p_cam.y() << " " << -p_cam.z() << std::endl;
   
@@ -434,7 +456,8 @@ write_edge_cylinder(const Point_3& p, const Point_3& q, std::ofstream& out)
   double angle = std::acos(cos_angle) * 180. / CGAL_PI;
   
   // radius
-  const double r = 0.3;
+  const double r = point_radius_ / 2.;
+  
   out << "Translate " << -p_cam.x() << " " << -p_cam.y() << " " << -p_cam.z() << std::endl;
   out << "Rotate " << (angle+180.) << " " << -r_axis.x() << " " << -r_axis.y() << " " << -r_axis.z() << std::endl; 
   
