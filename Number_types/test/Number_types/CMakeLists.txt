@@ -3,7 +3,7 @@
 # that dependency so as to test all the number types not depending on CORE
 # when it is not installed
 
-project( NT_extension_test )
+project( Number_types_test )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -21,7 +21,6 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
   include( CGAL_VersionUtils )
   find_package( MPFI )
-  IS_VERSION_LESS("${CGAL_GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TOO_LOW)
   include_directories( BEFORE ../../include include )
   create_single_source_cgal_program( "bench_interval.cpp" )
   create_single_source_cgal_program( "constant.cpp" )
@@ -73,25 +72,11 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "to_interval_test.cpp" )
   create_single_source_cgal_program( "utilities.cpp" )
   if( MPFI_FOUND )
-    # for the testsuite, the version of MPFI shipped with RS is used; this
-    # version needs GMP>=4.2, so we require this dependency only here and
-    # not in FindMPFI.cmake (users do not need this check, it was
-    # introduced only for the automatic testsuite)
-    if( _IS_GMP_VERSION_TOO_LOW )
-      message( STATUS
-        "MPFI tests need GMP>=4.2, some of the tests will not be compiled" )
-    else( _IS_GMP_VERSION_TOO_LOW )
-      include( ${MPFI_USE_FILE} )
-      create_single_source_cgal_program( "Gmpfi.cpp" )
-      create_single_source_cgal_program( "Gmpfr_bug.cpp" )
-    endif( _IS_GMP_VERSION_TOO_LOW )
-  else( MPFI_FOUND )
-    message( STATUS
-      "MPFI is not present, some of the tests will not be compiled." )
+    include( ${MPFI_USE_FILE} )
   endif( MPFI_FOUND )
-  # all the programs below will be linked against MPFI in case it is
-  # present and the version check did not fail
-
+  # all the programs below will be linked against MPFI in case it is present
+  create_single_source_cgal_program( "Gmpfi.cpp" )
+  create_single_source_cgal_program( "Gmpfr_bug.cpp" )
   create_single_source_cgal_program( "Quotient_new.cpp" )
   create_single_source_cgal_program( "Coercion_traits.cpp" )
 
