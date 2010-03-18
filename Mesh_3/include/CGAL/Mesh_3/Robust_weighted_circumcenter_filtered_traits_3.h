@@ -118,7 +118,7 @@ public:
                                              r.x(), r.y(), r.z(), r.weight(),
                                              num_x,  num_y, num_z, den);
     
-    if ( ! CGAL_NTS is_zero(den) );
+    if ( ! CGAL_NTS is_zero(den) )
     {
       FT inv = FT(1)/(FT(2) * den);
       Bare_point res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
