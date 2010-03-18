@@ -16,6 +16,10 @@
 #include <QColor>
 
 
+// Constants
+#define CGAL_RIB_NON_TRANSPARENT_MATERIAL_ALPHA 1
+
+
 class Mesh_3_rib_exporter_plugin :
   public QObject,
   protected Polyhedron_demo_plugin_helper
@@ -58,19 +62,20 @@ private:
   void write_triangle(const Point_3& p, const Point_3& q, const Point_3& r, 
                       const QColor& color, const QColor& edge_color, std::ofstream& out);
   
-  void write_point (const Point_3& p, std::ofstream& out);
-  void write_point_sphere(const QColor& color, const Point_3& p, std::ofstream& out);
+  void write_point(const Point_3& p, std::ofstream& out);
+  void write_point_sphere(const Point_3& p, std::ofstream& out);
   
-  void write_edge_cylinder(const QColor& color, const Point_3& p, const Point_3& q, 
-                           std::ofstream& out);
+  void write_edge_cylinder(const Point_3& p, const Point_3& q, std::ofstream& out);
   
   // Writes data which has been stored during triangle drawing
   void write_edges_flat(std::ofstream& out);
   void write_edges_volumic(std::ofstream& out);
   void write_vertices_volumic(std::ofstream& out);
   
-  // Utilities
-  void write_color(const QColor& color, double use_transparency, std::ofstream& out);
+  void write_color(const QColor& color, bool use_transparency, std::ofstream& out);
+  void write_opacity(const double alpha, std::ofstream& out);
+  
+  // Background
   void write_background(const QColor& color, std::ofstream& out);
   
 private:
@@ -91,6 +96,10 @@ private:
   Vertex_map vertices_;
   
   double zmax_;
+  
+  // Cache data to avoid writing too much lines in rib file
+  QColor prev_color_;
+  double prev_alpha_;
 };
 
 
@@ -99,6 +108,8 @@ Mesh_3_rib_exporter_plugin()
   : actionCreateRib(NULL)
   , viewer_(NULL)
   , zmax_(0)
+  , prev_color_(0,0,0)
+  , prev_alpha_(1)
 {
   
 }
@@ -171,11 +182,12 @@ Mesh_3_rib_exporter_plugin::save(const Scene_item* item, QFileInfo fileInfo)
   
   QString path = fileInfo.absoluteFilePath();
   std::ofstream obj_file (qPrintable(path));
+  obj_file.precision(13);
   
   QString basename = fileInfo.baseName();
   
   obj_file << "Option \"limits\" \"numthreads\" [16]" << std::endl
-           << "Option \"searchpath\" \"shader\" \".:./shaders:%PIXIE_SHADERS%:%PIXIE_HOME%/shaders\"" << std::endl
+           << "Option \"searchpath\" \"shader\" \".:./shaders:%PIXIE_SHADERS%:%PIXIEHOME%/shaders\"" << std::endl
            << "Attribute \"visibility\" \"specular\" 1" << std::endl
            << "Attribute \"visibility\" \"transmission\" 1" << std::endl << std::endl;
   
@@ -184,19 +196,23 @@ Mesh_3_rib_exporter_plugin::save(const Scene_item* item, QFileInfo fileInfo)
            << "Projection \"perspective\" \"fov\" 48" << std::endl
            << "PixelSamples 4 4" << std::endl
            << "PixelFilter \"catmull-rom\" 3 3" << std::endl
+           << "ShadingInterpolation \"smooth\"" << std::endl
            << "Rotate 180 0 0 1" << std::endl
            << "WorldBegin" << std::endl
-           << "LightSource \"shadowdistant\" 1 \"from\" [0 0 0] \"to\" [0 0 1] \"shadowname\" \"raytrace\" \"intensity\" 0.7" << std::endl
-           << "LightSource \"shadowdistant\" 2 \"from\" [1 -1 0] \"to\" [0 1 0] \"shadowname\" \"raytrace\" \"intensity\" 0.6" << std::endl
-           << "LightSource \"ambientlight\" 3 \"intensity\" 0.1" << std::endl
+           << "LightSource \"shadowdistant\" 1 \"from\" [0 0 0] \"to\" [0 0 1] \"shadowname\" \"raytrace\" \"intensity\" 0.85" << std::endl
+           //<< "LightSource \"shadowdistant\" 2 \"from\" [1 -1 0] \"to\" [0 1 0] \"shadowname\" \"raytrace\" \"intensity\" 0.55" << std::endl
+           << "LightSource \"ambientlight\" 3 \"intensity\" 0.15" << std::endl
            << "LightSource \"ambientlight\" 4 \"intensity\" 1" << std::endl
            << "Illuminate 4 0" << std::endl
-           << "ShadingInterpolation \"smooth\"" << std::endl
-           << "Surface \"plastic\" \"Ka\" 0.8 \"Kd\" 0.65 \"Ks\" 0.35 \"roughness\" 0.1" << std::endl;
+           << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.85 \"Ks\" 0.25 \"roughness\" 0.1" << std::endl;
            //<< "Surface \"matte\" \"Ka\" 0.8 \"Kd\" 0.65" << std::endl;
   
   write_facets(c3t3_item->c3t3(), c3t3_item->plane(), obj_file);
+  
+  obj_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.85 \"Ks\" 0.25 \"roughness\" 0.1" << std::endl
   write_cells(c3t3_item->c3t3(), c3t3_item->plane(), obj_file);
+  
+  obj_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.85 \"Ks\" 0.25 \"roughness\" 0.1" << std::endl;
   write_edges_volumic(obj_file);
   write_vertices_volumic(obj_file);
   
@@ -381,11 +397,8 @@ write_point (const Point_3& p, std::ofstream& out)
 
 void
 Mesh_3_rib_exporter_plugin::
-write_point_sphere(const QColor& color, const Point_3& p, std::ofstream& out)
+write_point_sphere(const Point_3& p, std::ofstream& out)
 {
-  // Color
-  write_color(color, false, out);
-  
   // Transform point in camera coordinates
   Point_3 p_cam = camera_coordinates(p);
   
@@ -402,12 +415,8 @@ write_point_sphere(const QColor& color, const Point_3& p, std::ofstream& out)
 
 void
 Mesh_3_rib_exporter_plugin::
-write_edge_cylinder(const QColor& color, const Point_3& p, const Point_3& q, 
-                    std::ofstream& out)
+write_edge_cylinder(const Point_3& p, const Point_3& q, std::ofstream& out)
 {
-  // Color
-  write_color(color, false, out);
-  
   // Transform point in camera coordinates
   Point_3 p_cam = camera_coordinates(p);
   Point_3 q_cam = camera_coordinates(q);
@@ -441,11 +450,11 @@ write_edges_flat(std::ofstream& out)
 {
   // Lights
   out << "Illuminate 1 0" << std::endl;
-  out << "Illuminate 2 0" << std::endl;
+  //out << "Illuminate 2 0" << std::endl;
   out << "Illuminate 3 0" << std::endl;
   out << "Illuminate 4 1" << std::endl;
   out << "Surface \"constant\"" << std::endl;
-  out << "Opacity 1 1 1" << std::endl;
+  write_opacity(CGAL_RIB_NON_TRANSPARENT_MATERIAL_ALPHA, out);
   
   // Translation
   out << "Translate 0 0 -0.1" << std::endl;
@@ -470,15 +479,15 @@ Mesh_3_rib_exporter_plugin::
 write_edges_volumic(std::ofstream& out)
 {
   // Material
-  out << "Opacity 1 1 1" << std::endl;
+  write_opacity(CGAL_RIB_NON_TRANSPARENT_MATERIAL_ALPHA, out);
   
   for ( Edge_map::iterator it = edges_.begin(), end = edges_.end() ;
        it != end ; ++it )
   {
-    write_edge_cylinder(it->second, it->first.first, it->first.second, out);
-    
-    write_point_sphere(it->second, it->first.first, out);
-    write_point_sphere(it->second, it->first.second, out);
+    // Color
+    write_color(it->second, false, out);
+    // Edge
+    write_edge_cylinder(it->first.first, it->first.second, out);
   }
 }
 
@@ -487,28 +496,57 @@ Mesh_3_rib_exporter_plugin::
 write_vertices_volumic(std::ofstream& out)
 {
   // Material
-  out << "Opacity 1 1 1" << std::endl;
+  write_opacity(CGAL_RIB_NON_TRANSPARENT_MATERIAL_ALPHA, out);
   
   for ( Vertex_map::iterator it = vertices_.begin(), end = vertices_.end() ;
        it != end ; ++it )
   {
-    write_point_sphere(it->second, it->first, out);
+    // Color
+    write_color(it->second, false, out);
+    // Vertex
+    write_point_sphere(it->first, out);
   }
 }
 
 
 void 
 Mesh_3_rib_exporter_plugin::
-write_color(const QColor& color, double use_transparency, std::ofstream& out)
+write_color(const QColor& color, bool use_transparency, std::ofstream& out)
 {
-  if (use_transparency)
-  {
-    double alpha = color.alphaF();
-    out << "Opacity " << alpha << " " << alpha << " " << alpha << std::endl;
+  if ( prev_color_ == color )
+  { 
+    return;
   }
   
+  // Cache data
+  prev_color_ = color;
+  
+  // Write opacity data
+  if (use_transparency)
+  {
+    write_opacity(color.alphaF(),out);
+  }
+  
+  // Write color data
   out << "Color [ " << color.redF() << " " << color.greenF() << " " 
       << color.blueF() <<  " ]" << std::endl;
+}
+
+
+void
+Mesh_3_rib_exporter_plugin::
+write_opacity(const double alpha, std::ofstream& out)
+{
+  if ( alpha == prev_alpha_ )
+  {
+    return;
+  }
+  
+  // Cache data
+  prev_alpha_ = alpha;
+  
+  // Write opacity data
+  out << "Opacity " << alpha << " " << alpha << " " << alpha << std::endl;
 }
 
 
@@ -517,7 +555,7 @@ Mesh_3_rib_exporter_plugin::
 write_background(const QColor& color, std::ofstream& out)
 {
   out << "Illuminate 1 0" << std::endl;
-  out << "Illuminate 2 0" << std::endl;
+  //out << "Illuminate 2 0" << std::endl;
   out << "Illuminate 3 0" << std::endl;
   out << "Illuminate 4 1" << std::endl;
   
