@@ -186,7 +186,7 @@ Mesh_3_rib_exporter_plugin::save(const Scene_item* item, QFileInfo fileInfo)
   
   QString path = fileInfo.absoluteFilePath();
   std::ofstream obj_file (qPrintable(path));
-  obj_file.precision(13);
+  obj_file.precision(8);
   
   QString basename = fileInfo.baseName();
   
@@ -286,7 +286,7 @@ init_point_radius(const C3t3& c3t3)
                                 ydelta*ydelta +
                                 zdelta*zdelta);
   
-  point_radius_ =  diag * 0.0025;
+  point_radius_ =  diag * 0.0015;
 }
 
 
@@ -456,7 +456,7 @@ write_edge_cylinder(const Point_3& p, const Point_3& q, std::ofstream& out)
   double angle = std::acos(cos_angle) * 180. / CGAL_PI;
   
   // radius
-  const double r = point_radius_ / 2.;
+  const double r = point_radius_ / 2.33;
   
   out << "Translate " << -p_cam.x() << " " << -p_cam.y() << " " << -p_cam.z() << std::endl;
   out << "Rotate " << (angle+180.) << " " << -r_axis.x() << " " << -r_axis.y() << " " << -r_axis.z() << std::endl; 
