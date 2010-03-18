@@ -26,6 +26,7 @@
 #include <CGAL/Poisson_mesh_cell_criteria_3.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
+#include <CGAL/Surface_mesh_traits_generator_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
