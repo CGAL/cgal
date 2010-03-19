@@ -20,6 +20,7 @@ endif( COMMAND cmake_policy )
 #
 #--------------------------------------------------------------------------------------------------
 
+set(CGAL_SOURCE_DIRECTORY "${CMAKE_SOURCE_DIR}")
 
 # 
 # Read and parse CGAL version number from VERSION file
@@ -436,7 +437,7 @@ endif()
 
 if ( TAUCS_IN_AUXILIARY )
   install(DIRECTORY auxiliary/taucs/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
-  install(DIRECTORY auxiliary/tacus/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+  install(DIRECTORY auxiliary/taucs/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
 endif()
 
 if ( ZLIB_IN_AUXILIARY )
