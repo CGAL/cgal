@@ -79,7 +79,7 @@ public:
       
   CGAL::Segment_2<K> operator()(const QLineF& qs) const
   {
-    return CGAL::Segment_2<K>(operator()(qs.p1()), operator()(qs.p2));
+    return CGAL::Segment_2<K>(operator()(qs.p1()), operator()(qs.p2()));
   }
  
   QLineF operator()(const CGAL::Segment_2<K> &s) const
