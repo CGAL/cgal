@@ -5,7 +5,7 @@
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
 project(CGAL)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
 
 # This allows else(), endif(), etc... (without repeating the expression)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
@@ -272,6 +272,17 @@ add_config_flag( CGAL_USE_GMP )
 add_config_flag( CGAL_USE_MPFR )
 add_config_flag( CGAL_USE_GMPXX )
 add_config_flag( CGAL_USE_LEDA )
+
+# Disable CORE if the architecture is 64 bits.
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  message(STATUS "Detected 64bit architecture, disable CGAL_Core")
+  set(CGAL_USE_CORE 0)
+  set(CGAL_NO_CORE ON)
+else()
+  set(CGAL_USE_CORE ${CGAL_USE_GMP})
+endif()
+
+add_config_flag( CGAL_USE_CORE )
 
 if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
   file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>\n\n" )

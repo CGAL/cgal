@@ -189,13 +189,6 @@ using std::max;
 #endif
 
 //-------------------------------------------------------------------//
-// Is CORE usable ?
-#ifdef CGAL_USE_GMP
-#  define CGAL_USE_CORE CGAL_USE_GMP
-#endif
-
-
-//-------------------------------------------------------------------//
 // Is Geomview usable ?
 #if !defined(_MSC_VER) && !defined(__MINGW32__)
 #  define CGAL_USE_GEOMVIEW
