@@ -29,7 +29,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_
 
   add_executable  ( Circular_kernel_3 Circular_kernel_3.cpp Viewer.cpp )
 
-  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Alpha_shape_3 )
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Circular_kernel_3 )
 
   target_link_libraries( Circular_kernel_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
   target_link_libraries( Circular_kernel_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
