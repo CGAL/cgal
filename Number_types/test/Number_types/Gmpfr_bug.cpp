@@ -16,6 +16,8 @@
 
 #include <CGAL/basic.h>
 
+#ifdef CGAL_USE_MPFI
+
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpfr.h>
@@ -67,3 +69,8 @@ int main(int argc,char** argv) {
  
   return 0; 
 }
+#else
+int main(){
+        return 0;
+}
+#endif
