@@ -82,6 +82,7 @@ private:
   bool save(const Scene_c3t3_item&, const QFileInfo& fileinfo);  
   void init_maps(const C3t3& c3t3, const QColor& color);
   void init_point_radius(const C3t3& c3t3);
+  void init_parameters();
   
   Point_3 camera_coordinates(const Point_3& p);
   void fill_points_and_edges_map(const C3t3& c3t3);
@@ -141,6 +142,7 @@ private:
   // Cache data to avoid writing too much lines in rib file
   QColor prev_color_;
   double prev_alpha_;
+  const Scene_c3t3_item* prev_c3t3_;
   
   Rib_exporter_parameters parameters_;
 };
@@ -154,6 +156,7 @@ Mesh_3_rib_exporter_plugin()
   , diag_(0)
   , prev_color_(0,0,0)
   , prev_alpha_(1)
+  , prev_c3t3_(NULL)
 {
   
 }
@@ -177,6 +180,8 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface)
   {
     std::cerr << "Can't get QGLViewer" << std::endl;
   }
+  
+  init_parameters();
 }
 
 
@@ -201,8 +206,14 @@ Mesh_3_rib_exporter_plugin::create_rib()
   }
   
   // Init data
-  init_maps(c3t3_item->c3t3(), c3t3_item->color());
-  init_point_radius(c3t3_item->c3t3());
+  if ( c3t3_item != prev_c3t3_ )
+  { 
+    init_maps(c3t3_item->c3t3(), c3t3_item->color());
+    init_point_radius(c3t3_item->c3t3());
+    init_parameters();
+    
+    prev_c3t3_ = c3t3_item;
+  }
   
   // Get parameters from user dialog
   if ( !get_parameters_from_dialog() )
@@ -283,9 +294,18 @@ get_parameters_from_dialog()
   // -----------------------------------
   // Set data
   // -----------------------------------
+  
+  // Materials
   ui.sphereRadius->setValue(parameters_.sphere_radius);
   ui.cylinderRadius->setValue(parameters_.cylinder_radius);
+
+  // Lights
+  ui.isAmbientOn->setChecked(parameters_.ambientOn);
+  ui.ambientIntensity->setValue(parameters_.ambientIntensity);
+  ui.isShadowOn->setChecked(parameters_.shadowOn);
+  ui.shadowIntensity->setValue(parameters_.shadowIntensity);
   
+  // Picture
   QStringList mode_list;
   mode_list << "Export Cut (draws current cut view)"
             << "Export Mesh (draws all surface facets)"
@@ -293,9 +313,12 @@ get_parameters_from_dialog()
   
   ui.exportMode->insertItems(0,mode_list);
   
-  // Get width and height (to compute mask)
-  parameters_.width = ui.resWidth->value();
-  parameters_.height = ui.resHeight->value();
+  ui.resWidth->setValue(parameters_.width);
+  ui.resHeight->setValue(parameters_.height);
+  ui.exportMode->setCurrentIndex(static_cast<int>(parameters_.mode));
+  ui.isPreview->setChecked(parameters_.is_preview);
+  
+  // Update mask
   update_mask();
   
   // -----------------------------------
@@ -320,13 +343,6 @@ get_parameters_from_dialog()
   parameters_.height = ui.resHeight->value();
   parameters_.mode = static_cast<Rib_exporter_mode>(ui.exportMode->currentIndex());
   parameters_.is_preview = ui.isPreview->isChecked();
-  
-  if ( parameters_.is_preview )
-  {
-    double ratio = double(parameters_.height) / double(parameters_.width);
-    parameters_.width = 150;
-    parameters_.height = int(ratio * double(parameters_.width));
-  }
   
   return true;
 }
@@ -447,6 +463,24 @@ init_point_radius(const C3t3& c3t3)
 }
 
 
+void
+Mesh_3_rib_exporter_plugin::
+init_parameters()
+{
+  // Lights
+  parameters_.ambientOn = true;
+  parameters_.ambientIntensity = 0.20;
+  parameters_.shadowOn = true;
+  parameters_.shadowIntensity = 0.85;
+  
+  // Picture
+  parameters_.width = 800;
+  parameters_.height = 800;
+  parameters_.mode = CUT;
+  parameters_.is_preview = false;
+}
+
+
 Mesh_3_rib_exporter_plugin::Point_3 
 Mesh_3_rib_exporter_plugin::
 camera_coordinates(const Point_3& p)
@@ -526,8 +560,22 @@ write_header(const std::string& filename, std::ofstream& out)
         << "Attribute \"visibility\" \"transmission\" 1" << std::endl << std::endl;
   }
   
-  out << "Display \""<< filename << ".tif\" \"file\" \"rgb\"" << std::endl
-      << "Format " << parameters_.width << " " << parameters_.height << " 1" << std::endl;
+  out << "Display \""<< filename << ".tif\" \"file\" \"rgb\"" << std::endl;
+  
+  if ( ! parameters_.is_preview )
+  {
+    out << "Format " << parameters_.width << " " << parameters_.height << " 1" << std::endl;
+  }
+  else
+  {
+    double ratio = double(parameters_.height) / double(parameters_.width);
+    
+    int width = (ratio < 1.)  ? 300               : int(300. / ratio);
+    int height = (ratio < 1.) ? int(ratio * 300.) : 300;
+    
+    out << "Format " << width << " " << height << " 1" << std::endl;
+  }
+      
   
   if ( parameters_.width > parameters_.height )
   {
