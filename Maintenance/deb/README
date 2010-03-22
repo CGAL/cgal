@@ -22,10 +22,10 @@ backport for lenny:
 
 tagging:
 svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.6-1
-svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.6-1~squeeze1
+svn copy $SVNROOT/trunk/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/3.6-1~squeeze1
 svn copy $SVNROOT/trunk/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.6-1~lenny1
 
 or:
 svn copy $SVNROOT/branches/CGAL-3.6-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.6-1
-svn copy $SVNROOT/branches/CGAL-3.6-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.6-1~squeeze1
+svn copy $SVNROOT/branches/CGAL-3.6-branch/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/3.6-1~squeeze1
 svn copy $SVNROOT/branches/CGAL-3.6-branch/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.6-1~lenny1
