@@ -19,8 +19,10 @@ public:
   void initializeGL();
   void drawWithNames();
   void postSelection(const QPoint&);
+  virtual void postDraw();
 
   void setScene(Scene_draw_interface* scene);
+  void setMask(bool b, double ratio=1);
   bool antiAliasing() const { return antialiasing; }
 
 signals:
@@ -32,10 +34,13 @@ public slots:
 
 private:
   void draw_aux(bool with_names);
+  void draw_mask();
 
   Scene_draw_interface* scene;
   bool antialiasing;
   bool twosides;
+  bool mask_;
+  double ratio_;
 }; // end class Viewer
 
 #endif // VIEWER_H

@@ -73,6 +73,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( UI_FILES MainWindow.ui )
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui)
   qt4_wrap_ui( optimUI_FILES  Smoother_dialog.ui LocalOptim_dialog.ui)
+  qt4_wrap_ui( ribUI_FILES  Rib_dialog.ui)
 
   include(AddFileDependencies)
 
@@ -98,6 +99,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   set(LIBRARY_OUTPUT_PATH ${RUNTIME_OUTPUT_PATH})
 
   # AUXILIARY LIBRARIES
+  add_library(viewer SHARED
+    Viewer.cpp Viewer_moc.cpp)
+  target_link_libraries(viewer ${QGLVIEWER_LIBRARIES})
+
   add_library(scene_item SHARED
     Scene_item.cpp Scene_item.moc
     Scene_item_with_display_list.cpp
@@ -128,11 +133,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_definitions(-DQT_STATICPLUGIN)
     add_executable  ( Mesh_3 MainWindow.cpp
       Mesh_3.cpp
-      Viewer.cpp
       Scene.cpp
       MainWindow_moc.cpp
       Scene_moc.cpp
-      Viewer_moc.cpp
       ${UI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Mesh_3 )
 
@@ -147,6 +150,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
 #  # Link with the scene_item library.
 #  target_link_libraries( Mesh_3 scene_item )
+
+  target_link_libraries( Mesh_3 viewer )
+
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Mesh_3 )
 
@@ -191,8 +197,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(c3t3_saver_plugin Mesh_3_c3t3_saver_plugin)
   target_link_libraries(c3t3_saver_plugin scene_c3t3_item)
 
-  polyhedron_demo_plugin(rib_exporter_plugin Mesh_3_rib_exporter_plugin)
-  target_link_libraries(rib_exporter_plugin scene_c3t3_item)
+  polyhedron_demo_plugin(rib_exporter_plugin Mesh_3_rib_exporter_plugin ${ribUI_FILES})
+  target_link_libraries(rib_exporter_plugin scene_c3t3_item viewer)
 
   polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
     Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Mesh_3_demo_mesh_plugin_image_cgal_code.cpp Scene_c3t3_item.moc ${meshingUI_FILES})

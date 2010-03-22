@@ -1,6 +1,7 @@
 #include "Viewer.h"
 #include "Polyhedron_demo_plugin_interface.h"
 #include "Polyhedron_demo_plugin_helper.h"
+#include "ui_Rib_dialog.h"
 
 #include "Scene_c3t3_item.h"
 
@@ -39,7 +40,9 @@ public:
   
 public slots:
   void create_rib();
-
+  void height_changed(int i);
+  void width_changed(int i);
+  
 private:
   typedef Kernel::Point_3   Point_3;
   typedef Kernel::Vector_3  Vector_3;
@@ -49,14 +52,49 @@ private:
   
   typedef qglviewer::Vec qglVec;
   
+  enum Rib_exporter_mode { CUT=0, MESH, TRIANGULATION };
+  
+  struct Rib_exporter_parameters 
+  {
+    // Materials
+    double sphere_radius;
+    double cylinder_radius;
+
+    // Lights
+    bool ambientOn;
+    double ambientIntensity;
+    bool shadowOn;
+    double shadowIntensity;
+    
+    // Picture
+    int width;
+    int height;
+    Rib_exporter_mode mode;
+    bool is_preview;
+  };
+  
 private:
+  void update_mask();
+  
+  bool get_parameters_from_dialog();
+  
   QStringList nameFilters() const;
-  bool save(const Scene_item*, QFileInfo fileinfo);  
+  bool save(const Scene_c3t3_item&, const QFileInfo& fileinfo);  
   void init_maps(const C3t3& c3t3, const QColor& color);
   void init_point_radius(const C3t3& c3t3);
   
-  Point_3 camera_coordinates(const Point_3& p) const;
+  Point_3 camera_coordinates(const Point_3& p);
+  void fill_points_and_edges_map(const C3t3& c3t3);
   
+  void add_edge(const Point_3& p, const Point_3& q, const QColor& color);
+  void add_vertex(const Point_3& p, const QColor& color);
+  
+  void write_header(const std::string& filename, std::ofstream& out);
+  
+  void write_lights(std::ofstream& out);
+  void write_turn_background_light(bool turn_on, std::ofstream& out);
+  
+  void write_facets(const C3t3& c3t3, std::ofstream& out);
   void write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
   void write_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out);
   
@@ -81,8 +119,9 @@ private:
   
 private:
   QAction* actionCreateRib;
-  // Viewer should be in a separate lib to be used here
-  QGLViewer* viewer_;
+  
+  // Viewer
+  Viewer* viewer_;
   
   typedef std::map<C3t3::Surface_index, QColor> Surface_map;
   typedef std::map<C3t3::Subdomain_index, QColor> Subdomain_map;
@@ -97,11 +136,13 @@ private:
   Vertex_map vertices_;
   
   double zmax_;
-  double point_radius_;
+  double diag_;
   
   // Cache data to avoid writing too much lines in rib file
   QColor prev_color_;
   double prev_alpha_;
+  
+  Rib_exporter_parameters parameters_;
 };
 
 
@@ -110,7 +151,7 @@ Mesh_3_rib_exporter_plugin()
   : actionCreateRib(NULL)
   , viewer_(NULL)
   , zmax_(0)
-  , point_radius_(0)
+  , diag_(0)
   , prev_color_(0,0,0)
   , prev_alpha_(1)
 {
@@ -131,7 +172,7 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface)
     connect(actionCreateRib, SIGNAL(triggered()), this, SLOT(create_rib()));
   }
   
-  viewer_ = mw->findChild<QGLViewer*>("viewer");
+  viewer_ = mw->findChild<Viewer*>("viewer");
   if ( NULL == viewer_ )
   {
     std::cerr << "Can't get QGLViewer" << std::endl;
@@ -148,8 +189,32 @@ Mesh_3_rib_exporter_plugin::create_rib()
     return;
   }
   
+  // Get Scene_c3t3_item
   Scene_interface::Item_id index = scene->mainSelectionIndex();
   
+  const Scene_c3t3_item* c3t3_item =
+    qobject_cast<const Scene_c3t3_item*>(scene->item(index));
+  
+  if ( NULL == c3t3_item )
+  {
+    return;
+  }
+  
+  // Init data
+  init_maps(c3t3_item->c3t3(), c3t3_item->color());
+  init_point_radius(c3t3_item->c3t3());
+  
+  // Get parameters from user dialog
+  if ( !get_parameters_from_dialog() )
+  { 
+    viewer_->setMask(false);
+    return;
+  }
+  
+  // Disable Mask
+  viewer_->setMask(false);
+  
+  // Save dialog
   QStringList filters;
   filters << nameFilters();
   filters << tr("All files (*)");
@@ -161,7 +226,109 @@ Mesh_3_rib_exporter_plugin::create_rib()
   
   QFileInfo fileinfo(filename);
   
-  save(scene->item(index),fileinfo);
+  // Save rib file
+  save(*c3t3_item,fileinfo);
+  
+  std::cout << "Rib file created successfully" << std::endl;
+}
+
+
+void
+Mesh_3_rib_exporter_plugin::
+height_changed(int i)
+{
+  parameters_.height = i;
+  update_mask();
+}
+
+void
+Mesh_3_rib_exporter_plugin::
+width_changed(int i)
+{
+  parameters_.width = i;
+  update_mask();
+}
+
+
+void
+Mesh_3_rib_exporter_plugin::
+update_mask()
+{
+  double ratio = double(parameters_.width) / double(parameters_.height);
+  
+  if ( NULL == viewer_ )
+  {
+    std::cerr << "Can't find viewer..." << std::endl;
+    return;
+  }
+  
+  viewer_->setMask(true, ratio);
+}
+
+
+
+bool
+Mesh_3_rib_exporter_plugin::
+get_parameters_from_dialog()
+{
+  QDialog dialog(mw);
+  Ui::Rib_dialog ui;
+  ui.setupUi(&dialog);
+  
+  connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+  connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+  connect(ui.resWidth, SIGNAL(valueChanged(int)), this, SLOT(width_changed(int)));
+  connect(ui.resHeight, SIGNAL(valueChanged(int)), this, SLOT(height_changed(int)));
+  
+  // -----------------------------------
+  // Set data
+  // -----------------------------------
+  ui.sphereRadius->setValue(parameters_.sphere_radius);
+  ui.cylinderRadius->setValue(parameters_.cylinder_radius);
+  
+  QStringList mode_list;
+  mode_list << "Export Cut (draws current cut view)"
+            << "Export Mesh (draws all surface facets)"
+            << "Export Triangulation (draws all points and edges)";
+  
+  ui.exportMode->insertItems(0,mode_list);
+  
+  // Get width and height (to compute mask)
+  parameters_.width = ui.resWidth->value();
+  parameters_.height = ui.resHeight->value();
+  update_mask();
+  
+  // -----------------------------------
+  // Get data
+  // -----------------------------------
+  int i = dialog.exec();
+  if(i == QDialog::Rejected)
+    return false;
+  
+  // Materials
+  parameters_.sphere_radius = ui.sphereRadius->value();
+  parameters_.cylinder_radius = ui.cylinderRadius->value();
+  
+  // Lights
+  parameters_.ambientOn = ui.isAmbientOn->isChecked();
+  parameters_.ambientIntensity = ui.ambientIntensity->value();
+  parameters_.shadowOn = ui.isShadowOn->isChecked();
+  parameters_.shadowIntensity = ui.shadowIntensity->value();
+  
+  // Picture
+  parameters_.width = ui.resWidth->value();
+  parameters_.height = ui.resHeight->value();
+  parameters_.mode = static_cast<Rib_exporter_mode>(ui.exportMode->currentIndex());
+  parameters_.is_preview = ui.isPreview->isChecked();
+  
+  if ( parameters_.is_preview )
+  {
+    double ratio = double(parameters_.height) / double(parameters_.width);
+    parameters_.width = 150;
+    parameters_.height = int(ratio * double(parameters_.width));
+  }
+  
+  return true;
 }
   
 
@@ -173,56 +340,55 @@ Mesh_3_rib_exporter_plugin::nameFilters() const
 
 
 bool
-Mesh_3_rib_exporter_plugin::save(const Scene_item* item, QFileInfo fileInfo)
+Mesh_3_rib_exporter_plugin::
+save(const Scene_c3t3_item& c3t3_item, const QFileInfo& fileInfo)
 {
-  const Scene_c3t3_item* c3t3_item = qobject_cast<const Scene_c3t3_item*>(item);
-  if ( NULL == c3t3_item )
+  QString path = fileInfo.absoluteFilePath();
+  std::ofstream rib_file (qPrintable(path));
+  rib_file.precision(8);
+  
+  // Header
+  QString basename = fileInfo.baseName();
+  write_header(qPrintable(basename), rib_file);
+  
+  // Lights
+  write_lights(rib_file);
+  
+  // Triangles
+  switch ( parameters_.mode )
   {
-    return false;
+    case CUT:
+      rib_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.85 \"Ks\" 0.25 \"roughness\" 0.1" << std::endl;
+      write_facets(c3t3_item.c3t3(), c3t3_item.plane(), rib_file);
+      
+      rib_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.65 \"Ks\" 0.35 \"roughness\" 0.2" << std::endl;
+      write_cells(c3t3_item.c3t3(), c3t3_item.plane(), rib_file);
+      break;
+      
+    case MESH:
+      rib_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.85 \"Ks\" 0.25 \"roughness\" 0.1" << std::endl;
+      write_facets(c3t3_item.c3t3(), rib_file);
+      break;
+      
+    case TRIANGULATION:
+      fill_points_and_edges_map(c3t3_item.c3t3());
+      break;
+      
+    default:
+      std::cerr << "Unexpected mode found" << std::endl;
+      return false;
+      break;
   }
   
-  init_maps(c3t3_item->c3t3(), c3t3_item->color());
-  init_point_radius(c3t3_item->c3t3());
+  // Edges and vertices
+  rib_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.85 \"Ks\" 0.25 \"roughness\" 0.1" << std::endl;
+  write_edges_volumic(rib_file);
+  write_vertices_volumic(rib_file);
   
-  QString path = fileInfo.absoluteFilePath();
-  std::ofstream obj_file (qPrintable(path));
-  obj_file.precision(8);
+  // Background
+  write_background(QColor(255,255,255), rib_file);
   
-  QString basename = fileInfo.baseName();
-  
-  obj_file << "Option \"limits\" \"numthreads\" [16]" << std::endl
-           << "Option \"searchpath\" \"shader\" \".:./shaders:%PIXIE_SHADERS%:%PIXIEHOME%/shaders\"" << std::endl
-           << "Attribute \"visibility\" \"specular\" 1" << std::endl
-           << "Attribute \"visibility\" \"transmission\" 1" << std::endl << std::endl;
-  
-  obj_file << "Display \""<< qPrintable(basename) << ".tif\" \"file\" \"rgb\"" << std::endl
-           << "Format 600 600 1" << std::endl
-           << "Projection \"perspective\" \"fov\" 48" << std::endl
-           << "PixelSamples 4 4" << std::endl
-           << "PixelFilter \"catmull-rom\" 3 3" << std::endl
-           << "ShadingInterpolation \"smooth\"" << std::endl
-           << "Rotate 180 0 0 1" << std::endl
-           << "WorldBegin" << std::endl
-           << "LightSource \"shadowdistant\" 1 \"from\" [0 0 0] \"to\" [0 0 1] \"shadowname\" \"raytrace\" \"intensity\" 0.85" << std::endl
-           //<< "LightSource \"shadowdistant\" 2 \"from\" [1 -1 0] \"to\" [0 1 0] \"shadowname\" \"raytrace\" \"intensity\" 0.55" << std::endl
-           << "LightSource \"ambientlight\" 3 \"intensity\" 0.15" << std::endl
-           << "LightSource \"ambientlight\" 4 \"intensity\" 1" << std::endl
-           << "Illuminate 4 0" << std::endl
-           << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.85 \"Ks\" 0.25 \"roughness\" 0.1" << std::endl;
-           //<< "Surface \"matte\" \"Ka\" 0.8 \"Kd\" 0.65" << std::endl;
-  
-  write_facets(c3t3_item->c3t3(), c3t3_item->plane(), obj_file);
-  
-  obj_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.65 \"Ks\" 0.35 \"roughness\" 0.2" << std::endl;
-  write_cells(c3t3_item->c3t3(), c3t3_item->plane(), obj_file);
-  
-  obj_file << "Surface \"plastic\" \"Ka\" 0.65 \"Kd\" 0.85 \"Ks\" 0.25 \"roughness\" 0.1" << std::endl;
-  write_edges_volumic(obj_file);
-  write_vertices_volumic(obj_file);
-  
-  write_background(QColor(255,255,255), obj_file);
-  
-  obj_file << "WorldEnd" << std::endl;
+  rib_file << "WorldEnd" << std::endl;
   
   return true;
 }
@@ -254,14 +420,6 @@ Mesh_3_rib_exporter_plugin::init_maps(const C3t3& c3t3, const QColor& color)
   // Starting hue
   double c = color.hueF();
   int i = 0;
-//  for ( Surface_map::iterator sit = surface_map_.begin(), send = surface_map_.end();
-//       sit != send ; ++sit, ++i )
-//  {
-//    double hue = c + 1./nb_colors * i;
-//    if ( hue > 1 ) { hue -= 1.; }
-//    sit->second = QColor::fromHsvF(hue, 1., 0.8);
-//  }
-
   for ( Subdomain_map::iterator it = subdomain_map_.begin(), end = subdomain_map_.end();
        it != end ; ++it, ++i )
   {
@@ -282,22 +440,180 @@ init_point_radius(const C3t3& c3t3)
   const double ydelta = bbox.ymax() - bbox.ymin();
   const double zdelta = bbox.zmax() - bbox.zmin();
   
-  const double diag = std::sqrt(xdelta*xdelta +
-                                ydelta*ydelta +
-                                zdelta*zdelta);
+  diag_ = std::sqrt(xdelta*xdelta + ydelta*ydelta + zdelta*zdelta);
   
-  point_radius_ =  diag * 0.0015;
+  parameters_.sphere_radius =  diag_ * 0.0015;
+  parameters_.cylinder_radius =  diag_ * 0.00065;
 }
 
 
 Mesh_3_rib_exporter_plugin::Point_3 
 Mesh_3_rib_exporter_plugin::
-camera_coordinates(const Point_3& p) const
+camera_coordinates(const Point_3& p)
 {
   qglVec p_vec ( p.x(), p.y(), p.z() );
   qglVec p_cam = viewer_->camera()->cameraCoordinatesOf(p_vec);
   
+  // Store maximal depth
+  zmax_ = (std::max)(zmax_, double(-p_cam[2]));
+  
   return Point_3(p_cam[0],p_cam[1],p_cam[2]);
+}
+
+
+void
+Mesh_3_rib_exporter_plugin::
+fill_points_and_edges_map(const C3t3& c3t3)
+{
+  for ( C3t3::Cell_iterator it = c3t3.cells_begin(), end = c3t3.cells_end();
+       it != end ; ++it )
+  {
+    const Point_3& p1 = it->vertex(0)->point();
+    const Point_3& p2 = it->vertex(1)->point();
+    const Point_3& p3 = it->vertex(2)->point();
+    const Point_3& p4 = it->vertex(3)->point();
+    
+    const QColor& edge_color = subdomain_map_[c3t3.subdomain_index(it)];
+    
+    add_edge(p1,p2,edge_color);
+    add_edge(p1,p3,edge_color);
+    add_edge(p1,p4,edge_color);
+    add_edge(p2,p3,edge_color);
+    add_edge(p2,p4,edge_color);
+    add_edge(p3,p4,edge_color);
+    
+    add_vertex(p1,edge_color);
+    add_vertex(p2,edge_color);
+    add_vertex(p3,edge_color);
+    add_vertex(p4,edge_color);
+  }
+}
+
+
+void
+Mesh_3_rib_exporter_plugin::
+add_edge(const Point_3& p, const Point_3& q, const QColor& color)
+{
+  if ( p < q )
+  {
+    edges_.insert(std::make_pair(std::make_pair(p,q),color));    
+  }
+  else
+  {
+    edges_.insert(std::make_pair(std::make_pair(q,p),color)); 
+  }
+}
+
+
+void
+Mesh_3_rib_exporter_plugin::
+add_vertex(const Point_3& p, const QColor& color)
+{
+  vertices_.insert(std::make_pair(p,color));    
+}
+
+
+void
+Mesh_3_rib_exporter_plugin::
+write_header(const std::string& filename, std::ofstream& out)
+{
+  out << "Option \"limits\" \"numthreads\" [16]" << std::endl
+      << "Option \"searchpath\" \"shader\" \".:./shaders:%PIXIE_SHADERS%:%PIXIEHOME%/shaders\"" << std::endl;
+  
+  if ( ! parameters_.is_preview )
+  {
+    out << "Attribute \"visibility\" \"specular\" 1" << std::endl
+        << "Attribute \"visibility\" \"transmission\" 1" << std::endl << std::endl;
+  }
+  
+  out << "Display \""<< filename << ".tif\" \"file\" \"rgb\"" << std::endl
+      << "Format " << parameters_.width << " " << parameters_.height << " 1" << std::endl;
+  
+  if ( parameters_.width > parameters_.height )
+  {
+    double ratio = double(parameters_.height) / double(parameters_.width);
+    out << "ScreenWindow -1 1 " << -ratio << " " << ratio << std::endl; 
+  }
+  else if ( parameters_.height > parameters_.width )
+  {
+    double ratio = double(parameters_.width) / double(parameters_.height);
+    out << "ScreenWindow " << -ratio << " " << ratio << " -1 1" << std::endl; 
+  }
+  
+  out << "Projection \"perspective\" \"fov\" 45" << std::endl
+      << "PixelSamples 4 4" << std::endl
+      << "PixelFilter \"catmull-rom\" 3 3" << std::endl
+      << "ShadingInterpolation \"smooth\"" << std::endl
+      << "Rotate 180 0 0 1" << std::endl
+      << "WorldBegin" << std::endl;
+}
+
+
+void
+Mesh_3_rib_exporter_plugin::
+write_lights(std::ofstream& out)
+{
+  if ( ! parameters_.is_preview )
+  {
+    // ShadowLight
+    out << "LightSource \"shadowdistant\" 1 \"from\" [0 0 0] \"to\" [0 0 1]"
+        << " \"shadowname\" \"raytrace\" \"intensity\" " << parameters_.shadowIntensity << std::endl;
+    
+    // Ambient light
+    out << "LightSource \"ambientlight\" 2 \"intensity\" " << parameters_.ambientIntensity << std::endl;
+  }
+  else
+  {
+    out << "LightSource \"distantLight\" 1 \"from\" [0 0 0] \"to\" [0 0 1]"
+    << " \"intensity\" 0.85" << std::endl;
+  }
+  
+  // Background light
+  out << "LightSource \"ambientlight\" 99 \"intensity\" 1" << std::endl;
+  write_turn_background_light(false,out);
+}
+
+
+void
+Mesh_3_rib_exporter_plugin::
+write_turn_background_light(bool turn_on, std::ofstream& out)
+{
+  switch (turn_on)
+  {
+    case false:
+      out << "Illuminate 1 1" << std::endl;
+      if ( ! parameters_.is_preview ) { out << "Illuminate 2 1" << std::endl; }
+      out << "Illuminate 99 0" << std::endl;
+      break;
+      
+    case true:
+      out << "Illuminate 1 0" << std::endl;
+      if ( ! parameters_.is_preview ) { out << "Illuminate 2 0" << std::endl; }
+      out << "Illuminate 99 1" << std::endl;
+      break;
+  }
+}
+
+
+void
+Mesh_3_rib_exporter_plugin::
+write_facets(const C3t3& c3t3, std::ofstream& out)
+{
+  for ( C3t3::Facet_iterator it = c3t3.facets_begin(), end = c3t3.facets_end();
+       it != end ; ++it )
+  {
+    const C3t3::Cell_handle& c = it->first;
+    const int& k = it->second;
+    
+    const Point_3& p1 = c->vertex((k+1)&3)->point();
+    const Point_3& p2 = c->vertex((k+2)&3)->point();
+    const Point_3& p3 = c->vertex((k+3)&3)->point();
+    
+    QColor color = c3t3.is_in_complex(c) ? subdomain_map_[c3t3.subdomain_index(c)]
+    : subdomain_map_[c3t3.subdomain_index(c->neighbor(k))];
+    
+    write_triangle(p1, p2, p3, color, color.darker(125), out );
+  }
 }
 
 
@@ -393,12 +709,14 @@ write_triangle (const Point_3& p, const Point_3& q, const Point_3& r,
   out << "]" << std::endl;
   
   // Edges (will be drawn later on)
-  edges_.insert(std::make_pair(std::make_pair(p,q),edge_color));
-  edges_.insert(std::make_pair(std::make_pair(p,r),edge_color));
-  edges_.insert(std::make_pair(std::make_pair(q,r),edge_color));
-  
-  vertices_.insert(std::make_pair(p,edge_color));
-  vertices_.insert(std::make_pair(q,edge_color));
+  add_edge(p,q,edge_color);
+  add_edge(p,r,edge_color);
+  add_edge(q,r,edge_color);
+
+  // Vertices (will be drawn later on)
+  add_vertex(p,edge_color);
+  add_vertex(q,edge_color);
+  add_vertex(r,edge_color);
 }
 
 
@@ -411,9 +729,6 @@ write_point (const Point_3& p, std::ofstream& out)
   
   // Write it
   out << " " << -p_cam.x() << " " << -p_cam.y() << " " << -p_cam.z() << " ";
-  
-  // Store maximal depth
-  zmax_ = (std::max)(zmax_, double(-p_cam.z()));
 }
 
 
@@ -425,7 +740,7 @@ write_point_sphere(const Point_3& p, std::ofstream& out)
   Point_3 p_cam = camera_coordinates(p);
   
   // radius
-  const double r = point_radius_;
+  const double& r = parameters_.sphere_radius;
   
   out << "Translate " << -p_cam.x() << " " << -p_cam.y() << " " << -p_cam.z() << std::endl;
   
@@ -456,7 +771,7 @@ write_edge_cylinder(const Point_3& p, const Point_3& q, std::ofstream& out)
   double angle = std::acos(cos_angle) * 180. / CGAL_PI;
   
   // radius
-  const double r = point_radius_ / 2.33;
+  const double& r = parameters_.cylinder_radius;
   
   out << "Translate " << -p_cam.x() << " " << -p_cam.y() << " " << -p_cam.z() << std::endl;
   out << "Rotate " << (angle+180.) << " " << -r_axis.x() << " " << -r_axis.y() << " " << -r_axis.z() << std::endl; 
@@ -472,10 +787,8 @@ Mesh_3_rib_exporter_plugin::
 write_edges_flat(std::ofstream& out)
 {
   // Lights
-  out << "Illuminate 1 0" << std::endl;
-  //out << "Illuminate 2 0" << std::endl;
-  out << "Illuminate 3 0" << std::endl;
-  out << "Illuminate 4 1" << std::endl;
+  write_turn_background_light(true,out);
+  
   out << "Surface \"constant\"" << std::endl;
   write_opacity(CGAL_RIB_NON_TRANSPARENT_MATERIAL_ALPHA, out);
   
@@ -577,15 +890,10 @@ void
 Mesh_3_rib_exporter_plugin::
 write_background(const QColor& color, std::ofstream& out)
 {
-  out << "Illuminate 1 0" << std::endl;
-  //out << "Illuminate 2 0" << std::endl;
-  out << "Illuminate 3 0" << std::endl;
-  out << "Illuminate 4 1" << std::endl;
+  write_turn_background_light(false,out);
   
   out << "Surface \"constant\"" << std::endl;
-
-//  out << "Surface \"matte\" \"Ka\" 0.9 \"Kd\" 0.65" << std::endl;
-  write_color(color,false, out);
+  write_color(color,false,out);
   
   double corner = zmax_ * 2.;
   double depth_pos = zmax_ * 1.6;

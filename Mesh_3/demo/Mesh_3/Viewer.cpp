@@ -5,7 +5,9 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   : QGLViewer(parent),
     scene(0),
     antialiasing(antialiasing),
-    twosides(false)
+    twosides(false),
+    mask_(false),
+    ratio_(1.)
 {
   setBackgroundColor(::Qt::white);
 }
@@ -24,6 +26,13 @@ void Viewer::setAntiAliasing(bool b)
 void Viewer::setTwoSides(bool b)
 {
   twosides = b;
+  updateGL();
+}
+
+void Viewer::setMask(bool b, double r)
+{
+  mask_ = b;
+  ratio_ = r;
   updateGL();
 }
 
@@ -85,4 +94,70 @@ void Viewer::drawWithNames()
 void Viewer::postSelection(const QPoint&)
 {
   emit selected(this->selectedName());
+}
+
+void Viewer::postDraw()
+{
+  QGLViewer::postDraw();
+  
+  if ( mask_ )
+  {
+    draw_mask();
+  }
+}
+
+void Viewer::draw_mask()
+{
+  // fill grid with transparent blue
+  ::glColor4f(.4f, .4f, .4f, .7f);
+  
+  this->startScreenCoordinatesSystem();
+  
+  int width = this->width();
+  int height = this->height();
+  
+  double ratio = ratio_; // r=(w/h)
+  
+  ::glDisable(GL_LIGHTING);
+  ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA); 
+  ::glEnable(GL_BLEND);
+  ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  
+  // Draws the background quad
+  ::glBegin(GL_QUADS);
+  
+  if ( width > (ratio*height) )
+  {
+    int w1 = (width-(height*ratio)) / 2;
+    int w2 = width - w1;
+    
+    ::glVertex2i( 0, 0);
+    ::glVertex2i( 0, height);
+    ::glVertex2i( w1, height);
+    ::glVertex2i( w1, 0);
+    
+    ::glVertex2i( w2, 0);
+    ::glVertex2i( w2, height);
+    ::glVertex2i( width, height);
+    ::glVertex2i( width, 0);
+  }
+  else
+  {
+    int h1 = (height-(width/ratio)) / 2;
+    int h2 = height - h1;
+    
+    ::glVertex2i( 0, 0);
+    ::glVertex2i( 0, h1);
+    ::glVertex2i( width, h1);
+    ::glVertex2i( width, 0);
+    
+    ::glVertex2i( 0, h2);
+    ::glVertex2i( 0, height);
+    ::glVertex2i( width, height);
+    ::glVertex2i( width, h2);
+  }
+  ::glEnd();
+  
+  ::glDisable(GL_BLEND);
+  this->stopScreenCoordinatesSystem();
 }

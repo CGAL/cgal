@@ -96,6 +96,7 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
 Scene_c3t3_item::~Scene_c3t3_item()
 {
   delete frame;
+  delete d;
 }
 
 const C3t3& 
