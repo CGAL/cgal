@@ -3370,6 +3370,9 @@ Reference~Manual}%
 % pages in the new manual style, so...
 \ifnum\ccNewRefManualStyle=\ccTrue
 \usepackage{graphicx}
+  % If no extension is used in \includegraphics,
+  % prefer PDF graphics over PNG pictures (then Jpeg and Metapost).
+  \DeclareGraphicsExtensions{.pdf,.png,.jpg,.mps}
 \fi
 
 % needed for footnotes in \parbox (which is used inside \ccLayoutThreeColumns)
