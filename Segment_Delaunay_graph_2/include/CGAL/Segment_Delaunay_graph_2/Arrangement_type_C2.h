@@ -27,7 +27,6 @@
 #include <CGAL/determinant.h>
 #include <CGAL/Segment_Delaunay_graph_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
-#include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Arrangement_enum.h>
 
 #include <iostream>
@@ -65,11 +64,9 @@ private:
   typedef typename K::Orientation_2          Orientation_2;
 
   typedef Are_same_points_C2<K>              Are_same_points_2;
-  typedef Are_same_segments_C2<K>            Are_same_segments_2;
 
 private:
   Are_same_points_2     same_points;
-  Are_same_segments_2   same_segments;
 
 public:
   typedef typename Enum::Arrangement_type    result_type;
@@ -333,35 +330,7 @@ private:
 			      unsigned int ip, unsigned int iq) const
   {
     CGAL_precondition( ip < 2 && iq < 2 );
-#if 0
-    if ( same_segments(p.supporting_site(), q.supporting_site()) ) {
-      Line_2 l = compute_supporting_line(p.supporting_site());
-      Line_2 lp;
 
-      if ( ip == 0 ) {
-	lp = compute_perpendicular(l, p.segment().source());
-      } else {
-	lp = compute_perpendicular(l, p.segment().target());
-	lp = opposite_line(lp);
-      }
-
-      Oriented_side os;
-
-      if ( iq == 0 ) {
-	os = oriented_side_of_line(lp, q.segment().target());
-      } else {
-	os = oriented_side_of_line(lp, q.segment().source());
-      }
-
-      CGAL_assertion( os != ON_ORIENTED_BOUNDARY );
-
-      if ( os == ON_POSITIVE_SIDE ) {
-	return std::pair<int,int>(ip,iq);
-      } else {
-	return std::pair<int,int>(5,5);
-      }
-    }
-#endif
     Point_2 p1 = p.supporting_site().source();
     Point_2 p2 = p.supporting_site().target();
     Point_2 p3;
@@ -401,17 +370,22 @@ private:
   result_type
   arrangement_type_ss(const Site_2& p, const Site_2& q) const
   {
-    if ( same_segments(p, q) ) {
+    bool same_p1q1 = same_points(p.source_site(), q.source_site());
+    bool same_p1q2 = same_points(p.source_site(), q.target_site());
+    bool same_p2q1 = same_points(p.target_site(), q.source_site());
+    bool same_p2q2 = same_points(p.target_site(), q.target_site());
+
+    if ( (same_p1q1 && same_p2q2) || (same_p1q2 && same_p2q1) ) {
       return IDENTICAL;
     }
 
-    if ( same_points(p.source_site(), q.source_site()) ) {
+    if ( same_p1q1 ) {
       return arrangement_type_same_point(p, q, 0, 0);
-    } if ( same_points(p.source_site(), q.target_site()) ) {
+    } if ( same_p1q2 ) {
       return arrangement_type_same_point(p, q, 0, 1);
-    } else if ( same_points(p.target_site(), q.source_site()) ) {
+    } else if ( same_p2q1 ) {
       return arrangement_type_same_point(p, q, 1, 0);
-    } else if ( same_points(p.target_site(), q.target_site()) ) {
+    } else if ( same_p2q2 ) {
       return arrangement_type_same_point(p, q, 1, 1);
     }
 
@@ -465,14 +439,18 @@ public:
   {
     CGAL_precondition( p.is_defined() && q.is_defined() );
 
-    if ( p.is_point() && q.is_point() ) {
-      return arrangement_type_pp(p, q);
-    } else if ( p.is_point() && q.is_segment() ) {
-      return arrangement_type_ps(p, q);
-    } else if ( p.is_segment() && q.is_point() ) {
-      return opposite( arrangement_type_ps(q, p) );
+    if ( p.is_point() ) {
+      if ( q.is_point() ) {
+	return arrangement_type_pp(p, q);
+      } else {
+	return arrangement_type_ps(p, q);
+      }
     } else {
-      return arrangement_type_ss(p, q);
+      if ( q.is_point() ) {
+	return opposite( arrangement_type_ps(q, p) );
+      } else {
+	return arrangement_type_ss(p, q);
+      }
     }
   }
 };

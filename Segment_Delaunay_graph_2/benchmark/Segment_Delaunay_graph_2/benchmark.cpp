@@ -20,6 +20,7 @@
 #define CGAL_SDG_NO_FACE_MAP 1
 #define CGAL_TDS2_DATA 1
 #define USE_INPLACE_LIST 1
+#define CGAL_SDG_USE_SIMPLIFIED_ARRANGEMENT_TYPE_PREDICATE 1
 
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>

@@ -26,6 +26,31 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace Internal {
+
+  template<class K,class BooleanTag> struct Which_arrangement_type;
+
+  // Tag_true means that we want to support intersections
+  template<class K>
+  struct Which_arrangement_type<K,Tag_true>
+  {
+    typedef
+    CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Arrangement_type_C2<K>
+    Arrangement_type;
+  };
+
+  // Tag_false means that we do not want to support intersections
+  template<class K>
+  struct Which_arrangement_type<K,Tag_false>
+  {
+    typedef
+    CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Arrangement_type_non_intersecting_C2<K>
+    Arrangement_type;
+  };
+
+} // namespace Internal
+
+
 //-----------------------------------------------------------------------
 // the Traits class
 //-----------------------------------------------------------------------
@@ -131,9 +156,15 @@ public:
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Is_degenerate_edge_C2<K,MTag>
   Is_degenerate_edge_2;
 
+#ifdef CGAL_SDG_USE_SIMPLIFIED_ARRANGEMENT_TYPE_PREDICATE
+  typedef typename
+  Internal::Which_arrangement_type<K,ITag>::Arrangement_type
+  Arrangement_type_2;
+#else
   typedef
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Arrangement_type_C2<K>
   Arrangement_type_2;
+#endif
 
   typedef
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Oriented_side_C2<K,MTag>

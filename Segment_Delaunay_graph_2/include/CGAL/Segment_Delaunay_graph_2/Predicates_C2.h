@@ -36,6 +36,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/Infinite_edge_interior_conflict_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Is_degenerate_edge_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Arrangement_type_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Arrangement_type_non_intersecting_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Oriented_side_C2.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_PREDICATES_C2_H
