@@ -53,7 +53,8 @@ if ( CGAL_FOUND )
     #example in doc not installed
     add_library(simple_triangulation MODULE simple_triangulation.cpp)
     target_link_libraries( simple_triangulation ipe )
-    
+    add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)
+
   else()
     message(STATUS "NOTICE: This program requires the Ipe include files and library, and will not be compiled.")
   endif()

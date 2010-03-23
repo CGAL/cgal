@@ -1,0 +1,19 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## ipe-default-to-version-7.dpatch by Joachim Reichel <reichel@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Change default for WITH_IPE_7 to ON.
+
+@DPATCH@
+diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' '--exclude=.hg' '--exclude=_darcs' '--exclude=.bzr' cgal-3.6~beta1~/demo/CGAL_ipelets/CMakeLists.txt cgal-3.6~beta1/demo/CGAL_ipelets/CMakeLists.txt
+--- cgal-3.6~beta1~/demo/CGAL_ipelets/CMakeLists.txt	2010-01-28 21:00:13.000000000 +0100
++++ cgal-3.6~beta1/demo/CGAL_ipelets/CMakeLists.txt	2010-03-08 21:34:59.000000000 +0100
+@@ -6,7 +6,7 @@
+ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY .build/ipelets)
+ 
+ find_package(CGAL QUIET COMPONENTS Core )
+-option( WITH_IPE_7 "Use the version 7 of Ipe" OFF )
++option( WITH_IPE_7 "Use the version 7 of Ipe" ON )
+ 
+ if ( CGAL_FOUND )
+   include( ${CGAL_USE_FILE} )

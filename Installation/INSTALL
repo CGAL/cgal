@@ -55,7 +55,6 @@ CGAL packages, some are only needed for demos.
        or precompiled version that can be downloaded with CGAL-x.y-Setup.exe
        based on http://fp.gladman.plus.com/computing/gmp4win.htm
 
-
      - MPFR (>= 2.2.1)
        http://www.mpfr.org/
        or precompiled version that can be downloaded with CGAL-x.y-Setup.exe
@@ -95,6 +94,11 @@ CGAL packages, some are only needed for demos.
        o Planar Parameterization of Triangulated Surface Meshes
        http://www.tau.ac.il/~stoledo/taucs/
        or precompiled version that can be downloaded with CGAL-x.y-Setup.exe
+
+     - RS (root isolation)
+       Required by the package:
+       Algebraic Kernel
+       http://www.loria.fr/equipes/vegas/rs/
 
    * Miscellaneous
 

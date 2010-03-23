@@ -1,8 +1,85 @@
-cgal (3.4-1~etch1) stable; urgency=low
+cgal (3.6-1~squeeze1) testing; urgency=low
 
-  * Backport to etch.
+  * New upstream release.
+  * Rename binary package libcgal4 to libcgal5 to reflect SONAME change.
+  * Remove fix-cmake-qglviewer-detection.dpatch (fixed upstream).
+  * New binary package libcgal5-ipelets which contains plugins for Ipe 7.x
+    (Closes: #557643).
+  * Add ipe-default-to-version-7.dpatch: change default of WITH_IPE_7 to ON.
+  * Remove libboost-graph1.35-dev from Build-Depends: and Suggests: of
+    libcgal-demo (not needed).
 
- -- Joachim Reichel <reichel@debian.org>  Thu, 22 Jan 2009 21:20:28 +0100
+ -- Joachim Reichel <reichel@debian.org>  Mon, 22 Mar 2010 19:09:15 +0100
+
+
+cgal (3.5.1-2) unstable; urgency=low
+
+  * Add fix-cmake-qglviewer-detection.dpatch (Closes: #564126), thanks to
+    Marc Glisse for the patch. 
+  * Update Standards-Version to 3.8.4 (no changes needed).
+
+ -- Joachim Reichel <reichel@debian.org>  Sat, 06 Feb 2010 12:29:02 +0100
+
+cgal (3.5.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * Fix error in handling of "debug" and "nostrip" in $(DEB_BUILD_OPTIONS)
+    (see also #552961).
+  * Unset QTDIR before calling cmake to reduce problems in non-clean build
+    environments.
+  * Add ${misc:Depends} to Depends: of all binary packages as found by
+    lintian.
+
+ -- Joachim Reichel <reichel@debian.org>  Sun, 22 Nov 2009 22:31:00 +0100
+
+cgal (3.5-1) unstable; urgency=low
+
+  * New upstream release.
+  * Rename binary package libcgal3 to libcgal4 to reflect SONAME change.
+  * Remove fix-FindCGAL-cmake.dpatch (fixed upstream).
+  * Remove fix-demos-examples-configuration.dpatch (fixed upstream).
+  * Remove add-cmake-2.6.3-support.dpatch (fixed upstream).
+  * Remove fix-demo-polyheron-3.dpatch (fixed upstream).
+  * Remove "-mieee -mfp-rounding-mode=d" from CGAL_CXX_FLAGS on alpha
+    (fixed upstream).
+
+ -- Joachim Reichel <reichel@debian.org>  Sat, 03 Oct 2009 16:43:08 +0200
+
+cgal (3.4-5) unstable; urgency=low
+
+  * Return to unversioned boost dependencies.
+  * Re-add working watch file.
+  * Update Standards-Version to 3.8.3 (no changes needed).
+
+ -- Joachim Reichel <reichel@debian.org>  Wed, 16 Sep 2009 19:25:09 +0200
+
+cgal (3.4-4) unstable; urgency=low
+
+  * Add patch fix-demos-examples-configuration.dpatch.
+  * Add patch add-cmake-2.6.3-support.dpatch.
+  * Add patch fix-demo-polyheron-3.dpatch.
+  * Fix support for nocheck in DEB_BUILD_OPTIONS (was broken in 3.4-3).
+
+ -- Joachim Reichel <reichel@debian.org>  Fri, 01 May 2009 17:31:00 +0200
+
+cgal (3.4-3) unstable; urgency=low
+
+  * Update boost dependencies to 1.38.
+  * Remove watch file (new upstream location uses unpredictable paths).
+  * Update Standards-Version to 3.8.1 (add support for nocheck in
+    DEB_BUILD_OPTIONS).
+  * Change Suggests: dependency of libcgal-demo from libqglviewer-dev
+    to libqglviewer-qt4-dev (all demos using libQGLViewer use Qt4).
+  * Add workaround for #522659 to README.Debian.
+
+ -- Joachim Reichel <reichel@debian.org>  Sat, 18 Apr 2009 11:46:19 +0200
+
+cgal (3.4-2) unstable; urgency=low
+
+  * Add "-mieee -mfp-rounding-mode=d" to CGAL_CXX_FLAGS on alpha (got lost
+    during the transition to cmake).
+
+ -- Joachim Reichel <reichel@debian.org>  Sun, 15 Feb 2009 15:06:31 +0100
 
 cgal (3.4-1) unstable; urgency=low
 

@@ -1,34 +1,31 @@
 README
 ======
 
+backport for squeeze:
+- debian/changelog:
+  * adjust version suffix from -X to -X~squeeze1
+  * adjust suite from unstable to testing
+
 backport for lenny:
 - debian/changelog:
   * adjust version suffix from -X to -X~lenny1
-  * adjust suite from unstable to testing
-
-backport for etch:
-- debian/changelog:
-  * adjust version suffix from -X to -X~etch1
   * adjust suite from unstable to stable
-- debian/compat
-  * adjust from 7 to 5
-- debian/control
-  * adjust debhelper version from >= 7 to >= 5
-  * adjust Standards-Version from 3.8.0 to 3.7.2
-  * remove libqt4-opengl-dev from Build-Depends
-  * remove Homepage field
+- debian/control:
+  * adjust Standards-Version from 3.8.4 to 3.8.0
+  * add boost version 1.35 (several times)
+  * replace libipe-dev by libipe1-dev, remove >= 7 qualifier
+  * add libboost-graph1.35-dev to Build-Depends: and Suggests: for libcgal-demo
+- debian-patches/00list
+  * disable ipe-default-to-version-7.dpatch
 - debian/rules
-  * replace dh_prep by dh_clean -k (twice)
-  * replace cmake-2.6 by cmake-2.4 (twice)
-- debian/libcgal-dev.install
-  * replace cmake-2.6 by cmake-2.4
+  * change value of WITH_IPE_7 to FALSE
 
 tagging:
-svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.4-1
-svn copy $SVNROOT/trunk/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.4-1~lenny1
-svn copy $SVNROOT/trunk/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.4-1~etch1
+svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.6-1
+svn copy $SVNROOT/trunk/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/3.6-1~squeeze1
+svn copy $SVNROOT/trunk/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.6-1~lenny1
 
 or:
-svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.4-1
-svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.4-1~lenny1
-svn copy $SVNROOT/branches/CGAL-3.4-branch/Maintenance/deb/etch/debian $SVNROOT/tags/debian/3.4-1~etch1
+svn copy $SVNROOT/branches/CGAL-3.6-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.6-1
+svn copy $SVNROOT/branches/CGAL-3.6-branch/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/3.6-1~squeeze1
+svn copy $SVNROOT/branches/CGAL-3.6-branch/Maintenance/deb/lenny/debian $SVNROOT/tags/debian/3.6-1~lenny1
