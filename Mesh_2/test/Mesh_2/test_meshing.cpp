@@ -1,6 +1,9 @@
 // 154 515 565
+#include <CGAL/config.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#if CGAL_USE_CORE || CGAL_USE_LEDA
+#  include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#endif
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
@@ -191,14 +194,18 @@ struct Tester2 {
 };
 
 struct K_e_i : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+#if CGAL_USE_CORE || CGAL_USE_LEDA
 struct K_e_e : public CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt {};
+#endif
 
 int main()
 {
   std::cerr << "TESTING WITH Exact_predicates_inexact_constructions_kernel...\n\n";
   Tester<K_e_i> tester1;
   tester1();
+#if CGAL_USE_CORE || CGAL_USE_LEDA
   // std::cerr << "\n\nTESTING WITH Exact_predicates_exact_constructions_kernel_with_sqrt...\n\n";
   // Tester<K_e_e> tester2;
   // tester2();
+#endif
 };
