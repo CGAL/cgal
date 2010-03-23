@@ -1,4 +1,5 @@
 // Copyright (c) 2004-2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2010       GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -15,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Laurent RINEAU
+// Author(s)     : Laurent Rineau
 
 #ifndef CGAL_MESH_2_CLUSTERS_H
 #define CGAL_MESH_2_CLUSTERS_H
@@ -191,7 +192,7 @@ private:
    * to the clusters of the vertex \c v.
    */
   void construct_cluster(const Vertex_handle v,
-                         Constrained_edge_circulator begin,
+                         const Constrained_edge_circulator& begin,
                          const Constrained_edge_circulator& end,
                          Cluster c = Cluster());
 
@@ -448,7 +449,7 @@ create_clusters_of_vertex(const Vertex_handle v)
 template <typename Tr>
 void Clusters<Tr>::
 construct_cluster(Vertex_handle v,
-                  Constrained_edge_circulator begin,
+                  const Constrained_edge_circulator& begin,
                   const Constrained_edge_circulator& end,
                   Cluster c)
 {
@@ -468,11 +469,8 @@ construct_cluster(Vertex_handle v,
       c.smallest_angle.second = target(second);
     }
 
-  bool all_edges_in_cluster=false; // tell if all incident edges are
-  // in the cluster
-  if(begin==end)
-    all_edges_in_cluster=true;
-
+  const bool all_edges_in_cluster = (begin == end); // tell if all incident edges
+                                              // are in the cluster
   const Point& vp = v->point();
 
   FT greatest_cosine =
@@ -480,31 +478,42 @@ construct_cluster(Vertex_handle v,
                                     v->point(),
                                     c.smallest_angle.second->point());
 
-  Constrained_edge_circulator next(begin);
-  ++next;
-  do
-    {
-      c.vertices[target(begin)] = false;
-      Squared_length l = squared_distance(vp,
-                                        target(begin)->point());
-      c.minimum_squared_length =
-        (std::min)(l,c.minimum_squared_length);
+  bool one_full_loop_is_needed = all_edges_in_cluster;
 
-      if(all_edges_in_cluster || begin!=end)
-        {
-          FT cosine =
-            squared_cosine_of_angle_times_4(target(begin)->point(),
-                                            v->point(),
-                                            target(next)->point());
-          if(cosine>greatest_cosine)
-            {
-              greatest_cosine = cosine;
-              c.smallest_angle.first = target(begin);
-              c.smallest_angle.second = target(next);
-            }
-        }
+  bool stop = false;
+  Constrained_edge_circulator circ(begin);
+  Constrained_edge_circulator next(begin);
+  while(!stop)
+  {
+    c.vertices[target(circ)] = false;
+    Squared_length l = squared_distance(vp,
+                                        target(circ)->point());
+    c.minimum_squared_length =
+      (std::min)(l,c.minimum_squared_length);
+
+    if(circ!=end || one_full_loop_is_needed)
+    {
+      FT cosine =
+        squared_cosine_of_angle_times_4(target(circ)->point(),
+                                        v->point(),
+                                        target(next)->point());
+      if(cosine>greatest_cosine)
+      {
+        greatest_cosine = cosine;
+        c.smallest_angle.first = target(circ);
+        c.smallest_angle.second = target(next);
+      }
     }
-  while(next++,begin++!=end);
+
+    if(one_full_loop_is_needed) {
+      one_full_loop_is_needed = false;
+    } else {
+      stop = (circ == end);
+    }
+    ++circ;
+    ++next;
+  }
+
   typedef typename Cluster_map::value_type Value_key_pair;
   cluster_map.insert(Value_key_pair(v,c));
 }
