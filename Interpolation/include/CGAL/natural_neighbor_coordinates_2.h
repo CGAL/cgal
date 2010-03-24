@@ -159,7 +159,7 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
   // is too big for the interpolation. As a consequence 
   // we would have points with lambda = 0 in the output
   // Therefore we filter them out again 
-  typedef std::list<Edge>::iterator Edge_iterator;
+  typedef typename std::list<Edge>::iterator Edge_iterator;
   Edge_iterator it = hole.begin(), nit = it;
   ++nit;
   
