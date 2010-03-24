@@ -41,7 +41,7 @@ include_directories(.)
 
   qt4_automoc( MainWindow.cpp Viewer.cpp)
 
-  add_executable  ( Combinatorial_map_3 Combinatorial_map_3.cpp MainWindow.cpp Viewer.cpp map_3_subivision.cpp ${uis}  ${RESOURCE_FILES} )
+  add_executable  ( Combinatorial_map_3 Combinatorial_map_3.cpp MainWindow.cpp Viewer.cpp map_3_subdivision.cpp ${uis}  ${RESOURCE_FILES} )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Combinatorial_map_3 )
 

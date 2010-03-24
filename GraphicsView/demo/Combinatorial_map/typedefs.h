@@ -3,9 +3,9 @@
 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Combinatorial_map_3_with_embedding.h>
-#include <CGAL/Combinatorial_map_with_embedding_constructors.h>
-#include <CGAL/Combinatorial_map_with_embedding_operations.h>
+#include <CGAL/Embedded_combinatorial_map_3.h>
+#include <CGAL/Embedded_combinatorial_map_constructors.h>
+#include <CGAL/Embedded_combinatorial_map_operations.h>
 
 #include <CGAL/Timer.h>
 
@@ -23,12 +23,12 @@ typedef double coord_type;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-typedef CGAL::Combinatorial_map_3_with_embedding<Kernel> Map;
+typedef CGAL::Embedded_combinatorial_map_3<Kernel> Map;
 typedef Map::Dart_handle Dart_handle;
 typedef Map::Vertex      Vertex;
 
-typedef Kernel::Point_3    Point_3;
-typedef Kernel::Vector_3   Vector_3;
+typedef Map::Point    Point_3;
+typedef Map::Vector   Vector_3;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
 typedef CGAL::Timer Timer;
