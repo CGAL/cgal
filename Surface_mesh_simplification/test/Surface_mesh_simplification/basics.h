@@ -25,7 +25,6 @@ void Surface_simplification_external_trace( std::string s )
 #include <CGAL/Real_timer.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
@@ -41,9 +40,7 @@ void Surface_simplification_external_trace( std::string s )
 
 #include <CGAL/assertions_behaviour.h>
 
-//typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel ;
-//typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt Kernel ;
 
 typedef Kernel::FT FT ;
 
