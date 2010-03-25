@@ -22,7 +22,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
@@ -31,9 +30,7 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
-//typedef CGAL::Simple_cartesian<double> K ;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-//typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K;
 
 typedef K::Point_2                    Point;
 typedef CGAL::Aff_transformation_2<K> Transformation;

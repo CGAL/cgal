@@ -22,8 +22,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Straight_skeleton_converter_2.h>
@@ -36,13 +34,8 @@
 
 #include <CGAL/Real_timer.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel   IK;
-//typedef CGAL::Exact_predicates_exact_constructions_kernel     IK;
-//typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt IK;
-
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel   OK;
-//typedef CGAL::Exact_predicates_exact_constructions_kernel     OK;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel IK;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel OK;
 
 
 typedef IK::FT                         IFT ;
