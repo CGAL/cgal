@@ -27,6 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <typeinfo>
+#include <cstddef>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -65,6 +66,8 @@ class Handle_for_virtual
 {
   public:
 
+    typedef std::ptrdiff_t Id_type ;
+    
     Handle_for_virtual(const RefCounted& rc)
     {
       ptr = new RefCounted(rc);
@@ -118,13 +121,10 @@ class Handle_for_virtual
 	ptr = new T(rc);
     }
 
-    bool
-    identical( const Handle_for_virtual& h) const
-    { return ptr == h.ptr; }
+    Id_type id() const { return Ptr() - static_cast<RefCounted const*>(0); }
+    
+    bool identical( const Handle_for_virtual& h) const { return Ptr() == h.Ptr(); }
 
-    long int
-    id() const
-    { return reinterpret_cast<long int>(&*ptr); }
 
     void
     swap(Handle_for_virtual & h)
@@ -173,6 +173,9 @@ protected:
 
     RefCounted * ptr;
 };
+
+template <class RefCounted>
+inline bool identical(const Handle_for_virtual<RefCounted> &h1, const Handle_for_virtual<RefCounted> &h2) { return h1.identical(h2); }
 
 CGAL_END_NAMESPACE
 

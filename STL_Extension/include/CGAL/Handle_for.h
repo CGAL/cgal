@@ -27,6 +27,7 @@
 #include <boost/config.hpp>
 #include <CGAL/memory.h>
 #include <algorithm>
+#include <cstddef>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -52,6 +53,8 @@ class Handle_for
 public:
 
     typedef T element_type;
+    
+    typedef std::ptrdiff_t Id_type ;
 
     Handle_for()
       : ptr_(allocator.allocate(1))
@@ -186,13 +189,10 @@ public:
         *this = t;
     }
 
-    bool
-    identical(const Handle_for& h) const
-    { return ptr_ == h.ptr_; }
+    Id_type id() const { return Ptr() - static_cast<T const*>(0); }
+    
+    bool identical(const Handle_for& h) const { return Ptr() == h.Ptr(); }
 
-    long int
-    id() const
-    { return reinterpret_cast<long int>(&*ptr_); }
 
     // Ptr() is the "public" access to the pointer to the object.
     // The non-const version asserts that the instance is not shared.
@@ -284,13 +284,7 @@ identical(const Handle_for<T, Allocator> &h1,
     return h1.identical(h2);
 }
 
-template <class T>
-inline
-bool
-identical(const T &t1, const T &t2)
-{
-    return &t1 == &t2;
-}
+template <class T> inline bool identical(const T &t1, const T &t2) { return &t1 == &t2; }
 
 template <class T, class Allocator>
 inline

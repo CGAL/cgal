@@ -43,6 +43,9 @@ class Rep
 class Handle
 {
   public:
+    
+    typedef std::ptrdiff_t Id_type ;
+    
     Handle()
 	: PTR(static_cast<Rep*>(0)) {}
 
@@ -73,22 +76,17 @@ class Handle
     int
     refs()  const { return PTR->count; }
 
-    friend std::ptrdiff_t id(const Handle& x);
-    friend bool identical(const Handle& h1, const Handle& h2);
+    Id_type id() const { return PTR - static_cast<Rep*>(0); }
+
+    bool identical(const Handle& h) const { return PTR == h.PTR; }
 
   protected:
     Rep* PTR;
 };
 
-inline
-std::ptrdiff_t
-id(const Handle& x)
-{ return x.PTR - static_cast<Rep*>(static_cast<void*>(0)); }
+//inline Handle::Id_type id(const Handle& x) { return x.id() ; }
 
-inline
-bool
-identical(const Handle &h1, const Handle &h2)
-{ return h1.PTR == h2.PTR; }
+inline bool identical(const Handle &h1, const Handle &h2) { return h1.identical(h2); }
 
 CGAL_END_NAMESPACE
 

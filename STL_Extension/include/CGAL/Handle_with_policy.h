@@ -1126,7 +1126,8 @@ typename Handle_with_policy<T,Policy,Alloc>::Bind Handle_with_policy<T,Policy,Al
  *  ID numbers have to be fixed throughout an object's lifetime.
  */
 template <class T, class A>
-unsigned long ID_Number(const Handle_with_policy<T, Handle_policy_no_union, A>& h)
+typename Handle_with_policy<T, Handle_policy_no_union, A>::Id_type
+ID_Number(const Handle_with_policy<T, Handle_policy_no_union, A>& h)
     { return h.id(); }
 
 template <class T, class Policy, class Alloc>
@@ -1329,7 +1330,7 @@ public:
 
     //! returns a unique id value. Two handles share their representation
     //! is their id values are identical.
-    Id_type id() const { return reinterpret_cast<Id_type>(this); }
+    Id_type id() const { return ptr() - static_cast<T const*>(0); }
 
     //! returns \c false since the representation is not shared for
     //! this specialization.
@@ -1356,6 +1357,10 @@ public:
     LEDA_MEMORY( Self)
 #endif
 };
+
+template <class T, class HandlePolicy, class Allocator>
+inline bool identical(const Handle_with_policy<T,HandlePolicy,Allocator> &h1, const Handle_with_policy<T,HandlePolicy,Allocator> &h2) { return h1.is_identical(h2); }
+
 
 /*\brief
  * This class' function call operator test whether one handle's \c id is
