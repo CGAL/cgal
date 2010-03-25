@@ -75,7 +75,7 @@ private:
             old_off=FT(0.0);
         }
         new_rd = this->distance_instance.new_distance(rd,old_off,new_off,new_cut_dim);
-        if (branch(new_rd)) 
+        if (this->branch(new_rd)) 
           compute_neighbors_orthogonally(N->upper(), new_rd);                               
       }
       else // compute new distance
@@ -92,7 +92,7 @@ private:
             old_off=FT(0.0);
         }  
         new_rd = this->distance_instance. new_distance(rd,old_off,new_off,new_cut_dim);
-        if (branch(new_rd)) 
+        if (this->branch(new_rd)) 
           compute_neighbors_orthogonally(N->lower(), new_rd);       
       }
     }
