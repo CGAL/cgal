@@ -8,6 +8,10 @@ struct A {};
 template < typename A1_ = A, typename A2 = int >
 struct B
 {
+    B()
+      : a1()
+    {}
+
     // Note that it is also possible to use CGAL::Default
     // instead of A as the default argument for A1_ above.
 
