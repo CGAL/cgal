@@ -24,6 +24,7 @@ my @platforms_to_do;
 my @known_platforms;
 my %platform_short_names;
 my %platform_is_optimized;
+my %platform_is_64bits;
 my @available_platforms;
 my %test_directories = ();
 my @testresults;
@@ -359,6 +360,9 @@ EOF
 	# my $pf_short = join('_',parse_platform_2($pf));
 	(my $pf_short) = ($pf =~ m/[a-z]+_(.*)/);
 	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\">$pf_short</a>";
+
+        ($platform_is_64bits{$pf}) = ($pf =~ m/(x86[-_]64)/);
+
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
 	    $_ = <PLATFORM_INFO>; # CGAL_VERSION
 	    $_ = <PLATFORM_INFO>; # TESTER
@@ -416,10 +420,20 @@ sub print_platforms_numbers()
 	my $pf_short = short_pfname($platform);
 	my $class = "";
 	my $tag = "";
-	if($platform_is_optimized{$platform})
+	if($platform_is_optimized{$platform} || $platform_is_64bits{$platform})
 	{
-	    $class = " class=\"highlight\"";
-	    $tag = " (optimized: $platform_is_optimized{$platform})"
+	    $class = " class=\"";
+	    $tag = " ( ";
+            if($platform_is_64bits{$platform}) { 
+                $class = "$class os64bits"; 
+                $tag = $tag . "64 bits ";
+            }
+            if($platform_is_optimized{$platform}) { 
+                $class = "$class highlight"; 
+                $tag = $tag ." optimized: $platform_is_optimized{$platform}";
+            }
+            $class = $class . "\"";
+            $tag = $tag . " )";
 	}
 	print OUTPUT "<td$class><a href=\"#platform$platform_num\" title=\"$pf_short$tag\"><b>$platform_num</b></a>\n";
     }
