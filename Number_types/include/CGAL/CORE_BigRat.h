@@ -85,6 +85,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
                                             const Type& y ) const {
           return CGAL::sign( ::CORE::cmp(x,y));
         }
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,Comparison_result)
     };
 
     class To_double
