@@ -26,7 +26,7 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Taucs_solver_traits.h>
-#include <CGAL/ARAP/mkl_solver_traits.h>
+//#include <CGAL/ARAP/mkl_solver_traits.h>
 
 #include "compute_normal.h"
 
@@ -92,7 +92,7 @@ int main(int argc, char * argv[])
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=100 * average spacing)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.25 * average spacing)\n";
-      std::cerr << "  -solver taucs|mkl      Sparse linear solver (default=TAUCS)\n";
+      //     std::cerr << "  -solver taucs|mkl      Sparse linear solver (default=TAUCS)\n";
       return EXIT_FAILURE;
     }
 
@@ -242,6 +242,7 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
       }
     }
+    /*
     else if (solver_name == "mkl")
     {
       std::cerr << "Use MKL Pardiso\n";
@@ -258,6 +259,7 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
       }
     }
+    */
     else
     {
       std::cerr << "Error: invalid solver " << solver_name << "\n";
