@@ -130,7 +130,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   if(TAUCS_FOUND)
   add_library(scene_textured_polyhedron_item SHARED
-    Scene_textured_polyhedron_item.cpp Scene_textured_polyhedron_item.moc)
+    Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
   target_link_libraries(scene_textured_polyhedron_item scene_item)
   endif(TAUCS_FOUND)
 
@@ -158,7 +158,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       MainWindow_moc.cpp
       Scene_moc.cpp
       Viewer_moc.cpp
-      texture.cpp
       ${UI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
     if(TAUCS_FOUND)
