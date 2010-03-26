@@ -25,6 +25,14 @@ public:
   construct_point_2_object() const
   { return Construct_point_2(); }
 
+  Construct_bbox_2
+  construct_bbox_2_object() const
+  { return Construct_bbox_2(); }
+
+  Construct_cartesian_const_iterator_2
+  construct_cartesian_const_iterator_2_object() const
+  { return Construct_cartesian_const_iterator_2(); }
+
   template < typename Kernel2 >
   struct Base { typedef MyCartesian_base<Kernel2, K_Base>  Type; };
 };
