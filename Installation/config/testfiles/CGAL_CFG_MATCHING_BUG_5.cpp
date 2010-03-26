@@ -24,7 +24,9 @@
 //| This flag is set, if a compiler cannot distinguish the signature
 //| of overloaded function templates, which have one template parameter
 //| to be passed explicitely when being called.
-//| This bug appears for example on g++ 3.3 and 3.4.
+//| 
+//| This bug appears for example on g++ 3.3 and 3.4 (but not on more recent
+//| g++ version). This bug appears also on Sun CC 5.90.
 
 template < typename T >
 struct A {};
