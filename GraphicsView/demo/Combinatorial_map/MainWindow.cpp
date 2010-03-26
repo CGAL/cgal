@@ -37,14 +37,14 @@ MainWindow::connectActions()
   QObject::connect(this->actionSubdivide, SIGNAL(triggered()), 
 		   this, SLOT(subdivide()));
 
-  QObject::connect(this->actionCreateCube, SIGNAL(triggered()), 
-		   this, SLOT(create_cube()));
+  QObject::connect(this->actionCreate3Cubes, SIGNAL(triggered()), 
+		   this, SLOT(create_3cubes()));
+
+  QObject::connect(this->actionCreate2Volumes, SIGNAL(triggered()), 
+		   this, SLOT(create_2volumes()));
 
   QObject::connect(this, SIGNAL(sceneChanged()), 
-		   this->viewer, SLOT(sceneChanged()));
-
-  QObject::connect(this->actionDisplayInfo, SIGNAL(triggered()), 
-		   this, SLOT(display_info()));
+		   this, SLOT(onSceneChanged()));
 
   QObject::connect(this->actionClear, SIGNAL(triggered()), 
 		   this, SLOT(clear()));
@@ -52,11 +52,32 @@ MainWindow::connectActions()
 }
 
 void
-MainWindow::display_info()
+MainWindow::onSceneChanged()
 {
-  scene.map.display_characteristics(std::cout)<<std::endl;
-  std::cout<<"Nb vertices:"<< scene.map.size_of_vertices()<<std::endl
-	   <<"Nb Darts:"<< scene.map.size_of_darts()<<std::endl;
+  std::cout<<"[BEGIN] MainWindow::onSceneChanged()"<<std::endl;
+  
+  int mark = scene.map.get_new_mark();
+  scene.map.negate_mask_mark(mark);
+  
+  unsigned int nb0, nb1, nb2, nb3, nb4;
+
+  scene.map.count_cells(mark, &nb0, &nb1, &nb2, &nb3, &nb4, NULL); 
+
+  std::ostringstream os;
+  os<<"Darts: "<< scene.map.size_of_darts()
+    <<",  Vertices:"<<nb0
+    <<",  Edges:"<<nb1
+    <<",  Faces:"<<nb2
+    <<",  Volumes:"<<nb3
+    <<",  Connected components:"<<nb4;
+  
+  scene.map.free_mark(mark);
+
+  viewer->sceneChanged();
+
+  statusBar()->showMessage(os.str().c_str());
+
+  std::cout<<"[END] MainWindow::onSceneChanged()"<<std::endl;
 }
 
 void
@@ -138,7 +159,7 @@ MainWindow::load_3DTDS(const QString& fileName, bool clear)
 }
 
 void
-MainWindow::create_cube()
+MainWindow::create_3cubes()
 {  
   Dart_handle d1=make_cube(scene.map, Point_3(nbcube, nbcube, nbcube), 1);
   Dart_handle d2=make_cube(scene.map, Point_3(nbcube+1, nbcube, nbcube), 1);
@@ -153,8 +174,30 @@ MainWindow::create_cube()
 }
 
 void
+MainWindow::create_2volumes()
+{
+  Dart_handle d1=make_cube(scene.map, Point_3(nbcube, nbcube, nbcube), 1);
+  Dart_handle d2=make_cube(scene.map, Point_3(nbcube+1, nbcube, nbcube), 1);
+  Dart_handle d3=make_cube(scene.map, Point_3(nbcube, nbcube+1, nbcube), 1);
+  Dart_handle d4=make_cube(scene.map, Point_3(nbcube+1, nbcube+1, nbcube), 1);
+
+  scene.map.sew3(d1->beta(1,1)->beta(2),d2->beta(2));
+  scene.map.sew3(d1->beta(2)->beta(1,1)->beta(2),d3);
+
+  scene.map.sew3(d3->beta(1,1)->beta(2),d4->beta(2));
+  scene.map.sew3(d2->beta(2)->beta(1,1)->beta(2),d4);
+
+  remove_face_3(scene.map,d3);
+  remove_face_3(scene.map,d2->beta(2));
+  
+  ++nbcube;
+  
+  emit (sceneChanged());
+}
+
+void
 MainWindow::subdivide()
-{  
+{
   subdivide_map_3(scene.map);
   emit (sceneChanged());
 }

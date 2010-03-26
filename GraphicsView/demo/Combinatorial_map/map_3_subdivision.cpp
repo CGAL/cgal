@@ -21,7 +21,7 @@ public:
 
     int degree=0;
     bool open = false;
-    
+
     Map::Edge_iterator_of_vertex it(mmap, d);
     for ( ; it!=mmap.edge_iterator_of_vertex_end(d); ++it )
     {

@@ -29,16 +29,18 @@ public slots:
   void import_3DTDS();
   void load_3DTDS(const QString& fileName, bool clear=true);
   
-  void subdivide();
-  void create_cube();
-
-  void display_info();
-
   void clear();
-  
+
+  void subdivide();
+  void create_3cubes();
+  void create_2volumes();
+
+  void onSceneChanged();   
+
  signals:
   void sceneChanged();
-
+  
+  
  private:
   unsigned int nbcube;
 };

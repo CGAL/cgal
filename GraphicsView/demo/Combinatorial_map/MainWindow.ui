@@ -33,7 +33,7 @@
      <x>0</x>
      <y>0</y>
      <width>635</width>
-     <height>28</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -54,8 +54,8 @@
      <string>Operations</string>
     </property>
     <addaction name="actionSubdivide"/>
-    <addaction name="actionCreateCube"/>
-    <addaction name="actionDisplayInfo"/>
+    <addaction name="actionCreate3Cubes"/>
+    <addaction name="actionCreate2Volumes"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOperations"/>
@@ -81,9 +81,9 @@
     <string>Subdivide</string>
    </property>
   </action>
-  <action name="actionCreateCube">
+  <action name="actionCreate3Cubes">
    <property name="text">
-    <string>Create cube</string>
+    <string>Create 3 cubes</string>
    </property>
   </action>
   <action name="actionImport3DTDS">
@@ -99,6 +99,11 @@
   <action name="actionClear">
    <property name="text">
     <string>Clear</string>
+   </property>
+  </action>
+  <action name="actionCreate2Volumes">
+   <property name="text">
+    <string>Create 2 volumes</string>
    </property>
   </action>
  </widget>
