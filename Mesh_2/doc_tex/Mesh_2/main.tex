@@ -309,6 +309,10 @@ and the reference manual for details. Note that the \ccc{CDT} should not be
 externally modified during the life time of the \ccc{Delaunay_mesher_2<CDT>}
 object.
 
+Once the mesh is constructed, one can determine which faces of the
+triangulation are in the mesh domain using the \ccc{is_in_domain()} member
+function of the face type (see the concept \ccc{DelaunayMeshFaceBase_2}).
+
 \subsection{Example Using the Global Function}
 
 The following example inserts several segments into a constrained
@@ -335,7 +339,11 @@ This example uses the class \ccc{Delaunay_mesher_2<CDT>} and calls
 
 This example uses the global function \ccc{refine_Delaunay_mesh_2} but
 defines a domain by using one seed. The size and shape criteria are the
-default ones provided by the criteria class \ccc{Delaunay_mesh_criteria_2<K>}.
+default ones provided by the criteria class
+\ccc{Delaunay_mesh_criteria_2<K>}.
+
+Once the mesh is constructed, the \ccc{is_in_domain()} member function of
+faces is used to count them.
 
 \ccIncludeExampleCode{Mesh_2/mesh_with_seeds.cpp}
 
