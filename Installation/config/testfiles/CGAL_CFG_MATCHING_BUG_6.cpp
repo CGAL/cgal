@@ -26,7 +26,7 @@
 //| It happens with the regular triangulation.
 //| No minimal testcase yet
 
-#if (defined _MSC_VER && ! defined __INTEL_COMPILER) || defined __SUNPRO_CC
+#if (defined _MSC_VER && _MSC_VER < 1500 && ! defined __INTEL_COMPILER) || defined __SUNPRO_CC
 
 #error "this should not compile and that is good so"
 
