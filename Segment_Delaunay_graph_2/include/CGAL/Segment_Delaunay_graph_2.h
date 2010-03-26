@@ -1094,7 +1094,24 @@ protected:
 
   inline Edge sym_edge(const Face_handle& f, int i) const {
     Face_handle f_sym = f->neighbor(i);
+#ifdef CGAL_SDG_ALTERNATE_SYMEDGE_IMPLEMENTATION_BY_AF
+    int count = ( f_sym->neighbor(0) == f );
+    int i_sym = 0;
+    if ( f_sym->neighbor(1) == f ) {
+      ++count;
+      i_sym = 1;
+    }
+    if ( f_sym->neighbor(2) == f ) {
+      ++count;
+      i_sym = 2;
+    }
+    if ( count == 1 ) {
+      return Edge(f_sym, i_sym);
+    }
+    return Edge(f_sym, f_sym->index( f->vertex(i) ));
+#else
     return Edge(  f_sym, f_sym->index( this->_tds.mirror_vertex(f, i) )  );
+#endif
   }
 
   Edge flip(Face_handle& f, int i) {
