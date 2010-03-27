@@ -54,8 +54,6 @@ MainWindow::connectActions()
 void
 MainWindow::onSceneChanged()
 {
-  std::cout<<"[BEGIN] MainWindow::onSceneChanged()"<<std::endl;
-  
   int mark = scene.map.get_new_mark();
   scene.map.negate_mask_mark(mark);
   
@@ -76,8 +74,6 @@ MainWindow::onSceneChanged()
   viewer->sceneChanged();
 
   statusBar()->showMessage(os.str().c_str());
-
-  std::cout<<"[END] MainWindow::onSceneChanged()"<<std::endl;
 }
 
 void

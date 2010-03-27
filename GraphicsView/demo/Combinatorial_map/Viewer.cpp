@@ -3,6 +3,13 @@
 #include <vector>
 #include <CGAL/bounding_box.h>
 #include <QGLViewer/vec.h>
+#include <CGAL/Combinatorial_map_basic_operations.h>
+
+#define NB_FILLED_MODE   4
+#define FILLED_ALL       0
+#define FILLED_NON_FREE3 1
+#define FILLED_VOL       2
+#define FILLED_VOL_AND_V 3
 
 template<class Map>
 CGAL::Bbox_3 bbox(Map& amap)
@@ -24,7 +31,9 @@ CGAL::Bbox_3 bbox(Map& amap)
 void
 Viewer::sceneChanged()
 {
-
+  iteratorAllDarts = scene->map.darts_begin();
+  scene->map.unmark_all_darts(markVolume);
+  
   CGAL::Bbox_3 bb = bbox(scene->map);
    
   this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
@@ -40,6 +49,11 @@ Viewer::sceneChanged()
 // Draw the face given by ADart
 void Viewer::drawFace(Dart_handle ADart, int AMark)
 {
+  if ( modeFilledFace==1 && ADart->is_free(3) )
+    {
+      return;
+    }
+  
   Map &m = scene->map;
   ::glBegin(GL_POLYGON);
   ::glColor3f(.7,.7,.7);
@@ -89,10 +103,59 @@ void Viewer::drawEdges(Dart_handle ADart)
   glEnd();
 }
     
+void Viewer::draw_one_vol_filled_faces(Dart_handle adart, int amark)
+{
+  Map &m = scene->map;
+  
+  for (Map::Dart_iterator_of_volume it(m,adart); it.cont(); ++it)
+    {
+      if ( !m.is_marked(*it,amark) )
+	{
+	  drawFace(*it,amark);
+	}
+    }  
+}
+
+void Viewer::draw_current_vol_filled_faces(Dart_handle adart)
+{
+  Map &m = scene->map;
+  unsigned int facetreated = m.get_new_mark();
+
+  draw_one_vol_filled_faces(adart,facetreated); 
+  
+  for (Map::Dart_iterator_of_volume it(m,adart); it.cont(); ++it)
+    {
+      m.unset_mark(*it,facetreated);
+    }
+  
+  m.free_mark(facetreated);  
+}
+
+void Viewer::draw_current_vol_and_neighboors_filled_faces(Dart_handle adart)
+{
+  Map &m = scene->map;
+  unsigned int facetreated = m.get_new_mark();
+
+  draw_one_vol_filled_faces(adart,facetreated);
+  
+  for (Map::Dart_iterator_of_volume it(m,adart); it.cont(); ++it)
+    {
+      if ( !it->is_free(3) ) // && !m.is_marked(it->beta(3),facetreated) )
+	{
+	  draw_one_vol_filled_faces(it->beta(3),facetreated);
+	}
+    }
+
+  m.free_mark(facetreated);  
+}
+
+
 
 void Viewer::draw()
 {
   Map &m = scene->map;
+
+  if ( m.is_empty() ) return;
 
   unsigned int facetreated = m.get_new_mark();
   unsigned int vertextreated = -1;
@@ -103,7 +166,12 @@ void Viewer::draw()
     {
       if ( !m.is_marked(*it,facetreated) )
 	{
-	  drawFace(*it,facetreated);
+	  if ( modeFilledFace==FILLED_ALL ||
+	      modeFilledFace==FILLED_NON_FREE3 && !it->is_free(3) )
+	    drawFace(*it,facetreated);
+	  else
+	    CGAL::mark_orbit<Map>(m,*it,CGAL::BETA1_ORBIT,facetreated);
+
 	  if ( edges) drawEdges(*it);
 	}
 
@@ -131,7 +199,14 @@ void Viewer::draw()
       m.free_mark(vertextreated);
     }
     
-  m.free_mark(facetreated);  
+  m.free_mark(facetreated);
+
+  std::cout<<modeFilledFace<<std::endl;
+  
+  if ( modeFilledFace==FILLED_VOL) 
+    draw_current_vol_filled_faces(iteratorAllDarts);
+  else if ( modeFilledFace==FILLED_VOL_AND_V)
+    draw_current_vol_and_neighboors_filled_faces(iteratorAllDarts);
 }
 
 /*
@@ -265,6 +340,8 @@ void Viewer::init()
   setKeyDescription(Qt::Key_F, "Toggles flat shading display");
   setKeyDescription(Qt::Key_E, "Toggles edges display");
   setKeyDescription(Qt::Key_V, "Toggles vertices display");
+  setKeyDescription(Qt::Key_Z, "Next mode filled face");
+  setKeyDescription(Qt::Key_R, "Select next volume, used for filled face");
 
   // Light default parameters
   ::glLineWidth(1.4f);
@@ -348,6 +425,33 @@ void Viewer::keyPressEvent(QKeyEvent *e)
       handled = true;
       updateGL();
     }
+  else if ((e->key()==Qt::Key_Z) && (modifiers==Qt::NoButton))
+    {
+      modeFilledFace = (modeFilledFace+1)%NB_FILLED_MODE;
+      handled = true;
+      updateGL();
+    }
+  else if ((e->key()==Qt::Key_R) && (modifiers==Qt::NoButton))
+    {      
+      CGAL::mark_orbit<Map>(scene->map, iteratorAllDarts,
+			    Map::VOLUME_ORBIT, markVolume);
+
+      while ( iteratorAllDarts!=scene->map.darts_end() &&
+	      scene->map.is_marked(iteratorAllDarts,markVolume) )
+	{
+	  ++iteratorAllDarts;
+	}
+      
+      if ( iteratorAllDarts==scene->map.darts_end() )
+	{
+	  scene->map.negate_mask_mark(markVolume);
+	  assert( scene->map.is_whole_map_unmarked(markVolume) );
+	  iteratorAllDarts=scene->map.darts_begin();
+	}
+
+      handled = true;
+      updateGL();
+    }
     
   if (!handled)
     QGLViewer::keyPressEvent(e);
@@ -368,6 +472,7 @@ QString Viewer::helpString() const
   text += "Double clicks automates single click actions: A left button double click aligns the closer axis with the camera (if close enough). ";
   text += "A middle button double click fits the zoom of the camera and the right button re-centers the scene.<br><br>";
   text += "A left button double click while holding right button pressed defines the camera <i>Revolve Around Point</i>. ";
+  text += "In filled face, there are four modes: all faces are filled; only faces between two volumes are filles; only the faces of current volume are filled; only the faces of current volume and all its adjacent volumes are filled.";
   text += "See the <b>Mouse</b> tab and the documentation web pages for details.<br><br>";
   text += "Press <b>Escape</b> to exit the viewer.";
   return text;
