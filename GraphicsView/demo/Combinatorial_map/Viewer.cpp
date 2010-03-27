@@ -48,12 +48,7 @@ Viewer::sceneChanged()
 
 // Draw the face given by ADart
 void Viewer::drawFace(Dart_handle ADart, int AMark)
-{
-  if ( modeFilledFace==1 && ADart->is_free(3) )
-    {
-      return;
-    }
-  
+{  
   Map &m = scene->map;
   ::glBegin(GL_POLYGON);
   ::glColor3f(.7,.7,.7);
@@ -187,8 +182,6 @@ void Viewer::draw_current_vol_and_neighboors_filled_faces(Dart_handle adart)
   m.free_mark(volmark);
   m.free_mark(facetreated);  
 }
-
-
 
 void Viewer::draw()
 {
