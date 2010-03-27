@@ -52,10 +52,12 @@ public slots :
  protected:
   void drawFace(Dart_handle ADart, int AMark);
   void drawEdges(Dart_handle ADart);
-  void draw_one_vol_filled_faces(Dart_handle ADart, int amark);
-  void draw_current_vol_filled_faces(Dart_handle ADart);
-  void draw_current_vol_and_neighboors_filled_faces(Dart_handle ADart);
+
+  void draw_one_vol_filled_faces(Dart_handle ADart,
+				 int amarkvol, int amarkface);
   
+  void draw_current_vol_filled_faces(Dart_handle ADart);
+  void draw_current_vol_and_neighboors_filled_faces(Dart_handle ADart);  
 };
 
 #endif

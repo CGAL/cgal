@@ -103,15 +103,16 @@ void Viewer::drawEdges(Dart_handle ADart)
   glEnd();
 }
     
-void Viewer::draw_one_vol_filled_faces(Dart_handle adart, int amark)
+void Viewer::draw_one_vol_filled_faces(Dart_handle adart,
+				       int amarkvol, int amarkface)
 {
   Map &m = scene->map;
   
-  for (Map::Dart_iterator_of_volume it(m,adart); it.cont(); ++it)
+  for (Map::Dart_iterator_basic_of_volume it(m,adart,amarkvol); it.cont(); ++it)
     {
-      if ( !m.is_marked(*it,amark) )
+      if ( !m.is_marked(*it,amarkface) )
 	{
-	  drawFace(*it,amark);
+	  drawFace(*it,amarkface);
 	}
     }  
 }
@@ -120,14 +121,24 @@ void Viewer::draw_current_vol_filled_faces(Dart_handle adart)
 {
   Map &m = scene->map;
   unsigned int facetreated = m.get_new_mark();
+  unsigned int volmark     = m.get_new_mark();
 
-  draw_one_vol_filled_faces(adart,facetreated); 
+  draw_one_vol_filled_faces(adart,volmark,facetreated); 
+
+  m.negate_mask_mark(volmark);  
   
-  for (Map::Dart_iterator_of_volume it(m,adart); it.cont(); ++it)
+  for (Map::Dart_iterator_basic_of_volume it(m,adart,volmark); it.cont(); ++it)
     {
       m.unset_mark(*it,facetreated);
+      if ( !it->is_free(3) ) m.unset_mark(it->beta(3),facetreated);
     }
+
+  m.negate_mask_mark(volmark);  
   
+  assert(m.is_whole_map_unmarked(volmark));
+  assert(m.is_whole_map_unmarked(facetreated));
+  
+  m.free_mark(volmark);
   m.free_mark(facetreated);  
 }
 
@@ -135,17 +146,45 @@ void Viewer::draw_current_vol_and_neighboors_filled_faces(Dart_handle adart)
 {
   Map &m = scene->map;
   unsigned int facetreated = m.get_new_mark();
-
-  draw_one_vol_filled_faces(adart,facetreated);
+  unsigned int volmark     = m.get_new_mark();
   
-  for (Map::Dart_iterator_of_volume it(m,adart); it.cont(); ++it)
+  draw_one_vol_filled_faces(adart,volmark,facetreated);
+
+  Map::Dart_iterator_of_volume it(m,adart);
+  for (; it.cont(); ++it)
     {
-      if ( !it->is_free(3) ) // && !m.is_marked(it->beta(3),facetreated) )
+      if ( !it->is_free(3) && !m.is_marked(it->beta(3),volmark) )
 	{
-	  draw_one_vol_filled_faces(it->beta(3),facetreated);
+	  draw_one_vol_filled_faces(it->beta(3),volmark,facetreated);
 	}
     }
 
+  m.negate_mask_mark(volmark);
+  
+  for (it.rewind(); it.cont(); ++it)
+    {
+      m.set_mark(*it,volmark);
+	    
+      if ( m.is_marked(*it,facetreated))
+	CGAL::unmark_orbit<Map>(m,*it,Map::FACE_ORBIT,facetreated);
+      
+      if ( !it->is_free(3) && !m.is_marked(it->beta(3),volmark) )
+	{
+	  Map::Dart_iterator_basic_of_volume it2(m,it->beta(3),volmark);
+	  for (; it2.cont(); ++it2)
+	    {
+	      if ( m.is_marked(*it2,facetreated))
+		CGAL::unmark_orbit<Map>(m,*it2,Map::FACE_ORBIT,facetreated);
+	    }
+	}
+    }
+
+  m.negate_mask_mark(volmark);
+
+  assert(m.is_whole_map_unmarked(volmark));
+  assert(m.is_whole_map_unmarked(facetreated));
+
+  m.free_mark(volmark);
   m.free_mark(facetreated);  
 }
 
@@ -201,8 +240,6 @@ void Viewer::draw()
     
   m.free_mark(facetreated);
 
-  std::cout<<modeFilledFace<<std::endl;
-  
   if ( modeFilledFace==FILLED_VOL) 
     draw_current_vol_filled_faces(iteratorAllDarts);
   else if ( modeFilledFace==FILLED_VOL_AND_V)
