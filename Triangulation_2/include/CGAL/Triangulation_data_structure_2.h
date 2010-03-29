@@ -60,6 +60,31 @@ class Triangulation_data_structure_2
   friend class Triangulation_ds_edge_circulator_2<Tds>;
   friend class Triangulation_ds_vertex_circulator_2<Tds>;
 
+public:
+  typedef Vertex_base                                Vertex;
+  typedef Face_base                                  Face;
+  
+  typedef Compact_container<Face>                    Face_range;
+  typedef Compact_container<Vertex>                  Vertex_range;
+
+  typedef typename Face_range::size_type             size_type;
+  typedef typename Face_range::difference_type       difference_type;
+
+  typedef typename Face_range::iterator              Face_iterator;
+  typedef typename Vertex_range::iterator            Vertex_iterator;
+
+  typedef Triangulation_ds_edge_iterator_2<Tds>      Edge_iterator;
+
+  typedef Triangulation_ds_face_circulator_2<Tds>    Face_circulator;
+  typedef Triangulation_ds_vertex_circulator_2<Tds>  Vertex_circulator;
+  typedef Triangulation_ds_edge_circulator_2<Tds>    Edge_circulator;
+
+  typedef Vertex_iterator                            Vertex_handle;
+  typedef Face_iterator                              Face_handle;
+
+  typedef std::pair<Face_handle, int>                Edge;
+  typedef std::list<Edge> List_edges;
+
 #ifdef CGAL_TDS2_DATA
 public:
 
@@ -120,31 +145,6 @@ public:
     // in-place edge list stuff -- end
   };
 #endif
-                
-public:
-  typedef Vertex_base                                Vertex;
-  typedef Face_base                                  Face;
-  
-  typedef Compact_container<Face>                    Face_range;
-  typedef Compact_container<Vertex>                  Vertex_range;
-
-  typedef typename Face_range::size_type             size_type;
-  typedef typename Face_range::difference_type       difference_type;
-
-  typedef typename Face_range::iterator              Face_iterator;
-  typedef typename Vertex_range::iterator            Vertex_iterator;
-
-  typedef Triangulation_ds_edge_iterator_2<Tds>      Edge_iterator;
-
-  typedef Triangulation_ds_face_circulator_2<Tds>    Face_circulator;
-  typedef Triangulation_ds_vertex_circulator_2<Tds>  Vertex_circulator;
-  typedef Triangulation_ds_edge_circulator_2<Tds>    Edge_circulator;
-
-  typedef Vertex_iterator                            Vertex_handle;
-  typedef Face_iterator                              Face_handle;
-
-  typedef std::pair<Face_handle, int>                Edge;
-  typedef std::list<Edge> List_edges;
 
 protected:
   int _dimension;
