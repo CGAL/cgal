@@ -42,7 +42,7 @@
 #include <CGAL/Triangulation_face_base_2.h>
 #endif
 
-#include <CGAL/in_place_edge_list.h>
+#include <CGAL/Segment_Delaunay_graph_2/in_place_edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/Traits_wrapper_2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
@@ -78,7 +78,7 @@ namespace Internal {
   struct Which_list<E,Tag_true>
   {
     typedef E                           Edge;
-    typedef In_place_edge_list<Edge>    List;
+    typedef In_place_edge_list_for_sdg<Edge>    List;
   };
 
   // do not use the in-place edge list

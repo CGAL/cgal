@@ -1170,8 +1170,8 @@ add_bogus_vertices(List& l)
   do {
     Edge esym = sym_edge(e);
     if ( l.is_in_list(esym) ) {
-      if ( !esym.first->is_selected(esym.second) ) {
-	e.first->mark_selected(e.second);
+      if ( !esym.first->tds_data().is_selected(esym.second) ) {
+	e.first->tds_data().mark_selected(e.second);
 	edge_list.push_back(e);
       }
     }
@@ -1181,8 +1181,8 @@ add_bogus_vertices(List& l)
   e_start = l.front();
   e = e_start;
   do {
-    if ( e.first->is_selected(e.second) ) {
-      e.first->mark_unselected(e.second);
+    if ( e.first->tds_data().is_selected(e.second) ) {
+      e.first->tds_data().mark_unselected(e.second);
     }
   } while ( e != e_start );
 
