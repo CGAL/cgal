@@ -66,8 +66,27 @@ public:
   class Face_data {
     bool in_conflict_;
     Sign incircle_sign_;
+    // below are the data for the in-place edge list
+    bool selected[3];
+    Edge next_[3], prev_[3];
+
+    // method to initialize the in-place edge list
+    void initialize_in_place_edge_list()
+    {
+      static Edge SENTINEL_QUEUE_EDGE = Edge(Face_handle(), -1);
+
+      for (int i = 0; i < 3; ++i) {
+	selected[i] = false;
+	next_[i] = SENTINEL_QUEUE_EDGE;
+	prev_[i] = SENTINEL_QUEUE_EDGE;
+      }
+    }
+
   public:
-    Face_data() : in_conflict_(false), incircle_sign_(ZERO) {}
+    Face_data() : in_conflict_(false), incircle_sign_(ZERO)
+    {
+      initialize_in_place_edge_list();
+    }
 
     inline void clear()                    { in_conflict_ = false; }
     inline void mark_in_conflict()         { in_conflict_ = true; }
@@ -76,6 +95,29 @@ public:
     inline bool is_clear()       const { return !in_conflict_; }
     inline bool is_in_conflict() const { return in_conflict_; }
     inline Sign incircle_sign()  const { return incircle_sign_; }
+
+    // in-place edge list stuff -- start
+    inline Edge next(unsigned int i)     const { return next_[i]; }
+    inline Edge previous(unsigned int i) const { return prev_[i]; }
+
+    inline void set_next(unsigned int i, const Edge& next)
+    {
+      next_[i] = next;
+    }
+
+    inline void set_previous(unsigned int i, const Edge& prev)
+    {
+      prev_[i] = prev;
+    }
+  
+    inline bool is_in_list(unsigned int i) const {
+      return next_[i].second != -1 || prev_[i].second != -1;
+    }
+
+    inline void mark_selected(unsigned int i) { selected[i] = true; }
+    inline void mark_unselected(unsigned int i) { selected[i] = false; }
+    inline bool is_selected(unsigned int i) const { return selected[i]; }
+    // in-place edge list stuff -- end
   };
 #endif
                 
