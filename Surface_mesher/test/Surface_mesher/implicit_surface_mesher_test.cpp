@@ -6,9 +6,6 @@
 #include <CGAL/Filtered_kernel.h>
 
 #include <CGAL/MP_Float.h>
-#ifdef CGAL_USE_CORE
-#  include <CGAL/CORE_Expr.h>
-#endif
 
 #include <CGAL/make_surface_mesh.h>
 
