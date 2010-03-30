@@ -2,7 +2,9 @@
 #include "test_configuration.h"
 #include <iostream>
 
-#if (TEST_TRAITS == CORE_CONIC_TRAITS) && !defined(CGAL_USE_CORE)
+#if ((TEST_TRAITS == CORE_CONIC_TRAITS) || \
+     (TEST_TRAITS == BEZIER_TRAITS) || \
+     (TEST_TRAITS == RATIONAL_ARC_TRAITS)) && !defined(CGAL_USE_CORE)
 
 int main ()
 {
