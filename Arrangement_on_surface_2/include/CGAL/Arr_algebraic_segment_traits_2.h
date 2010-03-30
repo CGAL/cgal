@@ -81,6 +81,12 @@ public:
         return CKvA_2::instance().compare_xy_2_object();
     }
 
+    typedef typename CKvA_2::Compare_endpoints_xy_2 Compare_endpoints_xy_2;
+    Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const {
+        return CKvA_2::instance().compare_endpoints_xy_2_object();
+    }
+
+
     typedef typename CKvA_2::Equal_2 Equal_2;
     Equal_2 equal_2_object() const {
         return CKvA_2::instance().equal_2_object();
@@ -122,6 +128,11 @@ public:
         return CKvA_2::instance().construct_max_vertex_2_object();
     }
 
+    typedef typename CKvA_2::Construct_opposite_2 Construct_opposite_2;
+    Construct_opposite_2 construct_opposite_2_object() const {
+        return CKvA_2::instance().construct_opposite_2_object();
+    }
+  
     typedef typename CKvA_2::Is_vertical_2 Is_vertical_2;
     Is_vertical_2 is_vertical_2_object() const {
         return CKvA_2::instance().is_vertical_2_object();
