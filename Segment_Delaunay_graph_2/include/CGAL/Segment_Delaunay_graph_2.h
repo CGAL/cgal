@@ -35,8 +35,8 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Segment_Delaunay_graph_storage_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_vertex_base_2.h>
+#include <CGAL/Segment_Delaunay_graph_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/in_place_edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/edge_list.h>
@@ -150,7 +150,7 @@ template<class Gt,
 	 class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
 	 class D_S = Triangulation_data_structure_2 < 
                 Segment_Delaunay_graph_vertex_base_2<ST>,
-                Triangulation_face_base_2<Gt> >,
+                Segment_Delaunay_graph_face_base_2<Gt> >,
 	 class LTag = Tag_false >
 class Segment_Delaunay_graph_2
   : private Triangulation_2<

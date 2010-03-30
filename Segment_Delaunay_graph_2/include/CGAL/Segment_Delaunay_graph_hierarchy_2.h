@@ -35,7 +35,7 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Segment_Delaunay_graph_vertex_base_2.h>
 #include <CGAL/Segment_Delaunay_graph_hierarchy_vertex_base_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Segment_Delaunay_graph_face_base_2.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -63,7 +63,7 @@ template < class Gt,
 	   class D_S = Triangulation_data_structure_2<
               Segment_Delaunay_graph_hierarchy_vertex_base_2<
 		Segment_Delaunay_graph_vertex_base_2<ST> >,
-              Triangulation_face_base_2<Gt> >,
+              Segment_Delaunay_graph_face_base_2<Gt> >,
 	   class LTag = Tag_false>
 class Segment_Delaunay_graph_hierarchy_2
   : public Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>

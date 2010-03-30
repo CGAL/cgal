@@ -16,7 +16,6 @@
 //#define CGAL_SDG_USE_OLD_INCIRCLE 1
 
 #define CGAL_SDG_NOX
-#define CGAL_TDS2_DATA 1
 #define USE_INPLACE_LIST 1
 #define CGAL_SDG_USE_SIMPLIFIED_ARRANGEMENT_TYPE_PREDICATE 1
 #define CGAL_SDG_SORT_POINTS_IN_SITE2 1
@@ -54,7 +53,7 @@ typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<K, 
 #ifdef USE_INPLACE_LIST
 
 typedef CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>    Vb;
-typedef CGAL::Triangulation_face_base_2<Gt>               Fb;
+typedef CGAL::Segment_Delaunay_graph_face_base_2<Gt>      Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>       TDS;
 typedef CGAL::Segment_Delaunay_graph_nox_2<Gt,TDS,CGAL::Tag_true>  SDG2;
 #else
