@@ -1,3 +1,20 @@
+#include <CGAL/basic.h>
+#include <iostream>
+
+#if !defined(CGAL_USE_CORE)
+
+int main ()
+{
+  bool UNTESTED_TRAITS_AS_CORE_IS_NOT_ISTALLED;
+  std::cout << std::endl
+            << "WARNING: Core is not installed, "
+            << "skipping the test ..."
+            << std::endl;
+  return 0;
+}
+
+#else
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_Expr.h>
@@ -11,7 +28,6 @@
 #include "Envelope_test_3.h"
 #include <CGAL/Env_sphere_traits_3.h>
 
-#include <iostream>
 #include <cassert>
 #include <list>
 #include <set>
@@ -94,11 +110,11 @@ bool test_one_file(std::ifstream& inp)
 }
 
 
-int main(int argc, char **argv)
+int main(int argc, char* argv[])
 {
-  if(argc < 2)
+  if (argc < 2)
   {
-    std::cerr<<"Missing input file\n";
+    std::cerr << "Missing input file" < std::endl;
     std::exit (-1);
   }
 
@@ -130,3 +146,5 @@ int main(int argc, char **argv)
   
   return success;
 }
+
+#endif
