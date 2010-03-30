@@ -24,11 +24,90 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace internal {
+  template<class E>
+  class In_place_edge_list_iterator
+  {
+    typedef E Edge;
+    typedef In_place_edge_list_iterator<Edge> Self;
+
+  public:
+    In_place_edge_list_iterator() {}
+
+    In_place_edge_list_iterator(const Edge& e, unsigned int idx)
+      : e(e), idx(idx) {}
+    
+    In_place_edge_list_iterator(const Self& other)
+    {
+      e = other.e;
+      idx = other.idx;
+    }
+
+    Self& operator=(const Self& other)
+    {
+      e = other.e;
+      idx = other.idx;
+      return *this;
+    }
+
+    // pre-increment
+    Self& operator++() {
+      ++idx;
+      e = e.first->tds_data().next(e.second);
+      return *this;
+    }
+
+    // post-increment
+    Self operator++(int) {
+      Self tmp(*this);
+      ++(*this);
+      return tmp;
+    }
+
+#if 0
+    Self& operator--() {
+      e = e.first->tds_data().previous(e.second);
+      return *this;
+    }
+
+    Self operator--(int) {
+      Self tmp(*this);
+      --(*this);
+      return tmp;
+    }
+#endif
+
+    Edge*  operator->() { return &e; }
+    Edge&  operator*()  { return e; }
+
+
+    bool operator==(const Self& other) const {
+      return (e.first == other.e.first &&
+	      e.second == other.e.second &&
+	      idx == other.idx);
+    }
+
+    bool operator!=(const Self& other) const {
+      return (e.first != other.e.first ||
+	      e.second != other.e.second ||
+	      idx != other.idx);
+    }
+
+  private:
+    Edge e;
+    unsigned int idx;
+  };
+} // namespace internal
+
+
 template<class Edge>
 class In_place_edge_list_for_sdg {
 private:
   typedef typename Edge::first_type          Face_handle;
   typedef typename Face_handle::value_type   Face;
+
+public:
+  typedef internal::In_place_edge_list_iterator<Edge>  iterator;
 
 private:
   Edge _front;
@@ -196,6 +275,14 @@ public:
     while ( !is_empty() ) {
       pop();
     }
+  }
+
+  iterator begin() const {
+    return iterator(front(), 0);
+  }
+
+  iterator end() const {
+    return iterator(front(), size());
   }
 };
 

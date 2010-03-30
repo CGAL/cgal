@@ -24,8 +24,14 @@
 
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
+
+#ifdef CGAL_SDG_NOX
+#include <CGAL/Segment_Delaunay_graph_2/nox/Voronoi_vertex_ring_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/nox/Voronoi_vertex_sqrt_field_new_C2.h>
+#else
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_ring_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_sqrt_field_new_C2.h>
+#endif
 
 #ifdef CGAL_SDG_USE_OLD_INCIRCLE
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_sqrt_field_C2.h>

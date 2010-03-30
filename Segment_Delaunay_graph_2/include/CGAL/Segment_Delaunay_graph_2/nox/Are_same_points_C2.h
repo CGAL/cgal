@@ -18,8 +18,8 @@
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
 
-#ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_COMPARE_X_2_H
-#define CGAL_SEGMENT_DELAUNAY_GRAPH_2_COMPARE_X_2_H
+#ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NOX_ARE_SAME_POINTS_C2_H
+#define CGAL_SEGMENT_DELAUNAY_GRAPH_2_NOX_ARE_SAME_POINTS_C2_H
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
@@ -27,35 +27,39 @@ CGAL_BEGIN_NAMESPACE
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
-//-----------------------------------------------------------------------
-//                           compare x
-//-----------------------------------------------------------------------
-
-template< class K >
-class Compare_x_2
+template<class K>
+class Are_same_points_C2
 {
-public:
-  typedef typename K::Site_2              Site_2;
-  typedef typename K::Point_2             Point_2;
-
-  typedef typename K::Comparison_result   result_type;
-
 private:
-  typedef typename K::Compare_x_2         Kernel_compare_x_2;
+  typedef typename K::Point_2     Point_2;
+  typedef typename K::Segment_2   Segment_2;
+  typedef typename K::Site_2      Site_2;
+  typedef typename K::Compare_x_2 Compare_x_2;
+  typedef typename K::Compare_y_2 Compare_y_2;
+  typedef typename K::Boolean     Boolean;
+
+  typedef typename K::Intersections_tag  ITag;
+
+  Compare_x_2 compare_x_2;
+  Compare_y_2 compare_y_2;
 
 public:
+  typedef Boolean        result_type;
+  typedef Site_2         argument_type;
 
   inline
-  result_type operator()(const Point_2& p, const Point_2& q) const
+  Boolean operator()(const Point_2& p, const Point_2& q) const
   {
-    return Kernel_compare_x_2()( p, q );
+    return
+      compare_x_2(p, q) == EQUAL && compare_y_2(p, q) == EQUAL;
   }
 
   inline
-  result_type operator()(const Site_2& p, const Site_2& q) const
+  Boolean operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_point() && q.is_point() );
-    return Kernel_compare_x_2()( p.point(), q.point() );
+
+    return operator()(p.point(), q.point());
   }
 };
 
@@ -63,5 +67,4 @@ CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
 CGAL_END_NAMESPACE
 
-
-#endif //  CGAL_SEGMENT_DELAUNAY_GRAPH_2_COMPARE_X_2_H
+#endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_NOX_ARE_SAME_POINTS_C2_H

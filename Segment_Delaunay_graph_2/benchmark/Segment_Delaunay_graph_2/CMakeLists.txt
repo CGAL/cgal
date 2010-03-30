@@ -20,9 +20,11 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-#  include_directories (BEFORE ../../include)
+  include_directories (BEFORE ../../include)
 
   create_single_source_cgal_program( "benchmark.cpp" )
+  create_single_source_cgal_program( "benchmark_nox.cpp" )
+  create_single_source_cgal_program( "double.cpp" )
 
 else()
   

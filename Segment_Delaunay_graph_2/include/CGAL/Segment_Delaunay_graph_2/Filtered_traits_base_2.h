@@ -24,7 +24,11 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 #include <CGAL/Segment_Delaunay_graph_2/Traits_base_2.h>
+#ifdef CGAL_SDG_NOX
+#include <CGAL/Segment_Delaunay_graph_2/nox/Kernel_wrapper_2.h>
+#else
 #include <CGAL/Segment_Delaunay_graph_2/Kernel_wrapper_2.h>
+#endif
 #include <CGAL/Segment_Delaunay_graph_2/Cartesian_converter.h>
 
 #include <CGAL/Filtered_predicate.h>

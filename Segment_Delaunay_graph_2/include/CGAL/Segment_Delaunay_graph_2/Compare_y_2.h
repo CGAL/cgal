@@ -45,6 +45,13 @@ private:
 
 public:
 
+  inline
+  result_type operator()(const Point_2& p, const Point_2& q) const
+  {
+    return Kernel_compare_y_2()( p, q );
+  }
+
+  inline
   result_type operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_point() && q.is_point() );
