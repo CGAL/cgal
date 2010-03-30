@@ -20,7 +20,7 @@
 // STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-
+#ifdef CGAL_USE_CORE
 #include <CGAL/Cartesian.h>
 #include <CGAL/Spherical_kernel_3.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
@@ -39,9 +39,11 @@
 #include <CGAL/_test_functionalities_on_sphere.h>
 
 int pipo(int r){return r;}
+#endif
 
 int main()
 {
+#ifdef CGAL_USE_CORE	
   typedef CORE::Expr                                          FT;
   typedef CGAL::Cartesian<FT>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_spheres_2_3<FT>          Algebraic_k1;
@@ -51,5 +53,6 @@ int main()
   _test_spherical_kernel_construct(sk1); 
   _test_spherical_kernel_compute(sk1);
   test_functionalities_on_a_reference_sphere<SK1>(SK1::Point_3(4.5,1.2,0.7));
+#endif
   return 0;
 }
