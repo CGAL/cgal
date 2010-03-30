@@ -117,7 +117,7 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
   Lazy_exact_Int_Cst (int i)
       : Lazy_exact_nt_rep<ET>(double(i)) {}
 
-  void update_exact()  { this->et = new ET((int)this->approx().inf()); }
+  void update_exact() const { this->et = new ET((int)this->approx().inf()); }
 };
 
 // double constant
@@ -127,7 +127,7 @@ struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
   Lazy_exact_Cst (double d)
       : Lazy_exact_nt_rep<ET>(d) {}
 
-  void update_exact()  { this->et = new ET(this->approx().inf()); }
+  void update_exact() const { this->et = new ET(this->approx().inf()); }
 };
 
 // Exact constant
@@ -140,14 +140,14 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_nt_rep<ET>
     this->et = new ET(e);
   }
 
-  void update_exact()  { CGAL_error(); }
+  void update_exact() const { CGAL_error(); }
 };
 
 // Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).
 template <typename ET, typename ET1>
 class Lazy_lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
 {
-  Lazy_exact_nt<ET1> l;
+  mutable Lazy_exact_nt<ET1> l;
 
 public:
 
@@ -157,14 +157,14 @@ public:
     this->set_depth(l.depth() + 1);
   }
 
-  void update_exact()
+  void update_exact() const
   {
     this->et = new ET(l.exact());
-    this->approx() = l.approx();
+    this->at = l.approx();
     prune_dag();
   }
 
-  void prune_dag() { l = Lazy_exact_nt<ET1>(); }
+  void prune_dag() const { l = Lazy_exact_nt<ET1>(); }
 };
 
 
@@ -175,7 +175,7 @@ public:
 template <typename ET>
 struct Lazy_exact_unary : public Lazy_exact_nt_rep<ET>
 {
-  Lazy_exact_nt<ET> op1;
+  mutable Lazy_exact_nt<ET> op1;
 
   Lazy_exact_unary (const Interval_nt<false> &i, const Lazy_exact_nt<ET> &a)
       : Lazy_exact_nt_rep<ET>(i), op1(a)
@@ -183,7 +183,7 @@ struct Lazy_exact_unary : public Lazy_exact_nt_rep<ET>
     this->set_depth(op1.depth() + 1);
   }
 
-  void prune_dag() { op1 = Lazy_exact_nt<ET>(); }
+  void prune_dag() const { op1 = Lazy_exact_nt<ET>(); }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -202,8 +202,8 @@ struct Lazy_exact_unary : public Lazy_exact_nt_rep<ET>
 template <typename ET, typename ET1 = ET, typename ET2 = ET>
 struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
 {
-  Lazy_exact_nt<ET1> op1;
-  Lazy_exact_nt<ET2> op2;
+  mutable Lazy_exact_nt<ET1> op1;
+  mutable Lazy_exact_nt<ET2> op2;
 
   Lazy_exact_binary (const Interval_nt<false> &i,
 		     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
@@ -212,7 +212,7 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
     this->set_depth((std::max)(op1.depth(), op2.depth()) + 1);
   }
 
-  void prune_dag()
+  void prune_dag() const
   {
     op1 = Lazy_exact_nt<ET1>();
     op2 = Lazy_exact_nt<ET2>();
@@ -245,11 +245,11 @@ struct NAME : public Lazy_exact_unary<ET>                                \
   NAME (const Lazy_exact_nt<ET> &a)                                      \
       : Lazy_exact_unary<ET>((P(), OP(a.approx())), a) {}                \
                                                                          \
-  void update_exact()                                                    \
+  void update_exact() const                                              \
   {                                                                      \
     this->et = new ET(OP(this->op1.exact()));                            \
     if (!this->approx().is_point())                                      \
-      this->approx() = CGAL_NTS to_interval(*(this->et));                \
+      this->at = CGAL_NTS to_interval(*(this->et));                      \
     this->prune_dag();                                                   \
    }                                                                     \
 };
@@ -268,11 +268,11 @@ struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
   NAME (const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)        \
     : Lazy_exact_binary<ET, ET1, ET2>((P(), a.approx() OP b.approx()), a, b) {} \
                                                                          \
-  void update_exact()                                                    \
+  void update_exact() const                                              \
   {                                                                      \
     this->et = new ET(this->op1.exact() OP this->op2.exact());           \
     if (!this->approx().is_point())                                      \
-      this->approx() = CGAL_NTS to_interval(*(this->et));                \
+      this->at = CGAL_NTS to_interval(*(this->et));                      \
     this->prune_dag();                                                   \
    }                                                                     \
 };
@@ -289,10 +289,11 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET>
   Lazy_exact_Min (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
     : Lazy_exact_binary<ET>((min)(a.approx(), b.approx()), a, b) {}
 
-  void update_exact()
+  void update_exact() const
   {
     this->et = new ET((min)(this->op1.exact(), this->op2.exact()));
-    if (!this->approx().is_point()) this->approx() = CGAL_NTS to_interval(*(this->et));
+    if (!this->approx().is_point()) 
+      this->at = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
   }
 };
@@ -304,10 +305,11 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
   Lazy_exact_Max (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
     : Lazy_exact_binary<ET>((max)(a.approx(), b.approx()), a, b) {}
 
-  void update_exact()
+  void update_exact() const
   {
     this->et = new ET((max)(this->op1.exact(), this->op2.exact()));
-    if (!this->approx().is_point()) this->approx() = CGAL_NTS to_interval(*(this->et));
+    if (!this->approx().is_point()) 
+      this->at = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
   }
 };
@@ -1303,7 +1305,7 @@ struct Lazy_exact_ro2
       : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx()))),
         op1(a), op2(b), op3(c), smaller(true), old_rep(false) {}
 
-    void update_exact()
+    void update_exact() const
     {
         if (old_rep)
           this->et = new RO2(make_root_of_2(op1.exact(), op2.exact(),
