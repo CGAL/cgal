@@ -64,8 +64,8 @@ namespace internal {
       return tmp;
     }
 
-#if 0
     Self& operator--() {
+      --idx;
       e = e.first->tds_data().previous(e.second);
       return *this;
     }
@@ -75,22 +75,17 @@ namespace internal {
       --(*this);
       return tmp;
     }
-#endif
 
     Edge*  operator->() { return &e; }
     Edge&  operator*()  { return e; }
 
 
     bool operator==(const Self& other) const {
-      return (e.first == other.e.first &&
-	      e.second == other.e.second &&
-	      idx == other.idx);
+      return idx == other.idx;
     }
 
     bool operator!=(const Self& other) const {
-      return (e.first != other.e.first ||
-	      e.second != other.e.second ||
-	      idx != other.idx);
+      return idx != other.idx;
     }
 
   private:
@@ -267,21 +262,21 @@ public:
     decrease_size();
   }
 
-  bool is_in_list(const Edge& e) const {
+  inline bool is_in_list(const Edge& e) const {
     return e.first->tds_data().is_in_list(e.second);
   }
 
-  void clear() {
+  inline void clear() {
     while ( !is_empty() ) {
       pop();
     }
   }
 
-  iterator begin() const {
+  inline iterator begin() const {
     return iterator(front(), 0);
   }
 
-  iterator end() const {
+  inline iterator end() const {
     return iterator(front(), size());
   }
 };
