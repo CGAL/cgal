@@ -1125,9 +1125,6 @@ public:
 protected:
   // HELPER METHODS FOR INSERTION
   //-----------------------------
-  bool is_flippable(Face_handle f, int i);
-  void propagating_flip(Face_handle f, int i, const Site_2& t);
-
   void initialize_conflict_region(const Face_handle& f, List& l);
 
   void expand_conflict_region(const Face_handle& f, const Site_2& t,

@@ -255,65 +255,6 @@ insert_third(const Site_2& s, Vertex_handle , Vertex_handle )
 // insertion of a point
 //--------------------------------------------------------------------
 
-
-
-template<class Gt, class D_S, class LTag>
-bool
-Segment_Delaunay_graph_nox_2<Gt,D_S,LTag>::
-is_flippable(Face_handle f, int i)
-{
-  // an edge is considered flippable if both its endpoints have degree
-  // at least 3
-  Vertex_handle v1 = f->vertex(ccw(i));
-  {
-    int count = 0;
-    Vertex_circulator vc = incident_vertices(v1), done(vc);
-    do {
-      ++count;
-    } while ( count < 3 || ++vc != done );
-    if ( count < 3 ) return false;
-  }
-
-  Vertex_handle v2 = f->vertex(cw(i));
-  int count = 0;
-  Vertex_circulator vc = incident_vertices(v2), done(vc);
-  do {
-    ++count;
-  } while ( count < 3 || ++vc != done );
-  return count == 3;
-}
-
-
-template<class Gt, class D_S, class LTag>
-void
-Segment_Delaunay_graph_nox_2<Gt,D_S,LTag>::
-propagating_flip(Face_handle f, int i, const Site_2& t)
-{
-  if ( !is_flippable(f, i) ) return;
-
-  Face_handle n = f->neighbor(i);
-
-  //  Edge esym = sym_edge(f, i);
-  //  if (  is_infinite( esym.first->vertex(esym.second) )   ) { return; }
-
-  Sign s = incircle(n, t);
-
-  if ( s != NEGATIVE ) { return; }
-
-  bool interior_in_conflict = edge_interior(f, i, t, s);
-  
-  if ( interior_in_conflict ) {
-    flip(f, i);
-    return;
-  }
-
-  flip(f, i);
-  propagating_flip(f, i, t);
-  i = n->index( f->vertex(i) );
-  propagating_flip(n, i, t);
-}
-
-
 template<class Gt, class D_S, class LTag>
 typename Segment_Delaunay_graph_nox_2<Gt,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_nox_2<Gt,D_S,LTag>::
@@ -497,22 +438,6 @@ insert_point2(const Site_2& t, Vertex_handle vnearest)
     return insert_degree_2(e, t);
   }
 
-#ifdef CGAL_SDG_INSERT_WITH_FLIPS
-  // this is the new vertex
-  Vertex_handle v = this->_tds.insert_in_face(start_f);
-  v->set_site(t);
-  Face_handle f = v->face();
-  Face_handle next;
-  int i;
-  Face_handle start(f);
-  do {
-    i = f->index(v);
-    next = f->neighbor(ccw(i));
-    propagating_flip(f, i, t);
-    f = next;
-  } while ( next != start );
-  return v;
-#else
   // we are in conflict with a Voronoi vertex; start from that and 
   // find the entire conflict region and then repair the diagram
   List l;
@@ -534,7 +459,6 @@ insert_point2(const Site_2& t, Vertex_handle vnearest)
   retriangulate_conflict_region(v, l);
 
   return v;
-#endif
 }
 
 
@@ -639,22 +563,6 @@ insert_segment_interior(const Site_2& t, Vertex_handle vnearest)
   // segments must have a conflict with at least one vertex
   CGAL_assertion( s == NEGATIVE );
 
-#ifdef CGAL_SDG_INSERT_WITH_FLIPS
-  // this is the new vertex
-  Vertex_handle v = this->_tds.insert_in_face(start_f);
-  v->set_site(t);
-  Face_handle f = v->face();
-  Face_handle next;
-  int i;
-  Face_handle start(f);
-  do {
-    i = f->index(v);
-    next = f->neighbor(ccw(i));
-    propagating_flip(f, i, t);
-    f = next;
-  } while ( next != start );
-  return v;
-#else
   // we are in conflict with a Voronoi vertex; start from that and 
   // find the entire conflict region and then repair the diagram
   List l;
@@ -680,7 +588,6 @@ insert_segment_interior(const Site_2& t, Vertex_handle vnearest)
   retriangulate_conflict_region(v, l);
 
   return v;
-#endif
 }
 
 
