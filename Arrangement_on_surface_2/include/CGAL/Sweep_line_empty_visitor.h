@@ -205,13 +205,13 @@ public:
   /*! Get the first subcurve in the status line. */
   Status_line_iterator status_line_begin()
   {
-    return (_sweep_line()->status_line_begin());
+    return (this->_sweep_line()->status_line_begin());
   }
 
   /*! Get a past-the-end iterator for the subcurves in the status line. */
   Status_line_iterator status_line_end()
   {
-    return (_sweep_line()->status_line_end());
+    return (this->_sweep_line()->status_line_end());
   }
 
   /*! Get the position of the given subcurve in the status line. */
@@ -223,25 +223,25 @@ public:
   /*! Get the number of subcurves in the status line. */
   unsigned status_line_size() const
   {
-    return (_sweep_line()->status_line_size());
+    return (this->_sweep_line()->status_line_size());
   }
 
   /*! Check if the status line is empty. */
   bool is_status_line_empty() const
   {
-    return (_sweep_line()->is_status_line_empty());
+    return (this->_sweep_line()->is_status_line_empty());
   }
 
   /*! Deallocate the given event. */
   void deallocate_event (Event* e)
   {
-    _sweep_line()->deallocate_event(e);
+    this->_sweep_line()->deallocate_event(e);
   }
 
   /*! Stop the sweep-line process. */
   void stop_sweep()
   {
-    _sweep_line()->stop_sweep();
+    this->_sweep_line()->stop_sweep();
   }
 
   /*! Get the sweep-line object. */
@@ -253,13 +253,13 @@ public:
   /*! Get the current event. */
   Event* current_event()
   {
-    return (_sweep_line()->current_event());
+    return (this->_sweep_line()->current_event());
   }
 
   /*! Get the geometry-traits class. */
   const Traits_2 * traits ()
   {
-    return (_sweep_line()->traits());
+    return (this->_sweep_line()->traits());
   }
 
 private:
