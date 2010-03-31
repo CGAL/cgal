@@ -567,8 +567,8 @@ _create_intersection_point (const Point_2& xp,
 {
   // insert the event and check if an event at this point already exists.   
   const std::pair<Event*, bool>& pair_res = 
-    _push_event (xp, Base_event::DEFAULT,
-                 ARR_INTERIOR, ARR_INTERIOR);
+    this->_push_event (xp, Base_event::DEFAULT,
+                       ARR_INTERIOR, ARR_INTERIOR);
     
   Event *e = pair_res.first;
   if(pair_res.second)    
@@ -757,7 +757,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_overlap
       this->m_traits->construct_max_vertex_2_object()(overlap_cv);
 
     const std::pair<Event*, bool>& pair_res =
-      _push_event (end_overlap, Base_event::OVERLAP, ps_x_r, ps_y_r);
+      this->_push_event (end_overlap, Base_event::OVERLAP, ps_x_r, ps_y_r);
 
     right_end = pair_res.first;
   }
