@@ -552,7 +552,7 @@ public:
       CGAL_precondition(degree() >= 0);
       CGAL_precondition(p2.degree() >= 0);
 
-      if (is_identical(p2)) return CGAL::EQUAL;
+      if (this->is_identical(p2)) return CGAL::EQUAL;
 
       int d1 = degree();
       int d2 = p2.degree();
