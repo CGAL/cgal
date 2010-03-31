@@ -216,7 +216,10 @@ public:
 
     if (m_orig_subcurve1 == NULL)
       return (oi);
-
+    
+    // EBEB: get_all_inner_nodes not existent. 
+    //       It seems that all_nods is never called. 
+    //       Only some compilers complain.
     oi = m_orig_subcurve1->get_all_inner_nodes (oi);
     oi = m_orig_subcurve2->get_all_inner_nodes (oi);
     return (oi);
