@@ -32,6 +32,10 @@ namespace internal {
     typedef In_place_edge_list_iterator<Edge> Self;
 
   public:
+    typedef Edge*  pointer;
+    typedef Edge&  reference;
+
+  public:
     In_place_edge_list_iterator() {}
 
     In_place_edge_list_iterator(const Edge& e, unsigned int idx)
@@ -76,11 +80,12 @@ namespace internal {
       return tmp;
     }
 
-    Edge*  operator->() { return &e; }
-    Edge&  operator*()  { return e; }
+    pointer    operator->() { return &e; }
+    reference  operator*()  { return e; }
 
 
     bool operator==(const Self& other) const {
+      CGAL_assertion( e == other.e );
       return idx == other.idx;
     }
 
@@ -273,11 +278,11 @@ public:
   }
 
   inline iterator begin() const {
-    return iterator(front(), 0);
+    return iterator(_front, 0);
   }
 
   inline iterator end() const {
-    return iterator(front(), size());
+    return iterator(_front, _size);
   }
 };
 

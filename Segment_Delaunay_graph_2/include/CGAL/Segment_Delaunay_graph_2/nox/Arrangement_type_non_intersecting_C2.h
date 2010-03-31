@@ -105,9 +105,9 @@ private:
   result_type
   arrangement_type_ps(const Site_2& p, const Site_2& q) const
   {
-    if ( same_points(p, q.source()) ) {
+    if ( same_points(p.point(), q.source()) ) {
       return TOUCH_1;
-    } else if ( same_points(p, q.target()) ) {
+    } else if ( same_points(p.point(), q.target()) ) {
       return TOUCH_2;
     } else {
       return DISJOINT;

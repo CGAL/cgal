@@ -125,6 +125,10 @@ namespace internal {
     typedef Edge_list_circulator<List>                  Self;
 
   public:
+    typedef typename Base::pointer     pointer;
+    typedef typename Base::reference   reference;
+
+  public:
     Edge_list_circulator()
       : l_(NULL), c_(List_item::sentinel_edge()) {}
 
@@ -156,25 +160,27 @@ namespace internal {
 
     Self operator++(int) {
       Self tmp(*this);
-      ++tmp;
+      ++(*this);
       return tmp;
     }
 
     Self operator--(int) {
       Self tmp(*this);
-      --tmp;
+      --(*this);
       return tmp;
     }
 
-    typename Base::pointer   operator->() { return &c_; }
-    typename Base::reference operator*() { return c_; }
+    pointer   operator->() { return &c_; }
+    reference operator*() { return c_; }
 
     bool operator==(const Self& other) const {
-      return l_ == other.l_ && c_ == other.c_;
+      CGAL_assertion( l_ == other.l_ );
+      return c_ == other.c_;
     }
 
     bool operator!=(const Self& other) const {
-      return l_ != other.l_ || c_ != other.c_;
+      CGAL_assertion( l_ == other.l_ );
+      return c_ != other.c_;
     }
 
   protected:
@@ -190,6 +196,10 @@ namespace internal {
     typedef L                               Edge_list;
     typedef typename Edge_list::Edge        Edge;
     typedef Edge_list_iterator<Edge_list>   Self;
+
+  public:
+    typedef Edge*  pointer;
+    typedef Edge&  reference;
 
   public:
     Edge_list_iterator() {}
@@ -238,15 +248,17 @@ namespace internal {
       return tmp;
     }
 
-    Edge*  operator->() { return &e; }
-    Edge&  operator*()  { return e; }
+    pointer    operator->() { return &e; }
+    reference  operator*()  { return e; }
 
 
     bool operator==(const Self& other) const {
+      CGAL_assertion( l == other.l );
       return idx == other.idx;
     }
 
     bool operator!=(const Self& other) const {
+      CGAL_assertion( l == other.l );
       return idx != other.idx;
     }
 
