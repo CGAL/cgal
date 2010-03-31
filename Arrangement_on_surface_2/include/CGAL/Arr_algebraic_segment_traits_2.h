@@ -64,17 +64,10 @@ public:
     typedef typename CKvA_2::Has_left_category Has_left_category;
     typedef typename CKvA_2::Has_merge_category Has_merge_category;
 
-#if CGAL_BOOLEAN_OPS_WITH_ALGEBRAIC_POLYGONS
-    typedef typename CGAL::Arr_oblivious_side_tag Arr_left_side_category;
-    typedef typename CGAL::Arr_oblivious_side_tag Arr_bottom_side_category;
-    typedef typename CGAL::Arr_oblivious_side_tag Arr_top_side_category;
-    typedef typename CGAL::Arr_oblivious_side_tag Arr_right_side_category;
-#else
     typedef typename CKvA_2::Arr_left_side_category Arr_left_side_category;
     typedef typename CKvA_2::Arr_bottom_side_category Arr_bottom_side_category;
     typedef typename CKvA_2::Arr_top_side_category Arr_top_side_category;
     typedef typename CKvA_2::Arr_right_side_category Arr_right_side_category;
-#endif
 
     typedef typename CKvA_2::Multiplicity Multiplicty;
 
