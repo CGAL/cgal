@@ -192,7 +192,6 @@ namespace internal {
         return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-j.y(), p_min.z()-j.z(), sides) <= 0
                 || do_axis_intersect_aux<K,AXE,SIDE>(p_max.y()-k.y(), p_max.z()-k.z(), sides) >= 0 );
       }
-      break;
     case 1:
       // t_max >= t_min
       if ( do_axis_intersect_aux<K,AXE,SIDE>(k.x()-j.x(), k.z()-j.z(), sides) >= 0 )
@@ -205,7 +204,6 @@ namespace internal {
         return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j.x(), p_min.z()-j.z(), sides) <= 0
                 || do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k.x(), p_max.z()-k.z(), sides) >= 0 );
       }
-      break;
     case 2:
       // t_max >= t_min
       if ( do_axis_intersect_aux<K,AXE,SIDE>(k.x()-j.x(), k.y()-j.y(), sides) >= 0 )
@@ -218,7 +216,6 @@ namespace internal {
         return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j.x(), p_min.y()-j.y(), sides) <= 0
                 || do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k.x(), p_max.y()-k.y(), sides) >= 0 );
       }
-      break;
     default:
       // Should not happen
       CGAL_error();
