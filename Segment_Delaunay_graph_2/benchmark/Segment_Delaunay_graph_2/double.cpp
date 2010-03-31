@@ -17,6 +17,11 @@
 // add this to use the old incircle test
 //#define CGAL_SDG_USE_OLD_INCIRCLE 1
 
+#define CGAL_SDG_NOX 1
+#define USE_INPLACE_LIST 1
+#define CGAL_SDG_USE_SIMPLIFIED_ARRANGEMENT_TYPE_PREDICATE 1
+#define CGAL_SDG_SORT_POINTS_IN_SITE2 1
+
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
@@ -32,13 +37,36 @@ typedef  K::Point_2 Point_2;
 
 
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>
+#ifdef CGAL_SDG_NOX
+#include <CGAL/Segment_Delaunay_graph_nox_2.h>
+#else
 #include <CGAL/Segment_Delaunay_graph_2.h>
-
+#endif
 
 typedef CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,CGAL::Field_with_sqrt_tag> Gt;
 
 
-typedef CGAL::Segment_Delaunay_graph_2<Gt>  SDG2;
+#ifdef CGAL_SDG_NOX
+typedef CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>    Vb;
+#else
+typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt> ST;
+typedef CGAL::Segment_Delaunay_graph_vertex_base_2<ST>    Vb;
+#endif
+typedef CGAL::Segment_Delaunay_graph_face_base_2<Gt>      Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>       TDS;
+
+#ifdef USE_INPLACE_LIST
+typedef CGAL::Tag_true    List_tag;
+#else
+typedef CGAL::Tag_false   List_tag;
+#endif
+
+#ifdef CGAL_SDG_NOX
+typedef CGAL::Segment_Delaunay_graph_nox_2<Gt,TDS,List_tag>  SDG2;
+#else
+typedef CGAL::Segment_Delaunay_graph_2<Gt,ST,TDS,List_tag>   SDG2;
+#endif
+
 
   
 typedef std::vector<Point_2> Points_container;

@@ -184,6 +184,79 @@ namespace internal {
   };
 
 
+  template<class L>
+  class Edge_list_iterator
+  {
+    typedef L                               Edge_list;
+    typedef typename Edge_list::Edge        Edge;
+    typedef Edge_list_iterator<Edge_list>   Self;
+
+  public:
+    Edge_list_iterator() {}
+    
+    Edge_list_iterator(const Edge_list* l, const Edge& e, unsigned int idx)
+      : l(l), e(e), idx(idx) {}
+    
+    Edge_list_iterator(const Self& other)
+    {
+      l = other.l;
+      e = other.e;
+      idx = other.idx;
+    }
+
+    Self& operator=(const Self& other)
+    {
+      l = other.l;
+      e = other.e;
+      idx = other.idx;
+      return *this;
+    }
+
+    // pre-increment
+    Self& operator++() {
+      ++idx;
+      e = l->next(e);
+      return *this;
+    }
+
+    // post-increment
+    Self operator++(int) {
+      Self tmp(*this);
+      ++(*this);
+      return tmp;
+    }
+
+    Self& operator--() {
+      --idx;
+      e = l->previous(e);
+      return *this;
+    }
+
+    Self operator--(int) {
+      Self tmp(*this);
+      --(*this);
+      return tmp;
+    }
+
+    Edge*  operator->() { return &e; }
+    Edge&  operator*()  { return e; }
+
+
+    bool operator==(const Self& other) const {
+      return idx == other.idx;
+    }
+
+    bool operator!=(const Self& other) const {
+      return idx != other.idx;
+    }
+
+  private:
+    const Edge_list* l;
+    Edge e;
+    unsigned int idx;
+  };
+
+
 } // namespace internal
 
 
@@ -211,6 +284,7 @@ private:
 
 public:
   typedef internal::Edge_list_circulator<Self>  circulator;
+  typedef internal::Edge_list_iterator<Self>    iterator;
 
 private:
   // PRIVATE DATA MEMBERS
@@ -450,6 +524,16 @@ public:
     return circulator(this, start);
   }
 #endif
+  // ACCESS TO ITERATOR
+  //===================
+  iterator begin() const {
+    return iterator(this, front(), 0);
+  }
+
+  iterator end() const {
+    return iterator(this, front(), size());
+  }
+
 
   // MISCELLANEOUS
   //==============
