@@ -543,7 +543,8 @@ public:
   OutputIterator get_t_at_y (const Rational& y0,
                              OutputIterator oi) const
   {
-    return (_solve_t_values (this->_rep().y_polynomial(), _rep.y_norm(), y0,
+    return (_solve_t_values (this->_rep().y_polynomial(), 
+                             this->_rep().y_norm(), y0,
                              oi));
   }
 
