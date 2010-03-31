@@ -328,25 +328,25 @@ public:
   /*! Get an iterator for the first event in event queue. */
   Event_queue_iterator event_queue_begin()
   {
-    return (m_queue.begin());
+    return (this->m_queue.begin());
   }
 
   /*! Get a past-the-end iterator for the events in the in event queue. */
   Event_queue_iterator event_queue_end()
   {
-    return (m_queue.end());
+    return (this->m_queue.end());
   }
 
    /*! Get the event queue size. */
   unsigned int event_queue_size() const
   {
-    return (m_queue.size());
+    return (this->m_queue.size());
   }
 
   /*! Check if the event queue is empty. */
   bool is_event_queue_empty() const
   {
-    return (m_queue.empty());
+    return (this->m_queue.empty());
   }
 
   /*! 
