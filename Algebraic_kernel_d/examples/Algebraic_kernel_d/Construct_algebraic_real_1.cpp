@@ -1,6 +1,10 @@
 // $URL$
 // $Id$
 
+#include <CGAL/basic.h>
+
+#if defined(CGAL_USE_GMP) && defined(CGAL_USE_MPFI) && defined(CGAL_USE_RS)
+
 #include <CGAL/Algebraic_kernel_d_1_RS_Gmpz.h>
 #include <vector>
 
@@ -29,3 +33,8 @@ int main(){
 
   return 0;
 }
+#else
+int main(){
+        return 0;
+}
+#endif

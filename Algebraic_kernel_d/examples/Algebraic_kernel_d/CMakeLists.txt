@@ -1,4 +1,4 @@
-project( RS_examples )
+project( AK_examples )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -30,6 +30,6 @@ if ( CGAL_FOUND )
 else( CGAL_FOUND )
 
   message(STATUS
-    "NOTICE: This program requires CGAL and GMP, and will not be compiled.")
+    "NOTICE: This program requires CGAL, and will not be compiled.")
 
 endif( CGAL_FOUND )
