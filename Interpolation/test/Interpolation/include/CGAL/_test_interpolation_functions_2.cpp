@@ -93,7 +93,7 @@ _test_sibson_c1_interpolation_sqrt(ForwardIterator ,
 {
   bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
   std::cout << std::endl
-            << "WARNING : FT doesn't support sqrt(),"
+            << "FT doesn't support sqrt(),"
     " hence sibson_c1_interpolation is not tested." << std::endl;
   return true;
 }
