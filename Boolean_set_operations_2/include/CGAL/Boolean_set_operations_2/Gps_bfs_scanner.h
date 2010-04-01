@@ -42,7 +42,7 @@ class Gps_bfs_scanner
 protected:
   Visitor*                     m_visitor;
   std::queue<Inner_ccb_iterator>   m_holes;
-  std::stack<Ccb_halfedge_circulator>  m_ccb_stcak;
+  std::stack<Ccb_halfedge_circulator>  m_ccb_stack;
 
 public:
 
@@ -74,10 +74,10 @@ public:
   void scan(Ccb_halfedge_circulator ccb)
   {
     _scan(ccb);
-    while(!m_ccb_stcak.empty())
+    while(!m_ccb_stack.empty())
     {
-      Ccb_halfedge_circulator curr_ccb = m_ccb_stcak.top();
-      m_ccb_stcak.pop();
+      Ccb_halfedge_circulator curr_ccb = m_ccb_stack.top();
+      m_ccb_stack.pop();
       _scan(curr_ccb);
     }
 
@@ -98,7 +98,7 @@ public:
         m_visitor->discovered_face(he->face(), new_f, he); 
         
         //scan(he->twin());
-        m_ccb_stcak.push(he->twin());
+        m_ccb_stack.push(he->twin());
       }
       ++ccb_circ;
     }
