@@ -20,9 +20,9 @@
 
 #if defined(CGAL_USE_GMP) && defined(CGAL_USE_MPFI) && defined(CGAL_USE_RS)
 
-#include <CGAL/Algebraic_kernel_d_1_RS_Gmpz.h>
+#include <CGAL/Algebraic_kernel_rs_gmpz_1.h>
 
-typedef CGAL::Algebraic_kernel_d_1_RS_Gmpz              AK;
+typedef CGAL::Algebraic_kernel_rs_gmpz_1                AK;
 typedef AK::Polynomial_1                                Polynomial_1;
 typedef AK::Algebraic_real_1                            Algebraic_real_1;
 typedef AK::Coefficient                                 Coefficient;
