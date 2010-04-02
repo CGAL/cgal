@@ -28,7 +28,6 @@
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Mesh_global_optimizer.h>
 #include <CGAL/Mesh_3/Odt_move.h>
-#include <CGAL/Mesh_3/Triangulation_sizing_field.h>
 #include <CGAL/Mesh_3/Mesh_sizing_field.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 
