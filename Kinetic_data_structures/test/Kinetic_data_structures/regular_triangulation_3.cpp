@@ -5,7 +5,7 @@
 #include <CGAL/Kinetic/basic.h>
 
 #include <CGAL/Kinetic/Regular_triangulation_3.h>
-#include <CGAL/Kinetic/Regular_triangulation_CORE_exact_simulation_traits.h>
+#include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits.h>
 #include <CGAL/Kinetic/Regular_triangulation_inexact_simulation_traits.h>
 #include <CGAL/Kinetic/Regular_triangulation_event_log_visitor_3.h>
 #include <algorithm>
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
       sp->set_current_event_number(sp->current_event_number()+1);
     }
   } else {
-    typedef CGAL::Kinetic::Regular_triangulation_CORE_exact_simulation_traits Simulation_traits;
+    typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits Simulation_traits;
     typedef CGAL::Kinetic::Regular_triangulation_event_log_visitor_3 Visitor;
     typedef CGAL::Kinetic::Regular_triangulation_3<Simulation_traits, Visitor> KDel;
     typedef KDel::Triangulation IT;

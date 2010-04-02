@@ -22,7 +22,9 @@
 #define CGAL_POLYNOMIAL_KERNEL_RATIONAL_BETWEEN_ROOTS_H
 
 #include <CGAL/Polynomial/basic.h>
+#ifdef CGAL_USE_CORE
 #include <CGAL/CORE_Expr.h>
+#endif
 #include <CGAL/Polynomial/internal/Simple_interval_root.h>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
@@ -75,6 +77,7 @@ protected:
     }
   }
   
+#ifdef CGAL_USE_CORE
   result_type compute(const CORE::Expr &r0, const CORE::Expr &r1) const {
     result_type ret= CGAL::to_interval(r0).second;
     result_type step=.0000000596046447753906250000000;
@@ -89,7 +92,7 @@ protected:
     } while (ret >= r1 || ret <= r0);
     return ret;
   }
-  
+#endif
   
 public:
 

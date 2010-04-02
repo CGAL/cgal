@@ -4,7 +4,9 @@
 #include <CGAL/Kinetic/Sort.h>
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
+#ifdef CGAL_USE_CORE
 #include <CGAL/Kinetic/CORE_Expr_exact_simulation_traits.h>
+#endif
 #include <cstdlib>
 #include "include/sort_test.h"
 
@@ -39,6 +41,7 @@ int main(int argc, char *argv[]) {
     }
     error= error || sort_test<Tr>(tr);
   }
+#ifdef CGAL_USE_CORE
   {
     
     typedef CGAL::Kinetic::CORE_Expr_exact_simulation_traits Tr;
@@ -60,6 +63,7 @@ int main(int argc, char *argv[]) {
     }
     error= error || sort_test<Tr>(tr);
   }
+#endif
   
  
   if (error || CGAL::Kinetic::internal::audit_failures__ != 0) {

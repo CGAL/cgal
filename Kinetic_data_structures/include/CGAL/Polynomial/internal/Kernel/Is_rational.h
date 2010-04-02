@@ -48,10 +48,12 @@ public:
   {
     return true;
   }
+#ifdef CGAL_USE_CORE
   bool operator()(const CORE::Expr) const
   {
     return false;
   }
+#endif
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

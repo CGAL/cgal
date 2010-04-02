@@ -23,10 +23,10 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-//#ifdef CGAL_USE_CORE
+#ifdef CGAL_USE_CORE
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_Expr.h>
-//#endif
+#endif
 
 #include <CGAL/Polynomial/internal/Simple_interval_root.h>
 
@@ -49,13 +49,13 @@ public:
     return v.isolating_interval();
   }
 
-  //#ifdef CGAL_USE_CORE
+#ifdef CGAL_USE_CORE
   result_type operator()(const CORE::Expr &r) const {
     double a,b;
     r.doubleInterval(a,b); // do something
     return std::make_pair(typename K::FT(a), typename K::FT(b));
   }
-  //#endif
+#endif
 
   std::pair<double, double> operator()(double v) const
   {

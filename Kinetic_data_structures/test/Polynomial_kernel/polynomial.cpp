@@ -9,13 +9,14 @@
 
 //#include <CGAL/Polynomial/internal/Filtered_rational/Filtered_rational_traits.h>
 //#include <CGAL/Polynomial/Default_filtering_traits.h>
+#ifdef CGAL_USE_CORE
 #include <CGAL/Polynomial/CORE_kernel.h>
+#include <CGAL/CORE_Expr.h>
+#endif
 
 #include <vector>
 
 //#include "write_maple_functions.h"
-
-#include <CGAL/CORE_Expr.h>
 
 bool for_maple=false;
 
@@ -243,6 +244,7 @@ int main(int argc, char* argv[])
     test_polynomial(tr);
     }*/
   std::cout <<"\n\n\n\n\n";
+#ifdef CGAL_USE_CORE
   {
     std::cout << "Testing core poly.\n";
     typedef CGAL_POLYNOMIAL_NS::CORE_kernel CORE_kernel;
@@ -250,6 +252,7 @@ int main(int argc, char* argv[])
     test_polynomial(tr);
   }
   std::cout <<"\n\n\n\n\n";
+#endif
   {
     std::cout << "Testing fixed poly.\n";
     typedef CGAL::POLYNOMIAL::Default_field_nt NT;
