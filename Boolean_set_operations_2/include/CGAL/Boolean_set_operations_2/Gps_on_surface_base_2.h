@@ -537,18 +537,18 @@ public:
     return *m_arr;
   }
   
-  /*! */
-  bool is_valid() const
-  {
-    if (!CGAL::is_valid(*m_arr))
+protected:
+  
+  bool _is_valid(Aos_2& arr) {
+    if (!CGAL::is_valid(arr))
       return false;
 
     Compare_endpoints_xy_2 cmp_endpoints =
       m_traits->compare_endpoints_xy_2_object();
     Construct_opposite_2 ctr_opp = m_traits->construct_opposite_2_object();
 
-    for (Edge_const_iterator eci = m_arr->edges_begin();
-         eci != m_arr->edges_end();
+    for (Edge_const_iterator eci = arr.edges_begin();
+         eci != arr.edges_end();
          ++eci)
     {
       Halfedge_const_handle he = eci;
@@ -568,10 +568,19 @@ public:
         SMALLER : LARGER;
       const bool                 has_same_dir = (cmp_endpoints(cv) == he_res);
 
-      if ((is_cont && !has_same_dir) || (!is_cont && has_same_dir))
+      if ((is_cont && !has_same_dir) || (!is_cont && has_same_dir)) {
         return false;
+      }
     }
     return true;
+  }
+
+public:
+
+  /*! */
+  bool is_valid()
+  {
+    return _is_valid(*this->m_arr);
   }
 
   // get the simple polygons, takes O(n)
@@ -905,7 +914,7 @@ public:
   {
     this->_remove_redundant_edges(m_arr);
   }
-
+  
 protected:
   
   void _remove_redundant_edges(Aos_2* arr)
@@ -967,8 +976,9 @@ protected:
   void _fix_curves_direction(Aos_2& arr)
   {
     Compare_endpoints_xy_2 cmp_endpoints =
-      m_traits->compare_endpoints_xy_2_object();
-    Construct_opposite_2 ctr_opp = m_traits->construct_opposite_2_object();
+      arr.geometry_traits()->compare_endpoints_xy_2_object();
+    Construct_opposite_2 ctr_opp = 
+      arr.geometry_traits()->construct_opposite_2_object();
 
     for (Edge_iterator eit = arr.edges_begin();
          eit != arr.edges_end();
@@ -981,9 +991,10 @@ protected:
         ((Arr_halfedge_direction)he->direction() == ARR_LEFT_TO_RIGHT) ?
         SMALLER : LARGER;
       const bool                 has_same_dir = (cmp_endpoints(cv) == he_res);
-
-      if ((is_cont && !has_same_dir) || (!is_cont && has_same_dir))
+      
+      if ((is_cont && !has_same_dir) || (!is_cont && has_same_dir)) {
         arr.modify_edge(he, ctr_opp(cv));
+      }
     }
   }
 
@@ -1121,6 +1132,8 @@ protected:
     
     m_arr = res_arr;
     remove_redundant_edges();
+    //fix_curves_direction(); // not needed for intersection
+    CGAL_assertion(is_valid());
   }
   
   void _intersection(const Aos_2& arr1, const Aos_2& arr2, Aos_2& res) 
@@ -1128,7 +1141,8 @@ protected:
     Gps_intersection_functor<Aos_2> func;
     overlay(arr1, arr2, res, func);
     _remove_redundant_edges(&res);
-    
+    //_fix_curves_direction(res); // not needed for intersection
+    CGAL_assertion(is_valid(res));
   }
   
   template <class Polygon_>
@@ -1179,6 +1193,8 @@ protected:
     
     m_arr = res_arr;
     remove_redundant_edges();
+    //fix_curves_direction(); // not needed for join
+    CGAL_assertion(is_valid());
   }
   
   void _join(const Aos_2& arr1, const Aos_2& arr2, Aos_2& res) 
@@ -1186,7 +1202,8 @@ protected:
     Gps_join_functor<Aos_2> func;
     overlay(arr1, arr2, res, func);
     _remove_redundant_edges(&res);
-    
+    //_fix_curves_direction(res); // not needed for join
+    CGAL_assertion(is_valid(res));
   }
   
   template <class Polygon_>
@@ -1253,6 +1270,7 @@ protected:
     m_arr = res_arr;
     remove_redundant_edges();
     fix_curves_direction();
+    CGAL_assertion(is_valid());
   }
   
   void _difference(const Aos_2& arr1, const Aos_2& arr2, Aos_2& res) 
@@ -1261,7 +1279,7 @@ protected:
     overlay(arr1, arr2, res, func);
     _remove_redundant_edges(&res);
     _fix_curves_direction(res);
-    
+    CGAL_assertion(is_valid(res));
   }
   
   template <class Polygon_>
@@ -1319,6 +1337,7 @@ protected:
     m_arr = res_arr;
     remove_redundant_edges();
     fix_curves_direction();
+    CGAL_assertion(is_valid());
   }
   
   void _symmetric_difference(const Aos_2& arr1, const Aos_2& arr2, Aos_2& res) 
@@ -1327,6 +1346,7 @@ protected:
     overlay(arr1, arr2, res, func);
     _remove_redundant_edges(&res);
     _fix_curves_direction(res);
+    CGAL_assertion(is_valid(res));
   }
   
   template <class Polygon_>
