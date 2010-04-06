@@ -162,7 +162,9 @@ private:
   Sizing_field sizing_field_;
   double time_limit_;
   CGAL::Timer running_time_;
-  std::list<FT> big_moves_;
+  
+  typedef std::list<FT> FT_list;
+  FT_list big_moves_;
   
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   mutable FT sum_moves_;
@@ -385,7 +387,7 @@ update_big_moves(const FT& new_sq_move)
     big_moves_.pop_back();
     
     // Insert value at the right place
-    typename std::list<FT>::iterator pos = 
+    typename FT_list::iterator pos = 
       std::find_if(big_moves_.begin(), big_moves_.end(), bl::_1 < new_sq_move );
     
     big_moves_.insert(pos, new_sq_move);
@@ -471,8 +473,11 @@ check_convergence() const
   namespace bl = boost::lambda;
   
   FT sum(0);
-  std::for_each(big_moves_.begin(), big_moves_.end(),
-                ( bl::var(sum) += bl::bind<FT>(CGAL::sqrt<FT>,bl::_1) ));
+  for ( typename FT_list::const_iterator
+       it = big_moves_.begin(), end = big_moves_.end() ; it != end ; ++it )
+  {
+    sum += CGAL::sqrt(*it);
+  }
   
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   sum_moves_ = sum/big_moves_.size();

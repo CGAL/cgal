@@ -980,7 +980,7 @@ public:
                             const FT& sphere_radius)
     : max_try_nb_(max_try_nb) 
     , sphere_radius_(sphere_radius)
-    , generator_(std::time(0))
+    , generator_(boost::uint32_t(std::time(0)))
     , uni_dist_(0,1)
     , random_(generator_, uni_dist_) {}
   

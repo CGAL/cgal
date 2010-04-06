@@ -821,9 +821,11 @@ update_mesh(const Point_3& new_point,
       
       // reset cache validity
       namespace bl = boost::lambda;
-      std::for_each(conflict_cells.begin(),
-                    conflict_cells.end(),
-                    bl::bind(&Cell::reset_cache_validity, *bl::_1) );
+      for ( typename Cell_vector::iterator cit = conflict_cells.begin(),
+           end = conflict_cells.end() ; cit != end ; ++cit )
+      {
+        (*cit)->reset_cache_validity();
+      }
       
       return std::make_pair(false,old_vertex);
     }
