@@ -56,7 +56,7 @@ Dart_handle flip_edge(Map &m, Dart_handle d)
 {
   CGAL_assertion( d!=NULL && !d->is_free(2) );
 
-  if ( !can_remove(m,d,1) ) return NULL;
+  if ( !m.can_remove(d,1) ) return NULL;
 
   Dart_handle d2 = d->beta(1,1);
   remove_edge_3(m, d);
@@ -68,7 +68,7 @@ Dart_handle flip_edge(Map &m, Dart_handle d)
 // Subdivide each face of the map by using sqrt(3)-subdivision.
 void subdivide_map_3(Map& m)
 {
-  if (m.number_of_darts() == 0)
+  if (m.size_of_darts() == 0)
     return;
 
   unsigned int mark    = m.get_new_mark();
