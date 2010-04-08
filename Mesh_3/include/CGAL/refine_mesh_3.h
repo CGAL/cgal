@@ -165,7 +165,7 @@ namespace parameters {
     return options;
   }
   
-  internal::Perturb_options no_perturb() { return internal::Perturb_options(false); }
+  inline internal::Perturb_options no_perturb() { return internal::Perturb_options(false); }
   
   // -----------------------------------
   // Exude
@@ -184,7 +184,7 @@ namespace parameters {
     return options;
   }
   
-  internal::Exude_options no_exude() { return internal::Exude_options(false); }
+  inline internal::Exude_options no_exude() { return internal::Exude_options(false); }
   
   // -----------------------------------
   // Odt
@@ -205,7 +205,7 @@ namespace parameters {
     return options;
   }
   
-  internal::Odt_options no_odt() { return internal::Odt_options(false); }
+  inline internal::Odt_options no_odt() { return internal::Odt_options(false); }
   
   // -----------------------------------
   // Lloyd
@@ -226,7 +226,7 @@ namespace parameters {
     return options;
   }
   
-  internal::Lloyd_options no_lloyd() { return internal::Lloyd_options(false); }
+  inline internal::Lloyd_options no_lloyd() { return internal::Lloyd_options(false); }
   
   
   // -----------------------------------
