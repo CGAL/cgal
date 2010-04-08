@@ -30,6 +30,9 @@ if( NOT CGAL_MPFI_SETUP )
       link_libraries( ${MPFI_LIBRARIES} )
     else( COMPILED_MPFI_TEST AND MPFI_TEST_RESULT EQUAL 0)
       message( STATUS "MPFI was incorrectly configured on this system" )
+      message( STATUS
+        "Output of the failed MPFI test was:\n${MPFI_TEST_COMPILATION_OUTPUT}" )
+      message( STATUS "End of the MPFI test output" )
     endif( COMPILED_MPFI_TEST AND MPFI_TEST_RESULT EQUAL 0)
 
   endif( MPFI_FOUND )
