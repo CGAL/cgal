@@ -1312,7 +1312,6 @@ Geomview/doc_tex/Geomview/geomview.gif -text
 GraphicsView/GraphicsView.odp -text
 GraphicsView/TODO -text
 GraphicsView/demo/Alpha_shapes_3/Alpha_shape_3.qrc -text
-GraphicsView/demo/Alpha_shapes_3/MainWindow.ui -text
 GraphicsView/demo/Circular_kernel_2/Circular_kernel_2.qrc -text
 GraphicsView/demo/Circular_kernel_2/Circular_kernel_2.ui -text
 GraphicsView/demo/Circular_kernel_2/arcs.arc -text
