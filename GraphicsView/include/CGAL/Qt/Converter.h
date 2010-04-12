@@ -39,9 +39,18 @@ namespace Qt {
 
 template <typename K>
 class Converter {
+public:
+  typedef typename K::Point_2              CGAL_Point_2;
+  typedef typename K::Segment_2            CGAL_Segment_2;
+  typedef typename K::Ray_2                CGAL_Ray_2;
+  typedef typename K::Line_2               CGAL_Line_2;
+  typedef typename K::Triangle_2           CGAL_Triangle_2;
+  typedef typename K::Iso_rectangle_2      CGAL_Iso_rectangle_2;
 
+private:
   bool clippingRectIsInitialized;
-  CGAL::Iso_rectangle_2<K> clippingRect;
+  CGAL_Iso_rectangle_2 clippingRect;
+  
 
 public:
 
@@ -60,41 +69,41 @@ public:
       clippingRectIsInitialized = false;
   }
 
-  CGAL::Point_2<K> operator()(const QPointF& qp) const
+  CGAL_Point_2 operator()(const QPointF& qp) const
   {
-    return CGAL::Point_2<K>(qp.x(), qp.y());
+    return CGAL_Point_2(qp.x(), qp.y());
   }
 
 
-  QPointF operator()(const CGAL::Point_2<K>& p) const
+  QPointF operator()(const CGAL_Point_2& p) const
   {
     return QPointF(to_double(p.x()), to_double(p.y()));
   }
 
-  QPointF operator()(const CGAL::Circular_arc_point_2<K>& p) const
+  QPointF operator()(const Circular_arc_point_2<K>& p) const
   {
     return QPointF(to_double(p.x()), to_double(p.y()));
   }
 
       
-  CGAL::Segment_2<K> operator()(const QLineF& qs) const
+  CGAL_Segment_2 operator()(const QLineF& qs) const
   {
-    return CGAL::Segment_2<K>(operator()(qs.p1()), operator()(qs.p2()));
+    return K::Segment_2(operator()(qs.p1()), operator()(qs.p2()));
   }
  
-  QLineF operator()(const CGAL::Segment_2<K> &s) const
+  QLineF operator()(const CGAL_Segment_2 &s) const
   {
     return QLineF(operator()(s.source()), operator()(s.target()));
   }
 
   
-  CGAL::Iso_rectangle_2<K> operator()(const QRectF& qr) const
+  CGAL_Iso_rectangle_2 operator()(const QRectF& qr) const
   {
-    return CGAL::Iso_rectangle_2<K>(operator()(qr.bottomLeft()), operator()(qr.topRight()));
+    return CGAL_Iso_rectangle_2(operator()(qr.bottomLeft()), operator()(qr.topRight()));
   }
 
 
-  QRectF operator()(const CGAL::Iso_rectangle_2<K>& r) const
+  QRectF operator()(const CGAL_Iso_rectangle_2& r) const
   {
     return QRectF(operator()(r[3]), operator()(r[1]));  // top left, bottom right
   }
@@ -109,12 +118,12 @@ public:
   }
 
      
-  QLineF operator()(const CGAL::Ray_2<K> &r) const
+  QLineF operator()(const CGAL_Ray_2 &r) const
   {
     CGAL_assertion(clippingRectIsInitialized);
     Object o = CGAL::intersection(r, clippingRect);
-    typedef CGAL::Segment_2<K> Segment_2;
-    typedef CGAL::Point_2<K> Point_2;
+    typedef CGAL_Segment_2 Segment_2;
+    typedef CGAL_Point_2 Point_2;
     if(const Segment_2 *s = CGAL::object_cast<Segment_2>(&o)){
       return this->operator()(*s);
     } else if(const Point_2 *p = CGAL::object_cast<Point_2>(&o)){
@@ -123,12 +132,12 @@ public:
     return QLineF();
   }
 
-  QLineF operator()(const CGAL::Line_2<K> &l) const
+  QLineF operator()(const CGAL_Line_2 &l) const
   {
     CGAL_assertion(clippingRectIsInitialized);
     Object o = CGAL::intersection(l, clippingRect);
-    typedef CGAL::Segment_2<K> Segment_2;
-    typedef CGAL::Point_2<K> Point_2;
+    typedef CGAL_Segment_2 Segment_2;
+    typedef CGAL_Point_2 Point_2;
     if(const Segment_2 *s = CGAL::object_cast<Segment_2>(&o)){
       return this->operator()(*s);
     } else if(const Point_2 *p = CGAL::object_cast<Point_2>(&o)){
@@ -137,7 +146,7 @@ public:
     return QLineF();
   }
 
-  QPolygonF operator()(const CGAL::Triangle_2<K> &t)
+  QPolygonF operator()(const CGAL_Ray_2                 &t)
   {
     QPolygonF qp;
     qp << operator()(t.vertex(0)) << operator()(t.vertex(1)) << operator()(t.vertex(2));
@@ -145,7 +154,7 @@ public:
   }
 
 
-  void operator()(std::list< CGAL::Point_2<K> >& p, const QPolygonF& qp) const
+  void operator()(std::list< CGAL_Point_2 >& p, const QPolygonF& qp) const
   {
     for(int i = 0; i < qp.size(); i++){
       p.push_back(operator()(qp[i]));
