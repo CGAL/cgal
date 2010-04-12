@@ -467,21 +467,20 @@ public:
   template <class OutputIterator>
   OutputIterator dual(Cell_handle c, int i, int j,
       OutputIterator points) const {
-    std::vector<Facet> facets;
-    Facet_circulator fstart = incident_facets(c, i, j);
+    Cell_circulator cstart = incident_cells(c, i, j);
 
     Offset offv = periodic_point(c,i).second;
     Vertex_handle v = c->vertex(i);
 
-    Facet_circulator fcit = fstart;
+    Cell_circulator ccit = cstart;
     do {
-      Point dual_orig = periodic_circumcenter(fcit->first).first;
-      int idx = fcit->first->index(v);
-      Offset off = periodic_point(fcit->first,idx).second;
+      Point dual_orig = periodic_circumcenter(ccit).first;
+      int idx = ccit->index(v);
+      Offset off = periodic_point(ccit,idx).second;
       Point dual = point(std::make_pair(dual_orig,-off+offv));
       *points++ = dual;
-      ++fcit;
-    } while (fcit != fstart);
+      ++ccit;
+    } while (ccit != cstart);
     return points;
   }
 
@@ -556,6 +555,7 @@ public:
   // square roots and thus cannot be done without changing the
   // Traits concept.
 
+  // TODO: reuse the centroid computation from the PCA package
   Point dual_centroid(Vertex_handle v) const {
     std::list<Edge> edges;
     incident_edges(v, std::back_inserter(edges));
