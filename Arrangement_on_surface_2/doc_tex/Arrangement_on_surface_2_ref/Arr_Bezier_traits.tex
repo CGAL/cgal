@@ -12,7 +12,7 @@
 \ccDefinition
 %============
 
-The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
+The traits class \ccRefName{} is a model of the \ccc{ArrangementTraits_2}
 concept that handles planar B\'ezier curves. A planar {\em B\'ezier curve}
 $B$ is a parametric curve defined by a sequence of {\em control points}
 $p_0, \ldots, p_n$ as follows:
@@ -72,12 +72,10 @@ library, with its ability to exactly represent simple algebraic numbers.
 
 The \ccc{Curve_2} class nested within the B\'ezier traits class is used
 to represent a B\'ezier curve of arbitrary degree, which is defined by a
-sequence of rational control points. The only resriction we have is that
-the curve does not contain any self-intersections. In addition to the
-methods listed below, the
-I/O operators \ccc{operator<<} and \ccc{operator>>} for standard output
-streams are also supported. The copy constructor and assigment operator
-are also supported.
+sequence of rational control points. In addition to the methods listed
+below, the I/O operators \ccc{operator<<} and \ccc{operator>>} for
+standard output-streams are also supported. The copy constructor and
+assigment operator are supported as well.
 
 \begin{ccClass}{Arr_Bezier_curve_traits_2<AlgKernel,NtTraits>::Curve_2}
 %======================================================================
@@ -93,11 +91,7 @@ are also supported.
                Curve_2 (InputIterator pts_begin, InputIterator pts_end);}{%
   constructs a B\'ezier curve as defined by the given range of control
   points. The value-type of \ccc{InputIterator} is \ccc{RatKernel::Point_2}.
-  \ccPrecond{The input range must contain at least two control points, and
-    the polyline defined by these points must not be self-intersecting. That
-    is, if we denote the control points by $p_0, \ldots, p_n$, then the $n$
-    segements defined by $p_{i-1}p_i$ (with $1 \leq i \leq n$) must be
-    pairwise disjoint in their interior.}
+  \ccPrecond{The input range must contain at least two control points.}
 }
 
 \ccAccessFunctions
@@ -165,22 +159,22 @@ operator for \ccc{Point_2} objects are also supported.
   {returns the approximated coordinates of \ccVar.}
 
 \ccMethod{bool is_exact () const;}
-  {returns whether the coordinates of \ccVar\ are computed in an exact manner.}
+  {returns whether the coordinates of \ccVar{} are computed in an exact manner.}
 
 \ccMethod{Algebraic x () const;}
   {returns the $x$-coordinate of \ccVar.
-   \ccPrecond{\ccVar is exactly computed.}}
+   \ccPrecond{\ccVar{} is exactly computed.}}
 \ccGlue
 \ccMethod{Algebraic y () const;}
   {returns the $y$-coordinate of \ccVar.
-   \ccPrecond{\ccVar is exactly computed.}}
+   \ccPrecond{\ccVar{} is exactly computed.}}
 
 \ccMethod{bool is_rational () const;}
-  {returns whether the coordinates of \ccVar\ are rational numbers.}
+  {returns whether the coordinates of \ccVar{} are rational numbers.}
 
 \ccMethod{operator typename RatKernel::Point_2 () const;}
-  {casts \ccVar\ to a point with rational coordinates.
-   \ccPrecond{\ccVar\ has rational coordinates.}}
+  {casts \ccVar{} to a point with rational coordinates.
+   \ccPrecond{\ccVar{} has rational coordinates.}}
 
 \end{ccClass}
 
