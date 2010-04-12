@@ -37,8 +37,11 @@ feature that lies above it. Each \ccc{Object} may be one of the following:
 \begin{itemize}
 \item \ccc{Halfedge_const_handle}, if the vertex is located above (or
   below) an edge. The given halfedge is always directed from right to left.
-  In case there is no concrete edge below (or above) the vertex, then
-  the object returned is a {\em fictitious halfedge}.
+  In case there is no concrete edge below (or above) the vertex, and
+  the arrangement is unbounded, then the object returned is a
+  \emph{fictitious} halfedge.
+\item \ccc{Face_const_handle}, in case there is no edge below (or above)
+  the vertex, and the arrangement is bounded.
 \item \ccc{Vertex_const_handle}, in case the vertex is located vertically
   above (or below) another arrangement vertex.
 \item An empty object, in case the vertex is the top end-vertex of
