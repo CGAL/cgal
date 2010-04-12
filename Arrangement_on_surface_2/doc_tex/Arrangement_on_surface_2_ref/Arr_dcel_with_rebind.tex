@@ -1,0 +1,36 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementDcelWithRebind}
+
+\ccDefinition
+% ===========
+
+The concept \ccRefName{} refines the basic \dcel{} concept by adding
+a rebind struct-template.
+
+\ccRefines
+\ccc{ArrangementDcel}
+
+\ccTypes
+% ======
+\ccNestedType{template <class T> rebind}
+   {allows the rebinding of any model of this concept with a different
+     geometry traits class \ccc{T}.}
+
+\ccCreation
+\ccCreationVariable{dcel}
+% =======================  
+\ccConstructor{Arr_dcel();}
+  {constructs an empty \dcel{} with one unbouned face.}
+
+\ccHasModels
+% ==========
+\ccc{Arr_default_dcel<Traits>}
+  \lcTex{(\ccRefPage{CGAL::Arr_default_dcel<Traits>})}\\
+\ccc{Arr_face_extended_dcel<Traits,FData,V,H,F>}
+  \lcTex{(\ccRefPage{CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>})}\\
+\ccc{Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>}
+  \lcTex{(\ccRefPage{CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>})}
+
+\end{ccRefConcept}
+\ccRefPageEnd
