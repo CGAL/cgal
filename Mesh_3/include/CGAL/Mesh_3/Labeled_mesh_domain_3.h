@@ -578,7 +578,7 @@ Labeled_mesh_domain_3<F,BGT>::Construct_initial_points::operator()(
                    % nb_points;
 #endif
     }
-    //else
+    else
     {
       // Get a new random point into sphere as center of object
       // It may be necessary if the center of the domain is empty, e.g. torus

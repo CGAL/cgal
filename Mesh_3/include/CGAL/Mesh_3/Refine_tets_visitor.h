@@ -46,7 +46,7 @@ namespace Mesh_3 {
 
       Refine_facets_visitor(Refine_tets* refine_tets_,
 			    Previous_visitor* p)
-        : refine_tets(refine_tets_), previous(p), active_(false)
+        : refine_tets(refine_tets_), previous(p)
       {
       }
 
@@ -58,14 +58,12 @@ namespace Mesh_3 {
                             const P&,
                             Zone& zone) 
       {
-        if ( active_ )
-          refine_tets->before_insertion_handle_cells_in_conflict_zone(zone);
+        refine_tets->before_insertion_handle_cells_in_conflict_zone(zone);
       }
 
       void after_insertion(const Vertex_handle& v)
       {
-        if ( active_ )
-          refine_tets->update_star(v);
+	refine_tets->update_star(v);
       }
 
       template <typename E, typename P, typename Z>
@@ -75,13 +73,6 @@ namespace Mesh_3 {
       {
         return *previous;
       }
-      
-      void activate() {
-        active_=true;
-      }
-      
-    private:
-      bool active_;
       
     }; // end class Refine_facets_visitor
 
