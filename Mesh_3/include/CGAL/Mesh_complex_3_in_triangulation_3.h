@@ -377,6 +377,7 @@ public:
     typedef Cell_iterator Self;
 
   public:
+    Cell_iterator() : Base() { }
     Cell_iterator(Base i) : Base(i) { }
 
     Self& operator++() { Base::operator++(); return *this; }

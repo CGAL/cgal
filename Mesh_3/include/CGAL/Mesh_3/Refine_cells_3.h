@@ -73,6 +73,10 @@ private:
   typedef typename MeshDomain::Index  Index;
   typedef typename Criteria::Cell_badness Cell_badness;
   
+  typedef typename Tr::Geom_traits::FT FT;
+  typedef typename boost::bimap<boost::bimaps::multiset_of<FT>,
+                                typename Tr::Cell_handle>         Unknown_cells;
+  
   // Self
   typedef Refine_cells_3<Tr,
     Criteria,
@@ -99,7 +103,17 @@ public:
                  C3T3& c3t3) ;
   
   // Destructor
-  virtual ~Refine_cells_3() { };
+  virtual ~Refine_cells_3()
+  { 
+//    std::cout << "==================\n Cells: "
+//    << r_c3t3_.number_of_cells() << " in mesh\n"
+//    << "------------------\n"
+//    << "Is_in_domain calls: " << nb_cell_created << "\n"
+//    << "Is_bad calls:       " << nb_cell_domain << "\n"
+//    << "Bad cells inserted: " << nb_cell_bad << "\n"
+//    << "Cells refined:      " << nb_cell_refined << "\n"
+//    << "===================\n";
+  }
   
   // Get a reference on triangulation
   Tr& triangulation_ref_impl() { return r_tr_; }
@@ -128,7 +142,7 @@ public:
   };
   
   // Job to do after insertion
-  void after_insertion_impl(const Vertex_handle& v) { update_star(v); };
+  void after_insertion_impl(const Vertex_handle& v) { update_star_self(v); };
   
   // Insertion implementation ; returns the inserted vertex
   Vertex_handle insert_impl(const Point& p, const Zone& zone);
@@ -139,11 +153,14 @@ public:
   /// Handle cells contained in \c zone (before their destruction by insertion)
   void before_insertion_handle_cells_in_conflict_zone(Zone& zone);
   
+  /// Set buffer size
+  void set_buffer_size(unsigned int i) { buffer_size_ = i; }
+  
 #ifdef CGAL_MESH_3_VERBOSE
   std::string debug_info() const
   {
     std::stringstream s;
-    s << this->previous().debug_info() << "," << this->size();
+    s << this->previous().debug_info() << "," << this->size() << "," << unknown_cells_.size();
     return s.str();
   }
   
@@ -158,7 +175,14 @@ public:
   
 private:
   /// Adds \c cell to the refinement queue if needed
+  void treat_new_created_cell(const Cell_handle& cell);
   void treat_new_cell(const Cell_handle& cell);
+  
+  /// Computes badness and add to queue if needed
+  void compute_badness(const Cell_handle& cell);
+  
+  // Updates cells incident to vertex, and add them to queue if needed
+  void update_star_self(const Vertex_handle& vertex);
   
   /// Set \c cell to domain, with subdomain index \c index
   void set_cell_in_domain(const Cell_handle& cell,
@@ -181,6 +205,16 @@ private:
     v->set_dimension(3);
   }
   
+  /// Get mirror facet
+  Facet mirror_facet(const Facet& f) const { return r_tr_.mirror_facet(f); };
+  Facet mirror_facet(const Cell_handle& c, const int i) const
+  { return mirror_facet(std::make_pair(c,i)); }
+  
+  void refill_bad_cell_queue();
+  void insert_unknown_cell(const Cell_handle& c);
+  void erase_unknown_cell(const Cell_handle& c);
+  void erase_unknown_cell(typename Unknown_cells::left_iterator it);
+  
 private:
   /// The triangulation
   Tr& r_tr_;
@@ -190,6 +224,15 @@ private:
   const MeshDomain& r_oracle_;
   /// The mesh result
   C3T3& r_c3t3_;
+  
+  /// The unknown buffer
+  //std::set<Cell_handle> unknown_cells_;
+  Unknown_cells unknown_cells_;
+  unsigned int buffer_size_;
+  
+  boost::rand48 rng_;
+  boost::uniform_smallint<> rng_distrib_;
+  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die_;
   
   //-------------------------------------------------------
   // Cache objects
@@ -203,6 +246,10 @@ private:
   // Disabled assignment operator
   Self& operator=(const Self& src);
   
+  mutable int nb_cell_created;
+  mutable int nb_cell_refined;
+  mutable int nb_cell_bad;
+  mutable int nb_cell_domain;
 };  // end class Refine_cells_3
 
 
@@ -227,7 +274,11 @@ Refine_cells_3(Tr& triangulation,
   , r_criteria_(criteria)
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
-  , last_vertex_index_()
+  , buffer_size_(static_cast<unsigned int>(-1))
+  , rng_distrib_(0,1048576) // 2^20
+  , die_(rng_,rng_distrib_)
+  , last_vertex_index_() 
+  , nb_cell_created(0), nb_cell_refined(0), nb_cell_bad(0), nb_cell_domain(0)
 {
 }
 
@@ -245,7 +296,7 @@ scan_triangulation_impl()
       cell_it != r_tr_.finite_cells_end();
       ++cell_it)
   {
-    treat_new_cell(cell_it);
+    treat_new_created_cell(cell_it);
   }
 }
 
@@ -282,6 +333,9 @@ before_insertion_handle_cells_in_conflict_zone(Zone& zone)
     
     // Remove cell from complex
     remove_cell_from_domain(*cit);
+    
+    // Remove cell from unknown cells
+    erase_unknown_cell(*cit);
   }
 }
 
@@ -306,9 +360,65 @@ update_star(const Vertex_handle& vertex)
     if( ! r_tr_.is_infinite(*cell_it) )
     {
       // update queue with the new cell if needed
-      treat_new_cell(*cell_it);
+      treat_new_created_cell(*cell_it);
     }
   }
+}
+
+  
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+update_star_self(const Vertex_handle& vertex)
+{
+  typedef std::vector<Cell_handle> Cells;
+  typedef typename Cells::iterator Cell_iterator;
+  
+  // Get the star of v
+  Cells incident_cells;
+  r_tr_.incident_cells(vertex, std::back_inserter(incident_cells));
+  
+  // Get subdomain index
+  Subdomain_index cells_subdomain = r_oracle_.subdomain_index(vertex->index());
+  
+  // Restore surface & domain
+  for( Cell_iterator cell_it = incident_cells.begin();
+      cell_it != incident_cells.end();
+      ++cell_it )
+  {
+    CGAL_assertion(!r_tr_.is_infinite(*cell_it));
+    
+    // Restore surface
+    const int k = (*cell_it)->index(vertex);
+    const Facet mirror_f = mirror_facet(*cell_it,k);
+    const Cell_handle& neighbor_cell = mirror_f.first;
+    const int neighb_k = mirror_f.second;
+    
+    if ( neighbor_cell->is_facet_on_surface(neighb_k) )
+    {
+      CGAL_assertion(!r_c3t3_.is_in_complex(neighbor_cell));
+      
+      (*cell_it)->set_surface_index(k,neighbor_cell->surface_index(neighb_k));
+      (*cell_it)->set_facet_surface_center(k,neighbor_cell->get_facet_surface_center(neighb_k));
+      (*cell_it)->set_facet_surface_center_index(k,neighbor_cell->get_facet_surface_center_index(neighb_k));
+    }
+    
+    // Set subdomain index
+    set_cell_in_domain(*cell_it, cells_subdomain);
+    
+    // Add to unknown
+    treat_new_created_cell(*cell_it);
+  }
+}
+
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+treat_new_created_cell(const Cell_handle& cell)
+{
+  insert_unknown_cell(cell);
+  refill_bad_cell_queue();
 }
 
 
@@ -317,28 +427,42 @@ void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
 treat_new_cell(const Cell_handle& cell)
 {
-  typedef typename MD::Subdomain Subdomain;
-  
-  // treat cell
-  const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell));
-  if ( subdomain )
+  if ( ! r_c3t3_.is_in_complex(cell) )
   {
-    set_cell_in_domain(cell, *subdomain);
-    
-    // Add to refinement queue if needed
-    const Cell_badness badness = r_criteria_(cell);
-    if( badness.is_initialized() )
+    typedef typename MD::Subdomain Subdomain;
+    ++nb_cell_created;
+  
+    // treat cell
+    const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell));
+    if ( subdomain )
     {
-      add_bad_element(cell, *badness);
+      set_cell_in_domain(cell, *subdomain);
+      
+      // Add to refinement queue if needed
+      compute_badness(cell);
     }
   }
   else
   {
-    remove_cell_from_domain(cell);
+    compute_badness(cell);
   }
-  
 }
+  
 
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+compute_badness(const Cell_handle& cell)
+{
+  ++nb_cell_domain;
+  
+  const Cell_badness badness = r_criteria_(cell);
+  if( badness.is_initialized() )
+  {
+    ++nb_cell_bad;
+    add_bad_element(cell, *badness);
+  }
+}
 
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::Vertex_handle
@@ -346,6 +470,7 @@ Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
 insert_impl(const Point& point,
             const Zone& zone)
 {
+  ++nb_cell_refined;
   // TODO: look at this
   if( zone.locate_type == Tr::VERTEX )
   {
@@ -365,9 +490,60 @@ insert_impl(const Point& point,
   
   return v;
 }
+  
+  
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+refill_bad_cell_queue()
+{
+  while ( this->size() < buffer_size_ && !unknown_cells_.empty() )
+  {
+    // Take an unknown facet
+    //typename std::set<Cell_handle>::iterator cit = unknown_cells_.begin();
+    typename Unknown_cells::left_iterator cit = unknown_cells_.left.begin();
+    
+    // Treat it
+    treat_new_cell(cit->second);
+    
+    // Remove it from unknown
+    erase_unknown_cell(cit);
+  }
+}
 
 
+  
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+insert_unknown_cell(const Cell_handle& c)
+{
+  FT value = die_();
+  unknown_cells_.insert(typename Unknown_cells::value_type(value,c));
+}
 
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+erase_unknown_cell(const Cell_handle& c)
+{
+  unknown_cells_.right.erase(c);
+}
+
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
+erase_unknown_cell(typename Unknown_cells::left_iterator it)
+{
+  unknown_cells_.left.erase(it);
+}
+  
+  
+  
+  
+  
 
 }  // end namespace Mesh_3
 

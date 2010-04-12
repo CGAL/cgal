@@ -35,6 +35,12 @@
 #include <CGAL/tuple.h>
 #include <sstream>
 
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_smallint.hpp>
+#include <boost/random/variate_generator.hpp>
+
+#include <boost/bimap.hpp>
+
 namespace CGAL {
 
 namespace Mesh_3 {
@@ -93,7 +99,18 @@ public:
                   C3T3& c3t3);
 
   /// Destructor
-  virtual ~Refine_facets_3() { };
+  virtual ~Refine_facets_3() 
+  {
+//    std::cout << "==================\n Facets: " 
+//    << r_c3t3_.number_of_facets() << " in mesh\n" 
+//    << "------------------\n"
+//    << "Do_intersect_surface calls:   " << nb_facet_created << "\n"
+//    << "Construct_intersection calls: " << nb_facet_in_rd << "\n"
+//    << "Is_bad calls:                 " << nb_facet_in_rd << "\n"
+//    << "Bad facets inserted:          " << nb_facet_bad << "\n"
+//    << "Facets refined:               " << nb_facet_refined << "\n"
+//    << "===================\n";
+  }
 
   /// Get a reference on triangulation
   Tr& triangulation_ref_impl() { return r_tr_; }
@@ -147,13 +164,16 @@ public:
 
   /// Restore restricted Delaunay ; may be call by Cells_mesher visitor
   void restore_restricted_Delaunay(const Vertex_handle& v);
-
+  
+  /// Set buffer size
+  void set_buffer_size(unsigned int i) { buffer_size_ = i; }
+  
 #ifdef CGAL_MESH_3_VERBOSE
   /// debug info
   std::string debug_info() const
   {
     std::stringstream s;
-    s << Container_::size();
+    s << Container_::size() << "," << unknown_facets_.size();
     return s.str();
   }
 
@@ -178,9 +198,13 @@ private:
   typedef typename Gt::Segment_3 Segment_3;
   typedef typename Gt::Ray_3 Ray_3;
   typedef typename Gt::Line_3 Line_3;
+  typedef typename Gt::FT FT;
 
   typedef typename boost::optional<CGAL::cpp0x::tuple<Surface_index, Index, Point> >
                                                                Facet_properties;
+  
+  typedef typename boost::bimap<boost::bimaps::multiset_of<FT, std::greater<FT> >, Facet> Unknown_facets;
+  typedef typename Unknown_facets::left_iterator Unknown_facets_iterator;
 
 private:
   /// Get mirror facet
@@ -271,8 +295,9 @@ private:
   }
 
   /// Computes facet properties and add facet to the refinement queue if needed
+  void treat_new_created_facet(Facet& facet);
   void treat_new_facet(Facet& facet);
-
+  
   /**
    * Computes at once is_facet_on_surface and facet_surface_center.
    * @param facet The input facet
@@ -293,6 +318,7 @@ private:
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet& facet, const Quality& quality)
   {
+    nb_facet_bad++;
     // Insert canonical facet
     add_bad_element(this->canonical_facet(facet), quality);
   }
@@ -333,6 +359,11 @@ private:
     // perform the same operations as for a facet incident to the new vertex
     after_insertion_handle_incident_facet(facet);
   };
+  
+  void refill_bad_facet_queue();
+  void insert_unknown_facet(const Facet& f);
+  void erase_unknown_facet(const Facet& f);
+  void erase_unknown_facet(Unknown_facets_iterator it);
 
 private:
   /// The triangulation
@@ -343,6 +374,15 @@ private:
   const MeshDomain& r_oracle_;
   /// The mesh result
   C3T3& r_c3t3_;
+  
+  /// The bad buffer
+  Unknown_facets unknown_facets_;
+  //std::set<std::pair<int,Cell_handle> > unknown_facets_;
+  unsigned int buffer_size_;
+  
+  boost::rand48 rng_;
+  boost::uniform_smallint<> rng_distrib_;
+  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die_;
 
   //-------------------------------------------------------
   // Cache objects
@@ -355,6 +395,11 @@ private:
   Refine_facets_3(const Self& src);
   // Disabled assignment operator
   Self& operator=(const Self& src);
+  
+  mutable int nb_facet_created;
+  mutable int nb_facet_refined;
+  mutable int nb_facet_in_rd;
+  mutable int nb_facet_bad;
 };  // end class Refine_facets_3
 
 
@@ -377,7 +422,11 @@ Refine_facets_3(Tr& triangulation,
   , r_criteria_(criteria)
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
+  , buffer_size_(static_cast<unsigned int>(-1))
+  , rng_distrib_(0,1048576) // 2^20
+  , die_(rng_,rng_distrib_)
   , last_vertex_index_()
+  , nb_facet_created(0), nb_facet_refined(0), nb_facet_in_rd(0), nb_facet_bad(0)
 {
 
 }
@@ -396,7 +445,7 @@ scan_triangulation_impl()
   {
     // Cannot be const, see treat_new_facet signature
     Facet facet = *facet_it;
-    treat_new_facet(facet);
+    treat_new_created_facet(facet);
   }
 }
 
@@ -485,6 +534,9 @@ before_insertion_impl(const Facet& facet,
        facet_it != zone.internal_facets.end();
        ++facet_it)
   {
+    erase_unknown_facet(*facet_it);
+    erase_unknown_facet(mirror_facet(*facet_it));
+    
     if (before_insertion_handle_facet_in_conflict_zone(*facet_it, facet) )
     {
       source_facet_is_in_conflict = true;
@@ -495,6 +547,7 @@ before_insertion_impl(const Facet& facet,
        facet_it != zone.boundary_facets.end() ;
        ++facet_it)
   {
+    erase_unknown_facet(*facet_it);
     if (before_insertion_handle_facet_on_conflict_zone(*facet_it, facet))
     {
       source_facet_is_in_conflict = true;
@@ -535,6 +588,8 @@ Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
 insert_impl(const Point& point,
             const Zone& zone)
 {
+  ++nb_facet_refined;
+  
   if( zone.locate_type == Tr::VERTEX )
   {
     // TODO look at this
@@ -595,8 +650,20 @@ restore_restricted_Delaunay(const Vertex_handle& vertex)
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 void
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+treat_new_created_facet(Facet& facet)
+{
+  insert_unknown_facet(facet);
+  refill_bad_facet_queue();
+}
+
+  
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
 treat_new_facet(Facet& facet)
 {
+  ++nb_facet_created;
+  
   // Treat facet
   Facet_properties properties = compute_facet_properties(facet);
   if ( properties )
@@ -661,6 +728,7 @@ compute_facet_properties(const Facet& facet) const
     Surface_patch surface = do_intersect_surface(*p_segment);
     if ( surface )
     {
+      ++nb_facet_in_rd;
       typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
 
@@ -696,6 +764,7 @@ compute_facet_properties(const Facet& facet) const
     Surface_patch surface = do_intersect_surface(*p_ray);
     if ( surface )
     {
+      ++nb_facet_in_rd;
       typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
 
@@ -711,6 +780,7 @@ compute_facet_properties(const Facet& facet) const
     Surface_patch surface = do_intersect_surface(*p_line);
     if ( surface )
     {
+      ++nb_facet_in_rd;
       typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
 
@@ -776,7 +846,7 @@ before_insertion_handle_facet_in_conflict_zone(Facet& facet,
                                                const Facet& source_facet)
 {
   Facet other_side = mirror_facet(facet);
-
+  
   if ( is_facet_on_surface(facet) )
   {
     // Remove facet from refinement queue
@@ -808,7 +878,69 @@ after_insertion_handle_incident_facet(Facet& facet)
     return;
   }
 
-  treat_new_facet(facet);
+  treat_new_created_facet(facet);
+}
+  
+  
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+refill_bad_facet_queue()
+{
+  while ( this->size() < buffer_size_ && !unknown_facets_.empty() )
+  {
+    // Take an unknown facet
+    Unknown_facets_iterator fit = unknown_facets_.left.begin();
+    
+    // Treat it
+    Facet f (fit->second);
+    treat_new_facet(f);
+    
+    // Remove it from unknown
+    erase_unknown_facet(fit);
+  }
+}
+
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+insert_unknown_facet(const Facet& f)
+{
+//  typedef typename Gt::Point_3 Point_3;
+//  
+//  typename Gt::Compute_squared_distance_3 sq_dist 
+//    = Gt().compute_squared_distance_3_object();
+//  
+//  const int k = f.second;
+//  const Point_3& p1 = f.first->vertex((k+1)&3)->point();
+//  const Point_3& p2 = f.first->vertex((k+2)&3)->point();
+//  const Point_3& p3 = f.first->vertex((k+3)&3)->point();
+//  
+//  FT min = (std::min)( (std::min)(sq_dist(p1,p2),sq_dist(p1,p3)),
+//                       sq_dist(p2,p3) );
+//  unknown_facets_.insert(typename Unknown_facets::value_type(min,f));
+
+  FT value = die_();
+  unknown_facets_.insert(typename Unknown_facets::value_type(value,f));
+}
+
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+erase_unknown_facet(const Facet& f)
+{
+  unknown_facets_.right.erase(f);
+}
+
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+void
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+erase_unknown_facet(Unknown_facets_iterator it)
+{
+  unknown_facets_.left.erase(it);
 }
 
 
