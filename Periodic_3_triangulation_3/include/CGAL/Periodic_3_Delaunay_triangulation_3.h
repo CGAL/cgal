@@ -696,7 +696,8 @@ Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex(const Point& p,
   int li, lj;
   Cell_handle c = locate(p, lt, li, lj, start);
   if (lt == Base::VERTEX) return c->vertex(li);
-  Offset o = combine_offsets(Offset(),get_location_offset(p,Offset(),c));
+  const Conflict_tester tester(p, this);
+  Offset o = combine_offsets(Offset(),get_location_offset(tester,c));
 
   // - start with the closest vertex from the located cell.
   // - repeatedly take the nearest of its incident vertices if any
