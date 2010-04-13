@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
 {
   if (argc < 2)
   {
-    std::cerr << "Missing input file" < std::endl;
+    std::cerr << "Missing input file" << std::endl;
     std::exit (-1);
   }
 
