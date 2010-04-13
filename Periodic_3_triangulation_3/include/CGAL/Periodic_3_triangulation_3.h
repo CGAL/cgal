@@ -815,7 +815,7 @@ protected:
       const Conflict_test &tester,
       Triple<OutputIteratorBoundaryFacets, OutputIteratorCells,
       OutputIteratorInternalFacets> it) const {
-    Offset off = get_location_offset(tester.point(), tester.get_offset(),c);
+    Offset off = get_location_offset(tester, c);
     return find_conflicts(c,off,tester,it);
   }
 
@@ -1183,8 +1183,10 @@ protected:
   int find_too_long_edges(std::map<Vertex_handle,
       std::list<Vertex_handle> >& edges) const;
   Cell_handle get_cell(const Vertex_handle* vh) const;
-  Offset get_location_offset(const Point & p, const Offset &o,
-      Cell_handle c) const;
+  template<class Conflict_tester>
+  Offset get_location_offset(const Conflict_tester& tester,
+	  Cell_handle c) const;
+
   Offset get_neighbor_offset(Cell_handle ch, int i, Cell_handle nb) const;
   
   /** @name Friends */ //@{
@@ -1886,7 +1888,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   CGAL_triangulation_assertion(lt != VERTEX);
 
   // Choose the periodic copy of tester.point() that is inside c.
-  Offset current_off = get_location_offset(tester.point(), o, c);
+  Offset current_off = get_location_offset(tester, c);
 
   CGAL_triangulation_assertion(side_of_cell(tester.point(),
       combine_offsets(o,current_off),c,lt_assert,i_assert,j_assert)
@@ -3283,15 +3285,16 @@ Periodic_3_triangulation_3<GT,TDS>::get_cell(const Vertex_handle* vh) const {
   return Cell_handle();
 }
 
-/*! \brief Get the offset of q such that q is inside c w.r.t o.
+/*! \brief Get the offset of tester.point() such that 
+ * this point is in conflict with c w.r.t tester.get_offset().
  *
- * If there is no such offset then return -1.
  * Implementation: Just try all eight possibilities.
  */
 template < class GT, class TDS >
+template < class Conflict_tester >
 inline typename Periodic_3_triangulation_3<GT,TDS>::Offset
 Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
-    const Point & q, const Offset &o, Cell_handle c) const {
+    const Conflict_tester& tester, Cell_handle c) const {
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
 
   //  CGAL_triangulation_precondition_code(Locate_type lt; int i; int j;);
@@ -3315,19 +3318,8 @@ Periodic_3_triangulation_3<GT,TDS>::get_location_offset(
     // Main idea seems to just test all possibilities.
     for (int i=0; i<8; i++) {
       if (((cumm_off | (~i))&7) == 7) {
-        if ((orientation(q ,*p[1],*p[2],*p[3],
-                combine_offsets(o,int_to_off(i)), off[1], off[2], off[3])
-		!= NEGATIVE) &&
-            (orientation(*p[0],q ,*p[2],*p[3],
-                off[0], combine_offsets(o,int_to_off(i)) ,off[2], off[3])
-		!= NEGATIVE) &&
-            (orientation(*p[0],*p[1],q ,*p[3],
-                off[0], off[1], combine_offsets(o,int_to_off(i)), off[3])
-		!= NEGATIVE) &&
-            (orientation(*p[0],*p[1],*p[2],q ,
-                off[0], off[1], off[2], combine_offsets(o,int_to_off(i)))
-		!= NEGATIVE) ) {
-          return int_to_off(i);
+		  if (tester(c,int_to_off(i))) {
+			return int_to_off(i);
         }
       }
     }
