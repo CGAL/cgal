@@ -35,26 +35,24 @@ template < class Kernel_,
            class Arr_seg_traits_ = Arr_segment_traits_2<Kernel_> >
 class Gps_segment_traits_2 : public Arr_seg_traits_
 {
-  typedef Arr_seg_traits_                               Base;
-  typedef Gps_segment_traits_2<Kernel_,
-                               Container_,
-                               Arr_seg_traits_>         Self;
+  typedef Arr_seg_traits_                                               Base;
+  typedef Gps_segment_traits_2<Kernel_, Container_, Arr_seg_traits_>    Self;
 
 public:
 
-  //Polygon_2 type is required by GeneralPolygonSetTraits Concept
+  // Polygon_2 type is required by GeneralPolygonSetTraits Concept
   typedef CGAL::Polygon_2<Kernel_, Container_>          Polygon_2;
-  //Polygon_2 is a model of the GeneralPolygon2 concept. 
+  // Polygon_2 is a model of the GeneralPolygon2 concept. 
   typedef  Polygon_2                                    General_polygon_2;
 
-  //Polygon_with_holes_2 can be a simple polygon , with holes that are 
-  //entirely inside him , or some vertices of the polygon and its holes
+  // Polygon_with_holes_2 can be a simple polygon , with holes that are 
+  // entirely inside him , or some vertices of the polygon and its holes
   // may overlap.
   
-  //Polygon_with_holes_2 type required by GeneralPolygonSetTraits Concept.
+  // Polygon_with_holes_2 type required by GeneralPolygonSetTraits Concept.
   typedef CGAL::Polygon_with_holes_2<Kernel_, Container_>    
                                                 Polygon_with_holes_2;
-  //Polygon_with_Holes_2 is a model of the GeneralPolygonWithHoles2 concept. 
+  // Polygon_with_Holes_2 is a model of the GeneralPolygonWithHoles2 concept. 
   typedef  Polygon_with_holes_2                 General_polygon_with_holes_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
 
@@ -69,45 +67,45 @@ public:
   /*!
    * A functor for constructing a polygon from a range of segments.
    */
-  class Construct_polygon_2
-  {
-    typedef Gps_segment_traits_2<Kernel_,
-                                 Container_,
-                                 Arr_seg_traits_>       Self;
-    typedef Gps_traits_adaptor<Base>                    Traits_adaptor;
+  class Construct_polygon_2 {
+    typedef Gps_segment_traits_2<Kernel_, Container_, Arr_seg_traits_> Self;
+    typedef Gps_traits_adaptor<Self>            Traits_adaptor;
 
+    /*! The traits (in case it has state) */
+    const Traits_adaptor* m_traits;
+    
   public:
-
-    template<class XCurveIterator>
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Construct_polygon_2(const Self* traits) :
+      m_traits(static_cast<const Traits_adaptor*>(traits))
+    {}
+    
+    template <typename XCurveIterator>
     void operator()(XCurveIterator begin, XCurveIterator end, Polygon_2& pgn)
       const
     {
-      Traits_adaptor tr;
       typename Traits_adaptor::Construct_vertex_2 ctr_v =
-        tr.construct_vertex_2_object();
+        m_traits->construct_vertex_2_object();
 
       for (XCurveIterator itr = begin; itr != end; ++itr)
-      {
         pgn.push_back(ctr_v(*itr, 1));
-      }
     }
   };
 
   Construct_polygon_2 construct_polygon_2_object() const
   {
-    return Construct_polygon_2();
+    return Construct_polygon_2(this);
   }
 
   /*!
    * A functor for scanning all segments that form a polygon boundary.
    */
-  class Construct_curves_2
-  {
+  class Construct_curves_2 {
   public:
-
-    std::pair<Curve_const_iterator,
-              Curve_const_iterator> operator()(const General_polygon_2& pgn)
-      const
+    std::pair<Curve_const_iterator, Curve_const_iterator>
+    operator()(const General_polygon_2& pgn) const
     {
       Curve_const_iterator c_begin(&pgn, pgn.edges_begin());
       Curve_const_iterator c_end(&pgn, pgn.edges_end());
@@ -121,21 +119,10 @@ public:
     return Construct_curves_2();
   }
 
-  /*!
-   * An auxiliary functor used for validity checks.
-   */
-  typedef Gps_traits_adaptor<Base>                       Traits_adaptor;
-  
-  /* typedef CGAL::Is_valid_2<Self, Traits_adaptor>         Is_valid_2;
-     Is_valid_2 is_valid_2_object()
-     {
-     Traits_adaptor  tr_adp;
+  // Added Functionality from GeneralPolygonWithHoles Concept to the traits.
 
-     return (Is_valid_2 (*this, tr_adp));
-     }*/
-  
-  //Added Functionality from GeneralPolygonWithHoles Concept to the traits.
-  /*A functor for constructing the outer boundary of a polygon with holes*/
+  /* A functor for constructing the outer boundary of a polygon with holes
+   */
   class Construct_outer_boundary {
   public:
     General_polygon_2 operator()(const  General_polygon_with_holes_2& pol_wh)
@@ -154,6 +141,7 @@ public:
    * Hole_const_iterator nested type is required by
    * GeneralPolygonWithHoles2 concept
    */
+
   /*A functor for constructing the container of holes of a polygon with holes.
    * It returns ths begin/end iterators for the holes
    */
