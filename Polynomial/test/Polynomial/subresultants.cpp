@@ -428,27 +428,7 @@ void test_routine() {
       CGAL_assertion(sres[i]==coP[i]*f + coQ[i]*g);
     }
   }
-  { // Test for trivariate
-      typedef CGAL::Polynomial<Poly_int2> Poly_int3;
-      typedef CGAL::Polynomial_traits_d<Poly_int3> Poly_int3_traits;
-      Poly_int3 f = from_string<Poly_int3>("P[6(0,P[6(0,P[6(2,3)(4,-3)(6,1)])(1,P[1(1,-2)])(2,P[4(0,3)(2,-5)(4,3)])(4,P[2(0,-3)(2,3)])(6,P[0(0,1)])])(3,P[1(0,P[0(0,2)])(1,P[1(1,-2)])])(6,P[0(0,P[0(0,1)])])]");
-      Poly_int3 g = CGAL::diff(f);
-      std::vector<Poly_int3> sres_check,sres,coP,coQ;
-      CGAL::internal::prs_polynomial_subresultants<Poly_int3_traits>
-          (f,g,std::back_inserter(sres_check));
-      CGAL::polynomial_subresultants_with_cofactors
-          (f,g,
-           std::back_inserter(sres), 
-           std::back_inserter(coP),
-           std::back_inserter(coQ));
-      CGAL_assertion(sres.size()==sres_check.size());
-      CGAL_assertion(sres.size()==coP.size());
-      CGAL_assertion(sres.size()==coQ.size());
-      for(int i=0;i < static_cast<int>(sres.size()); i++) {
-          CGAL_assertion(sres[i]==sres_check[i]);
-          CGAL_assertion(sres[i]==coP[i]*f + coQ[i]*g);
-      }
-  }
+
     { // Test for cofactors, bivariate
     Poly_int2 f = from_string<Poly_int2>("P[7(0,P[7(0,72)(1,113)(2,238)(3,75)(4,77)(5,149)(6,34)(7,75)])(1,P[6(0,113)(1,69)(2,94)(3,171)(4,148)(5,103)(6,42)])(2,P[5(0,103)(1,233)(2,16)(3,131)(4,2)(5,156)])(3,P[4(0,249)(1,194)(2,156)(3,81)(4,176)])(4,P[3(0,39)(1,140)(2,134)(3,190)])(5,P[2(0,117)(1,249)(2,158)])(6,P[1(0,109)(1,46)])(7,P[0(0,236)])]");
     Poly_int2 g = from_string<Poly_int2>("P[6(0,P[6(0,113)(1,69)(2,94)(3,171)(4,148)(5,103)(6,42)])(1,P[5(0,206)(1,466)(2,32)(3,262)(4,4)(5,312)])(2,P[4(0,747)(1,582)(2,468)(3,243)(4,528)])(3,P[3(0,156)(1,560)(2,536)(3,760)])(4,P[2(0,585)(1,1245)(2,790)])(5,P[1(0,654)(1,276)])(6,P[0(0,1652)])]");
@@ -467,7 +447,100 @@ void test_routine() {
       CGAL_assertion(sres[i]==sres_check[i]);
       CGAL_assertion(sres[i]==coP[i]*f + coQ[i]*g);
     }
+    }
+
+  { // Test for trivariate
+      typedef CGAL::Polynomial<Poly_int2> Poly_int3;
+      typedef CGAL::Polynomial_traits_d<Poly_int3> Poly_int3_traits;
+      Poly_int3 f = from_string<Poly_int3>("P[6(0,P[6(0,P[6(2,3)(4,-3)(6,1)])(1,P[1(1,-2)])(2,P[4(0,3)(2,-5)(4,3)])(4,P[2(0,-3)(2,3)])(6,P[0(0,1)])])(3,P[1(0,P[0(0,2)])(1,P[1(1,-2)])])(6,P[0(0,P[0(0,1)])])]");
+      Poly_int3 g = CGAL::diff(f);
+      std::vector<Poly_int3> sres_check,sres,coP,coQ;
+      CGAL::internal::prs_polynomial_subresultants<Poly_int3_traits>
+          (f,g,std::back_inserter(sres_check));
+      CGAL::polynomial_subresultants_with_cofactors
+          (f,g,
+           std::back_inserter(sres), 
+           std::back_inserter(coP),
+           std::back_inserter(coQ));
+      CGAL_assertion(sres.size()==sres_check.size());
+      CGAL_assertion(sres.size()==coP.size());
+      CGAL_assertion(sres.size()==coQ.size());
+      for(int i=static_cast<int>(sres.size())-1;i>=0 ; i--) {
+	CGAL_assertion(sres[i]==sres_check[i]);
+	CGAL_assertion(sres[i]==coP[i]*f + coQ[i]*g);
+      }
   }
+    
+    Poly_int2 x=from_string<Poly_int2>("P[0(0,P[1(1,1)])]");
+    Poly_int2 y=from_string<Poly_int2>("P[1(1,P[0(0,1)])]");
+    { // Bug reported by Eric Berberich, 15.03.2010 -> (half) fixed
+      Poly_int2 f = y*y + x*x-2;
+      Poly_int2 g = -y*y + x*x;
+      std::vector<Poly_int2> sres,coP,coQ,sres_check;
+      CGAL::internal::prs_polynomial_subresultants<Poly_int2_traits>
+	(f,g,std::back_inserter(sres_check));      
+      CGAL::polynomial_subresultants_with_cofactors
+	(f,g,
+	 std::back_inserter(sres),
+	 std::back_inserter(coP),
+	 std::back_inserter(coQ));
+      CGAL_assertion(sres.size()==3);
+      CGAL_assertion(sres[2]==coP[2]*f + coQ[2]*g);
+      CGAL_assertion(sres[1]==coP[1]*f + coQ[1]*g);
+      CGAL_assertion(sres[0]==coP[0]*f + coQ[0]*g);
+      CGAL::set_pretty_mode(std::cout);
+      CGAL_assertion(sres[2]==sres_check[2]);
+      CGAL_assertion(sres[1]==sres_check[1]);
+      // TODO Sign corection for equal degrees
+      //CGAL_assertion(sres[0]==sres_check[0]);
+    }
+
+
+    Poly_int1 t=from_string<Poly_int1>("P[1(1,1)]");
+    {
+      Poly_int1 f=3*t*t*t*t+t*t*t-t+1;
+      Poly_int1 g=5*t*t+7;
+     
+      std::vector<Poly_int1> sres,coP,coQ,sres_check;
+      
+      CGAL::internal::prs_polynomial_subresultants<Poly_int1_traits>
+	(f,g,std::back_inserter(sres_check));      
+
+      CGAL::polynomial_subresultants_with_cofactors
+	(f,g,
+	 std::back_inserter(sres),
+	 std::back_inserter(coP),
+	 std::back_inserter(coQ));
+      for(int i = 0; i < static_cast<int>(sres.size());i++) {
+	CGAL_assertion(sres_check[i]==sres[i]);
+	CGAL_assertion(sres[i]==coP[i]*f + coQ[i]*g);
+      }
+
+    }
+    { // Bug reported by Eric Berberich, 26.03.2010 -> Fixed
+
+      Poly_int2 f=(CGAL::ipower(x,16) + 8*CGAL::ipower(x,14) + 28*CGAL::ipower(x,12) + 56*CGAL::ipower(x,10) + 70*CGAL::ipower(x,8) + 56*CGAL::ipower(x,6) + 28*CGAL::ipower(x,4) + 8*CGAL::ipower(x,2) + 1)*CGAL::ipower(y,16) + (8*CGAL::ipower(x,16) + 40*CGAL::ipower(x,14) + 72*CGAL::ipower(x,12) + 40*CGAL::ipower(x,10) + (-40)*CGAL::ipower(x,8) + (-72)*CGAL::ipower(x,6) + (-40)*CGAL::ipower(x,4) + (-8)*CGAL::ipower(x,2))*CGAL::ipower(y,14) + (28*CGAL::ipower(x,16) + 72*CGAL::ipower(x,14) + 40*CGAL::ipower(x,12) + (-24)*CGAL::ipower(x,10) + (-32)*CGAL::ipower(x,8) + (-40)*CGAL::ipower(x,6) + (-40)*CGAL::ipower(x,4) + (-8)*CGAL::ipower(x,2) + 4)*CGAL::ipower(y,12) + (56*CGAL::ipower(x,16) + 40*CGAL::ipower(x,14) + (-24)*CGAL::ipower(x,12) + 376*CGAL::ipower(x,10) + 328*CGAL::ipower(x,8) + (-424)*CGAL::ipower(x,6) + (-360)*CGAL::ipower(x,4) + 8*CGAL::ipower(x,2))*CGAL::ipower(y,10) + (70*CGAL::ipower(x,16) + (-40)*CGAL::ipower(x,14) + (-32)*CGAL::ipower(x,12) + 328*CGAL::ipower(x,10) + 1458*CGAL::ipower(x,8) + 320*CGAL::ipower(x,6) + 84*CGAL::ipower(x,4) + (-48)*CGAL::ipower(x,2) + 4)*CGAL::ipower(y,8) + (56*CGAL::ipower(x,16) + (-72)*CGAL::ipower(x,14) + (-40)*CGAL::ipower(x,12) + (-424)*CGAL::ipower(x,10) + 320*CGAL::ipower(x,8) + (-128)*CGAL::ipower(x,6) + 48*CGAL::ipower(x,4) + (-16)*CGAL::ipower(x,2))*CGAL::ipower(y,6) + (28*CGAL::ipower(x,16) + (-40)*CGAL::ipower(x,14) + (-40)*CGAL::ipower(x,12) + (-360)*CGAL::ipower(x,10) + 84*CGAL::ipower(x,8) + 48*CGAL::ipower(x,6) + 24*CGAL::ipower(x,4))*CGAL::ipower(y,4) + (8*CGAL::ipower(x,16) + (-8)*CGAL::ipower(x,14) + (-8)*CGAL::ipower(x,12) + 8*CGAL::ipower(x,10) + (-48)*CGAL::ipower(x,8) + (-16)*CGAL::ipower(x,6))*CGAL::ipower(y,2) + (CGAL::ipower(x,16) + 4*CGAL::ipower(x,12) + 4*CGAL::ipower(x,8));
+     
+      Poly_int2 g=(CGAL::ipower(x,2))*CGAL::ipower(y,9) + ((-3)*CGAL::ipower(x,2) + (-1)*x + (-1))*CGAL::ipower(y,8) + (2*CGAL::ipower(x,4) + (-1)*CGAL::ipower(x,3) + 2*CGAL::ipower(x,2) + 3*x + 3)*CGAL::ipower(y,7) + (CGAL::ipower(x,5) + (-6)*CGAL::ipower(x,4) + (-1)*CGAL::ipower(x,3) + CGAL::ipower(x,2) + (-1)*x + (-2))*CGAL::ipower(y,6) + (CGAL::ipower(x,6) + (-2)*CGAL::ipower(x,5) + CGAL::ipower(x,4) + 6*CGAL::ipower(x,3) + 2*CGAL::ipower(x,2) + (-3)*x + (-2))*CGAL::ipower(y,5) + (2*CGAL::ipower(x,7) + (-3)*CGAL::ipower(x,6) + 11*CGAL::ipower(x,4) + (-1)*CGAL::ipower(x,3) + (-2)*CGAL::ipower(x,2) + 2*x + 3)*CGAL::ipower(y,4) + ((-1)*CGAL::ipower(x,7) + CGAL::ipower(x,6) + 5*CGAL::ipower(x,5) + (-10)*CGAL::ipower(x,4) + (-11)*CGAL::ipower(x,3) + (-9)*CGAL::ipower(x,2) + (-1))*CGAL::ipower(y,3) + (CGAL::ipower(x,9) + (-3)*CGAL::ipower(x,7) + (-6)*CGAL::ipower(x,5) + (-3)*CGAL::ipower(x,4) + 8*CGAL::ipower(x,3) + 12*CGAL::ipower(x,2))*CGAL::ipower(y,2) + ((-1)*CGAL::ipower(x,8) + (-1)*CGAL::ipower(x,7) + 3*CGAL::ipower(x,6) + 4*CGAL::ipower(x,5) + 5*CGAL::ipower(x,4) + (-4)*CGAL::ipower(x,2))*y;
+      std::vector<Poly_int2> sres,coP,coQ,sres_check;
+      
+      CGAL::internal::prs_polynomial_subresultants<Poly_int2_traits>
+	(f,g,std::back_inserter(sres_check));      
+
+      CGAL::polynomial_subresultants_with_cofactors
+	(f,g,
+	 std::back_inserter(sres),
+	 std::back_inserter(coP),
+	 std::back_inserter(coQ));
+      for(int i = 0; i < static_cast<int>(sres.size());i++) {
+	CGAL_assertion(sres[i]==sres_check[i]);
+	CGAL_assertion(sres[i]==coP[i]*f + coQ[i]*g);
+      }
+    }
+
+      
+
+
 
     { // bug reported by Eric Berberich
       Poly_int2 x = CGAL::shift(Poly_int2(1),1,0);

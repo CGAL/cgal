@@ -411,7 +411,11 @@ CGAL_BEGIN_NAMESPACE
       Polynomial zero_pol = construct(NT(0));
       std::vector<Polynomial> sres, coP, coQ;
 
+#if 0  // old algorithm, there is some problem when deg_diff>1
+
       int deg_diff=degree(P)-degree(Q);
+
+
 
       if(deg_diff==0) {
         sres.push_back(Q);
@@ -419,13 +423,18 @@ CGAL_BEGIN_NAMESPACE
         sres.push_back(CGAL::ipower(lcoeff(Q),deg_diff-1)*Q);
       }
 
-    
+
+
       Polynomial A,B,C,D,Quo, coPA, coPB, coQA, coQB, coPC, coQC;
       NT s,m;
       int delta,d,e;
 
       coPA = construct(NT(0));
-      coQA = construct(CGAL::ipower(lcoeff(Q),deg_diff-1));
+      if(deg_diff==0) {
+	coQA = construct(NT(1));
+      } else {
+	coQA = construct(CGAL::ipower(lcoeff(Q),deg_diff-1));
+      }
 
       coP.push_back(coPA);
       coQ.push_back(coQA);
@@ -433,12 +442,17 @@ CGAL_BEGIN_NAMESPACE
       A=Q;
 
       s=CGAL::ipower(lcoeff(Q),deg_diff);
+      //s=CGAL::ipower(lcoeff(Q),1);
      
       typename Polynomial_traits_d::Pseudo_division() (P, -Q, Quo, B, m);
-      
+      std::cout << "Quo=" << Quo << std::endl;
+      std::cout << "B=" << B << std::endl;
+
       coPB = construct(m);
       coQB = Quo;
-
+      
+      //CGAL_assertion(m*P+Quo*Q==B);
+      //CGAL_assertion(CGAL::degree(B)<CGAL::degree(-Q));
       
       while(true) {
         d=degree(A);
@@ -456,7 +470,10 @@ CGAL_BEGIN_NAMESPACE
         coP.push_back(coPB);
         coQ.push_back(coQB);
 
+	//CGAL_assertion(coPB*P+coQB*Q==B);
+
         delta=d-e;
+	std::cout << "NOW : " << delta << " " << d << " " << e << std::endl;
         if(delta>1) {
           C=CGAL::ipower(lcoeff(B),delta-1)*B / CGAL::ipower(s,delta-1);
 
@@ -493,9 +510,136 @@ CGAL_BEGIN_NAMESPACE
         s = lcoeff(A);
       }
 
+
+#endif
+
+      int p = degree(P);
+      int q = degree(Q);
+
+      if(p==q) {
+	p++;
+      }
+      
+      std::vector<Polynomial> sResP,sResU,sResV,C;
+      std::vector<NT> s,t;
+
+      for(int i=0;i<p+1;i++) {
+	sResP.push_back(construct(NT(0)));
+	sResU.push_back(construct(NT(0)));
+	sResV.push_back(construct(NT(0)));
+	C.push_back(construct(NT(0)));
+	s.push_back(NT(0));
+	t.push_back(NT(0));
+      }
+      sResP[p]=P;
+      s[p]=t[p]=(CGAL::sign(lcoeff(P))==CGAL::POSITIVE) ? NT(1) : NT(-1);
+      //s[p]=t[p]=NT(1);
+      sResP[p-1]=Q;
+      t[p-1]=lcoeff(Q);
+      sResU[p]=sResV[p-1]=construct(NT(1));
+      sResV[p]=sResU[p-1]=construct(NT(0));
+      if(p-q>1) {
+	NT eps_p_minus_1 = ((p-q)%4==0 || (p-q)%4==1) ? NT(1) : NT(-1);
+	sResP[q]=eps_p_minus_1*CGAL::ipower(lcoeff(Q),p-q-1)*Q;
+	s[q]=eps_p_minus_1*CGAL::ipower(lcoeff(Q),p-q);
+	sResU[q]=construct(NT(0));
+	sResV[q]=eps_p_minus_1*CGAL::ipower(lcoeff(Q),p-q-1);
+	for(int i=q+1;i<=p-2;i++) {
+	  sResP[i]=sResU[i]=sResV[i]=construct(NT(0));
+	  s[i]=NT(0);
+	}
+      }
+      int i = p+1;
+      int j = p;
+      int k;
+      while(!CGAL::is_zero(sResP[j-1])) {
+	k=degree(sResP[j-1]);
+	if(k>=j-1) {
+	  if(k==0) {
+	    break;
+	  }
+	  s[j-1]=t[j-1];
+	  NT s_sq=CGAL::ipower(s[j-1],2);
+	  NT denom=s[j]*t[i-1];
+	  Polynomial Quo,Rem;
+	  NT D;
+	  CGAL::pseudo_division(s_sq*sResP[i-1],sResP[j-1],Quo,Rem,D);
+	  C[k-1]=CGAL::integral_division(Quo,D);
+	  sResP[k-1]=CGAL::integral_division
+	    (-s_sq*sResP[i-1]+C[k-1]*sResP[j-1],
+	     denom);
+	  sResU[k-1]=CGAL::integral_division
+	    (-s_sq*sResU[i-1]+C[k-1]*sResU[j-1],
+	     denom);
+	  sResV[k-1]=CGAL::integral_division
+	    (-s_sq*sResV[i-1]+C[k-1]*sResV[j-1],
+	     denom);
+	} else { // k < j-1
+
+	  s[j-1]=NT(0);
+	  for(int delta=1;delta<=j-k-1;delta++) {
+	    t[j-delta-1]=CGAL::ipower(NT(-1),delta)*CGAL::integral_division
+	      (t[j-1]*t[j-delta],s[j]);
+	  }
+	  s[k]=t[k];
+	  sResP[k]=CGAL::integral_division(s[k]*sResP[j-1],t[j-1]);
+	  sResU[k]=CGAL::integral_division(s[k]*sResU[j-1],t[j-1]);
+	  sResV[k]=CGAL::integral_division(s[k]*sResV[j-1],t[j-1]);
+	  for(int ell=k+1;ell<=j-2;ell++) {
+	    sResP[ell]=sResU[ell]=sResV[ell]=construct(NT(0));
+	    s[ell]=NT(0);
+	  }
+	  if(k==0) {
+	    break;
+	  }
+	  Polynomial Quo,Rem;
+	  NT D;
+	  NT prefac=s[k]*t[j-1];
+	  CGAL::pseudo_division(prefac*sResP[i-1],sResP[j-1],Quo,Rem,D);
+	  C[k-1]=CGAL::integral_division(Quo,D);
+	  
+	  NT denom = s[j]*t[i-1];
+	  sResP[k-1]=CGAL::integral_division
+	    (-prefac*sResP[i-1]+C[k-1]*sResP[j-1],denom);
+	  sResU[k-1]=CGAL::integral_division
+	    (-prefac*sResU[i-1]+C[k-1]*sResU[j-1],denom);
+	  sResV[k-1]=CGAL::integral_division
+	    (-prefac*sResV[i-1]+C[k-1]*sResV[j-1],denom);
+	}
+	t[k-1]=lcoeff(sResP[k-1]);
+	i=j;
+	j=k;
+      }
+      if(k>0) {
+	for(int ell=0;ell<=j-2;ell++) {
+	  sResP[ell]=sResU[ell]=sResV[ell]=construct(NT(0));
+	  s[ell]=NT(0);
+	}
+      }
+      
+      // Correct the signs (the algorithm computes the signed subresultants)
+      // TODO Sign corection for equal degrees
+      /*
+      if(degree(P)==degree(Q)) {
+	p--;
+	CGAL_assertion(p==q);
+      }
+      */
+      for(int i = q;i>=0;i--) {
+	if((p-i)%4==0 || (p-i)%4==1) {
+	  sres.push_back(sResP[i]);
+	  coP.push_back(sResU[i]);
+	  coQ.push_back(sResV[i]);
+	} else {
+	  sres.push_back(-sResP[i]);
+	  coP.push_back(-sResU[i]);
+	  coQ.push_back(-sResV[i]);
+	}
+      }
+
       CGAL_assertion(static_cast<int>(sres.size())
                      == degree(Q)+1);
-    
+
       // If P and Q were swapped, correct the signs
       if(poly_swapped) {
         int p = degree(P);
