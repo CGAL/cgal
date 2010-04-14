@@ -491,12 +491,77 @@ void test_routine() {
       CGAL::set_pretty_mode(std::cout);
       CGAL_assertion(sres[2]==sres_check[2]);
       CGAL_assertion(sres[1]==sres_check[1]);
-      // TODO Sign corection for equal degrees
-      //CGAL_assertion(sres[0]==sres_check[0]);
+      CGAL_assertion(sres[0]==sres_check[0]);
+    }
+    Poly_int1 t=from_string<Poly_int1>("P[1(1,1)]");   
+    {
+      Poly_int1 f = 3*CGAL::ipower(t,10) + 7*CGAL::ipower(t,4)-13;
+      Poly_int1 g = (-5)*CGAL::ipower(t,10) + 11*CGAL::ipower(t,6)-17*t;
+      std::vector<Poly_int1> sres,coP,coQ,sres_check;
+      CGAL::internal::prs_polynomial_subresultants<Poly_int1_traits>
+	(f,g,std::back_inserter(sres_check));      
+      CGAL::polynomial_subresultants_with_cofactors
+	(f,g,
+	 std::back_inserter(sres),
+	 std::back_inserter(coP),
+	 std::back_inserter(coQ));
+      CGAL::set_pretty_mode(std::cout);
+      for(int i=static_cast<int>(sres.size()-1);i>=0;i--) {
+	CGAL_assertion(sres[i]==coP[i]*f + coQ[i]*g);
+	CGAL_assertion(sres_check[i]==sres[i]);
+      }
     }
 
+    {
+      Poly_int1 f = 11*t;
+      for(int i =0; i < 25; i++) {
+	f=t*f+((613*i+1225)%47);
+      }
+      Poly_int1 g = -23*t;
+      for(int i =0; i < 25; i++) {
+	g=t*g+((397*i+2423)%59);
+      }
+      std::vector<Poly_int1> sres,coP,coQ,sres_check;
+      CGAL::internal::prs_polynomial_subresultants<Poly_int1_traits>
+	(f,g,std::back_inserter(sres_check));      
+      CGAL::polynomial_subresultants_with_cofactors
+	(f,g,
+	 std::back_inserter(sres),
+	 std::back_inserter(coP),
+	 std::back_inserter(coQ));
+      CGAL::set_pretty_mode(std::cout);
+      for(int i=static_cast<int>(sres.size()-1);i>=0;i--) {
+	CGAL_assertion(sres[i]==coP[i]*f + coQ[i]*g);
+	CGAL_assertion(sres_check[i]==sres[i]);
+      }
+    }
 
-    Poly_int1 t=from_string<Poly_int1>("P[1(1,1)]");
+    {
+      Poly_int1 f = 771*CGAL::ipower(t,7);
+      for(int i =0; i < 31; i+=5) {
+	f=t*f+((881*i-14154)%31);
+      }
+      Poly_int1 g = 919*CGAL::ipower(t,7);
+      for(int i =0; i < 31; i+=4) {
+	g=t*g+((129*i+1151)%59);
+      }
+      std::vector<Poly_int1> sres,coP,coQ,sres_check;
+      CGAL::internal::prs_polynomial_subresultants<Poly_int1_traits>
+	(f,g,std::back_inserter(sres_check));      
+      CGAL::polynomial_subresultants_with_cofactors
+	(f,g,
+	 std::back_inserter(sres),
+	 std::back_inserter(coP),
+	 std::back_inserter(coQ));
+      CGAL::set_pretty_mode(std::cout);
+      for(int i=static_cast<int>(sres.size()-1);i>=0;i--) {
+	CGAL_assertion(sres[i]==coP[i]*f + coQ[i]*g);
+	CGAL_assertion(sres_check[i]==sres[i]);
+      }
+    }
+   
+    
+
     {
       Poly_int1 f=3*t*t*t*t+t*t*t-t+1;
       Poly_int1 g=5*t*t+7;
