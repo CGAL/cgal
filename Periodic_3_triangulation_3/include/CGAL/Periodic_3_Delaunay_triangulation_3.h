@@ -1080,6 +1080,7 @@ class Periodic_3_Delaunay_triangulation_3<GT,Tds>::Conflict_tester
   // a point, and an offset
   const Self *t;
   Point p;
+  // stores the offset of a point in 27-cover
   mutable Offset o;
 
 public:

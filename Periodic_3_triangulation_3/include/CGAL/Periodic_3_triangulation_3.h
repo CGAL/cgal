@@ -2154,50 +2154,63 @@ too_long_edges[vit].push_back(temp_inc_cells[i]->vertex(j));
   * tester is the function object that tests if a cell is in conflict.
   */
 template <class GT, class TDS>
-template <class Conflict_test, class OutputIteratorBoundaryFacets,
-          class OutputIteratorCells, class OutputIteratorInternalFacets>
-Triple<OutputIteratorBoundaryFacets, OutputIteratorCells,
+template <class Conflict_test,
+	  class OutputIteratorBoundaryFacets,
+          class OutputIteratorCells,
+	  class OutputIteratorInternalFacets>
+Triple<OutputIteratorBoundaryFacets,
+       OutputIteratorCells,
        OutputIteratorInternalFacets>
 Periodic_3_triangulation_3<GT,TDS>::
-find_conflicts(Cell_handle c, const Offset &current_off,
+find_conflicts(Cell_handle d, const Offset &current_off,
     const Conflict_test &tester,
-    Triple<OutputIteratorBoundaryFacets, OutputIteratorCells,
+    Triple<OutputIteratorBoundaryFacets,
+    OutputIteratorCells,
     OutputIteratorInternalFacets> it) const {
-  
   CGAL_triangulation_precondition( number_of_vertices() != 0 );
-  CGAL_triangulation_precondition( tester(c, current_off) );
+  CGAL_triangulation_precondition( tester(d, current_off) );
 
-  c->tds_data().mark_in_conflict();
-  
-  *it.second++ = c;
+  std::stack<std::pair<Cell_handle, Offset> > cell_stack;
+  cell_stack.push(std::make_pair(d,current_off));
+  d->tds_data().mark_in_conflict();  
+  *it.second++ = d;
 
-  for (int i=0; i< 4; ++i) {
-    Cell_handle test = c->neighbor(i);
-    if (test->tds_data().is_in_conflict()) {
-      if (c < test) {
-        *it.third++ = Facet(c, i); // Internal facet.
+  do {
+    Cell_handle c = cell_stack.top().first;
+    Offset current_off2 = cell_stack.top().second;
+    cell_stack.pop();
+
+    for (int i=0; i< 4; ++i) {
+      Cell_handle test = c->neighbor(i);
+      if (test->tds_data().is_in_conflict()) {
+	if (c < test) {
+	  *it.third++ = Facet(c, i); // Internal facet.
+	}
+	continue; // test was already in conflict.
       }
-      continue; // test was already in conflict.
-    }
-    if (!test->tds_data().is_in_conflict()) {
-      Offset o_test = current_off + get_neighbor_offset(c, i, test);
-      if (tester(test,o_test)) {
-        if (c < test)
-          *it.third++ = Facet(c, i); // Internal facet.
-        it = find_conflicts(test, o_test, tester, it);
-        continue;
+      if (test->tds_data().is_clear()) {
+	Offset o_test = current_off2 + get_neighbor_offset(c, i, test);
+	if (tester(test,o_test)) {
+	  if (c < test)
+	    *it.third++ = Facet(c, i); // Internal facet.
+	  
+	  cell_stack.push(std::make_pair(test,o_test));
+	  test->tds_data().mark_in_conflict();
+	  *it.second++ = test;
+	  continue;
+	}
+	test->tds_data().mark_on_boundary(); // test is on the boundary.
       }
-      test->tds_data().mark_on_boundary(); // test is on the boundary.
-    }
-    *it.first++ = Facet(c, i);
-    for (int j = 0 ; j<4 ; j++){
-      if (j==i) continue;
-      if (!c->vertex(j)->get_offset_flag()) {
-        c->vertex(j)->set_offset(int_to_off(c->offset(j))-current_off);
-        v_offsets.push_back(c->vertex(j));
+      *it.first++ = Facet(c, i);
+      for (int j = 0 ; j<4 ; j++){
+	if (j==i) continue;
+	if (!c->vertex(j)->get_offset_flag()) {
+	  c->vertex(j)->set_offset(int_to_off(c->offset(j))-current_off2);
+	  v_offsets.push_back(c->vertex(j));
+	}
       }
     }
-  }
+  } while (!cell_stack.empty());
   return it;
 }
 
@@ -2223,9 +2236,6 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point & p,
     Locate_type lt, Cell_handle c, int li, int lj,
     const Conflict_tester &tester, Point_hider &hider) {
 
-  if (!((_domain.xmin() <= p.x()) && (p.x() < _domain.xmax()))
-      || !((_domain.ymin() <= p.y()) && (p.y() < _domain.ymax()))
-      || !((_domain.zmin() <= p.z()) && (p.z() < _domain.zmax())))
   CGAL_triangulation_assertion((_domain.xmin() <= p.x())
       && (p.x() < _domain.xmax()));
   CGAL_triangulation_assertion((_domain.ymin() <= p.y())
