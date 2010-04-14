@@ -615,8 +615,11 @@ public:
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
   //@}
 
-private:
+protected:
+  // Protected, because inheritors(e.g. periodic triangulation for meshing) 
+  // of the class Periodic_3_Delaunay_triangulation_3 use this class
   class Conflict_tester;
+private:
   class Point_hider;
 
 #ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
