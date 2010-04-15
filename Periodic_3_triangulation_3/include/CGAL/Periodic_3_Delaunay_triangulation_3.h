@@ -189,7 +189,10 @@ public:
 	if (pbegin == points.end()) return number_of_vertices() - n;
       }
 
-    spatial_sort (pbegin, points.end(), geom_traits());
+    // Use Geom_traits::K for efficiency: spatial_sort creates a lot
+    // of copies of the traits but does not need the domain that is
+    // stored in it.
+    spatial_sort (pbegin, points.end(), typename Geom_traits::K());
 
     Conflict_tester tester(*pbegin,this);
     Point_hider hider;
