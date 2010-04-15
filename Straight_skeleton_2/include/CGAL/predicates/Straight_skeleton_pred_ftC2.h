@@ -262,8 +262,7 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
     Quotient mt = mt_->to_quotient();
     Quotient nt = nt_->to_quotient();
    
-    if ( CGAL_NTS certified_is_positive(mt) && CGAL_NTS certified_is_positive(nt) ) 
-      rResult = CGAL_NTS certified_compare(mt,nt);
+    rResult = CGAL_NTS certified_compare(mt,nt);
   }
   
   return rResult ;
@@ -442,8 +441,8 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2 > cons
     else // Valid (non-degenerate) angular bisector
     {
       // Scale distance from to the lines.
-      FT sd_p_l0 = validate(l0.a() * p.x() + l0.b() * p.y() + l0.c()) ;
-      FT sd_p_l1 = validate(l1.a() * p.x() + l1.b() * p.y() + l1.c()) ;
+      FT sd_p_l0 = w0_sign != ZERO ? validate((l0.a() * p.x() + l0.b() * p.y() + l0.c()) / w0 ) : FT(0) ;
+      FT sd_p_l1 = w1_sign != ZERO ? validate((l1.a() * p.x() + l1.b() * p.y() + l1.c()) / w1 ) : FT(0) ;
       
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l1=" << n2str(sd_p_l1) ) ;
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l0=" << n2str(sd_p_l0) ) ;
@@ -542,24 +541,21 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2 > const&
     Quotient lt = lt_->to_quotient();
     Quotient rt = rt_->to_quotient();
 
-    if ( CGAL_NTS certified_is_positive(lt) && CGAL_NTS certified_is_positive(rt) ) 
+    Uncertain<bool> equal_times = CGAL_NTS certified_is_equal(lt,rt);
+    
+    if ( is_certain(equal_times) )
     {
-      Uncertain<bool> equal_times = CGAL_NTS certified_is_equal(lt,rt);
-      
-      if ( is_certain(equal_times) )
+      if ( equal_times )
       {
-        if ( equal_times )
-        {
-          Optional_point_2 li = construct_offset_lines_isecC2(l);
-          Optional_point_2 ri = construct_offset_lines_isecC2(r);
-  
-          if ( li && ri )
-            rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li->x(),ri->x())
-                                          , CGAL_NTS certified_is_equal(li->y(),ri->y())
-                                          ) ;
-        }
-        else rResult = false;
+        Optional_point_2 li = construct_offset_lines_isecC2(l);
+        Optional_point_2 ri = construct_offset_lines_isecC2(r);
+
+        if ( li && ri )
+          rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li->x(),ri->x())
+                                        , CGAL_NTS certified_is_equal(li->y(),ri->y())
+                                        ) ;
       }
+      else rResult = false;
     }
 
   }

@@ -64,7 +64,7 @@ double sTimeout = 0.0 ;
 
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING
 
-#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 0
+//#define CGAL_STRAIGHT_SKELETON_ENABLE_TRACE 5
 //#define CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE    
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE 
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 3
@@ -281,7 +281,7 @@ IWeightedBoundariesPtr load_boundaries( string file, int aShift, int& rStatus )
               in >> x ;
             }
             
-	    in >> y ;
+            in >> y ;
             
             if ( lIncludeWeights )
             {
@@ -332,7 +332,6 @@ IWeightedBoundariesPtr load_boundaries( string file, int aShift, int& rStatus )
                 }
               
                 IWeightedPolygon lWeightedPolygon(lPoly,lWeights,lIsClosed);
-                //rBoundaries->push_back( lWeightedPolygon ) ;
                 rBoundaries->push_back( ( orientation == expected ) ? lWeightedPolygon : revert_weighted_polygon(lWeightedPolygon) ) ;
               }
               else if ( ! lIgnoreOpenPolygons ) 
@@ -635,26 +634,6 @@ void dump_to_dxf ( TestCase const& aCase )
   
 }
 
-/*
-template<class Boundaries, class Point>
-bool is_point_inside_region( Boundaries const& aBoundaries, Point const& aP )
-{
-  bool rR = true ;
-  
-  typedef typename Boundaries::value_type PolygonPtr ;
-  typedef typename PolygonPtr::element_type Polygon ;
-  
-  for ( typename Boundaries::const_iterator bit = aBoundaries.begin() ; bit != aBoundaries.end() && rR ; ++ bit )
-  {
-    Polygon const& lPoly = **bit ;
-    if ( oriented_side_2(lPoly.begin(),lPoly.end(),aP) == ON_NEGATIVE_SIDE )
-      rR = false ;
-  }  
-  
-  return rR ;
-}
-*/
-
 bool is_skeleton_valid( IWeightedBoundaries const& aBoundaries, ISls const& aSkeleton )
 {
   bool rValid = aSkeleton.is_valid() ;
@@ -663,27 +642,6 @@ bool is_skeleton_valid( IWeightedBoundaries const& aBoundaries, ISls const& aSke
   {
     if ( sVerbose )
       cout << "    Failed: Skeleton invalid.\n" ; 
-  }
-  else
-  {
-    if( sValidateGeometry )
-    {
-      for(Vertex_const_iterator vit = aSkeleton.vertices_begin(); vit != aSkeleton.vertices_end() && rValid ; ++vit)
-      {
-        Vertex_const_handle v = vit ;
-        if ( v->is_skeleton() && ! v->has_infinite_time() )
-        {
-          /* This check does not longer holds with weighted skeletons
-          if ( !is_point_inside_region(aBoundaries,v->point()) )
-          {
-            rValid = false ;
-            if ( sVerbose )
-              cout << "    Failed: skeleton node misplaced.\n" ; 
-          }
-          */
-        }
-      }  
-    }
   }
   
   return rValid ;
