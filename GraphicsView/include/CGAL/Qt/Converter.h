@@ -146,7 +146,7 @@ public:
     return QLineF();
   }
 
-  QPolygonF operator()(const CGAL_Ray_2                 &t)
+  QPolygonF operator()(const CGAL_Triangle_2 &t)
   {
     QPolygonF qp;
     qp << operator()(t.vertex(0)) << operator()(t.vertex(1)) << operator()(t.vertex(2));
