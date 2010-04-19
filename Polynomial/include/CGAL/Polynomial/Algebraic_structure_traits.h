@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 // Forward declaration for <NiX/polynomial_gcd.h> for NT_traits<Poly...>::Gcd
 namespace internal {
 template <class NT> inline
-Polynomial<NT> gcd(const Polynomial<NT>&, const Polynomial<NT>&);
+Polynomial<NT> gcd_(const Polynomial<NT>&, const Polynomial<NT>&);
 } // namespace internal
 
 
@@ -236,7 +236,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Unique_factorization_dom
         return idiv(x,upart(x));
       
       if (internal::may_have_common_factor(x,y))
-        return internal::gcd(x,y);
+        return CGAL::internal::gcd_(x,y);
       else{        
         typename Algebraic_structure_traits<ICoeff>::Algebraic_category category;  
         return POLY(gcd_help(Mcontent()(x),Mcontent()(y), category));

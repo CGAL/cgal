@@ -180,7 +180,7 @@ inline int square_free_factorize_for_regular_polynomial_
 
     POLY a = CGAL::canonicalize(p);
     POLY b = diff(a);
-    POLY c = CGAL::internal::gcd_utcf(a, b);
+    POLY c = CGAL::internal::gcd_utcf_(a, b);
 
     if (c == Coeff(1)) {
         *factors = a;
@@ -209,7 +209,7 @@ inline int square_free_factorize_for_regular_polynomial_
     POLY g;
 
     while (!z.is_zero()) {
-        g = CGAL::internal::gcd_utcf(w, z);
+        g = CGAL::internal::gcd_utcf_(w, z);
         if (g.degree() > 0) {
             *factors++ = g;
             *multiplicities++ = i;

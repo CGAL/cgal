@@ -1121,7 +1121,7 @@ struct Construct_innermost_coefficient_const_iterator_range
       }
       // apply modular filter first
       if (internal::may_have_common_factor(p,q)){
-        return internal::gcd_utcf(p,q);
+        return internal::gcd_utcf_(p,q);
       }else{
         return Polynomial_d(1);
       }

@@ -79,7 +79,7 @@ Polynomial<NT> gcd_(
         const Polynomial<NT>& p2, 
         Field_tag)
 { 
-    return CGAL::internal::gcd_utcf(p1,p2);
+    return CGAL::internal::gcd_utcf_(p1,p2);
 }
 
 template <class NT> 
@@ -101,7 +101,7 @@ Polynomial<NT> gcd_(
     POLY p1_ = CGAL::integral_division(p1,ictp(mcont_p1));
     POLY p2_ = CGAL::integral_division(p2,ictp(mcont_p2));
             
-    return CGAL::internal::gcd_utcf(p1_, p2_) * ictp(CGAL::gcd(mcont_p1, mcont_p2)); 
+    return CGAL::internal::gcd_utcf_(p1_, p2_) * ictp(CGAL::gcd(mcont_p1, mcont_p2)); 
 }
 
 
@@ -115,7 +115,7 @@ Polynomial<NT> gcd_(
  */
 template <class NT> 
 inline
-Polynomial<NT> gcd(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
+Polynomial<NT> gcd_(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
 { 
     typedef typename internal::Innermost_coefficient_type<Polynomial<NT> >::Type IC;
     typedef typename Algebraic_structure_traits<IC>::Algebraic_category Algebraic_category;
@@ -195,7 +195,7 @@ gcd_utcf_is_fraction_(
     typename FT::Decompose()(p2,p2i, dummy);
 
     typename Coercion_traits<POLY,typename FT::Numerator_type>::Cast cast;
-    return typename PT::Canonicalize()(cast(internal::gcd_utcf(p1i, p2i)));
+    return typename PT::Canonicalize()(cast(internal::gcd_utcf_(p1i, p2i)));
 }
 
 template <class NT> Polynomial<NT> inline

@@ -29,14 +29,12 @@ namespace CGAL{
 template <class NT> class Polynomial; 
 
 namespace internal{
-template <class NT> inline Polynomial<NT> gcd (const Polynomial<NT>&, const Polynomial<NT>&);
+template <class NT> inline Polynomial<NT> gcd_(const Polynomial<NT>&, const Polynomial<NT>&);
 template <class NT> inline Polynomial<NT> gcd_(const Polynomial<NT>&, const Polynomial<NT>&, Field_tag);
 template <class NT> inline Polynomial<NT> gcd_(const Polynomial<NT>&, const Polynomial<NT>&, Unique_factorization_domain_tag);
 
 
 template <class NT> inline NT gcd_utcf_(const NT& a, const NT& b){return NT(1);}
-template <class NT> inline Polynomial<NT> gcd_utcf(const Polynomial<NT>&, const Polynomial<NT>&);
-
 template <class NT> inline Polynomial<NT> gcd_utcf_(const Polynomial<NT>&, const Polynomial<NT>&);
 template <class NT> inline Polynomial<NT> gcd_utcf_UFD( Polynomial<NT> , Polynomial<NT>) ;
 template <class NT> inline Polynomial<NT> gcd_utcf_Integral_domain(Polynomial<NT>, Polynomial<NT>);
