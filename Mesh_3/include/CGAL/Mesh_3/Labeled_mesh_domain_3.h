@@ -78,25 +78,6 @@ public:
   typedef boost::optional<Surface_index> Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
-//  class Index
-//  {
-//  public:
-//    Index()
-//      : index_() {}
-//    Index(const Subdomain_index& subdomain_index)
-//      : index_(subdomain_index) {}
-//    Index(const Surface_index& surface_index)
-//      : index_(surface_index) {}
-//
-//    Subdomain_index subdomain_index() const
-//    { return boost::get<Subdomain_index>(index_); }
-//    Surface_index surface_index() const
-//    { return boost::get<Surface_index>(index_); }
-//
-//  private:
-//    typedef boost::variant<Subdomain_index, Surface_index> Internal_index;
-//    Internal_index index_;
-//  };
   typedef boost::variant<Subdomain_index, Surface_index> Index;
   typedef CGAL::cpp0x::tuple<Point_3,Index,int> Intersection;
 
@@ -224,23 +205,6 @@ public:
         return this->operator()(*s);
       else
         return Surface_patch();
-
-//      // CGAL::intersection(x,BBox_3) returns objects of kernel
-//      // Simple_cartesian<double>
-//      typedef Simple_cartesian<double>::Segment_3 Seg_3;
-//      if ( const Seg_3* s = object_cast<Seg_3>(&clipped) )
-//      {
-//        const FT& px = s->source().x();
-//        const FT& py = s->source().y();
-//        const FT& pz = s->source().z();
-//        const FT& qx = s->target().x();
-//        const FT& qy = s->target().y();
-//        const FT& qz = s->target().z();
-//        const Point_3 p(px,py,pz);
-//        const Point_3 q(qx,qy,qz);
-//
-//        return this->operator()(p,q);
-//      }
     }
 
   private:
@@ -363,25 +327,6 @@ public:
         return this->operator()(*s);
       else
         return Intersection();
-
-      //      // CGAL::intersection(x,BBox_3) returns objects of kernel
-      //      // Simple_cartesian<double>
-      //      typedef Simple_cartesian<double>::Segment_3 Seg_3;
-      //      const Object clipped = CGAL::intersection(query, r_domain_.bbox_);
-      //
-      //      if ( const Seg_3* s = object_cast<Seg_3>(&clipped) )
-      //      {
-      //        const FT& px = s->source().x();
-      //        const FT& py = s->source().y();
-      //        const FT& pz = s->source().z();
-      //        const FT& qx = s->target().x();
-      //        const FT& qy = s->target().y();
-      //        const FT& qz = s->target().z();
-      //        const Point_3 p(px,py,pz);
-      //        const Point_3 q(qx,qy,qz);
-      //
-      //        return this->operator()(p,q);
-      //      }
     }
 
   private:
@@ -466,6 +411,10 @@ private:
 
     return Iso_cuboid_3(p_min,p_max);
   }
+  
+protected:
+  /// Returns bounding box
+  const Iso_cuboid_3& bounding_box() const { return bbox; }
 
 private:
   /// The function which answers subdomain queries
