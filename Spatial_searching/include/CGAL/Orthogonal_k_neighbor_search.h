@@ -78,7 +78,7 @@ private:
   };
   
   // Set of points, sorted by distance, in increasing or decreasing order.
-  typedef std::set<Point_with_transformed_distance, Distance_larger> NN_list;
+  typedef std::multiset<Point_with_transformed_distance, Distance_larger> NN_list;
 
 public:
 
