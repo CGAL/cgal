@@ -58,6 +58,8 @@ one of the integral types above.
 \ccNestedType{Algebraic\_real\_1}{represents coordinates of points.
       Typedef from \ccc{Algebraic_kernel_1::Algebraic_real_1}}
 
+\ccNestedType{Bound}{Typedef from \ccc{Algebraic_kernel_1::Bound}}
+
 \subsection*{Class
          Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::Curve\_2}
 %========================================================================
@@ -221,6 +223,18 @@ Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::Construct\_point\_2}
          \ccPrecond(\ccc{cv} must not have a vertical line at \ccc{x}, 
                     and $0\leq arcno < c$, where $c$ is the number of points 
                      in the fiber of \ccc{cv} at \ccc{x}.)} 
+
+\ccMethod{Point_2 operator() (Algebraic_real_1 x, Algebraic_real_1 y);}
+        {Returns a \ccc{Point_2} object that represents (x,y)} 
+
+\ccMethod{Point_2 operator() (Coefficient x, Coefficient y);}
+        {Returns a \ccc{Point_2} object that represents (x,y)} 
+
+\ccMethod{Point_2 operator() (Bound x, Bound y);}
+        {Returns a \ccc{Point_2} object that represents (x,y)} 
+
+\ccMethod{Point_2 operator() (int x, int y);}
+        {Returns a \ccc{Point_2} object that represents (x,y)} 
 
 \end{ccClass}
 
