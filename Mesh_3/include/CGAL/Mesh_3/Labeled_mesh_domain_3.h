@@ -414,7 +414,7 @@ private:
   
 protected:
   /// Returns bounding box
-  const Iso_cuboid_3& bounding_box() const { return bbox; }
+  const Iso_cuboid_3& bounding_box() const { return bbox_; }
 
 private:
   /// The function which answers subdomain queries
