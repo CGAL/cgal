@@ -374,8 +374,6 @@ Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/SweepLineVisitor_2.tex eol=lf
 Arrangement_on_surface_2/doc_tex/Sweep_line_2_ref/Sweep_line_2.tex eol=lf
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Bezier.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Europe.dat -text
-Arrangement_on_surface_2/examples/Arrangement_on_surface_2/algebraic_curves.cpp -text
-Arrangement_on_surface_2/examples/Arrangement_on_surface_2/algebraic_segments.cpp -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/bounded_planar_vertical_decomposition.cpp -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/coll_points.dat -text
 Arrangement_on_surface_2/examples/Arrangement_on_surface_2/fan_grids.dat -text
