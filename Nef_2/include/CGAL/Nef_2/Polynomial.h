@@ -19,8 +19,8 @@
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 //                 Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 
-#ifndef CGAL_POLYNOMIAL_H
-#define CGAL_POLYNOMIAL_H
+#ifndef CGAL_NEF_2_POLYNOMIAL_H
+#define CGAL_NEF_2_POLYNOMIAL_H
 
 #include <CGAL/basic.h>
 #include <CGAL/kernel_assertions.h>
@@ -1979,4 +1979,4 @@ CGAL_END_NAMESPACE
 
 
 
-#endif  // CGAL_POLYNOMIAL_H
+#endif  // CGAL_NEF_2_POLYNOMIAL_H
