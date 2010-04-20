@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 
-#include <CGAL/Algebraic_kernel_1.h>
+#include <CGAL/Algebraic_kernel_d_1.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_curve_kernel_2.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_impl.h>
@@ -26,12 +26,12 @@ public:
     
     // 'derivation'
     
-    typedef CGAL::Algebraic_kernel_1< Coefficient > Algebraic_kernel_1;
+    typedef CGAL::Algebraic_kernel_d_1< Coefficient > Algebraic_kernel_d_1;
     
-    typedef CGAL::Algebraic_curve_kernel_2< Algebraic_kernel_1 > 
-        Algebraic_kernel_2;
+    typedef CGAL::Algebraic_curve_kernel_2< Algebraic_kernel_d_1 > 
+        Algebraic_kernel_d_2;
     
-    typedef CGAL::Curved_kernel_via_analysis_2< Algebraic_kernel_2 > CKvA_2;
+    typedef CGAL::Curved_kernel_via_analysis_2< Algebraic_kernel_d_2 > CKvA_2;
 
     typedef  CGAL::Arr_algebraic_segment_traits_2<Coefficient> Self;
 
@@ -48,13 +48,13 @@ public:
     
     // public types
     
-    typedef typename Algebraic_kernel_2::Algebraic_real_1 Algebraic_real_1;
+    typedef typename Algebraic_kernel_d_2::Algebraic_real_1 Algebraic_real_1;
 
-    typedef typename Algebraic_kernel_2::Polynomial_2 Polynomial_2;
+    typedef typename Algebraic_kernel_d_2::Polynomial_2 Polynomial_2;
 
     /// public types for ArrangementTraits_2
     
-    typedef typename Algebraic_kernel_2::Curve_analysis_2 Curve_2;
+    typedef typename Algebraic_kernel_d_2::Curve_analysis_2 Curve_2;
     
     typedef typename CKvA_2::Arc_2 X_monotone_curve_2;
 
