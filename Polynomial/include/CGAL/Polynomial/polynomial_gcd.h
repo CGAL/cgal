@@ -137,39 +137,6 @@ Polynomial<NT> gcd_(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
 
 namespace internal {
 
-template <class NT> Polynomial<NT> 
-gcd_utcf_(const Polynomial<NT>&, const Polynomial<NT>&);
-
-// is fraction ? 
-template <class NT> Polynomial<NT> 
-gcd_utcf_is_fraction_( const Polynomial<NT>&, const Polynomial<NT>&, 
-        ::CGAL::Tag_true); 
-template <class NT> Polynomial<NT> 
-gcd_utcf_is_fraction_( const Polynomial<NT>&, const Polynomial<NT>&, 
-        ::CGAL::Tag_false);
-
-// is type modularizable 
-template <class NT> Polynomial<NT> 
-gcd_utcf_modularizable_algebra_( const Polynomial<NT>&, const Polynomial<NT>&, 
-        ::CGAL::Tag_false, Integral_domain_tag);
-template <class NT> Polynomial<NT> 
-gcd_utcf_modularizable_algebra_( const Polynomial<NT>&, const Polynomial<NT>&, 
-        ::CGAL::Tag_false, Unique_factorization_domain_tag);
-template <class NT> Polynomial<NT> 
-gcd_utcf_modularizable_algebra_( const Polynomial<NT>&, const Polynomial<NT>&, 
-        ::CGAL::Tag_false, Field_tag);
-
-template <class NT> Polynomial<NT> 
-gcd_utcf_modularizable_algebra_( const Polynomial<NT>&, const Polynomial<NT>&, 
-        ::CGAL::Tag_true, Integral_domain_tag);
-template <class NT> Polynomial<NT> 
-gcd_utcf_modularizable_algebra_( const Polynomial<NT>&, const Polynomial<NT>&, 
-        ::CGAL::Tag_true, Unique_factorization_domain_tag);
-template <class NT> Polynomial<NT> 
-gcd_utcf_modularizable_algebra_( const Polynomial<NT>&, const Polynomial<NT>&, 
-        ::CGAL::Tag_true, Field_tag);
-
-
 template <class NT> Polynomial<NT> inline
 gcd_utcf_(const Polynomial<NT>& p1, const Polynomial<NT>& p2){
     typedef CGAL::Fraction_traits< Polynomial<NT> > FT;
