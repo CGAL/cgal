@@ -213,7 +213,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Unique_factorization_dom
     typedef typename Polynomial_traits_d<POLY>::Multivariate_content Mcontent;
     typedef typename Mcontent::result_type ICoeff; 
     
-    ICoeff gcd_help(const ICoeff& x, const ICoeff& y, Field_tag) const {
+    ICoeff gcd_help(const ICoeff& , const ICoeff& , Field_tag) const {
       return ICoeff(1);
     }
     ICoeff gcd_help(const ICoeff& x, const ICoeff& y, 

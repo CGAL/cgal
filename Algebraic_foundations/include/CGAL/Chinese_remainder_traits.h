@@ -57,10 +57,11 @@ public:
     struct Chinese_remainder{
         void operator() (
                 const Scalar_type& m1, const Scalar_type& m2, const Scalar_type& m, 
-                const Scalar_type& s,  const Scalar_type& t,  
+                const Scalar_type& s,  const Scalar_type& CGAL_precondition_code(t),  
                 NT u1, NT u2, 
                 NT& u) const {
-#ifndef NDEBUG 
+
+#ifndef CGAL_NDEBUG 
             NT tmp,s_,t_;
             tmp = CGAL::extended_euclidean_algorithm(m1,m2,s_,t_);
             CGAL_precondition(tmp == NT(1));

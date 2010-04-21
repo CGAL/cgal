@@ -13,7 +13,7 @@
 
 template<class A, class B> void test_coercion_from_to(A, B){
   CGAL::test_explicit_interoperable<A,B,B>();
-};
+}
 
 template <typename AK>
 void test_coercion_traits(){
@@ -163,4 +163,4 @@ int main(){
   test_coercion_traits<AK>();
 #endif 
 return 0;
-};
+}

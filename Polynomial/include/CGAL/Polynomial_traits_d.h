@@ -366,12 +366,10 @@ public:
       return Exponent_vector();
     }
   };
-    
+  
   struct Get_innermost_coefficient 
     : public std::binary_function< ICoeff, Polynomial_d, Exponent_vector > {
-        
-    ICoeff operator()( const Polynomial_d& p, Exponent_vector ev ) {
-      CGAL_precondition( ev.empty() );
+    ICoeff operator()( const Polynomial_d& p, Exponent_vector ) {
       return p;
     }
   };
@@ -387,14 +385,14 @@ public:
                                    Innermost_coefficient_type>::Type
     operator()(
         const Innermost_coefficient_type& p, 
-        Input_iterator begin, 
-        Input_iterator end) const { 
+        Input_iterator CGAL_precondition_code(begin), 
+        Input_iterator CGAL_precondition_code(end) ) const { 
       CGAL_precondition(end == begin);
       typedef typename std::iterator_traits<Input_iterator>::value_type 
         value_type;
       typedef CGAL::Coercion_traits<Innermost_coefficient_type,value_type> CT;
       return typename CT::Cast()(p);
-    }
+    } 
   };
 
   struct Substitute_homogeneous{
@@ -410,7 +408,7 @@ public:
     operator()(
         const Innermost_coefficient_type& p, 
         Input_iterator begin, 
-        Input_iterator end,
+        Input_iterator CGAL_precondition_code(end),
         int hdegree) const { 
       
       typedef typename std::iterator_traits<Input_iterator>::value_type 

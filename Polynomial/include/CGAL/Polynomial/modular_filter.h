@@ -86,8 +86,8 @@ namespace internal {
     }
    
     template <class NT> inline
-    bool may_have_common_factor_(const Polynomial<NT>& p1,
-                                 const Polynomial<NT>& p2,
+    bool may_have_common_factor_(const Polynomial<NT>& ,
+                                 const Polynomial<NT>& ,
                                  ::CGAL::Tag_false) {return true;}
     
 /*! \ingroup CGAL_polynomial_utils

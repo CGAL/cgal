@@ -549,7 +549,7 @@ CGAL_BEGIN_NAMESPACE
       }
       int i = p+1;
       int j = p;
-      int k;
+      int k = 0;
       while(!CGAL::is_zero(sResP[j-1])) {
 	k=degree(sResP[j-1]);
 	if(k>=j-1) {
