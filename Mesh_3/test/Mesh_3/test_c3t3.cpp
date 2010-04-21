@@ -64,11 +64,19 @@ struct Tester
   void operator()() const
   {
     //-------------------------------------------------------
-    // Data generation : fill a triangulation with 4 vertices
+    // Test default constructed c3t3
     //-------------------------------------------------------
     C3t3 c3t3;
     Tr& tr = c3t3.triangulation();
 
+    assert(c3t3.cells_begin() == c3t3.cells_end());
+    assert(c3t3.facets_begin() == c3t3.facets_end());
+    assert(c3t3.number_of_cells() == 0);
+    assert(c3t3.number_of_facets() == 0);
+
+    //-------------------------------------------------------
+    // Data generation : fill a triangulation with 4 vertices
+    //-------------------------------------------------------
     Point_creator creator;
     Point p1 = creator(0,0,0);
     Point p2 = creator(1,0,0);
@@ -191,7 +199,62 @@ struct Tester
     assert(c3t3.number_of_facets() == 4);
     assert(c3t3.number_of_facets() == (size_type)std::distance(c3t3.facets_begin(),
                                                                c3t3.facets_end()));
+    //-------------------------------------------------------
+    // Create c3t3_bis
+    //-------------------------------------------------------
+    std::cout << "Insert 6 points from domain in c3t3_bis, add 1 cell to c3t3_bis\n";
+    Polyhedron polyhedron;
+    std::ifstream input("data/sphere.off");
+    input >> polyhedron;
+    input.close();
+    Mesh_domain domain(polyhedron);
+        
+    typedef std::vector<std::pair<Point, Index> > Initial_points_vector;
+    Initial_points_vector initial_points;
+    domain.construct_initial_points_object()(std::back_inserter(initial_points), 6);
+    
+    C3t3 c3t3_bis;
+    c3t3_bis.insert_surface_points(initial_points.begin(), initial_points.end());
+    
+    Cell_handle ch_bis = c3t3_bis.triangulation().finite_cells_begin();
+    c3t3_bis.add_to_complex(ch_bis,subdomain_index);
+    
+    std::cout << "\tNumber of cells in c3t3_bis: " << c3t3_bis.number_of_cells() << std::endl;
+    std::cout << "\tNumber of facets in c3t3_bis: " << c3t3_bis.number_of_facets() << std::endl;
+    std::cout << "\tNumber of vertices in c3t3_bis: " << c3t3_bis.number_of_vertices() << std::endl;
+    
+    //-------------------------------------------------------
+    // Swap c3t3 and c3t3_bis
+    //-------------------------------------------------------
+    std::cout << "Swap c3t3 and c3t3_bis\n";
+    typedef typename C3t3::size_type size_type;
 
+    size_type c3t3_cell_nb = c3t3.number_of_cells(); 
+    size_type c3t3_facet_nb = c3t3.number_of_facets();
+    size_type c3t3_vertex_nb = c3t3.number_of_vertices();
+
+    size_type c3t3_bis_cell_nb = c3t3_bis.number_of_cells(); 
+    size_type c3t3_bis_facet_nb = c3t3_bis.number_of_facets();
+    size_type c3t3_bis_vertex_nb = c3t3_bis.number_of_vertices();
+
+    c3t3.swap(c3t3_bis);
+    
+    std::cout << "\tNumber of cells in c3t3: " << c3t3.number_of_cells() << std::endl;
+    std::cout << "\tNumber of facets in c3t3: " << c3t3.number_of_facets() << std::endl;
+    std::cout << "\tNumber of vertices in c3t3: " << c3t3.number_of_vertices() << std::endl;
+  
+    std::cout << "\tNumber of cells in c3t3_bis: " << c3t3_bis.number_of_cells() << std::endl;
+    std::cout << "\tNumber of facets in c3t3_bis: " << c3t3_bis.number_of_facets() << std::endl;
+    std::cout << "\tNumber of vertices in c3t3_bis: " << c3t3_bis.number_of_vertices() << std::endl;
+
+    assert(c3t3_cell_nb == c3t3_bis.number_of_cells());
+    assert(c3t3_facet_nb == c3t3_bis.number_of_facets());
+    assert(c3t3_vertex_nb == c3t3_bis.number_of_vertices());
+
+    assert(c3t3_bis_cell_nb == c3t3.number_of_cells());
+    assert(c3t3_bis_facet_nb == c3t3.number_of_facets());
+    assert(c3t3_bis_vertex_nb == c3t3.number_of_vertices());
+  
     //-------------------------------------------------------
     // Modify indices and dimension and verify
     //-------------------------------------------------------
