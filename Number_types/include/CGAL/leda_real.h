@@ -102,7 +102,7 @@ template <> class Algebraic_structure_traits< leda_real >
                        ForwardIterator begin,
                        ForwardIterator end) const {
             return CGAL_LEDA_SCOPE::diamond(k,make_polynomial(begin,end));
-        };
+        }
 /*        template <class ForwardIterator>
         Type operator()( leda_rational lower,
                                         leda_rational upper,

@@ -220,12 +220,12 @@ public:
 
 
 // Coercion traits:
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,leda_bigfloat_interval);
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,leda_bigfloat_interval);
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,leda_bigfloat_interval);
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,leda_bigfloat_interval);
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,leda_bigfloat_interval);
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::bigfloat   ,leda_bigfloat_interval);
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,leda_bigfloat_interval)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,leda_bigfloat_interval)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,leda_bigfloat_interval)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,leda_bigfloat_interval)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,leda_bigfloat_interval)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::bigfloat   ,leda_bigfloat_interval)
 
 template <>
 struct Coercion_traits< leda_bigfloat_interval , ::leda::integer >{
