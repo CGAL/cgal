@@ -313,8 +313,8 @@ public:
   OutputIterator vertices_in_conflict(const Point&p, Cell_handle c,
       OutputIterator res) const;
 
-  bool is_Gabriel(Cell_handle c, int i) const;
-  bool is_Gabriel(Cell_handle c, int i, int j) const;
+  bool is_Gabriel(const Cell_handle c, int i) const;
+  bool is_Gabriel(const Cell_handle c, int i, int j) const;
   bool is_Gabriel(const Facet& f)const {
     return is_Gabriel(f.first, f.second);
   }
@@ -950,9 +950,8 @@ _side_of_sphere(const Cell_handle &c, const Point &q,
 
 template < class Gt, class Tds >
 bool Periodic_3_Delaunay_triangulation_3<Gt,Tds>::
-is_Gabriel(Cell_handle c, int i) const {
+is_Gabriel(const Cell_handle c, int i) const {
   CGAL_triangulation_precondition(number_of_vertices() != 0);
-
   typename Geom_traits::Side_of_bounded_sphere_3
     side_of_bounded_sphere =
     geom_traits().side_of_bounded_sphere_3_object();
@@ -970,13 +969,13 @@ is_Gabriel(Cell_handle c, int i) const {
   int in = neighbor->index(c);
 
   if (side_of_bounded_sphere(
-          c->vertex(vertex_triple_index(i,0))->point(),
-	  c->vertex(vertex_triple_index(i,1))->point(),
-	  c->vertex(vertex_triple_index(i,2))->point(),
+          neighbor->vertex(vertex_triple_index(in,0))->point(),
+	  neighbor->vertex(vertex_triple_index(in,1))->point(),
+	  neighbor->vertex(vertex_triple_index(in,2))->point(),
           neighbor->vertex(in)->point(),
-          get_offset(c,vertex_triple_index(i,0)),
-          get_offset(c,vertex_triple_index(i,1)),
-          get_offset(c,vertex_triple_index(i,2)),
+          get_offset(neighbor,vertex_triple_index(in,0)),
+          get_offset(neighbor,vertex_triple_index(in,1)),
+          get_offset(neighbor,vertex_triple_index(in,2)),
           get_offset(neighbor, in) ) == ON_BOUNDED_SIDE )
     return false;
   
@@ -985,7 +984,7 @@ is_Gabriel(Cell_handle c, int i) const {
 
 template < class Gt, class Tds >
 bool Periodic_3_Delaunay_triangulation_3<Gt,Tds>::
-is_Gabriel(Cell_handle c, int i, int j) const {
+is_Gabriel(const Cell_handle c, int i, int j) const {
   typename Geom_traits::Side_of_bounded_sphere_3
     side_of_bounded_sphere =
     geom_traits().side_of_bounded_sphere_3_object();
@@ -993,17 +992,21 @@ is_Gabriel(Cell_handle c, int i, int j) const {
   Facet_circulator fcirc = incident_facets(c,i,j),
     fdone(fcirc);
   Vertex_handle v1 = c->vertex(i);
-  Offset off1 = int_to_off(c->offset(i));
   Vertex_handle v2 = c->vertex(j);
-  Offset off2 = int_to_off(c->offset(j));
   do {
     // test whether the vertex of cc opposite to *fcirc
     // is inside the sphere defined by the edge e = (s, i,j)
-    Cell_handle cc = (*fcirc).first;
-    int ii = (*fcirc).second;
-    Offset off3 = int_to_off(cc->offset(ii));
-    if (side_of_bounded_sphere( v1->point(), v2->point(), cc->vertex(ii)->point(), off1, off2, off3)  
-	== ON_BOUNDED_SIDE ) return false;
+    // It is necessary to fetch the offsets from the current cell.
+    Cell_handle cc = fcirc->first;
+    int i1 = cc->index(v1);
+    int i2 = cc->index(v2);
+    int i3 = fcirc->second;
+    Offset off1 = int_to_off(cc->offset(i1));
+    Offset off2 = int_to_off(cc->offset(i2));
+    Offset off3 = int_to_off(cc->offset(i3));
+    if (side_of_bounded_sphere(
+	    v1->point(), v2->point(), cc->vertex(fcirc->second)->point(),
+	    off1, off2, off3) == ON_BOUNDED_SIDE ) return false;
   } while(++fcirc != fdone);
   return true;
 }

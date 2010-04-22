@@ -72,6 +72,8 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   typedef typename P3T3::Facet_iterator       Facet_iterator;
   typedef typename P3T3::Cell_iterator        Cell_iterator;
 
+  typedef typename P3T3::Cell_circulator      Cell_circulator;
+
   typedef typename P3T3::Unique_vertex_iterator Unique_vertex_iterator;
   typedef typename P3T3::Periodic_point_iterator Periodic_point_iterator;
   typedef typename P3T3::Periodic_segment_iterator Periodic_segment_iterator;
@@ -351,13 +353,30 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
 
   std::cout << "  Gabriel"<< std::endl;
 
-  Edge_iterator  eit = PT.edges_begin();
-  Facet_iterator fit = PT.facets_begin();
-  for (int i=0 ; i<10 ; i++,eit++,fit++ ) {
-    PT.is_Gabriel(*eit);
-    PT.is_Gabriel(eit->first,eit->second,eit->third);
-    PT.is_Gabriel(*fit);
-    PT.is_Gabriel(fit->first,fit->second);
+  Edge_iterator  eit;
+  for ( eit = PT.edges_begin() ; eit != PT.edges_end() ; ++eit ) {
+    Cell_circulator ccirc = PT.incident_cells(*eit), cdone(ccirc);
+    bool result = PT.is_Gabriel(*eit);
+
+    Vertex_handle v1 = eit->first->vertex(eit->second);
+    Vertex_handle v2 = eit->first->vertex(eit->third);
+    // Test for all possible representations of the edge *eit
+    // whether the result is always the same.
+    do {
+      int i1 = ccirc->index(v1);
+      int i2 = ccirc->index(v2);
+      bool is_gab = PT.is_Gabriel(ccirc,i1,i2);
+      assert( is_gab == result );
+    } while(++ccirc != cdone);
+  }
+
+  Facet_iterator fit;
+  for ( fit = PT.facets_begin() ; fit != PT.facets_end() ; ++fit ) {
+    Cell_handle nb = fit->first->neighbor(fit->second);
+    int idx = nb->index(fit->first);
+    // Verify that for both representations of the facet *fit
+    // the result is the same.
+    assert ( PT.is_Gabriel(*fit) == PT.is_Gabriel(nb,idx) );
   }
  
   std::cout << "Voronoi diagram" << std::endl;
