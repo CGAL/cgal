@@ -42,10 +42,11 @@ public:
     typedef typename Gt_base::Point_2 Point_2;
 
     inline
-    Sign operator()(const Point_2& p1, const Point_2& p2,
-		    const Point_2& p3, const Point_2& q) const
+    Oriented_side operator()(const Point_2& p1, const Point_2& p2,
+			     const Point_2& p3, const Point_2& q) const
     {
-      return CGAL::side_of_oriented_circle(p1, p2, p3, q);
+      //      return CGAL::side_of_oriented_circle(p1, p2, p3, q);
+      return -(typename Gt_base::Vertex_conflict_2()(p1, p2, p3, q));
     }
   };
 

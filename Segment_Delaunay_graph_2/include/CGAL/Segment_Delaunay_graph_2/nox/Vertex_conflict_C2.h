@@ -279,6 +279,11 @@ public:
   typedef Site_2      argument_type;
   typedef Sign        result_type;
 
+  Sign operator()(const Point_2& p, const Point_2& q,
+		  const Point_2& r, const Point_2& t) const
+  {
+    return -(typename K::Side_of_oriented_circle_2()(p, q, r, t));
+  }
 
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& r, const Site_2& t) const

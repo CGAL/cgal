@@ -19,6 +19,7 @@
 #define USE_INPLACE_LIST 1
 #define CGAL_SDG_USE_SIMPLIFIED_ARRANGEMENT_TYPE_PREDICATE 1
 #define CGAL_SDG_SORT_POINTS_IN_SITE2 1
+#define CGAL_SDG_TRAITS_WITH_STATIC_FILTERS 1
 
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
@@ -35,6 +36,7 @@ typedef  K::Point_2 Point_2;
 
 // typedefs for the traits and the algorithm
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
+#include <CGAL/Segment_Delaunay_graph_filtered_traits_with_static_filters_2.h>
 #include <CGAL/Segment_Delaunay_graph_nox_2.h>
 
 typedef CGAL::Field_with_sqrt_tag MTag;
@@ -47,7 +49,12 @@ typedef CGAL::Simple_cartesian<leda::real> EK;
 typedef CGAL::Integral_domain_without_division_tag EMTag;
 typedef CGAL::Simple_cartesian<CGAL::Gmpq> EK;
 #endif
+#ifdef CGAL_SDG_TRAITS_WITH_STATIC_FILTERS
+typedef
+CGAL::Segment_Delaunay_graph_filtered_traits_with_static_filters_2<K, EK>  Gt;
+#else
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<K, MTag, EK, EMTag>  Gt;
+#endif
 
 
 #ifdef USE_INPLACE_LIST
