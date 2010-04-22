@@ -209,6 +209,8 @@ square_free_factorize(const Polynomial_d& p, OutputIterator oi){
 }  
 // MakeSquareFree
 CGAL_UNARY_POLY_FUNCTION(Make_square_free, make_square_free)
+// IsSquareFree
+CGAL_UNARY_POLY_FUNCTION(Is_square_free, is_square_free)
 
 // PseudoDivision
 // PseudoDivisionQuotient
@@ -368,16 +370,7 @@ sturm_habicht_sequence_with_cofactors
 }
 
 
-// TODO: REMOVE function below 
-
-// sign() forwarded to the sign() member function
-//template <typename NT> inline 
-//CGAL::Sign sign(const Polynomial<NT>& p) { return p.sign(); }
-
-// the non-member variants of diff() etc.
-template <typename NT> inline
-Polynomial<NT> diff(const Polynomial<NT>& p)
-{ Polynomial<NT> q(p); q.diff(); return q; }
+// TODO: REMOVE function below ?
 
 template<typename NT> inline
 Polynomial<NT> scale_up(const Polynomial<NT>& p, const NT& a)
@@ -387,31 +380,16 @@ template<typename NT> inline
 Polynomial<NT> scale_down(const Polynomial<NT>& p, const NT& b)
 { Polynomial<NT> q(p); q.scale_down(b); return q; }
 
-template<typename NT> inline
-Polynomial<NT> scale(const Polynomial<NT>& p, const NT& a, const NT& b)
-{ Polynomial<NT> q(p); q.scale(a, b); return q; }
 
 template<typename NT> inline
 Polynomial<NT> translate_by_one(const Polynomial<NT>& p)
 { Polynomial<NT> q(p); q.translate_by_one(); return q; }
 
-template<typename NT> inline
-Polynomial<NT> translate(const Polynomial<NT>& p, const NT& c)
-{ Polynomial<NT> q(p); q.translate(c); return q; }
-
-template<typename NT> inline
-Polynomial<NT> translate(const Polynomial<NT>& p, const NT& a, const NT& b)
-{ Polynomial<NT> q(p); q.translate(a, b); return q; }
 
 template<typename NT> inline
 Polynomial<NT> reversal(const Polynomial<NT>& p)
 { Polynomial<NT> q(p); q.reversal(); return q; }
 
-template< class Polynomial > 
-bool is_square_free( const Polynomial& p ) {
-  return typename CGAL::Polynomial_traits_d< Polynomial>::
-    Is_square_free()( p );
-}
 
 CGAL_END_NAMESPACE
 

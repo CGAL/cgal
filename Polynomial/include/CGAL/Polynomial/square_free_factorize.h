@@ -179,7 +179,7 @@ inline int square_free_factorize_for_regular_polynomial_
     if (typename PT::Total_degree()(p) == 0) return 0;
 
     POLY a = CGAL::canonicalize(p);
-    POLY b = diff(a);
+    POLY b = CGAL::differentiate(a);
     POLY c = CGAL::internal::gcd_utcf_(a, b);
 
     if (c == Coeff(1)) {
@@ -205,7 +205,7 @@ inline int square_free_factorize_for_regular_polynomial_
     sdiv(w, sfactor); 
     sdiv(y, sfactor);
 
-    POLY  z = y - diff(w);
+    POLY  z = y - CGAL::differentiate(w);
     POLY g;
 
     while (!z.is_zero()) {
@@ -225,7 +225,7 @@ inline int square_free_factorize_for_regular_polynomial_
         sdiv(w, sfactor); 
         sdiv(y, sfactor);
        
-        z = y - diff(w);
+        z = y - CGAL::differentiate(w);
     }
 
     *factors = w;
@@ -261,7 +261,7 @@ inline int square_free_factorize_for_regular_polynomial_
     if (typename PT::Total_degree()(p) == 0) return 0;
     POLY a = CGAL::canonicalize(p);
 
-    POLY b = diff(a);  
+    POLY b = CGAL::differentiate(a);  
     POLY c = CGAL::gcd(a, b);
    
     if (c == Coeff(1)) {
@@ -271,7 +271,7 @@ inline int square_free_factorize_for_regular_polynomial_
     }
 
     int i = 1, n = 0;
-    POLY w = a/c, y = b/c, z = y - diff(w), g;
+    POLY w = a/c, y = b/c, z = y - CGAL::differentiate(w), g;
     while (!z.is_zero()) {
         g = CGAL::gcd(w, z);
         if (g.degree() > 0) {
@@ -282,7 +282,7 @@ inline int square_free_factorize_for_regular_polynomial_
         i++;
         w /= g;
         y = z/g;
-        z = y - diff(w);
+        z = y - CGAL::differentiate(w);
     }
     *factors = w;
     *multiplicities++ = i;
