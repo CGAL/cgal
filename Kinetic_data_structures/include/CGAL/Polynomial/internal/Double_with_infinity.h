@@ -78,7 +78,7 @@ namespace std {
     static const bool has_infinity=true;
     static double infinity() throw() {return (std::numeric_limits<double>::max)();}
   };
-};
+}
 
 
 CGAL_BEGIN_NAMESPACE

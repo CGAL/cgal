@@ -160,7 +160,7 @@ namespace std {
     static T max BOOST_PREVENT_MACRO_SUBSTITUTION () throw() {return T((P::max)());}
     static T infinity() throw() {return P::infinity();}
   };
-};
+}
 
 
 int main(int argc, char* argv[])

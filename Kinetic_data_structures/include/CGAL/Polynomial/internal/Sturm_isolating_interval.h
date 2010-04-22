@@ -48,7 +48,7 @@ public:
     }
     CGAL_assertion(lb() <= ub());
   }
-  bool is_valid() {
+  bool is_valid() const {
     return b_.first <= b_.second;
   }
 

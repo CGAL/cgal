@@ -54,7 +54,7 @@ class Monic_Sturm_sequence
 // NOT WORK CORRECTLY IF p IS THE ZERO POLYNOMIAL AND q IS NOT
 // IN GENERAL I HAVE TO CONSIDER ALL THE LIMITING CASES
             if ( p.degree() >= 0 ) {
-                add( p / abs(p[p.degree()]) );
+                this->add( p / abs(p[p.degree()]) );
                 this->size_++;
             }
 

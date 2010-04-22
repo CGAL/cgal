@@ -31,7 +31,7 @@ CGAL::Sign sign_above(const typename Kernel::Function &p,
   // to make sure this is not called in vain
   CGAL_precondition( false );
   // to avoid warning
-  return 0;
+  return CGAL::ZERO;
 }
 
 

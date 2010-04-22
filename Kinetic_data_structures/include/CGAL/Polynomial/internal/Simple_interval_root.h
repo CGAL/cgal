@@ -23,7 +23,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Real_embeddable_traits.h>
 #include <vector>
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE;
+CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 //! A root represented as a bounding interval and a polynomial.
 /*!
@@ -737,5 +737,5 @@ namespace std
     static const bool tinyness_before =false;
     static const float_round_style round_stype = round_toward_zero;
   };
-};
+}
 #endif
