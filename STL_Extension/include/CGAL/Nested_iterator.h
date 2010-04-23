@@ -149,12 +149,12 @@ public:
 
   Self& operator++()
   {
-    if ( nested_it_ != end( this->base() ) ) {
+    if ( nested_it_ != this->end( this->base() ) ) {
       ++nested_it_;
-      if ( nested_it_ == end( this->base() ) ) {
+      if ( nested_it_ == this->end( this->base() ) ) {
 	Filter_base_iterator::operator++();
 	if ( !this->is_end() ) {
-	  nested_it_ = begin( this->base() );
+	  nested_it_ = this->begin( this->base() );
 	}
       }
     } 
@@ -175,7 +175,7 @@ public:
       nested_it_ = this->end(this->base());
       --nested_it_;
     } else {
-      if ( nested_it_ != begin( this->base() ) ) {
+      if ( nested_it_ != this->begin( this->base() ) ) {
 	--nested_it_;
       } else {
 	Filter_base_iterator::operator--();
