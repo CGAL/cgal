@@ -118,9 +118,9 @@ void test_routine() {
     Poly_int1 f(1,-2,0,0,0,0,1);
     std::vector<Poly_int1> sres;
     CGAL::internal::prs_polynomial_subresultants<Poly_int1_traits>
-      (f,CGAL::diff(f),std::back_inserter(sres));
+      (f,CGAL::differentiate(f),std::back_inserter(sres));
     CGAL_assertion(sres.size()==6);
-    CGAL_assertion(sres[5]==CGAL::diff(f));
+    CGAL_assertion(sres[5]==CGAL::differentiate(f));
     CGAL_assertion(sres[4]==Poly_int1(Integer(36),Integer(-60)));
     CGAL_assertion(sres[3]==Poly_int1(0));
     CGAL_assertion(sres[2]==Poly_int1(0));
@@ -128,9 +128,9 @@ void test_routine() {
     CGAL_assertion(sres[0]==Poly_int1(Integer(-153344)));
     sres.clear();
     CGAL::internal::bezout_polynomial_subresultants<Poly_int1_traits>
-      (f,CGAL::diff(f),std::back_inserter(sres));
+      (f,CGAL::differentiate(f),std::back_inserter(sres));
     CGAL_assertion(sres.size()==6);
-    CGAL_assertion(sres[5]==CGAL::diff(f));
+    CGAL_assertion(sres[5]==CGAL::differentiate(f));
     CGAL_assertion(sres[4]==Poly_int1(Integer(36),Integer(-60)));
     CGAL_assertion(sres[3]==Poly_int1(0));
     CGAL_assertion(sres[2]==Poly_int1(0));
@@ -138,7 +138,7 @@ void test_routine() {
     CGAL_assertion(sres[0]==Poly_int1(Integer(-153344)));
     std::vector<Integer> psres;
     CGAL::internal::prs_principal_subresultants<Poly_int1_traits>
-        (f,CGAL::diff(f),std::back_inserter(psres));
+        (f,CGAL::differentiate(f),std::back_inserter(psres));
     CGAL_assertion(psres.size()==6);
     CGAL_assertion(psres[5]==6);
     CGAL_assertion(psres[4]==0);
@@ -148,7 +148,7 @@ void test_routine() {
     CGAL_assertion(psres[0]==-153344);
     psres.clear();
     CGAL::internal::bezout_principal_subresultants<Poly_int1_traits>
-        (f,CGAL::diff(f),std::back_inserter(psres));
+        (f,CGAL::differentiate(f),std::back_inserter(psres));
     CGAL_assertion(psres.size()==6);
     CGAL_assertion(psres[5]==6);
     CGAL_assertion(psres[4]==0);
@@ -453,7 +453,7 @@ void test_routine() {
       typedef CGAL::Polynomial<Poly_int2> Poly_int3;
       typedef CGAL::Polynomial_traits_d<Poly_int3> Poly_int3_traits;
       Poly_int3 f = from_string<Poly_int3>("P[6(0,P[6(0,P[6(2,3)(4,-3)(6,1)])(1,P[1(1,-2)])(2,P[4(0,3)(2,-5)(4,3)])(4,P[2(0,-3)(2,3)])(6,P[0(0,1)])])(3,P[1(0,P[0(0,2)])(1,P[1(1,-2)])])(6,P[0(0,P[0(0,1)])])]");
-      Poly_int3 g = CGAL::diff(f);
+      Poly_int3 g = CGAL::differentiate(f);
       std::vector<Poly_int3> sres_check,sres,coP,coQ;
       CGAL::internal::prs_polynomial_subresultants<Poly_int3_traits>
           (f,g,std::back_inserter(sres_check));

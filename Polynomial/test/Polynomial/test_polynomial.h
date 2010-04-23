@@ -107,9 +107,9 @@ void arithmetic() {
     // diff
     POLY q(NT(3), NT(2), NT(-2));
     POLY z(NT(0));
-    assert( diff(z) == z );
+    assert( CGAL::differentiate(z) == z );
     assert( p.degree() == 2 );
-    assert( diff(p) == POLY(NT(-5), NT(2)) );
+    assert( CGAL::differentiate(p) == POLY(NT(-5), NT(2)) );
     assert( p.degree() == 2 );
     assert( q.degree() == 2 );
     q.diff();
@@ -120,8 +120,9 @@ void arithmetic() {
     assert( p == POLY(NT(6), NT(-20), NT(16)) );
     assert( scale_down(p, NT(2)) == POLY(NT(24), NT(-40), NT(16)) );
     assert( p == POLY(NT(6), NT(-20), NT(16)) );
-    assert( translate_by_one(p) == CGAL::translate<NT>(p, NT(1)) );
     p = POLY(NT(3), NT(2), NT(1));
+    // CGAL::translate takes an Innermost_coefficient 
+    assert( translate_by_one(p) == CGAL::translate(p, 1) );
     p.translate(NT(-2));
     assert( p == POLY(NT(3), NT(-2), NT(1)) );
 

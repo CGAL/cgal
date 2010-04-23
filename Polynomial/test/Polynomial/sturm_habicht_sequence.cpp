@@ -202,7 +202,7 @@ template<typename ArithmeticKernel> void test_routine() {
   { // test for cofactors
     // f:=(2*x+1)^3*(x+1)*(x-1)
     PNT_1 f(NT(-1),NT(-6),NT(-11),NT(-2),NT(12),NT(8));
-    PNT_1 fx = CGAL::diff(f);
+    PNT_1 fx = CGAL::differentiate(f);
 
     std::vector<PNT_1> stha_check,stha,co_f,co_fx;
 
@@ -244,7 +244,7 @@ template<typename ArithmeticKernel> void test_routine() {
   { // Cofactors, defective case
     // f:=x^8+x^2
     PNT_1 f(NT(0),NT(0),NT(1),NT(0),NT(0),NT(0),NT(0),NT(0),NT(1));
-    PNT_1 fx = CGAL::diff(f);
+    PNT_1 fx = CGAL::differentiate(f);
 
     std::vector<PNT_1> stha_check,stha,co_f,co_fx;
 
