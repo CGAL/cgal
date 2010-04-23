@@ -50,7 +50,7 @@ struct Int_t : public CGAL::Handle_with_policy< Int_rep, Unify > {
     bool operator==( const Int_t<Unify>& i) const {
         bool equal = (value() == i.value());
         if ( equal)
-            unify(i);
+            Base::unify(i);
         return equal;
     }
 };

@@ -101,7 +101,7 @@ struct Int_t : public Handle_with_policy< Int_rep, Unify > {
     bool operator==( const Int_t<Unify>& i) const {
         bool equal = (value() == i.value());
         if ( equal)
-            unify(i);
+            Base::unify(i);
         return equal;
     }
 };
@@ -160,7 +160,7 @@ struct Int_vt : public Handle_with_policy< Int_vrep<Unify,Alloc>, Unify > {
     bool operator==( const Int_vt<Unify>& i) const {
         bool equal = (value() == i.value());
         if ( equal)
-            unify(i);
+            Base::unify(i);
         return equal;
     }
 };
