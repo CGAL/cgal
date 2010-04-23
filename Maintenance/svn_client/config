@@ -168,6 +168,7 @@ cgal_test_with_cmake = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL
 # Code formats
 *.[cC] = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.cpp = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.cxx = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.xpm = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.cc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.tcc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
