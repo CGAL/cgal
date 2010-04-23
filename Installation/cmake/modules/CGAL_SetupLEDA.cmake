@@ -14,15 +14,10 @@ if ( NOT CGAL_LEDA_SETUP )
     
     add_to_cached_list(CGAL_3RD_PARTY_INCLUDE_DIRS ${LEDA_INCLUDE_DIR} )
     add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS  ${LEDA_DEFINITIONS} )
-    add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES    ${LEDA_LIBRARIES}   )
-    
+    add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES    ${LEDA_LIBRARIES}
+                                                   ${LEDA_LINKER_FLAGS})
+
     uniquely_add_flags( CMAKE_CXX_FLAGS ${LEDA_CXX_FLAGS} )
-    
-    if ( BUILD_SHARED_LIBS )
-      uniquely_add_flags( CMAKE_SHARED_LINKER_FLAGS ${LEDA_LINKER_FLAGS} )
-    else()
-      uniquely_add_flags( CMAKE_MODULE_LINKER_FLAGS ${LEDA_LINKER_FLAGS} )
-    endif()
     
   endif()
   
