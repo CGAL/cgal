@@ -23,7 +23,7 @@
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Gmpfi.h>
 
-int main(int argc,char** argv) {
+int main(){
 
 #ifdef CGAL_GMPFR_NO_REFCOUNT
   std::cout << "CGAL_GMPFR_NO_REFCOUNT defined "<< std::endl ;
