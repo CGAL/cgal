@@ -71,7 +71,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
         &pointbut, SLOT(stateChanged(int)));
   connect(but[2], SIGNAL(stateChanged(int)),
         &move_deletebut, SLOT(stateChanged(int)));
-};
+}
 
 #include "min_circle_2_toolbar.moc"
 
