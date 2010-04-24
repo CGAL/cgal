@@ -32,12 +32,12 @@ CGAL_BEGIN_NAMESPACE
 
   typedef CGAL::Interval_nt<false> Interval;  
 
-  void test_coercion_from_to(CGAL::Null_tag, CGAL::Null_tag){};
-  template<class A> void test_coercion_from_to(A, CGAL::Null_tag){};
-  template<class B> void test_coercion_from_to(CGAL::Null_tag, B){};
+  void test_coercion_from_to(CGAL::Null_tag, CGAL::Null_tag){}
+  template<class A> void test_coercion_from_to(A, CGAL::Null_tag){}
+  template<class B> void test_coercion_from_to(CGAL::Null_tag, B){}
   template<class A, class B> void test_coercion_from_to(A, B){
     CGAL::test_explicit_interoperable_from_to<A,B>();
-  };
+  }
 
 template <class ARK> 
 void test_coercion_arithmetic_kernel(){
