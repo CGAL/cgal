@@ -149,6 +149,6 @@ public:
 } ;
 
 
-}; // namespace OpenNL
+} // namespace OpenNL
 
 #endif // __OPENNL_FULL_VECTOR__

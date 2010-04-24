@@ -468,6 +468,6 @@ private:
 } ;
 
 
-}; // namespace OpenNL
+} // namespace OpenNL
 
 #endif

@@ -66,6 +66,6 @@ public:
 } ;
 
 
-}; // namespace OpenNL
+} // namespace OpenNL
 
 #endif

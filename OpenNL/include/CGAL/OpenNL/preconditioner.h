@@ -214,6 +214,6 @@ void mult(const SSOR_Preconditioner<T>& M, const FullVector<T>& x, FullVector<T>
 }
 
 
-}; // namespace OpenNL
+} // namespace OpenNL
 
 #endif // __OPENNL_PRECONDITIONER__

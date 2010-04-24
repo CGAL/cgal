@@ -255,6 +255,6 @@ void mult(const SparseMatrix<T>& M, const FullVector<T>& x, FullVector<T>& y) {
 }
 
 
-}; // namespace OpenNL
+} // namespace OpenNL
 
 #endif // __OPENNL_SPARSE_MATRIX__

@@ -241,6 +241,6 @@ private:
 } ;
 
 
-}; // namespace OpenNL
+} // namespace OpenNL
 
 #endif // __OPENNL_CONJUGATE_GRADIENT__
