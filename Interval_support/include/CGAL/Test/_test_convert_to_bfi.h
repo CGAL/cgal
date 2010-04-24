@@ -53,7 +53,7 @@ void test_convert_to_bfi_from(BFI,From){
   assert(CGAL::convert_to_bfi(From(4))  == BFI(4));
   assert(CGAL::convert_to_bfi(From(-8)) == BFI(-8));
   return;
-};
+}
 
 template <typename BFI>
 void test_convert_to_bfi(){
