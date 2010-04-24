@@ -45,7 +45,7 @@ overlap.
 \ccNestedType{X_monotone_curve_2}
   {models the concept \ccc{ArrTraits::XMonotoneCurve_2}.}
 
-\ccHeading{Tags}
+\ccHeading{Categories}
 % ==============
 \ccNestedType{Has_left_category}
   {indicates whether the nested functor \ccc{Compare_at_x_left_2} is
@@ -75,12 +75,12 @@ overlap.
 \ccNestedType{Parameter_space_in_x_2}
   {models the concept \ccc{ArrTraits::ParameterSpaceInX_2}.
   Required only if the traits class supports unbounded curves
-  (the \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}).}
+  (the \ccc{Has_boundary_category} category is defined as \ccc{Tag_true}).}
 \ccGlue
 \ccNestedType{Parameter_space_in_y_2}
   {models the concept \ccc{ArrTraits::ParameterSpaceInY_2}.
   Required only if the traits class supports unbounded curves
-  (the \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}).}
+  (the \ccc{Has_boundary_category} category is defined as \ccc{Tag_true}).}
 \ccGlue
 \ccNestedType{Construct_min_vertex_2}
   {models the concept \ccc{ArrTraits::ConstructMinVertex_2}.}
@@ -93,12 +93,12 @@ overlap.
 \ccNestedType{Compare_y_at_x_2}
   {models the concept \ccc{ArrTraits::CompareYAtX_2}.
   If the traits class supports unbounded curves (i.e., the
-  \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}), then
+  \ccc{Has_boundary_category} category is defined as \ccc{Tag_true}), then
   the type models the concept \ccc{ArrTraits::CompareYNearBoundary_2}.}
 \ccGlue
 \ccNestedType{Compare_y_at_x_left_2}
   {models the concept \ccc{ArrTraits::CompareYAtXLeft_2}.
-  Required only if the \ccc{Has_left_category} tag is defined as
+  Required only if the \ccc{Has_left_category} category is defined as
   \ccc{Tag_true}.}
 \ccGlue
 \ccNestedType{Compare_y_at_x_right_2}
@@ -107,14 +107,14 @@ overlap.
 \ccNestedType{Equal_2}{models the concept \ccc{ArrTraits::Equal_2}.}
 \ccGlue
 \ccNestedType{compare_x_near_boundary_2}
-  {models the concept \ccc{ArrTraits::Compare_x_near_boundary_2}.
+  {models the concept \ccc{ArrTraits::CompareXNearBoundary_2}.
   Required only if the traits class supports unbounded curves
-  (the \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}).}
+  (the \ccc{Has_boundary_category} category is defined as \ccc{Tag_true}).}
 \ccGlue
 \ccNestedType{compare_y_near_boundary_2}
-  {models the concept \ccc{ArrTraits::Compare_y_near_boundary_2}.
+  {models the concept \ccc{ArrTraits::CompareYNearBoundary_2}.
   Required only if the traits class supports unbounded curves
-  (the \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}).}
+  (the \ccc{Has_boundary_category} category is defined as \ccc{Tag_true}).}
 
 % \ccCreation
 \ccCreationVariable{traits}
