@@ -95,7 +95,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
   connect(but[4], SIGNAL(stateChanged(int)),
         &edit_layer, SLOT(stateChanged(int)));
   but[1]->toggle();
-};
+}
 
 #include "spatial_searching_toolbar.moc"
 
