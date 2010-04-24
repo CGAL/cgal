@@ -65,7 +65,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget * w,
   connect(but[1], SIGNAL(stateChanged(int)),
           &segment_layer, SLOT(stateChanged(int)));
   but[1]->toggle();
-};
+}
 
 #include "snap_rounding_2_toolbar.moc"
 
