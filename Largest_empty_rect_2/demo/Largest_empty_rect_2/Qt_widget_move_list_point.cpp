@@ -23,8 +23,8 @@
 
 #include "Qt_widget_move_list_point.h"
 
-void Qt_widget_movepoint_helper::delete_point() { delete_pointi(); };
-void Qt_widget_movepoint_helper::move_point() { move_pointi(); };
+void Qt_widget_movepoint_helper::delete_point() { delete_pointi(); }
+void Qt_widget_movepoint_helper::move_point() { move_pointi(); }
 void Qt_widget_movepoint_helper::stateChanged(int i){
   if(i==2)
     activate();

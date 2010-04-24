@@ -72,7 +72,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
   connect(but[2], SIGNAL(stateChanged(int)),
         &move_deletebut, SLOT(stateChanged(int)));
   but[1]->toggle();
-};
+}
 
 #include "Qt_widget_toolbar.moc"
 
