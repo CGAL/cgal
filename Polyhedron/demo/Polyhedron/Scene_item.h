@@ -13,7 +13,7 @@ namespace qglviewer {
 // This class represents an object in the OpenGL scene
 class SCENE_ITEM_EXPORT Scene_item : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QColor color READ color WRITE setColor);
+  Q_PROPERTY(QColor color READ color WRITE setColor)
   Q_PROPERTY(QString name READ name WRITE setName)
   Q_PROPERTY(bool visible READ visible WRITE setVisible)
   Q_ENUMS(RenderingMode)
