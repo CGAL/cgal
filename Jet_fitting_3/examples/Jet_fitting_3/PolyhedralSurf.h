@@ -88,7 +88,7 @@ namespace boost{
   //BOOST_INSTALL_PROPERTY(facet, attribute);
   BOOST_INSTALL_PROPERTY(vertex, attribute);
 
-};
+}
 
 template <class TPoly>
 Facet_PM<TPoly> get_fpm(boost::vertex_attribute_t, TPoly& P) {return Facet_PM<TPoly>();}
