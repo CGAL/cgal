@@ -131,6 +131,6 @@ _test_fct_point_conversion (const NT& x)
 {
     typedef CGAL::Algebraic_structure_traits<NT> AST;
     return _test_fct_point_conversion (x, typename AST::Algebraic_category());
-};
+}
 
 #endif // CGAL__TEST_FCT_POINT_CONVERSION_H
