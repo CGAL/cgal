@@ -2653,6 +2653,7 @@ Periodic_3_triangulation_3/include/CGAL/Periodic_3_triangulation_statically_filt
 Periodic_3_triangulation_3/include/CGAL/internal/Static_filters/Periodic_3_orientation_3.h -text
 Periodic_3_triangulation_3/include/CGAL/internal/Static_filters/Periodic_3_side_of_oriented_sphere_3.h -text
 Periodic_3_triangulation_3/include/CGAL/periodic_3_triangulation_3_io.h -text
+Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/data/P3DT3_alpha_shape_test.pts -text
 Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/data/P3DT3_covering_test.tri -text
 Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/data/P3DT3_covering_test_HOM.tri -text
 Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/include/CGAL/_test_cls_periodic_3_circulator.h -text
