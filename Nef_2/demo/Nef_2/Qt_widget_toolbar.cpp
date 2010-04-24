@@ -81,7 +81,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w,
         &input_line, SLOT(stateChanged(int)));
   connect(but[3], SIGNAL(stateChanged(int)),
         &input_polygon, SLOT(stateChanged(int)));
-};
+}
 
 #include "Qt_widget_toolbar.moc"
 
