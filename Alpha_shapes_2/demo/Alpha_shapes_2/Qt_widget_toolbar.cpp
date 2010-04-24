@@ -77,6 +77,6 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw,
 
   but[1]->toggle();
 
-};
+}
 
 #include "Qt_widget_toolbar.moc"
