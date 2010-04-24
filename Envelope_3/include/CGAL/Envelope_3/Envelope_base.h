@@ -26,7 +26,7 @@ CGAL_BEGIN_NAMESPACE
 // Envelope types:
 enum Envelope_type {
   ENVELOPE_LOWER = 1,
-  ENVELOPE_UPPER = 2,
+  ENVELOPE_UPPER = 2
 };
 
 // Types of intersection curve between 2 xy-monotone surfaces:
