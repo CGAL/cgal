@@ -26,7 +26,7 @@
 
 namespace std {
   struct _Unchecked_iterator_tag;
-};
+}
 
 
 CGAL_BEGIN_NAMESPACE
