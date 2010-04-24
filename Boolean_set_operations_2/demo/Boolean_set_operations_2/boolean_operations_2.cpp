@@ -160,7 +160,7 @@ void Qt_layer_show_ch::draw()
   widget->get_painter().setRasterOp(old_rasterop);
   widget->setFilled (false);
   widget->unlock(); // widget have to be unlocked when finished drawing
-};
+}
 
 /* The QMainWindow class provides a main application window,
  *  with a menu bar, dock windows (e.g. for toolbars), and a status bar
@@ -419,10 +419,10 @@ MyWindow::MyWindow(int w, int h) :
   red_set.clear();
   blue_set.clear();
   res_set.clear();
-};
+}
 
 
-void MyWindow::something_changed(){current_state++;};
+void MyWindow::something_changed(){current_state++;}
 /*not necessary if rado toggle is not const
   void change_grp_color(int color) {
   if (color == 1)
