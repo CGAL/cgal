@@ -773,16 +773,13 @@ class template it is possible to construct and maintain arrangements of
 B\'ezier curves that are given by rational control points (a sequence
 of objects of the \ccc{RatKernel::Point_2} type). We can handle curves
 of arbitrary degree (in general, a sequence of $n+1$ control points define a 
-B\'ezier curve of degree $n$) that do not contain any
-self-intersections.\footnote{B\'ezier curves that contain self-intersections
-will be supported in future releases.} The template parameters
-are the same ones used by the \ccc{Arr_conic_traits_2} class template, and
-here it is also recommended to use the \ccc{CORE_algebraic_number_traits}
-class, with Cartesian kernels instantiated
-with the \ccc{Rational} and \ccc{Algebraic} number-types defined by this
-class.
+B\'ezier curve of degree $n$). The template parameters are the same ones
+used by the \ccc{Arr_conic_traits_2} class template, and here it is also
+recommended to use the \ccc{CORE_algebraic_number_traits} class, with
+Cartesian kernels instantiated with the \ccc{Rational} and \ccc{Algebraic}
+number-types defined by this class.
 
-As we have just mentioned, we assume that the coordinates of all control
+As mentioned above, we assume that the coordinates of all control
 points that define a B\'ezier curve are rational numbers, so both $X(t)$
 and $Y(t)$ are polynomials with rational coefficients. The intersection
 points between curves are however algebraic numbers, and their exact
@@ -836,12 +833,12 @@ of a polynomial $f(x,y)$ in two variables. The curve is uniquely defined
 by $f$ (although several polynomials might define the same curve). 
 We call $f$ a \emph{defining polynomial} of $C$.
 
-%When talking about algebraic curves, 
-%we use the term ``segment'' for a closed continuous subset of an algebraic curve
-%such that each interior point can be parameterized uniquely, as a function in
-%$x$ or $y$. In other words, there is no self-intersection in the interior
-%of a segment. An weakly $x$-monotone segment is therefore a segment that is
-%either vertical, or permits a unique parameterization
+% When talking about algebraic curves, we use the term ``segment'' for a
+% closed continuous subset of an algebraic curve
+% such that each interior point can be parameterized uniquely, as a function in
+% $x$ or $y$. In other words, there is no self-intersection in the interior
+% of a segment. A weakly $x$-monotone segment is therefore a segment that is
+% either vertical, or permits a unique parameterization
 We consider arrangements induced by algebraic curves
 or by (weakly) $x$-monotone segments for algebraic curves
 (Such a segment is not necessarily the maximal possible 
