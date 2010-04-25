@@ -43,6 +43,9 @@ public:
 
   typedef Kernel_                                        Kernel;
   typedef typename Kernel::FT                            NT;
+  typedef typename Kernel::Point_2                       Rational_point_2;
+  typedef typename Kernel::Segment_2                     Rational_segment_2;
+  typedef typename Kernel::Circle_2                      Rational_circle_2;
   typedef _One_root_point_2<NT, Filter_>                 Point_2;
   typedef typename Point_2::CoordNT                      CoordNT;
   typedef _Circle_segment_2<Kernel, Filter_>             Curve_2;
