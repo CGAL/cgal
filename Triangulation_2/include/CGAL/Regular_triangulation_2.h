@@ -93,6 +93,10 @@ public:
   using Base::EDGE;
   using Base::OUTSIDE_CONVEX_HULL;
   using Base::orientation;
+  using Base::locate;
+  using Base::incident_faces;
+  using Base::is_infinite;
+  using Base::degree;
 #endif
 
 private:
@@ -1999,7 +2003,7 @@ stack_flip_dim1(Face_handle f, int i, Faces_around_stack &faces_around)
   n->neighbor(1-in)->set_neighbor(n->neighbor(1-in)->index(n), f);
   (f->vertex_list()).splice(f->vertex_list().begin(),n->vertex_list());
   set_face(f->vertex_list(),f);
-  delete_face(n);
+  this->delete_face(n);
   hide_vertex(f,va);
   faces_around.push_front(f);
   return;

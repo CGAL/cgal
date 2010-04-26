@@ -99,6 +99,7 @@ public:
   using Dt::OUTSIDE_CONVEX_HULL;
   using Dt::OUTSIDE_AFFINE_HULL;
   using Dt::dimension;
+  using Dt::is_infinite;
 
   // for backward compatibility
   typedef Finite_vertices_iterator Vertex_iterator;
