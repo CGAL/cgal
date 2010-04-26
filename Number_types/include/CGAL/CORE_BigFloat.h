@@ -247,6 +247,7 @@ public:
 
 
 // template<typename BFI> long relative_precision(BFI bfi);
+namespace internal{
 
 CORE::BigFloat 
 inline 
@@ -308,6 +309,7 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
     CGAL_postcondition(BF(xr.m()+xr.err(),0,xr.exp()) >= BF(x.m()+x.err(),0,x.exp()));
     return xr;     
 }
+}
 
 template<> class Bigfloat_interval_traits<CORE::BigFloat> 
 :public Interval_traits<CORE::BigFloat>
@@ -317,21 +319,6 @@ template<> class Bigfloat_interval_traits<CORE::BigFloat>
     typedef CORE::BigFloat BF;
 public:
   typedef Bigfloat_interval_traits<NT> Self;
-  
-//     struct Get_significant_bits {
-//         // type for the \c AdaptableUnaryFunction concept.
-//         typedef NT  argument_type;
-//         // type for the \c AdaptableUnaryFunction concept.
-//         typedef long  result_type;
-//         long operator()( NT x) const {  
-//           if(x.err() == 0 ) {
-//             return ::CORE::bitLength(x.m());
-//           }
-//           else {
-//             return ::CORE::bitLength(x.m()) - ::CORE::bitLength(x.err());
-//           }
-//         }
-//     };
   
    struct Relative_precision {
         // type for the \c AdaptableUnaryFunction concept.
@@ -397,7 +384,7 @@ template <> class Algebraic_structure_traits< CORE::BigFloat >
             CGAL_precondition(::CORE::defRelPrec.toLong() > 0);
             CGAL_precondition(x > 0);
             
-            Type a = CGAL::round(x, ::CORE::defRelPrec.toLong()*2);
+            Type a = CGAL::internal::round(x, ::CORE::defRelPrec.toLong()*2);
             CGAL_postcondition(a > 0); 
 
             Type tmp1 = 
@@ -509,8 +496,8 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
                         
             double lb,ub;
            
-            Type x_lower = CGAL::lower(CGAL::round(CGAL::lower(x),51));
-            Type x_upper = CGAL::upper(CGAL::round(CGAL::upper(x),51));
+            Type x_lower = CGAL::lower(CGAL::internal::round(CGAL::lower(x),51));
+            Type x_upper = CGAL::upper(CGAL::internal::round(CGAL::upper(x),51));
             
             // since matissa has 51 bits only, conversion to double is exact 
             lb = x_lower.doubleValue();
