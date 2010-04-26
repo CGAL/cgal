@@ -19,6 +19,9 @@
 
 //| g++ 4.4.0 and 4.4.1 have a bug here.  Most probably VC++ as well.
 
+// Note : it appears that this is a GNU Extension.  We might want to update
+// this using C++0x features if there is anything related.
+
 struct M
 {
   M() {}
