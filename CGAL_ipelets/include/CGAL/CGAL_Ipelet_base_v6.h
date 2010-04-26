@@ -275,7 +275,7 @@ public:
     //------------------------------
 
     void 
-    copy_attributes(IpeAllAttributes& AAttr,const IpeObject* obj_ipe) const 
+    copy_attributes(IpeAllAttributes& AAttr,IpeObject* obj_ipe) const 
     {
       AAttr.iStroke = obj_ipe -> Stroke();
       
