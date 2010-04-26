@@ -63,7 +63,9 @@ _test_cls_alpha_shape_3()
   std::ifstream is("./data/P3DT3_alpha_shape_test.pts", std::ios::in);
   assert(is);
   file_input(is,L);
-  Triangulation dt( Iso_cuboid(-0.1,-0.1,-0.1,0.2,0.2,0.2) ); 
+  Iso_cuboid domain(FT(-0.1),FT(-0.1),FT(-0.1),FT(0.2),FT(0.2),FT(0.2));
+  std::cout<< "Create triangulation with domain "<<domain<<std::endl;
+  Triangulation dt( domain ); 
   int n = dt.insert(L.begin(),L.end(), true);
   Alpha_shape_3 a1(dt,0, Alpha_shape_3::REGULARIZED);
   if(verbose) show_alpha_values(a1);
