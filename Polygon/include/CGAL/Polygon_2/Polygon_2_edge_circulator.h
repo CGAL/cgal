@@ -132,7 +132,7 @@ class Polygon_2_const_edge_circulator {
     operator+(difference_type n) const
     {
       return Polygon_2_const_edge_circulator<_Traits, _Container>(
-        this->container, first_vertex + n);
+        first_vertex + n);
     }
 
     Polygon_2_const_edge_circulator<_Traits, _Container>&
@@ -145,7 +145,7 @@ class Polygon_2_const_edge_circulator {
     operator-(difference_type n) const
     {
       return Polygon_2_const_edge_circulator<_Traits, _Container>(
-        this->container, first_vertex - n);
+        first_vertex - n);
     }
 
     difference_type
@@ -158,7 +158,7 @@ class Polygon_2_const_edge_circulator {
     Segment_2 operator[](int n) const
     {
       return *Polygon_2_const_edge_circulator<_Traits, _Container>(
-        this->container, first_vertex+n);
+        first_vertex+n);
     }
 
     bool operator<(
