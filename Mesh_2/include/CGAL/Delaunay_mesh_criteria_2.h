@@ -110,6 +110,6 @@ public:
     { return Is_bad(B); }
 };
 
-}; // end namespace CGAL
+} // end namespace CGAL
 
 #endif

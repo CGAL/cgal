@@ -83,7 +83,7 @@ namespace Mesh_2 {
         Is_a_constrained_edge> Default_container;
     };
 
-  }; // end namespace details
+  } // end namespace details
 
 
   /**

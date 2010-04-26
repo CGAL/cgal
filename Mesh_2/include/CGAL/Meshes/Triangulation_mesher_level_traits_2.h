@@ -76,6 +76,6 @@ struct Triangulation_mesher_level_traits_2 :
   }
 }; // end Triangulation_mesher_level_traits_2
 
-}; // end namespace CGAL
+} // end namespace CGAL
 
 #endif // CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_2_H
