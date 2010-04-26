@@ -205,6 +205,14 @@ Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::Construct\_curve\_2}
         {Returns a \ccc{Curve_2} object that represents the curve defined by
          the polynomial \ccc{p}} 
 
+\ccMethod{Curve_2 operator() (std::string s);}
+        {Returns a \ccc{Curve_2} object specified by \ccc{s}. 
+	The passed string represents the defining polynomial of the curve 
+	and must be given in a MAPLE-readable format using "x" as first 
+	and "y" as second variable, e.g., "(x^3*y-2*x)*(-6*x-y^3*x^6)" 
+	for integer coefficients, and "3/2*x*y^4-5/7*x^2+3/1" 
+	for rational coefficients.} 
+
 
 \end{ccClass}
 
@@ -289,6 +297,22 @@ Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::Construct\_x\_monotone\_seg
                     If \ccc{site_of_p==MAX_ENDPOINT}, \ccc{p}
                     must either have a unique $x$-monotone segment to the left,
                     or a vertical segment from \ccc{p} downwards.)}
+
+\ccMethod{template<class OutputIterator> OutputIterator 
+          operator() (Point_2 p, Point_2 q,
+                      OutputIterator out);}
+        {Writes a sequence of \ccc{X_monotone_curve_2} objects into \ccc{out}.
+         These segments form a straight-line segment connecting
+	 the points \ccc{p} and \ccc{q}. If \ccc{p} and \ccc{q} share the
+	 same $x$-coordinate, the constructed vertical segment consists of
+	 only one \ccc{X_monotone_curve_2} object and can be computed
+	 efficiently. In the non-vertical case, 
+	 if \ccc{p} and \ccc{q} have non-rational coordinates, 
+	 the construction 
+	 of the segment can become very expensive in practice.
+         \ccPrecond(\ccc{p} must not be equal to \ccc{q}.)
+	}
+
 
 \end{ccClass}
 
