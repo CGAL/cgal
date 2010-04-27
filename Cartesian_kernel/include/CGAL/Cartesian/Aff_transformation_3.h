@@ -57,6 +57,8 @@ class Aff_transformationC3
   typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
+  
+  using Handle_for_virtual<Aff_t_base>::initialize_with;
 public:
   typedef R_                               R;
 
