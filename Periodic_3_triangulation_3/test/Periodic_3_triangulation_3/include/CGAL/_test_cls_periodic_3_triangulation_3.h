@@ -152,6 +152,23 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(PT1_deg.number_of_vertices() == 54);
   assert(PT1_deg.is_valid());
 
+  std::cout<<"Constructor"<<std::endl;
+  Iso_cuboid domain(-0.1,-0.1,-0.1,0.2,0.2,0.2);
+  std::cout<<"x-length: "<<domain.xmax()-domain.xmin()<<'\t'
+	   <<"y-length: "<<domain.ymax()-domain.ymin()<<'\t'
+	   <<"z-length: "<<domain.zmax()-domain.zmin()<<std::endl;
+
+  std::cout<<"Comparisons: "
+	   <<(domain.xmax()-domain.xmin() == domain.ymax()-domain.ymin())
+	   <<(domain.xmax()-domain.xmin() == domain.zmax()-domain.zmin())
+	   <<(domain.ymax()-domain.ymin() == domain.zmax()-domain.zmin())
+	   <<((domain.xmax()-domain.xmin()) == (domain.ymax()-domain.ymin()))
+	   <<((domain.xmax()-domain.xmin()) == (domain.zmax()-domain.zmin()))
+	   <<((domain.ymax()-domain.ymin()) == (domain.zmax()-domain.zmin()))
+	   <<std::endl;
+
+  P3T3 PT_constr(domain);
+
   std::cout<<"Assignment"<<std::endl;
 
   P3T3 PT;
