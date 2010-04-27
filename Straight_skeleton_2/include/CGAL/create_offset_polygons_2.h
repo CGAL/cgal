@@ -35,93 +35,6 @@ template<class U, class V> struct Is_same_type { typedef Tag_false type ; } ;
 template<class U> struct Is_same_type<U,U> { typedef Tag_true type ; } ;
 
 
-template<class FT, class PointIterator, class HoleIterator, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_partial_interior_straight_skeleton_2 ( FT const&     aMaxTime
-                                            , PointIterator aOuterContour_VerticesBegin
-                                            , PointIterator aOuterContour_VerticesEnd
-                                            , HoleIterator  aHolesBegin
-                                            , HoleIterator  aHolesEnd
-                                            , K const&      
-                                            )
-{
-  typedef Straight_skeleton_2<K> Ss ;
-  typedef boost::shared_ptr<Ss>  SsPtr ;
-
-  typedef Straight_skeleton_builder_traits_2<K> SsBuilderTraits;
-  
-  typedef Straight_skeleton_builder_2<SsBuilderTraits,Ss> SsBuilder;
-  
-  typedef typename K::FT KFT ;
-  
-  typedef typename std::iterator_traits<PointIterator>::value_type InputPoint ;
-  typedef typename Kernel_traits<InputPoint>::Kernel InputKernel ;
-  
-  Cartesian_converter<InputKernel, K> Converter ;
-  
-  boost::optional<KFT> lMaxTime( Converter(aMaxTime) ) ;
-  
-  SsBuilder ssb( lMaxTime ) ;
-  
-  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, true, Converter ) ;
-  
-  for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi )
-    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), true, Converter ) ;
-  
-  return ssb.construct_skeleton();
-}
-
-template<class FT, class PointIterator, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_partial_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
-                                            , PointIterator  aVerticesBegin
-                                            , PointIterator  aVerticesEnd
-                                            , K const&       k
-                                            )
-{
-  typedef typename std::iterator_traits<PointIterator>::value_type Point_2 ;
-    
-  typedef Straight_skeleton_2<K> Ss ;
-  typedef boost::shared_ptr<Ss>  SsPtr ;
-  
-  SsPtr rSkeleton ;
-  
-  boost::optional<FT> margin = compute_outer_frame_margin( aVerticesBegin
-                                                         , aVerticesEnd
-                                                         , aMaxOffset 
-                                                         );
-
-  if ( margin )
-  {
-    
-    Bbox_2 bbox = bbox_2(aVerticesBegin, aVerticesEnd);
-
-    FT fxmin = bbox.xmin() - *margin ;
-    FT fxmax = bbox.xmax() + *margin ;
-    FT fymin = bbox.ymin() - *margin ;
-    FT fymax = bbox.ymax() + *margin ;
-
-    Point_2 frame[4] ;
-    
-    frame[0] = Point_2(fxmin,fymin) ;
-    frame[1] = Point_2(fxmax,fymin) ;
-    frame[2] = Point_2(fxmax,fymax) ;
-    frame[3] = Point_2(fxmin,fymax) ;
-
-    typedef std::vector<Point_2> Hole ;
-    
-    Hole lPoly(aVerticesBegin, aVerticesEnd);
-    std::reverse(lPoly.begin(), lPoly.end());
-    
-    std::vector<Hole> holes ;
-    holes.push_back(lPoly) ;
-        
-    rSkeleton = create_partial_interior_straight_skeleton_2(aMaxOffset,frame, frame+4, holes.begin(), holes.end(), k ) ;  
-  }
-  
-  return rSkeleton ;
-}
-
 //
 // Kernel != Skeleton::kernel. The skeleton is converted to Straight_skeleton_2<Kernel>
 //
@@ -234,13 +147,14 @@ create_interior_skeleton_and_offset_polygons_2 ( FT const&      aOffset
   return create_offset_polygons_2<Polygon>
           (aOffset
           ,CGAL_SS_i::dereference
-            ( CGAL_SS_i::create_partial_interior_straight_skeleton_2(aOffset
-                                                                    ,CGAL_SS_i::vertices_begin(aOuterBoundary)
-                                                                    ,CGAL_SS_i::vertices_end  (aOuterBoundary)
-                                                                    ,aHolesBegin
-                                                                    ,aHolesEnd
-                                                                    ,ssk
-                                                                    ) 
+            ( create_straight_skeleton_2(CGAL_SS_i::vertices_begin(aOuterBoundary)
+                                        ,CGAL_SS_i::vertices_end  (aOuterBoundary)
+                                        ,aHolesBegin
+                                        ,aHolesEnd
+                                        ,FT(1.0)
+                                        ,boost::optional<FT>(aOffset)
+                                        ,ssk
+                                        ) 
             )
           ,ofk
           );
@@ -312,11 +226,12 @@ create_exterior_skeleton_and_offset_polygons_2 ( FT const& aOffset, Polygon cons
   return create_offset_polygons_2<Polygon>
           (aOffset
           ,CGAL_SS_i::dereference
-            (CGAL_SS_i::create_partial_exterior_straight_skeleton_2(aOffset
-                                                                   ,CGAL_SS_i::vertices_begin(aPoly)
-                                                                   ,CGAL_SS_i::vertices_end  (aPoly)
-                                                                   ,ssk
-                                                                  )
+            (create_straight_skeleton_2( CGAL_SS_i::vertices_begin(aPoly)
+                                       , CGAL_SS_i::vertices_end  (aPoly)
+                                       , FT(1.0)
+                                       , boost::optional<FT>(aOffset)
+                                       , ssk
+                                       )
             )
           ,ofk                                    
           );

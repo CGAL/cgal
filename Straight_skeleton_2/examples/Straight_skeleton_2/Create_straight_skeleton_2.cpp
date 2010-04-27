@@ -31,10 +31,7 @@ int main()
   SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end());
 
   // Or you can pass the polygon directly, as below.
-  
-  // To create an exterior straight skeleton you need to specify a maximum offset.
-  double lMaxOffset = 5 ; 
-  SsPtr oss = CGAL::create_exterior_straight_skeleton_2(lMaxOffset, poly);
+  SsPtr oss = CGAL::create_exterior_straight_skeleton_2(poly);
   
   print_straight_skeleton(*iss);
   print_straight_skeleton(*oss);

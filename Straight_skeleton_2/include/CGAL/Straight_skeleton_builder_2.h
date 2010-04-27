@@ -941,6 +941,32 @@ private :
     
   }
 
+  template<class InputPointIterator, class NT, class Converter>
+  Halfedge_handle enter_valid_contour ( InputPointIterator  aPBegin
+                                      , InputPointIterator  aPEnd
+                                      , NT                  aWeight
+                                      , bool                aIsClosed
+                                      , Converter const&    aCvt 
+                                      ) 
+  {
+    Halfedge_handle rHead = enter_valid_contour(aPBegin, aPEnd, aIsClosed, aCvt ) ;
+    
+    Halfedge_handle lH = rHead ;
+    
+    do
+    {
+      CGAL_STSKEL_BUILDER_TRACE(1, "E" << hid(lH) << " is given weight " << aWeight );
+      lH->HBase_base::set_weight(aWeight);
+      Halfedge_handle lN = lH->next();
+      if ( !handle_assigned(lN) || lN == rHead )
+        break ;
+      lH = lN ;
+    }
+    while ( true ) ;
+    
+    return rHead ;
+  }
+
   template<class InputPointIterator, class InputWeightIterator, class Converter>
   Halfedge_handle enter_valid_contour ( InputPointIterator  aPBegin
                                       , InputPointIterator  aPEnd
@@ -985,9 +1011,10 @@ public:
     }
   } ; 
   
-  template<class InputPointIterator, class Converter>
+  template<class InputPointIterator, class Converter, class NT>
   Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin
                                              , InputPointIterator aEnd
+                                             , NT                 aWeight
                                              , bool               aIsClosed
                                              , Converter const&   aCvt
                                              , bool               aCheckValidity = true 
@@ -1009,7 +1036,7 @@ public:
       
       if ( lList.size() >= ( aIsClosed ? 3u : 2u ) )
       {
-        enter_valid_contour(lList.begin(), lList.end(), aIsClosed, aCvt);
+        enter_valid_contour(lList.begin(), lList.end(), aWeight, aIsClosed, aCvt);
       }
       else
       {
@@ -1018,7 +1045,7 @@ public:
     }
     else
     {
-      enter_valid_contour(aBegin, aEnd, aIsClosed, aCvt);
+      enter_valid_contour(aBegin, aEnd, aWeight, aIsClosed, aCvt);
     } 
 
     return *this ;
@@ -1087,26 +1114,28 @@ public:
     return *this ;
   }
   
-  template<class InputPointIterator>
+  template<class InputPointIterator, class NT>
   Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin
                                              , InputPointIterator aEnd
+                                             , NT                 aWeight        = 1.0
                                              , bool               aIsClosed      = true
                                              , bool               aCheckValidity = true 
                                              )
   {
-    return enter_contour(aBegin, aEnd, aIsClosed, Cartesian_converter<K,K>(), aCheckValidity);
-  }                                             
+    return enter_contour(aBegin, aEnd, aWeight, aIsClosed, Cartesian_converter<K,K>(), aCheckValidity);
+  }                          
   
-  template<class InputPointIterator, class InputWeightIterator>
+  template<class InputPointIterator, class InputWeightIterator, class NT>
   Straight_skeleton_builder_2& enter_contour ( InputPointIterator  aPBegin
                                              , InputPointIterator  aPEnd
                                              , InputWeightIterator aWBegin
                                              , InputWeightIterator aWEnd
+                                             , NT                  aWeight        = 1.0
                                              , bool                aIsClosed      = true
                                              , bool                aCheckValidity = true 
                                              )
   {
-    return enter_contour(aPBegin, aPEnd, aWBegin, aWEnd, aIsClosed, Cartesian_converter<K,K>(), aCheckValidity ) ;
+    return enter_contour(aPBegin, aPEnd, aWBegin, aWEnd, aWeight, aIsClosed, Cartesian_converter<K,K>(), aCheckValidity ) ;
   }                                             
 
 } ;
