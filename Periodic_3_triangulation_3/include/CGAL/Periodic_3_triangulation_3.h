@@ -1309,8 +1309,8 @@ copy_multiple_covering(const Periodic_3_triangulation_3<GT,TDS> & tr) {
   int i,j;
   for (Edge_iterator eit = edges_begin() ;
        eit != edges_end() ; ++eit) {
-    if (&(eit->first->vertex(eit->second))
-	< &(eit->first->vertex(eit->third))) {
+    if (&*(eit->first->vertex(eit->second))
+	< &*(eit->first->vertex(eit->third))) {
       i = eit->second; j = eit->third;
     } else {
       i = eit->third; j = eit->second;
@@ -1794,10 +1794,11 @@ inline void Periodic_3_triangulation_3<GT,TDS>::
     for (int k=0; k<4 ; k++) {
     for (int j=0; j<4 ; j++) {
       if (j==k) continue;
-      if (&((*it)->vertex(j)) > &((*it)->vertex(k))) continue;
+      if (&*((*it)->vertex(j)) > &*((*it)->vertex(k))) continue;
       // make the offsets canonical (wrt. to some notion)
       // add to too_long_edges, if not yet added and if "too long"
-      CGAL_triangulation_precondition(&((*it)->vertex(j))< &((*it)->vertex(k)));
+      CGAL_triangulation_precondition(
+	  &*((*it)->vertex(j))< &*((*it)->vertex(k)));
 
       edge_to_add = std::make_pair((*it)->vertex(j), (*it)->vertex(k));
       
@@ -1831,7 +1832,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::
   for (CellIt it = begin ; it != end ; ++it) {
     for (int j=0; j<4 ; j++) {
       for (int k=0; k<4; k++) {
-        if (&((*it)->vertex(j)) < &((*it)->vertex(k))) {
+        if (&*((*it)->vertex(j)) < &*((*it)->vertex(k))) {
           edge_to_delete = std::make_pair((*it)->vertex(j),(*it)->vertex(k));
         } else {
           edge_to_delete = std::make_pair((*it)->vertex(k),(*it)->vertex(j));
@@ -2107,13 +2108,9 @@ std::vector<Vertex_handle>();
   CGAL_triangulation_assertion( too_long_edges.empty() );
   CGAL_triangulation_assertion(too_long_edge_counter == 0);
 
-  int k=0;
-  std::list<Vertex_handle> empty_list;
   for (Vertex_iterator vit = vertices_begin() ;
-       vit !=vertices_end() ; ++vit ) {
-    too_long_edges[vit] = empty_list;
-    k++;
-  }
+       vit !=vertices_end() ; ++vit )
+    too_long_edges[vit] = std::list<Vertex_handle>();;
 
   std::vector<Cell_handle> temp_inc_cells;
   for (Vertex_iterator vit = vertices_begin() ;
@@ -2124,14 +2121,13 @@ std::vector<Vertex_handle>();
       int k = temp_inc_cells[i]->index(vit);
       for (int j=0; j<4 ; j++) {
         if (j==k) continue;
-        if (&vit > &(temp_inc_cells[i]->vertex(j))) continue;
+        if (&*vit > &*(temp_inc_cells[i]->vertex(j))) continue;
         if ((find(too_long_edges[vit].begin(),
                   too_long_edges[vit].end(),
             temp_inc_cells[i]->vertex(j)) ==
-too_long_edges[vit].end())
+		too_long_edges[vit].end())
         ){
-         
-too_long_edges[vit].push_back(temp_inc_cells[i]->vertex(j));
+	  too_long_edges[vit].push_back(temp_inc_cells[i]->vertex(j));
           too_long_edge_counter++;
         }
       }
@@ -2659,7 +2655,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
     for( int i=0 ; i < 4 ; i++ ) {
       for (int j=0 ; j < 4 ; j++) {
         if (j==i) continue;
-        if (&(new_ch->vertex(i)) > &(new_ch->vertex(j))) continue;
+        if (&*(new_ch->vertex(i)) > &*(new_ch->vertex(j))) continue;
 
 	Point p1 = construct_point(new_ch->vertex(i)->point(),
 	    get_offset(new_ch, i));
@@ -3238,8 +3234,8 @@ const {
     p2 = construct_point(eit->first->vertex(eit->third)->point(),
 	get_offset(eit->first, eit->third));
     if (squared_distance(p1,p2) > edge_length_threshold) {
-      if (&(eit->first->vertex(eit->second)) <
-	  &(eit->first->vertex(eit->third))) {
+      if (&*(eit->first->vertex(eit->second)) <
+	  &*(eit->first->vertex(eit->third))) {
 	v_no = eit->first->vertex(eit->second);
 	vh = eit->first->vertex(eit->third);
       } else {
