@@ -895,7 +895,7 @@ public:
     :public std::binary_function<Polynomial_d,Coefficient_type,Coefficient_type>{
     // Evaluate with respect to one variable 
     Coefficient_type
-    operator()(const Polynomial_d& p, Coefficient_type x) const {
+    operator()(const Polynomial_d& p, const Coefficient_type& x) const {
       return p.evaluate(x);
     }
 #define ICOEFF typename First_if_different<Innermost_coefficient_type, Coefficient_type>::Type 
@@ -915,7 +915,7 @@ public:
     typedef Coefficient_type           third_argument_type;
        
     Coefficient_type operator()(
-        const Polynomial_d& p, Coefficient_type a, Coefficient_type b) const 
+        const Polynomial_d& p, const Coefficient_type& a, const Coefficient_type& b) const 
     {
       return p.evaluate_homogeneous(a,b);
     }
@@ -1128,10 +1128,13 @@ struct Construct_innermost_coefficient_const_iterator_range
     
   struct Integral_division_up_to_constant_factor
     :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
+   
+  
+    
     Polynomial_d
     operator()(const Polynomial_d& p, const Polynomial_d& q) const {
       typedef Innermost_coefficient_type IC;
-
+      
       typename PT::Construct_polynomial construct;
       typename PT::Innermost_leading_coefficient ilcoeff;
       typename PT::Construct_innermost_coefficient_const_iterator_range range;

@@ -84,18 +84,19 @@ inline int square_free_factorize
 {
     typedef Polynomial<Coeff> POLY;
     typedef Polynomial_traits_d< POLY > PT;
+    typedef typename PT::Construct_polynomial Construct_polynomial;
     typedef typename PT::Univariate_content_up_to_constant_factor Ucont_utcf;
     typedef typename PT::Integral_division_up_to_constant_factor  Idiv_utcf;
     
     if (typename PT::Total_degree()(poly) == 0){return 0;}
    
     Coeff ucont_utcf = Ucont_utcf()(poly); 
-    POLY  regular_poly = Idiv_utcf()(poly,ucont_utcf);
+    POLY  regular_poly = Idiv_utcf()(poly,Construct_polynomial()(ucont_utcf));
 
     int result = square_free_factorize_for_regular_polynomial( 
             regular_poly, factors, multiplicities);
 
-    if (typename PT::Total_degree()(ucont_utcf) > 0){
+    if (CGAL::total_degree(ucont_utcf) > 0){
         typedef std::vector< Coeff > Factors_uc;
         typedef std::vector< int > Multiplicities_uc;
         Factors_uc factors_uc;
@@ -106,7 +107,7 @@ inline int square_free_factorize
         
         for( typename Factors_uc::iterator it = factors_uc.begin(); 
              it != factors_uc.end(); ++it ){
-            *factors++ = POLY(*it);
+          *factors++ = Construct_polynomial()(*it);
         }
         for( Multiplicities_uc::iterator it = multiplicities_uc.begin();
              it != multiplicities_uc.end(); ++it ){

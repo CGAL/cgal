@@ -479,11 +479,11 @@ Polynomial<NT> pseudo_gcdex(
     // handle trivial cases
     if (x.is_zero()) {
         if (y.is_zero()) CGAL_error_msg("gcdex(0,0) is undefined");
-        xf = NT(0); yf = NT(1); vf = y.unit_part();
+        xf = POLY(0); yf = POLY(1); vf = y.unit_part();
         return y / vf;
     }
     if (y.is_zero()) {
-        xf = NT(1); yf = NT(0); vf = x.unit_part();
+        xf = POLY(1); yf = POLY(0); vf = x.unit_part();
         return x / vf;
     }
     bool swapped = x.degree() < y.degree();

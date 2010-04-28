@@ -859,10 +859,10 @@ void test_total_degree(){
     assert(CGAL::total_degree(Poly_2(0))      ==  0);
     assert(CGAL::total_degree(Poly_2(1))      ==  0);
     assert(CGAL::total_degree(Poly_2(Poly_1(1),Poly_1(1))) ==  1);
-    assert(CGAL::total_degree(Poly_2(0,0,0,1))==  3);
+    assert(CGAL::total_degree(Poly_2(Poly_1(0),Poly_1(0),Poly_1(0),Poly_1(1)))==  3);
     
     assert(CGAL::total_degree(Poly_2(Poly_1(1,1),Poly_1(1)))  == 1);
-    assert(CGAL::total_degree(Poly_2(0,0,1))==  2);
+    assert(CGAL::total_degree(Poly_2(Poly_1(0),Poly_1(0),Poly_1(1)))==  2);
     assert(CGAL::total_degree(Poly_2(Poly_1(0),Poly_1(0),Poly_1(1)))== 2);
     assert(CGAL::total_degree(Poly_2(Poly_1(0),Poly_1(0),Poly_1(1,1)))== 3);
     assert(CGAL::total_degree(Poly_2(Poly_1(1),Poly_1(0),Poly_1(1,1)))== 3);

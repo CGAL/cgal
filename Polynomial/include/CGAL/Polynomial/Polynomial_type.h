@@ -276,7 +276,7 @@ public:
       { coeff(0) = NT(a0); reduce(); simplify_coefficients(); } 
           
     //! construct the constant polynomial a0
-    Polynomial(const NT& a0)
+    explicit Polynomial(const NT& a0)
       : Base(Rep(1, &a0))
       { reduce(); simplify_coefficients(); }
       
@@ -336,7 +336,8 @@ public:
     template <class Forward_iterator>
     Polynomial(Forward_iterator first, Forward_iterator last)
       : Base(Rep(first,last)) 
-      { reduce(); simplify_coefficients(); }
+      { std::cout << "FROM IT" << std::endl;
+        reduce(); simplify_coefficients(); }
                               
 #if defined(CGAL_USE_LEDA) || defined(DOXYGEN_RUNNING)
     /*! \brief construct a polynomial from a LEDA \c array

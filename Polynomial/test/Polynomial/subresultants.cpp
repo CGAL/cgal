@@ -28,6 +28,7 @@ void test_routine() {
   typedef typename Arithmetic_kernel::Rational Rational;
   typedef typename Arithmetic_kernel::Integer Integer;
     
+
   typedef CGAL::Polynomial<Integer> Poly_int1;
   typedef CGAL::Polynomial_traits_d<Poly_int1> Poly_int1_traits;
 
@@ -323,15 +324,15 @@ void test_routine() {
       CGAL::internal::prs_polynomial_subresultants<Poly_int1_traits>
         (f,g,std::back_inserter(sres));
       CGAL_assertion(sres.size()==1);
-      CGAL_assertion(sres[0].degree()==0);
-      CGAL_assertion(sres[0][0]==Integer(8*8*8));
+      //CGAL_assertion(sres[0].degree()==0);
+      CGAL_assertion(sres[0]==Integer(8*8*8));
       sres.clear();
 
       CGAL::internal::bezout_polynomial_subresultants<Poly_int1_traits>
         (f,g,std::back_inserter(sres));
       CGAL_assertion(sres.size()==1);
-      CGAL_assertion(sres[0].degree()==0);
-      CGAL_assertion(sres[0][0]==Integer(8*8*8));
+      //CGAL_assertion(sres[0].degree()==0);
+      CGAL_assertion(sres[0]==Integer(8*8*8));
       std::vector<Integer> psres;
 
       CGAL::internal::prs_principal_subresultants<Poly_int1_traits>
@@ -352,19 +353,19 @@ void test_routine() {
        CGAL::internal::prs_polynomial_subresultants<Poly_int1_traits>
         (f,g,std::back_inserter(sres));
        CGAL_assertion(sres.size()==1);
-       CGAL_assertion(sres[0].is_zero());
+       CGAL_assertion(CGAL::is_zero(sres[0]));
        sres.clear();
 
       CGAL::internal::bezout_polynomial_subresultants<Poly_int1_traits>
         (f,g,std::back_inserter(sres));
       CGAL_assertion(sres.size()==1);
-      CGAL_assertion(sres[0].is_zero());
+      CGAL_assertion(CGAL::is_zero(sres[0]));
     }
     {
       Poly_int1 f(Integer(7));
       Poly_int1 g(Integer(-12));
       
-      std::vector<Poly_int1> sres;
+      std::vector<Integer> sres;
       CGAL::internal::prs_principal_subresultants<Poly_int1_traits>
         (f,g,std::back_inserter(sres));
       CGAL_assertion(sres.size()==1);

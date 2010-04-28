@@ -130,11 +130,9 @@ CGAL_UNARY_POLY_FUNCTION_INDEX(Differentiate, differentiate)
 // Evaluate
 CGAL_BINARY_POLY_FUNCTION(Evaluate,evaluate)
 // EvaluateHomogeneous
-template <typename Polynomial_d>  inline                                 
+template <typename Polynomial_d, typename T>  inline                                 
 typename Polynomial_traits_d<Polynomial_d>::Evaluate_homogeneous::result_type
-evaluate_homogeneous(const Polynomial_d& p,
-    const typename Polynomial_traits_d<Polynomial_d>::Coefficient_type& num, 
-    const typename Polynomial_traits_d<Polynomial_d>::Coefficient_type& den){
+evaluate_homogeneous(const Polynomial_d& p,const T& num, const T& den){
   typedef Polynomial_traits_d<Polynomial_d> PT;                       
   return typename PT::Evaluate_homogeneous()(p,num,den);                      
 }  

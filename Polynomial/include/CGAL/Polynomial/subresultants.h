@@ -156,8 +156,8 @@ CGAL_BEGIN_NAMESPACE
     typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
 
     if(degree(P) < 1 || degree(Q) < 1) {
-        *out++ = CGAL::internal::resultant_for_constant_polynomial
-                     <Polynomial_traits_d> (P,Q);
+      *out++ = Polynomial(CGAL::internal::resultant_for_constant_polynomial
+          <Polynomial_traits_d> (P,Q));
       return out;
     }
       
@@ -260,8 +260,8 @@ CGAL_BEGIN_NAMESPACE
     typename Polynomial_traits_d::Construct_polynomial construct;
    
     if(degree(P) < 1 || degree(Q) < 1) {
-      *out++ = CGAL::internal::resultant_for_constant_polynomial
-                 <Polynomial_traits_d> (P,Q);
+      *out++ = Polynomial(CGAL::internal::resultant_for_constant_polynomial
+          <Polynomial_traits_d> (P,Q));
       return out;
     }
     
@@ -395,10 +395,10 @@ CGAL_BEGIN_NAMESPACE
       typename Polynomial_traits_d::Construct_polynomial construct;
 
       if(degree(P) < 1 || degree(Q) < 1) {
-          *sres_out++ = CGAL::internal::resultant_for_constant_polynomial
-                          <Polynomial_traits_d> (P,Q);
-        *coP_out++ = lcoeff(Q);
-        *coQ_out++ = lcoeff(P);
+        *sres_out++ = Polynomial(CGAL::internal::resultant_for_constant_polynomial
+            <Polynomial_traits_d> (P,Q));
+        *coP_out++ = Polynomial(lcoeff(Q));
+        *coQ_out++ = Polynomial(lcoeff(P));
         return sres_out;
       }
       
@@ -541,7 +541,7 @@ CGAL_BEGIN_NAMESPACE
 	sResP[q]=eps_p_minus_1*CGAL::ipower(lcoeff(Q),p-q-1)*Q;
 	s[q]=eps_p_minus_1*CGAL::ipower(lcoeff(Q),p-q);
 	sResU[q]=construct(NT(0));
-	sResV[q]=eps_p_minus_1*CGAL::ipower(lcoeff(Q),p-q-1);
+	sResV[q]=construct(eps_p_minus_1*CGAL::ipower(lcoeff(Q),p-q-1));
 	for(int i=q+1;i<=p-2;i++) {
 	  sResP[i]=sResU[i]=sResV[i]=construct(NT(0));
 	  s[i]=NT(0);

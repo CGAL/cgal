@@ -826,7 +826,7 @@ void test_make_square_free(const Polynomial_traits_d&){
     Polynomial_d p;
     p = generate_sparse_random_polynomial<Polynomial_d>(3); 
         
-    p = idiv_utcf(p, ucontent_utcf(p));
+    p = idiv_utcf(p, Constructor()(ucontent_utcf(p)));
     p = make_square_free(p);
     Coeff f_intern = lcoeff(p);
         

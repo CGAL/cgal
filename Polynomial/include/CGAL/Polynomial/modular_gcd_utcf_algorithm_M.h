@@ -97,7 +97,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
     }
     if(FF1.degree() == 0 || FF2.degree() == 0){
         Poly result;
-        result = CGAL::gcd(FF1.content(),FF2.content());
+        result = Poly(CGAL::gcd(FF1.content(),FF2.content()));
         return CGAL::canonicalize(result);
     }
         
