@@ -37,8 +37,6 @@
 #include <CGAL/Polynomials_for_line_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/_test_functionalities_on_sphere.h>
-
-int pipo(int r){return r;}
 #endif
 
 int main()

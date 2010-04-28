@@ -36,8 +36,6 @@
 #include <CGAL/_test_functionalities_on_sphere.h>
 
 
-int pipo(int r){return r;}
-
 int main()
 {
   typedef CGAL::Exact_predicates_exact_constructions_kernel Linear_k1;
