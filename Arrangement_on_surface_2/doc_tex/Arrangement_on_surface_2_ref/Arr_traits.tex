@@ -17,6 +17,20 @@ and is not necessarily connected. Such curves are eventually subdivided into
 $x$-monotone subcurves and isolated points (represented by the \ccc{Point_2}
 and \ccc{X_monotone_curve_2} types, defined in the basic traits concept).
 
+A model of the concept \ccRefName{} that handles arbitrary curves,
+which are always $x$-monotone, such as a traits class that handles
+linear curves may define the nested types \ccc{Curve\_2} and
+\ccc{X_monotone_curve\_2} to be of equivalent types. Moreover, defining
+them as of equivalent types is advantageous, as it enables a generic
+simple implementation of the nested Functor
+\ccc{Make_x_monotone_2}.
+
+On the other hand, a model of the \ccRefName{} concept that handles
+arbitrary curves, which may be not $x$-monotone msut define the
+\ccc{Curve\_2} and \ccc{X_monotone_curve\_2} nested types to be of
+different types to allow proper dispatching of the free functions
+that accept such curves, such as \ccc{intsert()}.
+
 \ccRefines
 \ccc{ArrangementXMonotoneTraits_2}
 
