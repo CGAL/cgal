@@ -77,7 +77,7 @@ public:
   
   typedef typename Base_traits_2::Has_merge_category  Base_has_merge_category;
   typedef Tag_true                                    Has_merge_category;
-  typedef typename Base_traits_::Has_do_intersect_category
+  typedef typename Base_traits_2::Has_do_intersect_category
                                                       Has_do_intersect_category;
 
   // Base_traits_2 is Arr_curve_data_traits that already completes
