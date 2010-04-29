@@ -153,8 +153,8 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(PT1_deg.is_valid());
 
   std::cout<<"Constructor"<<std::endl;
-  FT ft1(-0.1);
-  FT ft2(0.2);
+  typename P3T3::FT ft1(-0.1);
+  typename P3T3::FT ft2(0.2);
   Iso_cuboid domain(ft1,ft1,ft1,ft2,ft2,ft2);
   std::cout<<"x-length: "<<domain.xmax()-domain.xmin()<<'\t'
 	   <<"y-length: "<<domain.ymax()-domain.ymin()<<'\t'
