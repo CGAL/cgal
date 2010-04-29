@@ -6,7 +6,7 @@
 
 \ccDefinition
 % ===========
-The concept \ccRefName{} refines the basic traits concept by adding
+The concept \ccRefName{} refines the general traits concept by adding
 operations needed for the landmarks point-location strategy, namely ---
 approximating points and connecting points with a simple $x$-monotone
 curve.
@@ -17,7 +17,7 @@ recommended to define the approximated number type as the built-in
 \ccc{double} type. 
 
 \ccRefines
-\ccc{ArrangementBasicTraits_2}
+\ccc{ArrangementTraits_2}
 
 \ccTypes
 % ======
@@ -47,14 +47,15 @@ recommended to define the approximated number type as the built-in
 
 \ccHasModels
 % ==========
-\ccc{CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>}\\
 \ccc{CGAL::Arr_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_linear_traits_2<Kernel>}\\
 \ccc{CGAL::Arr_polyline_traits_2<SegmentTraits>}\\
 \ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}
 
 \ccSeeAlso
 %=========
-\ccc{ArrangementBasicTraits_2}\lcTex{(\ccRefPage{ArrangementBasicTraits_2})}
+\ccc{ArrangementTraits_2}\lcTex{(\ccRefPage{ArrangementTraits_2})}
 
 \end{ccRefConcept}
 \ccRefPageEnd
