@@ -522,6 +522,7 @@ namespace CGAL {
   
     typedef CGAL::Tag_false                        Has_left_category;
     typedef CGAL::Tag_false 			   Has_merge_category;
+    typedef CGAL::Tag_false                        Has_do_intersect_category;
 
     typedef Arr_oblivious_side_tag                 Arr_left_side_category;
     typedef Arr_oblivious_side_tag                 Arr_bottom_side_category;

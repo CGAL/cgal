@@ -84,10 +84,14 @@ public:
   ///! \name The side tags
   //@{
   // are inherited from the geometry traits
-  typedef typename Traits_adaptor_2::Arr_left_side_category   Arr_left_side_category;
-  typedef typename Traits_adaptor_2::Arr_bottom_side_category Arr_bottom_side_category;
-  typedef typename Traits_adaptor_2::Arr_top_side_category    Arr_top_side_category;
-  typedef typename Traits_adaptor_2::Arr_right_side_category  Arr_right_side_category;
+  typedef typename Traits_adaptor_2::Arr_left_side_category
+                                                        Arr_left_side_category;
+  typedef typename Traits_adaptor_2::Arr_bottom_side_category
+                                                        Arr_bottom_side_category;
+  typedef typename Traits_adaptor_2::Arr_top_side_category
+                                                        Arr_top_side_category;
+  typedef typename Traits_adaptor_2::Arr_right_side_category
+                                                        Arr_right_side_category;
   
   BOOST_MPL_ASSERT
   ((boost::is_same< Arr_left_side_category, Arr_oblivious_side_tag >));

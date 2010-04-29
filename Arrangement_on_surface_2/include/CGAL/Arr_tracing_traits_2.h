@@ -189,8 +189,9 @@ public:
   //@{
 
   // Traits types:
-  typedef typename Base::Has_left_category      Has_left_category;
-  typedef typename Base::Has_merge_category     Has_merge_category;
+  typedef typename Base::Has_left_category          Has_left_category;
+  typedef typename Base::Has_merge_category         Has_merge_category;
+  typedef typename Base::Has_do_intersect_category  Has_do_intersect_category;
 
   typedef typename internal::Arr_complete_left_side_tag< Base >::Tag
                                                 Arr_left_side_category;

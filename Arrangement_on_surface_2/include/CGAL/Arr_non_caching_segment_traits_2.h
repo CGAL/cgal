@@ -59,16 +59,17 @@ public:
   //@{
 
   // Traits types:
-  typedef typename Base::Has_left_category      Has_left_category;
+  typedef typename Base::Has_left_category           Has_left_category;
+  typedef typename Base::Has_do_intersect_category   Has_do_intersect_category;
 
   typedef typename Base::Arr_left_side_category      Arr_left_side_category;
   typedef typename Base::Arr_bottom_side_category    Arr_bottom_side_category;
   typedef typename Base::Arr_top_side_category       Arr_top_side_category;
   typedef typename Base::Arr_right_side_category     Arr_right_side_category;
 
-  typedef typename Base::Point_2                Point_2;
-  typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
-  typedef typename Base::Multiplicity           Multiplicity;
+  typedef typename Base::Point_2                     Point_2;
+  typedef typename Base::X_monotone_curve_2          X_monotone_curve_2;
+  typedef typename Base::Multiplicity                Multiplicity;
 
   /*! Compare the x-coordinates of two points */
   typedef typename Base::Compare_x_2            Compare_x_2;

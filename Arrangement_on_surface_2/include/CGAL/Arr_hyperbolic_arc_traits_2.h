@@ -40,22 +40,23 @@ class Arr_hyperbolic_arc_traits_2
 {
 public:
 
-  typedef Kernel_                                       Kernel;
-  typedef typename Kernel::FT                           NT;
-  typedef _One_root_point_2<NT, Filter_>                Point_2;
-  typedef typename Point_2::CoordNT                     CoordNT;
-  typedef _Hyperbolic_arc_2<Kernel, Filter_>            Curve_2;
-  typedef Curve_2                                       X_monotone_curve_2;
-  typedef Arr_hyperbolic_arc_traits_2<Kernel, Filter_>  Self;
+  typedef Kernel_                                      Kernel;
+  typedef typename Kernel::FT                          NT;
+  typedef _One_root_point_2<NT, Filter_>               Point_2;
+  typedef typename Point_2::CoordNT                    CoordNT;
+  typedef _Hyperbolic_arc_2<Kernel, Filter_>           Curve_2;
+  typedef Curve_2                                      X_monotone_curve_2;
+  typedef Arr_hyperbolic_arc_traits_2<Kernel, Filter_> Self;
 
   // Category tags:
-  typedef Tag_true                                      Has_left_category;
-  typedef Tag_false                                     Has_merge_category;
+  typedef Tag_true                                     Has_left_category;
+  typedef Tag_false                                    Has_merge_category;
+  typedef Tag_false                                    Has_do_intersect_category;
 
-  typedef Arr_oblivious_side_tag                        Arr_left_side_category;
-  typedef Arr_oblivious_side_tag                        Arr_bottom_side_category;
-  typedef Arr_oblivious_side_tag                        Arr_top_side_category;
-  typedef Arr_oblivious_side_tag                        Arr_right_side_category;
+  typedef Arr_oblivious_side_tag                       Arr_left_side_category;
+  typedef Arr_oblivious_side_tag                       Arr_bottom_side_category;
+  typedef Arr_oblivious_side_tag                       Arr_top_side_category;
+  typedef Arr_oblivious_side_tag                       Arr_right_side_category;
 
 public:
 

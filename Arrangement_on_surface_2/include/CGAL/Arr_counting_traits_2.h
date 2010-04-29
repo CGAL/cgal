@@ -192,21 +192,22 @@ public:
   //@{
 
   // Traits types:
-  typedef typename Base::Has_left_category      Has_left_category;
-  typedef typename Base::Has_merge_category     Has_merge_category;
+  typedef typename Base::Has_left_category          Has_left_category;
+  typedef typename Base::Has_merge_category         Has_merge_category;
+  typedef typename Base::Has_do_intersect_category  Has_do_intersect_category;
 
   typedef typename internal::Arr_complete_left_side_tag< Base >::Tag
-                                                Arr_left_side_category;
+                                                    Arr_left_side_category;
   typedef typename internal::Arr_complete_bottom_side_tag< Base >::Tag
-                                                Arr_bottom_side_category;
+                                                    Arr_bottom_side_category;
   typedef typename internal::Arr_complete_top_side_tag< Base >::Tag
-                                                Arr_top_side_category;
+                                                    Arr_top_side_category;
   typedef typename internal::Arr_complete_right_side_tag< Base >::Tag
-                                                Arr_right_side_category;
+                                                    Arr_right_side_category;
   
-  typedef typename Base::Point_2                Point_2;
-  typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
-  typedef typename Base::Curve_2                Curve_2;
+  typedef typename Base::Point_2                    Point_2;
+  typedef typename Base::X_monotone_curve_2         X_monotone_curve_2;
+  typedef typename Base::Curve_2                    Curve_2;
 
   /*! A functor that compares the x-coordinates of two points */
   class Compare_x_2 {

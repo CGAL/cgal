@@ -77,13 +77,19 @@ public:
   
   typedef typename Base_traits_2::Has_merge_category  Base_has_merge_category;
   typedef Tag_true                                    Has_merge_category;
+  typedef typename Base_traits_::Has_do_intersect_category
+                                                      Has_do_intersect_category;
 
   // Base_traits_2 is Arr_curve_data_traits that already completes
   // incomplete tags
-  typedef typename Base_traits_2::Arr_left_side_category   Arr_left_side_category;
-  typedef typename Base_traits_2::Arr_bottom_side_category Arr_bottom_side_category;
-  typedef typename Base_traits_2::Arr_top_side_category    Arr_top_side_category;
-  typedef typename Base_traits_2::Arr_right_side_category  Arr_right_side_category;
+  typedef typename Base_traits_2::Arr_left_side_category
+                                                      Arr_left_side_category;
+  typedef typename Base_traits_2::Arr_bottom_side_category
+                                                      Arr_bottom_side_category;
+  typedef typename Base_traits_2::Arr_top_side_category
+                                                      Arr_top_side_category;
+  typedef typename Base_traits_2::Arr_right_side_category
+                                                      Arr_right_side_category;
 };
 
 CGAL_END_NAMESPACE

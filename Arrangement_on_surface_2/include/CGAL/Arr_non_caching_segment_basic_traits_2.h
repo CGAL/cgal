@@ -67,6 +67,7 @@ public:
 
   // Categories:
   typedef Tag_true                              Has_left_category;
+  typedef Tag_false                             Has_do_intersect_category;
  
   typedef Arr_oblivious_side_tag                Arr_left_side_category;
   typedef Arr_oblivious_side_tag                Arr_bottom_side_category;

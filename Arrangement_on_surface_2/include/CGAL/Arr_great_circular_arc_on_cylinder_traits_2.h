@@ -56,6 +56,8 @@ public:
   // Category tags:
   typedef Tag_true                              Has_left_category;
   typedef Tag_true                              Has_merge_category;
+  typedef Tag_false                             Has_do_intersect_category;
+  
   typedef Arr_all_boundary_tag                  Boundary_category;
 
   /*! Default constructor */

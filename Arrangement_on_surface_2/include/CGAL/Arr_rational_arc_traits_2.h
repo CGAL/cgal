@@ -46,30 +46,31 @@ class Arr_rational_arc_traits_2
 {
 public:
 
-  typedef Alg_kernel_                                   Alg_kernel;
-  typedef Nt_traits_                                    Nt_traits;
+  typedef Alg_kernel_                             Alg_kernel;
+  typedef Nt_traits_                              Nt_traits;
 
-  typedef typename Alg_kernel::FT                       Algebraic;
+  typedef typename Alg_kernel::FT                 Algebraic;
 
-  typedef typename Nt_traits::Integer                   Integer;
+  typedef typename Nt_traits::Integer             Integer;
 
   // Category tags:
-  typedef Tag_true                                      Has_left_category;
-  typedef Tag_true                                      Has_merge_category;
+  typedef Tag_true                                Has_left_category;
+  typedef Tag_true                                Has_merge_category;
+  typedef Tag_false                               Has_do_intersect_category;
 
-  typedef Arr_open_side_tag                             Arr_left_side_category;
-  typedef Arr_open_side_tag                             Arr_bottom_side_category;
-  typedef Arr_open_side_tag                             Arr_top_side_category;
-  typedef Arr_open_side_tag                             Arr_right_side_category;
+  typedef Arr_open_side_tag                       Arr_left_side_category;
+  typedef Arr_open_side_tag                       Arr_bottom_side_category;
+  typedef Arr_open_side_tag                       Arr_top_side_category;
+  typedef Arr_open_side_tag                       Arr_right_side_category;
 
   // Traits objects:
-  typedef _Rational_arc_2<Alg_kernel, Nt_traits>        Curve_2;
+  typedef _Rational_arc_2<Alg_kernel, Nt_traits>  Curve_2;
   typedef _Continuous_rational_arc_2<Alg_kernel, Nt_traits>
-                                                        X_monotone_curve_2;
-  typedef typename Alg_kernel::Point_2                  Point_2;
-  typedef unsigned int                                  Multiplicity;
+                                                  X_monotone_curve_2;
+  typedef typename Alg_kernel::Point_2            Point_2;
+  typedef unsigned int                            Multiplicity;
 
-  typedef typename Curve_2::Rat_vector                  Rat_vector;
+  typedef typename Curve_2::Rat_vector            Rat_vector;
 
 public:
 
