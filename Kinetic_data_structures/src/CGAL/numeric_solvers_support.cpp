@@ -22,9 +22,10 @@
 #include <CGAL/Polynomial/internal/numeric_solvers_support.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 
-#include <CGAL/Polynomial_traits_d.h>
-#include <CGAL/Polynomial_type_generator.h>
-#include <CGAL/Polynomial/internal/interval_arithmetic.h>
+#include <CGAL/Polynomial/Polynomial.h>
+#include <CGAL/Polynomial/internal/Rational/Derivative.h>
+#include <CGAL/Polynomial/Interval_polynomial.h>
+
 /*#ifdef _MSC_VER
 #pragma warning(disable:1572)
 #endif*/
@@ -143,11 +144,9 @@ template <class NT>
     //if (roots.back() > lb+eps) return;
 
     //typedef CGAL_POLYNOMIAL_NS::Polynomial<NT> Fn;
-    typedef Polynomial_type_generator<Interval_nt_advanced, 1>::Type IFn;
-    typedef Polynomial_traits_d<IFn> Traits;
-    Traits::Differentiate dx= Traits::Differentiate();
-    Traits::Evaluate eval= Traits::Evaluate();
-    Traits::Construct_polynomial construct= Traits::Construct_polynomial();
+
+    typedef CGAL_POLYNOMIAL_NS::Interval_polynomial IFn;
+    typedef CGAL_POLYNOMIAL_NS::internal::Derivative<IFn> Diff;
     typedef typename IFn::NT INT;
     
 
@@ -169,21 +168,17 @@ template <class NT>
 	vi = -*(end-1);
       }
     } else {
-      INT intcoefs[end-begin];
-      for (unsigned int i=0; i< end-begin; ++i) {
-        intcoefs[i]= INT(*(begin+i));
-      }
-      IFn fi= construct(intcoefs, intcoefs+(end-begin));
+      IFn fi(begin, end);
       if (roots.empty()) {
 	Interval_arithmetic_guard guard;
         if (ub== std::numeric_limits<double>::infinity()) {
           vi = 10*lb + 1000;
         } else {
-          vi = eval(fi, (INT(lb)+INT(ub))/2.0);
+          vi = fi((INT(lb)+INT(ub))/2.0);
         }
       } else {
 	Interval_arithmetic_guard guard;
-	vi = eval(fi,(INT(last_root)+INT(roots.back()))/2.0);
+	vi = fi((INT(last_root)+INT(roots.back()))/2.0);
       }
     }
     
@@ -200,15 +195,16 @@ template <class NT>
       return;
     }
     Interval_arithmetic_guard guard;
+    Diff dx;
     IFn f(begin, end);
     IFn d= dx(f);
 
-    INT dv= eval(f, roots.back());
+    INT dv= d(roots.back());
     // switch
     //while (sign(d(roots.back().representation()))== ZERO) d= dx_(d);
     while (dv.inf() <= 0 && dv.sup() >= 0) {
       d= dx(d);
-      dv= eval(d, roots.back());
+      dv= d(roots.back());
     }
     // switch
     //if (sign(d(roots.back().representation()))==POSITIVE){
@@ -251,11 +247,20 @@ jama_polynomial_compute_cleaned_roots(begin, end, lb, ub, roots);
 
 double evaluate_polynomial(const double *b, const double *e, double t)
 {
-  typedef Polynomial_type_generator<double, 1>::Type P;
-  typedef Polynomial_traits_d<P> Traits;
-  Traits::Evaluate eval= Traits::Evaluate();
-  Traits::Construct_polynomial construct= Traits::Construct_polynomial();
-  return eval(construct(b, e), t);
+#ifdef POLYNOMIAL_USE_GSL
+    return gsl_evaluate_polynomial(b, e, t);
+#else
+    if (b==e) return 0.0;
+
+    const double *rit=e-1;
+    double result = *rit;
+    --rit;
+    for (; rit != b-1; --rit) {
+        result *= t;
+        result += (*rit);
+    }
+    return result;
+#endif
 }
 
 
