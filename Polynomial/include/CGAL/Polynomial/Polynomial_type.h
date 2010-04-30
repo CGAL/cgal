@@ -336,8 +336,7 @@ public:
     template <class Forward_iterator>
     Polynomial(Forward_iterator first, Forward_iterator last)
       : Base(Rep(first,last)) 
-      { std::cout << "FROM IT" << std::endl;
-        reduce(); simplify_coefficients(); }
+      { reduce(); simplify_coefficients(); }
                               
 #if defined(CGAL_USE_LEDA) || defined(DOXYGEN_RUNNING)
     /*! \brief construct a polynomial from a LEDA \c array
