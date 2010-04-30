@@ -326,12 +326,14 @@ template <class A, class B, class RT>
 void test_explicit_interoperable_one_way(){
   typedef CGAL::Coercion_traits<A,B> CT;
   typedef typename CT::Type Type;
+  typedef typename CT::Cast Cast; 
+  typedef typename Cast::result_type result_type; 
   
-  assert(
-      (::boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
-  assert((::boost::is_same<Type,RT>::value));
-  
+  BOOST_STATIC_ASSERT((::boost::is_same<result_type,Type>::value)); 
+  BOOST_STATIC_ASSERT((::boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
+  BOOST_STATIC_ASSERT((::boost::is_same<Type,RT>::value));
   typename CT::Cast cast;
+  
   A a(3);
   B b(3);
   RT  rt(3);
