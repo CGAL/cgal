@@ -51,7 +51,7 @@ namespace CircularFunctors {
 	      return construct_circle_2<CK>(eq);
       }
 
-	  result_type 
+	  const result_type& 
 	  operator() (const Circular_arc_2 & a) const
 	    {
 	      return (a.rep().supporting_circle());
@@ -60,6 +60,15 @@ namespace CircularFunctors {
   };
 
 } // namespace CircularFunctors
+
+#ifndef CGAL_CFG_DONT_OVERLOAD_TOO_MUCH
+  template < typename K>
+  struct Qualified_result_of<CircularFunctors::Construct_circle_2<K>,
+                           typename K::Circular_arc_2>
+  {
+    typedef const typename K::Circle_2 &   type;
+  };
+#endif
 
 } // namespace CGAL
 

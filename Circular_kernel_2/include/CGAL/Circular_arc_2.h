@@ -149,20 +149,28 @@ public:
     return typename R::Is_y_monotone_2()(*this);
   }
 
-  Circle_2 
+	typename Qualified_result_of
+  <typename R::Construct_circle_2,Circular_arc_2>::type
+  // const Circle_2 & 
   supporting_circle() const
   {
     return typename R::Construct_circle_2()(*this);
   }
 
-  const Point_2 & center() const
+	typename Qualified_result_of
+  <typename R::Construct_center_2,Circular_arc_2>::type
+  // const Point_2 & 
+  center() const
   {
-    return typename R::Construct_circle_2()(*this).center();
+    return typename R::Construct_center_2()(*this);
   }
 
-  const FT & squared_radius() const
+  typename Qualified_result_of
+  <typename R::Compute_squared_radius_2, Circular_arc_2>::type
+  // const FT & 
+  squared_radius() const
   {
-    return typename R::Construct_circle_2()(*this).squared_radius();
+    return typename R::Compute_squared_radius_2()(*this);
   }
 
   Bbox_2 bbox(void) const

@@ -32,6 +32,10 @@
 // macros CGAL_Circular_Kernel_pred and CGAL_Circular_Kernel_cons.
 // And they are #undefed at the end of this file.
 
+  CGAL_Circular_Kernel_cons(Compute_squared_radius_2,
+  compute_squared_radius_2_object)
+  CGAL_Circular_Kernel_cons(Construct_center_2,
+  construct_center_2_object)
   CGAL_Circular_Kernel_cons(Get_equation,
   get_equation_object)
   CGAL_Circular_Kernel_cons(Construct_circle_2,

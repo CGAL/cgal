@@ -1205,7 +1205,7 @@ namespace CircularFunctors {
     
     CGAL_DEPRECATED result_type operator() (const Circular_arc_2 & a) const
     {
-      return CK().construct_circle_2_object()(a);
+      return a.rep().supporting_circle();
     }
   };
   
@@ -1223,12 +1223,116 @@ namespace CircularFunctors {
     
     CGAL_DEPRECATED result_type operator() (const Line_arc_2 & a) const
     {
-      return CK().construct_line_2_object()(a);
+      return a.rep().supporting_line();
     }
   };
 #endif
 
+  template <typename CK>
+  class Construct_center_2
+	#ifndef CGAL_CFG_MATCHING_BUG_6
+	    : public CK::Linear_kernel::Construct_center_2
+	#endif
+  {
+    typedef typename CK::Circular_arc_2  Circular_arc_2;
+	  public:
+
+		#ifndef CGAL_CFG_MATCHING_BUG_6
+			typedef typename CK::Linear_kernel::Construct_center_2::result_type result_type; 
+	    using CK::Linear_kernel::Construct_center_2::operator();
+		#else
+
+    typedef typename CK::Linear_kernel LK;
+    typedef typename LK::Construct_center_2 LK_Construct_center_2;
+	  typedef typename LK::Point_2     Point_2;
+	  typedef typename LK::Circle_2    Circle_2;
+	public:
+    typedef Point_2          result_type;
+
+	  const result_type&
+	  operator()( const Circle_2& c) const
+	  { return LK_Construct_center_2()(c); }
+
+	#endif
+
+    const result_type&
+    operator()(const Circular_arc_2& c) const
+    { return c.rep().center(); }
+
+  };
+
+  template <typename CK>
+  class Compute_squared_radius_2
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    : public CK::Linear_kernel::Compute_squared_radius_2
+#endif
+  {
+    typedef typename CK::Circular_arc_2  Circular_arc_2;
+    typedef typename CK::Circle_2        Circle_2;
+  public:
+
+#ifndef CGAL_CFG_MATCHING_BUG_6
+		typedef typename CK::Linear_kernel::Compute_squared_radius_2::result_type result_type; 
+    using CK::Linear_kernel::Compute_squared_radius_2::operator();
+#else
+
+    typedef typename CK::Linear_kernel LK;
+    typedef typename LK::Compute_squared_radius_2 LK_Compute_squared_radius_2;
+	  typedef typename LK::FT          FT;
+	  typedef typename LK::Point_2     Point_2;
+	  typedef typename LK::Circle_2    Circle_2;
+	public:
+	  typedef FT               result_type;
+
+	  const result_type&
+	  operator()( const Circle_2& c) const
+	  { return LK_Compute_squared_radius_2()(c); }
+
+	  result_type
+	  operator()( const Point_2& p) const
+	  { return LK_Compute_squared_radius_2()(p); }
+
+	  result_type
+	  operator()( const Point_2& p, const Point_2& q) const
+	  { return LK_Compute_squared_radius_2()(p, q); }
+
+	  result_type
+	  operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
+	  { return LK_Compute_squared_radius_2(p, q, r); }
+
+#endif
+
+    const result_type&
+    operator()(const Circular_arc_2& c) const
+    { return c.rep().squared_radius(); }
+
+	};
+
 } // namespace CircularFunctors
+
+#ifndef CGAL_CFG_DONT_OVERLOAD_TOO_MUCH
+  template < typename K>
+  struct Qualified_result_of<CircularFunctors::Construct_center_2<K>,
+                           typename K::Circular_arc_2>
+  {
+    typedef typename K::Point_2 const &   type;
+  };
+
+  template < typename K>
+  struct Qualified_result_of<CircularFunctors::Compute_squared_radius_2<K>,
+                           typename K::Circular_arc_2>
+  {
+    typedef typename K::FT const &   type;
+  };
+
+  template < typename K>
+  struct Qualified_result_of<CircularFunctors::Compute_squared_radius_2<K>,
+                           typename K::Circle_2>
+  {
+    typedef typename K::FT const &   type;
+  };
+#endif
+
 } // namespace CGAL
 
 #endif // CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
