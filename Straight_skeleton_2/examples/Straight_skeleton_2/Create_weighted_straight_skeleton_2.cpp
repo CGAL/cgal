@@ -26,15 +26,16 @@ int main()
   poly.push_back( Point(0,12) ) ;
   poly.push_back( Point(-1,1) ) ;
   poly.push_back( Point(-12,0) ) ;
-     
-  // You can pass the polygon via an iterator pair
-  SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end());
-
-  // Or you can pass the polygon directly, as below.
-  SsPtr oss = CGAL::create_exterior_straight_skeleton_2(poly);
-
-  dump_to_eps(poly,*iss,"interior_skeleton.eps");
-  dump_to_eps(poly,*oss,"exterior_skeleton.eps");
   
+  SsPtr ss0 = CGAL::create_straight_skeleton_2(poly, -1.5);
+
+  dump_to_eps(poly,*ss0,"uniform_weights_skeleton.eps");
+
+  double weights[] = { -1.0, -1.0, -1.5, -1.0, -0.5, 1.0, 1.5, -1.0 } ;
+  
+  SsPtr ss1 = CGAL::create_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end(), weights, weights+8);
+
+  dump_to_eps(poly,*ss1,"mixed_weights_skeleton.eps");
+
   return 0;
 }

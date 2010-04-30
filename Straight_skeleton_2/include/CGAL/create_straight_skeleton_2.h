@@ -78,11 +78,11 @@ create_straight_skeleton_2 ( PointIterator              aOuterContour_VerticesBe
   
   SsBuilder ssb(aMaxTime) ;
   
-  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aOuterContour_WeightsBegin, aOuterContour_WeightsEnd, false, Point_converter ) ;
+  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aOuterContour_WeightsBegin, aOuterContour_WeightsEnd, true, Point_converter ) ;
   
   WeightSequenceIterator whi = aHolesWeightBegin   ;
   for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi, ++ whi )
-    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), whi->begin(), whi->end(), false, Point_converter ) ;
+    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), whi->begin(), whi->end(), true, Point_converter ) ;
   
   return ssb.construct_skeleton();
 }
@@ -139,10 +139,10 @@ create_straight_skeleton_2 ( PointIterator              aOuterContour_VerticesBe
   
   SsBuilder ssb(aMaxTime) ;
   
-  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aWeight, false, Point_converter ) ;
+  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aWeight, true, Point_converter ) ;
   
   for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi )
-    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), aWeight, false, Point_converter ) ;
+    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), aWeight, true, Point_converter ) ;
   
   return ssb.construct_skeleton();
 }
@@ -153,8 +153,8 @@ create_straight_skeleton_2 ( PointIterator                  aOuterContour_Vertic
                            , PointIterator                  aOuterContour_VerticesEnd
                            , HoleIterator                   aHolesBegin
                            , HoleIterator                   aHolesEnd
-                           , double                         aWeight   = 1.0
-                           , boost::optional<double> const& aMaxTime  = boost::optional<double>()
+                           , double                         aWeight  
+                           , boost::optional<double> const& aMaxTime 
                            )
 {
   return create_straight_skeleton_2(aOuterContour_VerticesBegin

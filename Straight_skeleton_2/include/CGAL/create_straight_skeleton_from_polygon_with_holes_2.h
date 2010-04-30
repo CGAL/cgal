@@ -24,18 +24,61 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class K>
+
+template<class K, class NT>
 boost::shared_ptr< Straight_skeleton_2<K> >
 inline
-create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K> const& aPolyWithHoles )
+create_straight_skeleton_2 ( Polygon_with_holes_2<K> const& aPolyWithHoles, NT aWeight, boost::optional<NT> const& aMaxTime, K const& k )
 {
-  return create_interior_straight_skeleton_2(aPolyWithHoles.outer_boundary().vertices_begin()
-                                            ,aPolyWithHoles.outer_boundary().vertices_end  ()
-                                            ,aPolyWithHoles.holes_begin   ()
-                                            ,aPolyWithHoles.holes_end     ()
-                                            ,K()
-                                            );
+  return create_straight_skeleton_2( aPolyWithHoles.outer_boundary().vertices_begin()
+                                   , aPolyWithHoles.outer_boundary().vertices_end  ()
+                                   , aPolyWithHoles.holes_begin   ()
+                                   , aPolyWithHoles.holes_end     ()
+                                   , aWeight
+                                   , aMaxTime
+                                   , k
+                                   );
 }
+
+boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+inline
+create_straight_skeleton_2 ( Polygon_with_holes_2<Exact_predicates_inexact_constructions_kernel> const& aPolyWithHoles
+                           , double                                                                     aWeight 
+                           , boost::optional<double> const&                                             aMaxTime
+                           )
+{
+  return create_straight_skeleton_2(aPolyWithHoles, aWeight, aMaxTime, Exact_predicates_inexact_constructions_kernel() );
+}
+
+boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+inline
+create_partial_interior_straight_skeleton_2 ( Polygon_with_holes_2<Exact_predicates_inexact_constructions_kernel> const& aPolyWithHoles, boost::optional<double> const& aMaxTime )
+{
+  return create_straight_skeleton_2(aPolyWithHoles, 1.0, aMaxTime, Exact_predicates_inexact_constructions_kernel() );
+}
+
+boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+inline
+create_interior_straight_skeleton_2 ( Polygon_with_holes_2<Exact_predicates_inexact_constructions_kernel> const& aPolyWithHoles )
+{
+  return create_straight_skeleton_2(aPolyWithHoles, 1.0, boost::optional<double> (), Exact_predicates_inexact_constructions_kernel() );
+}
+
+boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+inline
+create_partial_exterior_straight_skeleton_2 ( Polygon_with_holes_2<Exact_predicates_inexact_constructions_kernel> const& aPolyWithHoles, boost::optional<double> const& aMaxTime )
+{
+  return create_straight_skeleton_2(aPolyWithHoles, -1.0, aMaxTime, Exact_predicates_inexact_constructions_kernel() );
+}
+
+boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+inline
+create_exterior_straight_skeleton_2 ( Polygon_with_holes_2<Exact_predicates_inexact_constructions_kernel> const& aPolyWithHoles )
+{
+  return create_straight_skeleton_2(aPolyWithHoles, -1.0, boost::optional<double> (), Exact_predicates_inexact_constructions_kernel() );
+}
+
+
 
 CGAL_END_NAMESPACE
 
