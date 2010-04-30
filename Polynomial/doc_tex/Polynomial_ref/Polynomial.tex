@@ -86,7 +86,7 @@ the zero polynomial is represented by a single zero coefficient.
 
 \ccCreation
 
-\ccCreationVariable{fo}
+\ccCreationVariable{poly}
 \ccConstructor{Polynomial ();} 
 {Introduces an variable initialized with 0.}
 \ccGlue
@@ -125,15 +125,16 @@ Polynomial(Forward_iterator first, Forward_iterator last);}
 std::ostream& operator<<(std::ostream& os, const Polynomial<Coeff> &poly);}
 {Writes \ccc{poly} to ostream \ccc{os}. 
 The format depends on the \ccc{CGAL::IO::MODE} of \ccc{os}.
-In case the mode is \ccc{CGAL::IO::ASCII} the format is $P[d,a_0,\dots,a_d]$,
+In case the mode is \ccc{CGAL::IO::ASCII} the format is $P[d(0,a_0)(1,a_1)\dots(d,a_d)]$,
 where $d$ is the degree of the polynomial. 
+The format is output sensitive, that is, coefficients that are zero are not reported. 
 In case the mode is \ccc{CGAL::IO::PRETTY} the format is human readable.}
 
 
 \ccFunction{
 std::istream& operator>>(std::istream& is, const Polynomial<Coeff> &poly);}
-{Reads \ccc{poly} from istream \ccc{is} in format $POLY[d,a_0,\dots,a_d]$,  
-the output format in mode \ccc{CGAL::IO::ASCII} }
+{Reads \ccc{poly} from istream \ccc{is} in format $P[d(0,a_0)(1,a_1)\dots(d,a_d)]$,  
+the output format in mode \ccc{CGAL::IO::ASCII}.  }
 
 
 \end{ccRefClass}
