@@ -120,6 +120,27 @@ void test_construct_polynomial(const Polynomial_traits_d&){
   CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
   const int d = PT::d;
+  {  
+    typedef typename PT::Construct_polynomial Constructor; 
+    int array[] = {1,2,3,4};
+    Polynomial_d p = Constructor()(array,array+4);
+    assert(p==Construct_test_polynomial<Polynomial_traits_d>()(Coeff(1),Coeff(2),Coeff(3),Coeff(4)));   
+    assert(Constructor()(array,array) == Polynomial_d(0));
+  } 
+  {  
+    typedef typename PT::Construct_polynomial Constructor; 
+    Coeff array[] = {Coeff(1),Coeff(2),Coeff(3),Coeff(4)};
+    Polynomial_d p = Constructor()(array,array+4);
+    assert(p==Construct_test_polynomial<Polynomial_traits_d>()(Coeff(1),Coeff(2),Coeff(3),Coeff(4)));   
+    assert(Constructor()(array,array) == Polynomial_d(0));
+  }
+  {  
+    typedef typename PT::Construct_polynomial Constructor; 
+    ICoeff array[] = {ICoeff(1),ICoeff(2),ICoeff(3),ICoeff(4)};
+    Polynomial_d p = Constructor()(array,array+4);
+    assert(p==Construct_test_polynomial<Polynomial_traits_d>()(Coeff(1),Coeff(2),Coeff(3),Coeff(4)));   
+    assert(Constructor()(array,array) == Polynomial_d(0));
+  }
   { // Construct_polynomial
     typedef typename PT::Construct_polynomial Constructor;
     BOOST_STATIC_ASSERT(

@@ -42,12 +42,8 @@
 #include <CGAL/Polynomial/subresultants.h>
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>
 
+#include <boost/iterator/transform_iterator.hpp> 
 
-/*namespace CGAL{
-namespace internal{
-template <typename Polynomial> struct Monomial_representation; 
-}
-}*/
 
 #define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                          \
   private:                                                              \
@@ -570,6 +566,41 @@ public:
         const Coefficient_type& a8) const 
     {return Polynomial_d(a0,a1,a2,a3,a4,a5,a6,a7,a8);}
 
+#if 1
+  private:
+    template <class Input_iterator, class NT> Polynomial_d 
+    construct_value_type(Input_iterator begin, Input_iterator end, NT) const {
+      typedef CGAL::Coercion_traits<NT,Coefficient_type> CT;
+      BOOST_STATIC_ASSERT((boost::is_same<typename CT::Type,Coefficient_type>::value));    
+      typename CT::Cast cast; 
+      return Polynomial_d(
+          boost::make_transform_iterator(begin,cast),
+          boost::make_transform_iterator(end,cast));
+    }
+    
+    template <class Input_iterator, class NT> Polynomial_d 
+    construct_value_type(Input_iterator begin, Input_iterator end, std::pair<Exponent_vector,NT>) const {
+      return (*this)(begin,end,false);// construct from non sorted monom rep 
+    }
+    
+  public:
+    template< class Input_iterator >
+    Polynomial_d operator()( Input_iterator begin, Input_iterator end) const {
+      if(begin == end ) return Polynomial_d(0);
+      typedef typename std::iterator_traits<Input_iterator>::value_type value_type;
+      return construct_value_type(begin,end,value_type());
+    }
+    
+    template< class Input_iterator >
+    Polynomial_d operator()( Input_iterator begin, Input_iterator end, bool is_sorted) const {
+      if(begin == end ) return Polynomial_d(0);
+      Monom_rep monom_rep(begin,end);
+      // if(!is_sorted) 
+      std::sort(monom_rep.begin(),monom_rep.end(),Compare_exponents_coeff_pair()); 
+      return Create_polynomial_from_monom_rep<Coefficient_type>()(monom_rep.begin(),monom_rep.end());
+    }
+#else
+    
     // Construct from Coefficient type 
     template< class Input_iterator >
     inline Polynomial_d 
@@ -604,7 +635,8 @@ public:
         std::sort(begin,end,Compare_exponents_coeff_pair()); 
       return Create_polynomial_from_monom_rep< Coefficient_type >()(begin,end); 
     }
-    
+#endif
+
   public: 
 
     template< class T >
