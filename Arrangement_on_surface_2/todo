@@ -185,4 +185,15 @@
 - The callback functions of the observers are const referenced. However,
   the documentation generator automatically removes the const reference when
   it generates the cods. The result is very misleading!
+
+- The documentation of ParameterSpaceInX_2 and ParameterSpaceInY_2 are
+missing the requirement for an operator that accepts a point. Is it really
+needed? Seems like it for isolated points.
   
+- Make the Arr_circle_segment_traits_2 a model of the landmark concept. Need
+  to add 2 required operations, which seems possible.
+  
+- Support Minkowski sum of a degenerate polygons (using convolution)
+  * A polygon and a point
+  * A polygon and a line
+  Define precisely what type of polygons are valid as summands.
