@@ -76,7 +76,8 @@ Polynomial modular_filtered_gcd(const Polynomial& p1, const Polynomial& p2){
     return CGAL::gcd(p1,p2);
   }else{
     typename CGAL::Polynomial_traits_d<Polynomial>::Univariate_content  content;
-    return CGAL::gcd(content(p1),content(p2)); // return trivial gcd 
+    typename CGAL::Polynomial_traits_d<Polynomial>::Construct_polynomial construct;
+    return construct(CGAL::gcd(content(p1),content(p2))); // return trivial gcd 
   }
 }
 
@@ -85,10 +86,11 @@ int main(){
     
   typedef CGAL::Gmpz NT; 
   typedef CGAL::Polynomial<NT> Poly; 
+  CGAL::Polynomial_traits_d<Poly>::Construct_polynomial construct;
 
-  Poly  f1(NT(2), NT(6), NT(4)); 
-  Poly  f2(NT(12), NT(4), NT(8));
-  Poly  f3(NT(3), NT(4));
+  Poly  f1=construct(NT(2), NT(6), NT(4)); 
+  Poly  f2=construct(NT(12), NT(4), NT(8));
+  Poly  f3=construct(NT(3), NT(4));
     
   std::cout << "f1        : " << f1 << std::endl;
   std::cout << "f2        : " << f2 << std::endl;
