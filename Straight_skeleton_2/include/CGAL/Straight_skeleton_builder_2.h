@@ -1114,10 +1114,10 @@ public:
     return *this ;
   }
   
-  template<class InputPointIterator, class NT>
+  template<class InputPointIterator>
   Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin
                                              , InputPointIterator aEnd
-                                             , NT                 aWeight        = 1.0
+                                             , double             aWeight        = 1.0
                                              , bool               aIsClosed      = true
                                              , bool               aCheckValidity = true 
                                              )
@@ -1125,17 +1125,16 @@ public:
     return enter_contour(aBegin, aEnd, aWeight, aIsClosed, Cartesian_converter<K,K>(), aCheckValidity);
   }                          
   
-  template<class InputPointIterator, class InputWeightIterator, class NT>
+  template<class InputPointIterator, class InputWeightIterator>
   Straight_skeleton_builder_2& enter_contour ( InputPointIterator  aPBegin
                                              , InputPointIterator  aPEnd
                                              , InputWeightIterator aWBegin
                                              , InputWeightIterator aWEnd
-                                             , NT                  aWeight        = 1.0
                                              , bool                aIsClosed      = true
                                              , bool                aCheckValidity = true 
                                              )
   {
-    return enter_contour(aPBegin, aPEnd, aWBegin, aWEnd, aWeight, aIsClosed, Cartesian_converter<K,K>(), aCheckValidity ) ;
+    return enter_contour(aPBegin, aPEnd, aWBegin, aWEnd, aIsClosed, Cartesian_converter<K,K>(), aCheckValidity ) ;
   }                                             
 
 } ;
