@@ -299,7 +299,7 @@ unzip_cgal()
     rm -f CGAL-I
     ln -s "${CGAL_ROOT}/${CGAL_RELEASE_ID}" CGAL-I
     # Reset CGAL-3.x-I symlink
-    CGAL_RELEASE=`echo "${CGAL_RELEASE_ID}" | sed 's/I.*/I/'`
+    CGAL_RELEASE=`echo "${CGAL_RELEASE_ID}" | sed 's/I\([^-]*\)-.*/I\1/'`
     log "${ACTUAL_LOGFILE}" "Resetting ${CGAL_RELEASE} symlink to ${CGAL_ROOT}/${CGAL_RELEASE_ID}"
     rm -f "${CGAL_RELEASE}"
     ln -s "${CGAL_ROOT}/${CGAL_RELEASE_ID}" "${CGAL_RELEASE}"
