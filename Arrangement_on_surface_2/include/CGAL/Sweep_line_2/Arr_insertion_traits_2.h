@@ -40,9 +40,8 @@ class Arr_insertion_traits_2 :
 {
 public:
 
-  typedef Traits_                                     Traits_2;
-  typedef Arr_basic_insertion_traits_2<Traits_,
-                                       Arrangement_>  Base;
+  typedef Traits_                                               Traits_2;
+  typedef Arr_basic_insertion_traits_2<Traits_, Arrangement_>   Base;
 
   typedef typename Traits_2::Intersect_2              Base_intersect_2;
   typedef typename Traits_2::Split_2                  Base_split_2;
@@ -53,15 +52,16 @@ public:
   typedef typename Base::Point_2                      Point_2;
 
   typedef typename Base::Has_left_category            Has_left_category;
+  typedef typename Base::Has_do_intersect_category    Has_do_intersect_category;
 
   // should be ok, as basic_insertion (=Base) completes incomplete tags
-  typedef typename Base::Arr_left_side_category            Arr_left_side_category;
-  typedef typename Base::Arr_bottom_side_category          Arr_bottom_side_category;
-  typedef typename Base::Arr_top_side_category             Arr_top_side_category;
-  typedef typename Base::Arr_right_side_category           Arr_right_side_category;
+  typedef typename Base::Arr_left_side_category       Arr_left_side_category;
+  typedef typename Base::Arr_bottom_side_category     Arr_bottom_side_category;
+  typedef typename Base::Arr_top_side_category        Arr_top_side_category;
+  typedef typename Base::Arr_right_side_category      Arr_right_side_category;
 
   /* Insertion is implemented as sweep-line visitor. The sweep-line algorithm
-   * never never performs merging of curves. Therefore, AreMergeable_2 and
+   * never performs merging of curves. Therefore, AreMergeable_2 and
    * Merge_2 are not needed either.
    */
   typedef Tag_false                                   Has_merge_category;

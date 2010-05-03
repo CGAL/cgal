@@ -77,6 +77,9 @@ public:
   typedef typename Traits_2::Split_2                Base_split_2;
   typedef typename Traits_2::Equal_2                Base_equal_2;
 
+  typedef typename Traits_2::Has_do_intersect_category
+                                                    Has_do_intersect_category;
+
   typedef typename internal::Arr_complete_left_side_tag< Traits_2 >::Tag
                                                     Arr_left_side_category;
   typedef typename internal::Arr_complete_bottom_side_tag< Traits_2 >::Tag
