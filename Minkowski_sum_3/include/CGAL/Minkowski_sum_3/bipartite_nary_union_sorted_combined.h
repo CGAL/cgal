@@ -173,8 +173,11 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   for(fci = N0.halffacets_begin();
       fci != N0.halffacets_end(); ++fci) {
     if(fci->is_twin()) continue;  
-    if(fci->incident_volume() !=
-       fci->twin()->incident_volume()) continue;
+    if( fci->incident_volume() != fci->twin()->incident_volume() &&
+        ( fci->incident_volume()->mark() || fci->twin()->incident_volume()->mark() )) 
+	{
+		continue;
+	}
     SHalfedge_const_handle se(fci->facet_cycles_begin());
     GM0.push_back(std::make_pair(Gaussian_map(fci), 
 				 se->source()->source()->point()));    
@@ -182,8 +185,11 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   for(fci = N1.halffacets_begin();
       fci != N1.halffacets_end(); ++fci) {
     if(fci->is_twin()) continue;  
-    if(fci->incident_volume() !=
-       fci->twin()->incident_volume()) continue;
+    if( fci->incident_volume() != fci->twin()->incident_volume() &&
+        ( fci->incident_volume()->mark() || fci->twin()->incident_volume()->mark() )) 
+	{
+		continue;
+	}
     SHalfedge_const_handle se(fci->facet_cycles_begin());
     GM1.push_back(std::make_pair(Gaussian_map(fci), 
 				 se->source()->source()->point()));    
