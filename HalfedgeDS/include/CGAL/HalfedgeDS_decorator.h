@@ -41,6 +41,7 @@ class HalfedgeDS_decorator : public HalfedgeDS_items_decorator<p_HDS> {
 // TYPES (inherited from Items_decorator, but have to be repeated)
 // ---------------------------------------------------------------
 public:
+
     typedef p_HDS                                 HDS;
     typedef p_HDS                                 HalfedgeDS;
     typedef typename HDS::Traits                  Traits;
@@ -79,6 +80,20 @@ public:
     typedef typename HDS::Supports_face_halfedge  Supports_face_halfedge;
 
     typedef typename HDS::Supports_removal        Supports_removal;
+
+
+    using HalfedgeDS_items_decorator<p_HDS>::insert_tip;
+    using HalfedgeDS_items_decorator<p_HDS>::get_prev;
+    using HalfedgeDS_items_decorator<p_HDS>::set_prev;
+    using HalfedgeDS_items_decorator<p_HDS>::get_face;
+    using HalfedgeDS_items_decorator<p_HDS>::set_face;
+    using HalfedgeDS_items_decorator<p_HDS>::get_vertex;
+    using HalfedgeDS_items_decorator<p_HDS>::set_vertex;
+    using HalfedgeDS_items_decorator<p_HDS>::set_vertex_halfedge;
+    using HalfedgeDS_items_decorator<p_HDS>::set_face_halfedge;
+    using HalfedgeDS_items_decorator<p_HDS>::set_vertex_in_vertex_loop;
+    using HalfedgeDS_items_decorator<p_HDS>::set_face_in_face_loop;
+    using HalfedgeDS_items_decorator<p_HDS>::insert_halfedge;
 
 protected:
     typedef typename Vertex::Base                 VBase;
