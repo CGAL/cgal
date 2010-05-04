@@ -729,6 +729,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	if(hfci.is_shalfedge()) {
 	  SHalfedge_handle sheh(hfci);
 	  valid = valid && (sheh != SHalfedge_handle());
+// TODO	  valid = valid && ( is_boundary_object(sheh) );
 	  SHalfedge_around_facet_circulator shec1(sheh), shec2(shec1);
        	  CGAL_For_all(shec1, shec2) {
 	    CGAL_assertion(!SEinUniqueFC[shec1]);
@@ -803,12 +804,14 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
     SFace_iterator sf;
     CGAL_forall_sfaces(sf,*sncp()) {
-      SM_decorator SD;
+		SM_decorator SD(&*sf->center_vertex());
       valid = valid && (sf->volume()->mark() == sf->mark());
       SFace_cycle_iterator sfc;
       for(sfc=sf->sface_cycles_begin();sfc!=sf->sface_cycles_end();++sfc)
-	if(sfc.is_shalfedge())
-	  valid = valid && (sf==SHalfedge_handle(sfc)->incident_sface());
+		  if(sfc.is_shalfedge()) {
+			  valid = valid && (SD.is_sm_boundary_object(SHalfedge_handle(sfc)));
+			  valid = valid && (sf==SHalfedge_handle(sfc)->incident_sface());
+		  }
     }
 
     verr << "end of CGAL::SNC_decorator<...>::is_valid(): structure is "
