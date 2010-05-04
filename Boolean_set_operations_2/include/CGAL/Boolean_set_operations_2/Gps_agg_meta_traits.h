@@ -136,10 +136,11 @@ class Gps_agg_meta_traits :
                                                   Base;
 
   public:
-  typedef typename Base::X_monotone_curve_2       X_monotone_curve_2;
-  typedef typename Base::Point_2                  Point_2;
-  typedef typename Traits::Has_left_category      Has_left_category;
-  typedef typename Traits::Has_merge_category     Has_merge_category;
+  typedef typename Base::X_monotone_curve_2           X_monotone_curve_2;
+  typedef typename Base::Point_2                      Point_2;
+  typedef typename Traits::Has_left_category          Has_left_category;
+  typedef typename Traits::Has_merge_category         Has_merge_category;
+  typedef typename Traits::Has_do_intersect_category  Has_do_intersect_category;
 
   typedef typename Arrangement::Arr_left_side_category   Arr_left_side_category;
   typedef typename Arrangement::Arr_bottom_side_category Arr_bottom_side_category;
