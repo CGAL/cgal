@@ -181,7 +181,7 @@ public:
     CGAL_triangulation_precondition( this->dimension() == 2);
     int li;
     Locate_type lt;
-    Face_handle fh = locate(p,lt,li, start);
+    Face_handle fh = this->locate(p,lt,li, start);
     switch(lt) {
     case Triangulation::OUTSIDE_AFFINE_HULL:
     case Triangulation::VERTEX:
@@ -373,7 +373,7 @@ Delaunay_triangulation_2<Gt,Tds>::
 nearest_vertex_2D(const Point& p, Face_handle f) const
 {
   CGAL_triangulation_precondition(this->dimension() == 2);
-  f = locate(p,f);
+  f = this->locate(p,f);
 
   typename Geom_traits::Compare_distance_2 
     compare_distance =  this->geom_traits().compare_distance_2_object();
@@ -509,7 +509,7 @@ insert(const Point  &p,  Face_handle start)
 {
   Locate_type lt;
   int li;
-  Face_handle loc = locate (p, lt, li, start);
+  Face_handle loc = this->locate (p, lt, li, start);
   return insert(p, lt, loc, li);
 }
   
@@ -579,7 +579,7 @@ propagating_flip(Face_handle& f,int i)
        side_of_oriented_circle(n,  f->vertex(i)->point(), true) ) {          
     return;
   }
-  flip(f, i);
+  this->flip(f, i);
   propagating_flip(f,i);
   i = n->index(f->vertex(i));
   propagating_flip(n,i);
