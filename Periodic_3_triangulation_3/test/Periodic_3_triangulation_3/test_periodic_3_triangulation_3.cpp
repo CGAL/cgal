@@ -24,6 +24,8 @@
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 
+#include <CGAL/internal/Exact_type_selector.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K1;
 typedef CGAL::Periodic_3_triangulation_traits_3<K1> PTT1;
@@ -56,9 +58,14 @@ int main()
   K1::FT ft1(-0.1);
   K1::FT ft2(0.2);
   K1::Iso_cuboid_3 domain(ft1,ft1,ft1,ft2,ft2,ft2);
-  assert((domain.xmax()-domain.xmin()) == (domain.ymax()-domain.ymin()));
-  assert((domain.xmax()-domain.xmin()) == (domain.zmax()-domain.zmin()));
-  assert((domain.ymax()-domain.ymin()) == (domain.zmax()-domain.zmin()));
+
+  typedef CGAL::internal::Exact_type_selector<K1::FT>::Type EFT;
+  assert((EFT(domain.xmax())-EFT(domain.xmin()))
+      == (EFT(domain.ymax())-EFT(domain.ymin())));
+  assert((EFT(domain.xmax())-EFT(domain.xmin()))
+      == (EFT(domain.zmax())-EFT(domain.zmin())));
+  assert((EFT(domain.ymax())-EFT(domain.ymin()))
+      == (EFT(domain.zmax())-EFT(domain.zmin())));
 
   typedef CGAL::Periodic_3_triangulation_3<PTT1>            P3T3_1;
   _test_periodic_3_triangulation_3_constructors( P3T3_1() );
