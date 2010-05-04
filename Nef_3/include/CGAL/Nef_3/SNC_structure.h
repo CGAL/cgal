@@ -1467,25 +1467,29 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
   }
 
   CGAL_forall_sfaces(sf,*this) {
-    sf->center_vertex() = VM[sf->center_vertex()];
-    sf->volume() = CM[sf->volume()];
-    SFace_cycle_iterator sfc;
-    for(sfc = sf->sface_cycles_begin(); 
-        sfc != sf->sface_cycles_end(); ++sfc) {
-      if (sfc.is_svertex()) { 
-	SVertex_handle sv(sfc);
-	*sfc = make_object(EM[sv]);
-	store_sm_boundary_item(sv,sfc);
-      } else if (sfc.is_shalfedge()) { 
-	se = SHalfedge_handle(sfc);
-	*sfc = make_object(SEM[se]);
-	store_sm_boundary_item(se,sfc);
-      } else if (sfc.is_shalfloop()) { 
-	sl = SHalfloop_handle(sfc);
-	*sfc = make_object(SLM[sl]);
-	store_sm_boundary_item(sl,sfc);
-      } else CGAL_error_msg("damn wrong boundary item in sface.");
-    }
+	  sf->center_vertex() = VM[sf->center_vertex()];
+	  sf->volume() = CM[sf->volume()];
+	  SFace_cycle_iterator sfc;
+	  for(sfc = sf->sface_cycles_begin(); 
+		  sfc != sf->sface_cycles_end(); ++sfc) 
+	  {
+		  if (sfc.is_svertex()) { 
+			  SVertex_handle sv(sfc);
+			  sv = EM[sv];
+			  *sfc = make_object(sv);
+			  store_sm_boundary_item(sv,sfc);
+		  } else if (sfc.is_shalfedge()) { 
+			  se = SHalfedge_handle(sfc);
+			  se = SEM[se];
+			  *sfc = make_object(se);
+			  store_sm_boundary_item(se,sfc);
+		  } else if (sfc.is_shalfloop()) { 
+			  sl = SHalfloop_handle(sfc);
+			  sl = SLM[sl];
+			  *sfc = make_object(sl);
+			  store_sm_boundary_item(sl,sfc);
+		  } else CGAL_error_msg("damn wrong boundary item in sface.");
+	  }
   }
 }
 
