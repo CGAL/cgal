@@ -916,11 +916,11 @@ protected:
      	
 	Halffacet_const_handle f = opposite_facet->twin();
 
-	B.begin_facet();
 	fc = f->facet_cycles_begin();
 	se = SHalfedge_const_handle(fc);
 	CGAL_assertion(se!=0);
 	if(omit_vertex[se->source()->source()]) return;
+	B.begin_facet();
 	SHalfedge_around_facet_const_circulator hc_start(se);
 	SHalfedge_around_facet_const_circulator hc_end(hc_start);
 	CGAL_For_all(hc_start,hc_end) {
