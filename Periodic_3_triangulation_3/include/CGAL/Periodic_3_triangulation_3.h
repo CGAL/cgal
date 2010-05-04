@@ -295,6 +295,20 @@ public:
   }
 
   const Covering_sheets & number_of_sheets() const { return _cover; }
+  const std::pair<Vertex_handle, Offset> original_vertex(
+      const Vertex_handle v) const {
+    return (virtual_vertices.find(v) == virtual_vertices.end()) ?
+      std::make_pair(v,Offset()) : virtual_vertices.find(v)->second;
+  }
+  const std::vector<Vertex_handle>& periodic_copies(
+      const Vertex_handle v) const {
+    CGAL_triangulation_precondition(number_of_sheets() != make_array(1,1,1) );
+    CGAL_triangulation_precondition(
+       virtual_vertices.find(v) == virtual_vertices.end());
+    CGAL_triangulation_assertion(
+       virtual_vertices_reverse.find(v) != virtual_vertices_reverse.end());
+    return virtual_vertices_reverse.find(v)->second;
+  }
 
   bool is_extensible_triangulation_in_1_sheet_h1() const;
   bool is_extensible_triangulation_in_1_sheet_h2() const;

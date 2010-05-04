@@ -135,6 +135,11 @@ public:
 	hints[level] = v->cell();
 	  
 	v->set_down (prev);
+	if (hierarchy[level]->number_of_sheets()[0] != 1) {
+	  std::vector<Vertex_handle> vtc 
+	    = hierarchy[level]->periodic_copies(v);
+	  for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(prev);
+	}
 	prev->set_up (v);
 	prev = v;
       }
@@ -317,6 +322,11 @@ insert(const Point &p, Cell_handle start)
 	                                    positions[level].li,
 	                                    positions[level].lj);
     vertex->set_down(previous);// link with level above
+    if (hierarchy[level]->number_of_sheets()[0] != 1) {
+      std::vector<Vertex_handle> vtc 
+	= hierarchy[level]->periodic_copies(vertex);
+      for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(previous);
+    }
     previous->set_up(vertex);
     previous=vertex;
     level++;
@@ -353,6 +363,11 @@ insert(const Point &p, Locate_type lt, Cell_handle loc, int li, int lj)
 	    positions[level].li,
 	    positions[level].lj);
       vertex->set_down(previous);// link with level above
+      if (hierarchy[level]->number_of_sheets()[0] != 1) {
+	std::vector<Vertex_handle> vtc 
+	  = hierarchy[level]->periodic_copies(vertex);
+	for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(previous);
+      }
       previous->set_up(vertex);
       previous=vertex;
       level++;
@@ -395,6 +410,10 @@ move_point(Vertex_handle v, const Point & p)
     else {
 	old->set_up(w);
 	w->set_down(old);
+	if (hierarchy[l]->number_of_sheets()[0] != 1) {
+	  std::vector<Vertex_handle> vtc = hierarchy[l]->periodic_copies(w);
+	  for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(old);
+	}
     }
     if (u == Vertex_handle())
 	break;
