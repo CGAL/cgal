@@ -95,6 +95,8 @@ CGAL 3.6 offers the following improvements and new functionality :
   - The package can now be used with the 3D Alpha Shapes package to compute 
     periodic alpha shapes. 
 
+  - Fixed bug in the triangulation hierarchy for periodic triangulations.
+
 6.4 3D Alpha shapes
 
   - The class Weighted_alpha_shape_euclidean_traits_3 is deprecated, the class
