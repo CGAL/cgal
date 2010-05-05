@@ -65,6 +65,7 @@
 #include <CGAL/Polynomial/Modular_traits.h>
 #include <CGAL/Polynomial/Coercion_traits.h>
 #include <CGAL/Polynomial/Chinese_remainder_traits.h>
+#include <CGAL/Polynomial/Get_arithmetic_kernel.h>
 
 // TODO: Are these still includes necessary?
 #include <CGAL/Polynomial/polynomial_gcd.h> // used above for Algebraic_structure_traits<Poly...>::Gcd

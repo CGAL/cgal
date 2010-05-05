@@ -29,21 +29,6 @@
 
 CGAL_BEGIN_NAMESPACE
 template< class NT > struct Get_arithmetic_kernel;
-
-template <class COEFF, class ROOT> class Sqrt_extension;
-template <class COEFF, class ROOT>
-struct Get_arithmetic_kernel<Sqrt_extension<COEFF,ROOT> >{
-  typedef Get_arithmetic_kernel<COEFF> GET;
-  typedef typename GET::Arithmetic_kernel Arithmetic_kernel;
-};
-
-template <class COEFF> class Polynomial;
-template <class COEFF>
-struct Get_arithmetic_kernel<Polynomial<COEFF> >{
-  typedef Get_arithmetic_kernel<COEFF> GET;
-  typedef typename GET::Arithmetic_kernel Arithmetic_kernel;
-};
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_GET_ARITHMETIC_KERNEL_H

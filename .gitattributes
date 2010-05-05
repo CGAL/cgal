@@ -2418,6 +2418,7 @@ Number_types/include/CGAL/Sqrt_extension/Algebraic_extension_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_structure_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Coercion_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Fraction_traits.h -text
+Number_types/include/CGAL/Sqrt_extension/Get_arithmetic_kernel.h -text
 Number_types/include/CGAL/Sqrt_extension/Modular_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Real_embeddable_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Scalar_factor_traits.h -text
@@ -2890,6 +2891,7 @@ Polynomial/examples/Polynomial/substitute.cpp -text
 Polynomial/examples/Polynomial/swap_move.cpp -text
 Polynomial/include/CGAL/Polynomial/Coercion_traits.h -text
 Polynomial/include/CGAL/Polynomial/Degree.h -text
+Polynomial/include/CGAL/Polynomial/Get_arithmetic_kernel.h -text
 Polynomial/include/CGAL/Polynomial/Monomial_representation.h -text
 Polynomial/include/CGAL/Polynomial/bezout_matrix.h -text
 Polynomial/include/CGAL/Polynomial/determinant.h -text
@@ -2902,6 +2904,7 @@ Polynomial/include/CGAL/Polynomial/subresultants.h -text
 Polynomial/include/CGAL/Polynomial_type_generator.h -text
 Polynomial/include/CGAL/Test/_test_polynomial_traits_d.h -text
 Polynomial/test/Polynomial/Coercion_traits.cpp -text
+Polynomial/test/Polynomial/Get_arithmetic_kernel.cpp -text
 Polynomial/test/Polynomial/Polynomial_type_generator.cpp -text
 Polynomial/test/Polynomial/polynomial_utils.cpp -text
 Polynomial/test/Polynomial/sturm_habicht_sequence.cpp -text

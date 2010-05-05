@@ -706,6 +706,26 @@ void test_algebraic_extension_traits(){
     }
 }
 
+template<class AT>
+void test_get_arithmetic_kernel(){
+  typedef CGAL::Arithmetic_kernel AK;
+  typedef AK::Integer Integer;
+  typedef AK::Rational Rational; 
+  {
+    typedef CGAL::Sqrt_extension<Integer,Integer> EXT;
+    typedef CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AK_;
+    BOOST_STATIC_ASSERT((boost::is_same<AK,AK_>::value));
+  } {
+    typedef CGAL::Sqrt_extension<Rational,Integer> EXT;
+    typedef CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AK_;
+    BOOST_STATIC_ASSERT((boost::is_same<AK,AK_>::value));
+  } {
+    typedef CGAL::Sqrt_extension<Rational,Rational> EXT;
+    typedef CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AK_;
+    BOOST_STATIC_ASSERT((boost::is_same<AK,AK_>::value));
+  }
+}
+
 template <class AT>
 void sqrt_extension_test(){
     CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT);
@@ -724,6 +744,8 @@ void sqrt_extension_test(){
 
     scalar_factor_traits_test<AT>();
     test_algebraic_extension_traits<AT>();
+
+    test_get_arithmetic_kernel<AT>();    
 }
 
 int main(){ 
