@@ -65,6 +65,10 @@ public:
   using Ctr::ccw;
   using Ctr::infinite_vertex;
   using Ctr::side_of_oriented_circle;
+  using Ctr::is_infinite;
+  using Ctr::collinear_between;
+  using Ctr::are_there_incident_constraints;
+  using Ctr::make_hole;
 #endif
 
   typedef typename Geom_traits::Point_2  Point;

@@ -70,6 +70,16 @@ public:
   using Triangulation::all_faces_begin;
   using Triangulation::all_faces_end;
   using Triangulation::side_of_oriented_circle;
+  using Triangulation::is_infinite;
+  using Triangulation::collinear_between;
+  using Triangulation::incident_edges;
+  using Triangulation::test_dim_down;
+  using Triangulation::make_hole;
+  using Triangulation::fill_hole;
+  using Triangulation::delete_vertex;
+  using Triangulation::delete_face;
+  using Triangulation::create_face;
+
 #endif
 
   typedef Gt                                 Geom_traits;
