@@ -44,6 +44,7 @@ public:
 
 private:  
   using Base::Node_handle;
+  using Base::branch;
 
   void 
   compute_neighbors_general(typename Base::Node_handle N, const Kd_tree_rectangle<SearchTraits>& r) 
