@@ -212,7 +212,6 @@ gcd_utcf_modularizable_algebra_(
         ::CGAL::Tag_true, 
         Integral_domain_tag tag){
     return modular_gcd_utcf(p1, p2, tag);
-//    return modular_gcd_utcf_with_wang(p1, p2);
 }
 template <class NT> Polynomial<NT> inline
 gcd_utcf_modularizable_algebra_( 
