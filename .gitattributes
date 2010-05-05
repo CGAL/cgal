@@ -2423,6 +2423,7 @@ Number_types/include/CGAL/Sqrt_extension/Modular_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Real_embeddable_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Scalar_factor_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Sqrt_extension_type.h -text
+Number_types/include/CGAL/Sqrt_extension/convert_to_bfi.h -text
 Number_types/include/CGAL/Sqrt_extension/io.h -text
 Number_types/include/CGAL/mpfi_coercion_traits.h -text
 Number_types/include/CGAL/mpfr_coercion_traits.h -text
