@@ -20,7 +20,7 @@ int main()
 {
   Polygon_with_holes input ;
   
-  std::ifstream is("bee.poly") ;
+  std::ifstream is("sample_1.dat") ;
   is >> input ;
      
   SsPtr ss = CGAL::create_partial_interior_straight_skeleton_2(input,2.5);

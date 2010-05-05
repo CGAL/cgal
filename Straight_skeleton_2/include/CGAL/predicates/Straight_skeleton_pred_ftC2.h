@@ -440,9 +440,12 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2 > cons
     }
     else // Valid (non-degenerate) angular bisector
     {
+      FT aw0 = CGAL_NTS abs(w0);
+      FT aw1 = CGAL_NTS abs(w1);
+
       // Scale distance from to the lines.
-      FT sd_p_l0 = w0_sign != ZERO ? validate((l0.a() * p.x() + l0.b() * p.y() + l0.c()) / w0 ) : FT(0) ;
-      FT sd_p_l1 = w1_sign != ZERO ? validate((l1.a() * p.x() + l1.b() * p.y() + l1.c()) / w1 ) : FT(0) ;
+      FT sd_p_l0 = w0_sign != ZERO ? validate((l0.a() * p.x() + l0.b() * p.y() + l0.c()) / aw0 ) : FT(0) ;
+      FT sd_p_l1 = w1_sign != ZERO ? validate((l1.a() * p.x() + l1.b() * p.y() + l1.c()) / aw1 ) : FT(0) ;
       
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l1=" << n2str(sd_p_l1) ) ;
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l0=" << n2str(sd_p_l0) ) ;
