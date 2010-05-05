@@ -212,6 +212,7 @@ Arithmetic_kernel/test/Arithmetic_kernel/Arithmetic_kernel.cpp -text
 Arithmetic_kernel/test/Arithmetic_kernel/CMakeLists.txt -text
 Arithmetic_kernel/test/Arithmetic_kernel/CORE_arithmetic_kernel.cpp -text
 Arithmetic_kernel/test/Arithmetic_kernel/GMP_arithmetic_kernel.cpp -text
+Arithmetic_kernel/test/Arithmetic_kernel/Get_arithmetic_kernel.cpp -text
 Arithmetic_kernel/test/Arithmetic_kernel/LEDA_arithmetic_kernel.cpp -text
 Arithmetic_kernel/test/Arithmetic_kernel/OLD/Gmpfr_interval.cpp -text
 Arithmetic_kernel/test/Arithmetic_kernel/include/CGAL/Test/_test_arithmetic_kernel.h -text

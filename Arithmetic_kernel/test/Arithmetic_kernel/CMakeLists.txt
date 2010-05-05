@@ -47,6 +47,10 @@ if ( CGAL_FOUND )
   endif( MPFI_FOUND )
 
   create_single_source_cgal_program( "Arithmetic_kernel.cpp" )
+  create_single_source_cgal_program( "LEDA_arithmetic_kernel.cpp" )
+  create_single_source_cgal_program( "CORE_arithmetic_kernel.cpp" )
+  create_single_source_cgal_program( "GMP_arithmetic_kernel.cpp" )
+  create_single_source_cgal_program( "Get_arithmetic_kernel.cpp" )
 
 else()
   
