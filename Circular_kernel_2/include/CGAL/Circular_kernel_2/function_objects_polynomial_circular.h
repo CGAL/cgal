@@ -1277,9 +1277,9 @@ namespace CircularFunctors {
 
     typedef typename CK::Linear_kernel LK;
     typedef typename LK::Compute_squared_radius_2 LK_Compute_squared_radius_2;
-    typedef typename LK::FT          FT;
-    typedef typename LK::Point_2     Point_2;
-    typedef typename LK::Circle_2    Circle_2;
+    typedef typename CK::FT          FT;
+    typedef typename CK::Point_2     Point_2;
+    typedef typename CK::Circle_2    Circle_2;
   public:
     typedef FT               result_type;
     
@@ -1297,7 +1297,7 @@ namespace CircularFunctors {
     
     result_type
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
-    { return LK_Compute_squared_radius_2(p, q, r); }
+    { return LK_Compute_squared_radius_2()(p, q, r); }
     
 #endif
 
