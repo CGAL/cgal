@@ -27,29 +27,24 @@
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/Spherical_kernel_3.h>
 
-/*
-TODO: CORRECT THE MAKE_ROOT_OF_2 of GMPq GMPz
+
+//TODO: CORRECT THE MAKE_ROOT_OF_2 of GMPq GMPz
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpq.h>
 #else
-*/
 #  include <CGAL/MP_Float.h>
 #  include <CGAL/Quotient.h>
-/*
 #endif
-*/
 
 CGAL_BEGIN_NAMESPACE
 
-/*
+
 #ifdef CGAL_USE_GMP
   typedef CGAL::Gmpq                                           NT1;
 #else
-*/
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
-/*
 #endif
-*/
+
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_spheres_2_3<NT1>          Algebraic_k1;
   typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>     Exact_spherical_kernel_3;
