@@ -1268,45 +1268,44 @@ namespace CircularFunctors {
 #endif
   {
     typedef typename CK::Circular_arc_2  Circular_arc_2;
-    typedef typename CK::Circle_2        Circle_2;
   public:
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
-		typedef typename CK::Linear_kernel::Compute_squared_radius_2::result_type result_type; 
+    typedef typename CK::Linear_kernel::Compute_squared_radius_2::result_type result_type; 
     using CK::Linear_kernel::Compute_squared_radius_2::operator();
 #else
 
     typedef typename CK::Linear_kernel LK;
     typedef typename LK::Compute_squared_radius_2 LK_Compute_squared_radius_2;
-	  typedef typename LK::FT          FT;
-	  typedef typename LK::Point_2     Point_2;
-	  typedef typename LK::Circle_2    Circle_2;
-	public:
-	  typedef FT               result_type;
-
-	  const result_type&
-	  operator()( const Circle_2& c) const
-	  { return LK_Compute_squared_radius_2()(c); }
-
-	  result_type
-	  operator()( const Point_2& p) const
-	  { return LK_Compute_squared_radius_2()(p); }
-
-	  result_type
-	  operator()( const Point_2& p, const Point_2& q) const
-	  { return LK_Compute_squared_radius_2()(p, q); }
-
-	  result_type
-	  operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
-	  { return LK_Compute_squared_radius_2(p, q, r); }
-
+    typedef typename LK::FT          FT;
+    typedef typename LK::Point_2     Point_2;
+    typedef typename LK::Circle_2    Circle_2;
+  public:
+    typedef FT               result_type;
+    
+    const result_type&
+    operator()( const Circle_2& c) const
+    { return LK_Compute_squared_radius_2()(c); }
+    
+    result_type
+    operator()( const Point_2& p) const
+    { return LK_Compute_squared_radius_2()(p); }
+    
+    result_type
+    operator()( const Point_2& p, const Point_2& q) const
+    { return LK_Compute_squared_radius_2()(p, q); }
+    
+    result_type
+    operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
+    { return LK_Compute_squared_radius_2(p, q, r); }
+    
 #endif
 
     const result_type&
     operator()(const Circular_arc_2& c) const
     { return c.rep().squared_radius(); }
 
-	};
+  };
 
 } // namespace CircularFunctors
 
