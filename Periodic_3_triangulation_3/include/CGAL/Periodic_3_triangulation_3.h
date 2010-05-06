@@ -211,12 +211,12 @@ public:
       const Geometric_traits & gt = Geometric_traits())
     : _gt(gt), _tds(), _domain(domain), too_long_edge_counter(0) {
     _gt.set_domain(_domain);
-    CGAL_triangulation_precondition(
-	_domain.xmax()-_domain.xmin() == _domain.ymax() - _domain.ymin());
-    CGAL_triangulation_precondition(
-	_domain.ymax()-_domain.ymin() == _domain.zmax() - _domain.zmin());
-    CGAL_triangulation_precondition(
-	_domain.zmax()-_domain.zmin() == _domain.xmax() - _domain.xmin());
+//     CGAL_triangulation_precondition(
+// 	_domain.xmax()-_domain.xmin() == _domain.ymax() - _domain.ymin());
+//     CGAL_triangulation_precondition(
+// 	_domain.ymax()-_domain.ymin() == _domain.zmax() - _domain.zmin());
+//     CGAL_triangulation_precondition(
+// 	_domain.zmax()-_domain.zmin() == _domain.xmax() - _domain.xmin());
     _cover = make_array(3,3,3);
     init_tds();
     edge_length_threshold = FT(0.166) * (_domain.xmax()-_domain.xmin())
