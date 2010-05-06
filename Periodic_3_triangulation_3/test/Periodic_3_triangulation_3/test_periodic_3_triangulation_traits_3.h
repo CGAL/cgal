@@ -53,7 +53,7 @@
 #include <CGAL/_test_periodic_3_static_filters.h>
 #include <CGAL/_test_cls_periodic_3_triangulation_traits_3.h>
 
-int test_periodic_3_triangulation_traits_3()
+void test_periodic_3_triangulation_traits_3()
 {
   std::cout<<"Statically filtered predicates:"<<std::endl;
   _test_periodic_3_static_filters();
