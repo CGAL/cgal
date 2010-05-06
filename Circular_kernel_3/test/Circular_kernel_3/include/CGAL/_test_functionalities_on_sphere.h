@@ -83,7 +83,7 @@ void test_normal_circle_monotonicity(const typename SK::Circle_3& circle,
   extrems[1]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[1])->first;
   //create non extremal points on circle
   vect_obj.clear();
-  SK().intersect_3_object()(circle,typename SK::Plane_3(0,0,1,-zcoord-0.1),std::back_inserter(vect_obj));
+  SK().intersect_3_object()(circle,typename SK::Plane_3(0,0,1,-zcoord-typename SK::FT(0.1)),std::back_inserter(vect_obj));
   assert(vect_obj.size()==2);
   typename SK::Circular_arc_point_3 other_pts[2];
   other_pts[0]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[0])->first;
@@ -240,6 +240,7 @@ typename SK::Vector_3 get_vector_in_plane(unsigned i){
 template <class SK>
 inline
 typename SK::Plane_3 get_meridians(unsigned i,const typename SK::Point_3& center){
+  typedef typename SK::FT FT;
   double Pi_16=CGAL_PI / 16.;
   switch (i){
     case 0:
@@ -251,7 +252,7 @@ typename SK::Plane_3 get_meridians(unsigned i,const typename SK::Point_3& center
     case 12:
       return typename SK::Plane_3(1,1,0,-center.x()-center.y()); //theta=3/4 Pi and 7/4 Pi
     default:
-      return typename SK::Plane_3(sin(i*Pi_16),-cos(i*Pi_16),0,-sin(i*Pi_16)*center.x()+cos(i*Pi_16)*center.y());
+      return typename SK::Plane_3(sin(i*Pi_16),-cos(i*Pi_16),0,-FT(sin(i*Pi_16))*center.x()+FT(cos(i*Pi_16))*center.y());
   }
 }
 
@@ -340,6 +341,7 @@ void test_extremal_points(const typename SK::Circle_3& circle,
 template <class SK>
 void
 test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_sphere_center){
+  typedef typename SK::FT FT;
   std::cout << "test functionalities on a sphere" << std::endl;
   //=============DATA=========================================================================
   typename SK::Sphere_3 ref_sphere(ref_sphere_center,1);
@@ -357,12 +359,12 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
   
   
   typename SK::Circle_3 great_threaded(ref_sphere,typename SK::Plane_3(0,0,1  ,-ref_sphere_center.z() ));
-  typename SK::Circle_3 threaded      (ref_sphere,typename SK::Plane_3(0,0,1  ,0.5-ref_sphere_center.z() ));
+  typename SK::Circle_3 threaded      (ref_sphere,typename SK::Plane_3(0,0,1  ,FT(0.5)-ref_sphere_center.z() ));
   typename SK::Circle_3 bipolar       (ref_sphere,typename SK::Plane_3(0,1,0  ,-ref_sphere_center.y()));
-  typename SK::Circle_3 normal1       (ref_sphere,typename SK::Plane_3(0,1,0  ,-0.5-ref_sphere_center.y()));
-  typename SK::Circle_3 normal2       (ref_sphere,typename SK::Plane_3(0,1,0.1,-0.5-ref_sphere_center.y()-0.1*ref_sphere_center.z()));
-  typename SK::Circle_3 north_polar   (ref_sphere,typename SK::Plane_3(0,1,1  ,-1-ref_sphere_center.y()-ref_sphere_center.z()));
-  typename SK::Circle_3 south_polar   (ref_sphere,typename SK::Plane_3(0,1,-1 ,-1-ref_sphere_center.y()+ref_sphere_center.z()));  
+  typename SK::Circle_3 normal1       (ref_sphere,typename SK::Plane_3(0,1,0  ,-FT(0.5)-ref_sphere_center.y()));
+  typename SK::Circle_3 normal2       (ref_sphere,typename SK::Plane_3(0,1,FT(0.1),-FT(0.5)-ref_sphere_center.y()-FT(0.1)*ref_sphere_center.z()));
+  typename SK::Circle_3 north_polar   (ref_sphere,typename SK::Plane_3(0,1,1  ,-FT(1)-ref_sphere_center.y()-ref_sphere_center.z()));
+  typename SK::Circle_3 south_polar   (ref_sphere,typename SK::Plane_3(0,1,-1 ,-FT(1)-ref_sphere_center.y()+ref_sphere_center.z()));  
 
 //=============TEST CLASSIFY================================================================
   assert(CGAL::classify(great_threaded,ref_sphere)==CGAL::THREADED);
@@ -390,7 +392,7 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     typename SK::Compare_theta_3 cmp_theta=SK().compare_theta_3_object(ref_sphere);
     typename SK::Compare_theta_z_3 cmp_theta_z=SK().compare_theta_z_3_object(ref_sphere);
 
-    typename SK::Circle_3 normal_cut_M0(ref_sphere,typename SK::Plane_3(1,0,0.1  ,-0.5-ref_sphere_center.x()-0.1*ref_sphere_center.z()));
+    typename SK::Circle_3 normal_cut_M0(ref_sphere,typename SK::Plane_3(1,0,FT(0.1)  ,-FT(0.5)-ref_sphere_center.x()-FT(0.1)*ref_sphere_center.z()));
     std::vector <typename SK::Circular_arc_point_3> y_xtrems;
     CGAL::y_extremal_points(normal_cut_M0.diametral_sphere(),std::back_inserter(y_xtrems));
     assert( cmp_theta(y_xtrems[0],y_xtrems[1])==CGAL::LARGER );
@@ -518,7 +520,7 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     //threaded  vs threaded
     assert ( cmp_z_at_theta(typename SK::Circular_arc_3(great_threaded),
                             typename SK::Circular_arc_3(threaded),
-                            typename SK::Vector_3(0.25,-4,0))==CGAL::LARGER
+                            typename SK::Vector_3(typename SK::FT(0.25),-4,0))==CGAL::LARGER
     );
     
     //threaded vs polar
@@ -530,11 +532,11 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     //normal vs normal
     assert ( cmp_z_at_theta(typename SK::Circular_arc_3(normal1,xtrms1[1],xtrms1[0]),
                             typename SK::Circular_arc_3(normal1,xtrms1[0],xtrms1[1]),
-                            typename SK::Vector_3(0.1,0.8,0))==CGAL::LARGER
+                            typename SK::Vector_3(FT(0.1),FT(0.8),0))==CGAL::LARGER
     );
     assert ( cmp_z_at_theta(typename SK::Circular_arc_3(normal2,xtrms2[0],xtrms2[1]),
                             typename SK::Circular_arc_3(normal1,xtrms1[0],xtrms1[1]),
-                            typename SK::Vector_3(0.1,0.8,0))==CGAL::LARGER
+                            typename SK::Vector_3(FT(0.1),FT(0.8),0))==CGAL::LARGER
     );    
   }
   std::cout << "Test Compare_z_at_theta_3  OK" << std::endl;
@@ -544,8 +546,8 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     typename SK::Compare_z_to_right_3 cmp_right= SK().compare_z_to_right_3_object(ref_sphere);
   //at intersection points global
     //normal vs normal
-    typename SK::Circle_3 normal3 (ref_sphere,typename SK::Plane_3(0.08,1.1,0.9  ,-1-0.08*ref_sphere_center.x() -1.1*ref_sphere_center.y()-0.9*ref_sphere_center.z()));
-    typename SK::Circle_3 normal4 (ref_sphere,typename SK::Plane_3(0.05,1.1,-0.9 ,-1-0.05*ref_sphere_center.x() -1.1*ref_sphere_center.y()+0.9*ref_sphere_center.z()));  
+    typename SK::Circle_3 normal3 (ref_sphere,typename SK::Plane_3(0.08,1.1,0.9  ,-1-FT(0.08)*ref_sphere_center.x() -FT(1.1)*ref_sphere_center.y()-FT(0.9)*ref_sphere_center.z()));
+    typename SK::Circle_3 normal4 (ref_sphere,typename SK::Plane_3(0.05,1.1,-0.9 ,-1-FT(0.05)*ref_sphere_center.x() -FT(1.1)*ref_sphere_center.y()+FT(0.9)*ref_sphere_center.z()));  
     std::vector<CGAL::Object> objs;
     SK().intersect_3_object()(normal3,normal4,std::back_inserter(objs));
     typename SK::Circular_arc_point_3 int1=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
@@ -573,8 +575,8 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     assert ( cmp_right(typename SK::Circular_arc_3(south_polar,south_pole),typename SK::Circular_arc_3(normal2,xtrms2[0],xtrms2[1]),int1)==CGAL::LARGER );
     assert ( cmp_right(typename SK::Circular_arc_3(south_polar,south_pole),typename SK::Circular_arc_3(normal2,xtrms2[0],xtrms2[1]),int2)==CGAL::SMALLER );
     //polar vs polar
-    typename SK::Circle_3 npolar(ref_sphere,typename SK::Plane_3(0,1,0.25,-0.25-1*ref_sphere_center.y()-0.25*ref_sphere_center.z()));
-    typename SK::Circle_3 spolar(ref_sphere,typename SK::Plane_3(0,1,-0.25,-0.25-1*ref_sphere_center.y()+0.25*ref_sphere_center.z()));
+    typename SK::Circle_3 npolar(ref_sphere,typename SK::Plane_3(0,1,0.25,-FT(0.25)-1*ref_sphere_center.y()-FT(0.25)*ref_sphere_center.z()));
+    typename SK::Circle_3 spolar(ref_sphere,typename SK::Plane_3(0,1,-0.25,-FT(0.25)-1*ref_sphere_center.y()+FT(0.25)*ref_sphere_center.z()));
     assert(CGAL::classify(npolar,ref_sphere)==CGAL::POLAR);
     assert(CGAL::classify(spolar,ref_sphere)==CGAL::POLAR);
     objs.clear();
@@ -591,8 +593,8 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     assert ( cmp_right(typename SK::Circular_arc_3(south_polar,south_pole),typename SK::Circular_arc_3(threaded),int1)==CGAL::LARGER );
     assert ( cmp_right(typename SK::Circular_arc_3(south_polar,south_pole),typename SK::Circular_arc_3(threaded),int2)==CGAL::SMALLER );    
     //threaded vs threaded
-    typename SK::Circle_3 threaded1 (ref_sphere,typename SK::Plane_3(0,1.1,0.9,-1.1*ref_sphere_center.y()-0.9*ref_sphere_center.z()));
-    typename SK::Circle_3 threaded2 (ref_sphere,typename SK::Plane_3(0,1.1,-0.9,-1.1*ref_sphere_center.y()+0.9*ref_sphere_center.z()));
+    typename SK::Circle_3 threaded1 (ref_sphere,typename SK::Plane_3(0,1.1,0.9,-FT(1.1)*ref_sphere_center.y()-FT(0.9)*ref_sphere_center.z()));
+    typename SK::Circle_3 threaded2 (ref_sphere,typename SK::Plane_3(0,1.1,-0.9,-FT(1.1)*ref_sphere_center.y()+FT(0.9)*ref_sphere_center.z()));
     objs.clear();
     SK().intersect_3_object()(threaded1,threaded2,std::back_inserter(objs));
     int1=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
@@ -608,15 +610,15 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
       assert ( cmp_right(typename SK::Circular_arc_3(great_threaded),typename SK::Circular_arc_3(south_polar,south_pole),tgt_pt1)==CGAL::LARGER    );
       assert ( cmp_right(typename SK::Circular_arc_3(north_polar,north_pole),typename SK::Circular_arc_3(great_threaded),tgt_pt1)==CGAL::LARGER    );
       //polar vs normal
-      typename SK::Circle_3 normal5(ref_sphere,typename SK::Plane_3(0,1,0.8,-1-1*ref_sphere_center.y()-0.8*ref_sphere_center.z()) );
+      typename SK::Circle_3 normal5(ref_sphere,typename SK::Plane_3(0,1,0.8,-1-1*ref_sphere_center.y()-FT(0.8)*ref_sphere_center.z()) );
       assert(CGAL::classify(normal5,ref_sphere)==CGAL::NORMAL);
       typename SK::Circular_arc_point_3 xtrms5[2];
       CGAL::theta_extremal_points(normal5,ref_sphere,xtrms5);
       assert ( cmp_right(typename SK::Circular_arc_3(normal5,xtrms5[0],xtrms5[1]),typename SK::Circular_arc_3(north_polar,north_pole),tgt_pt1)==CGAL::LARGER );
       assert ( cmp_right(typename SK::Circular_arc_3(normal5,xtrms5[0],xtrms5[1]),typename SK::Circular_arc_3(south_polar,south_pole),tgt_pt1)==CGAL::LARGER );
       //threaded vs threaded
-      typename SK::Circle_3 threaded3 (ref_sphere,typename SK::Plane_3(0,0.1,1,-0.1-0.1*ref_sphere_center.y()-1*ref_sphere_center.z()) );
-      typename SK::Circle_3 threaded4 (ref_sphere,typename SK::Plane_3(0,0.1,-1,-0.1-0.1*ref_sphere_center.y()+1*ref_sphere_center.z()));
+      typename SK::Circle_3 threaded3 (ref_sphere,typename SK::Plane_3(0,0.1,1,-FT(0.1)-FT(0.1)*ref_sphere_center.y()-1*ref_sphere_center.z()) );
+      typename SK::Circle_3 threaded4 (ref_sphere,typename SK::Plane_3(0,0.1,-1,-FT(0.1)-FT(0.1)*ref_sphere_center.y()+1*ref_sphere_center.z()));
       assert(CGAL::classify(threaded3,ref_sphere)==CGAL::THREADED);
       assert(CGAL::classify(threaded4,ref_sphere)==CGAL::THREADED);
       assert ( cmp_right(typename SK::Circular_arc_3(threaded3),typename SK::Circular_arc_3(threaded4),tgt_pt1)==CGAL::LARGER );
@@ -624,7 +626,7 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
       assert ( cmp_right(typename SK::Circular_arc_3(normal5,xtrms5[0],xtrms5[1]),typename SK::Circular_arc_3(threaded3),tgt_pt1)==CGAL::LARGER );
       assert ( cmp_right(typename SK::Circular_arc_3(normal5,xtrms5[0],xtrms5[1]),typename SK::Circular_arc_3(threaded4),tgt_pt1)==CGAL::LARGER );
       //normal vs normal
-      typename SK::Circle_3 normal6(ref_sphere,typename SK::Plane_3(0,1,-0.8,-1-1*ref_sphere_center.y()+0.8*ref_sphere_center.z()) );
+      typename SK::Circle_3 normal6(ref_sphere,typename SK::Plane_3(0,1,-0.8,-1-1*ref_sphere_center.y()+FT(0.8)*ref_sphere_center.z()) );
       assert(CGAL::classify(normal6,ref_sphere)==CGAL::NORMAL);
       typename SK::Circular_arc_point_3 xtrms6[2];
       CGAL::theta_extremal_points(normal6,ref_sphere,xtrms6);
@@ -641,15 +643,15 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
       assert ( cmp_right(typename SK::Circular_arc_3(great_threaded),typename SK::Circular_arc_3(south_polar0,south_pole),tgt_pt1)==CGAL::LARGER    );
       assert ( cmp_right(typename SK::Circular_arc_3(north_polar0,north_pole),typename SK::Circular_arc_3(great_threaded),tgt_pt1)==CGAL::LARGER    );
       //polar vs normal
-      typename SK::Circle_3 normal5(ref_sphere,typename SK::Plane_3(1,0,0.8,-1-1*ref_sphere_center.x()-0.8*ref_sphere_center.z()) );
+      typename SK::Circle_3 normal5(ref_sphere,typename SK::Plane_3(1,0,0.8,-1-1*ref_sphere_center.x()-FT(0.8)*ref_sphere_center.z()) );
       assert(CGAL::classify(normal5,ref_sphere)==CGAL::NORMAL);
       typename SK::Circular_arc_point_3 xtrms5[2];
       CGAL::theta_extremal_points(normal5,ref_sphere,xtrms5);
       assert ( cmp_right(typename SK::Circular_arc_3(normal5,xtrms5[1],xtrms5[0]),typename SK::Circular_arc_3(north_polar0,north_pole),tgt_pt1)==CGAL::LARGER );
       assert ( cmp_right(typename SK::Circular_arc_3(normal5,xtrms5[1],xtrms5[0]),typename SK::Circular_arc_3(south_polar0,south_pole),tgt_pt1)==CGAL::LARGER );
       //threaded vs threaded
-      typename SK::Circle_3 threaded3 (ref_sphere,typename SK::Plane_3(0.1,0,1,-0.1-0.1*ref_sphere_center.x()-1*ref_sphere_center.z()) );
-      typename SK::Circle_3 threaded4 (ref_sphere,typename SK::Plane_3(0.1,0,-1,-0.1-0.1*ref_sphere_center.x()+1*ref_sphere_center.z()));
+      typename SK::Circle_3 threaded3 (ref_sphere,typename SK::Plane_3(0.1,0,1,-FT(0.1)-FT(0.1)*ref_sphere_center.x()-1*ref_sphere_center.z()) );
+      typename SK::Circle_3 threaded4 (ref_sphere,typename SK::Plane_3(0.1,0,-1,-FT(0.1)-FT(0.1)*ref_sphere_center.x()+1*ref_sphere_center.z()));
       assert(CGAL::classify(threaded3,ref_sphere)==CGAL::THREADED);
       assert(CGAL::classify(threaded4,ref_sphere)==CGAL::THREADED);
       assert ( cmp_right(typename SK::Circular_arc_3(threaded3),typename SK::Circular_arc_3(threaded4),tgt_pt1)==CGAL::LARGER );
@@ -659,7 +661,7 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
       assert ( cmp_right(typename SK::Circular_arc_3(normal5,xtrms5[1],xtrms5[0]),typename SK::Circular_arc_3(threaded3),tgt_pt1)==CGAL::LARGER );
       assert ( cmp_right(typename SK::Circular_arc_3(normal5,xtrms5[1],xtrms5[0]),typename SK::Circular_arc_3(threaded4),tgt_pt1)==CGAL::LARGER );
       //normal vs normal
-      typename SK::Circle_3 normal6(ref_sphere,typename SK::Plane_3(1,0,-0.8,-1-1*ref_sphere_center.x()+0.8*ref_sphere_center.z()) );
+      typename SK::Circle_3 normal6(ref_sphere,typename SK::Plane_3(1,0,-0.8,-1-1*ref_sphere_center.x()+FT(0.8)*ref_sphere_center.z()) );
       assert(CGAL::classify(normal6,ref_sphere)==CGAL::NORMAL);
       typename SK::Circular_arc_point_3 xtrms6[2];
       CGAL::theta_extremal_points(normal6,ref_sphere,xtrms6);
@@ -678,7 +680,7 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
       assert ( cmp_right(typename SK::Circular_arc_3(great_threaded),typename SK::Circular_arc_3(south_polar_at_0,south_pole),int_pt1)==CGAL::SMALLER    );
       assert ( cmp_right(typename SK::Circular_arc_3(north_polar_at_0,north_pole),typename SK::Circular_arc_3(great_threaded),int_pt1)==CGAL::SMALLER    );
       //polar vs normal
-      typename SK::Circle_3 normal5(ref_sphere,typename SK::Plane_3(1,1,0.8,-1-ref_sphere_center.x()-ref_sphere_center.y()-0.8*ref_sphere_center.z()) );
+      typename SK::Circle_3 normal5(ref_sphere,typename SK::Plane_3(1,1,0.8,-1-ref_sphere_center.x()-ref_sphere_center.y()-FT(0.8)*ref_sphere_center.z()) );
       assert(CGAL::classify(normal5,ref_sphere)==CGAL::NORMAL);
       typename SK::Circular_arc_point_3 xtrms5[2];
       CGAL::theta_extremal_points(normal5,ref_sphere,xtrms5);      
@@ -693,7 +695,7 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
       assert ( cmp_right(typename SK::Circular_arc_3(threaded3),typename SK::Circular_arc_3(normal5,xtrms5[1],xtrms5[0]),int_pt1)==CGAL::LARGER );
       assert ( cmp_right(typename SK::Circular_arc_3(normal5,xtrms5[1],xtrms5[0]),typename SK::Circular_arc_3(threaded3),int_pt1)==CGAL::SMALLER );
       //~ //normal vs normal
-      typename SK::Circle_3 normal6(ref_sphere,typename SK::Plane_3(1,-1,0.8,-1-ref_sphere_center.x()+ref_sphere_center.y()-0.8*ref_sphere_center.z()) );
+      typename SK::Circle_3 normal6(ref_sphere,typename SK::Plane_3(1,-1,0.8,-1-ref_sphere_center.x()+ref_sphere_center.y()-FT(0.8)*ref_sphere_center.z()) );
       assert(CGAL::classify(normal6,ref_sphere)==CGAL::NORMAL);
       typename SK::Circular_arc_point_3 xtrms6[2];
       CGAL::theta_extremal_points(normal6,ref_sphere,xtrms6);
@@ -706,10 +708,10 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
   {
     test_extremal_points<SK>(normal1,ref_sphere,false);
     test_extremal_points<SK>(normal2,ref_sphere,false);
-    test_extremal_points<SK>(typename SK::Circle_3(ref_sphere,typename SK::Plane_3(1,0.1,0.1,-0.5-ref_sphere_center.x()-0.1*ref_sphere_center.y()-0.1*ref_sphere_center.z())),ref_sphere,true);
-    test_extremal_points<SK>(typename SK::Circle_3(ref_sphere,typename SK::Plane_3(-1,0.1,0.1,-0.5+ref_sphere_center.x()-0.1*ref_sphere_center.y()-0.1*ref_sphere_center.z())),ref_sphere,false);
+    test_extremal_points<SK>(typename SK::Circle_3(ref_sphere,typename SK::Plane_3(1,0.1,0.1,-FT(0.5)-ref_sphere_center.x()-FT(0.1)*ref_sphere_center.y()-FT(0.1)*ref_sphere_center.z())),ref_sphere,true);
+    test_extremal_points<SK>(typename SK::Circle_3(ref_sphere,typename SK::Plane_3(-1,0.1,0.1,-FT(0.5)+ref_sphere_center.x()-FT(0.1)*ref_sphere_center.y()-FT(0.1)*ref_sphere_center.z())),ref_sphere,false);
     
-    typename SK::Circle_3 circle_shq(ref_sphere,typename SK::Plane_3(-1,-0.25,0.1,-1.03+ref_sphere_center.x()+0.25*ref_sphere_center.y()-0.1*ref_sphere_center.z()));
+    typename SK::Circle_3 circle_shq(ref_sphere,typename SK::Plane_3(-1,-0.25,0.1,-FT(1.03)+ref_sphere_center.x()+FT(0.25)*ref_sphere_center.y()-FT(0.1)*ref_sphere_center.z()));
     assert ( CGAL::SphericalFunctors::half_quadrant<SK>(CGAL::theta_extremal_point(circle_shq,ref_sphere,false),ref_sphere) ==
              CGAL::SphericalFunctors::half_quadrant<SK>(CGAL::theta_extremal_point(circle_shq,ref_sphere,true),ref_sphere)
     );
