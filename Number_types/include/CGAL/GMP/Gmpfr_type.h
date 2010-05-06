@@ -25,7 +25,6 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/GMP/Gmpz_type.h>
 #include <CGAL/GMP/Gmpzf_type.h>
-#include <string>
 #include <limits>
 #include <CGAL/Uncertain.h>
 #include <CGAL/ipower.h>
@@ -98,7 +97,7 @@ class Gmpfr:
 
         typedef Handle_for<Gmpfr_rep>   Base;
 
-        static inline Uncertain<mp_rnd_t> _gmp_rnd(std::float_round_style r){
+        static Uncertain<mp_rnd_t> _gmp_rnd(std::float_round_style r){
                 switch(r){
                         case std::round_toward_infinity: return GMP_RNDU;
                         case std::round_toward_neg_infinity: return GMP_RNDD;
@@ -108,7 +107,7 @@ class Gmpfr:
                 }
         };
 
-        static inline std::float_round_style _cgal_rnd(mp_rnd_t r){
+        static std::float_round_style _cgal_rnd(mp_rnd_t r){
                 switch(r){
                         case GMP_RNDU: return std::round_toward_infinity;
                         case GMP_RNDD: return std::round_toward_neg_infinity;
@@ -124,7 +123,6 @@ class Gmpfr:
 
         // access
 
-        inline
         mpfr_srcptr fr()const{
 #ifdef CGAL_GMPFR_NO_REFCOUNT
                 return floating_point_number;
@@ -133,7 +131,6 @@ class Gmpfr:
 #endif
         }
 
-        inline
         mpfr_ptr fr(){
 #ifdef CGAL_GMPFR_NO_REFCOUNT
                 return floating_point_number;
@@ -142,12 +139,19 @@ class Gmpfr:
 #endif
         }
 
-        inline
         void dont_clear_on_destruction(){
 #ifdef CGAL_GMPFR_NO_REFCOUNT
                 clear_on_destruction=false;
 #else
                 ptr()->clear_on_destruction=false;
+#endif
+        }
+
+        bool is_unique(){
+#ifdef CGAL_GMPFR_NO_REFCOUNT
+                return true;
+#else
+                return unique();
 #endif
         }
 
@@ -158,15 +162,13 @@ class Gmpfr:
         }
 
         Gmpfr(mpfr_srcptr f){
-                //mpfr_custom_init_set(
-                //        fr(),
-                //        mpfr_custom_get_kind(f),
-                //        mpfr_custom_get_exp(f),
-                //        mpfr_get_prec(f),
-                //        mpfr_custom_get_mantissa(f));
-                //dont_clear_on_destruction();
-                mpfr_init2(fr(),mpfr_get_prec(f));
-                mpfr_set(fr(),f,GMP_RNDN);
+                mpfr_custom_init_set(
+                        fr(),
+                        mpfr_custom_get_kind(f),
+                        mpfr_custom_get_exp(f),
+                        mpfr_get_prec(f),
+                        mpfr_custom_get_mantissa(f));
+                dont_clear_on_destruction();
                 CGAL_assertion((mpfr_nan_p(f)!=0 && mpfr_nan_p(fr())!=0) ||
                                (mpfr_unordered_p(f,fr())==0 &&
                                 mpfr_equal_p(f,fr())!=0));
@@ -175,16 +177,45 @@ class Gmpfr:
         Gmpfr(mpfr_srcptr f,
               std::float_round_style r,
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
-                mpfr_init2(fr(),p);
-                mpfr_set(fr(),f,_gmp_rnd(r));
-                CGAL_assertion(mpfr_get_prec(fr())<mpfr_get_prec(f) ||
-                               mpfr_equal_p(fr(),f)!=0);
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
+                if(p==mpfr_get_prec(f)){
+                        mpfr_custom_init_set(
+                                fr(),
+                                mpfr_custom_get_kind(f),
+                                mpfr_custom_get_exp(f),
+                                mpfr_get_prec(f),
+                                mpfr_custom_get_mantissa(f));
+                        dont_clear_on_destruction();
+                        CGAL_assertion((mpfr_nan_p(f)!=0&&mpfr_nan_p(fr())!=0)||
+                                       (mpfr_unordered_p(f,fr())==0&&
+                                        mpfr_equal_p(f,fr())!=0));
+                }else{
+                        mpfr_init2(fr(),p);
+                        mpfr_set(fr(),f,_gmp_rnd(r));
+                        CGAL_assertion(mpfr_get_prec(fr())<mpfr_get_prec(f)||
+                                       mpfr_equal_p(fr(),f)!=0);
+                }
         }
 
         Gmpfr(mpfr_srcptr f,Gmpfr::Precision_type p){
-                mpfr_init2(fr(),p);
-                mpfr_set(fr(),f,mpfr_get_default_rounding_mode());
-                CGAL_assertion(p<mpfr_get_prec(f) || mpfr_equal_p(fr(),f)!=0);
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
+                if(p==mpfr_get_prec(f)){
+                        mpfr_custom_init_set(
+                                fr(),
+                                mpfr_custom_get_kind(f),
+                                mpfr_custom_get_exp(f),
+                                mpfr_get_prec(f),
+                                mpfr_custom_get_mantissa(f));
+                        dont_clear_on_destruction();
+                        CGAL_assertion((mpfr_nan_p(f)!=0&&mpfr_nan_p(fr())!=0)||
+                                       (mpfr_unordered_p(f,fr())==0&&
+                                        mpfr_equal_p(f,fr())!=0));
+                }else{
+                        mpfr_init2(fr(),p);
+                        mpfr_set(fr(),f,mpfr_get_default_rounding_mode());
+                        CGAL_assertion(p<mpfr_get_prec(f)||
+                                       mpfr_equal_p(fr(),f)!=0);
+                }
         }
 
         Gmpfr(Gmpzf f,
@@ -222,13 +253,14 @@ class Gmpfr:
         Gmpfr(std::pair<Gmpz,long> intexp,
               std::float_round_style r=Gmpfr::get_default_rndmode(),
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 mpfr_init2(fr(),p);
                 mpfr_set_z(fr(),intexp.first.mpz(),_gmp_rnd(r));
                 mpfr_mul_2si(fr(),fr(),intexp.second,_gmp_rnd(r));
         }
 
-        Gmpfr(std::pair<Gmpz,long> intexp,
-              Gmpfr::Precision_type p){
+        Gmpfr(std::pair<Gmpz,long> intexp,Gmpfr::Precision_type p){
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
                 mpfr_init2(fr(),p);
                 mpfr_set_z(fr(),
                            intexp.first.mpz(),
@@ -243,10 +275,12 @@ class Gmpfr:
         Gmpfr(_type x, \
               std::float_round_style r, \
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){ \
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 mpfr_init2(fr(),p); \
                 _fun(fr(),x,_gmp_rnd(r)); \
         } \
         Gmpfr(_type x,Gmpfr::Precision_type p){ \
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 mpfr_init2(fr(),p); \
                 _fun(fr(),x,mpfr_get_default_rounding_mode()); \
         } \
@@ -268,10 +302,12 @@ class Gmpfr:
         Gmpfr(const _class &x, \
               std::float_round_style r, \
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){ \
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 mpfr_init2(fr(),p); \
                 _fun(fr(),x._member,_gmp_rnd(r)); \
         } \
         Gmpfr(const _class &x,Gmpfr::Precision_type p){ \
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 mpfr_init2(fr(),p); \
                 _fun(fr(),x._member,mpfr_get_default_rounding_mode()); \
         } \
@@ -300,13 +336,15 @@ class Gmpfr:
         }
 #endif
 
-        Gmpfr(
-              const Gmpfr &a,
+        Gmpfr(const Gmpfr &a,
               std::float_round_style r,
               Gmpfr::Precision_type p=Gmpfr::get_default_precision()){
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
 #ifndef CGAL_GMPFR_NO_REFCOUNT
                 if(p==a.get_precision()){
                         Gmpfr temp(a);
+                        // we use dont_clear_on_destruction because the
+                        // mpfr_t pointed to by fr() was never initialized
                         dont_clear_on_destruction();
                         swap(temp);
                 }else
@@ -318,9 +356,12 @@ class Gmpfr:
         }
 
         Gmpfr(const Gmpfr &a,Gmpfr::Precision_type p){
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
 #ifndef CGAL_GMPFR_NO_REFCOUNT
                 if(p==a.get_precision()){
                         Gmpfr temp(a);
+                        // we use dont_clear_on_destruction because the
+                        // mpfr_t pointed to by fr() was never initialized
                         dont_clear_on_destruction();
                         swap(temp);
                 }else
@@ -334,7 +375,8 @@ class Gmpfr:
         // default rounding mode
 
         static std::float_round_style get_default_rndmode();
-        static std::float_round_style set_default_rndmode(std::float_round_style);
+        static std::float_round_style
+                set_default_rndmode(std::float_round_style);
 
         // default precision
 
@@ -377,7 +419,9 @@ class Gmpfr:
 #undef CGAL_GMPFR_DECLARE_OPERATORS
 
 #define CGAL_GMPFR_DECLARE_STATIC_FUNCTION(_f,_t1,_t2) \
-        static Gmpfr _f (_t1,_t2,std::float_round_style=Gmpfr::get_default_rndmode()); \
+        static Gmpfr _f (_t1, \
+                         _t2, \
+                         std::float_round_style=Gmpfr::get_default_rndmode()); \
         static Gmpfr _f (_t1, \
                          _t2, \
                          Gmpfr::Precision_type, \
@@ -483,6 +527,7 @@ Gmpfr::Precision_type Gmpfr::get_precision()const{
 
 inline
 Gmpfr Gmpfr::round(Gmpfr::Precision_type p,std::float_round_style r)const{
+        CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
         return Gmpfr(*this,r,p);
 }
 
@@ -758,12 +803,14 @@ CGAL_GMPFR_OBJECT_BINARY_OPERATOR(operator/=,Gmpz,mpz(),mpfr_div_z)
 #include <CGAL/GMP/Gmpfr_type_static.h>
 
 #define CGAL_GMPFR_ARITHMETIC_FUNCTION(_name,_fun) \
-        inline Gmpfr Gmpfr::_name (std::float_round_style r)const{ \
+        inline \
+        Gmpfr Gmpfr::_name (std::float_round_style r)const{ \
                 Gmpfr result(0,CGAL_GMPFR_MEMBER_PREC()); \
                 _fun(result.fr(),fr(),_gmp_rnd(r)); \
                 return result; \
         } \
-        inline Gmpfr Gmpfr::_name (Gmpfr::Precision_type p, \
+        inline \
+        Gmpfr Gmpfr::_name (Gmpfr::Precision_type p, \
                             std::float_round_style r)const{ \
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 Gmpfr result(0,p); \
@@ -775,13 +822,15 @@ CGAL_GMPFR_ARITHMETIC_FUNCTION(abs,mpfr_abs)
 CGAL_GMPFR_ARITHMETIC_FUNCTION(sqrt,mpfr_sqrt)
 CGAL_GMPFR_ARITHMETIC_FUNCTION(cbrt,mpfr_cbrt)
 
-inline Gmpfr Gmpfr::kthroot(int k,std::float_round_style r)const{
+inline
+Gmpfr Gmpfr::kthroot(int k,std::float_round_style r)const{
         Gmpfr result(0,CGAL_GMPFR_MEMBER_PREC());
         mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
         return result;
 }
 
-inline Gmpfr Gmpfr::kthroot(int k,
+inline
+Gmpfr Gmpfr::kthroot(int k,
                      Gmpfr::Precision_type p,
                      std::float_round_style r)const{
         CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);

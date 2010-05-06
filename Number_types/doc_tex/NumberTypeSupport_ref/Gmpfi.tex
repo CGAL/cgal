@@ -3,12 +3,12 @@
 
 \ccDefinition
 
-An object of the class \ccc{Gmpfi} is a closed interval, whith
-endpoints represented as \mpfr\ floating-point numbers.  An interval can
-have finite or infinite endpoints and its meaning is straightforward.
-It can also have one (or both) NaN endpoint(s): this indicates that an
-invalid operation has been performed and that the resulting interval
-has no mathematical meaning.
+An object of the class \ccc{Gmpfi} is a closed interval, whith endpoints
+represented as \ccc{Gmpfr} floating-point numbers. An interval can have
+finite or infinite endpoints and its meaning is straightforward. It can
+also have one (or both) \ccc{NaN} endpoint(s): this indicates that an
+invalid operation has been performed and that the resulting interval has no
+mathematical meaning.
 
 All the operations of \ccc{Gmpfi} were designed in such a way that the
 mathematical correct result is always contained in the resulting interval.
@@ -31,13 +31,12 @@ and \verb-long double-.
 
 \ccCreation
 
-All the constructors accept an optional last argument: a precision
-(a \ccc{Precision_type}, which can be used to specify the precision of
-the \ccc{Gmpfr} endpoints. If none is specified, the default precision
-will be used. As the endpoints are represented with a fixed number of
-bits, they may need to be rounded. In this case, the number from which
-the \ccc{Gmpfi} was constructed is guaranteed to be included in the
-constructed interval.
+All the constructors accept an optional last argument: a precision (a
+\ccc{Precision_type}, which can be used to specify the precision of the
+\ccc{Gmpfr} endpoints. If none is specified, the default precision will be
+used. As the endpoints are represented with a fixed number of bits, they
+may need to be rounded. In this case, the number from which the \ccc{Gmpfi}
+was constructed is guaranteed to be included in the constructed interval.
 
 \ccCreationVariable{i}
 
@@ -73,7 +72,7 @@ constructed interval.
                 Gmpfi(std::pair<const L&,const R&> endpoints,
                       Precision_type p=get_default_precision());}
         {creates a \ccc{Gmpfi} initialized with endpoints
-        \ccc{endpoints.first} and \ccc{endpoints.second}.  \ccc{L} and
+        \ccc{endpoints.first} and \ccc{endpoints.second}. \ccc{L} and
         \ccc{R} are types from which \ccc{Gmpfr} can be constructed
         from. The rounding of the endpoints will guarantee that
         \([\ccc{endpoints.first},\ccc{endpoints.second}]\) is included in
@@ -113,8 +112,8 @@ constructed interval.
 
 Arithmetic operators \verb=+=, \verb=-=, \verb=*=\ and \verb=/=\ are
 overloaded, but special care must be taken when applying them. The
-precision of an operation between two \ccc{Gmpfi}s is defined as
-the maximum of the operands precision and the default precision.
+precision of an operation between two \ccc{Gmpfi}s is defined as the
+maximum of the operands precision and the default precision.
 
 The second operand of the former operations can be a \verb=Gmpfi=,
 \verb=Gmpfr=, \verb=int=, \verb=long=, \verb=unsigned=,
@@ -191,21 +190,21 @@ Other arithmetic functions provided by the class are:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ccHeading{Comparisons}
 
-The semantics of the comparison operators is the same than
-on \ccc{Interval_nt<Protected>}.  The result of the comparison
-is always an \ccc{Uncertain<bool>} (this type is convertible to
-\ccc{bool}, but may throw an exception).  If compared intervals have
-no common points, the result is \ccc{true} or \ccc{false}; otherwise,
+The semantics of the comparison operators is the same than on
+\ccc{Interval_nt<Protected>}. The result of the comparison is always an
+\ccc{Uncertain<bool>} (this type is convertible to \ccc{bool}, but may
+throw an exception). If compared intervals have no common points, the
+result is \ccc{true} or \ccc{false}; otherwise,
 \ccc{Uncertain<bool>::indeterminate()} will be returned.
 
 In the same way, we can explain the semantics of
 \ccc{Uncertain<Comparison\_result>} and \ccc{Uncertain<Sign>}.
 
 With the semantics described above, this class provides comparisons between
-\ccc{Gmpfi} and \ccc{Gmpfi}, \ccc{Gmpfr}, \ccc{long},
-\ccc{unsigned long}, \ccc{int}, \ccc{double}, \ccc{Gmpz}
-and \ccc{Gmpq}. Comparison operators \verb-==-, \verb-!=-, \verb->-,
-\verb-<-, \verb->=- \ and \verb-<=- \ are overloaded.
+\ccc{Gmpfi} and \ccc{Gmpfi}, \ccc{Gmpfr}, \ccc{long}, \ccc{unsigned long},
+\ccc{int}, \ccc{double}, \ccc{Gmpz} and \ccc{Gmpq}. Comparison operators
+\verb-==-, \verb-!=-, \verb->-, \verb-<-, \verb->=- \ and \verb-<=- \ are
+overloaded.
 
 The class provides also functions to test efficiently some special kinds
 of comparisons:
@@ -233,7 +232,8 @@ of comparisons:
         {Returns \ccc{true} iff both endpoints are equal.}
 
 \ccMethod{bool is_nan()const;}
-        {Returns \ccc{true} iff at least one of the endpoints is NaN.}
+        {Returns \ccc{true} iff at least one of the endpoints is
+        \ccc{NaN}.}
 
 \ccMethod{bool is_inf()const;}
         {Returns \ccc{true} iff at least one of the endpoints is plus or
@@ -300,7 +300,8 @@ of comparisons:
 
 
 \ccImplementation
-\ccc{Gmpfi}s are reference counted.
+All interval operations are performed by the \mpfi~library. The class
+\ccc{Gmpfi} is not reference counted, but its members are.
 
 \ccSeeAlso
 \ccRefIdfierPage{Gmpfr}\\

@@ -25,12 +25,12 @@
 #include <CGAL/GMP/Gmpfr_type.h>
 #include <mpfi.h>
 #include <boost/operators.hpp>
-#include <CGAL/Handle_for.h>
 #include <CGAL/Uncertain.h>
 #ifdef CGAL_HAS_THREADS
 #  include <boost/thread/tss.hpp>
 #endif
 #include <limits>
+#include <algorithm>
 
 namespace CGAL{
 
@@ -71,16 +71,6 @@ Uncertain<bool> operator<(const Gmpfi&,const Gmpq&);
 Uncertain<bool> operator>(const Gmpfi&,const Gmpq&);
 Uncertain<bool> operator==(const Gmpfi&,const Gmpq&);
 
-struct Gmpfi_rep{
-        mpfi_t floating_point_interval;
-        bool clear_on_destruction;
-        Gmpfi_rep():clear_on_destruction(true){}
-        ~Gmpfi_rep(){
-                if(clear_on_destruction)
-                        mpfi_clear(floating_point_interval);
-        }
-};
-
 // the default precision of Gmpfi is the size of a double's mantissa
 #ifdef IEEE_DBL_MANT_DIG
 #  define CGAL_GMPFI_DEFAULT_PRECISION IEEE_DBL_MANT_DIG
@@ -97,7 +87,6 @@ struct Gmpfi_rep{
 #endif
 
 class Gmpfi:
-        Handle_for<Gmpfi_rep>,
         boost::ordered_euclidian_ring_operators1<Gmpfi,
         boost::ordered_euclidian_ring_operators2<Gmpfi,Gmpfr,
         boost::ordered_euclidian_ring_operators2<Gmpfi,long,
@@ -109,7 +98,47 @@ class Gmpfi:
         boost::ordered_euclidian_ring_operators2<Gmpfi,Gmpq
         > > > > > > > > >
 {
-        typedef Handle_for<Gmpfi_rep>   Base;
+        private:
+
+        // The endpoints of the interval are represented by two objects of
+        // type Gmpfr. To apply MPFI functions to this interval, the
+        // pointers to the data in _left and _right are copied to the
+        // _interval structure using the function mpfi(). After the
+        // operation, the function gather_bounds should be called to put
+        // back the result of the operation in _left and _right.
+        Gmpfr _left,_right;
+        mutable __mpfi_struct _interval;
+
+        bool is_unique(){
+#ifdef CGAL_GMPFR_NO_REFCOUNT
+                return true;
+#else
+                return(_left.is_unique()&&_right.is_unique());
+#endif
+        }
+
+        // swaps the contents of this object and another one
+        void swap(Gmpfi &fi){
+                std::swap(*this,fi);
+        }
+
+        // after calling a library function that modifies the data in the
+        // structure _interval, this function has to be called in order to
+        // copy the data in _interval to _left and _right
+        void gather_bounds(){
+                mpfr_custom_init_set(
+                        _left.fr(),
+                        mpfr_custom_get_kind(&_interval.left),
+                        mpfr_custom_get_exp(&_interval.left),
+                        mpfr_get_prec(&_interval.left),
+                        mpfr_custom_get_mantissa(&_interval.left));
+                mpfr_custom_init_set(
+                        _right.fr(),
+                        mpfr_custom_get_kind(&_interval.right),
+                        mpfr_custom_get_exp(&_interval.right),
+                        mpfr_get_prec(&_interval.right),
+                        mpfr_custom_get_mantissa(&_interval.right));
+        }
 
         public:
 
@@ -117,51 +146,50 @@ class Gmpfi:
 
         // access
 
-        inline mpfi_srcptr mpfi()const{
-                return Ptr()->floating_point_interval;
+        mpfi_srcptr mpfi()const{
+                _interval.left=*_left.fr();
+                _interval.right=*_right.fr();
+                CGAL_assertion(mpfr_equal_p(_left.fr(),&_interval.left)!=0 &&
+                               mpfr_equal_p(_right.fr(),&_interval.right)!=0);
+                return &_interval;
         }
 
-        inline mpfr_srcptr left_mpfr()const{
-                return &(mpfi()->left);
+        mpfi_ptr mpfi(){
+                _interval.left=*_left.fr();
+                _interval.right=*_right.fr();
+                CGAL_assertion(mpfr_equal_p(_left.fr(),&_interval.left)!=0 &&
+                               mpfr_equal_p(_right.fr(),&_interval.right)!=0);
+                return &_interval;
         }
 
-        inline mpfr_srcptr right_mpfr()const{
-                return &(mpfi()->right);
+        mpfr_srcptr left_mpfr()const{
+                return _left.fr();
         }
 
-        inline mpfi_ptr mpfi(){
-                return ptr()->floating_point_interval;
+        mpfr_srcptr right_mpfr()const{
+                return _right.fr();
         }
 
-        inline Gmpfr inf()const{
-                return Gmpfr(left_mpfr());
+        Gmpfr inf()const{
+                return _left;
         }
 
-        inline Gmpfr sup()const{
-                return Gmpfr(right_mpfr());
-        }
-
-        inline
-        void dont_clear_on_destruction(){
-                ptr()->clear_on_destruction=false;
+        Gmpfr sup()const{
+                return _right;
         }
 
         // construction
 
-        Gmpfi(){
-                mpfi_init(mpfi());
-        }
+        Gmpfi(){}
+        ~Gmpfi(){}
 
 #define CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(_type) \
         Gmpfi(const _type &t, \
               Gmpfi::Precision_type p=Gmpfi::get_default_precision()){ \
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
-                Gmpfr l(t,std::round_toward_neg_infinity,p), \
-                      r(t,std::round_toward_infinity,p); \
-                l.dont_clear_on_destruction(); \
-                r.dont_clear_on_destruction(); \
-                mpfi()->left=*(l.fr()); \
-                mpfi()->right=*(r.fr()); \
+                _left=Gmpfr(t,std::round_toward_neg_infinity,p); \
+                _right=Gmpfr(t,std::round_toward_infinity,p); \
+                CGAL_assertion(_left<=t&&_right>=t); \
         }
 
 CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(long);
@@ -176,71 +204,94 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
         Gmpfi(const Gmpq &q,
               Gmpfi::Precision_type p=Gmpfi::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
-                Gmpfr l(0,p),r(0,p);
-                mpfr_set_q(l.fr(),q.mpq(),GMP_RNDD);
-                mpfr_set_q(r.fr(),q.mpq(),GMP_RNDU);
-                l.dont_clear_on_destruction();
-                r.dont_clear_on_destruction();
-                mpfi()->left=*(l.fr());
-                mpfi()->right=*(r.fr());
+                _left=Gmpfr(0,p);
+                _right=Gmpfr(0,p);
+                mpfr_set_q(_left.fr(),q.mpq(),GMP_RNDD);
+                mpfr_set_q(_right.fr(),q.mpq(),GMP_RNDU);
+                CGAL_assertion(_left<=q&&_right>=q);
         }
 
-        Gmpfi(mpfi_srcptr i,Gmpfi::Precision_type p=0){
-                if((p==0)||
-                   (p==mpfr_get_prec(&(i->left))
-                    &&p==mpfr_get_prec(&(i->right)))){
-                        mpfi()->left=i->left;
-                        mpfi()->right=i->right;
-                        dont_clear_on_destruction();
-                }else{
-                        CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
-                        mpfi_init2(mpfi(),p);
-                        mpfi_set(mpfi(),i);
-                }
+        Gmpfi(mpfi_srcptr i){
+                _left=Gmpfr(&(i->left));
+                _right=Gmpfr(&(i->right));
+        }
+
+        Gmpfi(mpfi_srcptr i,Gmpfi::Precision_type p){
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
+                _left=Gmpfr(&(i->left),std::round_toward_neg_infinity,p);
+                _right=Gmpfr(&(i->right),std::round_toward_infinity,p);
+                CGAL_assertion(mpfr_cmp(_left.fr(),&(i->left))<=0 &&
+                               mpfr_cmp(_right.fr(),&(i->right))>=0);
         }
 
         Gmpfi(const Gmpfr &f,
               Gmpfi::Precision_type p=Gmpfi::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
-                mpfi_init2(mpfi(),p);
-                mpfi_set_fr(mpfi(),f.fr());
+                _left=Gmpfr(f,std::round_toward_neg_infinity,p);
+                _right=Gmpfr(f,std::round_toward_infinity,p);
+                CGAL_assertion(_left<=f&&_right>=f);
         }
 
-        Gmpfi(const Gmpfr &left,
-              const Gmpfr &right,
+        Gmpfi(const Gmpfr &l,
+              const Gmpfr &r,
               Gmpfi::Precision_type p=Gmpfi::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
-                mpfi_init2(mpfi(),p);
-                mpfi_interv_fr(mpfi(),left.fr(),right.fr());
+                _left=Gmpfr(l,std::round_toward_neg_infinity,p);
+                _right=Gmpfr(r,std::round_toward_infinity,p);
+                CGAL_assertion(_left<=l||(_left.is_nan()&&l.is_nan()));
+                CGAL_assertion(_right>=l||(_right.is_nan()&&r.is_nan()));
         }
 
-        Gmpfi(std::pair<const Gmpfr,const Gmpfr> endpoints,
+        Gmpfi(std::pair<const Gmpfr,const Gmpfr> bounds,
               Gmpfi::Precision_type p=Gmpfi::get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
-                mpfi_init2(mpfi(),p);
-                mpfi_interv_fr(
-                                mpfi(),
-                                endpoints.first.fr(),
-                                endpoints.second.fr());
+                _left=Gmpfr(bounds.first,std::round_toward_neg_infinity,p);
+                _right=Gmpfr(bounds.second,std::round_toward_infinity,p);
+                CGAL_assertion(_left<=bounds.first||
+                               (_left.is_nan()&&bounds.first.is_nan()));
+                CGAL_assertion(_right>=bounds.second||
+                               (_right.is_nan()&&bounds.second.is_nan()));
         }
 
         template<class L,class R>
-        Gmpfi(std::pair<const L&,const R&> endpoints,
+        Gmpfi(std::pair<const L&,const R&> bounds,
               Gmpfi::Precision_type p=get_default_precision()){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
-                Gmpfr l(endpoints.first,std::round_toward_neg_infinity,p),
-                      r(endpoints.second,std::round_toward_infinity,p);
-                l.dont_clear_on_destruction();
-                r.dont_clear_on_destruction();
-                mpfi()->left=*(l.fr());
-                mpfi()->right=*(r.fr());
+                _left=Gmpfr(bounds.first,std::round_toward_neg_infinity,p);
+                _right=Gmpfr(bounds.second,std::round_toward_infinity,p);
+                CGAL_assertion(_left<=bounds.first&&_right>=bounds.second);
+        }
+
+        // copy assignment operator
+        Gmpfi& operator=(const Gmpfi &a){
+                _left=a.inf();
+                _right=a.sup();
+                CGAL_assertion(_left==a.inf()||
+                               (_left.is_nan()&&a.inf().is_nan()));
+                CGAL_assertion(_right==a.sup()||
+                               (_right.is_nan()&&a.sup().is_nan()));
+                return *this;
+        }
+
+        // copy constructor without precision
+        Gmpfi(const Gmpfi &a){
+                _left=a.inf();
+                _right=a.sup();
+                CGAL_assertion(_left==a.inf()||
+                               (_left.is_nan()&&a.inf().is_nan()));
+                CGAL_assertion(_right==a.sup()||
+                               (_right.is_nan()&&a.sup().is_nan()));
         }
 
         // copy constructor with precision
         Gmpfi(const Gmpfi &a,Gmpfi::Precision_type p){
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
-                mpfi_init2(mpfi(),p);
-                mpfi_set(mpfi(),a.mpfi());
+                _left=Gmpfr(a.inf(),std::round_toward_neg_infinity,p);
+                _right=Gmpfr(a.sup(),std::round_toward_infinity,p);
+                CGAL_assertion(_left<=a.inf()||
+                               (_left.is_nan()&&a.inf().is_nan()));
+                CGAL_assertion(_right>=a.sup()||
+                               (_right.is_nan()&&a.sup().is_nan()));
         }
 
         // default precision
@@ -385,7 +436,9 @@ Gmpfi::Precision_type Gmpfi::set_default_precision(Gmpfi::Precision_type prec){
 
 inline
 Gmpfi::Precision_type Gmpfi::get_precision()const{
-        return mpfi_get_prec(mpfi());
+        return (_left.get_precision()>_right.get_precision()?
+                (Gmpfi::Precision_type)_left.get_precision():
+                (Gmpfi::Precision_type)_right.get_precision());
 }
 
 inline
@@ -403,89 +456,101 @@ Gmpfi Gmpfi::operator+()const{
 
 inline
 Gmpfi Gmpfi::operator-()const{
-        Gmpfi result(0,get_precision());
-        mpfi_neg(result.mpfi(),mpfi());
-        return result;
+        mpfi_t result;
+        mpfi_init2(result,get_precision());
+        mpfi_neg(result,mpfi());
+        return Gmpfi(result);
 }
 
-// CGAL_GMPFI_BALANCE_ENDPOINTS checks if both endpoints of the interval have
+// CGAL_GMPFI_BALANCE_ENDPOINTS checks if both bounds of the interval have
 // the same precision. If not, it rounds the one with the smallest
 // precision.
 #define CGAL_GMPFI_BALANCE_ENDPOINTS \
-        if(mpfr_get_prec(left_mpfr())<mpfr_get_prec(right_mpfr())){\
-                mpfr_round_prec(&(mpfi()->left), \
-                                GMP_RNDD, \
-                                mpfr_get_prec(right_mpfr())); \
+        if(_left.get_precision()<_right.get_precision()){ \
+                _left=Gmpfr(_left,_right.get_precision()); \
         }else{ \
-                if(mpfr_get_prec(left_mpfr())>mpfr_get_prec(right_mpfr())){\
-                        mpfr_round_prec(&(mpfi()->right), \
-                                        GMP_RNDU, \
-                                        mpfr_get_prec(left_mpfr())); \
+                if(_right.get_precision()<_left.get_precision()){ \
+                        _right=Gmpfr(_right,_left.get_precision()); \
                 } \
-        }
+        }; \
+        CGAL_assertion_msg(_left.get_precision()==_right.get_precision(), \
+                           "error balancing bounds precision");
 
-// CGAL_GMPFI_OBJECT_BINARY_OPERATOR defines an overloaded binary operator of
-// the Gmpfi class, where the operated object belongs to another class,
+// CGAL_GMPFI_OBJECT_BINARY_OPERATOR defines an overloaded binary operator
+// of the Gmpfi class, where the operated object belongs to another class,
 // which represents a point (as opposition to an interval). The operation
-// will be performed using the biggest precision of the endpoints of this
-// Gmpfi object. That means that if endpoints have different precision, one
-// of them (the one with the biggest precision) will be rounded. This is
+// will be performed using the biggest precision of the bounds of this
+// Gmpfi object. That means that if bounds have different precision, one
+// of them (the one with the smallest precision) will be rounded. This is
 // not a problem when the object is not unique, since a new Gmpfi object
-// will be created with the endpoints having the correct precision.
+// will be created with the bounds having the correct precision.
 #define CGAL_GMPFI_OBJECT_BINARY_OPERATOR(_op,_class,_member,_fun) \
         inline \
         Gmpfi& Gmpfi::_op(const _class &b){ \
-                if(unique()){ \
+                if(is_unique()){ \
                         CGAL_GMPFI_BALANCE_ENDPOINTS \
                         _fun(mpfi(),mpfi(),b._member); \
+                        gather_bounds(); \
                 }else{ \
-                        Gmpfi result(0,get_precision()); \
-                        _fun(result.mpfi(),mpfi(),b._member); \
-                        swap(result); \
+                        mpfi_t result; \
+                        mpfi_init2(result,get_precision()); \
+                        _fun(result,mpfi(),b._member); \
+                        Gmpfi r(result); \
+                        swap(r); \
                 } \
                 return(*this); \
         }
 
-// CGAL_GMPFI_GMPFI_BINARY_OPERATOR defines an overloaded binary operator of
-// the Gmpfi class, where the operated object is also a Gmpfi object.
-// The operation will be performed using the biggest precision of the
-// endpoints of both intervals. The endpoints of target object will be
-// rounded accordingly before the operation.
+// CGAL_GMPFI_GMPFI_BINARY_OPERATOR defines an overloaded binary operator
+// of the Gmpfi class, where both operands are Gmpfi objects.  The
+// operation will be performed using the biggest precision of the bounds
+// of both intervals. The bounds of target object will be rounded
+// accordingly before the operation.
 #define CGAL_GMPFI_GMPFI_BINARY_OPERATOR(_op,_fun) \
         inline \
         Gmpfi& Gmpfi::_op(const Gmpfi &fi){ \
-                if(unique()){ \
+                if(is_unique()){ \
                         if(get_precision()<fi.get_precision()){ \
-                                mpfi_round_prec(mpfi(),fi.get_precision()); \
+                                mpfi_t result; \
+                                mpfi_init2(result,fi.get_precision()); \
+                                _fun(result,mpfi(),fi.mpfi()); \
+                                Gmpfi r(result); \
+                                swap(r); \
                         }else{ \
                                 CGAL_GMPFI_BALANCE_ENDPOINTS \
+                                _fun(mpfi(),mpfi(),fi.mpfi()); \
+                                gather_bounds(); \
                         } \
-                        _fun(mpfi(),mpfi(),fi.mpfi()); \
                 }else{ \
-                        Gmpfi result(0, \
-                                     get_precision()<fi.get_precision()? \
+                        mpfi_t result; \
+                        mpfi_init2(result, \
+                                   get_precision()<fi.get_precision()? \
                                         fi.get_precision(): \
                                         get_precision()); \
-                        _fun(result.mpfi(),mpfi(),fi.mpfi()); \
-                        swap(result); \
+                        _fun(result,mpfi(),fi.mpfi()); \
+                        Gmpfi r(result); \
+                        swap(r); \
                 } \
                 return(*this); \
         }
 
 // CGAL_GMPFI_TYPE_BINARY_OPERATOR defines an overloaded binary operator of
-// the Gmpfi class, where the operated belongs to a c++ type. Precision of
-// the operation is defined in the same manner that in
+// the Gmpfi class, where the operated number belongs to a c++ type.
+// Precision of the operation is defined in the same manner that in
 // CGAL_GMPFI_OBJECT_BINARY_OPERATOR.
 #define CGAL_GMPFI_TYPE_BINARY_OPERATOR(_op,_type,_fun) \
         inline \
         Gmpfi& Gmpfi::_op(_type x){ \
-                if(unique()){ \
+                if(is_unique()){ \
                         CGAL_GMPFI_BALANCE_ENDPOINTS \
                         _fun(mpfi(),mpfi(),x); \
+                        gather_bounds(); \
                 }else{ \
-                        Gmpfi result(0,get_precision()); \
-                        _fun(result.mpfi(),mpfi(),x); \
-                        swap(result); \
+                        mpfi_t result; \
+                        mpfi_init2(result,get_precision()); \
+                        _fun(result,mpfi(),x); \
+                        Gmpfi r(result); \
+                        swap(r); \
                 } \
                 return *this; \
         }
@@ -536,9 +601,11 @@ CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator/=,Gmpq,mpq(),mpfi_div_q)
 #define CGAL_GMPFI_ARITHMETIC_FUNCTION(_name,_fun) \
         inline \
         Gmpfi Gmpfi::_name (Gmpfi::Precision_type p)const{ \
-                Gmpfi result(0,p); \
-                _fun(result.mpfi(),mpfi()); \
-                return result; \
+                CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
+                mpfi_t result; \
+                mpfi_init2(result,p); \
+                _fun(result,mpfi()); \
+                return Gmpfi(result); \
         }
 
 CGAL_GMPFI_ARITHMETIC_FUNCTION(abs,mpfi_abs)
@@ -547,19 +614,23 @@ CGAL_GMPFI_ARITHMETIC_FUNCTION(sqrt,mpfi_sqrt)
 inline
 Gmpfi Gmpfi::cbrt(Gmpfi::Precision_type p)const{
         // MPFI does not provide a cubic root function
-        Gmpfi result(0,p);
-        mpfr_cbrt(&(result.mpfi())->left,left_mpfr(),GMP_RNDD);
-        mpfr_cbrt(&(result.mpfi())->right,right_mpfr(),GMP_RNDU);
-        return result;
+        CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
+        mpfi_t result;
+        mpfi_init2(result,p);
+        mpfr_cbrt(&result->left,left_mpfr(),GMP_RNDD);
+        mpfr_cbrt(&result->right,right_mpfr(),GMP_RNDU);
+        return Gmpfi(result);
 }
 
 inline
 Gmpfi Gmpfi::kthroot(int k,Gmpfi::Precision_type p)const{
         // MPFI does not provide k-th root functions
-        Gmpfi result(0,p);
-        mpfr_root(&(result.mpfi())->left,left_mpfr(),k,GMP_RNDD);
-        mpfr_root(&(result.mpfi())->right,right_mpfr(),k,GMP_RNDU);
-        return result;
+        CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
+        mpfi_t result;
+        mpfi_init2(result,p);
+        mpfr_root(&result->left,left_mpfr(),k,GMP_RNDD);
+        mpfr_root(&result->right,right_mpfr(),k,GMP_RNDU);
+        return Gmpfi(result);
 }
 
 CGAL_GMPFI_ARITHMETIC_FUNCTION(square,mpfi_sqr)
@@ -622,10 +693,10 @@ bool Gmpfi::is_number()const{
 
 inline
 Uncertain<Sign> Gmpfi::sign()const{
-        int s_left=mpfr_sgn(left_mpfr());
-        if(s_left>0)
+        int leftsign=mpfr_sgn(left_mpfr());
+        if(leftsign>0)
                 return POSITIVE;
-        if(s_left==0){
+        if(leftsign==0){
                 if(mpfr_zero_p(right_mpfr())!=0)
                         return ZERO;
                 else
@@ -677,7 +748,7 @@ Uncertain<bool> Gmpfi::is_square(Gmpfi &y)const{
 inline
 Uncertain<bool> Gmpfi::divides(const Gmpfi &n,Gmpfi &c,Gmpfi::Precision_type p
                               )const{
-        if(mpfr_zero_p(&mpfi()->left)!=0 && mpfr_zero_p(&mpfi()->right)!=0)
+        if(mpfr_zero_p(left_mpfr())!=0 && mpfr_zero_p(right_mpfr())!=0)
                 return false;
         if(mpfi_has_zero(mpfi())!=0)
                 return Uncertain<bool>::indeterminate();
@@ -709,7 +780,7 @@ std::pair<double,double> Gmpfi::to_interval()const{
         double d_low=mpfr_get_d(left_mpfr(),GMP_RNDD);
         double d_upp=mpfr_get_d(right_mpfr(),GMP_RNDU);
         CGAL_assertion(std::numeric_limits<double>::has_infinity);
-        // if an endpoint is finite and its double is infinity, we overflow
+        // if a bound is finite and its double is infinity, we overflow
         if(mpfr_inf_p(left_mpfr())==0&&
                         d_low==std::numeric_limits<double>::infinity())
                 mpfr_set_underflow();

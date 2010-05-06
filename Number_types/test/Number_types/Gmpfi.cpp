@@ -93,6 +93,17 @@ int test_precision(){
         return 0;
 }
 
+int test_refcount(){
+        CGAL::Gmpq A("6420587669/17179869184");
+        CGAL::Gmpfi f(A,20);
+        CGAL::Gmpfr i=f.inf();
+        assert(!i.is_unique());
+        i*=2;
+        assert(i!=f.inf());
+        assert(i.is_unique());
+        return 0;
+}
+
 int main(){
         typedef CGAL::Gmpfi                     NT;
         typedef CGAL::Field_with_kth_root_tag   Tag;
@@ -152,6 +163,12 @@ int main(){
 
         // TODO: missing tests for conversion functions
         // to_double, to_interval, to_double_exp, to_interval_exp
+
+#ifndef CGAL_GMPFR_NO_REFCOUNT
+        _TEST("endpoint reference counting",test_refcount())
+#else
+        std::cerr<<"endpoint reference counting was not tested"<<std::endl;
+#endif
 
         return 0;
 }
