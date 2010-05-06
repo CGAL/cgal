@@ -295,15 +295,15 @@ namespace CircularFunctors {
     typedef typename  CK::Linear_kernel LK;
     typedef typename LK::Equal_2 LK_Equal_2;
 
-    typedef typename LK::Point_2 Point_2;
-    typedef typename LK::Vector_2 Vector_2;
-    typedef typename LK::Direction_2 Direction_2;
-    typedef typename LK::Segment_2 Segment_2;
-    typedef typename LK::Ray_2 Ray_2;
-    typedef typename LK::Line_2 Line_2;
-    typedef typename LK::Triangle_2 Triangle_2;
-    typedef typename LK::Iso_rectangle_2 Iso_rectangle_2;
-    typedef typename LK::Circle_2 Circle_2;
+    typedef typename CK::Point_2 Point_2;
+    typedef typename CK::Vector_2 Vector_2;
+    typedef typename CK::Direction_2 Direction_2;
+    typedef typename CK::Segment_2 Segment_2;
+    typedef typename CK::Ray_2 Ray_2;
+    typedef typename CK::Line_2 Line_2;
+    typedef typename CK::Triangle_2 Triangle_2;
+    typedef typename CK::Iso_rectangle_2 Iso_rectangle_2;
+    typedef typename CK::Circle_2 Circle_2;
 
     
     typedef typename CK::Linear_kernel::Equal_2::result_type result_type;
@@ -1024,10 +1024,10 @@ namespace CircularFunctors {
 #else
     typedef typename CK::Linear_kernel LK;
     typedef typename LK::Construct_bbox_2 LK_Construct_bbox_2;
-    typedef typename LK::Point_2 Point_2;
-    typedef typename LK::Segment_2 Segment_2;
-    typedef typename LK::Triangle_2  Triangle_2 ;
-    typedef typename LK::Iso_rectangle_2 Iso_rectangle_2 ;
+    typedef typename CK::Point_2 Point_2;
+    typedef typename CK::Segment_2 Segment_2;
+    typedef typename CK::Triangle_2  Triangle_2 ;
+    typedef typename CK::Iso_rectangle_2 Iso_rectangle_2 ;
 
     result_type operator() (const Circle_2 & a) const
     {
@@ -1244,8 +1244,8 @@ namespace CircularFunctors {
 
     typedef typename CK::Linear_kernel LK;
     typedef typename LK::Construct_center_2 LK_Construct_center_2;
-	  typedef typename LK::Point_2     Point_2;
-	  typedef typename LK::Circle_2    Circle_2;
+	  typedef typename CK::Point_2     Point_2;
+	  typedef typename CK::Circle_2    Circle_2;
 	public:
     typedef Point_2          result_type;
 
