@@ -58,6 +58,8 @@ class Aff_transformationC2
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
+  using Handle_for_virtual<Aff_t_base>::initialize_with;
+
 public:
   typedef R_                                R;
    
