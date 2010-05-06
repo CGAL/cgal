@@ -2667,7 +2667,6 @@ Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/include/CGAL/_test_cl
 Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/include/CGAL/_test_periodic_3_static_filters.h -text
 Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/test_periodic_3_delaunay_hierarchy_3.cpp -text
 Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/test_periodic_3_offset_3.cpp -text
-Periodic_3_triangulation_3/test/Periodic_3_triangulation_3/test_periodic_3_triangulation_traits_3.cpp -text
 Point_set_2/doc_tex/Point_set_2/point_set.png -text
 Point_set_processing_3/doc_tex/Point_set_processing_3/Point_set_processing_images.ppt -text svneol=unset#application/vnd.ms-powerpoint
 Point_set_processing_3/doc_tex/Point_set_processing_3/analysis.tex -text

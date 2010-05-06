@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Triangulation_3/test/Triangulation_3/test_regular_traits_3.cpp $
-// $Id: test_regular_traits_3.cpp 42529 2008-03-19 13:45:36Z ameyer $ 
-// $Date: 2008-03-19 14:45:36 +0100 (Wed, 19 Mar 2008) $
+// $URL$
+// $Id$ 
+// $Date$
 // 
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
@@ -53,7 +53,7 @@
 #include <CGAL/_test_periodic_3_static_filters.h>
 #include <CGAL/_test_cls_periodic_3_triangulation_traits_3.h>
 
-int main()
+int test_periodic_3_triangulation_traits_3()
 {
   std::cout<<"Statically filtered predicates:"<<std::endl;
   _test_periodic_3_static_filters();
@@ -69,16 +69,10 @@ int main()
 
 #define RT CGAL::MP_Float
 #define FT CGAL::Quotient<RT>
-  test_traits<CGAL::Simple_cartesian< FT > >();
-  test_traits<CGAL::Cartesian< FT > >();
-  test_traits<CGAL::Simple_homogeneous< RT > >();
-  test_traits<CGAL::Homogeneous< RT > >();
+  test_traits<KERNEL>();
 #define LRT CGAL::Lazy_exact_nt< RT >
 #define LFT CGAL::Lazy_exact_nt< FT >
-  test_traits<CGAL::Simple_cartesian< LFT > >();
-  test_traits<CGAL::Cartesian< LFT > >();
-  test_traits<CGAL::Simple_homogeneous< LRT > >();
-  test_traits<CGAL::Homogeneous< LRT > >();
+  test_traits<LAZY_KERNEL>();
   std::cout<<" done"<<std::endl;
 #undef RT
 #undef FT
@@ -89,17 +83,10 @@ int main()
   std::cout<<"  GMP...";std::cout.flush();
 #define RT CGAL::Gmpz
 #define FT CGAL::Gmpq
-  test_traits<CGAL::Simple_cartesian< FT > >();
-  test_traits<CGAL::Cartesian< FT > >();
-  test_traits<CGAL::Simple_homogeneous< RT > >();
-  test_traits<CGAL::Homogeneous< RT > >();
+  test_traits<KERNEL>();
 #define LRT CGAL::Lazy_exact_nt< RT >
 #define LFT CGAL::Lazy_exact_nt< FT >
-  test_traits<CGAL::Simple_cartesian< LFT > >();
-  test_traits<CGAL::Cartesian< LFT > >();
-  test_traits<CGAL::Simple_homogeneous< LRT > >();
-  test_traits<CGAL::Homogeneous< LRT > >();
-  std::cout<<" done"<<std::endl;
+  test_traits<LAZY_KERNEL>();
 #undef RT
 #undef FT
 #undef LRT
@@ -112,16 +99,10 @@ int main()
   std::cout<<"  LEDA...";std::cout.flush();
 #define RT leda_integer
 #define FT leda_rational
-  test_traits<CGAL::Simple_cartesian< FT > >();
-  test_traits<CGAL::Cartesian< FT > >();
-  test_traits<CGAL::Simple_homogeneous< RT > >();
-  test_traits<CGAL::Homogeneous< RT > >();
+  test_traits<KERNEL>();
 #define LRT CGAL::Lazy_exact_nt< RT >
 #define LFT CGAL::Lazy_exact_nt< FT >
-  test_traits<CGAL::Simple_cartesian< LFT > >();
-  test_traits<CGAL::Cartesian< LFT > >();
-  test_traits<CGAL::Simple_homogeneous< LRT > >();
-  test_traits<CGAL::Homogeneous< LRT > >();
+  test_traits<LAZY_KERNEL>();
   std::cout<<" done"<<std::endl;
 #undef RT
 #undef FT
@@ -135,16 +116,10 @@ int main()
   std::cout<<"  CORE...";std::cout.flush();
 #define RT CORE::Expr
 #define FT CGAL::Quotient<RT>
-  test_traits<CGAL::Simple_cartesian< FT > >();
-  test_traits<CGAL::Cartesian< FT > >();
-  test_traits<CGAL::Simple_homogeneous< RT > >();
-  test_traits<CGAL::Homogeneous< RT > >();
+  test_traits<KERNEL>();
 #define LRT CGAL::Lazy_exact_nt< RT >
 #define LFT CGAL::Lazy_exact_nt< FT >
-  test_traits<CGAL::Simple_cartesian< LFT > >();
-  test_traits<CGAL::Cartesian< LFT > >();
-  test_traits<CGAL::Simple_homogeneous< LRT > >();
-  test_traits<CGAL::Homogeneous< LRT > >();
+  test_traits<LAZY_KERNEL>();
   std::cout<<" done"<<std::endl;
 #undef RT
 #undef FT
