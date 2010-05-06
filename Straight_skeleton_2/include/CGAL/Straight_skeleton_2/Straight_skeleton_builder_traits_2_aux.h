@@ -326,6 +326,9 @@ public:
       case TRISEGMENT_COLLINEARITY_02:
         mCSIdxA=0; mCSIdxB=2; mNCSIdx=1; break ;
         
+      default: // This is to shut the warning about unused enumeration values in the switch
+        mCSIdxA=-1; mCSIdxB=-1; mNCSIdx=-1; break;
+        
     }
   }
     
