@@ -299,7 +299,7 @@ test_conflict(const Point  &p, Face_handle fh) const
   Oriented_side os = side_of_oriented_circle(fh,p,true);
   if (os == ON_POSITIVE_SIDE) return true;
  
-  if (os == ON_ORIENTED_BOUNDARY && is_infinite(fh)) {
+  if (os == ON_ORIENTED_BOUNDARY && this->is_infinite(fh)) {
     int i = fh->index(this->infinite_vertex());
     return collinear_between(fh->vertex(cw(i))->point(), p,
 			     fh->vertex(ccw(i))->point() );
@@ -337,7 +337,7 @@ is_valid(bool verbose, int level) const
   for( Finite_faces_iterator it = this->finite_faces_begin(); 
        it != this->finite_faces_end() ; it++) {
     for(int i=0; i<3; i++) {
-      if ( ! is_infinite( this->mirror_vertex(it,i))) {
+      if ( ! this->is_infinite( this->mirror_vertex(it,i))) {
 	result = result &&  ON_POSITIVE_SIDE != 
 	  side_of_oriented_circle( it, this->mirror_vertex(it,i)->point(), false);
       }
@@ -377,12 +377,12 @@ nearest_vertex_2D(const Point& p, Face_handle f) const
 
   typename Geom_traits::Compare_distance_2 
     compare_distance =  this->geom_traits().compare_distance_2_object();
-  Vertex_handle nn =  !is_infinite(f->vertex(0)) ? f->vertex(0):f->vertex(1);
-  if ( !is_infinite(f->vertex(1)) && compare_distance(p,
+  Vertex_handle nn =  !this->is_infinite(f->vertex(0)) ? f->vertex(0):f->vertex(1);
+  if ( !this->is_infinite(f->vertex(1)) && compare_distance(p,
 					    f->vertex(1)->point(),
 					    nn->point()) == SMALLER) 
     nn=f->vertex(1);
-  if ( !is_infinite(f->vertex(2)) && compare_distance(p,
+  if ( !this->is_infinite(f->vertex(2)) && compare_distance(p,
 					    f->vertex(2)->point(), 
 					    nn->point()) == SMALLER) 
     nn=f->vertex(2);
@@ -425,7 +425,7 @@ look_nearest_neighbor(const Point& p,
   typename Geom_traits::Compare_distance_2 
     compare_distance =  this->geom_traits().compare_distance_2_object();
   i = ni->index(f);
-  if ( !is_infinite(ni->vertex(i)) &&
+  if ( !this->is_infinite(ni->vertex(i)) &&
        compare_distance(p, 
 	      ni->vertex(i)->point(),
 	      nn->point())  == SMALLER)  nn=ni->vertex(i);
@@ -455,7 +455,7 @@ dual(const Edge &e) const
   typedef typename Geom_traits::Line_2        Line;
   typedef typename Geom_traits::Ray_2         Ray;
 
-  CGAL_triangulation_precondition (!is_infinite(e));
+  CGAL_triangulation_precondition (!this->is_infinite(e));
   if( this->dimension()== 1 ){
     const Point& p = (e.first)->vertex(cw(e.second))->point();
     const Point& q = (e.first)->vertex(ccw(e.second))->point();
@@ -464,15 +464,15 @@ dual(const Edge &e) const
   }
 		    
   // dimension==2
-  if( (!is_infinite(e.first)) &&
-      (!is_infinite(e.first->neighbor(e.second))) ) {
+  if( (!this->is_infinite(e.first)) &&
+      (!this->is_infinite(e.first->neighbor(e.second))) ) {
     Segment s = this->geom_traits().construct_segment_2_object()
                           (dual(e.first),dual(e.first->neighbor(e.second)));
     return make_object(s);
   } 
   // one of the adjacent faces is infinite
   Face_handle f; int i;
-  if (is_infinite(e.first)) {
+  if (this->is_infinite(e.first)) {
     f=e.first->neighbor(e.second); i=f->index(e.first);
   }
   else {
@@ -560,7 +560,7 @@ Delaunay_triangulation_2<Gt,Tds>::
 remove(Vertex_handle v)
 {
   CGAL_triangulation_precondition( v != Vertex_handle());
-  CGAL_triangulation_precondition( !is_infinite(v));
+  CGAL_triangulation_precondition( !this->is_infinite(v));
 
   if ( this->dimension() <= 1) Triangulation::remove(v);
   else  remove_2D(v);
