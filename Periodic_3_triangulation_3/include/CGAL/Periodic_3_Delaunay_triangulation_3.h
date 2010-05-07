@@ -892,10 +892,10 @@ _side_of_sphere(const Cell_handle &c, const Point &q,
         p1 = c->vertex(1)->point(),
         p2 = c->vertex(2)->point(),
         p3 = c->vertex(3)->point();
-  Offset o0 = get_offset(c,0),
-        o1 = get_offset(c,1),
-        o2 = get_offset(c,2),
-        o3 = get_offset(c,3),
+  Offset o0 = this->get_offset(c,0),
+        o1 = this->get_offset(c,1),
+        o2 = this->get_offset(c,2),
+        o3 = this->get_offset(c,3),
         oq = offset;
 
   Oriented_side os = ON_NEGATIVE_SIDE;
