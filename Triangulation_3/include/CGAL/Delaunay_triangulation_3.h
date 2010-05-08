@@ -115,6 +115,15 @@ public:
   using Tr_Base::coplanar;
   using Tr_Base::coplanar_orientation;
   using Tr_Base::orientation;
+  using Tr_base::adjacent_vertices;
+  using Tr_base::construct_segment;
+  using Tr_base::incident_facets;
+  using Tr_base::insert_in_conflict;
+  using Tr_base::is_infinite;
+  using Tr_base::is_valid_finite;
+  using Tr_base::locate;
+  using Tr_base::side_of_edge;
+
 #endif
 
 protected:
@@ -995,6 +1004,10 @@ dual(Cell_handle c, int i) const
   unsigned char ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
   if ( (in&1) == 1 )
       std::swap(ind[0], ind[1]);
+  // in=0: 1 2 3
+  // in=1: 3 2 0
+  // in=2: 3 0 1
+  // in=3: 1 0 2
   const Point& p = n->vertex(ind[0])->point();
   const Point& q = n->vertex(ind[1])->point();
   const Point& r = n->vertex(ind[2])->point();
