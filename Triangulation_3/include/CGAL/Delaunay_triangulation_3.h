@@ -115,14 +115,14 @@ public:
   using Tr_Base::coplanar;
   using Tr_Base::coplanar_orientation;
   using Tr_Base::orientation;
-  using Tr_base::adjacent_vertices;
-  using Tr_base::construct_segment;
-  using Tr_base::incident_facets;
-  using Tr_base::insert_in_conflict;
-  using Tr_base::is_infinite;
-  using Tr_base::is_valid_finite;
-  using Tr_base::locate;
-  using Tr_base::side_of_edge;
+  using Tr_Base::adjacent_vertices;
+  using Tr_Base::construct_segment;
+  using Tr_Base::incident_facets;
+  using Tr_Base::insert_in_conflict;
+  using Tr_Base::is_infinite;
+  using Tr_Base::is_valid_finite;
+  using Tr_Base::locate;
+  using Tr_Base::side_of_edge;
 
 #endif
 
