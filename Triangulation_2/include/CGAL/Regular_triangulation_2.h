@@ -97,6 +97,12 @@ public:
   using Base::incident_faces;
   using Base::is_infinite;
   using Base::degree;
+  using Base::delete_vertex;
+  using Base::incident_vertices;
+  using Base::make_hole;
+  using Base::mirror_index;
+  using Base::show_vertex;
+  using Base::test_dim_down;
 #endif
 
 private:

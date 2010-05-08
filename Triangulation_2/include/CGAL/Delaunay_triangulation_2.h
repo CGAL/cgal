@@ -63,6 +63,11 @@ public:
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Triangulation::side_of_oriented_circle;
   using Triangulation::circumcenter;
+  using Triangulation::collinear_between;
+  using Triangulation::test_dim_down;
+  using Triangulation::make_hole;
+  using Triangulation::fill_hole_delaunay;
+  using Triangulation::delete_vertex;
 #endif
 
 

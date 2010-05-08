@@ -69,6 +69,12 @@ public:
   using Ctr::collinear_between;
   using Ctr::are_there_incident_constraints;
   using Ctr::make_hole;
+  using Ctr::insert_constraint;
+  using Ctr::locate;
+  using Ctr::test_dim_down;
+  using Ctr::fill_hole_delaunay;
+  using Ctr::update_constraints;
+  using Ctr::delete_vertex;
 #endif
 
   typedef typename Geom_traits::Point_2  Point;

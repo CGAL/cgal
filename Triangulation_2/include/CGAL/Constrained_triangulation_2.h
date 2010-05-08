@@ -79,7 +79,11 @@ public:
   using Triangulation::delete_vertex;
   using Triangulation::delete_face;
   using Triangulation::create_face;
-
+  using Triangulation::incident_faces;
+  using Triangulation::locate;
+  using Triangulation::includes_edge;
+  using Triangulation::remove_first;
+  using Triangulation::remove_second;
 #endif
 
   typedef Gt                                 Geom_traits;

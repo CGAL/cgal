@@ -76,6 +76,11 @@ public:
   using Triangulation::ccw;
   using Triangulation::number_of_vertices;
   using Triangulation::vertices_begin;
+  using Triangulation::locate;
+  using Triangulation::includes_edge;
+  using Triangulation::mark_constraint;
+  using Triangulation::find_intersected_faces;
+  using Triangulation::triangulate_hole;
 
 protected:
   Constraint_hierarchy hierarchy;
