@@ -170,6 +170,13 @@ public:
   using Dt::OUTSIDE_CONVEX_HULL;
   using Dt::OUTSIDE_AFFINE_HULL;
   using Dt::vertex_triple_index;
+  using Dt::is_infinite;
+  using Dt::is_Gabriel;
+  using Dt::incident_cells;
+  using Dt::incident_vertices;
+  using Dt::locate;
+  using Dt::;
+  using Dt::;
 
   enum Classification_type {EXTERIOR, 
 			    SINGULAR, 
