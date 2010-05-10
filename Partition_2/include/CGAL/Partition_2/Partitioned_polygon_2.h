@@ -117,7 +117,7 @@ public:
        _left_turn(Traits().left_turn_2_object())
    {
       for (; first != beyond; first++) {
-         push_back(Vertex(*first));
+         this->push_back(Vertex(*first));
       }
    }
 
