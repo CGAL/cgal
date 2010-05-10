@@ -108,7 +108,7 @@ ConstrainedTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
       }
     }
     if(this->visibleVertices()) {
-      paintOneVertex(fh->vertex(i)->point());
+      this->paintOneVertex(fh->vertex(i)->point());
     }
   }
 }
