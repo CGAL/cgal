@@ -61,7 +61,7 @@ public:
                                         CGAL::parameters::no_perturb());
     
     // Verify
-    verify(c3t3,domain,criteria);
+    this->verify(c3t3,domain,criteria);
   }
 };
 
