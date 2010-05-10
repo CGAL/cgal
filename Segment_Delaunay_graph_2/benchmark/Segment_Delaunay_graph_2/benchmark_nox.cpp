@@ -20,12 +20,14 @@
 #define CGAL_SDG_USE_SIMPLIFIED_ARRANGEMENT_TYPE_PREDICATE 1
 #define CGAL_SDG_SORT_POINTS_IN_SITE2 1
 #define CGAL_SDG_TRAITS_WITH_STATIC_FILTERS 1
+//#define CGAL_SDG_NO_FACE_MAP 1
+//#define CGAL_SDG_ALTERNATE_SYMEDGE_IMPLEMENTATION_BY_AF 1
 
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 #ifdef CGAL_USE_LEDA
-#  include <CGAL/Leda_real.h>
+#  include <CGAL/leda_real.h>
 #else
 //#  include <CGAL/CORE_Expr.h>
 #  include <CGAL/Gmpq.h>
