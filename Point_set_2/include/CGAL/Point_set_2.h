@@ -80,6 +80,9 @@ public:
   using Base::insert;
   using Base::remove;
   using Base::locate;
+  using Base::is_infinite;
+  using Base::nearest_vertex;
+  using Base::incident_vertices;
 
    Comparedist                   tr_comparedist;
    Orientation_2                 tr_orientation;  
