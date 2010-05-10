@@ -28,7 +28,6 @@
 #include <CGAL/Spherical_kernel_3.h>
 
 
-//TODO: CORRECT THE MAKE_ROOT_OF_2 of GMPq GMPz
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpq.h>
 #else
