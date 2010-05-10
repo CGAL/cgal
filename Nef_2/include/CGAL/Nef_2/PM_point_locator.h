@@ -175,8 +175,6 @@ public:
 
   /*{\Mcreation 3}*/
 
-  PM_naive_point_locator() : Base() {}
-
   /*{\Moptions constref=yes}*/
   PM_naive_point_locator(const Plane_map& P, const Geometry& k = Geometry()) :
     Base(const_cast<Plane_map&>(P)), K(k) {}
