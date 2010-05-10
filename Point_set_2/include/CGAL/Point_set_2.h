@@ -79,6 +79,7 @@ public:
   using Base::VERTEX;
   using Base::insert;
   using Base::remove;
+  using Base::locate;
 
    Comparedist                   tr_comparedist;
    Orientation_2                 tr_orientation;  
