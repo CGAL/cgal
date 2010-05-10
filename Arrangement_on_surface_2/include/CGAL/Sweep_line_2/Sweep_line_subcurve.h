@@ -207,24 +207,6 @@ public:
     return (oi);
   }
 
-  /*! Get all the nodes in the hierarchy of overlapping subcurves. */
-  template <class OutputIterator>
-  OutputIterator all_nodes (OutputIterator oi)
-  {
-    *oi = this;
-    ++oi;
-
-    if (m_orig_subcurve1 == NULL)
-      return (oi);
-    
-    // EBEB: get_all_inner_nodes not existent. 
-    //       It seems that all_nods is never called. 
-    //       Only some compilers complain.
-    oi = m_orig_subcurve1->get_all_inner_nodes (oi);
-    oi = m_orig_subcurve2->get_all_inner_nodes (oi);
-    return (oi);
-  }
-
   /*! Check if the given subcurve is a node in the overlapping hierarchy. */
   bool is_inner_node (Self *s)
   {
