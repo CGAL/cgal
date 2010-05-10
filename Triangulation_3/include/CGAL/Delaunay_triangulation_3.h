@@ -123,7 +123,7 @@ public:
   using Tr_Base::is_valid_finite;
   using Tr_Base::locate;
   using Tr_Base::side_of_edge;
-
+  using Tr_Base::side_of_segment;
 #endif
 
 protected:
