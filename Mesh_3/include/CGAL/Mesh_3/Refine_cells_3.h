@@ -278,7 +278,7 @@ before_insertion_handle_cells_in_conflict_zone(Zone& zone)
   for ( ; cit != zone.cells.end() ; ++cit )
   {
     // Remove cell from refinement queue
-    remove_element(*cit);
+    this->remove_element(*cit);
     
     // Remove cell from complex
     remove_cell_from_domain(*cit);
@@ -329,7 +329,7 @@ treat_new_cell(const Cell_handle& cell)
     const Cell_badness badness = r_criteria_(cell);
     if( badness.is_initialized() )
     {
-      add_bad_element(cell, *badness);
+      this->add_bad_element(cell, *badness);
     }
   }
   else

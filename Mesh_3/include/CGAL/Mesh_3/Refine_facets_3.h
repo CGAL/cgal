@@ -294,7 +294,7 @@ private:
   void insert_bad_facet(Facet& facet, const Quality& quality)
   {
     // Insert canonical facet
-    add_bad_element(this->canonical_facet(facet), quality);
+    this->add_bad_element(this->canonical_facet(facet), quality);
   }
 
   /// Removes facet from refinement queue

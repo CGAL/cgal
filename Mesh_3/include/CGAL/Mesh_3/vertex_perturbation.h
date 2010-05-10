@@ -417,7 +417,7 @@ protected:
     modified_vertices.clear();
     
     // norm depends on the local size of the mesh
-    FT sq_norm = compute_perturbation_amplitude(v, c3t3, step_size_);
+    FT sq_norm = this->compute_perturbation_amplitude(v, c3t3, step_size_);
     FT step_length = CGAL::sqrt(sq_norm/sq_length(gradient_vector));
     Point_3 new_loc = v->point() + step_length * gradient_vector;
     
@@ -1161,7 +1161,7 @@ private:
     C3T3_helpers helper(c3t3, domain);
     
     // norm depends on the local size of the mesh
-    FT sq_norm = compute_perturbation_amplitude(v, c3t3, Base::sphere_radius());
+    FT sq_norm = this->compute_perturbation_amplitude(v, c3t3, Base::sphere_radius());
     const Point_3 initial_location = v->point();
     
     // Initialize loop variables
@@ -1174,7 +1174,7 @@ private:
     unsigned int try_nb = 0;
     while ( ++try_nb <= Base::max_try_nb() )
     {
-      Vector_3 delta = random_vector(sq_norm,on_sphere_);
+      Vector_3 delta = this->random_vector(sq_norm,on_sphere_);
       
       // always from initial_location!
       Point_3 new_location = initial_location + delta;
