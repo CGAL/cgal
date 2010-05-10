@@ -83,18 +83,22 @@ public:
 
 
     using HalfedgeDS_items_decorator<p_HDS>::insert_tip;
+    using HalfedgeDS_items_decorator<p_HDS>::find_prev;
     using HalfedgeDS_items_decorator<p_HDS>::get_prev;
     using HalfedgeDS_items_decorator<p_HDS>::set_prev;
     using HalfedgeDS_items_decorator<p_HDS>::get_face;
     using HalfedgeDS_items_decorator<p_HDS>::set_face;
     using HalfedgeDS_items_decorator<p_HDS>::get_vertex;
     using HalfedgeDS_items_decorator<p_HDS>::set_vertex;
+    using HalfedgeDS_items_decorator<p_HDS>::get_vertex_halfedge;
     using HalfedgeDS_items_decorator<p_HDS>::set_vertex_halfedge;
+    using HalfedgeDS_items_decorator<p_HDS>::get_face_halfedge;
     using HalfedgeDS_items_decorator<p_HDS>::set_face_halfedge;
     using HalfedgeDS_items_decorator<p_HDS>::set_vertex_in_vertex_loop;
     using HalfedgeDS_items_decorator<p_HDS>::set_face_in_face_loop;
     using HalfedgeDS_items_decorator<p_HDS>::insert_halfedge;
-
+    using HalfedgeDS_items_decorator<p_HDS>::find_prev_around_vertex;
+    using HalfedgeDS_items_decorator<p_HDS>::remove_tip;
 protected:
     typedef typename Vertex::Base                 VBase;
     typedef typename Halfedge::Base               HBase;
