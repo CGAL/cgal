@@ -142,7 +142,7 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/ )
 	  continue;
 
 	// compute mu_j
-	mu = mu_j_NT( *it);
+	mu = this->mu_j_NT( *it);
 
 	CGAL_qpe_debug {
 	    this->vout() << "  mu_" << *it << " [NT]: " << mu << std::endl;
@@ -154,7 +154,7 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/ )
 
     // exact check of entering variable
     if ( min_mu < this->nt0) {
-	if ( mu_j( *min_it) >= this->et0) {
+	if ( this->mu_j( *min_it) >= this->et0) {
 
 	    // exact check failed!
 	    CGAL_qpe_debug {
@@ -186,7 +186,7 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/ )
 	    if (this->solver().is_artificial( *it)) continue;
 
 	    // compute mu_j
-	    mu = mu_j_NT( *it);
+	    mu = this->mu_j_NT( *it);
 
 	    CGAL_qpe_debug {
 		this->vout() << "  mu_" << *it << " [NT]: " << mu << std::endl;
@@ -197,7 +197,7 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/ )
 
 		// make variable active
 		active_it = it;
-		activating( active_it);
+		this->activating( active_it);
 
 		// new minimum?
 		if ( mu < min_mu) { min_it = active_it; min_mu = mu; }
@@ -206,7 +206,7 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/ )
 
 	// exact check of entering variable
 	if ( min_mu < this->nt0) {
-	    if ( mu_j( *min_it) >= this->et0) {
+	    if ( this->mu_j( *min_it) >= this->et0) {
 
 		// exact check failed!
 		CGAL_qpe_debug {
@@ -237,7 +237,7 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/ )
 	    if (this->solver().is_artificial( *it)) continue;
 
 	    // certify 'mu_j >= 0'
-	    if ( ! certify_mu_j_NT( *it)) {
+	    if ( ! this->certify_mu_j_NT( *it)) {
 
 		// entering variable missed by inexact arithmetic
 		min_it = it;
@@ -252,7 +252,7 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/ )
     // return index of entering variable, if any
     if ( min_mu < this->nt0) {
 	int  j = *min_it;
-	entering_basis( min_it);
+        this->entering_basis( min_it);
 	return j;
     }
 
@@ -282,7 +282,7 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/ )
 	  continue;
 
 	// compute mu_j
-	mu = mu_j_NT( *it);
+	mu = this->mu_j_NT( *it);
 
 	if (price_dantzig (*it, mu, this->nt0, min_j, min_mu, direction))
 	  min_it = it;
@@ -324,7 +324,7 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/ )
 	    if (this->solver().is_artificial( *it)) continue;
 
 	    // compute mu_j
-	    mu = mu_j_NT( *it);
+	    mu = this->mu_j_NT( *it);
 
 	    CGAL_qpe_debug {
 		this->vout() << "  mu_" << *it << " [NT]: " << mu << std::endl;
@@ -335,7 +335,7 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/ )
 
 		// make variable active
 		active_it = it;
-		activating( active_it);
+		this->activating( active_it);
 		
 		// new minimum
 		if (price_dantzig (*active_it, mu, this->nt0, 
@@ -381,7 +381,7 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/ )
 	    // don't price artificial variables
 	    if (this->solver().is_artificial( *it)) continue;
 
-	    if ( ! certify_mu_j_NT( *it)) {
+	    if ( ! this->certify_mu_j_NT( *it)) {
 
 		// entering variable missed by inexact arithmetic
 	      min_j = *it;
@@ -397,7 +397,7 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/ )
     // return index of entering variable, if any
     if ( min_j >= 0) {
       CGAL_qpe_assertion(min_j == *min_it);
-      entering_basis( min_it);
+      this->entering_basis( min_it);
       return min_j;
     }
 
