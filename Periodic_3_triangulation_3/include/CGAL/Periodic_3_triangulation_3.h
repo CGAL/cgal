@@ -48,6 +48,9 @@
 
 #include <CGAL/Unique_hash_map.h>
 
+#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/NT_converter.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class GT, class TDS > class Periodic_3_triangulation_3;
@@ -211,12 +214,15 @@ public:
       const Geometric_traits & gt = Geometric_traits())
     : _gt(gt), _tds(), _domain(domain), too_long_edge_counter(0) {
     _gt.set_domain(_domain);
-//     CGAL_triangulation_precondition(
-// 	_domain.xmax()-_domain.xmin() == _domain.ymax() - _domain.ymin());
-//     CGAL_triangulation_precondition(
-// 	_domain.ymax()-_domain.ymin() == _domain.zmax() - _domain.zmin());
-//     CGAL_triangulation_precondition(
-// 	_domain.zmax()-_domain.zmin() == _domain.xmax() - _domain.xmin());
+    typedef typename internal::Exact_type_selector<FT>::Type EFT;
+    typedef NT_converter<FT,EFT> NTC;
+    CGAL_triangulation_assertion_code( NTC ntc; )
+    CGAL_triangulation_precondition(ntc(_domain.xmax())-ntc(_domain.xmin())
+	== ntc(_domain.ymax())-ntc(_domain.ymin()));
+    CGAL_triangulation_precondition(ntc(_domain.ymax())-ntc(_domain.ymin())
+	== ntc(_domain.zmax())-ntc(_domain.zmin()));
+    CGAL_triangulation_precondition(ntc(_domain.zmax())-ntc(_domain.zmin())
+	== ntc(_domain.xmax())-ntc(_domain.xmin()));
     _cover = make_array(3,3,3);
     init_tds();
     edge_length_threshold = FT(0.166) * (_domain.xmax()-_domain.xmin())
