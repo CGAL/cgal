@@ -293,7 +293,7 @@ public:
     : Bitangent_line(FT(0), FT(0), FT(0), FT(0), vr.b(), vr.c2(),
 		     vr.delta(), vr.d(), FT(0), FT(0), FT(0)), _gamma(vr.c())
     {
-      store(vr.dxp(), vr.dyp(), vr.dwp());
+      this->store(vr.dxp(), vr.dyp(), vr.dwp());
     }
 
   Voronoi_circle_2(const Bitangent_line& bl)
