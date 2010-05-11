@@ -283,6 +283,22 @@ public:
   using Base::number_of_faces;
   using Base::new_vertex;
   using Base::new_face;
+  using Base::target;
+  using Base::source;
+  using Base::point;
+  using Base::next;
+  using Base::twin;
+  using Base::info;
+  using Base::link_as_outer_face_cycle;
+  using Base::link_as_isolated_vertex;
+  using Base::link_as_hole;
+  using Base::face;
+  using Base::set_face;
+  using Base::is_isolated;
+  using Base::first_out_edge;
+  using Base::halfedge;
+  using Base::clear_face_cycle_entries;
+  using Base::is_closed_at_source;
 
   // C++ is really friendly:
   #define USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }

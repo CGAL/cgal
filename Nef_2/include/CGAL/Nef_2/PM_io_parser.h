@@ -64,6 +64,16 @@ class PM_io_parser : public PMDEC
   using Base::new_vertex;
   using Base::new_face;
   using Base::new_halfedge_pair_without_vertices;
+  using Base::is_isolated;
+  using Base::face;
+  using Base::mark;
+  using Base::point;
+  using Base::twin;
+  using Base::previous;
+  using Base::next;
+  using Base::source;
+  using Base::target;
+  using Base::out_edges;
 
   std::istream& in;
   std::ostream& out;
