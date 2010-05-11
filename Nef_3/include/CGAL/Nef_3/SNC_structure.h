@@ -380,7 +380,7 @@ public:
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    {  return Object_handle(); }
   };
 
   class SFace_cycle_const_iterator : public Object_const_iterator 
@@ -411,7 +411,7 @@ public:
     operator Object_handle() const { return Ibase::operator*(); }
     const Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    { return Object_handle(); }
   };
 
 
@@ -432,7 +432,7 @@ public:
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    {  return Object_handle(); }
   };
 
   class Shell_entry_const_iterator : public Object_const_iterator 
@@ -452,7 +452,7 @@ public:
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    {  return Object_handle(); }
   };
 
   typedef CircFromIt<SHalfedge_const_iterator, 
