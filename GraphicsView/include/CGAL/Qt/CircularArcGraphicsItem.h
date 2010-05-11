@@ -87,6 +87,7 @@ protected:
   QRectF bounding_rect;
 
   QPen edges_pen;
+  QPen vertices_pen;
 
   Circular_arc_2 arc_;
 };
