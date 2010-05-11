@@ -187,7 +187,7 @@ struct Is_ok_bond {
     Monomer::Atom_key k_;
     const Atom *a_;
     Atom_pair(Monomer::Atom_key k, const Atom *a): k_(k), a_(a){}
-    const Atom& atom() const {return a_;}
+    const Atom& atom() const {return *a_;}
     Monomer::Atom_key key() const {return k_;}
   };
 
