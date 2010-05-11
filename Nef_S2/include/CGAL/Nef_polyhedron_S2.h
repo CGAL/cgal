@@ -100,6 +100,8 @@ template <typename Kernel_, typename Items_ = SM_items, typename Mark_ = bool,
 class Nef_polyhedron_S2 : public Handle_for< Nef_polyhedron_S2_rep<Kernel_,Items_,Mark_,Map_> >, 
 			  public Nef_polyhedron_S2_rep<Kernel_,Items_,Mark_,Map_>::Const_decorator { 
   
+  using Nef_polyhedron_S2_rep<Kernel_,Items_,Mark_,Map_>::Const_decorator::set_sm;
+
 public:
   /*{\Mtypes 7}*/
   typedef Items_                                              Items;
