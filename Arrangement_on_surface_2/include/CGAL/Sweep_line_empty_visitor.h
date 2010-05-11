@@ -269,6 +269,11 @@ private:
   {
     return (reinterpret_cast<Sweep_line*>(m_sweep_line));
   }
+
+  const Sweep_line* _sweep_line () const
+  {
+    return (reinterpret_cast<const Sweep_line*>(m_sweep_line));
+  }
 };
 
 CGAL_END_NAMESPACE
