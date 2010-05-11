@@ -134,6 +134,10 @@ private:
     typedef typename Sparse_LA::Vector      Vector;
     typedef typename Sparse_LA::Matrix      Matrix;
 
+    // Using statements needed for derived class
+    using Base::compute_angle_rad;
+    using Base::cotangent;
+
 // Public operations
 public:
     /// Constructor

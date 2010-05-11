@@ -120,6 +120,8 @@ private:
     typedef typename Sparse_LA::Vector      Vector;
     typedef typename Sparse_LA::Matrix      Matrix;
 
+    using Base::compute_angle_rad;
+
 // Public operations
 public:
     /// Constructor
