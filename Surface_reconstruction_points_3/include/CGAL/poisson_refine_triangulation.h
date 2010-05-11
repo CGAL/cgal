@@ -54,6 +54,7 @@ public:
   using Base::triangulation_ref_impl;
   using Base::oracle;
   using Base::surface;
+  using Base::should_be_refined;
 
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Tr::Vertex_handle Vertex_handle;
