@@ -139,6 +139,10 @@ typedef Positive_halfsphere_geometry<R> Base;
 typedef typename Base::Point_2   Point_2;
 typedef typename Base::Segment_2 Segment_2;
 
+  using Base::xz_pi_half_rotate;
+  using Base::zx_pi_half_rotate;
+  using Base::xy_pi_half_rotate;
+
 Negative_halfsphere_geometry() : Base() {}
 Negative_halfsphere_geometry(int check_sphere) : Base(check_sphere) {}
   
