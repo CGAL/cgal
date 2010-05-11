@@ -427,6 +427,27 @@ public:
 
   typedef typename Base::GenPtr GenPtr;
 
+
+  using Base::info;
+  using Base::set_first_out_edge;
+  using Base::first_out_edge;
+  using Base::last_out_edge;
+  using Base::out_edges;
+  using Base::link_as_loop;
+  using Base::link_as_face_cycle;
+  using Base::link_as_prev_next_pair;
+  using Base::link_as_isolated_vertex;
+  using Base::is_isolated;
+  using Base::set_source;
+  using Base::set_face;
+  using Base::delete_vertex_only;
+  using Base::delete_edge_pair_only;
+  using Base::is_sm_boundary_object;
+  using Base::undo_sm_boundary_object;
+  using Base::store_sm_boundary_object;
+  using Base::clear_face_cycle_entries;
+
+
   /*{\Mgeneralization SM_decorator}*/
 
 protected:

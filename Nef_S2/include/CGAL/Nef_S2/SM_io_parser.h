@@ -69,6 +69,11 @@ class SM_io_parser : public Decorator_
   typedef typename Decorator_traits::SHalfedge_around_svertex_circulator
                                      SHalfedge_around_svertex_circulator;
 
+
+  using Base::is_isolated;
+  using Base::first_out_edge;
+  using Base::out_edges;
+
   std::istream& in; std::ostream& out;
   bool verbose;
   // a reference to the IO object
