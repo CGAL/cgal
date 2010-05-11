@@ -269,12 +269,15 @@ class Convex_hull_d : public Regular_complex_d<R_>
 typedef Regular_complex_d<R_> Base;
 typedef Convex_hull_d<R_>     Self;
 
-using Base::new_simplex;
-
 public:
 
-using Base::kernel;
-using Base::dcur;
+  using Base::new_simplex;
+  using Base::new_vertex;
+  using Base::associate_vertex_with_simplex;
+  using Base::set_neighbor;
+
+  using Base::kernel;
+  using Base::dcur;
 
 /*{\Xgeneralization Regular_complex_d<R>}*/
 /*{\Mtypes 6.5}*/
