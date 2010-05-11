@@ -36,6 +36,9 @@ public:
   typedef typename Base::Segment_2                Segment_2;
   typedef typename Base::FT                       FT;
 
+  using Base::t;
+  using Base::f;
+
 #if 0
   typedef CGAL::Hyperbola_2<Point,Weight>         Base;
   typedef typename Base::Weighted_point           Weighted_point;
