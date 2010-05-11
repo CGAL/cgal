@@ -174,9 +174,8 @@ public:
   using Dt::is_Gabriel;
   using Dt::incident_cells;
   using Dt::incident_vertices;
+  using Dt::incident_facets;
   using Dt::locate;
-  using Dt::;
-  using Dt::;
 
   enum Classification_type {EXTERIOR, 
 			    SINGULAR, 
