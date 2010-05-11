@@ -121,22 +121,6 @@ private:
 
 
 public:
-  Mixed_complex_triangulator_3(Regular const &regular,
-			       Rt_FT const &shrink,
-			       Triangulated_mixed_complex
-			       &triangulated_mixed_complex, 
-			       bool verbose)
-    : regular(regular),
-      shrink(shrink),
-      _tmc(triangulated_mixed_complex),
-      triangulation_incr_builder(triangulated_mixed_complex), 
-      construct_anchor_point_3_obj(shrink),
-      compute_anchor_obj(regular),
-      verbose(verbose) {
-
-    build();
-  }
-
   Mixed_complex_triangulator_3(Regular &regular,
 			       Rt_FT const &shrink,
 			       Triangulated_mixed_complex
