@@ -503,6 +503,9 @@ class Aff_transformationH2
   typedef typename R_::Direction_2  Direction_2;
   typedef typename R_::Line_2       Line_2;
 
+  typedef Handle_for_virtual< Aff_transformation_rep_baseH2<R_> > Aff_t_base;
+  using Handle_for_virtual<Aff_t_base>::initialize_with;
+
 public:
   typedef R_                                    R;
 

@@ -293,6 +293,8 @@ class Aff_transformationH3
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
+  typedef  Handle_for_virtual< Aff_transformation_rep_baseH3<R_> > Aff_t_base;
+  using Handle_for_virtual<Aff_t_base>::initialize_with;
 public:
   typedef R_                R;
 
