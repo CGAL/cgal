@@ -279,11 +279,12 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
 //    else 
 //      std::cout <<"current prec: " << " SINGLETON " << std::endl;
 //    std::cout <<"desired prec: " << rel_prec << std::endl; 
-    
+//    std::cout <<"bitLength: " << CORE::bitLength(m) << std::endl; 
 //    long shift = ::CORE::bitLength(m) - rel_prec - 1;
+   
     long shift ;
     if (err == 0)
-      shift = ::CORE::bitLength(m) - rel_prec - 2;
+      shift = ::CORE::bitLength(m) - rel_prec - 3;
     else      
       shift = CGAL::relative_precision(x) - rel_prec -1; 
     
@@ -330,8 +331,9 @@ public:
           CGAL_precondition(!Singleton()(x));
           CGAL_precondition(!CGAL::zero_in(x));
           
+          x = x.abs();
           NT w = Width()(x);
-          w /= ::CORE::BigFloat(x.m()-x.err(),0,x.exp()); 
+          w /= ::CORE::BigFloat(x.m()-x.err(),0,x.exp());    
           w = w.abs();
           return -(CORE::ceilLg(w.m()+w.err())+w.exp()*14);
         }
