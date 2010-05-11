@@ -38,6 +38,8 @@ public:
                                unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
     : Base(tree,q,k,Eps,Search_nearest,d) 
   {
+    if (tree.empty()) return;
+    
     if (this->search_nearest) 
       this->distance_to_root = this->distance_instance.min_distance_to_rectangle(q, tree.bounding_box());
     else 
@@ -46,7 +48,7 @@ public:
       
     compute_neighbors_orthogonally(tree.root(), this->distance_to_root);      
       
-    if (sorted) this->queue.sort();      
+    if (sorted) this->queue.sort();
   }
 private:
 

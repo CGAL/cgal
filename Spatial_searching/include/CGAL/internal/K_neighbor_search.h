@@ -87,6 +87,7 @@ protected:
     typedef Point_with_transformed_distance result_type;
     
     result_type operator()(const Point_ptr_with_transformed_distance& pair) const {
+      CGAL_precondition(pair.first!=NULL);
       return std::make_pair(*(pair.first),pair.second);
     }
   };

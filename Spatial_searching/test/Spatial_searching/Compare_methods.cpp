@@ -34,29 +34,12 @@ typedef OK_search::iterator test5;
 typedef OK_search::Tree test6;
 
 
-int main(int argc,char** argv) {
-
-  int NB_INPUT_POINTS =100000;
-  int VALUE_OF_K=10000;
-  int NB_NEIGH = 5000;
-  
-  if(argc !=4){
-    std::cout << "./Compare_methods NB_INPUT_POINTS VALUE_OF_K NB_NEIGH" << std::endl;
-  }
-  else
-  {
-    NB_INPUT_POINTS = atoi(argv[1]);
-    VALUE_OF_K = atoi(argv[2]);
-    NB_NEIGH = atoi(argv[3]);    
-  }
-  
-
-
+void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
   if(VALUE_OF_K < NB_NEIGH || NB_NEIGH > NB_INPUT_POINTS){
     std::cout << "must have VALUE_OF_K >= NB_NEIGH and NB_NEIGH <= NB_INPUT_POINTS) " << std::endl;
-    return -1;
-  }
-
+    exit(EXIT_FAILURE);
+  }  
+  
   CGAL::Timer time;
   CGAL::Memory_sizer m;
   std::size_t ok_mem,k_mem,oi_mem,i_mem;
@@ -66,7 +49,7 @@ int main(int argc,char** argv) {
   std::cout << "Value of K: " <<VALUE_OF_K << std::endl;
   std::cout << "Nb neighbor requested: " <<NB_NEIGH << std::endl;
   
-  Point ok_pt,k_pt,oi_pt,i_pt;
+  Point ok_pt(0,0,0),k_pt(0,0,0),oi_pt(0,0,0),i_pt(0,0,0);
   
   
   time.start();
@@ -88,7 +71,13 @@ int main(int argc,char** argv) {
     OK_search::iterator ok_it=ok_search.begin(), ok_end=ok_search.end();
     for (int j=0; (j < NB_NEIGH-1)&&(ok_it!=ok_end); ++j,++ok_it);
     time.stop(); ok_time=time.time(); std::cout << ok_time << " "; time.reset();
-    ok_pt=(*ok_it).first;
+    if (NB_INPUT_POINTS!=0){
+      CGAL_assertion(ok_it!=ok_end);
+      ok_pt=(*ok_it).first;
+    }
+    else
+      CGAL_assertion(ok_it==ok_end);
+    
     ok_mem=(m.virtual_size()+m.resident_size())-mem_points; 
     std::cout << ok_mem << std::endl;
   }
@@ -103,7 +92,12 @@ int main(int argc,char** argv) {
     for (int j=0; (j < NB_NEIGH-1)&&(k_it!=k_end); ++j,++k_it);
       //~ //std::cout <<   (*k_it).first << "  at squared distance = " << (*k_it).second << std::endl;  
     time.stop(); k_time=time.time(); std::cout << k_time << " "; time.reset();
-    k_pt=(*k_it).first;
+    if (NB_INPUT_POINTS!=0){
+      CGAL_assertion(k_it!=k_end);
+      k_pt=(*k_it).first;
+    }
+    else
+      CGAL_assertion(k_it==k_end);
     k_mem=(m.virtual_size()+m.resident_size())-mem_points; 
     std::cout << k_mem << std::endl;
   }
@@ -117,7 +111,12 @@ int main(int argc,char** argv) {
     for (int j=0; (j < NB_NEIGH-1)&&(oi_it!=oi_end); ++j,++oi_it);
       //~ std::cout <<   (*oi_it).first << "  at squared distance = " << (*oi_it).second << std::endl;
     time.stop(); oi_time=time.time(); std::cout << oi_time << " "; time.reset();
-    oi_pt=(*oi_it).first;
+    if (NB_INPUT_POINTS!=0){
+      CGAL_assertion(oi_it!=oi_end);
+      oi_pt=(*oi_it).first;
+    }
+    else
+      CGAL_assertion(oi_it==oi_end);
     oi_mem=(m.virtual_size()+m.resident_size())-mem_points; 
     std::cout << oi_mem << std::endl;
   }
@@ -131,7 +130,12 @@ int main(int argc,char** argv) {
     for (int j=0; (j < NB_NEIGH-1)&&(i_it!=i_end); ++j,++i_it);
       //~ std::cout <<   (*i_it).first << "  at squared distance = " << (*i_it).second << std::endl;  
     time.stop(); i_time=time.time(); std::cout << i_time << " "; time.reset();
-    i_pt=(*i_it).first;
+    if (NB_INPUT_POINTS!=0){
+      CGAL_assertion(i_it!=i_end);
+      i_pt=(*i_it).first;
+    }
+    else
+      CGAL_assertion(i_it==i_end);
     i_mem=(m.virtual_size()+m.resident_size())-mem_points; 
     std::cout << i_mem << std::endl;
   }
@@ -140,15 +144,45 @@ int main(int argc,char** argv) {
   if ( ok_pt != oi_pt ) std::cout << "OI different\n";
   if ( ok_pt != i_pt ) std::cout << "I different\n";
   
-  assert (ok_pt == k_pt);
-  assert (ok_pt == oi_pt);
-  assert (ok_pt == i_pt);
+  CGAL_assertion (ok_pt == k_pt);
+  CGAL_assertion (ok_pt == oi_pt);
+  CGAL_assertion (ok_pt == i_pt);
   
   std::cerr << NB_INPUT_POINTS << " " << VALUE_OF_K << " " << NB_NEIGH << " ";
   std::cerr << ok_time  << " "  << ok_mem  << " ";
   std::cerr << k_time   << " "  << k_mem   << " ";
   std::cerr << oi_time  << " "  << oi_mem  << " ";
-  std::cerr << i_time   << " "  << i_mem   << "\n";
+  std::cerr << i_time   << " "  << i_mem   << "\n";  
+}
+
+
+int main(int argc,char** argv) {
+
+  if(argc !=4){
+    std::cout << "./Compare_methods NB_INPUT_POINTS VALUE_OF_K NB_NEIGH" << std::endl;
+    int NB_INPUT_POINTS =100000;
+    int VALUE_OF_K=10000;
+    int NB_NEIGH = 5000;
+    std::cout << "Normal run  .....\n";
+    one_run(NB_INPUT_POINTS,VALUE_OF_K,NB_NEIGH);
+    NB_INPUT_POINTS =100000;
+    VALUE_OF_K=1000000;
+    NB_NEIGH = 5000;
+    std::cout << "Run with k > nb input points  .....\n";
+    one_run(NB_INPUT_POINTS,VALUE_OF_K,NB_NEIGH);
+    NB_INPUT_POINTS =0;
+    VALUE_OF_K=1000000;
+    NB_NEIGH = 0;
+    std::cout << "Run with empty tree  .....\n";
+    one_run(NB_INPUT_POINTS,VALUE_OF_K,NB_NEIGH);
+  }
+  else
+  {
+    int NB_INPUT_POINTS = atoi(argv[1]);
+    int VALUE_OF_K = atoi(argv[2]);
+    int NB_NEIGH = atoi(argv[3]);    
+    one_run(NB_INPUT_POINTS,VALUE_OF_K,NB_NEIGH);
+  }
   
   return 0;
 }

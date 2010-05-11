@@ -182,6 +182,10 @@ public:
     std::copy(first, beyond, std::back_inserter(pts));
   }
 
+  bool empty() const {
+    return pts.empty();
+  }
+  
   void 
   build() const
   {

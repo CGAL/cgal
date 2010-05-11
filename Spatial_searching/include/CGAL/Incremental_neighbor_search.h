@@ -304,7 +304,9 @@ namespace CGAL {
 	  distance(tr), reference_count(1), number_of_internal_nodes_visited(0), 
 	  number_of_leaf_nodes_visited(0), number_of_items_visited(0),
 	  number_of_neighbours_computed(0)
-	{	  
+	{
+          if (tree.empty()) return;
+            
 	  multiplication_factor= distance.transformed_distance(FT(1)+Eps);
 
 	  Node_box *bounding_box = new Node_box((tree.bounding_box()));

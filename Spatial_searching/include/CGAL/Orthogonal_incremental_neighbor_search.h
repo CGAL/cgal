@@ -138,6 +138,8 @@ namespace CGAL {
 	  
 	  
       {
+        if (tree.empty()) return;
+        
         // if (search_nearest) 
 	distance_to_root=
 	  Orthogonal_distance_instance.min_distance_to_rectangle(q,
