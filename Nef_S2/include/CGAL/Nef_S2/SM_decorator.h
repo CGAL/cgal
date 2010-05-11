@@ -622,7 +622,7 @@ SHalfedge_handle new_shalfedge_pair_at_source
   return e1;
 }
 
-void delete_edge_pair_at_source(SHalfedge_handle e) const
+void delete_edge_pair_at_source(SHalfedge_handle e)
 /*{\Mop deletes |e| and its twin and maintains the adjacency at its 
   source.}*/
 { remove_from_adj_list_at_source(e);
