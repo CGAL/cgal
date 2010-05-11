@@ -123,6 +123,7 @@ public:
   using Tr_Base::is_valid_finite;
   using Tr_Base::locate;
   using Tr_Base::side_of_segment;
+  using Tr_Base::side_of_edge;
 
   Regular_triangulation_3(const Gt & gt = Gt())
     : Tr_Base(gt), hidden_point_visitor(this)
