@@ -292,32 +292,6 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     return simplified;
   }
 
-  bool vertex_on_facet_simplification() {
-    simplified = false;
-
-    Vertex_iterator v = (*this->sncp()).vertices_begin();
-    while( v != (*this->sncp()).vertices_end()) {
-      Vertex_iterator v_next(v);
-      ++v_next;
-      simplify_redundant_vertex_on_facet(v);
-      v = v_next;
-    }
-    return simplified;
-  }
-
-  bool vertex_on_edge_simplification() {
-    simplified = false;
-
-    Vertex_iterator v = (*this->sncp()).vertices_begin();
-    while( v != (*this->sncp()).vertices_end()) {
-      Vertex_iterator v_next(v);
-      ++v_next;
-      simplify_redundant_vertex_on_edge(v);
-      v = v_next;
-    }
-    return simplified;
-  }
-
   bool vertex_simplification(bool snc_computed = true) {
     simplified = false;
 
