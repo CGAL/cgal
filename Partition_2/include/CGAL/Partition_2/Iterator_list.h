@@ -36,7 +36,7 @@ public:
 
       for (Iterator current = first; current != beyond; current++)
       {
-         push_back(current);
+         this->push_back(current);
       } 
   }
 };

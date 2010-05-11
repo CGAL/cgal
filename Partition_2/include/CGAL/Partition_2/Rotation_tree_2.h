@@ -49,6 +49,7 @@ public:
    typedef typename internal::vector<Node>::iterator  Self_iterator;
    typedef typename Traits::Point_2                Point_2;
 
+  using  internal::vector< Rotation_tree_node_2<Traits_> >::push_back;
 
    // constructor
    template<class ForwardIterator>
