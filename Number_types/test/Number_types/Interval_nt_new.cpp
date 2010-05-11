@@ -12,13 +12,6 @@
         if(!b) CGAL_error_msg( "Expr should throw expetion");        \
     }                          
 
-namespace CGAL {
-  template< class NT >
-  bool in( const NT& v, const CGAL::Interval_nt<true>& interval) {
-    return (interval.inf() <= v ) && (interval.sup() >= v);
-  }
-}
-
 int main() {
 {
     typedef CGAL::Interval_nt<true> NT;
