@@ -105,16 +105,10 @@ private:
       return K2_Site_2::construct_site_2( Base::operator()(t.point()) );
     }
 
-#ifdef CGAL_SDG_NOX
-    // t is a segment
-    return K2_Site_2::construct_site_2
-      ( Base::operator()(t.source()), Base::operator()(t.target()) );    
-#else
     // t is a segment
     return K2_Site_2::construct_site_2
       ( Base::operator()(t.source_of_supporting_site()),
 	Base::operator()(t.target_of_supporting_site()) );    
-#endif
   }
 
 public:

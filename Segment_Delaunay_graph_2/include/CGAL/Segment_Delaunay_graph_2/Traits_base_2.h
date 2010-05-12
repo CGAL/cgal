@@ -20,16 +20,9 @@
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_TRAITS_BASE_2_H
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
-
-#ifdef CGAL_SDG_NOX
-#include <CGAL/Segment_Delaunay_graph_2/nox/Predicates_C2.h>
-#include <CGAL/Segment_Delaunay_graph_2/nox/Constructions_C2.h>
-#include <CGAL/Segment_Delaunay_graph_2/nox/Kernel_wrapper_2.h>
-#else
 #include <CGAL/Segment_Delaunay_graph_2/Predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Kernel_wrapper_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,7 +30,6 @@ namespace Internal {
 
   template<class K,class BooleanTag> struct Which_arrangement_type;
 
-#ifndef CGAL_SDG_NOX
   // Tag_true means that we want to support intersections
   template<class K>
   struct Which_arrangement_type<K,Tag_true>
@@ -46,7 +38,6 @@ namespace Internal {
     CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Arrangement_type_C2<K>
     Arrangement_type;
   };
-#endif
 
   // Tag_false means that we do not want to support intersections
   template<class K>
