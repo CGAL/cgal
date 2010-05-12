@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2006-2010 Inria Lorraine (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_FUNCTORS_H
 #define CGAL_RS_FUNCTORS_H
@@ -31,6 +31,12 @@
 #include <CGAL/RS/compare_1.h>
 #include <CGAL/RS/polynomial_converter.h>
 #include <CGAL/Gmpfr.h>
+
+#ifdef IEEE_DBL_MANT_DIG
+#  define CGAL_RS_FUNCTORS_DBL_PREC IEEE_DBL_MANT_DIG
+#else
+#  define CGAL_RS_FUNCTORS_DBL_PREC 53
+#endif
 
 namespace CGAL{
 namespace RSFunctors{
@@ -382,34 +388,41 @@ struct Bound_between_1:
     public std::binary_function<Algebraic,Algebraic,Bound>{
         typedef _Gcd_policy     Gcd;
         Bound operator()(const Algebraic &x1,const Algebraic &x2)const{
-            mpfr_t temp;
-            mp_prec_t p1,p2;
-            int round;
+            double l,r,m;
             switch(RS_COMPARE::compare_1<Gcd>(x1,x2)){
                 case LARGER:
-                    p1=mpfr_get_prec(x2.right());
-                    p2=mpfr_get_prec(x1.left());
-                    if(p1>p2)
-                        mpfr_init2(temp,p1+1);
-                    else
-                        mpfr_init2(temp,p2+1);
-                    round=mpfr_add(temp,x2.right(),x1.left(),GMP_RNDN);
+                    CGAL_assertion(x2.sup()<x1.inf());
+                    l=x2.sup().to_double(std::round_toward_infinity);
+                    r=x1.inf().to_double(std::round_toward_neg_infinity);
+                    m=(l+r)/2;
+                    if(l<m&&m<r){
+                        return Gmpfr(m,CGAL_RS_FUNCTORS_DBL_PREC);
+                    }
+                    return Gmpfr::add(x2.sup(),
+                                      x1.inf(),
+                                      (x2.sup().get_precision()>
+                                                x1.inf().get_precision()?
+                                       1+x2.sup().get_precision():
+                                       1+x1.inf().get_precision()))/2;
                     break;
                 case SMALLER:
-                    p1=mpfr_get_prec(x1.right());
-                    p2=mpfr_get_prec(x2.left());
-                    if(p1>p2)
-                        mpfr_init2(temp,p1+1);
-                    else
-                        mpfr_init2(temp,p2+1);
-                    round=mpfr_add(temp,x1.right(),x2.left(),GMP_RNDN);
+                    CGAL_assertion(x1.sup()<x2.inf());
+                    l=x1.sup().to_double(std::round_toward_infinity);
+                    r=x2.inf().to_double(std::round_toward_neg_infinity);
+                    m=(l+r)/2;
+                    if(l<m&&m<r){
+                        return Gmpfr(m,CGAL_RS_FUNCTORS_DBL_PREC);
+                    }
+                    return Gmpfr::add(x1.sup(),
+                                      x2.inf(),
+                                      (x1.sup().get_precision()>
+                                                x2.inf().get_precision()?
+                                       1+x1.sup().get_precision():
+                                       1+x2.inf().get_precision()))/2;
                     break;
                 default:
                     CGAL_error_msg("bound between two equal numbers");
             }
-            CGAL_assertion(!round);
-            mpfr_div_2ui(temp,temp,1,GMP_RNDN);
-            return Bound(temp);
         }
     };  // Bound_between_1
 
@@ -428,6 +441,9 @@ struct Approximate_absolute_1:
 //--------------------------------------------------
     RS3::refine_1(x,std::max<unsigned>(CGAL::abs(prec),
                                        mpfi_get_prec(x.mpfi())));
+    //if(mpfi_get_prec(x.mpfi())<CGAL::abs(prec)){
+    //        RS3::refine_1(x,CGAL::abs(prec));
+    //}
     CGAL_assertion(prec>0?
                    (x.sup()-x.inf())*CGAL::ipower(Bound(2),prec)<=Bound(1):
                    (x.sup()-x.inf())<=CGAL::ipower(Bound(2),-prec));
@@ -460,5 +476,7 @@ struct Approximate_relative_1
 
 } // namespace RSFunctors
 } // namespace CGAL
+
+#undef CGAL_RS_FUNCTORS_DBL_PREC
 
 #endif  // CGAL_RS_FUNCTORS_H
