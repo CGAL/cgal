@@ -766,8 +766,8 @@ public:
   
 protected:
   /** @name Location helpers */ //@{
-  Cell_handle locate(const Point & p, const Offset &o_p, Locate_type & lt,
-      int & li, int & lj, Cell_handle start) const;
+  Cell_handle periodic_locate(const Point & p, const Offset &o_p,
+    Locate_type & lt, int & li, int & lj, Cell_handle start) const;
 
   Bounded_side side_of_cell(const Point & p, const Offset &off,
       Cell_handle c, Locate_type & lt, int & i, int & j) const;
@@ -788,7 +788,7 @@ public:
     */
   Cell_handle locate(const Point & p, Locate_type & lt, int & li, int & lj,
       Cell_handle start = Cell_handle()) const {
-    return locate(p, Offset(), lt, li, lj, start);
+    return periodic_locate(p, Offset(), lt, li, lj, start);
   }
 
   Bounded_side side_of_cell(const Point & p,
@@ -856,7 +856,7 @@ protected:
       const Conflict_tester &tester, Point_hider &hider) {
     Locate_type lt = Locate_type();
     int li=0, lj=0;
-    Cell_handle c = locate(p, Offset(), lt, li, lj, start);
+    Cell_handle c = periodic_locate(p, Offset(), lt, li, lj, start);
     return insert_in_conflict(p,lt,c,li,lj,tester,hider);
   }
 
@@ -880,7 +880,7 @@ protected:
     Cell_handle hint;
     while (begin!=end) {
       tester.set_point(*begin);
-      hint = locate(*begin, Offset(), lt, li, lj, start);
+      hint = periodic_locate(*begin, Offset(), lt, li, lj, start);
       CGAL_triangulation_assertion_code( if (number_of_vertices() != 0) { );
 	CGAL_triangulation_assertion(side_of_cell(
 		*begin,Offset(), hint, lta, ia, ja) != ON_UNBOUNDED_SIDE);
@@ -1498,7 +1498,8 @@ periodic_triangle(const Cell_handle c, int i) const
   */
 template < class GT, class TDS >
 typename Periodic_3_triangulation_3<GT,TDS>::Cell_handle
-Periodic_3_triangulation_3<GT,TDS>::locate(const Point & p, const Offset &o_p,
+Periodic_3_triangulation_3<GT,TDS>::periodic_locate(
+    const Point & p, const Offset &o_p,
     Locate_type & lt, int & li, int & lj, Cell_handle start) const {
   int cumm_off = 0;
   Offset off_query = o_p;
@@ -2309,7 +2310,7 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point & p,
       for (int k=0; k<_cover[2]; k++) {
         if ((i!=0)||(j!=0)||(k!=0)) {
           start = start_vertices[i*9+j*3+k-1]->cell();
-          c = locate(p, Offset(i,j,k), lt, li, lj, start);
+          c = periodic_locate(p, Offset(i,j,k), lt, li, lj, start);
           Vertex_handle vh2 = periodic_insert(p, Offset(i,j,k), lt, c,
               tester, hider,vh);
         }
