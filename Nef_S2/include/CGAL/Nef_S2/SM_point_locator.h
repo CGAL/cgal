@@ -179,7 +179,7 @@ public:
   enum SOLUTION { is_vertex_, is_edge_, is_loop_ };
   // enumeration for internal use
 
-  Object_handle locate(const Sphere_point& p, bool skipVEL = false) const
+  Object_handle locate(const Sphere_point& p, bool skipVEL = false)
   /*{\Mop returns a generic handle |h| to an object (vertex, halfedge,
   face) of the underlying plane map |P| which contains the point |p =
   s.source()| in its relative interior. |s.target()| must be a point
