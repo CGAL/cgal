@@ -274,6 +274,7 @@ public:
   using Base::new_simplex;
   using Base::new_vertex;
   using Base::associate_vertex_with_simplex;
+  using Base::associate_point_with_vertex;
   using Base::set_neighbor;
 
   using Base::kernel;
