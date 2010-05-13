@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2006-2010 Inria Lorraine (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_POLYNOMIAL_1_EVAL_H
 #define CGAL_RS_POLYNOMIAL_1_EVAL_H
@@ -69,7 +69,7 @@ Sign RS_polynomial_1::sign_dyadic(CGALRS_dyadic_srcptr x)const{
         CGALRS_dyadic_t h;
         if(!(d=get_degree())){
                 s=mpz_sgn(coef(0));
-                return(s?(s>0?POSITIVE:NEGATIVE):ZERO);
+                return(s?(s>0?CGAL::POSITIVE:CGAL::NEGATIVE):CGAL::ZERO);
         }
         CGALRS_dyadic_init_set_z(h,leading_coefficient());
         for(int i=1;i<d;++i){
@@ -79,7 +79,7 @@ Sign RS_polynomial_1::sign_dyadic(CGALRS_dyadic_srcptr x)const{
         CGALRS_dyadic_mul(h,h,x);
         CGALRS_dyadic_neg(h,h);
         s=mpfr_cmp_z(h,coef(0));
-        return(s?(s>0?NEGATIVE:POSITIVE):ZERO);
+        return(s?(s>0?CGAL::NEGATIVE:CGAL::POSITIVE):CGAL::ZERO);
 }
 
 inline
@@ -91,12 +91,12 @@ Sign RS_polynomial_1::sign_mpfr(mpfr_srcptr x)const{
 
 // calculates the sign of the evaluation of a polynomial in a given interval
 inline
-rs_sign RS_polynomial_1::sign_mpfi(mpfi_srcptr x)const{
+RS::rs_sign RS_polynomial_1::sign_mpfi(mpfi_srcptr x)const{
         mpfi_t y;
         int l,r,d;
         if(!(d=get_degree())){
                 l=mpz_sgn(coef(0));
-                return(l?(l>0?RS_POSITIVE:RS_NEGATIVE):RS_ZERO);
+                return(l?(l>0?RS::RS_POSITIVE:RS::RS_NEGATIVE):RS::RS_ZERO);
         }
         // TODO: check if the precision is ok (Fabrice said that we lose
         // one bit per operation, there are 2*d operations and with three
@@ -110,19 +110,17 @@ rs_sign RS_polynomial_1::sign_mpfi(mpfi_srcptr x)const{
         l=mpfr_sgn(&y->left);
         if(l>0){
                 mpfi_clear(y);
-                return RS_POSITIVE;
+                return RS::RS_POSITIVE;
         }
         r=mpfr_sgn(&y->right);
         mpfi_clear(y);
         if(r<0)
-                return RS_NEGATIVE;
+                return RS::RS_NEGATIVE;
         if(!l&&!r)
-                return RS_ZERO;
-        return RS_UNKNOWN;
+                return RS::RS_ZERO;
+        return RS::RS_UNKNOWN;
 }
 
 } // namespace CGAL
 
 #endif  // CGAL_RS_POLYNOMIAL_1_EVAL_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

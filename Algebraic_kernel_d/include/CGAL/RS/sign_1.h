@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2006-2010 Inria Lorraine (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_SIGN_1_H
 #define CGAL_RS_SIGN_1_H
@@ -36,21 +36,21 @@ struct RSSign{
         // This function calculates the sign of the evaluation of a polynomial
         // at a given algebraic number. If it is impossible to know the sign
         // evaluating the interval, it calls sign_1_rs, which uses RS to do it.
-        static Sign sign_1(const RS_polynomial_1 &p,const Algebraic_1 &x){
-                rs_sign s=p.sign_mpfi(x.mpfi());
-                if(s!=RS_UNKNOWN)
-                        return convert_rs_sign(s);
+        static CGAL::Sign sign_1(const RS_polynomial_1 &p,const Algebraic_1 &x){
+                RS::rs_sign s=p.sign_mpfi(x.mpfi());
+                if(s!=RS::RS_UNKNOWN)
+                        return RS::convert_rs_sign(s);
                 return sign_1_rs(p,x);
         }
 
         // compute the sign of the polynomial at a given dyadic
-        static inline Sign
+        static inline CGAL::Sign
         exactsignatdyadic(const RS_polynomial_1 &p,CGALRS_dyadic_srcptr d){
                 return p.sign_dyadic(d);
         }
 
         // compute the sign of the polynomial at a given mpfr
-        static inline Sign
+        static inline CGAL::Sign
         exactsignat(const RS_polynomial_1 &p,mpfr_srcptr m){
                 return p.sign_mpfr(m);
         }
@@ -60,22 +60,22 @@ struct RSSign{
         // interval with the given precision. Later, it evaluates the
         // polynomial in the interval an looks for the sign. If it is not able
         // to determine it, it calls the exact signat function.
-        static Sign quicksignat
+        static CGAL::Sign quicksignat
         (const RS_polynomial_1 &p,mpfr_srcptr xcoord,mp_prec_t prec){
                 mpfi_t x_approx;
-                rs_sign s;
+                RS::rs_sign s;
                 mpfi_init2(x_approx,prec);
                 mpfi_set_fr(x_approx,xcoord);
                 s=p.sign_mpfi(x_approx);
                 mpfi_clear(x_approx);
-                if(s!=RS_UNKNOWN)
-                        return convert_rs_sign(s);
+                if(s!=RS::RS_UNKNOWN)
+                        return RS::convert_rs_sign(s);
                 return p.sign_mpfr(xcoord);
         }
 
         // This function is supposed to return the signat calculated in
         // the best way.
-        static Sign signat(const RS_polynomial_1 &p,mpfr_srcptr xcoord){
+        static CGAL::Sign signat(const RS_polynomial_1 &p,mpfr_srcptr xcoord){
                 mp_prec_t xprec=mpfr_get_prec(xcoord);
                 if(xprec>>(mp_prec_t)12) // switch to exact if xprec>=8192
                         return p.sign_mpfr(xcoord);
@@ -87,5 +87,3 @@ struct RSSign{
 } // namespace CGAL
 
 #endif  // CGAL_RS_SIGN_1_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

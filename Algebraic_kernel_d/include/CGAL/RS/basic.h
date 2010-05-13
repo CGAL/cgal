@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2006-2010 Inria Lorraine (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_BASIC_H
 #define CGAL_RS_BASIC_H
@@ -55,27 +55,25 @@
 #  define CGALRS_THREAD_ATTR
 #endif
 
-namespace CGAL{
+namespace RS{
 
 enum rs_sign{
-    RS_NEGATIVE=        NEGATIVE,
-    RS_ZERO=            ZERO,
-    RS_POSITIVE=        POSITIVE,
+    RS_NEGATIVE=        CGAL::NEGATIVE,
+    RS_ZERO=            CGAL::ZERO,
+    RS_POSITIVE=        CGAL::POSITIVE,
     RS_UNKNOWN
 };
 
 // this function must only be called when s is not RS_UNKNOWN
-inline Sign convert_rs_sign(rs_sign s){
+inline CGAL::Sign convert_rs_sign(rs_sign s){
         CGAL_precondition(s!=RS_UNKNOWN);
         switch(s){
-                case RS_NEGATIVE:return NEGATIVE;break;
-                case RS_POSITIVE:return POSITIVE;break;
-                default:return ZERO;
+                case RS_NEGATIVE:return CGAL::NEGATIVE;break;
+                case RS_POSITIVE:return CGAL::POSITIVE;break;
+                default:return CGAL::ZERO;
         }
 }
 
-} // namespace CGAL
+} // namespace RS
 
 #endif  // CGAL_RS_BASIC_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

@@ -1,4 +1,4 @@
-// Copyright (c) 2009 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2009-2010 Inria Lorraine (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_SIGN_1_RS_H
 #define CGAL_RS_SIGN_1_RS_H

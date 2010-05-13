@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2006-2010 Inria Lorraine (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_POLYNOMIAL_1_H
 #define CGAL_RS_POLYNOMIAL_1_H
@@ -108,9 +108,9 @@ class RS_polynomial_1:
                 void eval_mpfi(mpfi_ptr,mpfi_srcptr)const;
                 Sign sign_dyadic(CGALRS_dyadic_srcptr)const;
                 Sign sign_mpfr(mpfr_srcptr)const;
-                rs_sign sign_mpfi(mpfi_srcptr)const;
+                RS::rs_sign sign_mpfi(mpfi_srcptr)const;
                 double operator()(double)const;
-                Gmpz operator()(int)const;
+                CGAL::Gmpz operator()(int)const;
                 RS_polynomial_1 operator-()const;
                 RS_polynomial_1& operator+=(const RS_polynomial_1&);
                 RS_polynomial_1& operator-=(const RS_polynomial_1&);
@@ -142,5 +142,3 @@ class RS_polynomial_1:
 #include <CGAL/RS/polynomial_1_io.h>
 
 #endif  // CGAL_GRBS_POLYNOMIAL_1_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

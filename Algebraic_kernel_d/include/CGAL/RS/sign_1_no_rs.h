@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2006-2010 Inria Lorraine (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_RS_SIGN_1_NO_RS_H
 #define CGAL_RS_SIGN_1_NO_RS_H
@@ -32,16 +32,16 @@ namespace CGAL{
 
 // compute the sign of the polynomial at a given algebraic number
 template <class _Gcd_policy>
-Sign sign_1_no_rs(const RS_polynomial_1 &p,const Algebraic_1 &x){
+CGAL::Sign sign_1_no_rs(const RS_polynomial_1 &p,const Algebraic_1 &x){
         typedef _Gcd_policy     Gcd;
 
         unsigned bisect_steps=/*4*/1000;
         rs_sign s;
-        Sign sleft,sright;
+        CGAL::Sign sleft,sright;
         RS_polynomial_1 *gcd,*deriv;
         // we check first by evaluating intervals
         s=p.sign_mpfi(x.mpfi());
-        if(s!=RS_UNKNOWN)
+        if(s!=RS::RS_UNKNOWN)
                 return convert_rs_sign(s);
 
         // we are not sure, we calculate the gcd in order to know if both
@@ -58,15 +58,15 @@ Sign sign_1_no_rs(const RS_polynomial_1 &p,const Algebraic_1 &x){
 
         // how to assure that p is monotonic: when its derivative is never zero
         deriv=&(sfpart_1<Gcd>()(p).derive());
-        while(deriv->sign_mpfi(x.mpfi())==RS_UNKNOWN)
+        while(deriv->sign_mpfi(x.mpfi())==RS::RS_UNKNOWN)
                 RS3::refine_1(x,(bisect_steps*=2));
                 //bisect_n<Gcd>(x,(bisect_steps*=2));
 
         // how to know that the gcd has a root: just evaluating endpoints
-        if((sleft=RSSign::exactsignat(*gcd,x.left()))==ZERO
-                        ||(sright=RSSign::exactsignat(*gcd,x.right()))==ZERO
-                        ||(sleft!=sright)){
-                return ZERO;
+        if((sleft=RSSign::exactsignat(*gcd,x.left()))==CGAL::ZERO||
+           (sright=RSSign::exactsignat(*gcd,x.right()))==CGAL::ZERO||
+           (sleft!=sright)){
+                return CGAL::ZERO;
         }
 
 refineandreturn:
@@ -74,10 +74,10 @@ refineandreturn:
         for(;;){
                 RS3::refine_1(x,bisect_steps);
                 s=p.sign_mpfi(x.mpfi());
-                if(s==RS_POSITIVE)
-                        return POSITIVE;
-                if(s==RS_NEGATIVE)
-                        return NEGATIVE;
+                if(s==RS::RS_POSITIVE)
+                        return CGAL::POSITIVE;
+                if(s==RS::RS_NEGATIVE)
+                        return CGAL::NEGATIVE;
                 bisect_steps*=2;
         }
 }
@@ -85,5 +85,3 @@ refineandreturn:
 } // namespace CGAL
 
 #endif  // CGAL_RS_SIGN_1_NO_RS_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab
