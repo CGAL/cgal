@@ -189,7 +189,7 @@ public:
   Vertex_handle
   nearest_vertex(const Point& p, Cell_handle start = Cell_handle()) const;
 
-private:
+protected:
 
   struct locs {
       Cell_handle pos;

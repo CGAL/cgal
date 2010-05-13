@@ -764,7 +764,7 @@ public:
   }
   //@}
   
-private:
+protected:
   /** @name Location helpers */ //@{
   Cell_handle locate(const Point & p, const Offset &o_p, Locate_type & lt,
       int & li, int & lj, Cell_handle start) const;
