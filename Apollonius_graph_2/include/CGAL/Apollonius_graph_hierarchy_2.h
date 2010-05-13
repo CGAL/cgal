@@ -85,6 +85,18 @@ public:
 
   typedef typename Ag_base::size_type              size_type;
 
+  using Ag_base::insert_first;
+  using Ag_base::insert_second;
+  using Ag_base::insert_third;
+  using Ag_base::is_hidden;
+  using Ag_base::incircle;
+  using Ag_base::edge_interior;
+  using Ag_base::insert_degree_2;
+  using Ag_base::initialize_conflict_region;
+  using Ag_base::expand_conflict_region;
+  using Ag_base::retriangulate_conflict_region;
+  using Ag_base::is_infinite;
+
 public:
   // CREATION
   //---------

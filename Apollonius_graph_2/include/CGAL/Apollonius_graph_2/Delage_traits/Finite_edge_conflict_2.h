@@ -38,6 +38,9 @@ class Finite_edge_interior_conflict_new_2
 {
 private:
   typedef Edge_conflict_2<K,Method_tag>    Base;
+
+  using Base::edge_conflict_test;
+
 public:
   typedef typename Base::Inverted_weighted_point   Inverted_weighted_point;
   typedef Weighted_point_inverter_2<K>             Weighted_point_inverter;

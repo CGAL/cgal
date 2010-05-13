@@ -40,6 +40,9 @@ class Parabola_segment_2 : public Parabola_2< Gt >
   typedef typename Base::Segment_2        Segment_2;
   typedef typename Base::Line_2           Line_2;
 
+  using Base::t;
+  using Base::f;
+
 protected:
   Point_2 p1, p2;
 

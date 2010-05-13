@@ -43,6 +43,10 @@ public:
   //  typedef CGAL::Segment_2< Cartesian<double> >   Segment_2;
   //  typedef CGAL::Ray_2< Cartesian<double> >       Ray_2;
 
+
+  using Base::t;
+  using Base::f;
+
 protected:
 #if defined(__POWERPC__) && \
   defined(__GNUC__) && (__GNUC__ == 3 ) && (__GNUC_MINOR__ == 4)
