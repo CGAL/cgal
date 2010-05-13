@@ -106,6 +106,7 @@ public:
 
   using Base::cyclic_adj_succ;
   using Base::is_isolated;
+  using Base::first_out_edge;
 
   Sphere_segment segment(SHalfedge_handle e) const
   { return Sphere_segment(e->source()->point(), e->twin()->source()->point(), e->circle()); }

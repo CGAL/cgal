@@ -441,11 +441,17 @@ public:
   using Base::set_source;
   using Base::set_face;
   using Base::delete_vertex_only;
+  using Base::delete_face_only;
+  using Base::delete_edge_pair;
   using Base::delete_edge_pair_only;
   using Base::is_sm_boundary_object;
   using Base::undo_sm_boundary_object;
   using Base::store_sm_boundary_object;
   using Base::clear_face_cycle_entries;
+  using Base::is_closed_at_source;
+  using Base::has_outdeg_two;
+  using Base::convert_edge_to_loop;
+  using Base::merge_edge_pairs_at_target;
 
 
   /*{\Mgeneralization SM_decorator}*/
