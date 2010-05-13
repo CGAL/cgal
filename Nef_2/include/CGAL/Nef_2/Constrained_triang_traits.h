@@ -71,6 +71,19 @@ public:
   typedef typename Base::Halfedge_around_vertex_circulator
           Halfedge_around_vertex_circulator;
 
+
+  using Base::point;
+  using Base::is_isolated;
+  using Base::first_out_edge;
+  using Base::source;
+  using Base::target;
+  using Base::twin;
+  using Base::next;
+  using Base::previous;
+  using Base::cyclic_adj_succ;
+  using Base::cyclic_adj_pred;
+  using Base::delete_vertex;
+
   class lt_edges_in_sweepline : public PMDEC
   {  const Point& p;
      const Halfedge_handle& e_bottom;

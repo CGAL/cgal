@@ -139,6 +139,19 @@ public:
   using Base::number_of_vertices;
   using Base::number_of_halfedges;
   using Base::number_of_faces;
+  using Base::info;
+  using Base::is_closed_at_source;
+  using Base::source;
+  using Base::target;
+  using Base::cyclic_adj_succ;
+  using Base::mark;
+  using Base::twin;
+  using Base::flip_diagonal;
+  using Base::is_isolated;
+  using Base::first_out_edge;
+  using Base::next;
+  using Base::previous;
+  using Base::face;
 
   Halfedge_const_handle out_wedge(Vertex_const_handle v,
     const Direction& d, bool& collinear) const

@@ -287,6 +287,7 @@ public:
   using Base::source;
   using Base::point;
   using Base::next;
+  using Base::previous;
   using Base::twin;
   using Base::info;
   using Base::link_as_outer_face_cycle;
@@ -299,6 +300,14 @@ public:
   using Base::halfedge;
   using Base::clear_face_cycle_entries;
   using Base::is_closed_at_source;
+  using Base::delete_halfedge_pair;
+  using Base::delete_face;
+  using Base::set_halfedge;
+  using Base::set_hole;
+  using Base::delete_vertex_only;
+  using Base::set_isolated_vertex;
+  using Base::has_outdeg_two;
+  using Base::merge_halfedge_pairs_at_target;
 
   // C++ is really friendly:
   #define USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }

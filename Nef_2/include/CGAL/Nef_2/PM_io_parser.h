@@ -74,6 +74,7 @@ class PM_io_parser : public PMDEC
   using Base::source;
   using Base::target;
   using Base::out_edges;
+  using Base::halfedge;
 
   std::istream& in;
   std::ostream& out;
