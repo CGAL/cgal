@@ -201,7 +201,7 @@ pricing_helper(int& direction, Tag_false ) // bounds for variables
 		this->vout() << "mu_" << j << " [NT]: " << mu << std::endl;
 	    }
 	    // from pricing strategy base class
-	    price_dantzig (j, mu, this->nt0, min_j, min_mu, direction);
+	    this->price_dantzig (j, mu, this->nt0, min_j, min_mu, direction);
 	}
     }
 

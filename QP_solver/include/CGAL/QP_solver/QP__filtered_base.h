@@ -53,6 +53,9 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
     typedef  NT_                        NT;
     typedef  ET2NT_                     ET2NT;
 
+  using Base::price_dantzig;
+  using Base::is_improving;
+
   protected:
 
     // construction

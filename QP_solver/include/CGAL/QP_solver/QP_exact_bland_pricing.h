@@ -157,7 +157,7 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/)
 
       const ET mu = this->mu_j(j);
       // from pricing strategy base class
-      price_dantzig (j, mu, this->et0, min_j, min_mu, direction); 
+      this->price_dantzig (j, mu, this->et0, min_j, min_mu, direction); 
       if (min_j >= 0) return j;
     }
   }

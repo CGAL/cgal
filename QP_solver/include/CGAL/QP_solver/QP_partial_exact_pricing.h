@@ -187,7 +187,7 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/)
 	// compute mu_j
 	mu = this->mu_j( *it);
 
-	if (price_dantzig (*it, mu, this->et0, min_j, min_mu, direction))
+	if (this->price_dantzig (*it, mu, this->et0, min_j, min_mu, direction))
 	  min_it = it;
     }
 
@@ -216,14 +216,14 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/)
 	  }
 
 	  // candidate for entering?
-	  if ( is_improving(*it, mu, this->et0)) {
+	  if ( this->is_improving(*it, mu, this->et0)) {
 
 	    // make variable active
 	    active_it = it;
 	    this->activating( active_it);
 
 	    // new minimum?
-	    if (price_dantzig (*active_it, mu, this->et0, 
+	    if (this->price_dantzig (*active_it, mu, this->et0, 
 			       min_j, min_mu, direction))
 	      min_it = active_it;
 	  }
