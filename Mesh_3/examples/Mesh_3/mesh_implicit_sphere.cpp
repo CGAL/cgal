@@ -8,7 +8,7 @@
 #include <CGAL/make_mesh_3.h>
 
 // Domain
-struct K: public CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef FT (Function)(const Point&);

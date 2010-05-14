@@ -14,7 +14,7 @@
 
 // Domain 
 // (we use exact intersection computation with Robust_intersection_traits_3)
-struct K: public CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Mesh_3::Robust_intersection_traits_3<K> Geom_traits;
 typedef CGAL::Polyhedron_3<Geom_traits> Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Geom_traits> Mesh_domain;

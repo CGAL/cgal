@@ -32,8 +32,8 @@
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
-struct K_e_i : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-struct K_e_e : public CGAL::Exact_predicates_exact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K_e_i;
+typedef CGAL::Exact_predicates_exact_constructions_kernel K_e_e;
 
 namespace CGAL {
 namespace details {

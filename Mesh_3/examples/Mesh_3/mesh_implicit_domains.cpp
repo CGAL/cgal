@@ -44,7 +44,7 @@
 using namespace CGAL::parameters;
 
 // Domain
-struct K: public CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef FT_to_point_function_wrapper<K::FT, K::Point_3> Function;
 typedef CGAL::Mesh_3::Implicit_vector_to_labeled_function_wrapper<Function, K>
                                                         Function_wrapper;

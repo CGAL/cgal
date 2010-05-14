@@ -9,7 +9,7 @@
 #include <CGAL/Image_3.h>
 
 // Domain
-struct K: public CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_image_mesh_domain_3<CGAL::Image_3,K> Mesh_domain;
 
 // Triangulation
