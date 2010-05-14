@@ -108,14 +108,14 @@ struct Get_key {
     }                                                                   \
 
      */
-CGAL_PDB_MAKE_RANGE(Atom, atom);
-CGAL_PDB_MAKE_RANGE(Monomer, monomer);
-CGAL_PDB_MAKE_RANGE(Chain, chain);
-CGAL_PDB_MAKE_RANGE(Model, model);
-CGAL_PDB_MAKE_RANGE(Heterogen, heterogen);
-CGAL_PDB_MAKE_RANGE(Point, point);
-CGAL_PDB_MAKE_RANGE(Index, index);
-CGAL_PDB_MAKE_RANGE(Key, key);
+CGAL_PDB_MAKE_RANGE(Atom, atom)
+CGAL_PDB_MAKE_RANGE(Monomer, monomer)
+CGAL_PDB_MAKE_RANGE(Chain, chain)
+CGAL_PDB_MAKE_RANGE(Model, model)
+CGAL_PDB_MAKE_RANGE(Heterogen, heterogen)
+CGAL_PDB_MAKE_RANGE(Point, point)
+CGAL_PDB_MAKE_RANGE(Index, index)
+CGAL_PDB_MAKE_RANGE(Key, key)
 
 
 struct Get_bond_indices {
