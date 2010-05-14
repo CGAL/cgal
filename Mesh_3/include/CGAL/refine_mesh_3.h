@@ -51,7 +51,7 @@ namespace CGAL {
       
     public:
       Insert_vertex_in_c3t3(C3T3& c3t3)
-        : r_c3t3_(c3t3) { };
+        : r_c3t3_(c3t3) {}
       
       void operator()(const Vertex& vertex) const
       {
@@ -364,7 +364,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
                  parameters::sliver_bound = exude.bound());
   }
   
-};
+}
 
 }  // end namespace CGAL
 

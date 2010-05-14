@@ -49,7 +49,7 @@ public:
   typedef typename Visitor_::Handle Handle;
 
   /// Destructor
-  virtual ~Abstract_criterion() { };
+  virtual ~Abstract_criterion() {}
 
   void accept(Visitor_& v) const { do_accept(v); }
   Badness is_bad(const Handle& h) const { return do_is_bad(h); }
@@ -92,10 +92,10 @@ public:
   Criterion_visitor(const Handle_& h)
     : handle_(h)
     , badness_()
-    , criterion_counter_(0) { };
+    , criterion_counter_(0) {}
 
   // Destructor
-  ~Criterion_visitor() { };
+  ~Criterion_visitor() {}
 
   Badness badness() const
   {
@@ -152,14 +152,14 @@ class Criteria
 
 public:
   /// Constructor
-  Criteria() { };
+  Criteria() {}
 
   /// Copy constructor
   Criteria(const Self& rhs)
     : criterion_vector_(rhs.criterion_vector_.clone())    { }
 
   /// Destructor
-  ~Criteria() { }; // ptr_vector do the job of criterion deleting
+  ~Criteria() {} // ptr_vector do the job of criterion deleting
 
   /// Add a criterion
   void add(Criterion* criterion)

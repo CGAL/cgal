@@ -90,7 +90,7 @@ minimum_dihedral_angle(
     * FT(180) / FT(CGAL_PI));
   
   return CGAL::abs(result);
-};
+}
   
   
 template <typename K>

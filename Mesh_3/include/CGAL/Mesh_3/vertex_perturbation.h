@@ -338,7 +338,7 @@ operator<(const Abstract_perturbation<C3T3,MD,SC>& lhs,
           const Abstract_perturbation<C3T3,MD,SC>& rhs)
 {
   return lhs.order() < rhs.order();
-};
+}
   
   
 /**

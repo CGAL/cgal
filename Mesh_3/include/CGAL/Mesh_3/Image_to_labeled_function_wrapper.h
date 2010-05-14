@@ -56,12 +56,12 @@ public:
 
   /// Constructor
   Image_to_labeled_function_wrapper(const Image_& image)
-    : r_im_(image) { };
+    : r_im_(image) {}
 
   // Default copy constructor and assignment operator are ok
 
   /// Destructor
-  ~Image_to_labeled_function_wrapper() { };
+  ~Image_to_labeled_function_wrapper() {}
 
   /**
    * Returns an int corresponding to the label at point \c p

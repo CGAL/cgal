@@ -67,14 +67,14 @@ public:
     : Cb()
     , surface_index_table_()
     , surface_center_table_()
-    , bits_(0) { };
+    , bits_(0) { }
 
   Mesh_surface_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                            Vertex_handle v2, Vertex_handle v3)
     : Cb (v0, v1, v2, v3)
     , surface_index_table_()
     , surface_center_table_()
-    , bits_(0) { };
+    , bits_(0) { }
 
   Mesh_surface_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                            Vertex_handle v2, Vertex_handle v3,
@@ -83,11 +83,11 @@ public:
     : Cb (v0, v1, v2, v3, n0, n1, n2, n3)
     , surface_index_table_()
     , surface_center_table_()
-    , bits_(0) { };
+    , bits_(0) { }
 
 
   /// Destructor
-  ~Mesh_surface_cell_base_3() { };
+  ~Mesh_surface_cell_base_3() { }
 
   // Default copy constructor and assignment operator are ok
 

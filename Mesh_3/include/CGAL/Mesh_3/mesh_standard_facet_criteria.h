@@ -96,7 +96,7 @@ protected:
       B_ = std::sin (CGAL_PI * CGAL::to_double(angle_min) / 180);
       B_ = B_ * B_;
     }
-  };
+  }
 
   virtual Badness do_is_bad (const Facet& f) const
   {
@@ -294,9 +294,9 @@ private:
 
 public:
   /// Constructor
-  Facet_on_surface_criterion() {};
+  Facet_on_surface_criterion() {}
   /// Destructor
-  ~Facet_on_surface_criterion() {};
+  ~Facet_on_surface_criterion() {}
 
 protected:
   virtual void do_accept(Visitor_& v) const
@@ -354,7 +354,7 @@ public:
     : Base(f) {}
 
   // Destructor
-  ~Facet_criterion_visitor() { };
+  ~Facet_criterion_visitor() {}
 
   void visit(const Criterion& criterion)
   {

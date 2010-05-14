@@ -76,10 +76,10 @@ namespace Mesh_3 {
       
     }; // end class Refine_facets_visitor
 
-  }; // end namespace Mesh_3::tets
+  } // end namespace Mesh_3::tets
 
-}; // end namespace Mesh_3
+} // end namespace Mesh_3
 
-}; // end namespace CGAL
+} // end namespace CGAL
 
 #endif // CGAL_MESH_3_REFINE_TETS_VISITOR_H

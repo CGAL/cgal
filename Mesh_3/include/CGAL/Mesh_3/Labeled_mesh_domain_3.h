@@ -97,7 +97,7 @@ public:
                          const FT& error_bound = FT(1e-3));
 
   /// Destructor
-  virtual ~Labeled_mesh_domain_3()  { };
+  virtual ~Labeled_mesh_domain_3()  {}
 
   /**
    * Constructs  a set of \ccc{n} points on the surface, and output them to
@@ -145,7 +145,7 @@ public:
   };
 
   /// Returns Is_in_domain object
-  Is_in_domain is_in_domain_object() const { return Is_in_domain(*this); };
+  Is_in_domain is_in_domain_object() const { return Is_in_domain(*this); }
 
   /**
    * Returns true is the element \ccc{type} intersect properly any of the
@@ -344,28 +344,28 @@ public:
    * by \c index.
    */
   Index index_from_surface_index(const Surface_index& index) const
-  { return Index(index); };
+  { return Index(index); }
 
   /**
    * Returns the index to be stored in a vertex lying in the subdomain
    * identified by \c index.
    */
   Index index_from_subdomain_index(const Subdomain_index& index) const
-  { return Index(index); };
+  { return Index(index); }
 
   /**
    * Returns the \c Surface_index of the surface patch
    * where lies a vertex with dimension 2 and index \c index.
    */
   Surface_index surface_index(const Index& index) const
-  { return boost::get<Surface_index>(index); };
+  { return boost::get<Surface_index>(index); }
 
   /**
    * Returns the index of the subdomain containing a vertex
    *  with dimension 3 and index \c index.
    */
   Subdomain_index subdomain_index(const Index& index) const
-  { return boost::get<Subdomain_index>(index); };
+  { return boost::get<Subdomain_index>(index); }
 
 
 private:
@@ -449,7 +449,7 @@ Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
 , squared_error_bound_(squared_error_bound(bounding_sphere,error_bound))
 {
   // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
-};
+}
 
 template<class F, class BGT>
 Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
@@ -461,7 +461,7 @@ Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
 , squared_error_bound_(squared_error_bound(bbox_,error_bound))
 {
   // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
-};
+}
 
 
 

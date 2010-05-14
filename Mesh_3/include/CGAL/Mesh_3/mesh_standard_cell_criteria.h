@@ -51,10 +51,10 @@ public:
   // Constructor
   Cell_radius_edge_criterion(const FT& radius_edge_bound)
     : sq_radius_edge_bound_(radius_edge_bound*radius_edge_bound) 
-  { };
+  {}
 
   // Destructor
-  ~Cell_radius_edge_criterion() { };
+  ~Cell_radius_edge_criterion() {}
 
 
 protected:
@@ -129,10 +129,10 @@ class Cell_radius_criterion
 public:
   // Constructor
   Cell_radius_criterion(const FT& radius_bound)
-    : sq_radius_bound_(radius_bound*radius_bound)   { };
+    : sq_radius_bound_(radius_bound*radius_bound)   {}
 
   // Destructor
-  ~Cell_radius_criterion() { };
+  ~Cell_radius_criterion() {}
 
 protected:
   virtual void do_accept(Visitor_& v) const
@@ -199,7 +199,7 @@ public:
     : Base(ch) {}
 
   // Destructor
-  ~Cell_criterion_visitor() { };
+  ~Cell_criterion_visitor() {}
 
   void visit(const Criterion& criterion)
   {

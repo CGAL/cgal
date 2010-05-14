@@ -57,10 +57,11 @@ public:
                               const FT& error_bound = FT(1e-3))
     : Base(Wrapper(image),
            compute_bounding_box(image),
-           error_bound)                           { };
+           error_bound)
+  {}
 
   /// Destructor
-  virtual ~Labeled_image_mesh_domain_3() { };
+  virtual ~Labeled_image_mesh_domain_3() {}
 
 
 private:

@@ -62,10 +62,10 @@ public:
   Implicit_mesh_domain_3(Function& f,
                          const Sphere_3& bounding_sphere,
                          const FT& error_bound = FT(1e-3))
-    : Base(Wrapper(f), bounding_sphere, error_bound)  { };
+    : Base(Wrapper(f), bounding_sphere, error_bound)  {}
 
   /// Destructor
-  virtual ~Implicit_mesh_domain_3() { };
+  virtual ~Implicit_mesh_domain_3() {}
 
 
 private:

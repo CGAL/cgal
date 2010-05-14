@@ -74,16 +74,16 @@ public:
   Mesh_complex_3_in_triangulation_3()
     : number_of_facets_(0)
     , tr_()
-    , number_of_cells_(0)    { };
+    , number_of_cells_(0)    {}
   
   /// Copy constructor
   Mesh_complex_3_in_triangulation_3(const Self& rhs)
     : number_of_facets_(rhs.number_of_facets_)
     , tr_(rhs.tr_)
-    , number_of_cells_(rhs.number_of_cells_)    { };
+    , number_of_cells_(rhs.number_of_cells_)    {}
 
   /// Destructor
-  ~Mesh_complex_3_in_triangulation_3() { };
+  ~Mesh_complex_3_in_triangulation_3() {}
   
   /// Assignment operator
   Self& operator=(Self rhs)

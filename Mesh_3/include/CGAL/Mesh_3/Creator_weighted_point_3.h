@@ -47,9 +47,9 @@ public:
   typedef Arg_ argument_type;
 
   /// Constructor
-  Creator_weighted_point_3() {};
+  Creator_weighted_point_3() {}
   /// Destructor
-  ~Creator_weighted_point_3() {};
+  ~Creator_weighted_point_3() {}
 
   /// Constructs a weighted point with default weight from 3 \c Arg_
   /// We do not pass \c const \c Arg_& because \c Arg_ is a ring number type

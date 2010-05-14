@@ -93,12 +93,12 @@ public:
     , first_level_(first_level)
   {
     tree_->accelerate_distance_queries();
-  };
+  }
 
   // Default copy constructor and assignment operator are ok
 
   /// Destructor
-  ~Polyhedral_to_labeled_function_wrapper() {  };
+  ~Polyhedral_to_labeled_function_wrapper() {}
 
   /// Operator ()
   return_type operator()(const Point_3& p, bool use_cache=false) const
@@ -210,12 +210,12 @@ public:
     , hint_(p.facets_begin()->halfedge()->vertex()->point())
   {
     tree_->accelerate_distance_queries();
-  };
+  }
 
   // Default copy constructor and assignment operator are ok
 
   /// Destructor
-  ~Polyhedral_tolerance_to_labeled_function_wrapper() {  };
+  ~Polyhedral_tolerance_to_labeled_function_wrapper() {}
 
   /// Operator ()
   return_type operator()(const Point_3& p, bool use_cache=false) const
@@ -286,12 +286,12 @@ public:
     , hint_(p.facets_begin()->halfedge()->vertex()->point())
   {
     tree_->accelerate_distance_queries();
-  };
+  }
 
   // Default copy constructor and assignment operator are ok
 
   /// Destructor
-  ~Polyhedral_edge_tolerance_to_labeled_function_wrapper() {  };
+  ~Polyhedral_edge_tolerance_to_labeled_function_wrapper() {}
 
   /// Operator ()
   return_type operator()(const Point_3& p, bool use_cache=false) const

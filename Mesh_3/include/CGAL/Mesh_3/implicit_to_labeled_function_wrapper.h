@@ -52,12 +52,12 @@ public:
 
   /// Constructor
   Implicit_to_labeled_function_wrapper(Function_& f)
-    : r_f_(f) { };
+    : r_f_(f) {}
 
   // Default copy constructor and assignment operator are ok
 
   /// Destructor
-  ~Implicit_to_labeled_function_wrapper() { };
+  ~Implicit_to_labeled_function_wrapper() {}
 
   /// Operator ()
   return_type operator()(const Point_3& p, const bool = true) const
@@ -95,12 +95,12 @@ public:
 
   /// Constructor
   Implicit_vector_to_labeled_function_wrapper(const std::vector<Function_*>& v)
-    : function_vector_(v) { };
+    : function_vector_(v) {}
 
   // Default copy constructor and assignment operator are ok
 
   /// Destructor
-  ~Implicit_vector_to_labeled_function_wrapper() { };
+  ~Implicit_vector_to_labeled_function_wrapper() {}
 
   /// Operator ()
   return_type operator()(const Point_3& p, const bool = true) const

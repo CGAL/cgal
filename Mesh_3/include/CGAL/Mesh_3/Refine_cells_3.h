@@ -99,7 +99,7 @@ public:
                  C3T3& c3t3) ;
   
   // Destructor
-  virtual ~Refine_cells_3() { };
+  virtual ~Refine_cells_3() { }
   
   // Get a reference on triangulation
   Tr& triangulation_ref_impl() { return r_tr_; }
@@ -116,7 +116,7 @@ public:
     //    last_vertex_index_ = Index(cell->subdomain_index());
     // NB : dual() is optimized when the cell base class has circumcenter()
     return r_tr_.dual(cell);
-  };
+  }
   
   // Returns the conflicts zone
   Zone conflicts_zone_impl(const Point& point, const Cell_handle& cell) const;
@@ -125,10 +125,10 @@ public:
   void before_insertion_impl(const Cell_handle&, const Point&, Zone& zone)
   {
     before_insertion_handle_cells_in_conflict_zone(zone);
-  };
+  }
   
   // Job to do after insertion
-  void after_insertion_impl(const Vertex_handle& v) { update_star(v); };
+  void after_insertion_impl(const Vertex_handle& v) { update_star(v); }
   
   // Insertion implementation ; returns the inserted vertex
   Vertex_handle insert_impl(const Point& p, const Zone& zone);

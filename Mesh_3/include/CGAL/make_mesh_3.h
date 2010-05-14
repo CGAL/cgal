@@ -146,7 +146,7 @@ void make_mesh_3_impl(C3T3& c3t3,
   // Don't reset c3t3 as we just created it
   refine_mesh_3(c3t3, domain, criteria,
                 exude, perturb, odt, lloyd, parameters::no_reset_c3t3());
-};
+}
 
 
 }  // end namespace CGAL

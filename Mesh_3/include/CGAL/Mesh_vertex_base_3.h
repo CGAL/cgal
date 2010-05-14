@@ -59,26 +59,28 @@ public:
   Mesh_vertex_base_3() : Surface_mesh_vertex_base_3<GT, Vb>()
                        , index_()
                        , dimension_(-1)
-                       , meshing_info_(0) { };
+                       , meshing_info_(0) {}
 
   // Destructor
-  virtual ~Mesh_vertex_base_3() { };
+  virtual ~Mesh_vertex_base_3() {}
 
   // Default copy constructor and assignment operator are ok
 
   // Returns the dimension of the lowest dimensional face of the input 3D
   // complex that contains the vertex
-  int in_dimension() const { return dimension_;};
+  int in_dimension() const { return dimension_;}
+
   // Sets the dimension of the lowest dimensional face of the input 3D complex
   // that contains the vertex
-  void set_dimension(const int dimension) { dimension_ = dimension; };
+  void set_dimension(const int dimension) { dimension_ = dimension; }
 
   // Returns the index of the lowest dimensional face of the input 3D complex
   // that contains the vertex
-  Index index() const { return index_; };
+  Index index() const { return index_; }
+
   // Sets the index of the lowest dimensional face of the input 3D complex
   // that contains the vertex
-  void set_index(const Index& index) { index_ = index; };
+  void set_index(const Index& index) { index_ = index; }
 
   // Accessors to meshing_info private data
   const FT& meshing_info() const { return meshing_info_; }

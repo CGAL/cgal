@@ -93,7 +93,7 @@ public:
                   C3T3& c3t3);
 
   /// Destructor
-  virtual ~Refine_facets_3() { };
+  virtual ~Refine_facets_3() { }
 
   /// Get a reference on triangulation
   Tr& triangulation_ref_impl() { return r_tr_; }
@@ -140,7 +140,7 @@ public:
 
   /// Job to do after insertion
   void after_insertion_impl(const Vertex_handle& v)
-                                          { restore_restricted_Delaunay(v); };
+                                          { restore_restricted_Delaunay(v); }
 
   /// Insert p into triangulation
   Vertex_handle insert_impl(const Point& p, const Zone& zone);
@@ -197,13 +197,13 @@ private:
   bool is_facet_visited(const Facet& f) const
   {
     return f.first->is_facet_visited(f.second);
-  };
+  }
 
   /// Sets facet f to visited
   void set_facet_visited(Facet& f) const
   {
     f.first->set_facet_visited(f.second);
-  };
+  }
 
   /// Sets facet f to not visited
   void reset_facet_visited(Facet& f) const
@@ -322,7 +322,7 @@ private:
   {
     // perform the same operations as for an internal facet
     return before_insertion_handle_facet_in_conflict_zone(facet, source_facet);
-  };
+  }
 
   /// Action to perform on a facet incident to the new vertex
   void after_insertion_handle_incident_facet(Facet& facet);
@@ -332,7 +332,7 @@ private:
   {
     // perform the same operations as for a facet incident to the new vertex
     after_insertion_handle_incident_facet(facet);
-  };
+  }
 
 private:
   /// The triangulation

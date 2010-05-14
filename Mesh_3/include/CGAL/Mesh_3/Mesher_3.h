@@ -97,7 +97,7 @@ public:
            const MeshCriteria& criteria);
   
   /// Destructor
-  ~Mesher_3() { };
+  ~Mesher_3() { }
   
   /// Launch mesh refinement
   double refine_mesh();
