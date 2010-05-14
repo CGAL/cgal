@@ -18,27 +18,19 @@
 //
 // Author(s)     : Laurent Rineau
 
-#include <CGAL/basic.h>
-
-
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
-
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_area_criteria_2.h>
 #include <CGAL/IO/File_poly.h>
 
-typedef CGAL::Simple_cartesian<double> K1;
-typedef CGAL::Filtered_kernel<K1> K2;
-struct K : public K2 {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
