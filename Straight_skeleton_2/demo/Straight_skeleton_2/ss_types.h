@@ -18,9 +18,8 @@
 #ifndef SSKEL_DEMO_SS_TYPES_H
 #define SSKEL_DEMO_SS_TYPES_H
 
-#include <CGAL/Straight_skeleton_builder_2.h>
-#include <CGAL/Polygon_offset_builder_2.h>
-#include <CGAL/compute_outer_frame_margin.h>
+#include <CGAL/create_straight_skeleton_2.h>
+#include <CGAL/create_offset_polygons_2.h>
 
 namespace demo
 {
@@ -71,8 +70,6 @@ struct Visitor
       ++ mDegenerateVertexCount ;
 
     draw_point(v->point(),CGAL::BLACK );
-
-    //printf("\rInitialization: %d/%d (%d%%)",mVertexCount0,mTotalVertices,(mVertexCount0*100/mTotalVertices));
   }
 
   void on_edge_event_created( Vertex_const_handle const& 
@@ -141,8 +138,7 @@ struct Visitor
     if ( node->is_contour() )
     {
       ++ mVertexCount1 ;
-      wait_on_user();
-      //printf("\rPropagation: %d/%d (%d%%)",mVertexCount1,mTotalVertices,(mVertexCount1*100/mTotalVertices));
+//      wait_on_user();
     }
   }
 
