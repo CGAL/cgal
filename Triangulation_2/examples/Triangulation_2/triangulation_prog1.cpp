@@ -3,7 +3,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2.h>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Triangulation_2<K>         Triangulation;
 typedef Triangulation::Vertex_circulator Vertex_circulator;
