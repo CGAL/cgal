@@ -303,7 +303,7 @@ namespace CGAL {
         }
         else
           return Object();
-      }; // end operator()(Surface_3, Line_3)
+      } // end operator()(Surface_3, Line_3)
 
       // debug function
       std::string debug_point(const Surface_3& surface,

@@ -119,7 +119,7 @@ namespace CGAL {
     Quality angle_min() const { return std::asin (std::sqrt(B)); }
 
     inline
-    void set_bound(const Quality b) { B = b; };
+    void set_bound(const Quality b) { B = b; }
 
     inline
     void set_angle_min(const FT angle_min) {
@@ -130,7 +130,7 @@ namespace CGAL {
         B = std::sin (CGAL_PI * CGAL::to_double(angle_min) / 180);
         B = B * B;
       }
-    };
+    }
 
     bool is_bad (const Facet& fh, Quality& q) const {
       CGAL_assertion (fh.first->is_facet_on_surface (fh.second));
@@ -197,7 +197,7 @@ namespace CGAL {
     Quality bound() const { return std::sqrt (B); }
 
     inline
-    void set_bound(const Quality b) { B = b * b; };
+    void set_bound(const Quality b) { B = b * b; }
 
 
     bool is_bad (const Facet& fh, Quality& q) const {
@@ -254,7 +254,7 @@ namespace CGAL {
     Quality bound() const { return CGAL::sqrt (B); }
 
     inline
-    void set_bound(const Quality b) { B = b * b; };
+    void set_bound(const Quality b) { B = b * b; }
 
 
     bool is_bad (const Facet& fh, Quality& q) const {
@@ -298,7 +298,7 @@ namespace CGAL {
     Quality bound() const { return std::sqrt (B); }
 
     inline
-    void set_bound(const Quality b) { B = b * b; };
+    void set_bound(const Quality b) { B = b * b; }
 
 
     bool is_bad (const Facet& fh, Quality& q) const {

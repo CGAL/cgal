@@ -788,7 +788,7 @@ public:
     he->tag(edge_index);
     he->opposite()->tag(edge_index);
     edge_node.sub_edges.push_back(he);
-  };
+  }
 
   static void new_sub_facet(Graph_facet_node& facet_node,
                             const int facet_index,
