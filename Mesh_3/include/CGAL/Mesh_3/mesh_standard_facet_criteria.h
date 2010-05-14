@@ -44,7 +44,7 @@ namespace details {
         const typename K::FT& c)
   {
     return (std::min)(a, (std::min)(b,c));
-  };
+  }
 
 } // end namespace details
 
