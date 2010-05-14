@@ -54,7 +54,7 @@ int main()
 #include <iostream>
 #include <utility>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Voronoi_intersection_2_traits_3<K> Gt;
 typedef CGAL::Regular_triangulation_2<Gt>        Regular_triangulation;
