@@ -104,7 +104,7 @@ int main(int argc, char** argv)
     {
       usage(argv);
       return 1;
-    };
+    }
 
   std::ifstream input(argv[arg_count]);
   if(input)
@@ -136,5 +136,5 @@ int main(int argc, char** argv)
     }
 
   return 0;
-};
+}
 
