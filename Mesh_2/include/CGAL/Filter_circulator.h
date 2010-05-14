@@ -32,10 +32,10 @@ public:
   typedef Filter_circulator<Circ,Pred> Self;
 
 
-  Filter_circulator(const Pred p=Pred()): is_null(true), test(p) {};
+  Filter_circulator(const Pred p=Pred()): is_null(true), test(p) {}
 
   Filter_circulator(const Self& c): Circ(c), is_null(c.is_null),
-    test(c.test) {};
+    test(c.test) {}
 
   Self& operator=(const Self& c)
     {
@@ -61,7 +61,7 @@ public:
 	  if((*this)==end)
 	    is_null=true;
 	}
-    };
+    }
 
   bool operator==( Nullptr_t ) const {
     return is_null;

@@ -40,13 +40,13 @@ public:
 
   Delaunay_mesh_area_criteria_2(const double aspect_bound = 0.125, 
 			      const double area_bound = 0)
-    : Private_base(aspect_bound, area_bound) {};
+    : Private_base(aspect_bound, area_bound) {}
 
   inline
-  double area_bound() const { return this->sizebound; };
+  double area_bound() const { return this->sizebound; }
 
   inline
-  void set_area_bound(const double ab) { this->sizebound = ab; };
+  void set_area_bound(const double ab) { this->sizebound = ab; }
 
   class Is_bad: public Private_base::Is_bad
   {
@@ -59,7 +59,7 @@ public:
 
     Is_bad(const double aspect_bound,
 	   const double area_bound)
-      : Is_bad_base(aspect_bound, area_bound) {};
+      : Is_bad_base(aspect_bound, area_bound) {}
 
     Mesh_2::Face_badness operator()(Quality q)
     {

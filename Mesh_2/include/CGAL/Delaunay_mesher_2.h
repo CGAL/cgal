@@ -260,7 +260,7 @@ public:
   bool is_refinement_done ()
   {
     return faces_level.is_algorithm_done();  
-  };
+  }
 
   bool
   step_by_step_refine_mesh()

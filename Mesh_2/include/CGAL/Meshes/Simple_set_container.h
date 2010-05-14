@@ -72,7 +72,7 @@ namespace CGAL {
       }
     }; // end Simple_set_container
     
-  }; // end namespace Meshes
-}; // end namespace CGAL
+  } // end namespace Meshes
+} // end namespace CGAL
 
 #endif // CGAL_MESHES_SIMPLE_SET_CONTAINER_H

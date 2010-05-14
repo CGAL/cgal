@@ -630,7 +630,7 @@ private: /** \name DEBUGGING TYPES AND DATAS */
   {
     Tr& tr;
   public:
-    From_pair_of_vertex_to_edge(Tr& t) : tr(t) {};
+    From_pair_of_vertex_to_edge(Tr& t) : tr(t) {}
 
     const Edge operator()(const Constrained_edge edge) const
     {

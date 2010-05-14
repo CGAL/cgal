@@ -82,7 +82,7 @@ public:
       if(fh->is_constrained(i) && !is_locally_conform(this->tr, fh, i, p))
       {
         return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
-      };
+      }
     }
 
     return NO_CONFLICT;

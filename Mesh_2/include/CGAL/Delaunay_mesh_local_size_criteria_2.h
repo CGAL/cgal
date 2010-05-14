@@ -47,19 +47,19 @@ public:
                                       const double size_bound = 0,
                                       const bool is_local_size = false,
                                       const Segment s = Segment())
-    : Base(aspect_bound, size_bound), local(is_local_size), _s(s) {};
+    : Base(aspect_bound, size_bound), local(is_local_size), _s(s) {}
 
   inline
-  Segment segment() const { return _s; };
+  Segment segment() const { return _s; }
 
   inline 
-  void set_segment(const Segment s) { _s = s; };
+  void set_segment(const Segment s) { _s = s; }
 
   inline
-  bool is_local_size() const { return local; };
+  bool is_local_size() const { return local; }
 
   inline 
-  void set_local_size(bool local_size) { local = local_size; };
+  void set_local_size(bool local_size) { local = local_size; }
 
   class Is_bad: public Base::Is_bad
   {
@@ -83,7 +83,7 @@ public:
 	   const double size_bound,
 	   const bool l,
 	   const Segment_2 _s)
-      : Base::Is_bad(aspect_bound, size_bound), local(l), s(_s) {};
+      : Base::Is_bad(aspect_bound, size_bound), local(l), s(_s) {}
 
     Mesh_2::Face_badness operator()(Quality q) const
     {
@@ -114,14 +114,14 @@ public:
 	      return Mesh_2::BAD;
 	    else
 	      return Mesh_2::NOT_BAD;
-	};
+	}
     }
   };
 
   Is_bad is_bad_object() const
-  { return Is_bad(this->bound(), this->size_bound(), local, segment()); };
+  { return Is_bad(this->bound(), this->size_bound(), local, segment()); }
 };
 
-}; //end namespace
+} //end namespace
 
 #endif

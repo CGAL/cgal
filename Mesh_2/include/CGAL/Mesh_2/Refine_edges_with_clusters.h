@@ -204,7 +204,7 @@ public:
 		status = CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
             }
           }
-      }; // after here edges encroached by p are in the list of edges to
+      }  // after here edges encroached by p are in the list of edges to
          // be conformed.
 
     return status;

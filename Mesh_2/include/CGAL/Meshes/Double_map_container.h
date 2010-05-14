@@ -88,7 +88,7 @@ namespace CGAL {
       }
     }; // end Double_map_container
     
-  }; // end namespace Meshes
-}; // end namespace CGAL
+  } // end namespace Meshes
+} // end namespace CGAL
 
 #endif // CGAL_MESHES_DOUBLE_MAP_CONTAINER_H

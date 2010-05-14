@@ -31,15 +31,15 @@ class Delaunay_mesh_criteria_2
 public:
   typedef typename Tr::Face_handle Face_handle;
 
-  Delaunay_mesh_criteria_2(const double bound = 0.125) : B(bound) {};
+  Delaunay_mesh_criteria_2(const double bound = 0.125) : B(bound) {}
 
   typedef double Quality;
 
   inline
-  double bound() const { return B; };
+  double bound() const { return B; }
 
   inline 
-  void set_bound(const double bound) { B = bound; };
+  void set_bound(const double bound) { B = bound; }
 
   class Is_bad
   {
@@ -48,7 +48,7 @@ public:
   public:
     typedef typename Tr::Point Point_2;
       
-    Is_bad(const double bound) : B(bound) {};
+    Is_bad(const double bound) : B(bound) {}
       
     Mesh_2::Face_badness operator()(const Quality q) const
     {
@@ -103,7 +103,7 @@ public:
 	  q = area/(a*b);
 
       return operator()(q);
-    };
+    }
   };
 
   Is_bad is_bad_object() const

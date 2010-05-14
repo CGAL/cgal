@@ -43,12 +43,12 @@ protected:
   bool in_domain;
 
 public:
-  Delaunay_mesh_face_base_2(): Fb(), in_domain(false) {};
+  Delaunay_mesh_face_base_2(): Fb(), in_domain(false) {}
 
   Delaunay_mesh_face_base_2(Vertex_handle v0, 
 			    Vertex_handle v1, 
 			    Vertex_handle v2)
-    : Fb(v0,v1,v2), in_domain(false) {};
+    : Fb(v0,v1,v2), in_domain(false) {}
 
   Delaunay_mesh_face_base_2(Vertex_handle v0, 
 			    Vertex_handle v1, 
@@ -56,21 +56,21 @@ public:
 			    Face_handle n0, 
 			    Face_handle n1, 
 			    Face_handle n2)
-    : Fb(v0,v1,v2,n0,n1,n2), in_domain(false) {};
+    : Fb(v0,v1,v2,n0,n1,n2), in_domain(false) {}
 
   inline
-  bool is_in_domain() const { return in_domain; };
+  bool is_in_domain() const { return in_domain; }
 
   inline
-  void set_in_domain(const bool b) { in_domain=b; };
-
-  /** compatibility with CGAL-3.2 */
-  inline
-  bool is_marked() const { return in_domain; };
+  void set_in_domain(const bool b) { in_domain=b; }
 
   /** compatibility with CGAL-3.2 */
   inline
-  void set_marked(const bool b) { in_domain=b; };
+  bool is_marked() const { return in_domain; }
+
+  /** compatibility with CGAL-3.2 */
+  inline
+  void set_marked(const bool b) { in_domain=b; }
 };
 
 }; // namespace CGAL

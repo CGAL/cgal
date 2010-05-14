@@ -65,7 +65,7 @@ namespace CGAL {
       }
     }; // end Simple_queue_container
     
-  }; // end namespace Mesh_3
-}; // end namespace CGAL
+  } // end namespace Mesh_3
+} // end namespace CGAL
 
 #endif // CGAL_MESH_3_SIMPLE_QUEUE_CONTAINER_H
