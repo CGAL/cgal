@@ -15,7 +15,7 @@ class Polyhedron_demo_orient_soup_plugin :
   public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
   void init(QMainWindow* mainWindow,
@@ -116,6 +116,6 @@ void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
   }
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_orient_soup_plugin, Polyhedron_demo_orient_soup_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_orient_soup_plugin, Polyhedron_demo_orient_soup_plugin)
 
 #include "Polyhedron_demo_orient_soup_plugin.moc"

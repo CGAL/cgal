@@ -13,7 +13,7 @@ class Polyhedron_demo_subdivision_methods_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
   // used by Polyhedron_demo_plugin_helper
@@ -88,6 +88,6 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionSqrt3_triggered()
   scene->itemChanged(item);
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_subdivision_methods_plugin, Polyhedron_demo_subdivision_methods_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_subdivision_methods_plugin, Polyhedron_demo_subdivision_methods_plugin)
 
 #include "Polyhedron_demo_subdivision_methods_plugin.moc"

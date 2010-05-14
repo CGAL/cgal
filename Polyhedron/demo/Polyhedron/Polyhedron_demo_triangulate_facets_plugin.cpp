@@ -131,7 +131,7 @@ class Polyhedron_demo_triangulate_facets_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
   void init(QMainWindow* mainWindow,
@@ -311,6 +311,6 @@ private:
   Messages_interface* messages;
 };
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_triangulate_facets_plugin, Polyhedron_demo_triangulate_facets_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_triangulate_facets_plugin, Polyhedron_demo_triangulate_facets_plugin)
 
 #include "Polyhedron_demo_triangulate_facets_plugin.moc"

@@ -16,7 +16,7 @@ class Polyhedron_demo_convex_hull_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
   // used by Polyhedron_demo_plugin_helper
@@ -64,6 +64,6 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_convex_hull_plugin, Polyhedron_demo_convex_hull_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_convex_hull_plugin, Polyhedron_demo_convex_hull_plugin)
 
 #include "Polyhedron_demo_convex_hull_plugin.moc"

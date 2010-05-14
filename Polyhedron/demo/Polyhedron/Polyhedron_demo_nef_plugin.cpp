@@ -17,7 +17,7 @@ class Polyhedron_demo_nef_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
   QStringList actionsNames() const {
@@ -228,6 +228,6 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
   QApplication::restoreOverrideCursor();
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_nef_plugin, Polyhedron_demo_nef_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_nef_plugin, Polyhedron_demo_nef_plugin)
 
 #include "Polyhedron_demo_nef_plugin.moc"

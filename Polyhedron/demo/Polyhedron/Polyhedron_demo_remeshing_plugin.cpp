@@ -27,7 +27,7 @@ class Polyhedron_demo_remeshing_plugin :
   protected Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
     this->scene = scene_interface;
@@ -130,7 +130,7 @@ void Polyhedron_demo_remeshing_plugin::remesh()
   }
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_remeshing_plugin, Polyhedron_demo_remeshing_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_remeshing_plugin, Polyhedron_demo_remeshing_plugin)
 
 #include "Polyhedron_demo_remeshing_plugin.moc"
 

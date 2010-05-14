@@ -9,7 +9,7 @@ class Polyhedron_demo_off_to_nef_plugin :
   public Polyhedron_demo_io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_io_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
 
 public:
   QStringList nameFilters() const;
@@ -57,5 +57,5 @@ bool Polyhedron_demo_off_to_nef_plugin::save(const Scene_item* item, QFileInfo f
 }
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Polyhedron_demo_off_to_nef_plugin, Polyhedron_demo_off_to_nef_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_off_to_nef_plugin, Polyhedron_demo_off_to_nef_plugin)
 #include "Polyhedron_demo_off_to_nef_plugin.moc"

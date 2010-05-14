@@ -152,7 +152,7 @@ class Polyhedron_demo_cut_plugin :
   public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
   Polyhedron_demo_cut_plugin() : QObject(), edges_item(0) {
@@ -301,6 +301,6 @@ void Polyhedron_demo_cut_plugin::enableAction() {
   actionCreateCutPlane->setEnabled(true);
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_cut_plugin, Polyhedron_demo_cut_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_cut_plugin, Polyhedron_demo_cut_plugin)
 
 #include "Polyhedron_demo_cut_plugin.moc"
