@@ -13,7 +13,7 @@ class PS_demo_inside_out_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
   // used by Polyhedron_demo_plugin_helper
@@ -50,6 +50,6 @@ void PS_demo_inside_out_plugin::on_actionInsideOut_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(PS_demo_inside_out_plugin, PS_demo_inside_out_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_inside_out_plugin, PS_demo_inside_out_plugin)
 
 #include "PS_demo_inside_out_plugin.moc"

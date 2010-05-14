@@ -25,7 +25,7 @@ class PS_demo_poisson_plugin :
   protected Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
@@ -111,6 +111,6 @@ void PS_demo_poisson_plugin::reconstruct()
   }
 }
 
-Q_EXPORT_PLUGIN2(PS_demo_poisson_plugin, PS_demo_poisson_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_poisson_plugin, PS_demo_poisson_plugin)
 
 #include "PS_demo_poisson_plugin.moc"

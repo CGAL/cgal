@@ -9,7 +9,7 @@ class PS_demo_xyz_plugin :
   public Polyhedron_demo_io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_io_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
 
 public:
   QStringList nameFilters() const;
@@ -82,5 +82,5 @@ bool PS_demo_xyz_plugin::save(const Scene_item* item, QFileInfo fileinfo)
 }
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(PS_demo_xyz_plugin, PS_demo_xyz_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_xyz_plugin, PS_demo_xyz_plugin)
 #include "PS_demo_xyz_plugin.moc"

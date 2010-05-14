@@ -17,7 +17,7 @@ class PS_demo_smoothing_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
   QAction* actionJetSmoothing;
 
 public:
@@ -78,6 +78,6 @@ void PS_demo_smoothing_plugin::on_actionJetSmoothing_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(PS_demo_smoothing_plugin, PS_demo_smoothing_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_smoothing_plugin, PS_demo_smoothing_plugin)
 
 #include "PS_demo_smoothing_plugin.moc"

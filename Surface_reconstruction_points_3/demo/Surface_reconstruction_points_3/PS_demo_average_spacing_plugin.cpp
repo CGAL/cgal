@@ -20,7 +20,7 @@ class PS_demo_average_spacing_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 private:
   QAction* actionAverageSpacing;
@@ -102,6 +102,6 @@ void PS_demo_average_spacing_plugin::on_actionAverageSpacing_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(PS_demo_average_spacing_plugin, PS_demo_average_spacing_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_average_spacing_plugin, PS_demo_average_spacing_plugin)
 
 #include "PS_demo_average_spacing_plugin.moc"

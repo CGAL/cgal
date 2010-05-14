@@ -22,7 +22,7 @@ class PS_demo_cleaning_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 private:
   QAction* actionOutlierRemoval;
@@ -119,6 +119,6 @@ void PS_demo_cleaning_plugin::on_actionOutlierRemoval_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(PS_demo_cleaning_plugin, PS_demo_cleaning_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_cleaning_plugin, PS_demo_cleaning_plugin)
 
 #include "PS_demo_cleaning_plugin.moc"

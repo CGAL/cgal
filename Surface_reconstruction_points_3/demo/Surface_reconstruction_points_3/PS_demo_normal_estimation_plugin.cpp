@@ -24,7 +24,7 @@ class PS_demo_normal_estimation_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
   QAction* actionNormalEstimation;
 
 public:
@@ -168,6 +168,6 @@ void PS_demo_normal_estimation_plugin::on_actionNormalEstimation_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(PS_demo_normal_estimation_plugin, PS_demo_normal_estimation_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_normal_estimation_plugin, PS_demo_normal_estimation_plugin)
 
 #include "PS_demo_normal_estimation_plugin.moc"
