@@ -49,6 +49,9 @@ public:
   /// @cond SKIP_IN_MANUAL
   typedef typename Base::iterator iterator;
   typedef typename Base::const_iterator const_iterator;
+
+  using Base::erase;
+
   /// @endcond
 
   // Classic CGAL geometric types
