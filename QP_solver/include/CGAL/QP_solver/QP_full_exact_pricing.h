@@ -48,6 +48,8 @@ class QP_full_exact_pricing : public QP_pricing_strategy<Q,ET,Tags> {
   typedef  typename Tags::Is_nonnegative     Is_nonnegative;
   typedef  typename CGAL::QP_solver<Q,ET,Tags>    QP_solver;
 
+  using Base::price_dantzig;
+
  public:
 
   // creation

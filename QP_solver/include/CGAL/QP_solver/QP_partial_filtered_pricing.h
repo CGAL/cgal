@@ -54,6 +54,9 @@ class QP_partial_filtered_pricing
     typedef  typename Tags::Is_nonnegative           Is_nonnegative;
     typedef  typename Partial_base::Index_iterator        Index_iterator;
     typedef  typename Partial_base::Index_const_iterator  Index_const_iterator;
+
+    using Base::price_dantzig;
+
   public:
 
     // number type
