@@ -4,8 +4,7 @@
 #include <string>
 #include <boost/lexical_cast.hpp>
 
-#include "arr_rational_nt.h"
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_extended_dcel.h>
@@ -22,7 +21,7 @@ struct Overlay_label
   }
 };
 
-typedef CGAL::Cartesian<Number_type>                        Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
 typedef CGAL::Arr_linear_traits_2<Kernel>                   Traits_2;
 typedef Traits_2::Point_2                                   Point_2;
 typedef Traits_2::Segment_2                                 Segment_2;
