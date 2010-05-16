@@ -2,23 +2,18 @@
  * Performing a sequence of Boolean set-operations.
  */
 
-#include "bso_rational_nt.h"
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Polygon_set_2.h>
 
 #include <list>
 
-// instead of
-//typedef CGAL::Cartesian<Number_type>               Kernel;
-// workaround for VC++
-struct Kernel : public CGAL::Cartesian<Number_type> {};
-
-typedef Kernel::Point_2                            Point_2;
-typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
-typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
-typedef CGAL::Polygon_set_2<Kernel>                Polygon_set_2;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
+typedef Kernel::Point_2                                   Point_2;
+typedef CGAL::Polygon_2<Kernel>                           Polygon_2;
+typedef CGAL::Polygon_with_holes_2<Kernel>                Polygon_with_holes_2;
+typedef CGAL::Polygon_set_2<Kernel>                       Polygon_set_2;
 
 #include "print_utils.h"
 

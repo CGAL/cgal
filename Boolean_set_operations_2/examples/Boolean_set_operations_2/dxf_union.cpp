@@ -2,9 +2,7 @@
  * Computing the union of a set of circular polygons read from a DXF file.
  */
 
-#include "bso_rational_nt.h"
-#include <CGAL/Cartesian.h>
-#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/IO/Dxf_bsop_reader.h>
@@ -14,8 +12,7 @@
 #include <vector>
 #include <cstdlib>
 
-typedef CGAL::Lazy_exact_nt<Number_type>             Lazy_exact_nt;
-typedef CGAL::Cartesian<Lazy_exact_nt>               Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Gps_circle_segment_traits_2<Kernel>    Traits_2;
 typedef Traits_2::Polygon_2                          Circ_polygon_2;
 typedef Traits_2::Polygon_with_holes_2               Circ_polygon_with_holes_2;
@@ -27,20 +24,15 @@ static const int DEFAULT_GROUP_SIZE = 5;
 
 // The command line should be:
 //   ex_dxf_union [DXF file] [simplify] [group size]
-int main (int argc, char **argv)
+int main (int argc, char* argv[])
 {
   // Open the input DXF file.
-  const char   *filename = "test.dxf";
-
-  if (argc >= 2)
-    filename = argv[1];
-
+  const char* filename = (argc >= 2) ? argv[1] : "test.dxf";
   std::ifstream input_file (filename);
-
   if (! input_file.is_open())
   {
     std::cerr << "Failed to open the " << filename <<std::endl;
-    return (1);
+    return -1;
   }
 
   // Read the extra flags.

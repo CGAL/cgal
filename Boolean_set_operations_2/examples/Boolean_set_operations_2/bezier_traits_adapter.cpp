@@ -27,23 +27,17 @@ typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
 typedef Nt_traits::Rational                             Rational;
 typedef Nt_traits::Algebraic                            Algebraic;
 
-// instead of
-// typedef CGAL::Cartesian<Rational>                       Rat_kernel;
-// typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
-// typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
-//                                                         Traits_2;
-// workaround for VC++
-struct Rat_kernel  : public CGAL::Cartesian<Rational> {};
-struct Alg_kernel  : public CGAL::Cartesian<Algebraic> {};
-struct Traits_2 :
-  public CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits> {};
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                        Traits_2;
   
 typedef Rat_kernel::Point_2                             Rat_point_2;
 typedef Traits_2::Curve_2                               Bezier_curve_2;
 typedef Traits_2::X_monotone_curve_2                    X_monotone_curve_2;
 typedef CGAL::Gps_traits_2<Traits_2>                    Gps_traits_2;
-typedef Gps_traits_2::General_polygon_2                         Polygon_2;
-typedef Gps_traits_2::General_polygon_with_holes_2              Polygon_with_holes_2;
+typedef Gps_traits_2::General_polygon_2                 Polygon_2;
+typedef Gps_traits_2::General_polygon_with_holes_2      Polygon_with_holes_2;
 typedef std::list<Polygon_with_holes_2>                 Polygon_set;
 
 /*! Read a general polygon with holes, formed by Bezier curves, from the
@@ -65,15 +59,14 @@ bool read_Bezier_polygon (const char* filename, Polygon_with_holes_2& P)
 
   // Read the curves one by one, and construct the general polygon these
   // curve form (the outer boundary and the holes inside it).
-  Traits_2                       traits;
-  Traits_2::Make_x_monotone_2    make_x_monotone = 
-                                        traits.make_x_monotone_2_object();
-  bool                           first = true;
-  Rat_point_2                    p_0;
+  Traits_2                    traits;
+  Traits_2::Make_x_monotone_2 mk_x_monotone = traits.make_x_monotone_2_object();
+  bool                        first = true;
+  Rat_point_2                 p_0;
   std::list<X_monotone_curve_2>  xcvs;
-  Rat_kernel                     ker;
-  Rat_kernel::Equal_2            equal = ker.equal_2_object();
-  std::list<Polygon_2>           pgns;
+  Rat_kernel                  ker;
+  Rat_kernel::Equal_2         equal = ker.equal_2_object();
+  std::list<Polygon_2>        pgns;
 
   for (k = 0; k < n_curves; k++) {
     // Read the current curve and subdivide it into x-monotone subcurves.
@@ -83,7 +76,7 @@ bool read_Bezier_polygon (const char* filename, Polygon_with_holes_2& P)
     X_monotone_curve_2                       xcv;
 
     in_file >> B;
-    make_x_monotone (B, std::back_inserter (x_objs));
+    mk_x_monotone (B, std::back_inserter (x_objs));
     
     for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) {
       if (CGAL::assign (xcv, *xoit))
@@ -130,12 +123,12 @@ bool read_Bezier_polygon (const char* filename, Polygon_with_holes_2& P)
 }
 
 // The main program.
-int main (int argc, char *argv[])
+int main (int argc, char* argv[])
 {
   // Get the name of the input files from the command line, or use the default
   // char_g.dat and char_m.dat files if no command-line parameters are given.
-  const char           *filename1 = (argc > 1) ? argv[1] : "char_g.dat";
-  const char           *filename2 = (argc > 2) ? argv[2] : "char_m.dat";
+  const char* filename1 = (argc > 1) ? argv[1] : "char_g.dat";
+  const char* filename2 = (argc > 2) ? argv[2] : "char_m.dat";
 
   // Read the general polygons from the input files.
   CGAL::Timer           timer;

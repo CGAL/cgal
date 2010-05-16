@@ -2,31 +2,28 @@
  * Connecting a polygon with holes.
  */
 
-#include "bso_rational_nt.h"
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/connect_holes.h>
 #include <list>
 
-typedef CGAL::Cartesian<Number_type>               Kernel;
-typedef Kernel::Point_2                            Point_2;
-typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
-typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
+typedef Kernel::Point_2                                   Point_2;
+typedef CGAL::Polygon_2<Kernel>                           Polygon_2;
+typedef CGAL::Polygon_with_holes_2<Kernel>                Polygon_with_holes_2;
 
-int main (int argc, char **argv)
+int main (int argc, char* argv[])
 {
   
   // Get the name of the input file from the command line, or use the default
   // pgn_holes.dat file if no command-line parameters are given.
   //more data files can be found under test data
   //boundary no other connections are made.  
-  const char   *filename = (argc > 1) ? argv[1] : "pgn_holes.dat";  
-
+  const char* filename = (argc > 1) ? argv[1] : "pgn_holes.dat";  
   std::ifstream input_file (filename);
-
   if (! input_file.is_open())
   {
     std::cerr << "Failed to open the " << filename <<std::endl;
-    return (1);
+    return -1;
   }
 
   // Read a polygon with holes from a file.

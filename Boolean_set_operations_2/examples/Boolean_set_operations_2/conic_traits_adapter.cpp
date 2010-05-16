@@ -26,16 +26,10 @@ typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
 typedef Nt_traits::Rational                             Rational;
 typedef Nt_traits::Algebraic                            Algebraic;
 
-// instead of
-//typedef CGAL::Cartesian<Rational>                       Rat_kernel;
-//typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
-//typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel,Nt_traits>
-//                                                        Conic_traits_2;
-// workaround for VC++
-struct Rat_kernel  : public CGAL::Cartesian<Rational> {};
-struct Alg_kernel  : public CGAL::Cartesian<Algebraic> {};
-struct Conic_traits_2 :
-  public CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits> {};
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel,Nt_traits>
+                                                        Conic_traits_2;
 
 typedef CGAL::General_polygon_2<Conic_traits_2>         Polygon_2;
 typedef CGAL::Gps_traits_2<Conic_traits_2, Polygon_2>   Traits_2;

@@ -28,16 +28,10 @@ typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
 typedef Nt_traits::Rational                             Rational;
 typedef Nt_traits::Algebraic                            Algebraic;
 
-// instead of
-// typedef CGAL::Cartesian<Rational>                       Rat_kernel;
-// typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
-// typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
-//                                                         Traits_2;
-// workaround for VC++
-struct Rat_kernel  : public CGAL::Cartesian<Rational> {};
-struct Alg_kernel  : public CGAL::Cartesian<Algebraic> {};
-struct Traits_2 :
-  public CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits> {};
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                        Traits_2;
   
 typedef Rat_kernel::Point_2                             Bezier_rat_point;
 typedef Traits_2::Curve_2                               Bezier_curve;
@@ -97,7 +91,8 @@ bool read_bezier ( char const* aFileName, Bezier_polygon_set& rSet )
       std::string format ;
       std::getline(in_file,format);
       
-      bool lDoubleFormat = ( format.length() >= 6 && format.substr(0,6) == "DOUBLE") ;
+      bool lDoubleFormat = ( format.length() >= 6 &&
+                             format.substr(0,6) == "DOUBLE") ;
                               
       // Red the number of bezier polygon with holes
       unsigned int n_regions ;
@@ -130,7 +125,8 @@ bool read_bezier ( char const* aFileName, Bezier_polygon_set& rSet )
             std::list<CGAL::Object>::const_iterator xoit;
             Bezier_X_monotone_curve                 xcv;
             Bezier_traits                           traits;
-            Bezier_traits::Make_x_monotone_2        make_x_monotone = traits.make_x_monotone_2_object();
+            Bezier_traits::Make_x_monotone_2        make_x_monotone =
+              traits.make_x_monotone_2_object();
         
             Bezier_curve B = read_bezier_curve(in_file, lDoubleFormat);
             if ( B.number_of_control_points() >= 2 )
@@ -153,7 +149,8 @@ bool read_bezier ( char const* aFileName, Bezier_polygon_set& rSet )
           CGAL::Orientation  orient = pgn.orientation();
           std::cout << "  Orientation: " << orient << std::endl  ;
             
-          if (( b == 0 && orient == CGAL::CLOCKWISE) || ( b > 0 && orient == CGAL::COUNTERCLOCKWISE))
+          if (( b == 0 && orient == CGAL::CLOCKWISE) ||
+              ( b > 0 && orient == CGAL::COUNTERCLOCKWISE))
           {
             std::cout << "    Reversing orientation: " << std::endl  ;
             pgn.reverse_orientation();
@@ -168,22 +165,24 @@ bool read_bezier ( char const* aFileName, Bezier_polygon_set& rSet )
           
           if ( polygons.size() > 1 )
           {
-            for ( Bezier_polygon_vector::const_iterator it = CGAL::successor(polygons.begin())
-                ; it != polygons.end()
-                ; ++ it 
-                )
+            Bezier_polygon_vector::const_iterator it;
+            for ( it = CGAL::successor(polygons.begin()); it != polygons.end();
+                  ++ it )
               pwh.add_hole(*it);    
           }
           
           if ( is_valid_polygon_with_holes(pwh, rSet.traits() ) )
           {
-            std::cout << "  Inserting bezier polygon with holes made of " << polygons.size() << " boundaries into Set." << std::endl ;
+            std::cout << "  Inserting bezier polygon with holes made of "
+                      << polygons.size() << " boundaries into Set."
+                      << std::endl ;
             rSet.join(pwh) ;      
             std::cout << "    Done." << std::endl ;
           }
           else
           {
-            std::cout << "  **** Bezier polygon wiht holes IS NOT VALID ****" << std::endl ;
+            std::cout << "  **** Bezier polygon wiht holes IS NOT VALID ****"
+                      << std::endl ;
           }
         }
         
@@ -192,11 +191,13 @@ bool read_bezier ( char const* aFileName, Bezier_polygon_set& rSet )
     }
     catch( std::exception const& x )
     {
-      std::cout << "Exception ocurred during reading of bezier polygon set:" << x.what() << std::endl ;
+      std::cout << "Exception ocurred during reading of bezier polygon set:"
+                << x.what() << std::endl ;
     } 
     catch(...)
     {
-      std::cout << "Exception ocurred during reading of bezier polygon set." << std::endl ;
+      std::cout << "Exception ocurred during reading of bezier polygon set."
+                << std::endl ;
     } 
   }
   
@@ -204,11 +205,11 @@ bool read_bezier ( char const* aFileName, Bezier_polygon_set& rSet )
 }
 
 // The main program.
-int main (int argc, char **argv)
+int main (int argc, char* argv[])
 {
-  const char           *filename1 = (argc > 1) ? argv[1] : "char_g.bps";
-  const char           *filename2 = (argc > 2) ? argv[2] : "char_m.bps";
-  const char           *bop       = (argc > 3) ? argv[3] : "i";
+  const char* filename1 = (argc > 1) ? argv[1] : "char_g.bps";
+  const char* filename2 = (argc > 2) ? argv[2] : "char_m.bps";
+  const char* bop       = (argc > 3) ? argv[3] : "i";
 
   // Read the general polygons from the input files.
   CGAL::Timer           timer;
@@ -244,11 +245,12 @@ int main (int argc, char **argv)
   }
   catch( std::exception const& x )
   {
-    std::cout << "Exception ocurred during the boolean operation:" << x.what() << std::endl ;
+    std::cout << "Exception ocurred during the boolean operation:" << x.what()
+              << std::endl ;
   } 
   catch(...)
   {
-    std::cout << "Exception ocurred during the boolean operation." << std::endl ;
+    std::cout << "Exception ocurred during the boolean operation." << std::endl;
   } 
   timer.stop();
   
