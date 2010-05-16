@@ -99,6 +99,15 @@ public:
 
   using Base::associate_vertex_with_simplex;
   using Base::dcur;
+  using Base::hyperplane_supporting;
+  using Base::visited_mark;
+  using Base::is_bounded_simplex;
+  using Base::is_unbounded_simplex;
+  using Base::clear_visited_marks;
+  using Base::is_dimension_jump;
+  using Base::point_of_simplex;
+  using Base::point_of_facet;
+  using Base::vertex_of_facet;
 
 /*{\Mgeneralization Convex_hull_d<Lifted_R>}*/
 
