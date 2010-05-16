@@ -76,7 +76,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
         break ;
       }
        
-      FT lSDist = CGAL::squared_distance(*lCurr,(*lP).get<0>());
+      FT lSDist = CGAL::squared_distance(*lCurr,(*lP).template get<0>());
  
       if (    ! CGAL_NTS is_valid ( lSDist )
            || ! CGAL_NTS is_finite( lSDist )

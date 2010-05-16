@@ -2738,7 +2738,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
 
   // finally set the neighboring relations
   for (unsigned int i=0 ; i<nr_vec.size() ; i++) {
-    nr_vec[i].get<0>()->set_neighbor(nr_vec[i].get<1>(),nr_vec[i].get<2>());
+    nr_vec[i].template get<0>()->set_neighbor(nr_vec[i].template get<1>(),nr_vec[i].template get<2>());
   }
   
   _tds.delete_vertex(v);

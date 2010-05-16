@@ -145,17 +145,17 @@ namespace CGAL {
 
       const Line_3& supporting_line() const 
       {
-        return get(base).get<0>();
+        return get(base).template get<0>();
       }
 
       const Circular_arc_point_3& source() const 
       {
-        return get(base).get<1>();
+        return get(base).template get<1>();
       }
 
       const Circular_arc_point_3& target() const 
       {
-        return get(base).get<2>();
+        return get(base).template get<2>();
       }
 
       const Circular_arc_point_3& lower_xyz_extremity() const

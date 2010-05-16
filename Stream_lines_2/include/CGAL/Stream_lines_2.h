@@ -87,7 +87,7 @@ protected:
     bool operator()(const Pq_element &a1, const Pq_element
         &a2)
       {
-        return a1.get<3>().second < a2.get<3>().second ;
+        return a1.template get<3>().second < a2.template get<3>().second ;
       }
   };
   std::priority_queue<Pq_element, std::vector<Pq_element>, C>    pq;
@@ -180,7 +180,7 @@ public:
   std::pair<Point_2, FT> get_biggest_circle()
     {
       Pq_element m_Pq = Biggest_circle;
-      std::pair<Point_2, FT> circle(m_Pq.get<3>().first, m_Pq.get<3>().second);
+      std::pair<Point_2, FT> circle(m_Pq.template get<3>().first, m_Pq.template get<3>().second);
       return circle;
     }
 protected:
@@ -676,10 +676,10 @@ pq_elements(const Vector_field_2 & vector_field_2, Vertex_container_2 stl_vertic
       else
         {
     Pq_next_r = m_Pq_element;
-    if (Pq_element_max_r.get<3>().second <= Pq_next_r.get<3>().second)
+    if (Pq_element_max_r.template get<3>().second <= Pq_next_r.template get<3>().second)
       Pq_element_max_r = Pq_next_r;
-    if ((Pq_current_r.get<3>().second>=Pq_previous_r.get<3>().second)
-        &&(Pq_current_r.get<3>().second>=Pq_next_r.get<3>().second))
+    if ((Pq_current_r.template get<3>().second>=Pq_previous_r.template get<3>().second)
+        &&(Pq_current_r.template get<3>().second>=Pq_next_r.template get<3>().second))
       {
         pq.push(Pq_current_r);
       }
@@ -714,10 +714,10 @@ pq_elements(const Vector_field_2 & vector_field_2, Vertex_container_2 stl_vertic
       else
         {
     Pq_next_l = m_Pq_element;
-    if (Pq_element_max_l.get<3>().second <= Pq_next_l.get<3>().second) 
+    if (Pq_element_max_l.template get<3>().second <= Pq_next_l.template get<3>().second) 
       Pq_element_max_l = Pq_next_l;
-    if ((Pq_current_l.get<3>().second>=Pq_previous_l.get<3>().second)
-        &&(Pq_current_l.get<3>().second>=Pq_next_l.get<3>().second))
+    if ((Pq_current_l.template get<3>().second>=Pq_previous_l.template get<3>().second)
+        &&(Pq_current_l.template get<3>().second>=Pq_next_l.template get<3>().second))
       {
         pq.push(Pq_current_l);
       }
@@ -773,14 +773,14 @@ Stream_lines_2<VectorField_2, Integrator_2>::get_next_seed_point(FT &
   do{
     CGAL_assertion(!pq.empty());
     m_Pq_element = pq.top();
-    v0 = m_Pq_element.get<0>();
-    v1 = m_Pq_element.get<1>();
-    v2 = m_Pq_element.get<2>();
-    distance = m_Pq_element.get<3>().second;
+    v0 = m_Pq_element.template get<0>();
+    v1 = m_Pq_element.template get<1>();
+    v2 = m_Pq_element.template get<2>();
+    distance = m_Pq_element.template get<3>().second;
     pq.pop();
     b0 = m_DT.is_face(v0,v1,v2,fr);
     if (b0){
-      seed_point_ = m_Pq_element.get<3>().first;}
+      seed_point_ = m_Pq_element.template get<3>().first;}
     b = (!pq.empty());
   }while ((b)&&(!b0));
   Biggest_circle = m_Pq_element;
@@ -893,13 +893,13 @@ Stream_lines_2<VectorField_2, Integrator_2>::get_pq()
   while (!pq_temp.empty())
     {
       Pq_element m_Pq_element = pq_temp.top();
-      Vertex_handle v0 = m_Pq_element.get<0>();
-      Vertex_handle v1 = m_Pq_element.get<1>();
-      Vertex_handle v2 = m_Pq_element.get<2>();
+      Vertex_handle v0 = m_Pq_element.template get<0>();
+      Vertex_handle v1 = m_Pq_element.template get<1>();
+      Vertex_handle v2 = m_Pq_element.template get<2>();
       pq_temp.pop();
       Face_handle fr;
       bool b0 = m_DT.is_face(v0,v1,v2,fr);
-      Point_2 sdPoint = m_Pq_element.get<3>().first;
+      Point_2 sdPoint = m_Pq_element.template get<3>().first;
       if (b0)
   _list.push_front(sdPoint);
     }
