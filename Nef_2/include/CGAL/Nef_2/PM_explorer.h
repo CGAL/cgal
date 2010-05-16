@@ -93,6 +93,8 @@ typedef typename Base::Isolated_vertex_const_iterator
 typedef typename Base::Hole_const_iterator
                        Hole_const_iterator;
 
+  using Base::face;
+  using Base::twin;
 
 /*{\Mtext Iterators, handles, and circulators are inherited from 
 |Topological_explorer|.}*/

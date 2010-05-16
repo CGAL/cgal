@@ -75,6 +75,7 @@ public:
   using Base::point;
   using Base::is_isolated;
   using Base::first_out_edge;
+  using Base::last_out_edge;
   using Base::source;
   using Base::target;
   using Base::twin;
@@ -83,12 +84,16 @@ public:
   using Base::cyclic_adj_succ;
   using Base::cyclic_adj_pred;
   using Base::delete_vertex;
+  using Base::make_first_out_edge;
 
   class lt_edges_in_sweepline : public PMDEC
   {  const Point& p;
      const Halfedge_handle& e_bottom;
      const Halfedge_handle& e_top;
      const GEOMETRY& K;
+    using PMDEC::point;
+    using PMDEC::source;
+    using PMDEC::target;
   public:
   lt_edges_in_sweepline(const Point& pi, 
      const Halfedge_handle& e1, const Halfedge_handle& e2, 
@@ -127,6 +132,8 @@ public:
   class lt_pnts_xy : public PMDEC
   { const GEOMETRY& K;
   public:
+    using PMDEC::point;
+
    lt_pnts_xy(const PMDEC& D, const GEOMETRY& k) : PMDEC(D), K(k) {}
    lt_pnts_xy(const lt_pnts_xy& lt) : PMDEC(lt), K(lt.K) {}
    int operator()(const Vertex_handle& v1, const Vertex_handle& v2) const

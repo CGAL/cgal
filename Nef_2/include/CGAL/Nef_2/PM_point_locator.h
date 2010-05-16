@@ -440,6 +440,8 @@ public:
   using Base::K;
   using Base::number_of_vertices;
   using Base::faces_begin;
+  using Base::info;
+  using Base::flip_diagonal;
 
   /*{\Mtypes 2}*/
   /*{\Mtext All local types of |PM_naive_point_locator| are inherited.}*/
@@ -518,6 +520,13 @@ protected:
 
   struct CT_new_edge : Decorator {
     const Decorator& _DP;
+
+    using Decorator::previous;
+    using Decorator::is_closed_at_source;
+    using Decorator::info;
+    using Decorator::source;
+    using Decorator::twin;
+
     CT_new_edge(const Decorator& CT, const Decorator& DP) :
       Decorator(CT), _DP(DP) {}
     void operator()(Halfedge_handle& e) const
