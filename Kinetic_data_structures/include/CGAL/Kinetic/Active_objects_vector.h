@@ -35,7 +35,7 @@
 #include <CGAL/iterator.h>
 #include <boost/iterator/transform_iterator.hpp>
 
-CGAL_KINETIC_BEGIN_NAMESPACE;
+CGAL_KINETIC_BEGIN_NAMESPACE
 
 //! Holds a set of moving points and creates notifications when changes occur.
 /*!  This container holds a set of objects of a particular type. It
@@ -75,7 +75,7 @@ public:
   //! default constructor
   Active_objects_vector():editing_(false), num_valid_(false){}
 
-  ~Active_objects_vector(){CGAL_KINETIC_MULTILISTENER_DESTRUCTOR;}
+  ~Active_objects_vector(){CGAL_KINETIC_MULTILISTENER_DESTRUCTOR}
 
   //! access a point
   const Data &operator[](Key key) const
@@ -359,5 +359,5 @@ inline std::istream &operator>>(std::istream &in, Active_objects_vector<V> &v) {
   return v.read(in);
 }
 
-CGAL_KINETIC_END_NAMESPACE;
+CGAL_KINETIC_END_NAMESPACE
 #endif
