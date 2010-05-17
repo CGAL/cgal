@@ -56,6 +56,7 @@ class QP_partial_filtered_pricing
     typedef  typename Partial_base::Index_const_iterator  Index_const_iterator;
 
     using Base::price_dantzig;
+    using Base::is_improving;
 
   public:
 
