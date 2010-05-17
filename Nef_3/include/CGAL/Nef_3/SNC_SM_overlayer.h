@@ -223,6 +223,24 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
 
   typedef typename Map::Infi_box Infi_box;
 
+  using SM_decorator::clear_face_cycle_entries;
+  using SM_decorator::link_as_loop;
+  using SM_decorator::link_as_prev_next_pair;
+  using SM_decorator::is_closed_at_source;
+  using SM_decorator::is_closed_at_target;
+  using SM_decorator::delete_edge_pair;
+  using SM_decorator::set_face;
+  using SM_decorator::is_isolated;
+  using SM_decorator::delete_vertex_only;
+  using SM_decorator::delete_face_only;
+  using SM_decorator::first_out_edge;
+  using SM_decorator::set_first_out_edge;
+  using SM_decorator::has_outdeg_two;
+  using SM_decorator::store_sm_boundary_object;
+  using SM_decorator::is_sm_boundary_object;
+  using SM_decorator::undo_sm_boundary_object;
+  using SM_decorator::delete_edge_pair_only;
+
  public:
   SNC_SM_overlayer(Map* M, 
 		   const Sphere_kernel& G = Sphere_kernel()) 

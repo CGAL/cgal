@@ -66,6 +66,7 @@ class SNC_point_locator
 {
  public:
   class Intersection_call_back;
+  typedef SNC_decorator Base;
   typedef SNC_point_locator<SNC_decorator> Self;
   typedef typename SNC_decorator::Decorator_traits Decorator_traits;
   typedef typename SNC_decorator::SNC_structure SNC_structure;
@@ -91,6 +92,7 @@ public:
   typedef typename Decorator_traits::Vertex_iterator Vertex_iterator;
   typedef typename Decorator_traits::Halfedge_iterator Halfedge_iterator;
   typedef typename Decorator_traits::Halffacet_iterator Halffacet_iterator;
+
 
   const char* version() { return version_; }
 
@@ -214,6 +216,7 @@ public:
 
   //  typedef typename SNC_candidate_provider::Objects_around_box Objects_around_box;
 
+  using Base::get_visible_facet;
 public:
   SNC_point_locator_by_spatial_subdivision() : 
     initialized(false), candidate_provider(0) {}
@@ -305,7 +308,7 @@ public:
 
   virtual void initialize(SNC_structure* W) {
 #ifdef CGAL_NEF_LIST_OF_TRIANGLES
-    set_snc(*W);
+    this->set_snc(*W);
     candidate_provider = new SNC_candidate_provider(W);
 #else // CGAL_NEF_LIST_OF_TRIANGLES
     CGAL_NEF_TIMER(ct_t.start());
@@ -317,7 +320,7 @@ public:
 #endif
     CGAL_assertion( W != NULL);
 //    (Base) *this = SNC_decorator(*W);
-	set_snc(*W);
+    this->set_snc(*W);
     Object_list objects;
     Vertex_iterator v;
     Halfedge_iterator e;

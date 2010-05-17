@@ -387,7 +387,7 @@ public:
 	Halfedge_handle e2 = *itl;
 	while(normalized(e1->vector()) != normalized(-e2->vector())) {
 	  ++itl;
-	  make_twins(e1,*itl);
+	  this->make_twins(e1,*itl);
 	  e1 = e2;
 	  ++itl;
 	  e2 = *itl;
@@ -395,7 +395,7 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	make_twins(e1,e2);
+	this->make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
 	// discard temporary sphere_point ?
@@ -414,7 +414,7 @@ public:
 	Halfedge_handle e2 = *itl;
 	while(normalized(e1->vector()) != normalized(-e2->vector())) {
 	  ++itl;
-	  make_twins(e1,*itl);
+	  this->make_twins(e1,*itl);
 	  e1 = e2;
 	  ++itl;
 	  e2 = *itl;
@@ -422,7 +422,7 @@ public:
 	CGAL_NEF_TRACEN("    " << e1->source()->point() 
 			<< " -> " << e2->source()->point());
 	CGAL_NEF_TRACEN(e1->vector()<<" -> "<<-e2->vector());
-	make_twins(e1,e2);
+	this->make_twins(e1,e2);
 	CGAL_assertion(e1->mark()==e2->mark());
 	
 	// discard temporary sphere_point ?

@@ -1858,6 +1858,8 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
 
   typedef typename SNC_structure::Mark      Mark;
 
+  using Base::create_from_plane;
+
   public:
   SNC_constructor( SNC_structure& W) : Base(W) {}
 

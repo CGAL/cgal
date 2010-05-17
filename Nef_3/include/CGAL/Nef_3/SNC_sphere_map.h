@@ -134,7 +134,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
 
   typedef Vertex_handle       Constructor_parameter;
   typedef Vertex_const_handle Constructor_const_parameter;
-
+  using Base::init_range; // AF add CR
  public:
   SNC_sphere_map(bool construct=false) : Base(), destruct(construct) {
     if(!construct) return;
@@ -228,7 +228,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    { CGAL_assertion_msg(0,"not impl."); return Object_handle(); }
   };
 
   class SFace_cycle_const_iterator : public Object_const_iterator 
@@ -259,7 +259,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
     operator Object_handle() const { return Ibase::operator*(); }
     const Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
-    { this->CGAL_nef_assertion_msg(0,"not impl."); return Object_handle(); }
+    { CGAL_assertion_msg(0,"not impl."); return Object_handle(); }
   };
 
   SFace_cycle_const_iterator sface_cycles_begin(SFace_const_handle f) const

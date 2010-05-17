@@ -346,7 +346,7 @@ public:
 
   typedef CGAL::Halffacet_geometry<Point_3,Plane_3,Vertex_handle> 
     Halffacet_geometry;
-
+  using Base::debug; using Base::link_as_facet_cycle; using Base::info; using Base::link_as_interior_loop;
 protected:
   Halffacet_handle f_;
 public:

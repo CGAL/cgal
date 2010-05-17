@@ -697,6 +697,8 @@ class SNC_simplify<SNC_indexed_items, SNC_structure>
   typedef typename SNC_structure::SHalfedge_around_facet_circulator 
                                   SHalfedge_around_facet_circulator;
 
+  using Base::is_part_of_edge;
+
  public:
   SNC_simplify(SNC_structure& sncs) : Base(sncs) {}
 
