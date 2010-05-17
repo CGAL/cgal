@@ -62,11 +62,11 @@ unsigned int distance(const Range &r) {
       }                                                 \
     };                                                  \
 
-CGAL_PDB_GET_MAP(Atom, atom);
-CGAL_PDB_GET_MAP(Monomer, monomer);
-CGAL_PDB_GET_MAP(Chain, chain);
-CGAL_PDB_GET_MAP(Model, model);
-CGAL_PDB_GET_MAP(Heterogen, heterogen);
+CGAL_PDB_GET_MAP(Atom, atom)
+CGAL_PDB_GET_MAP(Monomer, monomer)
+CGAL_PDB_GET_MAP(Chain, chain)
+CGAL_PDB_GET_MAP(Model, model)
+CGAL_PDB_GET_MAP(Heterogen, heterogen)
 
 template <class A>
 struct Get_point {
