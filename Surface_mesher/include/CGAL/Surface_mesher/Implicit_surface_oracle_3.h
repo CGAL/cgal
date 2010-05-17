@@ -49,7 +49,7 @@ namespace CGAL {
 #ifdef  BOOST_MPL_CFG_NO_HAS_XXX
 #  error "BOOST_MPL_HAS_XXX_TRAIT_DEF is needed!"
 #else
-   BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_set_on_surface, Set_on_surface_tag, true);
+   BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_set_on_surface, Set_on_surface_tag, true)
 #endif
 
   namespace Surface_mesher {
