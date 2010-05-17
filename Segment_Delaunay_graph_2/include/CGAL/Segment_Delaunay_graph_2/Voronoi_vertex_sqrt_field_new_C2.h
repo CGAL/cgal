@@ -40,6 +40,10 @@ class Voronoi_vertex_sqrt_field_new_C2
 public:
   typedef Basic_predicates_C2<K> Base;
 
+  using Base::compute_supporting_line;
+  using Base::oriented_side_of_line;
+  using Base::opposite_line;
+
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
   struct PPS_Type {};
