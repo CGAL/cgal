@@ -23,7 +23,7 @@ public:
 
 QStringList Polyhedron_demo_off_plugin::nameFilters() const {
   return QStringList() << "OFF files (*.off)";
-};
+}
 
 bool Polyhedron_demo_off_plugin::canLoad() const {
   return true;
