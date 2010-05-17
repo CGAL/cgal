@@ -349,7 +349,7 @@ public:
   {}
 };
 
-}; // namespace boost
+} // namespace boost
 
 CGAL_BEGIN_NAMESPACE
 
