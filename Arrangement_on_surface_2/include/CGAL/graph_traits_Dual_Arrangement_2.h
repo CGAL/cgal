@@ -501,7 +501,7 @@ class graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > > :
       typename CGAL::Arrangement_2<Traits_, Dcel_>::Topology_traits> > >
 {};
 
-}; // namespace boost
+} // namespace boost
 
 CGAL_BEGIN_NAMESPACE
 
