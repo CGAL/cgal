@@ -152,6 +152,7 @@ public:
   using Base::next;
   using Base::previous;
   using Base::face;
+  using Base::point;
 
   Halfedge_const_handle out_wedge(Vertex_const_handle v,
     const Direction& d, bool& collinear) const
@@ -442,6 +443,14 @@ public:
   using Base::faces_begin;
   using Base::info;
   using Base::flip_diagonal;
+  using Base::twin; 
+  using Base::next; 
+  using Base::previous; 
+  using Base::source; 
+  using Base::target; 
+  using Base::point; 
+  using Base::segment; 
+  using Base::face;
 
   /*{\Mtypes 2}*/
   /*{\Mtext All local types of |PM_naive_point_locator| are inherited.}*/
@@ -450,8 +459,11 @@ public:
 
   struct CT_link_to_original : Decorator { // CT decorator
     const Decorator& Po;
+    using Decorator::info;
+
     CT_link_to_original(const Decorator& P, const Decorator& Poi)
       : Decorator(P), Po(Poi) {}
+
     void operator()(Vertex_handle vn, Vertex_const_handle vo) const
     { Face_const_handle f;
       if ( Po.is_isolated(vo) ) f = Po.face(vo);
@@ -459,6 +471,7 @@ public:
       geninfo<VF_pair>::access(info(vn)) = VF_pair(vo,f);
       CGAL_NEF_TRACEN("linking to org "<<PV(vn));
     }
+
     void operator()(Halfedge_handle hn, Halfedge_const_handle ho) const
     { geninfo<EF_pair>::create(info(hn));
       geninfo<EF_pair>::access(info(hn)) = EF_pair(ho,Po.face(ho));
@@ -520,7 +533,7 @@ protected:
 
   struct CT_new_edge : Decorator {
     const Decorator& _DP;
-
+    using Decorator::mark;
     using Decorator::previous;
     using Decorator::is_closed_at_source;
     using Decorator::info;
