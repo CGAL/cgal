@@ -133,7 +133,7 @@ public:
   */
   bool picture_is_valid() const
   {
-    return widget()->picture_is_current();
+    return widget().picture_is_current();
   }
   //! Return the current time as a double.
   double current_time() const
