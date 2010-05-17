@@ -104,7 +104,7 @@ Layers_toolbar::Layers_toolbar(CGAL::Qt_widget*        w
     delete showO;
     delete progress;
     delete button_group;
-  };
+  }
 
 
 #include "straight_skeleton_2_toolbar_layers.moc"
