@@ -115,5 +115,4 @@ int main()
   //  std::cerr << "Mesh generation from a 3D image:\n";
   //  test_epec.image();
   
-};
-
+}
