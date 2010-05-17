@@ -179,7 +179,7 @@ struct Nth_of_tuple_property_map
   /// @commentheading Template Parameters:
   /// @param Iter Type convertible to key_type.
   template <class Iter>
-  reference operator[](Iter tuple) const { return (reference) tuple->get<N>(); }
+  reference operator[](Iter tuple) const { return (reference) tuple->template get<N>(); }
 };
 
 /// Free function to create a Nth_of_tuple_property_map property map.
