@@ -56,6 +56,15 @@ class SM_walls : SM_decorator<SMap> {
   typedef typename Base::SFace_cycle_iterator
     SFace_cycle_iterator;
   
+  using Base::new_svertex;
+  using Base::link_as_face_cycle;
+  using Base::link_as_isolated_vertex;
+  using Base::unlink_as_isolated_vertex;
+  using Base::new_shalfedge_pair;
+  using Base::unlink_as_loop;
+  using Base::is_isolated;
+  using Base::is_sm_boundary_object;
+
  public:
   SM_walls(Sphere_map* M) : Base(M) {
 //   SM_decorator SD(sphere_map());
