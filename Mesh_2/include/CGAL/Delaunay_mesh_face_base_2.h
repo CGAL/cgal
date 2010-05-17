@@ -73,6 +73,6 @@ public:
   void set_marked(const bool b) { in_domain=b; }
 };
 
-}; // namespace CGAL
+} // namespace CGAL
 
 #endif
