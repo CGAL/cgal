@@ -479,8 +479,8 @@ operator()(const Hot_pixel * h1, const Hot_pixel * h2) const
   Compare_x_2 compare_x = m_gt.compare_x_2_object();
   Compare_y_2 compare_y = m_gt.compare_y_2_object();
   
-  Comparison_result cx = compare_x(h1.get_center(), h2.get_center());
-  Comparison_result cy = compare_y(h1.get_center(), h2.get_center());
+  Comparison_result cx = compare_x(h1->get_center(), h2->get_center());
+  Comparison_result cy = compare_y(h1->get_center(), h2->get_center());
 
   return(cx == SMALLER || cx == EQUAL && cy == SMALLER);
 }
