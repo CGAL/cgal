@@ -23,7 +23,7 @@ class PS_demo_simplification_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Polyhedron_demo_plugin_interface)
   QAction* actionSimplify;
 
 public:
@@ -137,6 +137,6 @@ void PS_demo_simplification_plugin::on_actionSimplify_triggered()
   }
 }
 
-Q_EXPORT_PLUGIN2(PS_demo_simplification_plugin, PS_demo_simplification_plugin);
+Q_EXPORT_PLUGIN2(PS_demo_simplification_plugin, PS_demo_simplification_plugin)
 
 #include "PS_demo_simplification_plugin.moc"

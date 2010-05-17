@@ -23,7 +23,7 @@ public:
 QStringList PS_demo_xyz_plugin::nameFilters() const {
   return QStringList() << "XYZ files (*.xyz)"
                        << "Point Sets with Normal (*.pwn)";
-};
+}
 
 bool PS_demo_xyz_plugin::canLoad() const {
   return true;

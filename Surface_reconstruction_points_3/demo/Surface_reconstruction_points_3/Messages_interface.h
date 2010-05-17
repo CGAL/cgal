@@ -12,6 +12,6 @@ public:
 };
 
 Q_DECLARE_INTERFACE(Messages_interface, 
-                    "com.geometryfactory.PolyhedronDemo.MessagesInterface/1.0");
+                    "com.geometryfactory.PolyhedronDemo.MessagesInterface/1.0")
 
 #endif // MESSAGES_INTERFACE_H
