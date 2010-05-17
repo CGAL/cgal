@@ -37,6 +37,8 @@ public:
   typedef typename Tri::Cell::Facet_label Facet_label;
   typedef typename Tri::Cell_circulator Cell_circulator;
 
+  using Tri::incident_cells;
+
   Triangulation_helper_3(typename Tri::Geom_traits gt= Tri::Geom_traits()): Tri(gt){}
 
   bool has_degree_3(const Edge &e) const
