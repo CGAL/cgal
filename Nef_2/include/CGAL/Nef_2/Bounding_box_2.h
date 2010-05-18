@@ -69,9 +69,10 @@ class Bounding_box_2<Tag_false,Kernel>
   
  public:
 
+  using Box::extend;
   using Box::min_coord;
   using Box::max_coord;
-
+  
   template<typename Vertex_iterator>
     Bounding_box_2(Vertex_iterator begin, Vertex_iterator end) {
     SFT p[2];
