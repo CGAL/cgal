@@ -52,6 +52,7 @@ private:
   typedef Union_of_curve_cycles_2<Labeled_traits_2,
                                   Offset_polygon_2>      Union_2;
 
+  using Base::_offset_polygon;
 public:
 
   /*! Constructor. */
