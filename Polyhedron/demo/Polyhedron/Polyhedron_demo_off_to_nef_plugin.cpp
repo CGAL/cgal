@@ -22,7 +22,7 @@ public:
 
 QStringList Polyhedron_demo_off_to_nef_plugin::nameFilters() const {
   return QStringList() << "OFF files, into nef (*.off)";
-};
+}
 
 bool Polyhedron_demo_off_to_nef_plugin::canLoad() const {
   return true;
