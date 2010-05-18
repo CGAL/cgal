@@ -11,7 +11,7 @@ since CGAL-3.6:
 
 2. Polynomial
 
-  - Fix compilation error with the Microsoft Visual C++ compiler and the
+  - Fix compilation errors with the Microsoft Visual C++ compiler and the
     Intel C++ compiler.
 
 
