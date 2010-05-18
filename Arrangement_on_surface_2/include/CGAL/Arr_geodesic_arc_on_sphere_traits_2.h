@@ -2762,6 +2762,10 @@ protected:
   // For some reason compilation under Windows fails without the qualifier
   typedef CGAL::Arr_extended_direction_3<Kernel>    Arr_extended_direction_3;
 
+  using Base::x_sign;
+  using Base::y_sign;
+  using Base::z_sign;
+
   /*! Indicates whether the arc is x-monotone */
   bool m_is_x_monotone;
   
