@@ -65,6 +65,11 @@ public:
   typedef typename Base::Oriented_side       Oriented_side;
   typedef typename Base::Sign                Sign;
 
+  using Base::compute_supporting_line;
+  using Base::oriented_side_of_line;
+  using Base::opposite_line;
+  using Base::to_ft;
+
 private:
   typedef Are_same_points_C2<K>     Are_same_points_2;
   typedef Are_same_segments_C2<K>   Are_same_segments_2;

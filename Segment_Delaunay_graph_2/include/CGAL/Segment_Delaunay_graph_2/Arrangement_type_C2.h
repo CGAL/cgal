@@ -65,6 +65,11 @@ private:
 
   typedef Are_same_points_C2<K>              Are_same_points_2;
 
+  using Base::compute_supporting_line;
+  using Base::oriented_side_of_line;
+  using Base::compute_perpendicular;
+  using Base::opposite_line;
+
 private:
   Are_same_points_2     same_points;
 

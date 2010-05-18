@@ -60,6 +60,11 @@ public:
   typedef typename Base::Point_2            Point_2;
   typedef typename Base::Segment_2          Segment_2;
 
+  using Base::compute_supporting_line;
+  using Base::compute_perpendicular;
+  using Base::opposite_line;
+  using Base::oriented_side_of_line;
+  using Base::compute_squared_distance;
 private:
   bool is_endpoint(const Site_2& p, const Site_2& s) const
   {

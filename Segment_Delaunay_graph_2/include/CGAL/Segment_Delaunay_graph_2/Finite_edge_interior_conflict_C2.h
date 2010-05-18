@@ -60,6 +60,17 @@ public:
 
   typedef typename Base::Homogeneous_point_2  Homogeneous_point_2;
 
+  using Base::opposite_line;  
+  using Base::compute_supporting_line;
+  using Base::oriented_side_of_line;
+  using Base::compare_squared_distances_to_line;
+  using Base::compare_squared_distances_to_lines;
+  using Base::compute_perpendicular;
+  using Base::projection_on_line;
+  using Base::compute_squared_distance;
+
+
+
 private:
   typedef Are_same_points_C2<K>               Are_same_points_2;
   typedef Are_same_segments_C2<K>             Are_same_segments_2;

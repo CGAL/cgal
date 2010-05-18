@@ -106,7 +106,18 @@ protected:
   typedef typename Base::Handle_map                Handle_map;
   typedef typename Base::Point_handle_pair         Point_handle_pair;
 
+  using Base::merge_info;
+  using Base::same_segments;
+  using Base::is_degenerate_segment;
+  using Base::convert_info;
+  using Base::second_endpoint_of_segment;
+  using Base::split_storage_site;
+  using Base::first_endpoint_of_segment;
+  using Base::incircle;
+
 public:
+  using Base::is_infinite;
+
   typedef typename Base::Point_container           Point_container;
   typedef typename Base::size_type                 size_type;
 

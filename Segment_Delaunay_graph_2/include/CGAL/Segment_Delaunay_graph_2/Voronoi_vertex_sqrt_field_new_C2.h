@@ -43,6 +43,7 @@ public:
   using Base::compute_supporting_line;
   using Base::oriented_side_of_line;
   using Base::opposite_line;
+  using Base::compute_projection;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};

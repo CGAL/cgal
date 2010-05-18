@@ -50,6 +50,10 @@ private:
   typedef typename Base::FT                   FT;
   typedef typename Base::RT                   RT;
 
+
+  using Base::compute_supporting_line;
+  using Base::compute_perpendicular;
+
 public:
   typedef typename Base::Oriented_side        Oriented_side;
   typedef Oriented_side                       result_type;

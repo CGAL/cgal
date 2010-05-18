@@ -359,7 +359,8 @@ public:
 
   using Delaunay_graph::cw;
   using Delaunay_graph::ccw;
-
+  using Delaunay_graph::delete_vertex;
+  using Delaunay_graph::delete_face;
 public:
   // TRAVERSAL OF THE DUAL GRAPH
   //----------------------------
