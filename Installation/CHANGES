@@ -4,11 +4,11 @@ Release notes of CGAL.
 CGAL 3.6.1 is a bug-fixes release. The following has been changed
 since CGAL-3.6:
 
-1 General
+x General
 
   - Fix compilation errors with recent Boost versions (since 1.40).
 
-2 Polyhedron
+x Polyhedron
 
   - Fix a compilation errors in demo/Polyhedron/:
      - issue with the location of qglobal.h of Qt4 on MacOS X,
@@ -16,7 +16,11 @@ since CGAL-3.6:
   - Fix the location of built plugins of demo/Polyhedron/, when CGAL is
     configured with WITH_demos=ON
 
-3 2D Mesh Generation
+x 3D Periodic Triangulations
+
+  - Fixed bug in the triangulation hierarchy for periodic triangulations.
+
+x 2D Mesh Generation
 
   - Fix a bug that lead to precondition violation.
   - Improve the user manual about the member function is_in_domain() of the
@@ -24,12 +28,12 @@ since CGAL-3.6:
   - The 2D meshing process is now deterministic (sorting of bad faces no
     longer relies on pointers comparisons).
 
-4 3D Mesh Generation
+x 3D Mesh Generation
 
   - Fix a linking errors (duplicate symbols) when <CGAL/refine_mesh_3.h> is
     included in different compilation units.
 
-5 Spatial Searching
+x Spatial Searching
 
   - Fix a bug in <CGAL/Orthogonal_k_neighbor_search.h> when several
     nearest neighbors are at the same distance from the query point.
