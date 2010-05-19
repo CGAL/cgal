@@ -1,25 +1,16 @@
 * text=auto !eol
-AABB_tree/demo/AABB_tree/AABB_demo.cpp -text
 AABB_tree/demo/AABB_tree/AABB_demo.pdf -text svneol=unset#application/pdf
 AABB_tree/demo/AABB_tree/AABB_demo.ppt -text svneol=unset#application/vnd.ms-powerpoint
 AABB_tree/demo/AABB_tree/AABB_demo.qrc -text
 AABB_tree/demo/AABB_tree/CMakeLists.txt -text
-AABB_tree/demo/AABB_tree/MainWindow.cpp -text
-AABB_tree/demo/AABB_tree/MainWindow.h -text
 AABB_tree/demo/AABB_tree/MainWindow.ui -text
-AABB_tree/demo/AABB_tree/Scene.cpp -text
-AABB_tree/demo/AABB_tree/Scene.h -text
-AABB_tree/demo/AABB_tree/Viewer.cpp -text
-AABB_tree/demo/AABB_tree/Viewer.h -text
 AABB_tree/demo/AABB_tree/cleanup.bat eol=crlf
 AABB_tree/demo/AABB_tree/data/hand.off -text svneol=unset#application/octet-stream
 AABB_tree/demo/AABB_tree/data/knot.off -text
 AABB_tree/demo/AABB_tree/data/part.off -text svneol=unset#application/octet-stream
 AABB_tree/demo/AABB_tree/data/u.off -text svneol=unset#application/octet-stream
-AABB_tree/demo/AABB_tree/render_edges.h -text
 AABB_tree/demo/AABB_tree/resources/about.html -text
 AABB_tree/demo/AABB_tree/resources/cgal_logo.xpm -text
-AABB_tree/demo/AABB_tree/types.h -text
 AABB_tree/doc_tex/AABB_tree/PkgDescription.tex -text
 AABB_tree/doc_tex/AABB_tree/details.tex -text
 AABB_tree/doc_tex/AABB_tree/examples.tex -text
