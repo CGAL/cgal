@@ -13,6 +13,7 @@ typedef Kernel::Plane_3 Plane;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Segment_3 Segment;
 typedef Kernel::Triangle_3 Triangle;
+typedef Kernel::Aff_transformation_3 Aff_transformation;
 
 #include <CGAL/Polyhedron_3.h>
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;

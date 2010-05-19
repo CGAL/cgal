@@ -19,8 +19,13 @@ public:
   void initializeGL();
   void setScene(Scene* pScene);
 
+protected:
+  virtual void mousePressEvent(QMouseEvent* e);
+  virtual void mouseReleaseEvent(QMouseEvent* e);
+  
 private:
   Scene* m_pScene;
+  bool m_custom_mouse;
 }; // end class Viewer
 
 #endif // VIEWER_H

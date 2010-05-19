@@ -16,9 +16,16 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Subdivision_method_3.h>
 
+
+// constants
+const double slow_distance_grid_size = 100;
+const double fast_distance_grid_size = 20;
+
 Scene::Scene()
   : m_frame (new ManipulatedFrame())
   , m_view_plane(false)
+  , m_grid_size(slow_distance_grid_size)
+  , m_cut_plane(NONE)
 {
     m_pPolyhedron = NULL;
 
@@ -26,13 +33,11 @@ Scene::Scene()
     m_view_points = true;
     m_view_segments = true;
     m_view_polyhedron = true;
-    m_view_distance_function = true;
 
     // distance function
     m_red_ramp.build_red();
     m_blue_ramp.build_blue();
     m_max_distance_function = (FT)0.0;
-    m_signed_distance_function = false;
 }
 
 Scene::~Scene()
@@ -122,17 +127,23 @@ void Scene::draw()
     if(m_view_segments)
         draw_segments();
 
-    if(m_view_distance_function)
-    {
-        if(m_signed_distance_function)
-            draw_signed_distance_function();
-        else
-            draw_unsigned_distance_function();
-    }
-  
     if (m_view_plane)
-    {  
-        draw_plane();      
+    {
+        switch( m_cut_plane )
+        {
+          case UNSIGNED_EDGES:
+          case UNSIGNED_FACETS:
+              draw_distance_function(m_thermal_ramp, m_thermal_ramp);
+              break;
+          case SIGNED_FACETS:
+              draw_distance_function(m_red_ramp, m_blue_ramp);
+              break;
+          case CUT_SEGMENTS:
+              draw_cut_segment_plane();
+              break;
+          case NONE: // do nothing
+              break;
+        }
     }
 }
 
@@ -188,117 +199,71 @@ void Scene::draw_points()
     }
 }
 
-void Scene::draw_unsigned_distance_function()
+void Scene::draw_distance_function(const Color_ramp& ramp_pos,
+                                   const Color_ramp& ramp_neg) const
 {
-    if(m_max_distance_function == (FT)0.0)
-        return;
-
     ::glDisable(GL_LIGHTING);
-    ::glShadeModel(GL_SMOOTH);
+    if ( m_fast_distance ) { ::glShadeModel(GL_FLAT); }
+    else { ::glShadeModel(GL_SMOOTH); }
+    
     ::glBegin(GL_QUADS);
     int i,j;
-    const int nb_quads = 99;
+    const int nb_quads = m_grid_size-1;
     for(i=0;i<nb_quads;i++)
     {
         for(j=0;j<nb_quads;j++)
         {
-            Point_distance& pd00 = m_distance_function[i][j];
-            Point_distance& pd01 = m_distance_function[i][j+1];
-            Point_distance& pd11 = m_distance_function[i+1][j+1];
-            Point_distance& pd10 = m_distance_function[i+1][j];
-            Point& p00 = pd00.first;
-            Point& p01 = pd01.first;
-            Point& p11 = pd11.first;
-            Point& p10 = pd10.first;
-            FT& d00 = pd00.second;
-            FT& d01 = pd01.second;
-            FT& d11 = pd11.second;
-            FT& d10 = pd10.second;
-            unsigned int i00 = 255-(unsigned int)(255.0 * d00 / m_max_distance_function);
-            unsigned int i01 = 255-(unsigned int)(255.0 * d01 / m_max_distance_function);
-            unsigned int i11 = 255-(unsigned int)(255.0 * d11 / m_max_distance_function);
-            unsigned int i10 = 255-(unsigned int)(255.0 * d10 / m_max_distance_function);
-            ::glColor3ub(m_thermal_ramp.r(i00),m_thermal_ramp.g(i00),m_thermal_ramp.b(i00));
-            ::glVertex3d(p00.x(),p00.y(),p00.z());
-            ::glColor3ub(m_thermal_ramp.r(i01),m_thermal_ramp.g(i01),m_thermal_ramp.b(i01));
-            ::glVertex3d(p01.x(),p01.y(),p01.z());
-            ::glColor3ub(m_thermal_ramp.r(i11),m_thermal_ramp.g(i11),m_thermal_ramp.b(i11));
-            ::glVertex3d(p11.x(),p11.y(),p11.z());
-            ::glColor3ub(m_thermal_ramp.r(i10),m_thermal_ramp.g(i10),m_thermal_ramp.b(i10));
-            ::glVertex3d(p10.x(),p10.y(),p10.z());
-        }
-    }
-    ::glEnd();
-}
-
-void Scene::draw_signed_distance_function()
-{
-    if(m_max_distance_function == (FT)0.0)
-        return;
-
-    ::glDisable(GL_LIGHTING);
-    ::glShadeModel(GL_SMOOTH);
-    ::glBegin(GL_QUADS);
-    int i,j;
-    const int nb_quads = 99;
-    for(i=0;i<nb_quads;i++)
-    {
-        for(j=0;j<nb_quads;j++)
-        {
-            Point_distance& pd00 = m_distance_function[i][j];
-            Point_distance& pd01 = m_distance_function[i][j+1];
-            Point_distance& pd11 = m_distance_function[i+1][j+1];
-            Point_distance& pd10 = m_distance_function[i+1][j];
-            Point& p00 = pd00.first;
-            Point& p01 = pd01.first;
-            Point& p11 = pd11.first;
-            Point& p10 = pd10.first;
-            FT& d00 = pd00.second;
-            FT& d01 = pd01.second;
-            FT& d11 = pd11.second;
-            FT& d10 = pd10.second;
-
+            const Point_distance& pd00 = m_distance_function[i][j];
+            const Point_distance& pd01 = m_distance_function[i][j+1];
+            const Point_distance& pd11 = m_distance_function[i+1][j+1];
+            const Point_distance& pd10 = m_distance_function[i+1][j];
+            const Point& p00 = pd00.first;
+            const Point& p01 = pd01.first;
+            const Point& p11 = pd11.first;
+            const Point& p10 = pd10.first;
+            const FT& d00 = pd00.second;
+            const FT& d01 = pd01.second;
+            const FT& d11 = pd11.second;
+            const FT& d10 = pd10.second;
+            
             // determines grey level
             unsigned int i00 = 255-(unsigned)(255.0 * (double)std::fabs(d00) / m_max_distance_function);
             unsigned int i01 = 255-(unsigned)(255.0 * (double)std::fabs(d01) / m_max_distance_function);
             unsigned int i11 = 255-(unsigned)(255.0 * (double)std::fabs(d11) / m_max_distance_function);
             unsigned int i10 = 255-(unsigned)(255.0 * (double)std::fabs(d10) / m_max_distance_function);
-
+            
             // assembles one quad
             if(d00 > 0.0)
-                ::glColor3ub(m_red_ramp.r(i00),m_red_ramp.g(i00),m_red_ramp.b(i00));
+                ::glColor3ub(ramp_pos.r(i00),ramp_pos.g(i00),ramp_pos.b(i00));
             else
-                ::glColor3ub(m_blue_ramp.r(i00),m_blue_ramp.g(i00),m_blue_ramp.b(i00));
+                ::glColor3ub(ramp_neg.r(i00),ramp_neg.g(i00),ramp_neg.b(i00));
             ::glVertex3d(p00.x(),p00.y(),p00.z());
-
+            
             if(d01 > 0.0)
-                ::glColor3ub(m_red_ramp.r(i01),m_red_ramp.g(i01),m_red_ramp.b(i01));
+                ::glColor3ub(ramp_pos.r(i01),ramp_pos.g(i01),ramp_pos.b(i01));
             else
-                ::glColor3ub(m_blue_ramp.r(i01),m_blue_ramp.g(i01),m_blue_ramp.b(i01));
+                ::glColor3ub(ramp_neg.r(i01),ramp_neg.g(i01),ramp_neg.b(i01));
             ::glVertex3d(p01.x(),p01.y(),p01.z());
-
+            
             if(d11 > 0)
-                ::glColor3ub(m_red_ramp.r(i11),m_red_ramp.g(i11),m_red_ramp.b(i11));
+                ::glColor3ub(ramp_pos.r(i11),ramp_pos.g(i11),ramp_pos.b(i11));
             else
-                ::glColor3ub(m_blue_ramp.r(i11),m_blue_ramp.g(i11),m_blue_ramp.b(i11));
+                ::glColor3ub(ramp_neg.r(i11),ramp_neg.g(i11),ramp_neg.b(i11));
             ::glVertex3d(p11.x(),p11.y(),p11.z());
-
+            
             if(d10 > 0)
-                ::glColor3ub(m_red_ramp.r(i10),m_red_ramp.g(i10),m_red_ramp.b(i10));
+                ::glColor3ub(ramp_pos.r(i10),ramp_pos.g(i10),ramp_pos.b(i10));
             else
-                ::glColor3ub(m_blue_ramp.r(i10),m_blue_ramp.g(i10),m_blue_ramp.b(i10));
+                ::glColor3ub(ramp_neg.r(i10),ramp_neg.g(i10),ramp_neg.b(i10));
             ::glVertex3d(p10.x(),p10.y(),p10.z());
         }
     }
     ::glEnd();
 }
 
-void Scene::draw_plane()
+void Scene::draw_cut_segment_plane() const
 {
-    double dx = m_bbox.xmax()-m_bbox.xmin();
-    double dy = m_bbox.ymax()-m_bbox.ymin();
-    double dz = m_bbox.zmax()-m_bbox.zmin();
-    float diag = .6f * float(std::sqrt(dx*dx + dy*dy + dz*dz));
+    float diag = .6f * float(bbox_diag());
 
     ::glDisable(GL_LIGHTING);
     ::glLineWidth(1.0f);
@@ -314,7 +279,7 @@ void Scene::draw_plane()
     ::glLineWidth(2.0f);
     ::glColor3f(1.f, 0.f, 0.f);
     ::glBegin(GL_LINES);
-    for ( std::vector<Segment>::iterator it = m_cut_segments.begin(), 
+    for ( std::vector<Segment>::const_iterator it = m_cut_segments.begin(), 
           end = m_cut_segments.end() ; it != end ; ++it )
     {
         const Point& a = it->source();
@@ -402,6 +367,25 @@ Plane Scene::frame_plane() const
     return Plane(n[0], n[1],  n[2], - n * pos);
 }
 
+Aff_transformation Scene::frame_transformation() const
+{
+    const ::GLdouble* m = m_frame->matrix();
+  
+    // OpenGL matrices are row-major matrices
+    return Aff_transformation (m[0], m[4], m[8], m[12],
+                               m[1], m[5], m[9], m[13],
+                               m[2], m[6], m[10], m[14]);
+}
+
+FT Scene::bbox_diag() const
+{
+  double dx = m_bbox.xmax()-m_bbox.xmin();
+  double dy = m_bbox.ymax()-m_bbox.ymin();
+  double dz = m_bbox.zmax()-m_bbox.zmin();
+  
+  return FT(std::sqrt(dx*dx + dy*dy + dz*dz));
+}
+
 void Scene::build_facet_tree()
 {
     if ( NULL == m_pPolyhedron )
@@ -416,25 +400,54 @@ void Scene::build_facet_tree()
     // build tree
     CGAL::Timer timer;
     timer.start();
-    std::cout << "Construct AABB tree...";
+    std::cout << "Construct Facet AABB tree...";
     m_facet_tree.rebuild(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+    m_facet_tree.accelerate_distance_queries();
+    std::cout << "done (" << timer.time() << " s)" << std::endl;
+}
+
+void Scene::build_edge_tree()
+{
+    if ( NULL == m_pPolyhedron )
+    {
+        std::cerr << "Build edge tree failed: load polyhedron first." << std::endl;
+        return;
+    }
+    
+    // ensure tree is empty
+    m_edge_tree.clear();
+    
+    // build tree
+    CGAL::Timer timer;
+    timer.start();
+    std::cout << "Construct Edge AABB tree...";
+    m_edge_tree.rebuild(m_pPolyhedron->edges_begin(),m_pPolyhedron->edges_end());
+    m_edge_tree.accelerate_distance_queries();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 }
 
 void Scene::clear_internal_data()
 {
     m_facet_tree.clear();
+    m_edge_tree.clear();
 
     clear_points();
     clear_segments();
-    clear_distance_function();
     clear_cutting_plane();
 }
 
 void Scene::clear_cutting_plane()
 {
     m_cut_segments.clear();
+    m_cut_plane = NONE;
+  
     deactivate_cutting_plane();
+}
+
+void Scene::update_grid_size()
+{
+    m_grid_size = m_fast_distance ? fast_distance_grid_size
+                                  : slow_distance_grid_size;
 }
 
 void Scene::generate_points_in(const unsigned int nb_points,
@@ -679,147 +692,121 @@ void Scene::generate_edge_points(const unsigned int nb_points)
     std::cout << nb_planes << " plane queries, " << timer.time() << " s." << std::endl;
 }
 
-void Scene::unsigned_distance_function()
+
+template <typename Tree>
+void Scene::compute_distance_function(const Tree& tree)
 {
-    if(m_pPolyhedron == NULL)
+    // Get transformation
+    Aff_transformation t = frame_transformation();
+    
+    m_max_distance_function = FT(0);
+    FT diag = bbox_diag();
+    
+    const FT dx = diag;
+    const FT dy = diag;
+    const FT z (0);
+    
+    for(int i=0 ; i<m_grid_size ; ++i)
     {
-        std::cout << "Load polyhedron first." << std::endl;
-        return;
-    }
-
-    CGAL::Timer timer;
-    timer.start();
-    std::cout << "Construct AABB tree...";
-    Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
-    tree.accelerate_distance_queries();
-    std::cout << "done (" << timer.time() << " s)" << std::endl;
-
-    m_max_distance_function = (FT)0.0;
-    int i,j;
-    const double dx = m_bbox.xmax() - m_bbox.xmin();
-    const double dy = m_bbox.ymax() - m_bbox.ymin();
-    const double z = 0.5 * (m_bbox.zmax() + m_bbox.zmin());
-    for(i=0;i<100;i++)
-    {
-        FT x = m_bbox.xmin() + (FT)((double)i/100.0 * dx);
-        for(j=0;j<100;j++)
+        FT x = -diag/FT(2) + FT(i)/FT(m_grid_size) * dx;
+        
+        for(int j=0 ; j<m_grid_size ; ++j)
         {
-            FT y = m_bbox.ymin() + (FT)((double)j/100.0 * dy);
-            Point query(x,y,z);
-            FT sq_distance = tree.squared_distance(query);
-            FT distance = std::sqrt(sq_distance);
-            m_distance_function[i][j] = Point_distance(query,distance);
-            m_max_distance_function = distance > m_max_distance_function ?
-distance : m_max_distance_function;
+            FT y = -diag/FT(2) + FT(j)/FT(m_grid_size) * dy;
+            
+            Point query = t( Point(x,y,z) );
+            FT dist = CGAL::sqrt( tree.squared_distance(query) );
+            
+            m_distance_function[i][j] = Point_distance(query,dist);
+            m_max_distance_function = (std::max)(dist, m_max_distance_function);
         }
     }
-    m_signed_distance_function = false;
 }
+
+template <typename Tree>
+void Scene::sign_distance_function(const Tree& tree)
+{
+    Vector random_vec = random_vector();
+    
+    for(int i=0 ; i<m_grid_size ; ++i)
+    {
+        for(int j=0 ; j<m_grid_size ; ++j)
+        {
+            const Point& p = m_distance_function[i][j].first;
+            const FT unsigned_distance = m_distance_function[i][j].second;
+            
+            // get sign through ray casting (random vector)
+            Ray ray(p, random_vec);
+            unsigned int nbi = tree.number_of_intersected_primitives(ray);
+            
+            FT sign ( (nbi&1) == 0 ? 1 : -1);
+            m_distance_function[i][j].second = sign * unsigned_distance;
+        }
+    }
+}
+
+
+void Scene::unsigned_distance_function()
+{
+    // Build tree if needed
+    if ( m_facet_tree.empty() )
+    {
+      build_facet_tree();
+    }
+  
+    compute_distance_function(m_facet_tree);
+    
+    m_cut_plane = UNSIGNED_FACETS;
+}
+
 
 void Scene::unsigned_distance_function_to_edges()
 {
-    if(m_pPolyhedron == NULL)
+    // Build tree if needed
+    if ( m_edge_tree.empty() )
     {
-        std::cout << "Load polyhedron first." << std::endl;
-        return;
+        build_edge_tree();
     }
-
-    typedef CGAL::AABB_polyhedron_segment_primitive<Kernel,Polyhedron> Primitive;
-    typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
-    typedef CGAL::AABB_tree<Traits> Edge_tree;
-
-    CGAL::Timer timer;
-    timer.start();
-    std::cout << "Construct AABB tree from edges...";
-    Edge_tree tree(m_pPolyhedron->edges_begin(),m_pPolyhedron->edges_end());
-    tree.accelerate_distance_queries();
-    std::cout << "done (" << timer.time() << " s)" << std::endl;
-
-    m_max_distance_function = (FT)0.0;
-    const double dx = m_bbox.xmax() - m_bbox.xmin();
-    const double dy = m_bbox.ymax() - m_bbox.ymin();
-    const double z = 0.5 * (m_bbox.zmax() + m_bbox.zmin());
-    int i,j;
-    for(i=0;i<100;i++)
-    {
-        FT x = m_bbox.xmin() + (FT)((double)i/100.0 * dx);
-        for(j=0;j<100;j++)
-        {
-            FT y = m_bbox.ymin() + (FT)((double)j/100.0 * dy);
-            Point query(x,y,z);
-            FT sq_distance = tree.squared_distance(query);
-            FT distance = std::sqrt(sq_distance);
-            m_distance_function[i][j] = Point_distance(query,distance);
-            m_max_distance_function = distance > m_max_distance_function ?
-distance : m_max_distance_function;
-        }
-    }
-    m_signed_distance_function = false;
+    
+    compute_distance_function(m_edge_tree);
+    
+    m_cut_plane = UNSIGNED_EDGES;
 }
+
 
 void Scene::signed_distance_function()
-{
-    if(m_pPolyhedron == NULL)
-    {
-        std::cout << "Load polyhedron first." << std::endl;
-        return;
-    }
-
-    CGAL::Timer timer;
-    timer.start();
-    std::cout << "Construct AABB tree...";
-    Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
-    tree.accelerate_distance_queries();
-    std::cout << "done (" << timer.time() << " s)" << std::endl;
-
-    m_max_distance_function = (FT)0.0;
-    Vector vec = random_vector();
-
-    const double dx = m_bbox.xmax() - m_bbox.xmin();
-    const double dy = m_bbox.ymax() - m_bbox.ymin();
-    const double z = 0.5 * (m_bbox.zmax() + m_bbox.zmin());
-    int i,j;
-    for(i=0;i<100;i++)
-    {
-        FT x = m_bbox.xmin() + (FT)((double)i/100.0 * dx);
-        for(j=0;j<100;j++)
-        {
-            FT y = m_bbox.ymin() + (FT)((double)j/100.0 * dy);
-            Point query(x,y,z);
-            FT sq_distance = tree.squared_distance(query);
-            FT unsigned_distance = std::sqrt(sq_distance);
-
-            // get sign through ray casting (random vector)
-            Ray ray(query,vec);
-            unsigned int nbi = tree.number_of_intersected_primitives(ray);
-            FT sign = nbi%2 == 0 ? (FT)1.0 : (FT)-1.0;
-            FT signed_distance = sign * unsigned_distance;
-
-            m_distance_function[i][j] = Point_distance(query,signed_distance);
-            m_max_distance_function = unsigned_distance > m_max_distance_function ?
-unsigned_distance : m_max_distance_function;
-        }
-    }
-    m_signed_distance_function = true;
-}
-
-void Scene::cutting_plane()
 {
     // Build tree if needed
     if ( m_facet_tree.empty() )
     {
         build_facet_tree();
     }
+    
+    compute_distance_function(m_facet_tree);
+    sign_distance_function(m_facet_tree);
 
+    m_cut_plane = SIGNED_FACETS;
+}
+
+
+void Scene::cut_segment_plane()
+{
+    // Build tree if needed
+    if ( m_facet_tree.empty() )
+    {
+        build_facet_tree();
+    }
+    
     Plane plane = frame_plane();
-
+    
     // Compute intersections
-    std::vector<Object_and_primitive_id> intersections;
+    typedef std::vector<Facet_tree::Object_and_primitive_id> Intersections;
+    Intersections intersections;
     m_facet_tree.all_intersections(plane, std::back_inserter(intersections));
-
+    
     // Fill data structure
     m_cut_segments.clear();
-    for ( std::vector<Object_and_primitive_id>::iterator it = intersections.begin(),
+    for ( Intersections::iterator it = intersections.begin(),
          end = intersections.end() ; it != end ; ++it )
     {
         const Segment* inter_seg = CGAL::object_cast<Segment>(&(it->first));
@@ -829,6 +816,29 @@ void Scene::cutting_plane()
             m_cut_segments.push_back(*inter_seg);
         }
     }
+    
+    m_cut_plane = CUT_SEGMENTS;
+}
+
+void Scene::cutting_plane()
+{
+    switch( m_cut_plane )
+    {
+      case UNSIGNED_FACETS:
+          return unsigned_distance_function();
+      case SIGNED_FACETS:
+          return signed_distance_function();
+      case UNSIGNED_EDGES:
+          return unsigned_distance_function_to_edges();
+      case CUT_SEGMENTS:
+          return cut_segment_plane();
+      case NONE: // do nothing 
+          return;
+    }
+    
+    // Should not be here
+    std::cerr << "Unknown cut_plane type" << std::endl;
+    CGAL_assertion(false);
 }
 
 void Scene::toggle_view_poyhedron()
@@ -844,11 +854,6 @@ void Scene::toggle_view_segments()
 void Scene::toggle_view_points()
 {
     m_view_points = !m_view_points;
-}
-
-void Scene::toggle_view_distance_function()
-{
-    m_view_distance_function = !m_view_distance_function;
 }
 
 void Scene::toggle_view_plane()

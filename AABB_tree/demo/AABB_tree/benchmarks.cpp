@@ -204,7 +204,7 @@ void Scene::bench_intersections_vs_nbt()
         // calls ray queries
         CGAL::Timer timer;
         timer.start();
-        std::list<Object_and_primitive_id> intersections;
+        std::list<Facet_tree::Object_and_primitive_id> intersections;
         for(int i=0;i<nb_queries;i++)
             tree.all_intersections(queries[i],std::back_inserter(intersections));
         double duration = timer.time();
@@ -268,8 +268,8 @@ void Scene::bench_intersection(Facet_tree& tree,
     CGAL::Timer timer;
     timer.start();
     unsigned int nb = 0;
-    std::list<Primitive_id> primitive_ids;
-    std::list<Object_and_primitive_id> intersections;
+    std::list<Facet_tree::Primitive_id> primitive_ids;
+    std::list<Facet_tree::Object_and_primitive_id> intersections;
     while(timer.time() < duration)
     {
         const Query& query = queries[nb % nb_queries]; // loop over vector

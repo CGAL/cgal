@@ -268,6 +268,7 @@ void MainWindow::on_actionBench_intersections_triggered()
 void MainWindow::on_actionUnsigned_distance_function_to_facets_triggered()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
+    m_pScene->activate_cutting_plane();
 	m_pScene->unsigned_distance_function();
 	QApplication::restoreOverrideCursor();
   m_pViewer->update();
@@ -276,6 +277,7 @@ void MainWindow::on_actionUnsigned_distance_function_to_facets_triggered()
 void MainWindow::on_actionUnsigned_distance_function_to_edges_triggered()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
+    m_pScene->activate_cutting_plane();
 	m_pScene->unsigned_distance_function_to_edges();
 	QApplication::restoreOverrideCursor();
   m_pViewer->update();
@@ -284,17 +286,24 @@ void MainWindow::on_actionUnsigned_distance_function_to_edges_triggered()
 void MainWindow::on_actionSigned_distance_function_to_facets_triggered()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
+    m_pScene->activate_cutting_plane();
 	m_pScene->signed_distance_function();
 	QApplication::restoreOverrideCursor();
   m_pViewer->update();
 }
 
-void MainWindow::on_actionCutting_plane_triggered()
+void MainWindow::on_actionIntersection_cutting_plane_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   m_pScene->activate_cutting_plane();
-  m_pScene->cutting_plane();
+  m_pScene->cut_segment_plane();
   QApplication::restoreOverrideCursor();
+  m_pViewer->update();
+}
+
+void MainWindow::on_actionCutting_plane_none_triggered()
+{
+  m_pScene->deactivate_cutting_plane();
   m_pViewer->update();
 }
 
@@ -316,12 +325,6 @@ void MainWindow::on_actionView_segments_triggered()
   m_pViewer->update();
 }
 
-void MainWindow::on_actionView_distance_function_triggered()
-{
-	m_pScene->toggle_view_distance_function();
-  m_pViewer->update();
-}
-
 void MainWindow::on_actionView_cutting_plane_triggered()
 {
   m_pScene->toggle_view_plane();
@@ -337,12 +340,6 @@ void MainWindow::on_actionClear_points_triggered()
 void MainWindow::on_actionClear_segments_triggered()
 {
 	m_pScene->clear_segments();
-  m_pViewer->update();
-}
-
-void MainWindow::on_actionClear_distance_function_triggered()
-{
-	m_pScene->clear_distance_function();
   m_pViewer->update();
 }
 
