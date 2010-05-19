@@ -59,22 +59,22 @@ public:
     Handle_for()
       : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) T(); // we get the warning here 
+        new (&(ptr_->t)) element_type(); // we get the warning here 
         ptr_->count = 1;
     }
 
-    Handle_for(const T& t)
+    Handle_for(const element_type& t)
       : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) T(t);
+        new (&(ptr_->t)) element_type(t);
         ptr_->count = 1;
     }
 
 #ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
-    Handle_for(T && t)
+    Handle_for(element_type && t)
       : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) T(std::move(t));
+        new (&(ptr_->t)) element_type(std::move(t));
         ptr_->count = 1;
     }
 #endif
@@ -95,7 +95,7 @@ public:
     Handle_for(T1 && t1, T2 && t2, Args && ... args)
       : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) T(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
+        new (&(ptr_->t)) element_type(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
         ptr_->count = 1;
     }
 #else
@@ -103,7 +103,7 @@ public:
     Handle_for(const T1& t1, const T2& t2)
       : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) T(t1, t2);
+        new (&(ptr_->t)) element_type(t1, t2);
         ptr_->count = 1;
     }
 
@@ -111,7 +111,7 @@ public:
     Handle_for(const T1& t1, const T2& t2, const T3& t3)
       : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) T(t1, t2, t3);
+        new (&(ptr_->t)) element_type(t1, t2, t3);
         ptr_->count = 1;
     }
 
@@ -119,7 +119,7 @@ public:
     Handle_for(const T1& t1, const T2& t2, const T3& t3, const T4& t4)
       : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) T(t1, t2, t3, t4);
+        new (&(ptr_->t)) element_type(t1, t2, t3, t4);
         ptr_->count = 1;
     }
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
@@ -139,7 +139,7 @@ public:
     }
 
     Handle_for&
-    operator=(const T &t)
+    operator=(const element_type &t)
     {
         if (is_shared())
             *this = Handle_for(t);
@@ -161,7 +161,7 @@ public:
     }
 
     Handle_for&
-    operator=(T && t)
+    operator=(element_type && t)
     {
         if (is_shared())
             *this = Handle_for(std::move(t));
@@ -183,7 +183,7 @@ public:
     }
 
     void
-    initialize_with(const T& t)
+    initialize_with(const element_type& t)
     {
         // kept for backward compatibility.  Use operator=(t) instead.
         *this = t;
@@ -196,7 +196,7 @@ public:
 
     // Ptr() is the "public" access to the pointer to the object.
     // The non-const version asserts that the instance is not shared.
-    const T *
+    const element_type *
     Ptr() const
     {
        return &(ptr_->t);
@@ -244,7 +244,7 @@ protected:
       if ( is_shared() )
       {
         pointer tmp_ptr = allocator.allocate(1);
-        new (&(tmp_ptr->t)) T(ptr_->t);
+        new (&(tmp_ptr->t)) element_type(ptr_->t);
         tmp_ptr->count = 1;
         --(ptr_->count);
         ptr_ = tmp_ptr;
@@ -253,11 +253,11 @@ protected:
 
     // ptr() is the protected access to the pointer.  Both const and non-const.
     // Redundant with Ptr().
-    T *
+    element_type *
     ptr()
     { return &(ptr_->t); }
 
-    const T *
+    const element_type *
     ptr() const
     { return &(ptr_->t); }
 };
