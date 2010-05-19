@@ -303,7 +303,7 @@ void MainWindow::on_actionIntersection_cutting_plane_triggered()
 
 void MainWindow::on_actionCutting_plane_none_triggered()
 {
-  m_pScene->deactivate_cutting_plane();
+  m_pScene->clear_cutting_plane();
   m_pViewer->update();
 }
 
