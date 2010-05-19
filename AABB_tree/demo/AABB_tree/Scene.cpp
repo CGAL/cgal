@@ -393,9 +393,9 @@ void Scene::build_facet_tree()
         std::cerr << "Build facet tree failed: load polyhedron first." << std::endl;
         return;
     }
-  
-    // ensure tree is empty
-    m_facet_tree.clear();
+
+    // Don't rebuild tree if it is already built
+    if ( !m_facet_tree.empty() ) { return; }
   
     // build tree
     CGAL::Timer timer;
@@ -413,9 +413,9 @@ void Scene::build_edge_tree()
         std::cerr << "Build edge tree failed: load polyhedron first." << std::endl;
         return;
     }
-    
-    // ensure tree is empty
-    m_edge_tree.clear();
+  
+    // Don't rebuild tree if it is already built
+    if ( !m_edge_tree.empty() ) { return; }
     
     // build tree
     CGAL::Timer timer;
@@ -748,11 +748,9 @@ void Scene::sign_distance_function(const Tree& tree)
 
 void Scene::unsigned_distance_function()
 {
-    // Build tree if needed
-    if ( m_facet_tree.empty() )
-    {
-      build_facet_tree();
-    }
+    // Build tree (if build fail, exit)
+    build_facet_tree();
+    if ( m_facet_tree.empty() ) { return; }
   
     compute_distance_function(m_facet_tree);
     
@@ -762,11 +760,9 @@ void Scene::unsigned_distance_function()
 
 void Scene::unsigned_distance_function_to_edges()
 {
-    // Build tree if needed
-    if ( m_edge_tree.empty() )
-    {
-        build_edge_tree();
-    }
+    // Build tree (if build fail, exit)
+    build_edge_tree();
+    if ( m_edge_tree.empty() ) { return; }
     
     compute_distance_function(m_edge_tree);
     
@@ -776,11 +772,9 @@ void Scene::unsigned_distance_function_to_edges()
 
 void Scene::signed_distance_function()
 {
-    // Build tree if needed
-    if ( m_facet_tree.empty() )
-    {
-        build_facet_tree();
-    }
+    // Build tree (if build fail, exit)
+    build_facet_tree();
+    if ( m_facet_tree.empty() ) { return; }
     
     compute_distance_function(m_facet_tree);
     sign_distance_function(m_facet_tree);
@@ -791,11 +785,9 @@ void Scene::signed_distance_function()
 
 void Scene::cut_segment_plane()
 {
-    // Build tree if needed
-    if ( m_facet_tree.empty() )
-    {
-        build_facet_tree();
-    }
+    // Build tree (if build fail, exit)
+    build_facet_tree();
+    if ( m_facet_tree.empty() ) { return; }
     
     Plane plane = frame_plane();
     
