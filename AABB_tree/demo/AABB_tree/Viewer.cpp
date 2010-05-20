@@ -35,6 +35,8 @@ void Viewer::mousePressEvent(QMouseEvent* e)
   if ( e->modifiers() == Qt::ControlModifier )
   {
     m_pScene->set_fast_distance(true);
+    // Refresh distance function
+    m_pScene->cutting_plane();
     m_custom_mouse = true;
   }
   
