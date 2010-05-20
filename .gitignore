@@ -72,14 +72,6 @@ Circular_kernel_3/demo/Circular_kernel_3/Circular_kernel_3_demo
 Circular_kernel_3/demo/Circular_kernel_3/Makefile
 Distance_3/include
 GraphicsView/TAGS
-GraphicsView/demo/Alpha_shapes_3/*.exe
-GraphicsView/demo/Alpha_shapes_3/*.sln
-GraphicsView/demo/Alpha_shapes_3/*.vcproj
-GraphicsView/demo/Alpha_shapes_3/Alpha_shape_3
-GraphicsView/demo/Alpha_shapes_3/Makefile
-GraphicsView/demo/Alpha_shapes_3/moc_*.cxx
-GraphicsView/demo/Alpha_shapes_3/qrc_*.cxx
-GraphicsView/demo/Alpha_shapes_3/ui_*.h
 GraphicsView/demo/Circular_kernel_2/*.exe
 GraphicsView/demo/Circular_kernel_2/*.sln
 GraphicsView/demo/Circular_kernel_2/*.vcproj
