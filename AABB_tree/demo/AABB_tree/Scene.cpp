@@ -18,8 +18,8 @@
 
 
 // constants
-const double slow_distance_grid_size = 100;
-const double fast_distance_grid_size = 20;
+const int slow_distance_grid_size = 100;
+const int fast_distance_grid_size = 20;
 
 Scene::Scene()
   : m_frame (new ManipulatedFrame())
