@@ -195,9 +195,9 @@ bool
 operator<(const Gmpq &a, const Gmpq &b)
 { return mpq_cmp(a.mpq(), b.mpq()) < 0; }
 
-inline bool operator==(const Gmpq &q,double d)const{return q==Gmpq(d);}
-inline bool operator< (const Gmpq &q,double d)const{return q< Gmpq(d);}
-inline bool operator> (const Gmpq &q,double d)const{return q> Gmpq(d);}
+inline bool operator==(const Gmpq &q,double d){return q==Gmpq(d);}
+inline bool operator< (const Gmpq &q,double d){return q< Gmpq(d);}
+inline bool operator> (const Gmpq &q,double d){return q> Gmpq(d);}
 
 // mixed operators.
 inline

@@ -239,6 +239,13 @@ int main() {
   test_overflow_to_interval(Gmpz());
   test_overflow_to_interval(Gmpq());
  
+  // interoperability with double
+  Gmpq qd=0.1+Gmpq(0);
+  assert(CGAL::to_double(qd)==0.1);
+  assert(qd>.0);
+  assert(qd<.2);
+  assert(qd==.1);
+
 #ifdef CGAL_USE_GMPXX
   test_overflow_to_interval(mpz_class());
   test_overflow_to_interval(mpq_class());
