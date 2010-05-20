@@ -36,6 +36,8 @@ private:
 
   typedef Base_                                        Base;
 
+  using Base::_offset_polygon;
+
 public:
 
   typedef typename Base::Basic_kernel                  Kernel;
