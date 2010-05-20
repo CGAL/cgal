@@ -1007,9 +1007,12 @@ add_cell(Tmc_Vertex_handle vh[], int orient, Rt_Simplex s) {
   CGAL_assertion(vh[1] != Tmc_Vertex_handle());
   CGAL_assertion(vh[2] != Tmc_Vertex_handle()); 
   CGAL_assertion(vh[3] != Tmc_Vertex_handle());
-  CGAL_assertion(vh[1] != vh[2]); CGAL_assertion(vh[1] != vh[3]); 
-  CGAL_assertion(vh[1] != vh[4]); CGAL_assertion(vh[2] != vh[3]); 
-  CGAL_assertion(vh[2] != vh[4]); CGAL_assertion(vh[3] != vh[4]);
+  CGAL_assertion(vh[0] != vh[1]); 
+  CGAL_assertion(vh[0] != vh[2]); 
+  CGAL_assertion(vh[0] != vh[3]); 
+  CGAL_assertion(vh[1] != vh[2]); 
+  CGAL_assertion(vh[1] != vh[3]); 
+  CGAL_assertion(vh[2] != vh[3]);
 
   Tmc_Cell_handle ch;
 
@@ -1027,7 +1030,10 @@ template <
   class RegularTriangulation_3,
   class TriangulatedMixedComplex_3,
   class TriangulatedMixedComplexObserver_3>
-typename TriangulatedMixedComplex_3::Geom_traits::Point_3
+typename Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::Tmc_Point
 Mixed_complex_triangulator_3<
   RegularTriangulation_3,
   TriangulatedMixedComplex_3,
@@ -1075,7 +1081,10 @@ template <
   class RegularTriangulation_3,
   class TriangulatedMixedComplex_3,
   class TriangulatedMixedComplexObserver_3>
-typename TriangulatedMixedComplex_3::Geom_traits::Point_3
+typename Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::Tmc_Point
 Mixed_complex_triangulator_3<
   RegularTriangulation_3,
   TriangulatedMixedComplex_3,
