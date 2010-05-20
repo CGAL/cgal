@@ -26,6 +26,11 @@ CGAL_BEGIN_NAMESPACE
 namespace internal {
 
 template <class K>
+bool do_intersect_coplanar(const typename K::Triangle_3 &t, 
+                           const typename K::Ray_3      &r,
+                           const K & k );
+  
+template <class K>
 bool do_intersect(const typename K::Triangle_3 &t, 
 		  const typename K::Ray_3 &r,
 		  const K & k)
