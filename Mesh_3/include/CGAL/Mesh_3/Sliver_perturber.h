@@ -73,9 +73,110 @@ class Sliver_perturber
   // Helper
   typedef class C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
   
+private:
   // Relaxed heap
-  class PVertex;
-  class PVertex_id;
+  // -----------------------------------
+  // Private classes
+  // -----------------------------------
+  /**
+   * @class PVertex
+   * Vertex with associated perturbation datas
+   */
+  class PVertex
+  {
+  public:
+    typedef unsigned int id_type;
+    
+    /// Constructor
+    PVertex(const Vertex_handle& vh, id_type id)
+    : vertex_handle_(vh)
+    , incident_sliver_nb_(0)
+    , min_value_(SliverCriterion::max_value)
+    , try_nb_(0)
+    , p_perturbation_(NULL)
+    , id_(id) { }
+    
+    /// Associated vertex
+    const Vertex_handle& vertex() const { return vertex_handle_; }
+    void set_vertex(const Vertex_handle& vh) { vertex_handle_ = vh; }
+    
+    /// Incident slivers number
+    unsigned int sliver_nb() const { return incident_sliver_nb_; }
+    void set_sliver_nb(const unsigned int n) { incident_sliver_nb_ = n; }
+    
+    /// Current perturbation
+    const Perturbation* perturbation() const { return p_perturbation_; }
+    void set_perturbation(const Perturbation* p) { p_perturbation_ = p; }
+    
+    /// Is perturbable
+    bool is_perturbable() const
+    {
+      return ( (NULL != perturbation()) && (sliver_nb() != 0) );
+    }
+    
+    /// Min sliver value
+    const FT& min_value() const { return min_value_; }
+    void set_min_value(const FT& min_value) { min_value_ = min_value; }
+    
+    /// Try nb
+    const unsigned int& try_nb() const { return try_nb_; }
+    void set_try_nb(const unsigned int& try_nb) { try_nb_ = try_nb; }
+    void increment_try_nb() { ++try_nb_; }
+    
+    /// Id
+    id_type id() const { return id_; }
+    
+    /// Operators
+    bool operator==(const PVertex& pv) const { return ( id() == pv.id() ); }
+    
+    bool operator<(const PVertex& pv) const
+    { 
+      // vertex type (smallest-interior first)
+      if ( vertex()->in_dimension() != pv.vertex()->in_dimension() )
+        return vertex()->in_dimension() > pv.vertex()->in_dimension();
+      // nb incident slivers (smallest first)
+      else if ( sliver_nb() != pv.sliver_nb() )
+        return sliver_nb() < pv.sliver_nb();
+      // min angle (smallest first)      
+      else if ( min_value() != pv.min_value() )
+        return min_value() < pv.min_value();
+      // try nb (smallest first)
+      else if ( try_nb() != pv.try_nb() )
+        return try_nb() < pv.try_nb();
+      // perturbation type (smallest first)
+      else if ( perturbation() != pv.perturbation() )
+        return *perturbation() < *pv.perturbation();
+      else
+        return true; // all characteristics are the same!
+    }
+    
+  private:
+    /// Private datas
+    Vertex_handle vertex_handle_;
+    unsigned int incident_sliver_nb_;
+    FT min_value_;
+    unsigned int try_nb_;
+    const Perturbation* p_perturbation_;
+    id_type id_;
+  };
+  
+  
+  /**
+   * @class PVertex_id
+   * relaxed heap
+   */
+  class PVertex_id : 
+  public boost::put_get_helper<typename PVertex::id_type, PVertex_id>
+  {
+  public:
+    typedef boost::readable_property_map_tag category;
+    typedef typename PVertex::id_type value_type;
+    typedef typename PVertex::id_type reference;
+    typedef PVertex key_type;
+    
+    value_type operator[] (const key_type& pv) const { return pv.id(); }
+  };
+  
   typedef std::less<PVertex> less_PVertex;
   typedef boost::relaxed_heap<PVertex, less_PVertex, PVertex_id> PQueue; 
   
@@ -187,112 +288,6 @@ private:
   void print_final_perturbations_statistics() const;
   void reset_perturbation_counters();
 #endif
-  
-private:
-  // -----------------------------------
-  // Private classes
-  // -----------------------------------
-  /**
-   * @class PVertex
-   *
-   * Vertex with associated perturbation datas
-   */
-  class PVertex
-  {
-  public:
-    typedef unsigned int id_type;
-    
-    /// Constructor
-    PVertex(const Vertex_handle& vh, id_type id)
-      : vertex_handle_(vh)
-      , incident_sliver_nb_(0)
-      , min_value_(SliverCriterion::max_value)
-      , try_nb_(0)
-      , p_perturbation_(NULL)
-      , id_(id) { }
-    
-    /// Associated vertex
-    const Vertex_handle& vertex() const { return vertex_handle_; }
-    void set_vertex(const Vertex_handle& vh) { vertex_handle_ = vh; }
-    
-    /// Incident slivers number
-    unsigned int sliver_nb() const { return incident_sliver_nb_; }
-    void set_sliver_nb(const unsigned int n) { incident_sliver_nb_ = n; }
-    
-    /// Current perturbation
-    const Perturbation* perturbation() const { return p_perturbation_; }
-    void set_perturbation(const Perturbation* p) { p_perturbation_ = p; }
-    
-    /// Is perturbable
-    bool is_perturbable() const
-    {
-      return ( (NULL != perturbation()) && (sliver_nb() != 0) );
-    }
-    
-    /// Min sliver value
-    const FT& min_value() const { return min_value_; }
-    void set_min_value(const FT& min_value) { min_value_ = min_value; }
-    
-    /// Try nb
-    const unsigned int& try_nb() const { return try_nb_; }
-    void set_try_nb(const unsigned int& try_nb) { try_nb_ = try_nb; }
-    void increment_try_nb() { ++try_nb_; }
-    
-    /// Id
-    id_type id() const { return id_; }
-    
-    /// Operators
-    bool operator==(const PVertex& pv) const { return ( id() == pv.id() ); }
-    
-    bool operator<(const PVertex& pv) const
-    { 
-      // vertex type (smallest-interior first)
-      if ( vertex()->in_dimension() != pv.vertex()->in_dimension() )
-        return vertex()->in_dimension() > pv.vertex()->in_dimension();
-      // nb incident slivers (smallest first)
-      else if ( sliver_nb() != pv.sliver_nb() )
-        return sliver_nb() < pv.sliver_nb();
-      // min angle (smallest first)      
-      else if ( min_value() != pv.min_value() )
-        return min_value() < pv.min_value();
-      // try nb (smallest first)
-      else if ( try_nb() != pv.try_nb() )
-        return try_nb() < pv.try_nb();
-      // perturbation type (smallest first)
-      else if ( perturbation() != pv.perturbation() )
-        return *perturbation() < *pv.perturbation();
-      else
-        return true; // all characteristics are the same!
-    }
-    
-  private:
-    /// Private datas
-    Vertex_handle vertex_handle_;
-    unsigned int incident_sliver_nb_;
-    FT min_value_;
-    unsigned int try_nb_;
-    const Perturbation* p_perturbation_;
-    id_type id_;
-  };
-  
-  
-  /**
-   * @class PVertex_id
-   *
-   * relaxed heap
-   */
-  class PVertex_id : 
-  public boost::put_get_helper<typename PVertex::id_type, PVertex_id>
-  {
-  public:
-    typedef boost::readable_property_map_tag category;
-    typedef typename PVertex::id_type value_type;
-    typedef typename PVertex::id_type reference;
-    typedef PVertex key_type;
-    
-    value_type operator[] (const key_type& pv) const { return pv.id(); }
-  };
-  
   
 private:
   // -----------------------------------
