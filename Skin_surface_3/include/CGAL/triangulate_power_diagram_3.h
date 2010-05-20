@@ -113,18 +113,7 @@ private:
                    typename Union_find_anchor::handle> Simplex_UF_map;
                    
 public:
-  Power_diagram_triangulator_3(
-			       Regular const &regular,
-			       Triangulated_mixed_complex &triangulated_mixed_complex, 
-			       bool verbose)
-    : regular(regular),
-      _tmc(triangulated_mixed_complex),
-      triangulation_incr_builder(triangulated_mixed_complex), 
-      compute_anchor_obj(regular),
-      verbose(verbose) {
 
-    build();
-  }
 
   Power_diagram_triangulator_3(
 			       Regular &regular,
