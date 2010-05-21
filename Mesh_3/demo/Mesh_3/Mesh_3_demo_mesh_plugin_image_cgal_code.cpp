@@ -41,7 +41,7 @@ Scene_c3t3_item* cgal_code_mesh_3(const Image* pImage,
   Cell_criteria cell_criteria(tet_shape, tets_sizing); // radius-edge ratio, size
   Mesh_criteria criteria(facet_criteria, cell_criteria);
 
-  Image_mesh_domain domain(*pImage);
+  Image_mesh_domain domain(*pImage, 1e-6);
 
   CGAL::Timer timer;
   timer.start();
