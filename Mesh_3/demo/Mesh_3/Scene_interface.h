@@ -55,6 +55,18 @@ public:
 
   }; // struct BBox (ad hoc class, does not depend on CGAL kernels
 
+  struct Point_ {
+    Point_() : x_(0.0), y_(0.0), z_(0.0) {}
+    Point_(double x, double y, double z) : x_(x), y_(y), z_(z) {}
+    
+    double x() const { return x_; }
+    double y() const { return y_; }
+    double z() const { return z_; }
+    
+  private:
+    double x_,y_,z_;
+  }; // struct Point_ (ad hoc class, does not depend on CGAL kernels
+  
   typedef int Item_id;
 
   virtual ~Scene_interface() {};
