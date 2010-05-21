@@ -30,6 +30,8 @@ template <class SearchTraits,
           class Tree= Kd_tree<SearchTraits, Splitter, Tag_true> >
 class Orthogonal_k_neighbor_search: public internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree> {
   typedef  internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree> Base;
+
+  typename SearchTraits::Cartesian_const_iterator_d query_object_it;
   
 public:
   typedef typename Base::FT FT;
@@ -39,14 +41,18 @@ public:
     : Base(tree,q,k,Eps,Search_nearest,d) 
   {
     if (tree.empty()) return;
-    
-    if (this->search_nearest) 
-      this->distance_to_root = this->distance_instance.min_distance_to_rectangle(q, tree.bounding_box());
-    else 
-      this->distance_to_root = this->distance_instance.max_distance_to_rectangle(q, tree.bounding_box());
 
+    FT distance_to_root;
+    if (this->search_nearest) 
+      distance_to_root = this->distance_instance.min_distance_to_rectangle(q, tree.bounding_box());
+    else 
+      distance_to_root = this->distance_instance.max_distance_to_rectangle(q, tree.bounding_box());
+
+
+    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+    query_object_it = construct_it(this->query_object);
       
-    compute_neighbors_orthogonally(tree.root(), this->distance_to_root);      
+    compute_neighbors_orthogonally(tree.root(), distance_to_root);      
       
     if (sorted) this->queue.sort();
   }
@@ -54,8 +60,6 @@ private:
 
   void compute_neighbors_orthogonally(typename Base::Node_handle N, FT rd)
   {
-    typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-    typename SearchTraits::Cartesian_const_iterator_d query_object_it = construct_it(this->query_object);
     if (!(N->is_leaf())) 
     {
       this->number_of_internal_nodes_visited++;

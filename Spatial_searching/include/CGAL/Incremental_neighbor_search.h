@@ -231,8 +231,6 @@ namespace CGAL {
 
 	Query_item query_point;
 
-	int total_item_number;
-
 	FT distance_to_root;
 
 	bool search_nearest_neighbour;
@@ -317,8 +315,6 @@ namespace CGAL {
 		 distance.max_distance_to_rectangle(q,*bounding_box);
 
         
-	  total_item_number=tree.size();
-
 
 	  Cell *Root_Cell = new Cell(bounding_box,tree.root());
 	  Cell_with_distance  *The_Root = 

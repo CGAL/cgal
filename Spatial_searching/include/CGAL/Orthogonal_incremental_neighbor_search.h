@@ -69,8 +69,6 @@ namespace CGAL {
 
       Query_item query_point;
 
-      int total_item_number;
-
       FT distance_to_root;
 
       bool search_nearest_neighbour;
@@ -132,7 +130,7 @@ namespace CGAL {
 	: number_of_neighbours_computed(0), number_of_internal_nodes_visited(0), 
 	number_of_leaf_nodes_visited(0), number_of_items_visited(0),
 	Orthogonal_distance_instance(tr), multiplication_factor(Orthogonal_distance_instance.transformed_distance(FT(1.0)+Eps)), 
-	query_point(q), total_item_number(tree.size()), search_nearest_neighbour(search_nearest), 
+	query_point(q), search_nearest_neighbour(search_nearest), 
 	PriorityQueue(Priority_higher(search_nearest)), Item_PriorityQueue(Distance_smaller(search_nearest)),
 	reference_count(1)
 	  
