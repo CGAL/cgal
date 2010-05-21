@@ -39,27 +39,6 @@ CGAL_BEGIN_NAMESPACE
 
 // ======================================================================
 namespace Subdivision_method_3 {
-  //
-  template <class Polyhedron>
-  void CatmullClark_subdivision(Polyhedron& p, int step = 1) {
-    PQQ(p, CatmullClark_mask_3<Polyhedron>(), step);
-  }
-  //
-  template <class Polyhedron>
-  void Loop_subdivision(Polyhedron& p, int step = 1) {
-    PTQ(p, Loop_mask_3<Polyhedron>() , step);
-  }
-  //
-  template <class Polyhedron>
-  void DooSabin_subdivision(Polyhedron& p, int step = 1) {
-    DQQ(p, DooSabin_mask_3<Polyhedron>(), step);
-  }
-  //
-  template <class Polyhedron>
-  void Sqrt3_subdivision(Polyhedron& p, int step = 1) {
-    Sqrt3(p, Sqrt3_mask_3<Polyhedron>(), step);
-  }
-
   // 
   template <class Polyhedron, template <typename> class Mask>
   void PQQ(Polyhedron& p, Mask<Polyhedron> mask, int step = 1) {
@@ -80,6 +59,27 @@ namespace Subdivision_method_3 {
   void Sqrt3(Polyhedron& p, Mask<Polyhedron> mask, int step = 1) {
     for (int i = 0; i < step; i++) Private::Sqrt3_1step(p, mask);
   }  
+
+  //
+  template <class Polyhedron>
+  void CatmullClark_subdivision(Polyhedron& p, int step = 1) {
+    PQQ(p, CatmullClark_mask_3<Polyhedron>(), step);
+  }
+  //
+  template <class Polyhedron>
+  void Loop_subdivision(Polyhedron& p, int step = 1) {
+    PTQ(p, Loop_mask_3<Polyhedron>() , step);
+  }
+  //
+  template <class Polyhedron>
+  void DooSabin_subdivision(Polyhedron& p, int step = 1) {
+    DQQ(p, DooSabin_mask_3<Polyhedron>(), step);
+  }
+  //
+  template <class Polyhedron>
+  void Sqrt3_subdivision(Polyhedron& p, int step = 1) {
+    Sqrt3(p, Sqrt3_mask_3<Polyhedron>(), step);
+  }
 }
 
 CGAL_END_NAMESPACE
