@@ -8,7 +8,7 @@ endif(COMMAND cmake_policy)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 #path where to build libraries
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY .build/ipelets)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 find_package(CGAL QUIET COMPONENTS Core )
 option( WITH_IPE_7 "Use the version 7 of Ipe" OFF )
