@@ -130,7 +130,6 @@ operator<<(VRML_2_ostream& os,
              "                        IndexedFaceSet {\n"
              "                            coord Coordinate {\n"
              "                                point [ \n"
-          << Indent << "point [\n"
           << Indent << "  "
           << CGAL::to_double(t[0].x()) << " "
           << CGAL::to_double(t[0].y()) << " "
@@ -146,7 +145,7 @@ operator<<(VRML_2_ostream& os,
           << Indent << "  "
           << CGAL::to_double(t[3].x()) << " "
           << CGAL::to_double(t[3].y()) << " "
-          << CGAL::to_double(t[3].z()) << " ]"
+          << CGAL::to_double(t[3].z()) <<
              "\n                                ]\n"
              "                            }\n"
              "                            solid   FALSE\n"
