@@ -26,6 +26,7 @@
 
 #include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
+#include <CGAL/predicates/kernel_ftC3.h>
 
 CGAL_BEGIN_NAMESPACE
 
