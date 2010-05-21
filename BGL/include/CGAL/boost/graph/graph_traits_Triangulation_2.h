@@ -257,6 +257,22 @@ namespace boost {
   }
 
   template <class Gt, class Tds>
+  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type
+  out_degree(
+    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    const CGAL::Triangulation_2<Gt,Tds>& g)
+  {
+    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
+    typename CGAL::Triangulation_2<Gt,Tds>::Edge_circulator c = g.incident_edges(u), done(c);
+    if ( c != 0) {
+        do {
+            ++deg;
+        } while (++c != done);
+    }
+    return deg;
+  }
+
+  template <class Gt, class Tds>
   inline std::pair<
     typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::out_edge_iterator,
     typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::out_edge_iterator >  
@@ -316,22 +332,6 @@ namespace boost {
 
     return  g.number_of_vertices() + 1 + g.number_of_faces() + degree(g.infinite_vertex(), g) - 2;
   }  
-
-  template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type
-  out_degree(
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
-    const CGAL::Triangulation_2<Gt,Tds>& g)
-  {
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
-    typename CGAL::Triangulation_2<Gt,Tds>::Edge_circulator c = g.incident_edges(u), done(c);
-    if ( c != 0) {
-        do {
-            ++deg;
-        } while (++c != done);
-    }
-    return deg;
-  }
 
   template <class Gt, class Tds>
   typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type
