@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>LocalOptim_dialog</class>
  <widget class="QDialog" name="LocalOptim_dialog">
