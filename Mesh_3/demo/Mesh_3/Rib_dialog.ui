@@ -55,6 +55,13 @@
         </item>
        </layout>
       </item>
+      <item>
+       <widget class="QCheckBox" name="isFlatEdges">
+        <property name="text">
+         <string>Render flat edges (width: cylinder radius)</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
