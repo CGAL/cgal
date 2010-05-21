@@ -90,7 +90,7 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   
   d->colors.resize(max+1);
   
-  compute_color_map(0.);
+  compute_color_map(QColor());
 }
 
 Scene_c3t3_item::~Scene_c3t3_item()
@@ -349,7 +349,9 @@ Scene_c3t3_item::build_histogram()
   const int max_tr_width = 2*((histo_data.size()-std::floor(max_value))*cell_width + left_margin);
   const int tr_y = drawing_height + top_margin + text_margin;
   
-  painter.setPen(Qt::red);
+  if ( min_value < 5 ) { painter.setPen(Qt::red); }
+  else { painter.setPen(Qt::darkGreen); }
+  
   QRect min_text_rect (0, tr_y, min_tr_width, text_height);
   painter.drawText(min_text_rect, Qt::AlignCenter, tr("%1").arg(min_value,0,'f',1));
   
@@ -421,12 +423,12 @@ void
 Scene_c3t3_item::setColor(QColor c)
 {
   color_ = c;
-  compute_color_map(c.hueF());
+  compute_color_map(c);
 }
 
 
 void
-Scene_c3t3_item::compute_color_map(double c)
+Scene_c3t3_item::compute_color_map(const QColor& c)
 {
   typedef Indices::size_type size_type;
 
@@ -435,9 +437,9 @@ Scene_c3t3_item::compute_color_map(double c)
   for(Indices::iterator it = indices_.begin(), end = indices_.end();
       it != end; ++it, ++i)
   {
-    double hue = c + 1./nb_domains * i;
+    double hue = c.hueF() + 1./nb_domains * i;
     if ( hue > 1 ) { hue -= 1.; }
-    d->colors[*it] = QColor::fromHsvF(hue, 1., 0.8);
+    d->colors[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
   }
 }
 
