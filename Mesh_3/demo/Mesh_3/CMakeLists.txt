@@ -74,6 +74,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui)
   qt4_wrap_ui( optimUI_FILES  Smoother_dialog.ui LocalOptim_dialog.ui)
   qt4_wrap_ui( ribUI_FILES  Rib_dialog.ui)
+  qt4_wrap_ui( funcUI_FILES  Function_dialog.ui)
 
   include(AddFileDependencies)
 
@@ -93,6 +94,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_automoc( Scene_polygon_soup.cpp )
   qt4_automoc( Scene_segmented_image_item.cpp )
   qt4_automoc( Scene_c3t3_item.cpp )
+  qt4_automoc( Scene_implicit_function_item.cpp )
 
   # put plugins (which are shared libraries) at the same location as
   # executable files
@@ -127,6 +129,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(scene_c3t3_item SHARED
     Scene_c3t3_item.cpp Scene_c3t3_item.moc)
   target_link_libraries(scene_c3t3_item scene_item ${QGLVIEWER_LIBRARIES} )
+
+  add_library(scene_implicit_function_item SHARED
+    Scene_implicit_function_item.cpp Scene_implicit_function_item.moc Color_ramp.cpp)
+  target_link_libraries(scene_implicit_function_item scene_item ${QGLVIEWER_LIBRARIES} )
 
 
   add_definitions(-DUSE_FORWARD_DECL)
@@ -200,13 +206,23 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(rib_exporter_plugin Mesh_3_rib_exporter_plugin ${ribUI_FILES})
   target_link_libraries(rib_exporter_plugin scene_c3t3_item viewer)
 
+  polyhedron_demo_plugin(implicit_function_loader_plugin Mesh_3_implicit_function_loader_plugin ${funcUI_FILES})
+  target_link_libraries(implicit_function_loader_plugin scene_implicit_function_item)
+
   polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
-    Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Mesh_3_demo_mesh_plugin_image_cgal_code.cpp Scene_c3t3_item.moc ${meshingUI_FILES})
-  target_link_libraries(mesh_3_plugin scene_c3t3_item scene_polyhedron_item scene_segmented_image_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+    Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Mesh_3_demo_mesh_plugin_image_cgal_code.cpp Mesh_3_demo_mesh_plugin_function_cgal_code.cpp Scene_c3t3_item.moc ${meshingUI_FILES})
+  target_link_libraries(mesh_3_plugin scene_c3t3_item scene_polyhedron_item scene_segmented_image_item scene_implicit_function_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
   polyhedron_demo_plugin(mesh_3_optimization_plugin Mesh_3_demo_optimization_plugin 
     Mesh_3_demo_optimization_plugin_cgal_code.cpp Scene_c3t3_item.moc ${optimUI_FILES})
-  target_link_libraries(mesh_3_optimization_plugin scene_c3t3_item scene_polyhedron_item scene_segmented_image_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  target_link_libraries(mesh_3_optimization_plugin
+                        scene_c3t3_item
+                        scene_polyhedron_item
+                        scene_segmented_image_item
+                        scene_implicit_function_item
+                        ${QGLVIEWER_LIBRARIES}
+                        ${OPENGL_gl_LIBRARY}
+                        ${OPENGL_glu_LIBRARY})
 
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)

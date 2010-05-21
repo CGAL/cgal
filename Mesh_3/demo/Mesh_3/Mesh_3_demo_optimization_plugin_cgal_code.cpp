@@ -3,11 +3,12 @@
 #include "Scene_c3t3_item.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_segmented_image_item.h"
+#include "Scene_implicit_function_item.h"
 
-#include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/Polyhedral_mesh_domain_3.h>
-#include <CGAL/Labeled_image_mesh_domain_3.h>
+#include "Implicit_function_interface.h"
+
 #include <CGAL/optimize_mesh_3.h>
+#include <CGAL/Bbox_3.h>
 
 #include <fstream>
 
@@ -53,7 +54,7 @@ Scene_c3t3_item* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
       return NULL;
     }
     
-    Image_mesh_domain domain(*p_image);
+    Image_mesh_domain domain(*p_image, 1e-6);
     
     // Launch
     return_code = f(p_result_item, domain);
@@ -78,6 +79,35 @@ Scene_c3t3_item* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     }
     
     Mesh_domain domain(*p_poly);
+    
+    // Launch
+    return_code = f(p_result_item, domain);
+    
+    // Treat new item and exit
+    treat_new_item(*p_result_item, create_new_item);
+    return p_result_item;
+  }
+  
+  // Function
+  const Scene_implicit_function_item* function_item = 
+    qobject_cast<const Scene_implicit_function_item*>(c3t3_item.data_item());
+  
+  if ( NULL != function_item )
+  {
+    // Build domain
+    const Implicit_function_interface* p_function = function_item->function();
+    if ( NULL == p_function ) { return NULL; }
+    
+    CGAL::Bbox_3 domain_bbox (p_function->bbox().xmin,
+                              p_function->bbox().ymin,
+                              p_function->bbox().zmin,
+                              p_function->bbox().xmax,
+                              p_function->bbox().ymax,
+                              p_function->bbox().zmax);
+    
+    Function_mesh_domain domain(Function_wrapper(*p_function),
+                                domain_bbox,
+                                1e-7);
     
     // Launch
     return_code = f(p_result_item, domain);

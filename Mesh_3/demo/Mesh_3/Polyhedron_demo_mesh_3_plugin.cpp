@@ -17,6 +17,8 @@
 
 #include "Scene_polyhedron_item.h"
 #include "Scene_segmented_image_item.h"
+#include "Scene_implicit_function_item.h"
+#include "Implicit_function_interface.h"
 #include "Scene_c3t3_item.h"
 #include "Image_type.h"
 
@@ -38,6 +40,18 @@ Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron*,
                                   const bool exude);
 
 Scene_c3t3_item* cgal_code_mesh_3(const Image*,
+                                  QString filename,
+                                  const double angle,
+                                  const double sizing,
+                                  const double approx,
+                                  const double tets_sizing,
+                                  const double tet_shape,
+                                  const bool lloyd,
+                                  const bool odt,
+                                  const bool perturb,
+                                  const bool exude);
+
+Scene_c3t3_item* cgal_code_mesh_3(const Implicit_function_interface*,
                                   QString filename,
                                   const double angle,
                                   const double sizing,
@@ -96,6 +110,8 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Scene_segmented_image_item* image_item = 
     qobject_cast<Scene_segmented_image_item*>(scene->item(index));
+  Scene_implicit_function_item* function_item = 
+    qobject_cast<Scene_implicit_function_item*>(scene->item(index));
 
   if(poly_item)
   {
@@ -108,6 +124,12 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
     item = image_item;
     const Image* image = image_item->image();
     if(!image) return;
+  }
+  else if(function_item)
+  {
+    item = function_item;
+    const Implicit_function_interface* function = function_item->function();
+    if(!function) return;
   }
 
   if(item) {
@@ -212,6 +234,20 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                                      radius_edge,
                                      lloyd, odt, perturb, exude);
     }
+    else if(function_item)
+    {
+      const Implicit_function_interface* function = function_item->function();
+      if(!function) return;
+      
+      result_item = cgal_code_mesh_3(function,
+                                     item->name(),
+                                     angle,
+                                     facet_sizing,
+                                     approx,
+                                     tet_sizing,
+                                     radius_edge,
+                                     lloyd, odt, perturb, exude);
+    }
     
     std::stringstream sstr;
     sstr << "Meshing file \"" << qPrintable(item->name()) << "\" done in "
@@ -256,7 +292,7 @@ get_approximate(double d, int precision, int& decimals)
   while ( d > i*10 ) { d = d/10.; ++decimals; }
   while ( d < i ) { d = d*10.; --decimals; }
   
-  return std::floor(d)*std::pow(10.,decimals);;
+  return std::floor(d)*std::pow(10.,decimals);
 }
 
 
