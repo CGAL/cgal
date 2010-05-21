@@ -109,22 +109,6 @@ z_plane_circumcircle_2(const FT &x1, const FT &y1, const FT &w1,
 
 
 template < class FT >
-inline
-void
-ad_circumcenterC2(const FT &x1, const FT &y1, const FT &w1,
-		  const FT &x2, const FT &y2, const FT &w2,
-		  const FT &x3, const FT &y3, const FT &w3,
-		  FT       &cx, FT       &cy)
-{
-  FT cwt;
-  ad_circumcircleC2(x1, y1, w1,
-		    x2, y2, w2,
-		    x3, y3, w3,
-		    cx, cy, cwt);
-}
-
-
-template < class FT >
 void
 ad_circumcircleC2(const FT &x1, const FT &y1, const FT &w1,
 		  const FT &x2, const FT &y2, const FT &w2,
@@ -151,6 +135,22 @@ ad_circumcircleC2(const FT &x1, const FT &y1, const FT &w1,
 			 x3, y3, w3,
 			 cx, cy, cwt);
 }
+
+template < class FT >
+inline
+void
+ad_circumcenterC2(const FT &x1, const FT &y1, const FT &w1,
+		  const FT &x2, const FT &y2, const FT &w2,
+		  const FT &x3, const FT &y3, const FT &w3,
+		  FT       &cx, FT       &cy)
+{
+  FT cwt;
+  ad_circumcircleC2(x1, y1, w1,
+		    x2, y2, w2,
+		    x3, y3, w3,
+		    cx, cy, cwt);
+}
+
 
 template < class FT >
 void
