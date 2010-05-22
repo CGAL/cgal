@@ -64,12 +64,14 @@ void Qt_layer::draw()
     }
    case CONIC_TRAITS:
     {
+#ifdef CGAL_USE_CORE
      Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p =
        static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
        (myBar->currentPage());
      w_demo_p->lock();
      w_demo_p->draw();
      w_demo_p->unlock();
+#endif
      break;
     }
   }

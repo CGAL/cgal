@@ -36,7 +36,6 @@
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Bbox_2.h>
 
 #include <CGAL/Arr_trapezoid_ric_point_location.h>
@@ -209,6 +208,10 @@ typedef CGAL::Arr_landmarks_point_location<Pol_arr>
 
 // Conics
 
+#ifdef CGAL_USE_CORE
+
+#include <CGAL/CORE_algebraic_number_traits.h>
+
 typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
 typedef Nt_traits::Rational                           Rational;
 typedef Nt_traits::Algebraic                          Algebraic;
@@ -258,6 +261,7 @@ typedef CGAL::Arr_walk_along_line_point_location<Conic_arr>
 typedef CGAL::Arr_landmarks_point_location<Conic_arr>
  Conic_lanmarks_point_location;
 
+#endif
 
 
 

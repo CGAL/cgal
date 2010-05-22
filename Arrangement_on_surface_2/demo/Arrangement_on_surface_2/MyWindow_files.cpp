@@ -25,7 +25,10 @@
 #include "forms.h"
 #include "qt_layer.h"
 #include "demo_tab.h"
+
+#ifdef CGAL_USE_CORE
 #include "Conic_reader.h"
+#endif
 
 #include <CGAL/IO/Arr_with_history_iostream.h>
 
@@ -162,40 +165,6 @@ void MyWindow::fileOpenPolylinePm()
   }
 }// fileOpenPolylinePm
 
-/*! open a polyline file and add new tab */
-void MyWindow::fileOpenConic()
-{
-  Qt_widget_base_tab *w_demo_p =
-    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  bool flag = (w_demo_p->traits_type == CONIC_TRAITS);
-  if( w_demo_p->is_empty() ) // pm is empty
-  {
-    updateTraitsType( setConicTraits );
-    fileOpen(true);
-  }
-  else
-  {
-    FileOpenOptionsForm * form = new FileOpenOptionsForm(flag);
-    if ( form->exec() )
-    {
-      int id = form->buttonGroup->id(form->buttonGroup->selected());
-      switch ( id )
-      {
-       case 0: // open file in a new tab
-        add_conic_tab();
-        fileOpen();
-        break;
-       case 1: // open file in current tab (delete current Pm)
-        updateTraitsType( setConicTraits );
-        fileOpen(true);
-        break;
-       case 2: // merge file into current tab
-        fileOpen();
-        break;
-      }// switch
-    }// if
-  }// else
-}// fileOpenConic
 
 /*! open a file */
 void MyWindow::fileOpen( bool clear_flag )
@@ -298,22 +267,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
   QCursor old = w_demo->cursor();
   w_demo->setCursor(Qt::WaitCursor);
 
-  if (w_demo->traits_type == CONIC_TRAITS)
-  {
-    Qt_widget_demo_tab<Conic_tab_traits>    *w_demo_p =
-      static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
-      (myBar->currentPage());
-    if (clear_flag)
-        w_demo_p->m_curves_arr->clear();
-    typedef Conic_tab_traits::Traits    Conic_traits;
-    Conic_reader<Conic_traits>  reader;
-    std::list<Arr_conic_2>               curve_list;
-    reader.read_data(filename, std::back_inserter(curve_list), w_demo->bbox);
-    CGAL::insert (*(w_demo_p->m_curves_arr), curve_list.begin(),
-                  curve_list.end());
-  }
-
-  else if (w_demo->traits_type == POLYLINE_TRAITS)
+  if (w_demo->traits_type == POLYLINE_TRAITS)
   {
     Qt_widget_demo_tab<Polyline_tab_traits>    *w_demo_p =
       static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
@@ -384,6 +338,24 @@ void MyWindow::load( const QString& filename , bool clear_flag )
 
     CGAL::insert(*(w_demo_p->m_curves_arr), seg_list.begin(), seg_list.end());
   }
+
+#ifdef CGAL_USE_CORE
+  else if (w_demo->traits_type == CONIC_TRAITS)
+  {
+    Qt_widget_demo_tab<Conic_tab_traits>    *w_demo_p =
+      static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
+      (myBar->currentPage());
+    if (clear_flag)
+        w_demo_p->m_curves_arr->clear();
+    typedef Conic_tab_traits::Traits    Conic_traits;
+    Conic_reader<Conic_traits>  reader;
+    std::list<Arr_conic_2>               curve_list;
+    reader.read_data(filename, std::back_inserter(curve_list), w_demo->bbox);
+    CGAL::insert (*(w_demo_p->m_curves_arr), curve_list.begin(),
+                  curve_list.end());
+  }
+#endif
+
   w_demo->set_window(w_demo->bbox.xmin() , w_demo->bbox.xmax() ,
                      w_demo->bbox.ymin() , w_demo->bbox.ymax());
 
@@ -393,6 +365,7 @@ void MyWindow::load( const QString& filename , bool clear_flag )
   something_changed();
 }
 
+#ifdef CGAL_USE_CORE
 /*! read a conic curve
  * \param is - input file stream
  * \param cv - will hold the reading curve
@@ -542,7 +515,46 @@ void MyWindow::ReadCurve(std::ifstream & is, Arr_conic_2 & cv)
 
   return;
 }
+#endif
 
+/*! open a polyline file and add new tab */
+void MyWindow::fileOpenConic()
+{
+#ifdef CGAL_USE_CORE
+  Qt_widget_base_tab *w_demo_p =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  bool flag = (w_demo_p->traits_type == CONIC_TRAITS);
+  if( w_demo_p->is_empty() ) // pm is empty
+  {
+    updateTraitsType( setConicTraits );
+    fileOpen(true);
+  }
+  else
+  {
+    FileOpenOptionsForm * form = new FileOpenOptionsForm(flag);
+    if ( form->exec() )
+    {
+      int id = form->buttonGroup->id(form->buttonGroup->selected());
+      switch ( id )
+      {
+       case 0: // open file in a new tab
+        add_conic_tab();
+        fileOpen();
+        break;
+       case 1: // open file in current tab (delete current Pm)
+        updateTraitsType( setConicTraits );
+        fileOpen(true);
+        break;
+       case 2: // merge file into current tab
+        fileOpen();
+        break;
+      }// switch
+    }// if
+  }// else
+#else
+  CGAL_error_msg("Conics were not compiled");
+#endif
+}// fileOpenConic
 
 /*! calls from readCurve to skip comments in the input file */
 void MyWindow::skip_comments( std::ifstream& is, char* one_line )

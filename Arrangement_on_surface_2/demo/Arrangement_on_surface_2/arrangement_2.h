@@ -84,8 +84,12 @@ private:
     void something_changed();
     /*! skip_comments in input file */
     void skip_comments( std::ifstream& is, char* one_line );
+
+#ifdef CGAL_USE_CORE
     /*! read conic curve from input file */
     void ReadCurve(std::ifstream & is, Arr_conic_2 & cv);
+#endif
+
     /*! read from file */
     void load( const QString& filename , bool clear_flag = false);
     /*! find the actual widget tab index of a tab */
@@ -107,8 +111,6 @@ private slots:
     void add_segment_tab();
     /*! add a new tab of polyline traits */
     void add_polyline_tab();
-    /*! add a new tab of conic traits */
-    void add_conic_tab();
     /*! remove current tab */
     void remove_tab();
     /*! connect the timer to main window */
@@ -143,8 +145,6 @@ private slots:
     void fileOpenPolyline();
     /*! open a pm file and add a Polyline tab */
     void fileOpenPolylinePm();
-    /*! open a file and add a conic tab */
-    void fileOpenConic();
     /*! overlay planar maps */
     void overlay_pm();
     /*! make the overlay */
@@ -164,8 +164,6 @@ private slots:
     void showGrid();
     /*! hide grid */
     void hideGrid();
-    /*! choose a conic type to insert */
-    void conicType();
     /*! set backGround Color */
     void backGroundColor();
     /*! set edge Color */
@@ -174,16 +172,22 @@ private slots:
     void changeVertexColor();
     /*! choose the point location strategy */
     void pointLocationStrategy();
-    /*! change the conic type of current tab */
-    void updateConicType( QAction *action );
-    /*! update the window buttons according to change in conic type */
-    void setConicType( ConicType t );
     /*! open the color dialog */
     void openColorDialog();
     /* compute and draw lower envelope */
     void lowerEnvelope(bool);
      /* compute and draw upper envelope */
     void upperEnvelope(bool);
+    /*! add a new tab of conic traits */
+    void add_conic_tab();
+    /*! open a file and add a conic tab */
+    void fileOpenConic();
+    /*! choose a conic type to insert */
+    void conicType();
+    /*! change the conic type of current tab */
+    void updateConicType( QAction *action );
+    /*! update the window buttons according to change in conic type */
+    void setConicType( ConicType t );
 
 private:
     /*! myBar - hold the tab widgets */
@@ -200,8 +204,6 @@ private:
     QAction *setSegmentTraits;
     /*! polyline traits action */
     QAction *setPolylineTraits;
-    /*! conic traits action */
-    QAction *setConicTraits;
     /*! snap mode action */
     QAction *setSnapMode;
     /*! grid snap mode action */
@@ -254,6 +256,20 @@ private:
     double m_scailing_factor;
     /*! different colors mode */
     bool colors_flag;
+    /*! color dialog action (for filling faces) */
+    QAction *color_dialog_bt;
+    /*! lower envelope  dialog action */
+    QAction *lower_env_dialog_bt;
+    /*! upper envelope dialog action */
+    QAction *upper_env_dialog_bt;
+    /*! number of colors */
+    const unsigned int num_of_colors;
+    /*! array of colors */
+    QColor *colors;
+
+#ifdef CGAL_USE_CORE
+    /*! conic traits action */
+    QAction *setConicTraits;
     /*! circle conic type action */
     QAction *setCircle;
     /*! segment conic type action */
@@ -266,16 +282,7 @@ private:
     QAction *setHyperbola;
     /*! conic type tool bar */
     QToolBar *conicTypeTool;
-    /*! color dialog action (for filling faces) */
-    QAction *color_dialog_bt;
-    /*! lower envelope  dialog action */
-    QAction *lower_env_dialog_bt;
-    /*! upper envelope dialog action */
-    QAction *upper_env_dialog_bt;
-    /*! number of colors */
-    const unsigned int num_of_colors;
-    /*! array of colors */
-    QColor *colors;
+#endif
 };
 
 

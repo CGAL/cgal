@@ -2385,9 +2385,11 @@ private:
   std::vector<Arr_pol_point_2> points;
 };
 
+
 //////////////////////////////////////////////////////////////////////////////
 /*!
  */
+#ifdef CGAL_USE_CORE
 class Conic_tab_traits
 {
 public:
@@ -3039,9 +3041,12 @@ public:
   /*! counter for the number of points */
   int num_points;
 };
+#endif
 
 typedef Qt_widget_demo_tab<Segment_tab_traits>       Qt_widget_segment_tab;
 typedef Qt_widget_demo_tab<Polyline_tab_traits>      Qt_widget_polyline_tab;
+#ifdef CGAL_USE_CORE
 typedef Qt_widget_demo_tab<Conic_tab_traits>         Qt_widget_conic_tab;
+#endif
 
 #endif //DEMO_TAB_H

@@ -243,11 +243,13 @@ void MyWindow::backGroundColor()
       }
     case CONIC_TRAITS:
       {
+#ifdef CGAL_USE_CORE
         Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p =
           static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
           (myBar->currentPage()); 
         Conic_face_handle       ubf = w_demo_p->m_curves_arr->unbounded_face();
         w_demo_p->set_face_color(ubf,c); 
+#endif
         break;
       }
     }
@@ -356,20 +358,6 @@ void MyWindow::add_polyline_tab()
   widget->draw();
 }
 
-/*! add a tab widget with conic traits */
-void MyWindow::add_conic_tab()
-{
-  Qt_widget_demo_tab<Conic_tab_traits> *widget =
-    new Qt_widget_demo_tab<Conic_tab_traits>
-    (CONIC_TRAITS , this , tab_number, colors[tab_number%num_of_colors]);
-  init(widget);
-  widget->draw();
-
-  //widget->set_window(widget->x_pixel(widget->x_min()), widget->x_pixel(widget->x_max()),
-    //                 widget->x_pixel(widget->y_min()), widget->x_pixel(widget->y_max()));
-
-}
-
 /*! remove the current page (tab) from myBar */
 void MyWindow::remove_tab()
 {
@@ -411,12 +399,14 @@ void MyWindow::updateTraitsType( QAction *action )
     widget = new Qt_widget_demo_tab<Polyline_tab_traits>
       (POLYLINE_TRAITS , this, old_index, old_widget->edge_color);
   }
+#ifdef CGAL_USE_CORE
   else if (action == setConicTraits)
   {
     if (old_widget->traits_type == CONIC_TRAITS) return;
     widget = new Qt_widget_demo_tab<Conic_tab_traits>
       (CONIC_TRAITS , this, old_index, old_widget->edge_color);
   }
+#endif
 
   if( !old_widget->is_empty() ) // pm is not empty
   {
@@ -469,62 +459,25 @@ void MyWindow::setTraits( TraitsType t )
   switch ( t ) {
    case SEGMENT_TRAITS:
     setSegmentTraits->setOn( TRUE );
-        conicTypeTool->hide();
+#ifdef CGAL_USE_CORE
+    conicTypeTool->hide();
+#endif
     break;
    case POLYLINE_TRAITS:
     setPolylineTraits->setOn( TRUE );
-        conicTypeTool->hide();
+#ifdef CGAL_USE_CORE
+    conicTypeTool->hide();
+#endif
     break;
    case CONIC_TRAITS:
+#ifdef CGAL_USE_CORE
     setConicTraits->setOn( TRUE );
-        conicTypeTool->show();
+    conicTypeTool->show();
+#endif
     break;
   }
 }
 
-/*! update widget conic type
- * \param action - the new conic type
- */
-void MyWindow::updateConicType( QAction *action )
-{
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
-  // as we know that only
-  // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab    *w_demo_p =
-    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  if ( action == setCircle )
-    w_demo_p->conic_type = CIRCLE;
-  else if ( action == setSegment )
-    w_demo_p->conic_type = SEGMENT;
-  else if ( action == setEllipse )
-    w_demo_p->conic_type = ELLIPSE;
-  else if ( action == setParabola )
-    w_demo_p->conic_type = PARABOLA;
-  else if ( action == setHyperbola )
-    w_demo_p->conic_type = HYPERBOLA;
-}
-
-/*! change the buttons stste according to the traits type */
-void MyWindow::setConicType( ConicType t )
-{
-  switch ( t ) {
-   case CIRCLE:
-    setCircle->setOn( TRUE );
-    break;
-   case SEGMENT:
-    setSegment->setOn( TRUE );
-    break;
-   case ELLIPSE:
-    setEllipse->setOn( TRUE );
-    break;
-   case PARABOLA:
-    setParabola->setOn( TRUE );
-    break;
-   case HYPERBOLA:
-    setHyperbola->setOn( TRUE );
-    break;
-  }
-}
 
 /*! open color dialog for faces color */
 void MyWindow::openColorDialog()
@@ -546,6 +499,105 @@ void MyWindow::upperEnvelope(bool b)
 {
   upper_env = b;
   something_changed();
+}
+
+/*! add a tab widget with conic traits */
+void MyWindow::add_conic_tab()
+{
+#ifdef CGAL_USE_CORE
+  Qt_widget_demo_tab<Conic_tab_traits> *widget =
+    new Qt_widget_demo_tab<Conic_tab_traits>
+    (CONIC_TRAITS , this , tab_number, colors[tab_number%num_of_colors]);
+  init(widget);
+  widget->draw();
+
+  //widget->set_window(widget->x_pixel(widget->x_min()), widget->x_pixel(widget->x_max()),
+    //                 widget->x_pixel(widget->y_min()), widget->x_pixel(widget->y_max()));
+#else
+  CGAL_error_msg("Conics were not compiled");
+#endif
+}
+
+/*! a dialog form to set the conic type for conics insertion. */
+void MyWindow::conicType()
+{
+#ifdef CGAL_USE_CORE
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
+  // as we know that only
+  // Qt_widget_base_tab objects are stored in the tab pages.
+  Qt_widget_base_tab     *w_demo_p =
+    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
+  OptionsForm *form = new OptionsForm();
+  if ( form->exec() )
+  {
+    QString type = form->arrComboBox1->currentText();
+
+    if (strcmp(type,"Circle") == 0)
+      w_demo_p->conic_type = CIRCLE;
+    else if (strcmp(type,"Segment") == 0)
+      w_demo_p->conic_type = SEGMENT;
+        else if (strcmp(type,"Ellipse") == 0)
+      w_demo_p->conic_type = ELLIPSE;
+        else if (strcmp(type,"Parabola") == 0)
+      w_demo_p->conic_type = PARABOLA;
+        else if (strcmp(type,"Hyperbola") == 0)
+      w_demo_p->conic_type = HYPERBOLA;
+  }
+#else
+  CGAL_error_msg("Conics were not compiled");
+#endif
+}
+
+/*! update widget conic type
+ * \param action - the new conic type
+ */
+void MyWindow::updateConicType( QAction *action )
+{
+#ifdef CGAL_USE_CORE
+  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
+  // as we know that only
+  // Qt_widget_base_tab objects are stored in the tab pages.
+  Qt_widget_base_tab    *w_demo_p =
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  if ( action == setCircle )
+    w_demo_p->conic_type = CIRCLE;
+  else if ( action == setSegment )
+    w_demo_p->conic_type = SEGMENT;
+  else if ( action == setEllipse )
+    w_demo_p->conic_type = ELLIPSE;
+  else if ( action == setParabola )
+    w_demo_p->conic_type = PARABOLA;
+  else if ( action == setHyperbola )
+    w_demo_p->conic_type = HYPERBOLA;
+#else
+  CGAL_error_msg("Conics were not compiled");
+#endif
+}
+
+/*! change the buttons stste according to the traits type */
+void MyWindow::setConicType( ConicType t )
+{
+#ifdef CGAL_USE_CORE
+  switch ( t ) {
+   case CIRCLE:
+    setCircle->setOn( TRUE );
+    break;
+   case SEGMENT:
+    setSegment->setOn( TRUE );
+    break;
+   case ELLIPSE:
+    setEllipse->setOn( TRUE );
+    break;
+   case PARABOLA:
+    setParabola->setOn( TRUE );
+    break;
+   case HYPERBOLA:
+    setHyperbola->setOn( TRUE );
+    break;
+  }
+#else
+  CGAL_error_msg("Conics were not compiled");
+#endif
 }
 
 
@@ -707,7 +759,9 @@ void MyWindow::update()
   setMode( w_demo_p->mode );
   //updateSnapMode( w_demo_p->snap );
   setTraits( w_demo_p->traits_type );
+#ifdef CGAL_USE_CORE
   setConicType( w_demo_p->conic_type );
+#endif
   if ( w_demo_p->snap )
   {
     setGridSnapMode->setEnabled( TRUE );
@@ -726,30 +780,5 @@ void MyWindow::update()
 }
 
 
-/*! a dialog form to set the conic type for conics insertion. */
-void MyWindow::conicType()
-{
-  // We peform downcasting from QWigdet* to Qt_widget_base_tab*,
-  // as we know that only
-  // Qt_widget_base_tab objects are stored in the tab pages.
-  Qt_widget_base_tab     *w_demo_p =
-    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
-  OptionsForm *form = new OptionsForm();
-  if ( form->exec() )
-  {
-    QString type = form->arrComboBox1->currentText();
-
-    if (strcmp(type,"Circle") == 0)
-      w_demo_p->conic_type = CIRCLE;
-    else if (strcmp(type,"Segment") == 0)
-      w_demo_p->conic_type = SEGMENT;
-        else if (strcmp(type,"Ellipse") == 0)
-      w_demo_p->conic_type = ELLIPSE;
-        else if (strcmp(type,"Parabola") == 0)
-      w_demo_p->conic_type = PARABOLA;
-        else if (strcmp(type,"Hyperbola") == 0)
-      w_demo_p->conic_type = HYPERBOLA;
-  }
-}
 
 

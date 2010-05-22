@@ -212,6 +212,7 @@ void MyWindow::make_overlay(std::list<int> indexes,
 
     case CONIC_TRAITS:
     {
+#ifdef CGAL_USE_CORE
       if(new_tab)
         add_conic_tab();
       else
@@ -258,6 +259,8 @@ void MyWindow::make_overlay(std::list<int> indexes,
                             w_demo_p_new->bbox.ymax());
 
      w_demo_p_new->setCursor(old);
+#endif
+
      break;
 
     }

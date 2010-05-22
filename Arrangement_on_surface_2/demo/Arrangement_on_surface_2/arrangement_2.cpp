@@ -20,8 +20,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_USE_CORE
-
 #include "arrangement_2.h"
 #include "forms.h"
 #include "qt_layer.h"
@@ -100,11 +98,13 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
                                   "Polyline Traits" );
   setPolylineTraits->setToggleAction( TRUE );
 
+#ifdef CGAL_USE_CORE
   setConicTraits = new QAction("Conic Traits",
                                QPixmap( (const char**)conic_xpm ),
                                "&Conic Traits", 0 , traitsGroup,
                                "Conic Traits" );
   setConicTraits->setToggleAction( TRUE );
+#endif
 
   // Snap Mode Group
 
@@ -185,6 +185,7 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
                              "&upper envelope", 0, this, "Upper envelop" );
   upper_env_dialog_bt->setToggleAction( TRUE );
 
+#ifdef CGAL_USE_CORE
   // Conic Type Group
   QActionGroup *conicTypeGroup = new QActionGroup( this ); // Connected later
   conicTypeGroup->setExclusive( TRUE );
@@ -214,8 +215,7 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
                                  "&5 Points Arc", 0 ,conicTypeGroup,
                                  "5 Points Arc" );
   setHyperbola->setToggleAction( TRUE );
-
-
+#endif
 
   //create a timer for checking if somthing changed
   QTimer *timer = new QTimer( this );
@@ -227,8 +227,12 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
   QPopupMenu * file = new QPopupMenu( this );
   menuBar()->insertItem( "&File", file );
   file->insertItem("&Open Segment File...", this, SLOT(fileOpenSegment()));
-  file->insertItem("&Open Polyline File...", this, SLOT(fileOpenPolyline()));
+  file->insertItem("&Open Polyline File...", this, SLOT(fileOpenPolyline()));\
+
+#ifdef CGAL_USE_CORE
   file->insertItem("&Open Conic File...", this, SLOT(fileOpenConic()));
+#endif
+
   file->insertItem("&Open Segment Arr File...", this, SLOT(fileOpenSegmentPm()));
   file->insertItem("&Open Polyline Arr File...", this, SLOT(fileOpenPolylinePm()));
   //file->insertItem("&Open Conic Pm File", this, SLOT(fileOpenConicPm()));
@@ -247,8 +251,12 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
   menuBar()->insertItem( "&Tab", tab );
   tab->insertItem("Add &Segment Tab", this, SLOT(add_segment_tab()));
   tab->insertItem("Add &Polyline Tab", this, SLOT(add_polyline_tab()));
+
+#ifdef CGAL_USE_CORE
   tab->insertItem("Add &Conic Tab", this, SLOT(add_conic_tab()));
   tab->insertSeparator();
+#endif
+
   tab->insertItem("Remove &Tab", this, SLOT(remove_tab()));
   menuBar()->insertSeparator();
 
@@ -278,7 +286,9 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
   menuBar()->insertItem( "&Traits Type", traits );
   setSegmentTraits->addTo(traits);
   setPolylineTraits->addTo(traits);
+#ifdef CGAL_USE_CORE
   setConicTraits->addTo(traits);
+#endif
 
   // options menu
   QPopupMenu * options = new QPopupMenu( this );
@@ -336,7 +346,9 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
   traitsTool->addSeparator();
   setSegmentTraits->addTo( traitsTool );
   setPolylineTraits->addTo( traitsTool );
+#ifdef CGAL_USE_CORE
   setConicTraits->addTo( traitsTool );
+#endif
   traitsTool->addSeparator();
 
   QToolBar *zoomTool = new QToolBar( this, "zoom" );
@@ -360,7 +372,7 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
   envelopeTool->addSeparator();
 
 
-
+#ifdef CGAL_USE_CORE
   conicTypeTool = new QToolBar( this, "conic type" );
   conicTypeTool->setLabel( "Conic Type" );
   conicTypeTool->addSeparator();
@@ -369,7 +381,7 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
   setEllipse->addTo( conicTypeTool );
   setParabola->addTo( conicTypeTool );
   setHyperbola->addTo( conicTypeTool );
-
+#endif
 
   connect( zoomoutBt, SIGNAL( activated () ) ,
        this, SLOT( zoomout() ) );
@@ -393,9 +405,11 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
   connect( traitsGroup, SIGNAL( selected(QAction*) ),
            this, SLOT( updateTraitsType(QAction*) ) );
 
+#ifdef CGAL_USE_CORE
   // connect Conic Type Group
   connect( conicTypeGroup, SIGNAL( selected(QAction*) ),
            this, SLOT( updateConicType(QAction*) ) );
+#endif
 
   // connect Snap Mode
 
@@ -457,15 +471,3 @@ int main(int argc, char **argv)
   return app.exec();
 }
 
-#else // CGAL_USE_CORE not defined:
-
-#include <iostream>
-
-int main(int, char*)
-{
-  std::cout << "Sorry, this demo needs CORE ..." << std::endl;
-
-  return (0);
-}
-
-#endif // CGAL_USE_CORE
