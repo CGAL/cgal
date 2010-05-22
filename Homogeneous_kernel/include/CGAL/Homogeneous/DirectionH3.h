@@ -25,6 +25,7 @@
 #define CGAL_HOMOGENEOUS_DIRECTION_3_H
 
 #include <CGAL/array.h>
+#include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 
