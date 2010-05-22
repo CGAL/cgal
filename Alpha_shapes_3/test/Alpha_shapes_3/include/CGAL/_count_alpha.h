@@ -204,8 +204,9 @@ count_faces(const AS &A, bool verbose)
 
 }
 
+// forward declaration
 template <class AS>
-void show_alpha_status(AS&); // forward declaration
+void show_alpha_status(AS&, const typename AS::Alpha_status&);
 
 template <class AS>
 void 
