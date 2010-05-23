@@ -590,25 +590,25 @@ bool Traits_base_test<T_Traits>::perform(std::ifstream & is)
       print_result(result);
       test_result &= result;
     }
-    catch (CGAL::Precondition_exception e) {
+    catch (CGAL::Precondition_exception /* e */) {
       if (m_violation_tested != PRECONDITION) {
         test_result = false;
         if (m_abort_on_error) abort = true;
       }
     }
-    catch (CGAL::Postcondition_exception e) {
+    catch (CGAL::Postcondition_exception /* e */) {
       if (m_violation_tested != POSTCONDITION) {
         test_result = false;
         if (m_abort_on_error) abort = true;
       }
     }
-    catch (CGAL::Warning_exception e) {
+    catch (CGAL::Warning_exception /* e */) {
       if (m_violation_tested != WARNING) {
         test_result = false;
         if (m_abort_on_error) abort = true;
       }
     }
-    catch (CGAL::Assertion_exception e) {
+    catch (CGAL::Assertion_exception /* e */) {
       if (m_violation_tested != ASSERTION) {
         test_result = false;
         if (m_abort_on_error) abort = true;
