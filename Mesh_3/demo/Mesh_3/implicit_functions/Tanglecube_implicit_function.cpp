@@ -24,7 +24,6 @@
 #include <QObject>
 #include "../Implicit_function_interface.h"
 
-#include <vector>
 
 const double radius = 4.;
 

@@ -24,46 +24,6 @@
 #include <QObject>
 #include "../Implicit_function_interface.h"
 
-#include <vector>
-#include <iostream>
-
-//template <typename T>
-//class A {
-//  struct B;
-//  
-//  void f( typename B::value_type & b) { b = 3;}
-//  
-//public:
-//  void g();
-//private:
-//  //typename T::T_ p_;
-//  struct B : public std::vector<T> {};
-//};
-//
-//class C {
-//  struct B;
-//  
-//  //void f(B::value_type & b) {}
-//  
-//public:
-//  void g();
-//private:
-//  struct B : public std::vector<int> {};
-//};
-//
-//template <typename T>
-//void
-//A<T>::g() {
-//  T t;
-//  f(t);
-//}
-//
-//
-//void
-//C::g() {
-//  int t;
-//  //f(t);
-//}
 
 const double radius = 1.;
 
@@ -79,7 +39,6 @@ public:
   
   virtual double operator()(double x, double y, double z) const
   {
-    //std::cerr << "x: " << x << "  y: " << y << "  z:" << z << "\n";
     return (x*x + y*y + z*z - radius);
   }
   
