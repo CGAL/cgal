@@ -216,7 +216,7 @@ operator-(const Sqrt_extension_1<NT>& x, const Sqrt_extension_1<NT>& y)
 //=============================================================
 
 template <class NT> 
-struct Algebraic_structure_traits<Sqrt_extension_1<NT> >
+class Algebraic_structure_traits<Sqrt_extension_1<NT> >
     :public Algebraic_structure_traits_base<Sqrt_extension_1<NT>,CGAL::Integral_domain_without_division_tag>{
     // I haven't found division 
 private:
@@ -227,7 +227,7 @@ public:
 };
 
 template<class NT>
-struct Real_embeddable_traits<Sqrt_extension_1<NT> >{
+class Real_embeddable_traits<Sqrt_extension_1<NT> >{
 private:
     typedef Real_embeddable_traits<NT> RET_NT;
 public:
