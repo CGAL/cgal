@@ -172,7 +172,7 @@ draw_grid_vertex(const Point_value& pv,
     ::glColor3ub(ramp_negative.r(i),ramp_negative.g(i),ramp_negative.b(i));
   }
   
-  ::glVertex3d(p.x(),p.y(),p.z());
+  ::glVertex3d(p.x,p.y,p.z);
 }
 
 

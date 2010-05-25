@@ -7,6 +7,9 @@
 #include "Implicit_function_interface.h"
 #include "Color_ramp.h"
 
+#include <QGLViewer/manipulatedFrame.h>
+#include <QGLViewer/qglviewer.h>
+
 #define SCENE_IMPLICIT_GRID_SIZE 100
 
 
@@ -46,7 +49,7 @@ public slots:
   void compute_function_grid();
 
 private:
-  typedef Scene_interface::Point_         Point;
+  typedef qglviewer::Vec                  Point;
   typedef std::pair <Point,double>        Point_value;
   
   void draw_bbox() const;
