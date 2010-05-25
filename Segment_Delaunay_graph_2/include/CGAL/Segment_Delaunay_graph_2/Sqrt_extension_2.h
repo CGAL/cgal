@@ -241,7 +241,7 @@ operator-(const Sqrt_extension_2<NT>& x, const Sqrt_extension_2<NT>& y)
 
 
 template <class NT> 
-struct Algebraic_structure_traits<Sqrt_extension_2<NT> >
+class Algebraic_structure_traits<Sqrt_extension_2<NT> >
     :public Algebraic_structure_traits_base<Sqrt_extension_2<NT>,CGAL::Integral_domain_without_division_tag>{
 private:
     typedef Algebraic_structure_traits<NT> AST_NT;
@@ -251,7 +251,7 @@ public:
 };
 
 template<class NT>
-struct Real_embeddable_traits<Sqrt_extension_2<NT> >{
+class Real_embeddable_traits<Sqrt_extension_2<NT> >{
 private:
     typedef Real_embeddable_traits<NT> RET_NT;
 public:
