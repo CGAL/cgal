@@ -33,7 +33,7 @@
         if [ -z "${MAKE_CMD}" ]; then
           MAKE_CMD=make
         fi
-        MAKE_CMD="${MAKE_CMD} -fMakefile"
+        MAKE_CMD="${MAKE_CMD} VERBOSE=ON -fMakefile"
         MAKE_CLEAN_CMD="${MAKE_CMD} clean"
         ;;
   esac
