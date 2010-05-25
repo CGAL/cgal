@@ -80,17 +80,13 @@ public:
     };
 
     struct Square: public std::unary_function< mpz_class , mpz_class > {
-        template <typename T, typename U>
-        mpz_class operator()( const ::__gmp_expr< T , U >& x) const {
-            CGAL_CHECK_GMP_EXPR;
+        mpz_class operator()( const mpz_class& x) const {
             return x*x;
         }
     };
 
     struct Unit_part: public std::unary_function< mpz_class , mpz_class > {
-        template <typename T, typename U>
-        mpz_class operator()( const ::__gmp_expr< T , U >& x) const {
-            CGAL_CHECK_GMP_EXPR;
+        mpz_class operator()( const mpz_class& x) const {
             return( x < mpz_class(0)) ?  mpz_class(-1) : mpz_class(1);
         }
     };
@@ -114,13 +110,11 @@ public:
     };
 
     struct Gcd : public std::binary_function< mpz_class, mpz_class, mpz_class > {
-        template <typename T,  typename U1, typename U2>
         mpz_class operator()(
-                const ::__gmp_expr< T , U1 >& x,
-                const ::__gmp_expr< T , U2 >& y) const {
-            CGAL_CHECK_GMP_EXPR;
+                const mpz_class& x,
+                const mpz_class& y) const {
             mpz_class c;
-            mpz_gcd(c.get_mpz_t(),mpz_class(x).get_mpz_t(), mpz_class(y).get_mpz_t() );
+            mpz_gcd(c.get_mpz_t(),x.get_mpz_t(), y.get_mpz_t() );
             return c;
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
@@ -153,19 +147,18 @@ public:
         typedef mpz_class&   third_argument_type;
         typedef mpz_class&   fourth_argument_type;
         typedef void         result_type;
-        template <typename T,  typename U1, typename U2>
         void operator()(
-                const ::__gmp_expr< T , U1 >& x,
-                const ::__gmp_expr< T , U2 >& y,
+                const mpz_class& x,
+                const mpz_class& y,
                 mpz_class& q,
                 mpz_class& r
         ) const {
-            CGAL_CHECK_GMP_EXPR;
             typedef Algebraic_structure_traits<mpz_class> Traits;
-                typename Traits::Div  actual_div;
-                typename Traits::Mod  actual_mod;
+                Traits::Div  actual_div;
+                Traits::Mod  actual_mod;
                 q = actual_div( x, y );
                 r = actual_mod( x, y );
+                // use mpz_tdiv_qr to do both at once
                 return;
             }
     };
@@ -267,21 +260,16 @@ public:
 
     struct To_double
         : public std::unary_function< mpz_class, double > {
-        template < typename T, typename U >
-        double operator()( const ::__gmp_expr< T , U >& x ) const {
-            CGAL_CHECK_GMP_EXPR;
-            return mpz_class(x).get_d();
+        double operator()( const mpz_class& x ) const {
+            return x.get_d();
         }
     };
 
     struct To_interval
 
         : public std::unary_function< mpz_class, std::pair< double, double > > {
-       template <typename T, typename U>
         std::pair<double, double>
-        operator()( const ::__gmp_expr< T , U >& x_ ) const {
-            CGAL_CHECK_GMP_EXPR;
-            mpz_class x = mpz_class(x_);
+        operator()( const mpz_class& x ) const {
             mpfr_t y;
             mpfr_init2 (y, 53); /* Assume IEEE-754 */
             mpfr_set_z (y, x.get_mpz_t(), GMP_RNDD);

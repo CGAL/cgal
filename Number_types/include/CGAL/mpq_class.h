@@ -71,33 +71,21 @@ class Algebraic_structure_traits< mpq_class  >
     };
 
     struct Simplify: public std::unary_function< mpq_class , void > {
-        template <typename T, typename U>
-        void operator()( ::__gmp_expr< T, U>& x) const {
-            CGAL_CHECK_GMP_EXPR;
-          //TODO: cast x to (mpq_class)??
-          x.canonicalize();
-        }
-
-        template <class T, class U>
-        bool operator()( const ::__gmp_expr< T ,U >& x) const {
-            CGAL_CHECK_GMP_EXPR;
-            return x.canonicalize();
+        void operator()( mpq_class& x) const {
+            // do nothing because x is already canonical?
+            x.canonicalize();
         }
     };
 
     struct Square: public std::unary_function< mpq_class , mpq_class > {
-        template <typename T, typename U>
-        mpq_class operator()( const ::__gmp_expr< T , U >& x) const {
-            CGAL_CHECK_GMP_EXPR;
+        mpq_class operator()( const mpq_class& x) const {
             return x*x;
         }
     };
 
     struct Unit_part: public std::unary_function< mpq_class , mpq_class > {
-        template <typename T, typename U>
-        mpq_class operator()( const ::__gmp_expr< T , U >& x) const {
-            CGAL_CHECK_GMP_EXPR;
-            return( x == mpq_class(0)) ? mpq_class(1) : x;
+        mpq_class operator()( const mpq_class& x) const {
+            return( x == 0) ? mpq_class(1) : x;
         }
     };
 
@@ -120,20 +108,13 @@ class Algebraic_structure_traits< mpq_class  >
     class Is_square
         : public std::binary_function< mpq_class, mpq_class&, bool > {
     public:
-        template <typename T , typename U >
-        bool operator()(
-                const ::__gmp_expr< T , U >& x_,
-                mpq_class& y ) const {
-            CGAL_CHECK_GMP_EXPR;
-            mpq_class x( x_ );
+        bool operator()( const mpq_class& x, mpq_class& y ) const {
             y = mpq_class (::sqrt( x.get_num() ), ::sqrt( x.get_den() )) ;
-
             return y*y == x;
+            // for efficiency, only handle den if num is a square
         }
 
-        template < typename T, typename U >
-        bool operator()( const ::__gmp_expr< T , U >& x ) const {
-            CGAL_CHECK_GMP_EXPR;
+        bool operator()( const mpq_class& x ) const {
             mpq_class y;
             return operator()(x,y);
         }
@@ -214,21 +195,16 @@ class Real_embeddable_traits< mpq_class >
 
     struct To_double
         : public std::unary_function< mpq_class, double > {
-        template < typename T , typename U >
-        double operator()( const ::__gmp_expr< T , U >& x ) const {
-            CGAL_CHECK_GMP_EXPR;
-            return mpq_class(x).get_d();
+        double operator()( const mpq_class& x ) const {
+            return x.get_d();
         }
     };
 
     struct To_interval
 
         : public std::unary_function< mpq_class, std::pair< double, double > > {
-        template < typename T, typename U >
         std::pair<double, double>
-        operator()( const ::__gmp_expr< T , U >& x_ ) const {
-            CGAL_CHECK_GMP_EXPR;
-            mpq_class x = mpq_class(x_);
+        operator()( const mpq_class& x ) const {
             mpfr_t y;
             mpfr_init2 (y, 53); /* Assume IEEE-754 */
             mpfr_set_q (y, x.get_mpq_t(), GMP_RNDD);
