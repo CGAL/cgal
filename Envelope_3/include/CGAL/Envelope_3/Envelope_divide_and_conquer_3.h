@@ -130,13 +130,14 @@ protected:
     Vertex_handle;
   typedef typename Minimization_diagram_2::Vertex_iterator
     Vertex_iterator;
-  typedef typename Minimization_diagram_2::Inner_ccb_iterator
-    Inner_ccb_iterator;
   typedef typename Minimization_diagram_2::Ccb_halfedge_circulator
     Ccb_halfedge_circulator;
   typedef typename Minimization_diagram_2::Halfedge_around_vertex_circulator
-
     Halfedge_around_vertex_circulator;
+  typedef typename Minimization_diagram_2::Outer_ccb_iterator 
+    Outer_ccb_iterator;
+  typedef typename Minimization_diagram_2::Inner_ccb_iterator 
+    Inner_ccb_iterator;
 
   typedef Arr_observer<Minimization_diagram_2>          Md_observer;
   typedef typename Minimization_diagram_2::Dcel::Dcel_data_iterator
@@ -369,21 +370,43 @@ protected:
             he->twin()->face()->set_no_data();
           }
 
-          Ccb_halfedge_circulator face_hec = f->outer_ccb();
-          Ccb_halfedge_circulator face_hec_begin = face_hec;
-          do 
-          {
-            face_hec->set_is_equal_data_in_face(true);
-            face_hec->set_has_equal_data_in_face(true);
-            face_hec->set_has_equal_data_in_target_and_face(true);
-
-            face_hec->twin()->set_is_equal_data_in_face(false);
-            face_hec->twin()->set_has_equal_data_in_face(false);
-            face_hec->twin()->set_has_equal_data_in_target_and_face(false);
-
-            ++face_hec;
-          } 
-          while(face_hec != face_hec_begin);
+          // init auxiliary data for f and its boundarys. 
+          for(Outer_ccb_iterator ocit = f->outer_ccbs_begin();
+              ocit != f->outer_ccbs_end(); ocit++){
+            Ccb_halfedge_circulator face_hec = *ocit;
+            Ccb_halfedge_circulator face_hec_begin = face_hec;
+            do 
+              {
+                face_hec->set_is_equal_data_in_face(true);
+                face_hec->set_has_equal_data_in_face(true);
+                face_hec->set_has_equal_data_in_target_and_face(true);
+                
+                face_hec->twin()->set_is_equal_data_in_face(false);
+                face_hec->twin()->set_has_equal_data_in_face(false);
+                face_hec->twin()->set_has_equal_data_in_target_and_face(false);
+                
+                ++face_hec;
+              } 
+            while(face_hec != face_hec_begin);
+          }
+          for(Outer_ccb_iterator icit = f->inner_ccbs_begin();
+              icit != f->inner_ccbs_end(); icit++){
+            Ccb_halfedge_circulator face_hec = *icit;
+            Ccb_halfedge_circulator face_hec_begin = face_hec;
+            do 
+              {
+                face_hec->set_is_equal_data_in_face(true);
+                face_hec->set_has_equal_data_in_face(true);
+                face_hec->set_has_equal_data_in_target_and_face(true);
+                
+                face_hec->twin()->set_is_equal_data_in_face(false);
+                face_hec->twin()->set_has_equal_data_in_face(false);
+                face_hec->twin()->set_has_equal_data_in_target_and_face(false);
+                
+                ++face_hec;
+              } 
+            while(face_hec != face_hec_begin);
+          }
         }
       }
       else
