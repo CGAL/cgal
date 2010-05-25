@@ -151,14 +151,12 @@ protected:
     bool operator() (const Point_2_with_info& p1,
                      const Point_2_with_info& p2) const
     {
-      Comparison_result res =
-        p_traits->compare_xy_2_object()(p1.first, p2.first);
-      if (res == SMALLER)
-        return true;
-      if (res == LARGER)
-        return false;
-      CGAL_error();
-      return (p1.second == true || p2.third == true);
+      // The original code seemed to presume that two Points are never equal
+      // This is not true, there are various counter examples. 
+      // e.g the intersection of surf1 and surf2 may have ending edge and 
+      // a starting edge on the to be resolved edge 
+      return 
+        p_traits->compare_xy_2_object()(p1.first, p2.first) == SMALLER;  
     }
   };
   
@@ -615,7 +613,7 @@ public:
 #endif
       return;
     }
-    
+   
     // sort the split points from left to right
     // and split the original edge in these points
     Points_compare comp(*m_traits);
