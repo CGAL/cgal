@@ -38,7 +38,7 @@ public:
     Random_points_in_sphere_3( double r = 1, Random& rnd = default_random)
         // g is an input iterator creating points of type `P' uniformly
         // distributed in the open sphere with radius r, i.e. |`*g'| < r .
-        // A non determinate random numbers are needed from `rnd' for each point
+        // Three random numbers are needed from `rnd' for each point
     : Random_generator_base<P>( r, rnd) { generate_point(); }
     This& operator++()    {
         generate_point();
@@ -55,18 +55,16 @@ template < class P, class Creator >
 void
 Random_points_in_sphere_3<P,Creator>::
 generate_point() {
-   typedef typename Creator::argument_type T;
-   do {
-       Creator creator;
-       this->d_item =
-	    creator( T(this->d_range * ( 2 * this->_rnd.get_double() - 1.0)),
-                     T(this->d_range * ( 2 * this->_rnd.get_double() - 1.0)),
-                     T(this->d_range * ( 2 * this->_rnd.get_double() - 1.0)));
-   } 
-   while (CGAL::to_double(this->d_item.x() * this->d_item.x() +
-			  this->d_item.y() * this->d_item.y() +
-                          this->d_item.z() * this->d_item.z()) >=
-		          this->d_range * this->d_range);
+  // A strip between z and z+dz has an area independant of z
+    typedef typename Creator::argument_type T;
+    double alpha = this->_rnd.get_double() * 2.0 * CGAL_PI;
+    double z     = 2 * this->_rnd.get_double() - 1.0;
+    double r     = std::sqrt( 1 - z * z);
+    r *= std::pow( this->_rnd.get_double() , 1.0/3.0 );  
+    Creator creator;
+    this->d_item = creator( T(this->d_range * r * std::cos(alpha)),
+                            T(this->d_range * r * std::sin(alpha)),
+                            T(this->d_range * z));
 }
 
 
@@ -79,7 +77,7 @@ public:
     Random_points_on_sphere_3( double r = 1, Random& rnd = default_random)
         // g is an input iterator creating points of type `P' uniformly
         // distributed on the sphere with radius r, i.e. |`*g'| == r . A
-        // distributed in the open sphere with radius r, i.e. |`*g'| < r .
+        // two random numbers are needed from `rnd' for each point.
     : Random_generator_base<P>( r, rnd) { generate_point(); }
     This& operator++()    {
         generate_point();
@@ -96,19 +94,15 @@ template < class P, class Creator >
 void
 Random_points_on_sphere_3<P,Creator>::
 generate_point() {
+  // A strip between z and z+dz has an area independant of z
     typedef typename Creator::argument_type T;
-    double dist,x,y,z;
+    double alpha = this->_rnd.get_double() * 2.0 * CGAL_PI;
+    double z     = 2 * this->_rnd.get_double() - 1.0;
+    double r     = std::sqrt( 1 - z * z);
     Creator creator;
-    do {
-      x = this->d_range * ( 2 * this->_rnd.get_double() - 1.0);
-      y = this->d_range * ( 2 * this->_rnd.get_double() - 1.0);
-      z = this->d_range * ( 2 * this->_rnd.get_double() - 1.0);
-   } while ((dist = x*x + y*y + z*z ) >= this->d_range * this->d_range);
-    dist = std::sqrt( dist);
-    x /= dist;
-    y /= dist;
-    z /= dist;
-    this->d_item = creator( T(x) , T(y), T(z) );
+    this->d_item = creator( T(this->d_range * r * std::cos(alpha)),
+                            T(this->d_range * r * std::sin(alpha)),
+                            T(this->d_range * z));
 }
 
 
