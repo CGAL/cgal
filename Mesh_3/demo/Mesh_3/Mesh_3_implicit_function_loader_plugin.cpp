@@ -135,7 +135,7 @@ Mesh_3_implicit_function_loader_plugin::
 load_function_plugins()
 {
   QDir pluginsDir(qApp->applicationDirPath());
-  pluginsDir.cd("implicit_functions");
+  if ( !pluginsDir.cd("implicit_functions") ) { return; }
   
   Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files))
   {
