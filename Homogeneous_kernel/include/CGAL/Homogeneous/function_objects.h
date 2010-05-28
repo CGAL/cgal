@@ -4482,8 +4482,6 @@ namespace HomogeneousKernelFunctors {
       const RT& thy = t.hy();
       const RT& thw = t.hw();
 
-      CGAL_kernel_precondition( ! collinear(q,r,s) );
-
       // compute sign of      |qx  qy  qx^2+qy^2  1 |   | a b c d |
       //                      |      --  r  --      | = | e f g h |
       //     determinant      |      --  s  --      | = | i j k l |
@@ -4531,7 +4529,7 @@ namespace HomogeneousKernelFunctors {
 	        const Point_3& s, const Point_3& t) const
     {
       typedef typename K::RT RT;
-      CGAL_kernel_precondition( !coplanar(p,q,r,s) );
+
       const RT & phx = p.hx();
       const RT & phy = p.hy();
       const RT & phz = p.hz();
