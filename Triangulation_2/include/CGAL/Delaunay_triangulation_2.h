@@ -924,7 +924,7 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
   enum type_of_edge{ boundary, locally_delaunay, unknown};
   std::map<Face_handle, int> type[3];
   std::list<Edge> to_be_checked;
-  int j=1,k;
+  int j=1;
   Face_handle nn;
 
   // process pentagon by pentagon
