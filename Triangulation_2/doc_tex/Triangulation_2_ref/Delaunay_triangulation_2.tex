@@ -143,6 +143,20 @@ Thus a  call to \ccc{insert_in_face}
 on a valid Delaunay triangulation might lead to a triangulation
 which is no longer a Delaunay triangulation.
 
+\ccHeading{Displacement}
+
+\ccMethod{Vertex_handle    move_if_no_collision(Vertex_handle v, const Point & p);}
+{if there is not already another vertex placed on \ccc{p}, 
+the triangulation is modified such that the new position of vertex \ccc{v}
+is \ccc{p}, and \ccc{v} is returned. Otherwise, the triangulation is not
+modified and the vertex at point \ccc{p} is returned.
+\ccPrecond Vertex \ccc{v} must be finite.}
+
+\ccMethod{Vertex_handle    move(Vertex_handle v, const Point & p);}
+{same as above if there is no collision. Otherwise, \ccc{v}
+is deleted and the vertex placed on \ccc{p} is returned.
+ \ccPrecond Vertex \ccc{v} must be finite.}
+
 \ccHeading{Queries}
 
 \ccMethod{Vertex_handle

@@ -243,8 +243,7 @@ can be represented as well as an edge of the \ccc{neighbor(i)} of
 
 The triangulations  classes of \cgal\  
 provide high-level geometric functionalities
-such as location of a point in the triangulation, insertion
-or removal of a point.
+such as location of a point in the triangulation, insertion, removal, or displacement of a point.
 They are build as a layer on top of a data structure
 called the triangulation data structure.
 The triangulation data structure   can be thought 
@@ -432,8 +431,8 @@ circumcircle.
 The faces of the triangulation and their circumcircles 
 have the  counterclockwise orientation.
 
-The triangulation can be modified by several functions~:
-insertion of a point, removal of a vertex,
+The triangulation can be modified by several functions:
+insertion of a point, removal of a vertex, displacement of a vertex,
 flipping  of an edge. The flipping of an edge
 is possible when the union of the two incident faces
 forms  a convex quadrilateral (see Figure~\ref{2D_Triangulation_fig_flip_bis}). 
@@ -480,6 +479,10 @@ re-triangulating the hole. Removal takes a time  at most proportional to
 $d^2$, where
 $d$ is the degree of the removed vertex,
 which is $O(1)$ for a random vertex.
+
+Displacement of a vertex is done by: first, verifying if the triangulation embedding
+remains planar after the displacement; if yes the vertex is directly placed at the new location; otherwise, a point is inserted at the new location 
+and the vertex at the obsolete location is removed.
 
 The face, edge, and vertex iterators on finite features
 are derived from their counterparts visiting all (finite and infinite)
@@ -573,10 +576,8 @@ are defined to represent the dual Voronoi diagram.
 
 
 The class \ccc{Delaunay_triangulation_2<Traits,Tds>}
-overwrites the member functions that insert a new point
-in the triangulation 
-or remove a vertex  from it
-to maintain the Delaunay property.
+overwrites the member functions that insert, move, or remove a point
+in the triangulation to maintain the Delaunay property.
 It also has a member function (\ccc{Vertex_handle
         nearest_vertex(const Point& p)})
 to answer nearest neighbor queries
@@ -636,6 +637,13 @@ satisfied. Removal of a
 vertex of degree $d$ takes time $O(d^2)$.
 The degree $d$ is $O(1)$ for a random
 vertex in the triangulation.
+
+The displacement of a vertex $v$ at a point $p$ to a new location $p'$, first checks whether the triangulation embedding remains
+planar or not after moving $v$ to $p'$. If yes, it moves $v$ to $p'$ and simply performs a sequence of flips
+to restore the Delaunay property, which is $O(d)$ where $d$ is the degree of the vertex after the displacement. 
+Otherwise, the displacement is done by inserting a vertex at the new location,
+and removing the obsolete vertex. 
+The complexity is $O(n)$ in the worst case, but only $O(1 + \delta \sqrt{n})$ for evenly distributed vertices in the unit square, where $\delta$ is the Euclidean distance between the new and old locations.
 
 After having performed a  point location, the
 nearest neighbor of a point is found in time $O(n)$ in the
@@ -755,6 +763,8 @@ The functions \ccc{insert} and
 \ccc{remove} are overwritten to handle weighted points
 and maintain the regular
 property.
+In current version, function \ccc{move} is not 
+overwritten and thus does not preserve the regular property.
 The vertices of the regular triangulation
 of a set of weighted points ${PW}$ correspond  only to a subset
 of ${PW}$.
@@ -929,6 +939,8 @@ overrides the insertion and removal of a point to take care of the
 information about constrained edges. The class also allows inline
 insertion of a new constraint, given by its two endpoints
 or the removal of a constraint.
+In current version, function \ccc{move} is not 
+overwritten and thus does not take care of the constraints.
 
 \subsubsection{The Geometric Traits}
 The geometric traits of a constraint triangulation
@@ -1160,7 +1172,7 @@ classes.
 
 The class \ccc{Triangulation_hierarchy_2<Tr>} inherits from the
 triangulation type passed as template parameter \ccc{Tr}. 
-The insert and remove member functions
+The \ccc{insert}, \ccc{move}, and \ccc{remove} member functions
 are  overwritten to update the data structure at each operation.
 The locate queries are also overwritten to take advantage of the data
 structure for a fast processing.

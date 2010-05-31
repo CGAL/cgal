@@ -146,6 +146,150 @@ _test_cls_delaunay_triangulation_2( const Del & )
    _test_delaunay_duality(T2);
    _test_delaunay_duality(T3);
 
+
+  /**********************/
+  /******* MOVE *********/
+  std::cout << "    displacements" << std::endl;
+
+  std::cout << "    degenerate cases: " << std::endl;
+  
+  Del TM_0, TM_1;
+  Vertex_handle tmv1 = TM_0.insert(Point(0,0));
+  Vertex_handle tmv2 = TM_0.insert(Point(1,0));
+
+  TM_0.move_if_no_collision(tmv1, Point(2, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv1, Point(0, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  Vertex_handle tmv3 = TM_0.insert(Point(2,1));
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv3, Point(2, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv3, Point(2, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);  
+
+  Vertex_handle tmv4 = TM_0.insert(Point(1,1));
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv4, Point(2, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv4, Point(2, -1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv4, Point(3, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv3, Point(1, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv3, Point(-1, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv2, Point(-1, 0, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv2, Point(-1, 0, 4));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv2, Point(-1, 0, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv2, Point(-1, 1, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv1, Point(0, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv1, Point(0, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv1, Point(0, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+  assert(TM_0.move_if_no_collision(tmv1, Point(3, 0)) != tmv1);
+
+  TM_0.move_if_no_collision(tmv1, Point(0, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv4, Point(1, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);   
+
+  TM_0.move_if_no_collision(tmv4, Point(3, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv1, Point(2, 3));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv4, Point(1, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  std::cout << "    non-degenerate cases: " << std::endl;
+  // non-degenerate cases
+  std::list<Point> points;
+  for(int count=0; count<50; count++) {
+    points.push_back(Point(rand()%30000, rand()%30000));
+  }
+  TM_1.insert(points.begin(), points.end());
+  Vertex_handle vTM_1;
+  for(int i=0; i<5; i++) {
+    for(typename Del::Finite_vertices_iterator 
+         fvi = TM_1.finite_vertices_begin();
+         fvi != TM_1.finite_vertices_end(); fvi++) {
+      Point p = Point(rand()%30000, rand()%30000);
+      vTM_1 = TM_1.move_if_no_collision(fvi, p);
+      assert(TM_1.is_valid());
+    }
+  }
+
+  // A simple test to see if move return the good vertex
+  // when there is a collision
+  assert(TM_1.move(TM_1.finite_vertices_begin(), vTM_1->point()) == vTM_1); 
 }
 
 

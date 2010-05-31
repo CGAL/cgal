@@ -171,6 +171,25 @@ _test_cls_tds_2( const Tds &)
   u4 = tds4.star_hole(hole);
   tds4.remove_degree_3(u4);
 
+  // dim_down
+  std::cout << "    dim_down" << std::endl;
+  Tds td5;
+  Vertex_handle v5_0 = td5.insert_first();
+  Vertex_handle v5_1 = td5.insert_second();
+  Vertex_handle v5_2 = td5.insert_dim_up(v5_1, false);
+  Vertex_handle v5_3 = td5.insert_dim_up();
+  Face_handle f5_0 = v5_3->face();
+  int i = f5_0->index(v5_3);
+  td5.dim_down(f5_0, i);
+  assert(td5.dimension() == 1);
+  assert(td5.is_valid());
+  Vertex_handle v5_4 = td5.insert_dim_up();
+  Face_handle f5_1 = v5_4->face();	
+  i = f5_1->index(v5_4);
+  td5.dim_down(f5_1, i);
+  assert(td5.dimension() == 1);
+  assert(td5.is_valid());
+
  //access
   std::cout << "    test access" << std::endl;
   assert(tds0.dimension() <= -1     && tds0.number_of_vertices() == 0 &&

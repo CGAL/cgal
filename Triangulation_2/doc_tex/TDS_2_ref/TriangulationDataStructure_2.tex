@@ -367,6 +367,35 @@ and  decreases by one the dimension of the triangulation.
 3,
 if the dimension is 1, the number of vertices is 2.} }
 
+\newpage
+The following operation, \texttt{dim\_down}, is necessary when the displacement of a vertex decreases the dimension of the triangulation.
+
+\ccMethod{void dim_down(Face_handle f, int i);}
+{The link of a vertex $v$ is formed by the edges disjoint from $v$
+that are included in the faces incident to $v$.
+When the link of \ccc{v = f->vertex(i)} contains all the other vertices
+of the two-dimensional triangulation data-structure ($\mathbb{S}^2$), \ccc{dim\_down} crushes the two-dimensional 
+data-structure ($\mathbb{S}^2$) onto the one-dimensional data structure ($\mathbb{S}^1$) formed by the link of \ccc{v}
+augmented with the vertex \ccc{v} itself; this one is placed on the edge \ccc{(f, i)}.
+(see Fig. \ref{fig-tds-dim_down_2}).
+\ccPrecond{ \ccc{dimension()} must be equal to \ccc{2}, the degree of \ccc{f->vertex(i)} must be equal to the total number of vertices minus 1.}
+}
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=1.0\textwidth]{TDS_2_ref/tds-dim_down}
+\end{center}
+\caption{From a two-dimensional data structure to a one-dimensional data structure.}
+\label{fig-tds-dim_down_2}
+\end{ccTexOnly} 
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 border=0 height="200" src="./tds-dim_down.png" align=middle alt="From a two-dimensional data structure to a one-dimensional data structure.">
+</CENTER>
+\end{ccHtmlOnly} 
+\end{figure}
+
 
 \begin{ccAdvanced}
 The following modifiers are required for convenience of the advanced
