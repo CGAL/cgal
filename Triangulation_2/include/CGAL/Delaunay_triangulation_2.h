@@ -838,7 +838,7 @@ remove(Vertex_handle v)
   int d;
 
   CGAL_triangulation_precondition( v != Vertex_handle());
-  CGAL_triangulation_precondition( !is_infinite(v));
+  CGAL_triangulation_precondition( !this->is_infinite(v));
 
   if ( this->dimension() <= 1) { Triangulation::remove(v); return; }
 
@@ -863,7 +863,7 @@ remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,
   do{
     i[d] = f[d]->index(v);
     w[d] = f[d]->vertex( ccw(i[d]) );
-    if(is_infinite(w[d])) {
+    if(this->is_infinite(w[d])) {
       f[0] = f[d]; i[0]=i[d]; w[0]=w[d];
       w[0]->set_face( f[0]->neighbor(i[0]));
       f[1] = f[0]->neighbor( ccw(i[0]) );
@@ -1229,7 +1229,7 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
       Vertex_handle vopp = fopp->vertex( kk ) ;
       Vertex_handle vff  = ff->vertex( k ) ;
       //   std::cout<<"try "<<vff->point()<<";"<<vopp->point()<<std::endl;
-      if ( (is_infinite(vff))  
+      if ( (this->is_infinite(vff))  
 	   ? (test_conflict( vopp->point(), ff) )
 	   : (test_conflict( vff->point(), fopp) )
 	   )  {
@@ -2237,7 +2237,7 @@ template <class Gt, class Tds >
 typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 move_if_no_collision(Vertex_handle v, const Point &p) {
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_triangulation_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   const int dim = this->dimension();
 
@@ -2249,7 +2249,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
 	  // of the faces.. we will consider this as an a priori,
 	  // because otherwise it is pointless to just do
 	  // not rebuild from scratch.
-    if(well_oriented(v)) {
+    if(this->well_oriented(v)) {
       restore_edges(v);
       return v;
     }
@@ -2259,7 +2259,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
   Locate_type lt;
   int li;
   Vertex_handle inserted;
-  Face_handle loc = locate(p, lt, li, v->face());
+  Face_handle loc = this->locate(p, lt, li, v->face());
 
   if(lt == Triangulation_2<Gt,Tds>::VERTEX) return loc->vertex(li);
 
@@ -2308,7 +2308,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
   if((lt != Triangulation::OUTSIDE_AFFINE_HULL) && this->test_dim_down(v)) {
     // verify if p and two static vertices are collinear in this case
     int iinf = 0;
-    Face_circulator finf = incident_faces(this->infinite_vertex()), 
+    Face_circulator finf = this->incident_faces(this->infinite_vertex()), 
       fdone(finf);
     do { 
       if(!finf->has_vertex(v))
@@ -2340,7 +2340,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
   }
 
   // fixing pointer
-  Face_circulator fc = incident_faces(inserted), done(fc);
+  Face_circulator fc = this->incident_faces(inserted), done(fc);
   std::vector<Face_handle> faces_pt;
 	faces_pt.reserve(16);
   do { faces_pt.push_back(fc); } while(++fc != done);

@@ -545,7 +545,7 @@ template <class Tr>
 typename Triangulation_hierarchy_2<Tr>::Vertex_handle
 Triangulation_hierarchy_2<Tr>::
 move(Vertex_handle v, const Point &p) {
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_triangulation_precondition(!this->is_infinite(v));
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
     remove(v);
