@@ -563,7 +563,7 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 move_if_no_collision(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(!is_infinite(v));	
+  CGAL_triangulation_precondition(!this->is_infinite(v));	
   if(v->point() == p) return v;
   Vertex_handle ans;
   for (int l = 0; l < maxlevel; ++l) {
@@ -583,7 +583,7 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 move(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_triangulation_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
