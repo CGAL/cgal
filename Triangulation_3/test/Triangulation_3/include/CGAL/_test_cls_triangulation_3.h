@@ -604,6 +604,112 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T3_3.is_valid());
   assert(T3_3.dimension()==3);
 
+  // ################## Operations + newly created cells ################
+  // Small test for inserting and returning the newly created cells
+  // (the code is mainly the usual insert + incident_{edges,facets,cells} 
+  // depending on the dimension)
+
+  std::cout << " Test insertion + newly created cells: " << std::endl;
+
+  std::cout << " 1 dimension" << std::endl;
+  // dimension 1
+  Cls TAI1;
+  for(int i=0; i<50; i++)
+  {	
+    double x = (double) (2*i);
+    TAI1.insert(Point(x, x, x));
+  }
+  std::list<Cell_handle> lis_tai1;
+  for(int i=0; i<51; i++)
+  {
+    lis_tai1.clear();
+    double x = (double) (2*i - 1);
+    Vertex_handle taiv = 
+      TAI1.insert_and_give_new_cells(
+                                     Point(x, x, x), 
+                                     std::back_inserter(lis_tai1));
+    assert(TAI1.is_valid());
+    assert(TAI1.dimension() == 1);
+    assert(lis_tai1.size() == 2);
+    while(!lis_tai1.empty())
+    {
+      Cell_handle c = lis_tai1.front();
+      lis_tai1.pop_front();
+      assert(TAI1.tds().is_simplex(c));
+    }	
+  }
+  TAI1.clear();
+
+  std::cout << " 2 dimensions" << std::endl;	
+  CGAL::Random grand;
+  for(int i=0; i<50; i++)
+  {	
+    double x = grand.get_double();
+    double y = grand.get_double();		  
+    TAI1.insert(Point(x, y, 0));
+  }
+  for(int i=0; i<50; i++)
+  {
+    lis_tai1.clear();
+    double x = grand.get_double();
+    double y = grand.get_double();
+    Vertex_handle taiv = 
+      TAI1.insert_and_give_new_cells(
+                                     Point(x, y, 0), 
+                                     std::back_inserter(lis_tai1));
+    assert(TAI1.is_valid());
+    assert(TAI1.dimension() == 2);
+    while(!lis_tai1.empty())
+    {
+      Cell_handle c = lis_tai1.front();
+      lis_tai1.pop_front();
+      assert(TAI1.tds().is_simplex(c));
+    }	
+  } 
+  TAI1.clear();
+
+  std::cout << " 3 dimensions" << std::endl;	
+  for(int i=0; i<50; i++)
+  {	
+    double x = grand.get_double();
+    double y = grand.get_double();	
+    double z = grand.get_double();			  
+    TAI1.insert(Point(x, y, z));
+  }
+  for(int i=0; i<50; i++)
+  {
+    lis_tai1.clear();
+    double x = grand.get_double();
+    double y = grand.get_double();
+    double z = grand.get_double();	
+    Vertex_handle taiv = 
+      TAI1.insert_and_give_new_cells(
+                                     Point(x, y, z), 
+                                     std::back_inserter(lis_tai1));
+    assert(TAI1.is_valid());
+    assert(TAI1.dimension() == 3);
+    while(!lis_tai1.empty())
+    {
+      Cell_handle c = lis_tai1.front();
+      lis_tai1.pop_front();
+      assert(TAI1.tds().is_simplex(c));
+    }	
+  } 
+  TAI1.clear(); 
+
+  // the other two insertion methods is exactly the same
+  // with different version of the basic insert method
+  // Vertex_handle insert_and_give_new_cells(const Point& p,
+  //       OutputItCells fit,
+  //       Vertex_handle hint)	
+  // Vertex_handle insert_and_give_new_cells(const Point& p,
+  //       Locate_type lt, Cell_handle c, int li, int lj, 
+  //       OutputItCells fit
+	
+	
+  // ##################################################################
+
+
        // testing some simple basic methods (access functions)
 
   std::cout << "   Boolean and query functions " <<std::endl;

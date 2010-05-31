@@ -293,7 +293,13 @@ public:
     return n - number_of_vertices();
   }
 
+  // DISPLACEMENT
   Vertex_handle move_point(Vertex_handle v, const Weighted_point & p);
+
+  // Displacement works only for Regular triangulation
+  // without hidden points at any time
+  Vertex_handle move_if_no_collision(Vertex_handle v, const Weighted_point & p);
+  Vertex_handle move(Vertex_handle v, const Weighted_point & p);
 
 protected:
 
@@ -679,6 +685,9 @@ private:
 
   template < class RegularTriangulation_3 >
   class Vertex_remover;
+
+  template < class RegularTriangulation_3 >
+  class Vertex_inserter;
 
   Hidden_point_visitor hidden_point_visitor;
 };
@@ -1241,6 +1250,39 @@ private:
   std::vector<Point> hidden;
 };
 
+// The displacement method works only
+// on regular triangulation without hidden points at any time
+// the vertex inserter is used only
+// for the purpose of displacements
+template <class Gt, class Tds >
+template <class RegularTriangulation_3>
+class Regular_triangulation_3<Gt, Tds>::Vertex_inserter {
+  typedef RegularTriangulation_3 Regular;
+public:
+  typedef Nullptr_t Hidden_points_iterator;
+
+  Vertex_inserter(Regular &tmp_) : tmp(tmp_) {}
+
+  Regular &tmp;
+
+  void add_hidden_points(Cell_handle) {}
+  Hidden_points_iterator hidden_points_begin() { return NULL; }
+  Hidden_points_iterator hidden_points_end() { return NULL; }
+
+  Vertex_handle insert(const Weighted_point& p,
+		       Locate_type lt, Cell_handle c, int li, int lj) {
+    return tmp.insert(p, lt, c, li, lj);
+  }
+
+  Vertex_handle insert(const Weighted_point& p, Cell_handle c) {
+    return tmp.insert(p, c);
+  }
+
+  Vertex_handle insert(const Weighted_point& p) {
+    return tmp.insert(p);
+  }
+};
+
 template < class Gt, class Tds >
 void
 Regular_triangulation_3<Gt,Tds>::
@@ -1286,6 +1328,34 @@ move_point(Vertex_handle v, const Weighted_point & p)
     if (dimension() <= 0)
         return insert(p);
     return insert(p, old_neighbor->cell());
+}
+
+// Displacement works only for Regular triangulation
+// without hidden points at any time
+template < class Gt, class Tds >
+typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
+Regular_triangulation_3<Gt,Tds>::
+move_if_no_collision(Vertex_handle v, const Weighted_point &p)
+{
+  Self tmp;
+  Vertex_remover<Self> remover (tmp);
+  Vertex_inserter<Self> inserter (*this);
+  Vertex_handle res = Tr_Base::move_if_no_collision(v,p,remover,inserter);
+
+  CGAL_triangulation_expensive_postcondition(is_valid());	
+  return res;
+}
+
+template <class Gt, class Tds >
+typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
+Regular_triangulation_3<Gt,Tds>::
+move(Vertex_handle v, const Weighted_point &p) {
+  CGAL_triangulation_precondition(!is_infinite(v));
+  if(v->point() == p) return v;
+  Self tmp;
+  Vertex_remover<Self> remover (tmp);
+  Vertex_inserter<Self> inserter (*this);
+  return Tr_Base::move(v,p,remover,inserter);
 }
 
 template < class Gt, class Tds >

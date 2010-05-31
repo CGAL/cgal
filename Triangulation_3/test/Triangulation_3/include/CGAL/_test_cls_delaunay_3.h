@@ -587,6 +587,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T3_13.number_of_vertices()==22);
   assert(T3_13.dimension()==3);
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   {
     std::cout << "    Testing move_point()" << std::endl;
     Cls T;
@@ -603,6 +604,32 @@ _test_cls_delaunay_3(const Triangulation &)
       L.pop_front();
       size_type nbv = T.number_of_vertices();
       L.push_back(T.move_point(v, q[(3*i)%22]));
+
+      if (nbv != T.number_of_vertices())
+        L.pop_back(); // it means we move onto an already existing point.
+
+      assert(T.is_valid());
+      assert(T.number_of_vertices()<=22);
+    }
+  }
+#endif
+
+  {
+    std::cout << "    Testing move()" << std::endl;
+    Cls T;
+    std::list<Vertex_handle> L;
+    for (i=0; i<22; ++i)
+      L.push_back(T.insert(q[i]));
+    assert(T.is_valid());
+    assert(T.number_of_vertices()==22);
+    assert(T.dimension()==3);
+
+    for (i=0; i<100; ++i) {
+      assert(!L.empty());
+      Vertex_handle v = L.front();
+      L.pop_front();
+      size_type nbv = T.number_of_vertices();
+      L.push_back(T.move(v, q[(3*i)%22]));
 
       if (nbv != T.number_of_vertices())
         L.pop_back(); // it means we move onto an already existing point.
@@ -896,6 +923,261 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(ita->vertex(3)->point() == itb->vertex(3)->point());
     }
   }
+  
+  /**********************/
+  /******* MOVE *********/
+  std::cout << "    displacements" << std::endl;
+
+  std::cout << "    degenerate cases: " << std::endl;
+  
+  Cls TM_0;
+  Vertex_handle tmv1 = TM_0.insert(Point(0,0,0));
+  Vertex_handle tmv2 = TM_0.insert(Point(0,1,0));
+
+	TM_0.move_if_no_collision(tmv1, Point(0, 2, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv1, Point(0, 0, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  Vertex_handle tmv3 = TM_0.insert(Point(0,2,1));
+
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv3, Point(0, 2, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv3, Point(0, 2, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  Vertex_handle tmv4 = TM_0.insert(Point(0,1,1));
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv3, Point(1, 1, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 3);
+
+  TM_0.move_if_no_collision(tmv3, Point(4, 2, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 3);
+
+  TM_0.move_if_no_collision(tmv3, Point(0, 2, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv4, Point(0, 2, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv4, Point(0, 2, -1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv4, Point(0, 3, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv3, Point(0, 1, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv3, Point(0, -1, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv2, Point(0, -1, 0, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv2, Point(0, -1, 0, 4));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv2, Point(0, -1, 0, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  TM_0.move_if_no_collision(tmv2, Point(0, -1, 1, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv1, Point(0, 0, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv1, Point(0, 0, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv1, Point(0, 0, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  assert(TM_0.move_if_no_collision(tmv1, Point(0, 3, 0)) != tmv1);
+
+  TM_0.move_if_no_collision(tmv1, Point(0, 0, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv4, Point(0, 1, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);   
+
+  TM_0.move_if_no_collision(tmv4, Point(0, 3, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv1, Point(0, 2, 3));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv4, Point(0, 1, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+
+  Vertex_handle tmv5 = TM_0.insert(Point(0,2,0));
+  Vertex_handle tmv6 = TM_0.insert(Point(1,0,0));
+  assert(TM_0.dimension() == 3);
+
+  TM_0.move_if_no_collision(tmv6, Point(0, 0, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv6, Point(2, 0, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 3);
+
+  TM_0.move_if_no_collision(tmv6, Point(2, 1, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 3);
+
+  TM_0.move_if_no_collision(tmv6, Point(0, 99, 99));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv6, Point(2, 1, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 3);
+
+  TM_0.move_if_no_collision(tmv6, Point(2, 2, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 3);
+
+  TM_0.move_if_no_collision(tmv6, Point(-2, 2, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 3);
+
+  TM_0.move_if_no_collision(tmv6, Point(0, 1, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+
+  TM_0.move_if_no_collision(tmv6, Point(-2, 2, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 3);
+
+  std::cout << "    random 1D: " << std::endl;
+  Cls TM_1;
+  // non-degenerate cases
+  std::list<Point> points;
+  for(int count=0; count<50; count++) {
+    points.push_back(Point(0, 0, rand()%30000));
+  }
+  TM_1.insert(points.begin(), points.end());
+  Vertex_handle vTM_1;
+  for(int i=0; i<2; i++) {
+    for(typename Cls::Finite_vertices_iterator 
+          fvi = TM_1.finite_vertices_begin();
+        fvi != TM_1.finite_vertices_end(); fvi++) {
+      Point p = Point(0, 0, rand()%30000);
+      vTM_1 = TM_1.move_if_no_collision(fvi, p);
+      assert(TM_1.is_valid());
+    }
+  }
+  assert(TM_1.is_valid());
+
+  std::cout << "    random 2D: " << std::endl;
+  Cls TM_2;
+  // non-degenerate cases
+  points.clear(); TM_2.clear();
+  for(int count=0; count<10; count++) {
+    points.push_back(Point(0, rand()%30000, rand()%30000));
+  }
+  TM_2.insert(points.begin(), points.end());
+	Vertex_handle vTM_2;
+  for(int i=0; i<2; i++) {
+    for(typename Cls::Finite_vertices_iterator 
+         fvi = TM_2.finite_vertices_begin();
+         fvi != TM_2.finite_vertices_end(); fvi++) {
+      Point p = Point(0, rand()%30000, rand()%30000);
+      vTM_2 = TM_2.move_if_no_collision(fvi, p);
+      assert(TM_2.is_valid());
+    }
+  }
+  assert(TM_2.is_valid());
+
+  std::cout << "    random 3D: " << std::endl;
+  Cls TM_3;	
+  // non-degenerate cases
+  points.clear(); TM_3.clear();
+  for(int count=0; count<50; count++) {
+    points.push_back(Point(rand()%30000, rand()%30000, rand()%30000));
+  }
+  TM_3.insert(points.begin(), points.end());
+
+  assert(TM_3.is_valid());
+	
+  Vertex_handle vTM_3;
+  for(int i=0; i<2; i++) {
+    for(typename Cls::Finite_vertices_iterator 
+          fvi = TM_3.finite_vertices_begin();
+        fvi != TM_3.finite_vertices_end(); fvi++) {
+      Point p = Point(rand()%30000, rand()%30000, rand()%30000);
+      vTM_3 = TM_3.move_if_no_collision(fvi, p);
+      assert(TM_3.is_valid());
+    }
+  }
+
+  // A simple test to see if move return the good vertex
+  // when there is a collision
+  assert(TM_3.move(TM_3.finite_vertices_begin(), vTM_3->point()) == vTM_3);
+
 }
 
 #endif // CGAL_TEST_CLS_DELAUNAY_C

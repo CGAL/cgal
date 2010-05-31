@@ -446,6 +446,7 @@ public:
       remove_decrease_dimension (v, v);
   }
   void remove_decrease_dimension(Vertex_handle v, Vertex_handle w);
+  void decrease_dimension(Cell_handle f, int i);
 
   // Change orientation of the whole TDS.
   void reorient()
@@ -2539,6 +2540,145 @@ remove_degree_4(Vertex_handle v)
 }
 
 template <class Vb, class Cb >
+void
+Triangulation_data_structure_3<Vb,Cb>::
+decrease_dimension(Cell_handle c, int i)
+{
+  CGAL_triangulation_expensive_precondition( is_valid() );;
+  CGAL_triangulation_precondition( dimension() >= 2);
+  CGAL_triangulation_precondition( number_of_vertices() >
+                                   (size_type) dimension() + 1 );
+  CGAL_triangulation_precondition( degree(c->vertex(i)) == number_of_vertices()-1 );
+
+  Vertex_handle v = c->vertex(i);
+  Vertex_handle w = c->vertex(i);
+
+  // the cells incident to w are down graded one dimension
+  // the other cells are deleted
+  std::vector<Cell_handle> to_delete, to_downgrade;
+
+  for (Cell_iterator ib = cells().begin();
+       ib != cells().end(); ++ib) {
+    if ( ib->has_vertex(w) )
+      to_downgrade.push_back(ib);
+    else
+      to_delete.push_back(ib);
+  }
+
+  typename std::vector<Cell_handle>::iterator lfit=to_downgrade.begin();
+  for( ; lfit != to_downgrade.end(); ++lfit) {
+    Cell_handle f = *lfit;
+    int j = f->index(w);
+    int k; 
+    if (f->has_vertex(v, k)) f->set_vertex(k, w);
+    if (j != dimension()) {
+      f->set_vertex(j, f->vertex(dimension()));
+      f->set_neighbor(j, f->neighbor(dimension()));
+      if (dimension() >= 1)
+        change_orientation(f);
+    }
+    f->set_vertex(dimension(), Vertex_handle());
+    f->set_neighbor(dimension(), Cell_handle());
+
+    // Update vertex->cell() pointers.
+    for (int i = 0; i < dimension(); ++i)
+      f->vertex(i)->set_cell(f);
+  }
+
+  delete_cells(to_delete.begin(), to_delete.end());
+
+  //delete_vertex(v);
+  set_dimension(dimension()-1);
+
+  if(dimension() == 2)
+  {
+    Cell_handle n0 = c->neighbor(0);
+    Cell_handle n1 = c->neighbor(1);
+    Cell_handle n2 = c->neighbor(2);
+    Vertex_handle v0 = c->vertex(0);
+    Vertex_handle v1 = c->vertex(1);
+    Vertex_handle v2 = c->vertex(2);
+		
+    int i0 = 0, i1 = 0, i2 = 0;
+		
+    for(int i=0; i<3; i++) if(n0->neighbor(i) == c) { i0 = i; break; }
+    for(int i=0; i<3; i++) if(n1->neighbor(i) == c) { i1 = i; break; }
+    for(int i=0; i<3; i++) if(n2->neighbor(i) == c) { i2 = i; break; }				
+		
+    Cell_handle c1 = create_cell(v, v0, v1, Vertex_handle());
+    Cell_handle c2 = create_cell(v, v1, v2, Vertex_handle());
+
+    c->set_vertex(0, v);
+    c->set_vertex(1, v2);
+    c->set_vertex(2, v0);
+    c->set_vertex(3, Vertex_handle());
+
+    //Cell_handle c3 = create_cell(v, v2, v0, Vertex_handle());		
+    Cell_handle c3 = c;
+		
+    c1->set_neighbor(0, n2); n2->set_neighbor(i2, c1);
+    c1->set_neighbor(1, c2); 
+    c1->set_neighbor(2, c3);
+    c1->set_neighbor(3, Cell_handle());
+		
+    c2->set_neighbor(0, n0); n0->set_neighbor(i0, c2);
+    c2->set_neighbor(1, c3); 
+    c2->set_neighbor(2, c1);
+    c2->set_neighbor(3, Cell_handle());	
+		
+    c3->set_neighbor(0, n1); n1->set_neighbor(i1, c3);
+    c3->set_neighbor(1, c1); 
+    c3->set_neighbor(2, c2);
+    c3->set_neighbor(3, Cell_handle());
+		
+    v->set_cell(c1);
+    v0->set_cell(c1);
+    v1->set_cell(c1);
+    v2->set_cell(c2);	
+  }
+	
+  if(dimension() == 1)
+  {
+    Cell_handle n0 = c->neighbor(0);
+    Cell_handle n1 = c->neighbor(1);
+    Vertex_handle v0 = c->vertex(0);
+    Vertex_handle v1 = c->vertex(1);
+		
+    int i0 = 0 , i1 = 0;
+		
+    for(int i=0; i<2; i++) if(n0->neighbor(i) == c) { i0 = i; break; }
+    for(int i=0; i<2; i++) if(n1->neighbor(i) == c) { i1 = i; break; }
+		
+    Cell_handle c1 = create_cell(v0, v, Vertex_handle(), Vertex_handle());
+		
+    c->set_vertex(0, v);
+    c->set_vertex(1, v1);
+    c->set_vertex(2, Vertex_handle());
+    c->set_vertex(3, Vertex_handle());
+
+    //Cell_handle c2 = create_cell(v, v1, Vertex_handle(), Vertex_handle());	
+    Cell_handle c2 = c;
+		
+    c1->set_neighbor(0, c2); 
+    c1->set_neighbor(1, n1); n1->set_neighbor(i1, c1);
+    c1->set_neighbor(2, Cell_handle());
+    c1->set_neighbor(3, Cell_handle());
+		
+    c2->set_neighbor(0, n0); n0->set_neighbor(i0, c2);
+    c2->set_neighbor(1, c1); 
+    c2->set_neighbor(2, Cell_handle());
+    c2->set_neighbor(3, Cell_handle());
+		
+    v->set_cell(c1);
+    v0->set_cell(c1);
+    v1->set_cell(c2);
+  }
+	
+  CGAL_triangulation_postcondition(is_valid());
+}
+
+
+template <class Vb, class Cb >
 typename Triangulation_data_structure_3<Vb,Cb>::size_type
 Triangulation_data_structure_3<Vb,Cb>::
 degree(Vertex_handle v) const
@@ -2556,19 +2696,27 @@ is_valid(bool verbose, int level ) const
   switch ( dimension() ) {
   case 3:
     {
+	
+      if(number_of_vertices() <= 4) {
+        if (verbose)
+          std::cerr << "wrong number of vertices" << std::endl;
+        CGAL_triangulation_assertion(false);
+        return false;
+      }
+	
       size_type vertex_count;
       if ( ! count_vertices(vertex_count,verbose,level) )
-	  return false;
+        return false;
       if ( number_of_vertices() != vertex_count ) {
 	if (verbose)
-	    std::cerr << "wrong number of vertices" << std::endl;
+          std::cerr << "wrong number of vertices" << std::endl;
 	CGAL_triangulation_assertion(false);
 	return false;
       }
 
       size_type cell_count;
       if ( ! count_cells(cell_count,verbose,level) )
-	  return false;
+        return false;
       size_type edge_count;
       if ( ! count_edges(edge_count,verbose,level) )
 	  return false;
@@ -2588,9 +2736,18 @@ is_valid(bool verbose, int level ) const
     }
   case 2:
     {
+	
+      if(number_of_vertices() <= 3) {
+        if (verbose)
+          std::cerr << "wrong number of vertices" << std::endl;
+        CGAL_triangulation_assertion(false);
+        return false;
+      }
+	
       size_type vertex_count;
+      
       if ( ! count_vertices(vertex_count,verbose,level) )
-	  return false;
+        return false;
       if ( number_of_vertices() != vertex_count ) {
 	if (verbose)
 	    std::cerr << "false number of vertices" << std::endl;
@@ -2625,6 +2782,14 @@ is_valid(bool verbose, int level ) const
     }
   case 1:
     {
+	
+      if(number_of_vertices() <= 1) {
+        if (verbose)
+          std::cerr << "wrong number of vertices" << std::endl;
+        CGAL_triangulation_assertion(false);
+        return false;
+      }
+	
       size_type vertex_count;
       if ( ! count_vertices(vertex_count,verbose,level) )
 	  return false;

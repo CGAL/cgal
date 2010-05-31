@@ -465,6 +465,36 @@ dimension 3, \ccVar.\ccc{insert_in_facet(v)} in dimension 2, and
 \ccPrecond{\ccVar.\ccc{degree(v)} $=$ \ccVar.\ccc{dimension()+1}.}
 }
 
+\newpage
+
+\ccHeading{Dimension Manipulation}
+
+The following operation, \texttt{decrease\_dimension}, is necessary when the displacement of a vertex decreases
+the dimension of the triangulation.
+
+\ccMethod{void decrease_dimension(Cell_handle c, int i);}
+{The link of a vertex $v$ is formed by the  facets
+disjoint from $v$ that are included in the cells incident to $v$. When the link of \ccc{v = c->vertex(i)} contains all the other vertices, \ccc{decrease\_dimension} crushes the 
+triangulation of the sphere $S^d$ of $\R^{d+1}$ onto the the 
+triangulation of the sphere $S^{d-1}$ of $\R^{d}$ formed by the link of \ccc{v}
+augmented with the vertex \ccc{v} itself, for $d$==2,3; this one is placed on the facet \ccc{(c, i)}
+(see Fig. \ref{TDS3-dim_down}).
+\ccPrecond{ The dimension must be 2 or 3. The degree of \ccc{v} must be equal to the total number of vertices of the triangulation data structure minus 1.}
+}
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=1.0\textwidth]{TriangulationDS_3_ref/tds-dim_down}
+\end{center}
+\caption{From an $S^d$ data structure to an $S^{d-1}$ data structure (top: $d==2$, bottom: $d==3$).\label{TDS3-dim_down}}
+\end{ccTexOnly} 
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 height="500" src="./tds-dim_down.png" align=middle alt="Lowering dimension from 3D to 2D">
+</CENTER>
+\end{ccHtmlOnly} 
+\end{figure}
 
 \begin{ccAdvanced}
 \ccHeading{Other modifiers}

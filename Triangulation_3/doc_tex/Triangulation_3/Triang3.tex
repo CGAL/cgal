@@ -146,8 +146,8 @@ These triangulations are uniquely defined except in degenerate cases
 where five points are co-spherical.  Note however that the \cgal\ implementation
 computes a unique triangulation even in these cases.
 
-This implementation is fully dynamic: it supports both insertions of points
-and vertex removal.
+This implementation is fully dynamic: it supports insertions of points, vertex removals
+and displacements of points.
 
 
 \section{Regular Triangulation\label{Triangulation3-sec-class-Regulartriangulation}}
@@ -211,6 +211,8 @@ example \cite{es-itfwr-96}.
 When all weights are 0, power spheres are nothing more than
 circumscribing spheres, and the regular triangulation is exactly the
 Delaunay triangulation.
+
+The implementation of 3D regular triangulation supports insertions of weighted points, and vertex removals. Displacements are not supported in the current implementation.
 
 \section{Software Design\label{Triangulation3-sec-design}}
 
@@ -358,14 +360,23 @@ or cell base class.
 \subsection{The Location Policy Parameter\label{Triangulation3-sec-locpol}}
 
 The Delaunay triangulation class supports an optional feature which maintains
-an additional data structure for fast point location queries.  This can be
-beneficial when the user needs to do many unrelated queries with no close
-starting hint for location in large data sets.
+an additional data structure for fast point location queries.  
+The fast location policy should be used when the user inserts points in a random
+order or needs to do many unrelated queries.
+If the user is able to give a good hint to help the point  location of
+ its queries (and its newly inserted points), then it should prefer the default
+ policy. In such a case where good hints are provided,
+the default policy save some memory (few percents), and is faster.
+Notice that if points are not inserted one by one, but as a  range, then a good hint is 
+automatically computed using spatial sort.
+
+Reading Section~\ref{Triangulation3-sec-complexity} on complexity and
+performance can help making an informed choice for this parameter.
 
 The point location strategy can be selected with the third template argument of
 \ccc{Delaunay_triangulation_3}, \ccc{LocationPolicy}, which enables a fast
 point location data structure when set to \ccc{Fast_location}.  By default, it
-uses \ccc{Compact_location}, which has the advantage of using less memory.
+uses \ccc{Compact_location}.
 
 Note that you can specify the \ccc{LocationPolicy} parameter without specifying
 the triangulation data structure, in case you are fine with the default there.
@@ -374,7 +385,9 @@ geometric traits.\footnote{The mechanism used behind the scenes to allow this
 syntactical convenience is called \textit{deduced parameters}.} 
 
 The \ccc{Fast_location} policy is implemented using a hierarchy of
-triangulations.  As proved in~\cite{cgal:d-dh-02}, this structure has an
+triangulations; it changes the behavior of functions \ccc{locate},
+\ccc{insert}, \ccc{move}, and \ccc{remove}.
+As proved in~\cite{cgal:d-dh-02}, this structure has an
 optimal behavior when it is built for Delaunay triangulations.
 
 In this setting, if you build a triangulation by iteratively inserting points,
@@ -382,9 +395,6 @@ you should try to shuffle the points beforehand, as the time complexity is
 guaranteed only for a randomized order.  For example, inserting points in
 lexicographic order is typically much slower.  Note that this shuffling is
 performed internally by the constructor taking a range of points.
-
-Reading Section~\ref{Triangulation3-sec-complexity} on complexity and
-performance can help making an informed choice for this parameter.
 
 Prior to \cgal\ 3.6, this functionality was available through the
 \ccc{Triangulation_hierarchy_3} class, which is now deprecated.
@@ -792,6 +802,8 @@ the package that were integrated in release~3.4.
 
 In 2009, Sylvain Pion simplified the design of the Delaunay hierarchy
 so that it became the simple \ccc{Fast_location} policy in release~3.6.
+
+In 2010, Pedro de Castro and Olivier Devillers added the point displacement.
 
 The authors wish to thank Lutz Kettner for inspiring discussions about
 the design of CGAL. Jean-Daniel Boissonnat is also acknowledged

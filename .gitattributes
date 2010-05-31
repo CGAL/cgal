@@ -3867,6 +3867,10 @@ Triangulation_3/doc_tex/TriangulationDS_3/topo-simplex4.pdf -text svneol=unset#a
 Triangulation_3/doc_tex/TriangulationDS_3/topo-simplex4.xml svneol=native#text/xml
 Triangulation_3/doc_tex/TriangulationDS_3_ref/flips.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/TriangulationDS_3_ref/flips.pdf -text svneol=unset#application/pdf
+Triangulation_3/doc_tex/TriangulationDS_3_ref/tds-dim_down.eps -text
+Triangulation_3/doc_tex/TriangulationDS_3_ref/tds-dim_down.gif -text
+Triangulation_3/doc_tex/TriangulationDS_3_ref/tds-dim_down.pdf -text
+Triangulation_3/doc_tex/TriangulationDS_3_ref/tds-dim_down.png -text
 Triangulation_3/doc_tex/TriangulationDS_3_ref/topo-insert_outside_affine_hull.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/TriangulationDS_3_ref/topo-insert_outside_affine_hull.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc_tex/TriangulationDS_3_ref/utils.gif -text svneol=unset#image/gif
