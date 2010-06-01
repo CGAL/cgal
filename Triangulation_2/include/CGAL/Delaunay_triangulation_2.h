@@ -869,8 +869,8 @@ remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,
       f[1] = f[0]->neighbor( ccw(i[0]) );
       i[1] = f[1]->index(v);
       w[1] = f[1]->vertex( ccw(i[1]) );
-      if ( is_infinite( f[1]->neighbor( i[1] ) ) ){//otherwise dim remains 2
-	if ( test_dim_down(v) ) {
+      if ( this->is_infinite( f[1]->neighbor( i[1] ) ) ){//otherwise dim remains 2
+	if ( this->test_dim_down(v) ) {
 	  d=0;
 	  this->tds().remove_dim_down(v);
 	  return; 
@@ -2364,7 +2364,7 @@ template <class Gt, class Tds >
 typename Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_2<Gt,Tds>::
 move(Vertex_handle v, const Point &p) {
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_triangulation_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
