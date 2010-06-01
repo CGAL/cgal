@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/internal/debug_counters.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE;
+CGAL_KINETIC_BEGIN_NAMESPACE
 
 
 template <class Traits_t, bool SLOPPY>
@@ -117,5 +117,5 @@ std::ostream &operator<<(std::ostream &out, const HDRS<T, SLOPPY> &k) {
   return k.write(out);
 }
 
-CGAL_KINETIC_END_NAMESPACE;
+CGAL_KINETIC_END_NAMESPACE
 #endif

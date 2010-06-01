@@ -94,7 +94,7 @@ bool has_degree_3(const T&t, const typename T::Edge &e)
     } while (ccir != ecir);
     bool ret=( degree==3);
     return ret;
-};
+}
 
 template <class Tr>
 bool has_degree_4(const Tr &t, const typename Tr::Vertex_handle vh)

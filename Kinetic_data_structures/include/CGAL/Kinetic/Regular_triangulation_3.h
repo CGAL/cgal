@@ -435,7 +435,7 @@ protected:
   typedef internal::Delaunay_triangulation_base_3<Base_traits, Delaunay_visitor> KDel;
 
   CGAL_KINETIC_DECLARE_LISTENERS(typename TraitsT::Simulator,
-				 typename Traits::Active_points_3_table);
+				 typename Traits::Active_points_3_table)
 
 public:
   

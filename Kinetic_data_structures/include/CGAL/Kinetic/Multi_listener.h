@@ -137,7 +137,7 @@ private:							\
   };                                                                    \
 public:                                                                 \
  typedef CGAL::Kinetic::Multi_listener_base<Listener_core> Listener;    \
- friend class CGAL::Kinetic::Multi_listener_base<Listener_core>;                       \
+ friend class CGAL::Kinetic::Multi_listener_base<Listener_core>;        \
 private:                                                                \
  void new_listener(Listener *sk) {                                      \
    listeners_.push_back(sk);                                            \
@@ -226,10 +226,12 @@ private:                                                                \
  }                                                                      \
  std::vector<Listener*> listeners_;
 
-#define CGAL_KINETIC_MULTINOTIFY(field) for(typename std::vector<Listener*>::iterator it= listeners_.begin(); it != listeners_.end(); ++it){ \
+#define CGAL_KINETIC_MULTINOTIFY(field) do {                            \
+  for(typename std::vector<Listener*>::iterator it= listeners_.begin(); it != listeners_.end(); ++it){ \
     (*it)->new_notification(Listener::field);				\
-  }
+  }} while (false)
 
-#define CGAL_KINETIC_MULTILISTENER_DESTRUCTOR CGAL_assertion(listeners_.empty());
+#define CGAL_KINETIC_MULTILISTENER_DESTRUCTOR CGAL_assertion(listeners_.empty())
+
 CGAL_KINETIC_END_NAMESPACE
 #endif

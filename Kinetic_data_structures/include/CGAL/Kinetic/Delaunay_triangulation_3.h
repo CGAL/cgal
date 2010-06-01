@@ -125,7 +125,7 @@ private:
   typedef internal::Delaunay_triangulation_base_3<Base_traits, Visitor> KDel;
 
   CGAL_KINETIC_DECLARE_LISTENERS(typename TraitsT::Simulator,
-				 typename TraitsT::Active_points_3_table);
+				 typename TraitsT::Active_points_3_table)
 
 public:
   //! Initialize it.
@@ -205,7 +205,7 @@ public:
 
  
 
-  CGAL_KINETIC_LISTENER1(TRIANGULATION);
+  CGAL_KINETIC_LISTENER1(TRIANGULATION)
 
  void on_geometry_changed() {
     CGAL_KINETIC_NOTIFY(TRIANGULATION);

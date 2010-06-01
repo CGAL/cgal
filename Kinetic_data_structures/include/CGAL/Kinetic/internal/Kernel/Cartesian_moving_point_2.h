@@ -24,7 +24,7 @@
 #include <iostream>
 #include <CGAL/Point_2.h>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE;
+CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
 template <class Coordinate_t>
 class Cartesian_moving_point_2

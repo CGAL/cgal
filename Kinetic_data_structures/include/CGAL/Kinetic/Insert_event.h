@@ -24,7 +24,7 @@
 #include <CGAL/Kinetic/internal/To_static.h>
 #include <CGAL/Kinetic/Event_base.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE;
+CGAL_KINETIC_BEGIN_NAMESPACE
 
 //! An event to insert a single object into a MovingObjectTable
 
@@ -62,5 +62,5 @@ std::ostream &operator<<(std::ostream &out, const Insert_event< MH> &moi)
 }
 
 
-CGAL_KINETIC_END_NAMESPACE;
+CGAL_KINETIC_END_NAMESPACE
 #endif

@@ -41,7 +41,7 @@ class Simulator_listener: public SL
 {
   typedef SL P;
 public:
-  CGAL_KINETIC_LISTENER_BASICS(Simulator_listener, KDS);
+  CGAL_KINETIC_LISTENER_BASICS(Simulator_listener, KDS)
 
   //! Pass HAS_AUDIT_TIME notifications via a call to the audit() function
   void new_notification(typename P::Notification_type t) {
@@ -74,7 +74,7 @@ class Active_objects_listener: public Moving_object_table_listener
   typedef typename Moving_object_table_listener::Notifier_handle::element_type MOT;
   typedef Moving_object_table_listener P;
 public:
-  CGAL_KINETIC_LISTENER_BASICS(Active_objects_listener, KDS);
+  CGAL_KINETIC_LISTENER_BASICS(Active_objects_listener, KDS)
 public:
   //! Pass EDITING notifications
   /*!  When editing changes to false, call new_object, changed_object,
@@ -131,7 +131,7 @@ class Active_objects_batch_listener: public Moving_object_table_listener
   typedef typename Moving_object_table_listener::Notifier_handle::element_type MOT;
   typedef Moving_object_table_listener P;
 public:
-  CGAL_KINETIC_LISTENER_BASICS(Active_objects_batch_listener, KDS);
+  CGAL_KINETIC_LISTENER_BASICS(Active_objects_batch_listener, KDS)
   //! Pass EDITING notifications
   /*!  When editing changes to false, call new_object, changed_object,
     deleted_object for each new, changed or deleted object in the
@@ -175,24 +175,24 @@ public:
   typedef typename CGAL::Kinetic::Active_objects_listener<A::Listener, This> Moving_point_table_listener; \
   friend class CGAL::Kinetic::Active_objects_listener<A::Listener, This>; \
   Simulator_listener siml_;\
-  Moving_point_table_listener motl_; 
+  Moving_point_table_listener motl_;
 
 
 #define CGAL_KINETIC_DECLARE_AOT_LISTENER(A) private:			\
   typedef typename CGAL::Kinetic::Active_objects_listener<A::Listener, This> Moving_point_table_listener; \
   friend class CGAL::Kinetic::Active_objects_listener<A::Listener, This>; \
-  Moving_point_table_listener motl_; 
+  Moving_point_table_listener motl_;
 
 
 #define CGAL_KINETIC_INITIALIZE_LISTENERS(sh, ph)			\
   siml_.set_recipient(this); siml_.set_notifier(sh);			\
   motl_.set_recipient(this); motl_.set_notifier(ph);			\
-  motl_.catch_up();
+  motl_.catch_up()
 
 
 #define CGAL_KINETIC_INITIALIZE_AOT_LISTENER(ph)			\
   motl_.set_recipient(this); motl_.set_notifier(ph);			\
-  motl_.catch_up();
+  motl_.catch_up()
 
 
 #define CGAL_KINETIC_DECLARE_BATCH_LISTENERS(S, A) private:		\
@@ -201,12 +201,12 @@ public:
   typedef typename CGAL::Kinetic::Active_objects_batch_listener<A::Listener, This> Moving_point_table_listener; \
   friend class CGAL::Kinetic::Active_objects_batch_listener<A::Listener, This>;\
   Simulator_listener siml_;						\
-  Moving_point_table_listener motl_; 
+  Moving_point_table_listener motl_;
 
 #define CGAL_KINETIC_INITIALIZE_BATCH_LISTENERS(sh, ph, insert) \
   siml_.set_recipient(this); siml_.set_notifier(sh);		\
   motl_.set_recipient(this); motl_.set_notifier(ph);		\
-  if (insert) motl_.catch_up();
+  if (insert) motl_.catch_up()
 
 CGAL_KINETIC_END_NAMESPACE
 #endif

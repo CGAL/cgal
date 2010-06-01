@@ -118,7 +118,7 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
   friend class Swap_event<This,iterator, typename KLess::result_type>;
   // Redirects the Simulator notifications to function calls
   CGAL_KINETIC_DECLARE_LISTENERS(typename Traits::Simulator,
-				 typename Active_objects_table);
+				 typename Active_objects_table)
 public:
   
   // Register this KDS with the MovingObjectTable and the Simulator

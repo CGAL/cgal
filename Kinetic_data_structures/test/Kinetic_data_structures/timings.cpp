@@ -206,4 +206,4 @@ int main(/* int argc, char *argv[] */)
    << CGAL::POLYNOMIAL::lazy_stats.isolated_ << " "
    << CGAL::POLYNOMIAL::lazy_stats.refine_attempted_ << " "
    << CGAL::POLYNOMIAL::lazy_stats.refine_succeeded_ << std::endl; */
-};
+}

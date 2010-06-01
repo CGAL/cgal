@@ -70,7 +70,7 @@ private:
   Priority time_;
 };
 
-CGAL_OUTPUT1(Heap_pointer_event_queue_item);
+CGAL_OUTPUT1(Heap_pointer_event_queue_item)
 
 
 template <class Priority>
@@ -87,7 +87,7 @@ public:
   Heap_pointer_event_queue_item_handle(const P&p): P(p){}
 };
 
-CGAL_OUTPUT1(Heap_pointer_event_queue_item_handle);
+CGAL_OUTPUT1(Heap_pointer_event_queue_item_handle)
 
 // The how a dummy item is stored in the ::Heap_pointer_event_queue
 /*

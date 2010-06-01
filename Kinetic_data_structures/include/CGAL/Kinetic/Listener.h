@@ -233,7 +233,7 @@ private:							\
 
 #define CGAL_KINETIC_NOTIFY(field) if (listener_!= NULL) listener_->new_notification(Listener::field)
 
-#define CGAL_KINETIC_LISTENER_DESTRUCTOR CGAL_assertion(listener_==NULL);
+#define CGAL_KINETIC_LISTENER_DESTRUCTOR CGAL_assertion(listener_==NULL)
 
 
 #define CGAL_KINETIC_LISTENER_BASICS(Name, KDS)		\
@@ -274,7 +274,7 @@ private:						\
       else {								\
       }									\
     }									\
-  };								\
+  };                                                                    \
   friend class Notifier##_listener;					\
   Notifier##_listener listener_##Notifier##_;
 

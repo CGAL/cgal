@@ -113,4 +113,4 @@ int main(int argc, char *argv[])
   
   if (CGAL::Kinetic::internal::audit_failures__ != 0 ) return EXIT_FAILURE;
   else return EXIT_SUCCESS;
-};
+}

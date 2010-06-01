@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <iostream>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE;
+CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
 template <class Coordinate_t>
 class Cartesian_moving_point_3
@@ -198,7 +198,7 @@ std::istream &operator>>(std::istream &in,
 }
 
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE;
+CGAL_KINETIC_END_INTERNAL_NAMESPACE
 
 /*CGAL_KINETIC_BEGIN_NAMESPACE;
 

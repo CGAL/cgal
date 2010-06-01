@@ -68,14 +68,14 @@ protected:
   typedef Active_objects_vector<Value_t> This;
   typedef std::pair<Key, Value_t> Storage_item;
   typedef std::vector<Storage_item > Storage;
-  CGAL_KINETIC_MULTILISTENER1(IS_EDITING);
+  CGAL_KINETIC_MULTILISTENER1(IS_EDITING)
   
 public:
 
   //! default constructor
   Active_objects_vector():editing_(false), num_valid_(false){}
 
-  ~Active_objects_vector(){CGAL_KINETIC_MULTILISTENER_DESTRUCTOR}
+  ~Active_objects_vector(){CGAL_KINETIC_MULTILISTENER_DESTRUCTOR;}
 
   //! access a point
   const Data &operator[](Key key) const

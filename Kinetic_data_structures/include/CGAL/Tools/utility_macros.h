@@ -23,21 +23,21 @@
 #define CGAL_UTILITY_MACROS_H
 
 #define CGAL_SUBSCRIPT(type, expr) type& operator[](unsigned int i){ expr;} \
-  const type& operator[](unsigned int i) const { expr;} 
+  const type& operator[](unsigned int i) const { expr;}
 
 #define CGAL_COPY_CONSTRUCTOR(TC) TC(const TC &o){copy_from(o);}\
-  TC& operator=(const TC &o) {copy_from(o); return *this;}  
+  TC& operator=(const TC &o) {copy_from(o); return *this;}
 
 // 
-#define CGAL_GET(type, name, expr) const type & name() const{expr;} 
-#define CGAL_GETOBJECT(UC, lc, expr) const UC& lc##_object() const {expr;} 
-#define CGAL_GETNR(type, name, expr) type name() const{expr;} 
+#define CGAL_GET(type, name, expr) const type & name() const{expr;}
+#define CGAL_GETOBJECT(UC, lc, expr) const UC& lc##_object() const {expr;}
+#define CGAL_GETNR(type, name, expr) type name() const{expr;}
 //#define CGAL_GET(type, name, expr) typename boost::call_traits<type>::param_type name() const {expr;}
 
-#define CGAL_IS(name, expr) bool is_##name() const {expr;} 
-#define CGAL_SET_IS(name, expr) void set_is_##name(bool tf) {expr;} 
+#define CGAL_IS(name, expr) bool is_##name() const {expr;}
+#define CGAL_SET_IS(name, expr) void set_is_##name(bool tf) {expr;}
 
-#define CGAL_SET(type, name, expr) void set_##name(const type &k) {expr;} 
+#define CGAL_SET(type, name, expr) void set_##name(const type &k) {expr;}
 
 #define CGAL_GETSET(type, name, var)		\
   CGAL_GET(type, name, return var)              \
@@ -46,7 +46,8 @@
 #define CGAL_OUTPUT(type)						\
   inline std::ostream& operator<<(std::ostream&out, const type &t){	\
     return t.write(out);						\
-  }
+  }                                                                     \
+  CGAL_REQUIRE_SEMICOLON_NAMESPACE
 
 #define CGAL_OUTPUT1(type)						\
   template <class A>							\
@@ -69,7 +70,6 @@
   uc_name##_consts lc_name##s() const {                                 \
     return uc_name##_consts(const_it_type(bexpr), const_it_type(eexpr)); \
   }
-
 
 #define CGAL_CONST_ITERATOR(uc_name, lc_name, it_type, bexpr, eexpr)	\
   typedef boost::iterator_range< it_type > uc_name##s;                  \
@@ -113,10 +113,10 @@
 
 
 #define CGAL_INSERT(ucname, expr)					\
-  void insert(ucname##_key k, const ucname &m) {expr;} 
+  void insert(ucname##_key k, const ucname &m) {expr;}
 
 #define CGAL_INSERTNK(ucname, expr)			\
-  void insert(const ucname &m) {expr;} 
+  void insert(const ucname &m) {expr;}
 
 #define CGAL_SWAP(type)				\
   inline void swap(type &a, type &b) {		\
@@ -133,7 +133,7 @@
 template <class A, class B>			\
  inline void swap(type<A,B> &a, type<A,B> &b) {	\
     a.swap_with(b);				\
-  }
+}
 
 #define CGAL_ISWAP(name)			\
   std::swap(name, o.name)
@@ -159,7 +159,7 @@ template <class A, class B>			\
   }									\
   bool operator<=(const This &o) const {				\
     return compare(o) != CGAL::LARGER;					\
-  } 
+  }
 
 #define CGAL_COMPARISONS_COMPARE bool operator==(const This &o) const { \
     return compare(o)==0;						\
@@ -178,7 +178,8 @@ template <class A, class B>			\
   }									\
   bool operator<=(const This &o) const {				\
     return compare(o) <= 0;                                             \
-  } 
+  }
+
 
 
 #define CGAL_COMPARISONS1(field) bool operator==(const This &o) const { \
@@ -198,7 +199,8 @@ template <class A, class B>			\
   }									\
   bool operator<=(const This &o) const {				\
     return (field<= o.field);						\
-  } 
+  }
+
 
 
 
@@ -223,7 +225,8 @@ template <class A, class B>			\
   }									\
   bool operator<=(const This &o) const {				\
     return !operator>(o);						\
-  } 
+  }
+
 
 #define CGAL_COMPARISONS3(a, b, c)					\
   bool operator==(const This &o) const {				\
@@ -252,6 +255,7 @@ template <class A, class B>			\
   bool operator<=(const This &o) const {				\
     return !operator>(o);						\
   }
+
 
 #define CGAL_REAL_EMBEDDABLE_BODY					\
   class Abs								\
@@ -333,7 +337,7 @@ template <class A, class B>			\
   static const bool is_modulo= false;					\
   static const bool traps = false;					\
   static const bool tinyness_before =false;				\
-  static const float_round_style round_stype = round_toward_zero	\
+  static const float_round_style round_stype = round_toward_zero;	\
     
 
 #define CGAL_REAL_EMBEDDABLE1(name)					\

@@ -152,7 +152,7 @@ public:
   typedef typename CGAL::Kinetic::Active_objects_batch_listener_helper<typename Moving_point_table::Listener, This> Moving_point_table_listener;
   friend class CGAL::Kinetic::Active_objects_batch_listener_helper<typename Moving_point_table::Listener, This>;*/
   CGAL_KINETIC_DECLARE_BATCH_LISTENERS(typename Simulator,
-				       typename Moving_point_table);
+				       typename Moving_point_table)
 
   /*struct Compare_edges{
     bool operator()(const Edge &a, const Edge &b) const {
