@@ -34,7 +34,8 @@
 #include <QPluginLoader>
 #include <QDir>
 #include <QApplication>
-
+#include <QMenu>
+#include <QList>
 
 class Mesh_3_implicit_function_loader_plugin :
   public QObject,
@@ -51,7 +52,7 @@ public:
   
   QList<QAction*> actions() const
   {
-    return QList<QAction*>() << actionLoadFunction_;
+    return QList<QAction*>();
   }
   
 public slots:
@@ -61,7 +62,6 @@ private:
   void load_function_plugins();
   
 private:
-  QAction* actionLoadFunction_;
   QList<Implicit_function_interface*> functions_;
 };
 
@@ -69,7 +69,6 @@ private:
 
 Mesh_3_implicit_function_loader_plugin::
 Mesh_3_implicit_function_loader_plugin()
-  : actionLoadFunction_(NULL)
 {
   load_function_plugins();
 }
@@ -82,10 +81,38 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface)
   this->scene = scene_interface;
   this->mw = mainWindow;
   
-  actionLoadFunction_ = new QAction("Load Implicit Function", mw);
-  if( NULL != actionLoadFunction_ )
+  QAction* actionLoadFunction = new QAction("Load Implicit Function", mw);
+  if( NULL != actionLoadFunction )
   {
-    connect(actionLoadFunction_, SIGNAL(triggered()), this, SLOT(load_function()));
+    connect(actionLoadFunction, SIGNAL(triggered()), this, SLOT(load_function()));
+  }
+  
+  QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
+  if ( NULL != menuFile )
+  {
+    QList<QAction*> menuFileActions = menuFile->actions();
+    
+    // Look for action just after "Load..." action
+    QAction* actionAfterLoad = NULL;
+    for ( QList<QAction*>::iterator it_action = menuFileActions.begin(), 
+         end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
+    {
+      if ( NULL != *it_action && (*it_action)->text().contains("Load") )
+      {
+        ++it_action;
+        if ( it_action != end && NULL != *it_action )
+        {
+          actionAfterLoad = *it_action;
+        }
+      }
+    }
+    
+    // Insert "Load implicit function" action
+    if ( NULL != actionAfterLoad )
+    {
+      menuFile->insertAction(actionAfterLoad,actionLoadFunction);      
+    }
+    
   }
 }
 
