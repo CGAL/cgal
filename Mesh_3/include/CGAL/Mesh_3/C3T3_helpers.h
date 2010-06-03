@@ -26,6 +26,7 @@
 
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
+#include <CGAL/tuple.h>
 
 #include <boost/optional.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -33,6 +34,8 @@
 #include <boost/lambda/bind.hpp>
 
 #include <functional>
+#include <vector>
+#include <set>
 
 namespace CGAL {
 namespace Mesh_3 {
