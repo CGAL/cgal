@@ -9,9 +9,9 @@ Functor decomposing a \ccc{Fraction} into its numerator and denominator.
 \ccOperations
 %SetThreeColumns{xxxxxxxxxx}{xxxxx}{}
 \ccCreationVariable{decompose}
-\ccMethod{result_type operator()( FractionTraits::Type               f,
-                                  FractionTraits::Numerator_type   & n,
-                                  FractionTraits::Denominator_type & d);}
+\ccMethod{void operator()( FractionTraits::Type               f,
+                           FractionTraits::Numerator_type   & n,
+                           FractionTraits::Denominator_type & d);}
         {decompose $f$ into numerator $n$ and denominator $d$. }
 
 %\ccHasModels
