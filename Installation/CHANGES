@@ -72,6 +72,11 @@ since CGAL-3.6:
   - Fix a bug in <CGAL/Orthogonal_k_neighbor_search.h> when several
     nearest neighbors are at the same distance from the query point.
 
+8. IO Streams
+
+  - Fix a bug in <CGAL/IO/VRML_2_ostream.h> that generated VRML 2 files with
+    an invalid syntax for IndexedFaceSet nodes.
+
 ----------------------------- Release 3.6 ----------------------------------
 
 CGAL 3.6 offers the following improvements and new functionality : 

@@ -24,6 +24,8 @@
 #ifndef CGAL_MESH_3_GLOBAL_PARAMETERS_H
 #define CGAL_MESH_3_GLOBAL_PARAMETERS_H
 
+#include <CGAL/config.h>
+
 #define BOOST_PARAMETER_MAX_ARITY 8
 #include <boost/parameter.hpp>
 
