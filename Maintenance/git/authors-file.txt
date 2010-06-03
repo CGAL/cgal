@@ -90,6 +90,7 @@ rozapoga = Roza Pogalnikova <rozapoga@post.tau.ac.il>
 rschindl = Ralf Schindlbeck <rschindl@mpi-inf.mpg.de>
 rursu = Radu Ursu <Radu.Ursu@sophia.inria.fr>
 sabath = Niv Sabath <sabath@post.tau.ac.il>
+sccode = Fei (Sophie) Che <che.sophie@gmail.com>
 seel = Michael Seel <seel@mpi-sb.mpg.de>
 shaihi = Shai Hirsch <shaihi@post.tau.ac.il>
 shornus = Samuel Hornus <Samuel.Hornus@sophia.inria.fr>
