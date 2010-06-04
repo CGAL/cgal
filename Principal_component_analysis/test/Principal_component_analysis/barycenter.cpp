@@ -102,6 +102,9 @@ void test_3()
   assert( CGAL::centroid(pts.begin(), pts.begin()+2,CGAL::Dimension_tag<0>()) == p0);
   assert( CGAL::centroid(pts.begin()+1, pts.begin()+3,CGAL::Dimension_tag<0>())
           == CGAL::midpoint(p0, p1) );
+
+  // Test other CGAL::centroid overloads
+  assert( CGAL::centroid(p0,p1,p0,p1) == CGAL::midpoint(p0,p1) );
 }
 
 
