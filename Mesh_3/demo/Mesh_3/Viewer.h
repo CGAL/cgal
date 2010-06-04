@@ -1,13 +1,14 @@
 #ifndef VIEWER_H
 #define VIEWER_H
 
+#include "Viewer_config.h"
 #include <QGLViewer/qglviewer.h>
 
 // forward declarations
 class QWidget;
 class Scene_draw_interface;
 
-class Viewer : public QGLViewer {
+class VIEWER_EXPORT Viewer : public QGLViewer {
 
   Q_OBJECT
 
