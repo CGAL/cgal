@@ -3,7 +3,7 @@
 
 #include <QtCore/qglobal.h>
 
-#ifdef scene_item_EXPORTS
+#ifdef viewer_EXPORTS
 #  define VIEWER_EXPORT Q_DECL_EXPORT
 #else
 #  define VIEWER_EXPORT Q_DECL_IMPORT
