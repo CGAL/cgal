@@ -31,7 +31,7 @@ public:
 
 QStringList Mesh_3_image_loader_plugin::nameFilters() const {
   return QStringList() << "Inrimage files (*.inr *.inr.gz)"
-                       << "Analize files (*.hdr *.img *img.gz)"
+                       << "Analyze files (*.hdr *.img *img.gz)"
                        << "All files (*.*)";
 };
 
