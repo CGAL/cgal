@@ -310,7 +310,6 @@ inline
 Gmpq& Gmpq::operator+=(const Gmpz &z){
   if(unique()){
     mpz_addmul(mpq_numref(mpq()),mpq_denref(mpq()),z.mpz());
-    mpq_canonicalize(mpq());
   }else{
     Gmpq result;
     mpz_mul(mpq_numref(result.mpq()),
@@ -320,7 +319,6 @@ Gmpq& Gmpq::operator+=(const Gmpz &z){
             mpq_numref(mpq()),
             mpq_numref(result.mpq()));
     mpz_set(mpq_denref(result.mpq()),mpq_denref(mpq()));
-    mpq_canonicalize(result.mpq());
     swap(result);
   }
   return *this;
@@ -330,7 +328,6 @@ inline
 Gmpq& Gmpq::operator-=(const Gmpz &z){
   if(unique()){
     mpz_submul(mpq_numref(mpq()),mpq_denref(mpq()),z.mpz());
-    mpq_canonicalize(mpq());
   }else{
     Gmpq result;
     mpz_mul(mpq_numref(result.mpq()),
@@ -340,7 +337,6 @@ Gmpq& Gmpq::operator-=(const Gmpz &z){
             mpq_numref(mpq()),
             mpq_numref(result.mpq()));
     mpz_set(mpq_denref(result.mpq()),mpq_denref(mpq()));
-    mpq_canonicalize(result.mpq());
     swap(result);
   }
   return *this;

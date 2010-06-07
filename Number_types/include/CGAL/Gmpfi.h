@@ -99,10 +99,10 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfi,CGAL::Tag_true>{
 
         public:
 
-        typedef Tag_true                        Is_real_embeddable;
-        typedef Uncertain<bool>                 Boolean;
-        typedef Uncertain<Comparison_result>    Comparison_result;
-        typedef Uncertain<CGAL::Sign>           Sign;
+        typedef Tag_true                                Is_real_embeddable;
+        typedef Uncertain<bool>                         Boolean;
+        typedef Uncertain<CGAL::Comparison_result>      Comparison_result;
+        typedef Uncertain<CGAL::Sign>                   Sign;
  
         typedef AST::Is_zero    Is_zero;
 
