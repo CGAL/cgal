@@ -809,8 +809,8 @@ centroid(InputIterator begin,
 // computes the centroid of a set of kernel objects
 // takes an iterator range over kernel objects
 
-// We use two different functions here in order to avoid a wrong match with
-// CGAL::centroid(Point_3, Point_3, Point_3, Point_3)
+// We use different overloads here in order to avoid a wrong match with
+// CGAL::centroid(Point_3, Point_3, Point_3, Point_3) (with VC++ and Intel).
 template < typename InputIterator, 
            typename K >
 inline
@@ -824,15 +824,28 @@ centroid(InputIterator begin,
   return internal::centroid(begin, end, k,(Value_type*) NULL, tag);
 }
 
-template < typename InputIterator, 
-           typename K,
-           int d>
+template < typename InputIterator, typename K >
 inline
 typename Access::Point<K, typename Ambient_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type>::type
-centroid(InputIterator begin,
-         InputIterator end, 
-         const K& k,
-         Dimension_tag<d> tag)
+centroid(InputIterator begin, InputIterator end, const K& k, Dimension_tag<0> tag)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+  return internal::centroid(begin, end, k,(Value_type*) NULL, tag);
+}
+
+template < typename InputIterator, typename K >
+inline
+typename Access::Point<K, typename Ambient_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type>::type
+centroid(InputIterator begin, InputIterator end, const K& k, Dimension_tag<1> tag)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+  return internal::centroid(begin, end, k,(Value_type*) NULL, tag);
+}
+
+template < typename InputIterator, typename K >
+inline
+typename Access::Point<K, typename Ambient_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type>::type
+centroid(InputIterator begin, InputIterator end, const K& k, Dimension_tag<2> tag)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return internal::centroid(begin, end, k,(Value_type*) NULL, tag);
