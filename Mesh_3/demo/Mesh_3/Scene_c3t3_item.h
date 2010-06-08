@@ -83,6 +83,7 @@ public slots:
 private:
   void build_histogram();
   void compute_color_map(const QColor& c);
+  QColor get_histogram_color(const double v) const;
   
 protected:
   void direct_draw(int) const;

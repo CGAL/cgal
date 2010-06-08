@@ -325,6 +325,9 @@ Scene_c3t3_item::build_histogram()
     max_size = (std::max)(max_size,*it);
   }
   
+  // colored histogram
+  int j = 0;
+  
   // draw
   int i=left_margin;
   for ( std::vector<int>::iterator it = histo_data.begin(), end = histo_data.end() ;
@@ -333,7 +336,11 @@ Scene_c3t3_item::build_histogram()
     int line_height = std::ceil(static_cast<double>(drawing_height) *
       static_cast<double>(*it)/static_cast<double>(max_size));
     
-    painter.drawRect(i, drawing_height+top_margin-line_height, cell_width, line_height);
+    painter.fillRect(i,
+                     drawing_height+top_margin-line_height,
+                     cell_width,
+                     line_height,
+                     get_histogram_color(j++));
   }
   
   // draw bottom horizontal line
@@ -349,12 +356,11 @@ Scene_c3t3_item::build_histogram()
   const int max_tr_width = 2*((histo_data.size()-std::floor(max_value))*cell_width + left_margin);
   const int tr_y = drawing_height + top_margin + text_margin;
   
-  if ( min_value < 5 ) { painter.setPen(Qt::red); }
-  else { painter.setPen(Qt::darkGreen); }
-  
+  painter.setPen(get_histogram_color(min_value));
   QRect min_text_rect (0, tr_y, min_tr_width, text_height);
   painter.drawText(min_text_rect, Qt::AlignCenter, tr("%1").arg(min_value,0,'f',1));
   
+  painter.setPen(get_histogram_color(max_value));           
   QRect max_text_rect (width - max_tr_width, tr_y, max_tr_width, text_height);
   painter.drawText(max_text_rect, Qt::AlignCenter, tr("%1").arg(max_value,0,'f',1));
 }
@@ -416,6 +422,19 @@ create_histogram(const C3t3& c3t3, double& min_value, double& max_value)
 	}
   
 	return histo;	
+}
+
+
+QColor
+Scene_c3t3_item::get_histogram_color(const double v) const
+{
+  if ( v < 5 )            { return Qt::red; }
+  else if ( v < 10 )      { return QColor(215,108,0); }
+  else if ( v < 15 )      { return QColor(138,139,0); }
+  else if ( v < 165 )     { return Qt::darkGreen; }
+  else if ( v < 170 )     { return QColor(138,139,1); }
+  else if ( v < 175 )     { return QColor(215,108,0); }
+  else /* 175<v<=180 */   { return Qt::red; }
 }
 
 
