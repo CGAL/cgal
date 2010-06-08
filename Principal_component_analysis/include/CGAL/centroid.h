@@ -809,46 +809,44 @@ centroid(InputIterator begin,
 // computes the centroid of a set of kernel objects
 // takes an iterator range over kernel objects
 
-// We use different overloads here in order to avoid a wrong match with
-// CGAL::centroid(Point_3, Point_3, Point_3, Point_3) (with VC++ and Intel).
-template < typename InputIterator, 
-           typename K >
-inline
-typename Access::Point<K, typename Ambient_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type>::type
-centroid(InputIterator begin,
-         InputIterator end, 
-         const K& k,
-         Dynamic_dimension_tag tag)
+namespace internal {
+  
+template < typename InputIterator, typename K, typename Dim_tag >
+struct Dispatch_centroid_3
 {
-  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  return internal::centroid(begin, end, k,(Value_type*) NULL, tag);
+  typedef typename Access::Point<K, typename Ambient_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type>::type result_type;
+  
+  result_type operator()(InputIterator begin, InputIterator end, const K& k, Dim_tag tag) const
+  {
+    typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+    return centroid(begin, end, k,(Value_type*) NULL, tag);
+  }
+};
+
+#if defined(_MSC_VER) || defined (__INTEL_COMPILER)
+  // Workaround for VC++ and Intel compiler
+  // (avoids wrong template function instanciation)
+  template <typename K>
+  struct Dispatch_centroid_3<Point_3<K>, Point_3<K>, Point_3<K> >
+  {
+    typedef void result_type;
+  };
+#endif
+  
+} // namespace internal
+
+template < typename InputIterator, typename K>
+typename internal::Dispatch_centroid_3<InputIterator,K,Dynamic_dimension_tag>::result_type
+centroid(InputIterator begin, InputIterator end, const K& k, Dynamic_dimension_tag tag)
+{
+  return internal::Dispatch_centroid_3<InputIterator,K,Dynamic_dimension_tag>()(begin,end,k,tag);
 }
 
-template < typename InputIterator, typename K >
-inline
-typename Access::Point<K, typename Ambient_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type>::type
-centroid(InputIterator begin, InputIterator end, const K& k, Dimension_tag<0> tag)
+template < typename InputIterator, typename K, int d >
+typename internal::Dispatch_centroid_3<InputIterator,K,Dimension_tag<d> >::result_type
+centroid(InputIterator begin, InputIterator end, const K& k, Dimension_tag<d> tag)
 {
-  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  return internal::centroid(begin, end, k,(Value_type*) NULL, tag);
-}
-
-template < typename InputIterator, typename K >
-inline
-typename Access::Point<K, typename Ambient_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type>::type
-centroid(InputIterator begin, InputIterator end, const K& k, Dimension_tag<1> tag)
-{
-  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  return internal::centroid(begin, end, k,(Value_type*) NULL, tag);
-}
-
-template < typename InputIterator, typename K >
-inline
-typename Access::Point<K, typename Ambient_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type>::type
-centroid(InputIterator begin, InputIterator end, const K& k, Dimension_tag<2> tag)
-{
-  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-  return internal::centroid(begin, end, k,(Value_type*) NULL, tag);
+  return internal::Dispatch_centroid_3<InputIterator,K,Dimension_tag<d> >()(begin,end,k,tag);
 }
 
 namespace internal {
@@ -866,6 +864,14 @@ struct Dispatch_centroid
     typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
     return CGAL::centroid(begin, end, k, typename Feature_dimension<Value_type, K>::type());
   }
+};
+
+// Avoids wrong matching with
+// CGAL::centroid(Point_3<K>, Point_3<K>, Point_3<K>)
+template < typename K >
+struct Dispatch_centroid < Point_3<K>, Point_3<K> >
+{
+  typedef void result_type;
 };
 
 // this one takes an iterator range over kernel objects, and a dimension tag,
