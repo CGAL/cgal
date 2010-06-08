@@ -82,7 +82,7 @@ create_straight_skeleton_2 ( PointIterator              aOuterContour_VerticesBe
   
   WeightSequenceIterator whi = aHolesWeightBegin   ;
   for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi, ++ whi )
-    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), whi->begin(), whi->end(), true, Point_converter ) ;
+    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), (*whi)->begin(), (*whi)->end(), true, Point_converter ) ;
   
   return ssb.construct_skeleton();
 }
@@ -154,7 +154,7 @@ create_straight_skeleton_2 ( PointIterator                  aOuterContour_Vertic
                            , HoleIterator                   aHolesBegin
                            , HoleIterator                   aHolesEnd
                            , double                         aWeight  
-                           , boost::optional<double> const& aMaxTime 
+                           , boost::optional<double> const& aMaxTime = boost::optional<double>()
                            )
 {
   return create_straight_skeleton_2(aOuterContour_VerticesBegin

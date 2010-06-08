@@ -53,7 +53,7 @@ typedef std::vector<IPoint>           IPolygon;
 typedef std::vector<IFT>              IWeights;
 typedef boost::shared_ptr<IPolygon>   IPolygonPtr;
 typedef boost::shared_ptr<IWeights>   IWeightsPtr;
-
+typedef std::vector<IWeightsPtr>      IWeightsPtrContainer ;
 
 struct IWeightedPolygon 
 {
