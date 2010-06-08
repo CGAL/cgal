@@ -75,6 +75,7 @@ public:
   using Ctr::fill_hole_delaunay;
   using Ctr::update_constraints;
   using Ctr::delete_vertex;
+  using Ctr::push_back;
 #endif
 
   typedef typename Geom_traits::Point_2  Point;
