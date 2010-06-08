@@ -143,6 +143,11 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
    // vc90:
 #  define CGAL_LIB_TOOLSET "vc90"
 
+#elif defined(BOOST_MSVC) && (BOOST_MSVC >= 1600)
+
+   // vc10:
+#  define CGAL_LIB_TOOLSET "vc100"
+
 #elif defined(__BORLANDC__)
 
    // CBuilder 6:
