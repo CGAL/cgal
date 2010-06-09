@@ -31,7 +31,7 @@
 #include <CGAL/MP_Float.h>
 #endif
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 template<class Kernel_t>
 class Sturm_sequence_base
 {
@@ -151,5 +151,5 @@ class Sturm_sequence_base
         Kernel k_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_POLYNOMIAL_INTERNAL_STURM_SEQUENCE_BASE_H

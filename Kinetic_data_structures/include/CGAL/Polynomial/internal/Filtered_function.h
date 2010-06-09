@@ -27,7 +27,7 @@
 #include <CGAL/Polynomial/internal/filtered_function_operation_nodes.h>
 #include <iterator>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 //! A function which supports filtering.
 /*!  This class wraps a tree for generating functions, allowing the
@@ -278,5 +278,5 @@ Filtered_function<Traits> operator+(const typename Traits::Exact_function::NT &n
 }
 
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

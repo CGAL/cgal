@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 do not use
 
@@ -57,5 +57,5 @@ class Filtered_sign_above_rational
         typename Kernel::Function p_;
         Kernel k_;
 };
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

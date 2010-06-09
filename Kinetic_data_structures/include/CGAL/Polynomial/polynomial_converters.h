@@ -25,7 +25,7 @@
 #include <CGAL/Polynomial/internal/nt_converters.h>
 #include <iterator>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 //! from P1 to P2
 template<class P1, class P2, class Converter_t =
@@ -136,5 +136,5 @@ public:
   }
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif                                            // CGAL_POLYNOMIAL_CONVERTER_H

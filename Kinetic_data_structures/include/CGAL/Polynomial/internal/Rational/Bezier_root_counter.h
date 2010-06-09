@@ -25,7 +25,7 @@
 #include <vector>
 #include <CGAL/Polynomial/internal/Sign_variations_counter.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 /*class Bezier_root_count {
 public:
@@ -824,5 +824,5 @@ const Polynomial& polynomial() const { return p; }*/
         Kernel kernel_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_BEZIER_ROOT_COUNTER_H

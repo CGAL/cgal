@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+namespace SegmentDelaunayGraph_2 {
 
 template<class K>
 class Voronoi_vertex_sqrt_field_new_C2
@@ -1484,7 +1484,7 @@ private:
 
 
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
+} //namespace SegmentDelaunayGraph_2
 
 } //namespace CGAL
 

@@ -31,7 +31,7 @@
 #include <CGAL/CORE/BigFloatRep.h>
 #include <CGAL/CORE/BigFloat.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 void core_io_error_handler(const char *f, const char *m) {
   std::cout << "\n error_handler";
@@ -453,5 +453,5 @@ void BigFloat::write_to_file2(std::ostream& out, int base, int charsPerLine) {
 }
 */
 
-CORE_END_NAMESPACE
+} //namespace CORE
 

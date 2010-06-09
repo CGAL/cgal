@@ -26,7 +26,7 @@
 
 //#define NEW_REF_COUNTED
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 class Ref_counted_base;
 
@@ -99,9 +99,9 @@ inline void intrusive_ptr_release(const Non_ref_counted_base *)
 
 
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class T>
 class Ref_counted: public internal::Ref_counted_base
@@ -125,5 +125,5 @@ struct Non_ref_counted: public internal::Non_ref_counted_base
 
 
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

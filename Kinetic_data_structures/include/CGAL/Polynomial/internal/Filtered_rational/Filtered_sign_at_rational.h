@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 template<class Fn>
 class Filtered_sign_at_rational
 {
@@ -107,5 +107,5 @@ class Filtered_sign_at_rational
         Fn p;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

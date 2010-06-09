@@ -25,11 +25,4 @@
 
 #define CGAL_VORONOI_DIAGRAM_2_INS CGAL::VoronoiDiagram_2::Internal
 
-#define CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE  \
-  namespace VoronoiDiagram_2 { \
-    namespace Internal {
-
-#define CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE } }
-
-
 #endif // CGAL_VORONOI_DIAGRAM_2_BASIC_H

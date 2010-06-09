@@ -34,7 +34,7 @@
 #include <CGAL/double.h>
 #include <CGAL/int.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 //! The class we use for interval arithmetic.
 /*!
   This class is not protected, so the Interval_arithmetic_guard must be used when calculations
@@ -107,7 +107,7 @@ namespace internal
 }
 
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 
 
 #elif POLYNOMIAL_USE_BOOST_INTERVAL
@@ -119,7 +119,7 @@ Not implemented yet.
 No interval arithmetic support.
 #endif
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 inline Extended_sign extended_sign(const Interval_nt &i)
 {
@@ -136,5 +136,5 @@ inline Extended_sign extended_sign(const Interval_nt &i)
 }
 
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif

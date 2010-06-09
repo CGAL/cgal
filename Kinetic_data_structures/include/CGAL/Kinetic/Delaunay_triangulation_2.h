@@ -34,7 +34,7 @@
 #include <CGAL/Kinetic/Event_base.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_default_traits_2.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 //#ifdef NDEBUG
 #define CGAL_DELAUNAY_2_DEBUG(x)
 /*#else
@@ -1174,5 +1174,5 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
 
   }
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

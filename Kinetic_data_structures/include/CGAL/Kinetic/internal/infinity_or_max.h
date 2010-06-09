@@ -23,7 +23,7 @@
 
 #include <limits>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 template <class T>
 T infinity_or_max()
 {
@@ -40,5 +40,5 @@ T infinity_or_max(T)
 }
 
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 #endif

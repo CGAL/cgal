@@ -33,7 +33,7 @@
 
 //#include <iomanip>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 #if CGAL_HAVE_TNT
 //static const double max_error_value =0.00005;
 
@@ -125,4 +125,4 @@ std::vector<double> &roots)
 }
 
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal

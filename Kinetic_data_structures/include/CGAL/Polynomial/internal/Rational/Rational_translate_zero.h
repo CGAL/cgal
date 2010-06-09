@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 //! Move 0 to -sh
 template <class Polynomial>
@@ -67,5 +67,5 @@ class Rational_translate_zero
         NT tr_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

@@ -23,7 +23,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Real_embeddable_traits.h>
 #include <vector>
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 //! A root represented as a bounding interval and a polynomial.
 /*!
@@ -635,7 +635,7 @@ bool is_rational(const Simple_interval_root<F> &f)
   }*/
 
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 
 namespace CGAL {
 

@@ -40,7 +40,7 @@
 #endif                          // initialize a member
 
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class KD>
 class Regular_3_pop_event: public Delaunay_event_base_3<KD, typename KD::Root_stack>
@@ -249,9 +249,9 @@ struct Regular_triangulation_3_types
 
 };
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 /*!
   redundant_cells_ maps each cell with redundant points to the ids of the points in that cell
@@ -1205,7 +1205,7 @@ std::ostream &operator<<(std::ostream &out, const Regular_triangulation_3<Traits
 }
 
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

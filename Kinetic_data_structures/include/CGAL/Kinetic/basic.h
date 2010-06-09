@@ -49,37 +49,21 @@
 #endif
 
 
-
-#define CGAL_KINETIC_BEGIN_NAMESPACE namespace CGAL { \
-namespace Kinetic \
-{ \
-
-    #define CGAL_KINETIC_END_NAMESPACE } \
-} //namespace CGAL
-
-#define CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE CGAL_KINETIC_BEGIN_NAMESPACE \
-namespace internal \
-{ \
-
-    #define CGAL_KINETIC_END_INTERNAL_NAMESPACE } \
-CGAL_KINETIC_END_NAMESPACE
-
-
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 typedef CGAL::Gmpq Default_field_nt;
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #else
 #include <CGAL/MP_Float.h>
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 typedef CGAL::MP_Float Default_field_nt;
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 
 #include <CGAL/Tools/Log.h>
 

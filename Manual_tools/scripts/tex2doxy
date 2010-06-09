@@ -579,7 +579,6 @@ SHOW_DIRECTORIES       = NO
 WARNINGS               = NO
 RECURSIVE              = YES
 FILTER_SOURCE_FILES    = YES
-INPUT_FILTER           = "sed -e 's/CGAL_BEGIN_NAMESPACE/namespace CGAL {/' -e 's/CGAL_END_NAMESPACE/}/'"
 SOURCE_BROWSER         = NO
 VERBATIM_HEADERS       = NO
 GENERATE_HTML          = NO

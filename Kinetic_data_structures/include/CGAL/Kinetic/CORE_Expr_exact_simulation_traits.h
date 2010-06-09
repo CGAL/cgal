@@ -33,7 +33,7 @@
 #include <CGAL/Cartesian.h>
 //#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 struct CORE_Expr_exact_simulation_traits {
   typedef CORE_Expr_exact_simulation_traits This;
@@ -90,5 +90,5 @@ protected:
   Kinetic_kernel kk_;
   Function_kernel fk_;
 };
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

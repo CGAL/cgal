@@ -25,7 +25,7 @@
 #include <CGAL/Polynomial/internal/Sign_variations_counter.h>
 #include <vector>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template<class Sturm_sequence_t>
 class Sign_Sturm_sequence : public Sturm_sequence_t
@@ -113,5 +113,5 @@ class Sign_Sturm_sequence : public Sturm_sequence_t
         Polynomial pder_, q_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_SIGN_STURM_SEQUENCE_H

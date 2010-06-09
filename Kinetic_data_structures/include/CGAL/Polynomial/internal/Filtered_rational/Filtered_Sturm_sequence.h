@@ -25,7 +25,7 @@
 #include <CGAL/NT_converter.h>
 #include <CGAL/Polynomial/internal/Sign_variations_counter.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 #define CGAL_POLYNOMIAL_NORMALIZE_GCD_IF_CONSTANT
 
@@ -329,5 +329,5 @@ class Filtered_Sturm_sequence
         mutable bool    know_exact;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_FILTERED_STURM_SEQUENCE_H

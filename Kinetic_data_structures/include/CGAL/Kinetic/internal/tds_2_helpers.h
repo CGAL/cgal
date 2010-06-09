@@ -22,7 +22,7 @@
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_HELPER_2_H
 #include <CGAL/Kinetic/basic.h>
 #include <utility>
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class TDS>
 struct Triangulation_data_structure_helper_2
@@ -73,5 +73,5 @@ struct Triangulation_data_structure_helper_2
 
 
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 #endif

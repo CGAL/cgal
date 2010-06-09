@@ -23,7 +23,7 @@
 
 #include <CGAL/Kinetic/Simulation_traits.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 struct Inexact_simulation_traits_2: public Suggested_inexact_simulation_traits_base {
   typedef Suggested_inexact_simulation_traits_base P;
@@ -48,5 +48,5 @@ protected:
   Active_points_2_table::Handle ap_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

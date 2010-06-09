@@ -2210,13 +2210,13 @@ void ending_segment(Vertex_handle v, ITERATOR it) {}
 #ifndef CGAL_USE_LEDA
 #define LEDA_MEMORY(t) 
 #endif
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 <<SM traits classes for segment overlay>>
 <<SM overlayer>>
 <<SM overlayer implementation>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #undef CGAL_USING
 #endif //CGAL_SM_OVERLAYER_H
 

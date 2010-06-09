@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+namespace ApolloniusGraph_2 {
 
 class ag2_predicate_profiler
 {
@@ -71,7 +71,7 @@ unsigned long ag2_predicate_profiler::shadow_region_type_counter = 0;
 unsigned long ag2_predicate_profiler::incircle_counter = 0;
 unsigned long ag2_predicate_profiler::order_on_bisector_counter = 0;
 
-CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
+} //namespace ApolloniusGraph_2
 
 } //namespace CGAL
 

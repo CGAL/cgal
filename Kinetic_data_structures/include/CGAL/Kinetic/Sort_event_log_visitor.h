@@ -25,7 +25,7 @@
 #include <sstream>
 #include <vector>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 struct Sort_event_log_visitor
 {
@@ -95,5 +95,5 @@ struct Sort_event_log_visitor
   std::vector<std::string> log_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

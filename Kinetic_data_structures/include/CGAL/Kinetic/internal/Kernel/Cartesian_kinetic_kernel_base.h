@@ -33,7 +33,7 @@
 #include <CGAL/Kinetic/internal/Kernel/Certificate.h>
 #include <CGAL/Kinetic/internal/Kernel/Center.h>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 //! A kinetic kernel using cartesian coordinates
 /*!
@@ -253,7 +253,7 @@ protected:
   Function_kernel k_;
 };
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 
 //#include <CGAL/Kinetic_internals/kernel_undefs.h>
 #endif

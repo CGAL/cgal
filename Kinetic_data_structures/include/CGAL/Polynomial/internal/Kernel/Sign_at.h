@@ -26,7 +26,7 @@
 #include <CGAL/Polynomial/polynomial_converters.h>
 #include <CGAL/Polynomial/internal/Rational/Sign_at_rational.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 template <class Root, class K>
 class Sign_at
 {
@@ -95,5 +95,5 @@ public:
 
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

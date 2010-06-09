@@ -38,7 +38,7 @@
 #define _CORE_REAL_H_
 #include "RealRep.h"
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 // class Real
 typedef RCImpl<RealRep> RCReal;
 class Real : public RCReal {
@@ -490,5 +490,5 @@ inline Real RealLong::operator-() const {
   return ker < -LONG_MAX ? -BigInt(ker) : -ker;
 }
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_REAL_H_

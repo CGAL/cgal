@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/FPU.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 template <class NT_t>
 class Filtered_number
@@ -306,7 +306,7 @@ std::ostream &operator<<(std::ostream &out, const Filtered_number<NT> &a)
 }
 
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 
 namespace CGAL {
 template <class NT>

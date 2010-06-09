@@ -22,7 +22,7 @@
 #define CGAL_POLYNOMIAL_INTERNAL_CONSTRUCT_FUNCTION_H
 #include <CGAL/Polynomial/basic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class Fn>
 struct Construct_function
@@ -105,5 +105,5 @@ result_type operator()(It b,
     }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

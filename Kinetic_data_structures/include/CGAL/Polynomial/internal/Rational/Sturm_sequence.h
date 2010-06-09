@@ -28,7 +28,7 @@
   \file Sturm_sequence.h A non-filtered Sturm sequence class.
 */
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template<class Kernel_t>
 class Sturm_sequence
@@ -91,5 +91,5 @@ class Sturm_sequence
         }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_POLYNOMIAL_INTERNAL_STURM_SEQUENCE_H

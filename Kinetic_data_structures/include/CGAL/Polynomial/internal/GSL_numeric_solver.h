@@ -27,7 +27,7 @@
 #include <gsl/gsl_poly.h>
 #include <gsl/gsl_errno.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 /*template <bool CLEAN>
 inline double gsl_max_error()
@@ -219,5 +219,5 @@ struct GSL_cleaned_numeric_solver
     }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

@@ -25,10 +25,5 @@
 
 #define CGAL_APOLLONIUS_GRAPH_2_NS CGAL::ApolloniusGraph_2
 
-#define CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE \
-  namespace ApolloniusGraph_2 {
-
-#define CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE }
-
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_BASIC_H

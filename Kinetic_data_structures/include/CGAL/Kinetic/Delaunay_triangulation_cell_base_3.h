@@ -25,7 +25,7 @@
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 //! A class to track labels of edges of faces in a triangulation
 template <class SimulationTraits, class Cell_base= CGAL::Triangulation_cell_base_3<typename SimulationTraits::Instantaneous_kernel> >
 class Delaunay_triangulation_cell_base_3: public Cell_base
@@ -113,5 +113,5 @@ std::ostream &operator<<(std::ostream &out,
 }
 
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

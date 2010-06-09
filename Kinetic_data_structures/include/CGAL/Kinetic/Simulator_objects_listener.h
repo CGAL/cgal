@@ -22,7 +22,7 @@
 #define CGAL_KINETIC_NOTIFICATION_HELPERS_H
 #include <CGAL/Kinetic/basic.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! A helper function to handle the simulator reversing time.
 /*!  This helper is only useful if you are implementing a variant on a
@@ -61,5 +61,5 @@ class Simulator_objects_listener: public Simulator_listener
         MOT *t_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

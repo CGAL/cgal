@@ -47,7 +47,7 @@
 
 #define CGAL_KINETIC_USE_CORE
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class StaticKernel,
 	  class KineticKernel,
@@ -183,5 +183,5 @@ struct Suggested_inexact_simulation_traits_base: public Simulation_traits<Sugges
 };
 
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

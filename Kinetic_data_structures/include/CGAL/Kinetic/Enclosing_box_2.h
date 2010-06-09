@@ -25,7 +25,7 @@
 #include <CGAL/Kinetic/listeners.h>
 #include <CGAL/Kinetic/Event_base.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class EB2>
 class Enclosing_box_bounce_event_2: public Event_base<EB2*>
@@ -258,5 +258,5 @@ protected:
   
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

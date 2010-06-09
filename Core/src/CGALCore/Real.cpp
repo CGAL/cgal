@@ -37,7 +37,7 @@
 #include <ctype.h>
 #include <CGAL/CORE/Real.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 const Real& Real::getZero() {
   static Real Zero(0);
@@ -265,4 +265,4 @@ std::istream& operator >>(std::istream& i, Real& x) {
   return i;
 }//operator >> (std::istream&, Real&)
 
-CORE_END_NAMESPACE
+} //namespace CORE

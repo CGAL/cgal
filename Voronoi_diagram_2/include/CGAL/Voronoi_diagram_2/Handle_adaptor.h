@@ -24,7 +24,7 @@
 
 namespace CGAL {
 
-CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
+namespace VoronoiDiagram_2 { namespace Internal {
 
 template<class T>
 class Handle_adaptor
@@ -64,7 +64,7 @@ class Handle_adaptor
   T t;
 };
 
-CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
+} } //namespace VoronoiDiagram_2::Internal
 
 } //namespace CGAL
 

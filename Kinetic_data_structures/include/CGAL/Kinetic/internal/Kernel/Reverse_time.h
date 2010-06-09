@@ -22,7 +22,7 @@
 #define CGAL_KINETIC_KERNEL_REVERSE_TIME_H
 #include <CGAL/Kinetic/basic.h>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class K>
 class Reverse_time
@@ -43,5 +43,5 @@ protected:
   typename K::Function_kernel::Negate_variable nv_;
 };
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 #endif

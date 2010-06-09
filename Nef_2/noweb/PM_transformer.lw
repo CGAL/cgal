@@ -104,12 +104,12 @@ CGAL_USING(Face_iterator);
 #define _DEBUG 13
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 <<PM transformer>>
 <<PM transformer implementation>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_PM_TRANSFORMER_H
 
 <<CGAL Header>>=

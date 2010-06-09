@@ -1583,7 +1583,7 @@ std::cout << #c##" " << c##_exception << "/" << c##_total << std::endl
 #define PRINT_STATISTICS(c)
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 <<simple polynomials>>
 <<extended points>>
 <<orientation predicate>>
@@ -1594,7 +1594,7 @@ CGAL_BEGIN_NAMESPACE
 <<direction predicates>>
 <<extended kernel>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #undef CHECK
 #undef KERNEL_CHECK

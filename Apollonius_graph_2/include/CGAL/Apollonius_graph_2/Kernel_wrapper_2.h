@@ -29,7 +29,7 @@
 
 namespace CGAL {
 
-CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+namespace ApolloniusGraph_2 {
 
 template<class Kernel_base_2>
 class Apollonius_graph_kernel_wrapper_2 : public Kernel_base_2
@@ -78,7 +78,7 @@ public:
 };
 
 
-CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
+} //namespace ApolloniusGraph_2
 
 } //namespace CGAL
 

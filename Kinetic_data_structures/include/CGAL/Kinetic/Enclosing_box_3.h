@@ -26,7 +26,7 @@
 #include <CGAL/Kinetic/Enclosing_box_3.h>
 #include <CGAL/Kinetic/Event_base.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class EB3>
 class Enclosing_box_bounce_event_3: public Event_base<EB3*>
@@ -285,5 +285,5 @@ protected:
   std::map<Point_key, Event_key> certs_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

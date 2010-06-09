@@ -41,7 +41,7 @@
 #include <CGAL/Polynomial/Kernel/Sturm_root_counter.h>
 #include <CGAL/Polynomial/Kernel/Compare_isolated_roots_in_interval.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class SFK_t, class IFK_t, class EFK_t, class IFC_t, class EFC_t, class EIFC_t>
 class Filtered_polynomial_rational_kernel
@@ -222,5 +222,5 @@ class Filtered_polynomial_rational_kernel
         Exact_interval_function_converter eifc_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

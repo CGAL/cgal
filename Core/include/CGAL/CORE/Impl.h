@@ -11,10 +11,6 @@
   #pragma warning(disable: 4244) 
 #endif
 
-// macros for defining namespace
-#define CORE_BEGIN_NAMESPACE    namespace CORE {
-#define CORE_END_NAMESPACE      }
-
 // condition preprocessor for inline function
 #ifndef CORE_DISABLE_INLINE
   #define CORE_INLINE inline

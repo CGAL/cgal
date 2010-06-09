@@ -25,7 +25,7 @@
 
 namespace CGAL {
 
-CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
+namespace VoronoiDiagram_2 { namespace Internal {
 
 template<class Value_t>
 class Dummy_iterator : public Emptyset_iterator
@@ -78,7 +78,7 @@ class Dummy_iterator : public Emptyset_iterator
   }
 };
 
-CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
+} } //namespace VoronoiDiagram_2::Internal
 
 } //namespace CGAL
 

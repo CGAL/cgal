@@ -26,7 +26,7 @@
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 #include <iostream>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 #ifndef NDEBUG
 int function_handles_created=0;
 int function_handles_exact=0;
@@ -235,5 +235,5 @@ protected:
   EF fe_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

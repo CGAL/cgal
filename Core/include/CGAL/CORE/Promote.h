@@ -40,7 +40,7 @@
 
 #include <CGAL/CORE/Impl.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 /// hasExactDivision()
 ///   CHECKING if NT has exact division
@@ -152,6 +152,6 @@ DEFINE_MAX_TYPE(BigFloat, Expr, Expr)
 
 DEFINE_MAX_TYPE(BigRat, Expr, Expr)
 
-CORE_END_NAMESPACE
+} //namespace CORE
 
 #endif //__PROMOTE_H__

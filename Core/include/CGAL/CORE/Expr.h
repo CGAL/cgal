@@ -40,7 +40,7 @@
 
 #include <CGAL/CORE/ExprRep.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 /// \class Expr Expr.h
 /// \brief Expr is a class of Expression in Level 3
@@ -544,5 +544,5 @@ inline Expr radical(const NT& n, int m) {
 // because otherwise VC++.net2003 can't compile Expr.cpp
 #include <CGAL/CORE/poly/Poly.tcc>
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_EXPR_H_

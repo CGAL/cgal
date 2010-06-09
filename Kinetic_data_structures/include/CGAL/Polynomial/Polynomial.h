@@ -27,7 +27,7 @@
 //#include <utility>
 #include <sstream>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 //! A basic polynomial class
 /*!  The implementation is proved by internal::Polynomial_impl. This
@@ -132,5 +132,5 @@ class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT>
 #endif
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif

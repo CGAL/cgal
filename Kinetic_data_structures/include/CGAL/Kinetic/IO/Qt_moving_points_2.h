@@ -27,7 +27,7 @@
 #include <CGAL/Kinetic/Listener.h>
 #include <sstream>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! A graphical moving point set
 /*!  This allows a set of moving points to be used in a
@@ -242,5 +242,5 @@ void Qt_moving_points_2<T,G>::reverse_time()
 }
 
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif                                            // guard

@@ -22,7 +22,7 @@
 #define CGAL_KINETIC_EXACT_SIMULATION_3_H
 #include <CGAL/Kinetic/Simulation_traits.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 struct Exact_simulation_traits_3: public Suggested_exact_simulation_traits_base {
   typedef Suggested_exact_simulation_traits_base P;
@@ -46,5 +46,5 @@ struct Exact_simulation_traits_3: public Suggested_exact_simulation_traits_base 
 protected:
   Active_points_3_table::Handle ap_;
 };
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

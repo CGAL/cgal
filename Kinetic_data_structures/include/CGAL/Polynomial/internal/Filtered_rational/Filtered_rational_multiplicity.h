@@ -25,7 +25,7 @@
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 #include <vector>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class Kernel>
 class Filtered_rational_multiplicity
@@ -105,5 +105,5 @@ protected:
   mutable std::vector<Function> h_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

@@ -49,7 +49,7 @@
 #include <cmath>
 #include <iomanip>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 # define FLOAT double
 
@@ -458,4 +458,4 @@ void Turkowski_polynomial_compute_cleaned_roots(const double *begin, const doubl
 }
 
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal

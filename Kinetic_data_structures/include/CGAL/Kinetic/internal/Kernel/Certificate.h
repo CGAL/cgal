@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <limits>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class Function_kernel_t>
 class Certificate {
@@ -80,7 +80,7 @@ inline std::ostream& operator<<(std::ostream& out, const Certificate<FK> &c) {
   return c.write(out);
 }
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 
 
 #endif

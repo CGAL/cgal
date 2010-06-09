@@ -25,7 +25,7 @@
 #include <sstream>
 #include <CGAL/Kinetic/Delaunay_triangulation_visitor_base_2.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 struct Delaunay_triangulation_event_log_visitor_2: public Delaunay_triangulation_visitor_base_2
 {
@@ -71,5 +71,5 @@ struct Delaunay_triangulation_event_log_visitor_2: public Delaunay_triangulation
     std::vector<std::string> log_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

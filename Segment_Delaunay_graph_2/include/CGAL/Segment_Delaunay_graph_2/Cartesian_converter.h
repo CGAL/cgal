@@ -27,7 +27,7 @@
 
 namespace CGAL {
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+namespace SegmentDelaunayGraph_2 {
 
 
 template<class K1, class K2, class Converter>
@@ -136,7 +136,7 @@ public:
 };
 
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
+} //namespace SegmentDelaunayGraph_2
 
 } //namespace CGAL
 

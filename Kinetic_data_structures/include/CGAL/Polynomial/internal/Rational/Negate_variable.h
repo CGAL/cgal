@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <vector>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 //------------------------------------------------------------------
 
 template <class Polynomial>
@@ -64,5 +64,5 @@ class Negate_variable
         }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_POLYNOMIAL_KERNEL_NEGATE_VARIABLE_H

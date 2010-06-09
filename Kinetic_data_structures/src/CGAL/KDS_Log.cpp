@@ -25,7 +25,7 @@
 namespace CGAL {
 Log::State Log::state_;
 } //namespace CGAL
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
   unsigned int function_degeneracies__=0;
   unsigned int zero_certificates__=0;
@@ -39,4 +39,4 @@ CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
     if (audit_failures__ != 0) out << "Audit failures " << audit_failures__ << std::endl;
   }
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal

@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <iterator>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class Fn>
 struct Derivative
@@ -118,5 +118,5 @@ public:
   }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

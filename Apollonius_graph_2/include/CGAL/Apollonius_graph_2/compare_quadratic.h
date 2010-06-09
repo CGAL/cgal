@@ -27,7 +27,7 @@
 
 namespace CGAL {
 
-CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+namespace ApolloniusGraph_2 {
 
 #ifdef COMPARATOR_PROFILER
 #include <CGAL/Apollonius_graph_2/comparator_profiler.h>
@@ -983,7 +983,7 @@ ke_compare_r1_r2_filtered(const CT& a1, const CT& b1, const CT& c1,
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
-CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
+} //namespace ApolloniusGraph_2
 
 } //namespace CGAL
 

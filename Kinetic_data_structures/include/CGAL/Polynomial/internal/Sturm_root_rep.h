@@ -29,7 +29,7 @@
 //#include <CGAL/Polynomial/internal/Bisection.h>
 
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 //==================
 // the Root class
@@ -926,7 +926,7 @@ operator<<(Stream& os, const Sturm_root_rep<S,I>& r)
   return r.compute_interval();
   }*/
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 
 namespace CGAL {
 

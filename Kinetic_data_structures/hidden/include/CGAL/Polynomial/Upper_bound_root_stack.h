@@ -31,7 +31,7 @@
 
 #define CGAL_DSPRINT(x)
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 //! A Solver which uses
 template <class Traits_t>
 class Upper_bound_root_stack
@@ -479,6 +479,6 @@ protected:
   Sturm_root_counter ss_;
   bool has_ss_;
 };
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 
 #endif

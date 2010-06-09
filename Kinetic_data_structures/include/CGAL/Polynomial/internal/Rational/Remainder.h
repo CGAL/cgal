@@ -27,7 +27,7 @@
   \file Remainder.h A class to compute remainders.
 */
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 //! Compute the remainder of two polynomials.
 /*!
@@ -58,5 +58,5 @@ class Remainder : private Quotient_remainder<Polynomial>
         }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_POLYNOMIAL_INTERNAL_REMAINDER_H

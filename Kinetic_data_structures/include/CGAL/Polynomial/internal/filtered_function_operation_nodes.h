@@ -25,7 +25,7 @@
 #include <CGAL/Polynomial/internal/filtered_function_node_bases.h>
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class Traits>
 class Filtered_function_node_plus: public Filtered_function_node_binary_operation<Traits>
@@ -272,5 +272,5 @@ protected:
   double c_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

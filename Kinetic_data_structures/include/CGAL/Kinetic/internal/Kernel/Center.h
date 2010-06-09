@@ -22,7 +22,7 @@
 #define CGAL_KINETIC_INTERNAL_CENTER_H
 #include <CGAL/Kinetic/basic.h>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class K>
 struct Center
@@ -40,5 +40,5 @@ struct Center
     }
 };
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 #endif

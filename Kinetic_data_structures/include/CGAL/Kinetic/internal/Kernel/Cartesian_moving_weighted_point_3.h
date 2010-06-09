@@ -24,7 +24,7 @@
 #include <iostream>
 #include <CGAL/Kinetic/internal/Kernel/Cartesian_moving_point_3.h>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class Coordinate_t>
 class Cartesian_moving_weighted_point_3
@@ -147,9 +147,9 @@ std::istream &operator>>(std::istream &in,
 }
 
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 
-/*CGAL_KINETIC_BEGIN_NAMESPACE;
+/*namespace CGAL { namespace Kinetic {;
 
 template <>
 template <class Coord, class SK>
@@ -169,5 +169,5 @@ arg.point().z()(P::time())),
 arg.weight()(t_));
 }
 };
-CGAL_KINETIC_END_NAMESPACE*/
+} } //namespace CGAL::Kinetic*/
 #endif

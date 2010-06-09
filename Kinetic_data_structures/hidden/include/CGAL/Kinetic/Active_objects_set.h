@@ -33,7 +33,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <utility>
 
-CGAL_KINETIC_BEGIN_NAMESPACE;
+namespace CGAL { namespace Kinetic {;
 
 //! Holds a set of moving points and creates notifications when changes occur.
 /*!  This container holds a set of objects of a particular type. It
@@ -357,5 +357,5 @@ inline std::istream &operator>>(std::istream &in, Active_objects_set<V> &v) {
   return v.read(in);
 }
 
-CGAL_KINETIC_END_NAMESPACE;
+} } //namespace CGAL::Kinetic;
 #endif

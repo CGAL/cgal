@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_event_log_visitor_3.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 struct Regular_triangulation_event_log_visitor_3:
 public Delaunay_triangulation_event_log_visitor_3
@@ -96,5 +96,5 @@ public Delaunay_triangulation_event_log_visitor_3
 	}*/
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

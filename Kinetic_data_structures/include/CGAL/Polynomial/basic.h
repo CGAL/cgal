@@ -48,17 +48,17 @@
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 typedef CGAL::Gmpq Default_field_nt;
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #else
 #include <CGAL/MP_Float.h>
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 typedef CGAL::MP_Float Default_field_nt;
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 /*typedef CGAL::Sign Sign;
 static const Sign ZERO= CGAL::ZERO;
@@ -92,7 +92,7 @@ typedef ::CGAL::Euclidean_ring_tag   Euclidean_ring_tag;
 typedef ::CGAL::Field_tag            Field_tag;
 typedef ::CGAL::Field_with_sqrt_tag       Field_with_sqrt_tag;*/
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 
 #define CGAL_POLYNOMIAL_TO_DOUBLE(d) CGAL::to_double(d)
 
@@ -103,7 +103,7 @@ CGAL_POLYNOMIAL_END_NAMESPACE
   When no CGAL is present
 */
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 typedef int Sign;
 static const int ZERO =0;
@@ -128,7 +128,7 @@ struct Euclidean_ring_tag {};
 struct Field_tag {};
 struct Field_with_sqrt_tag {};
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif
 
 #include <limits>
@@ -137,7 +137,7 @@ CGAL_POLYNOMIAL_END_NAMESPACE
   Shared
 */
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 //! Used for signs when filtering is involved
 typedef enum Extended_sign
@@ -173,7 +173,7 @@ inline Rt infinity()
 }
 
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 
 /*!  \namespace CGAL::POLYNOMIAL This is the namespace where all the
   directly exposed members of the framework are defined.
@@ -192,14 +192,14 @@ to_interval, sign and a couple of other methods.
 */
 
 /*
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 //!\todo are these needed? The tags in the polynomial NS?
 struct Descartes_tag {};
 struct Sturm_tag {};
 struct Bezier_tag {};
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 */
 
 #ifdef CGAL_POLYNOMIAL_NO_LIMITS

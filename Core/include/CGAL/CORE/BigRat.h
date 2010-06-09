@@ -36,7 +36,7 @@
 
 #include <CGAL/CORE/BigInt.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 class BigRatRep : public RCRepImpl<BigRatRep> {
 public:
@@ -484,5 +484,5 @@ inline BigInt BigIntValue(const BigRat& a) {
   return a.BigIntValue();
 }
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_BIGRAT_H_

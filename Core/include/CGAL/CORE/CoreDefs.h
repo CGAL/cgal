@@ -39,7 +39,7 @@
 
 #include <CGAL/CORE/extLong.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 //////////////////////////////////////////////////////////////
 // defined constants
@@ -249,5 +249,5 @@ inline void setPositionalFormat(std::ostream& o = std::cout) {
   o.setf(std::ios::fixed, std::ios::floatfield);
 }
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_COREDEFS_H_

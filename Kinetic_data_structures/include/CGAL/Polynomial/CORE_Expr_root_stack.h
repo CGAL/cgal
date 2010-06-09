@@ -37,7 +37,7 @@ double to_double(const CORE::BigInt &bi)
 
   } //namespace CGAL*/
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 
 class CORE_Expr_root_stack
@@ -264,5 +264,5 @@ std::ostream &operator<<(std::ostream &out, const CORE_Expr_root_stack &o) {
   return o.write(out);
 }
 
-CGAL_POLYNOMIAL_END_NAMESPACE;
+} } //namespace CGAL::POLYNOMIAL;
 #endif

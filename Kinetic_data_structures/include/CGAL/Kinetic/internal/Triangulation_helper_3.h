@@ -22,7 +22,7 @@
 #define CGAL_KINETIC_TRIANGULATION_HELPER_H
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/internal/triangulation_helpers_3.h>
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class Tri>
 class Triangulation_helper_3: public Tri
@@ -297,5 +297,5 @@ protected:
 
 };
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 #endif

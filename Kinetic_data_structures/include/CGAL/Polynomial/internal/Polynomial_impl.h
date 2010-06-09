@@ -30,7 +30,7 @@
 
 #define CGAL_EXCESSIVE(x)
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class This, class NT_t>
 class Polynomial_impl;
@@ -533,5 +533,5 @@ class Input_rep<Polynomial<NT> , CGAL::Maple_format_tag > {
   }
   };*/
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

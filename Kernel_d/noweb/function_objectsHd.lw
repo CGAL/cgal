@@ -661,7 +661,7 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 <<Lift_to_paraboloidHd function object>>
 <<Project_along_d_axisHd function object>>
@@ -683,7 +683,7 @@ CGAL_BEGIN_NAMESPACE
 <<Linearly_independentHd function object>>
 <<Linear_baseHd function object>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_FUNCTION_OBJECTSHD_H
 
 @ 

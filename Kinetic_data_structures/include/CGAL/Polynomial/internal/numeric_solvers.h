@@ -23,7 +23,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <vector>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 // JAMA
 void jama_polynomial_compute_roots(const double *begin, const double *end,
@@ -102,5 +102,5 @@ struct Turkowski_cleaned_numeric_solver
     }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

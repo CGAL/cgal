@@ -29,7 +29,7 @@
 #include <CGAL/Polynomial/internal/GSL_numeric_solver.h>
 #endif
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <bool HINF=std::numeric_limits<double>::has_infinity>
   struct Numeric_pick_root {
@@ -41,9 +41,9 @@ template <bool HINF=std::numeric_limits<double>::has_infinity>
   struct Numeric_pick_root<false> {
     typedef internal::Double_with_infinity Root;
   };
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 #ifdef CGAL_USE_GSL
 #define CGAL_DEFAULT_NUMERIC_SOLVER CGAL::POLYNOMIAL::internal::GSL_numeric_solver
@@ -146,5 +146,5 @@ protected:
   std::vector<Root> roots_;
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif

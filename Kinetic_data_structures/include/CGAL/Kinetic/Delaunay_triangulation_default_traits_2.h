@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/internal/tds_2_helpers.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class Simulation_traits_t, class Triangulation_t>
 class Delaunay_triangulation_default_traits_2 {
@@ -152,6 +152,6 @@ protected:
   O2 o2_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 
 #endif

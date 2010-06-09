@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <iostream>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class Coordinate_t>
 class Cartesian_moving_point_1
@@ -139,9 +139,9 @@ inline std::istream &operator>>(std::istream &out,
 }
 
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 /*template <>
   template <class Coord, class SK>
@@ -159,5 +159,5 @@ CGAL_KINETIC_BEGIN_NAMESPACE
   arg.y()(P::time()));
   }
   };*/
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

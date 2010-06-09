@@ -32,7 +32,7 @@
 
 class SoSeparator;
 
-CGAL_KINETIC_BEGIN_NAMESPACE;
+namespace CGAL { namespace Kinetic {;
 
 //! This provides a GUI in 3D using Coin.
 /*!  If you want to draw something, extend
@@ -177,5 +177,5 @@ protected:
   Window_listener window_l_;
 };
 
-CGAL_KINETIC_END_NAMESPACE;
+} } //namespace CGAL::Kinetic;
 #endif                                            // qt

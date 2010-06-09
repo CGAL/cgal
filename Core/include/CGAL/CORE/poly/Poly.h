@@ -60,7 +60,7 @@
 #include <CGAL/CORE/Promote.h>
 #include <vector>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 using namespace std;
 class Expr;
 // ==================================================
@@ -430,5 +430,5 @@ bool Polynomial<NT>::setCoeff(int i, const NT & cc) {
 // We include this file from CORE/Expr.h, AFTER the definition
 // of class Expr, because otherwise VC++.net2003 can'y compile Expr.cpp
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif

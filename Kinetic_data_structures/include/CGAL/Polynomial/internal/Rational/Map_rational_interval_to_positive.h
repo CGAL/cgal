@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 //------------------------------------------------------------------
 
@@ -123,5 +123,5 @@ class Map_rational_interval_to_positive_2
         NT lb_, ub_;
         K k_;
 };
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

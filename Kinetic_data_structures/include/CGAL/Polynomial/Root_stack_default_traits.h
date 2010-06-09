@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/Root_stack_traits_base.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 template <class Polynomial>
 class Root_stack_default_traits: public internal::Root_stack_traits_base<Polynomial>
@@ -35,5 +35,5 @@ class Root_stack_default_traits: public internal::Root_stack_traits_base<Polynom
     public:
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif

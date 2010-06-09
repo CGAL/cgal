@@ -36,7 +36,7 @@
 #include <CGAL/CORE/Expr.h>
 #include <cmath>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 #ifdef CORE_DEBUG_BOUND
 unsigned int BFMSS_counter = 0;
@@ -1148,4 +1148,4 @@ void BinOpRep::debugTree(int level, int indent, int depthLimit) const {
   second->debugTree(level, indent + 2, depthLimit - 1);
 }
 
-CORE_END_NAMESPACE
+} //namespace CORE

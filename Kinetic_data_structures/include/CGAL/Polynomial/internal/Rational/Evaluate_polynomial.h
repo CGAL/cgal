@@ -23,7 +23,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <vector>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 double evaluate_polynomial(const double *b, const double *e, double t);
 
@@ -75,5 +75,5 @@ for (unsigned int i=0; i< p.degree(); ++i){
         std::vector<result_type> coefs_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

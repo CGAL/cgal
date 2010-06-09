@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/Filtered_rational/Filtered_Sturm_sequence.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template<class Traits>
 class Filtered_standard_sequence
@@ -147,5 +147,5 @@ class Filtered_standard_sequence
 
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_FILTERED_STANDARD_SEQUENCE_H

@@ -24,7 +24,7 @@
 //#include <CGAL/Polynomial/utilities.h>
 //#include <CGAL/Polynomial/Rational/Sturm_sequence.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template<class Sturm_sequence_t>
 class Standard_sequence : public Sturm_sequence_t
@@ -92,5 +92,5 @@ class Standard_sequence_k
 };
 #endif
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_STANDARD_SEQUENCE_H

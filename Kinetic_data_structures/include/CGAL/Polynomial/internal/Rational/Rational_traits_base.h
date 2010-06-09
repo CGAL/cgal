@@ -45,7 +45,7 @@
 #include <CGAL/Polynomial/internal/Rational/Quotient.h>
 #include <CGAL/Polynomial/internal/Rational/Remainder.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class Poly>
 struct Rational_traits_base
@@ -213,5 +213,5 @@ struct Rational_traits_base
   }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

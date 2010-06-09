@@ -36,7 +36,7 @@
 #define _CORE_REALREP_H_
 #include "BigFloat.h"
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 class Real;
 
@@ -509,5 +509,5 @@ inline std::string RealBigFloat::toString(long prec, bool sci) const {
   return ker.toString(prec, sci);
 }
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_REALREP_H_

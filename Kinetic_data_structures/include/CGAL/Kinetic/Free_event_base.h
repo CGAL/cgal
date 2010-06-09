@@ -21,7 +21,7 @@
 #ifndef CGAL_KDS_FREE_EVENT_BASE_H
 #define CGAL_KDS_FREE_EVENT_BASE_H
 #include <CGAL/Kinetic/basic.h>
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 class Free_event_base {
 public:
@@ -48,5 +48,5 @@ public:
   void audit(Key)const{}
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

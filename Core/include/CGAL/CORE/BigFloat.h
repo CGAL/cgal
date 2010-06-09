@@ -36,7 +36,7 @@
 
 #include <CGAL/CORE/BigFloatRep.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 class Expr;
 
@@ -616,5 +616,5 @@ inline BigFloat gcd(const BigFloat& a, const BigFloat& b) {
 inline BigRat::BigRat(const BigFloat& f) : RCBigRat(new BigRatRep()){
   *this = f.BigRatValue();
 }
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_BIGFLOAT_H_

@@ -2015,7 +2015,7 @@ public:
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Moptions outfile=AffineGeometryTraits_2.man}*/
 /*{\Msubst Affine_geometry AffineGeometryTraits_2}*/
@@ -2172,7 +2172,7 @@ counterclockwise angular sector between |d1| and |d3|.}*/
 
 }; // Affine_geometry<R>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_AFFINE_GEOMETRY_H
 
 @ \subsection{Testing the CGAL sweep}

@@ -30,7 +30,7 @@
 
 #include <CGAL/Polynomial/internal/Simple_interval_root.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 //! Compute the sign after a root.
 
@@ -63,5 +63,5 @@ public:
   }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

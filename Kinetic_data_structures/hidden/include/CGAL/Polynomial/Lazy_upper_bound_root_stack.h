@@ -24,7 +24,7 @@
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 /*
   Root has pointer to Root_rep, solver_rep (ref counted), a double approximation;
@@ -255,8 +255,8 @@ std::ostream& operator<<(std::ostream &out, const Lazy_upper_bound_root_stack_ro
 }
 
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
+namespace CGAL { namespace POLYNOMIAL {
 
 /*template <class Rep, class Solver_rep>
   double to_double(const Lazy_upper_bound_root_stack_root<Rep, Solver_rep> &rt){
@@ -553,7 +553,7 @@ struct Lazy_upper_bound_root_stack<Traits_t>::Root_rep: public CGAL::Kinetic::Re
 };*/
 
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 
 namespace CGAL
 {

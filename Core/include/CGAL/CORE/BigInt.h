@@ -38,7 +38,7 @@
 #include <CGAL/CORE/MemoryPool.h>
 #include <string>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 
 class BigIntRep : public RCRepImpl<BigIntRep> {
@@ -557,5 +557,5 @@ inline BigInt randomize(const BigInt& a) {
 }
 //@}
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_BIGINT_H_

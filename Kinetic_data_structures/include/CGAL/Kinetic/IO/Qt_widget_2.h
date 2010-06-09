@@ -30,7 +30,7 @@
 #include <set>
 #include <qapplication.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! A GUI for a kinetic simulation in 2D.
 /*!
@@ -250,5 +250,5 @@ protected:
   //std::auto_ptr<Widget_listener> widget_l_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif                                            // guard

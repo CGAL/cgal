@@ -23,7 +23,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/Filtered_rational/Filtered_Descartes_root_counter.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE;
+namespace CGAL { namespace POLYNOMIAL { namespace internal {;
 
 template <class Kernel>
 class Filtered_Descartes_has_root
@@ -52,5 +52,5 @@ class Filtered_Descartes_has_root
         Kernel kernel_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE;
+} } } //namespace CGAL::POLYNOMIAL::internal;
 #endif

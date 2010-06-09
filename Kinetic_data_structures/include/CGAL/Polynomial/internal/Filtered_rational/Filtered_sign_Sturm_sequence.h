@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template<class Traits >
 class Filtered_sign_Sturm_sequence
@@ -120,5 +120,5 @@ class Filtered_sign_Sturm_sequence
 //Function_handle fhq_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_FILTERED_SIGN_STURM_SEQUENCE_H

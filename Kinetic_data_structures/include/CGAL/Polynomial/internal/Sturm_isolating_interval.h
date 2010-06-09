@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/Filtered_number.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 //! Define the interface for a bounding interval By convention the intervals are closed.
 /*!
@@ -341,7 +341,7 @@ std::pair<double, double> to_interval(const Sturm_isolating_interval<NT> &ii)
 }
 
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 
 namespace CGAL {
 template <class NT>

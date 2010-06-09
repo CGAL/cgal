@@ -34,7 +34,7 @@
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Heap_pointer_event_queue.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 struct Inexact_simulation_traits {
   typedef Inexact_simulation_traits This;
@@ -93,5 +93,5 @@ protected:
   Kinetic_kernel kk_;
   Function_kernel fk_;
 };
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

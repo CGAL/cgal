@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class Kernel, class NTT>
 Sign filtered_sign_at(const typename Kernel::Function &fh,
@@ -88,5 +88,5 @@ class Filtered_sign_at
         Kernel kernel_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

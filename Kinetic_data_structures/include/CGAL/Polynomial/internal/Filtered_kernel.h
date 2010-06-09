@@ -30,7 +30,7 @@
 #include <CGAL/Polynomial/Kernel/Is_rational.h>
 #include <CGAL/Polynomial/Kernel/To_rational.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 //! A filtered polynomial kernel.
 /*!
@@ -107,5 +107,5 @@ class Filtered_kernel: public internal::Filtered_rational_traits<Traits_t>
         Root_stack_traits ret_;
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif

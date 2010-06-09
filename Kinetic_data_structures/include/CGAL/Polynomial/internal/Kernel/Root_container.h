@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <iterator>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class K>
 class Root_container
@@ -108,5 +108,5 @@ protected:
   iterator begin_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

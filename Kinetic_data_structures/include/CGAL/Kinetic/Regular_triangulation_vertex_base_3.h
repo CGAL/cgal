@@ -25,7 +25,7 @@
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 //! A class to track labels of edges of faces in a triangulation
 template <class SimulationTraits,
 class Vertex_base= CGAL::Triangulation_vertex_base_3<typename SimulationTraits::Instantaneous_kernel> >
@@ -61,5 +61,5 @@ public CGAL::Triangulation_vertex_base_with_info_3<typename SimulationTraits::Si
         };
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

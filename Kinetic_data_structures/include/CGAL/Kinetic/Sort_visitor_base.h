@@ -22,7 +22,7 @@
 #define CGAL_KINETIC_DELAUNAY_SORT_WATCHER_BASE_H
 #include <CGAL/Kinetic/basic.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 struct Sort_visitor_base
 {
@@ -59,5 +59,5 @@ struct Sort_visitor_base
   }
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

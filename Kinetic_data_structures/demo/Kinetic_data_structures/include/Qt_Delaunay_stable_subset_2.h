@@ -7,7 +7,7 @@
 #include <CGAL/Kinetic/internal/tds_2_helpers.h>
 #include <CGAL/Kinetic/Listener.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! This class draws a Kinetic_Delaunay_2 triangulation to a Qt_gui_2.
 /*!  The most recently created edges are colored green and the other
@@ -143,5 +143,5 @@ protected:
   double threshold_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

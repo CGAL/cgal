@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Simple_cartesian.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! a functor that turns a moving object into a static object. It needs to pick the static type.
 /*!  This is the default implementation which looks for a class named
@@ -86,5 +86,5 @@ protected:
   bool initialized_;
 #endif
 };
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template<class Kernel, class M = CGAL::Integral_domain_without_division_tag>
 class Compare_isolated_roots_in_interval
@@ -65,5 +65,5 @@ protected:
   Sign_Sturm_sequence seq;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_COMPARE_ISOLATED_ROOTS_IN_INTERVAL_H

@@ -27,7 +27,7 @@
   This file has the root counter used by the Descartes (and other) solvers.
 */
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE;
+namespace CGAL { namespace POLYNOMIAL { namespace internal {;
 
 class Descartes_root_count
 {
@@ -146,5 +146,5 @@ inline std::ostream &operator<<(std::ostream &out, Descartes_root_count ct)
 }
 
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE;
+} } } //namespace CGAL::POLYNOMIAL::internal;
 #endif

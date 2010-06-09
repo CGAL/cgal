@@ -24,7 +24,7 @@
 #include <CGAL/Kinetic/Delaunay_triangulation_visitor_base_2.h>
 #include <set>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class Triangulation>
 struct Delaunay_triangulation_recent_edges_visitor_2: public Delaunay_triangulation_visitor_base_2
@@ -76,5 +76,5 @@ struct Delaunay_triangulation_recent_edges_visitor_2: public Delaunay_triangulat
   std::set<Edge> recent_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

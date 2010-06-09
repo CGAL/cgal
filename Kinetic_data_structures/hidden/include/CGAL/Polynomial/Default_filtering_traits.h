@@ -26,7 +26,7 @@
 #include <CGAL/Polynomial/polynomial_converters.h>
 
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 template <class NT = Default_field_nt>
 struct Default_filtering_traits
 {
@@ -37,7 +37,7 @@ struct Default_filtering_traits
         To_interval<NT> > Exact_to_interval_converter;
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 
 #ifdef CGAL_DEFAULT_FILTERING_DEFAULT_NT
 #undef CGAL_DEFAULT_FILTERING_DEFAULT_NT

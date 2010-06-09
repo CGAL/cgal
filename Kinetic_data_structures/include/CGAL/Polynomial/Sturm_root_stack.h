@@ -30,7 +30,7 @@
 
 #include <CGAL/Polynomial/Kernel.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 //================================================================
 //================================================================
@@ -390,5 +390,5 @@ std::ostream& operator<<(std::ostream& os,
 }
 
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif                                            // CGAL_STURM_LAZY_SOLVER_H

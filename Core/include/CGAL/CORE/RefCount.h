@@ -56,7 +56,7 @@
 #ifndef _CORE_REFCOUNT_H_
 #define _CORE_REFCOUNT_H_
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 template<class Deriving>
 class RCRepImpl {
@@ -110,5 +110,5 @@ public:
 #endif
 };
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_REFCOUNT_H_

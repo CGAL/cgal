@@ -179,9 +179,8 @@ INCLUDE_PATH           = /absinthe/CGAL-testsuites/CGAL-I/include/CGAL \
                          /home/lrineau/CGAL-3.1-I-49/include
 INCLUDE_FILE_PATTERNS  = 
 PREDEFINED             = "CGAL_USE_GMP CGAL_USE_QT" \
-                         "CGAL_BEGIN_NAMESPACE=namespace CGAL {" \
-                         CGAL_END_NAMESPACE=} \
                          CGAL_USE_BOOST
+
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

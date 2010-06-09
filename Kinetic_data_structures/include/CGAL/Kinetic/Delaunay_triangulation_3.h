@@ -45,7 +45,7 @@
 #  pragma warning(disable:4355) // complaint about using 'this' to
 #endif                          // initialize a member
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class Traits>
 struct Delaunay_triangulation_3_types
@@ -64,9 +64,9 @@ struct Delaunay_triangulation_3_types
 
 };
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! A 3D kinetic Delaunay triangulation.
 template <class TraitsT,
@@ -214,7 +214,7 @@ public:
   KDel kdel_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

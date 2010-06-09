@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/IO/internal/pixmaps.h>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 namespace pixmaps {
 #include "Kinetic_play.xpm"
 #include "Kinetic_pause.xpm"
@@ -45,4 +45,4 @@ const char ** reverse_xpm= pixmaps::reverse_xpm;
 const char ** stop_xpm= pixmaps::stop_xpm;
 const char ** print_xpm= pixmaps::print_xpm;
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal

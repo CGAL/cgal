@@ -16,7 +16,7 @@ Given a SNC structure and segment $s$, with source in a known face $o$ of the SN
 #define _DEBUG 151
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename SNC_structure_>
 class SNC_walker :  SNC_decorator<SNC_structure_>
@@ -62,7 +62,7 @@ private:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // SNC_WALKER_H
 

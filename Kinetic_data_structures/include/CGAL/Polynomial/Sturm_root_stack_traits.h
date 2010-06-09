@@ -30,7 +30,7 @@
 #include <CGAL/Polynomial/internal/Rational/Subresultant_Sturm_sequence.h>
 #include <CGAL/Polynomial/internal/Rational/Sturm_root_counter.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 template<class Polynomial>
 class Sturm_root_stack_traits
@@ -73,5 +73,5 @@ public:
   }
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif                                            // CGAL_POLYNOMIAL_STURM_ROOT_ENUMERATOR_TRAITS_H

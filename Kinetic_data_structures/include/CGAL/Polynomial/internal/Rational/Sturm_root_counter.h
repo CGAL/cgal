@@ -25,7 +25,7 @@
 
 #include <CGAL/Polynomial/internal/Sign_variations_counter.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template<class Kernel>
 struct Sturm_root_counter
@@ -119,5 +119,5 @@ struct Sturm_root_counter
         typename Kernel::Sturm_sequence sseq;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_STURM_ROOT_COUNTER_H

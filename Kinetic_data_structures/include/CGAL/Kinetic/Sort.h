@@ -33,7 +33,7 @@
 #include <map>
 #include <set>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class KDS, class It, class RE>
 class Swap_event;
@@ -467,5 +467,5 @@ public:
 };
 
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

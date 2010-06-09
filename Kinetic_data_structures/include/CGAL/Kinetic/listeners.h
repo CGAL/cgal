@@ -24,7 +24,7 @@
 #include <CGAL/Kinetic/Listener.h>
 #include <CGAL/Kinetic/Multi_listener.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! This is a helper for KDSs which want to audit themselves when appropriate..
 /*!  This listener object listens for
@@ -208,5 +208,5 @@ public:
   motl_.set_recipient(this); motl_.set_notifier(ph);		\
   if (insert) motl_.catch_up()
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

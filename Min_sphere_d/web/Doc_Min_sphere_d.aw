@@ -3135,7 +3135,7 @@ int main ()
 
     #include <iostream>
 
-    CGAL_BEGIN_NAMESPACE
+    namespace CGAL {
 
 
     template <class Traits>
@@ -3164,7 +3164,7 @@ int main ()
 
     @<Min_sphere_d I/O operators declaration>
 
-    CGAL_END_NAMESPACE
+    } //namespace CGAL
 
     #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
     #  include <CGAL/Min_sphere_d.C>
@@ -3184,7 +3184,7 @@ int main ()
 @file <include/CGAL/Min_sphere_d.C> = @begin
     @<Min_sphere_d header>("include/CGAL/Min_sphere_d.C")
 
-    CGAL_BEGIN_NAMESPACE
+    namespace CGAL {
 
     // Class implementation (continued)
     // ================================
@@ -3192,7 +3192,7 @@ int main ()
     // ---
     @<Min_sphere_d I/O operators>
 
-    CGAL_END_NAMESPACE
+    } //namespace CGAL
 
     @<end of file line>
 
@@ -3209,7 +3209,7 @@ int main ()
     #ifndef CGAL_OPTIMISATION_SPHERE_D_H
     #define CGAL_OPTIMISATION_SPHERE_D_H
 
-    CGAL_BEGIN_NAMESPACE
+    namespace CGAL {
 
     // Class declarations
     // ==================
@@ -3220,7 +3220,7 @@ int main ()
     @<Optimisation_sphereHd declaration>
     @<Optimisation_sphereCd declaration>
 
-    CGAL_END_NAMESPACE
+    } //namespace CGAL
 
     // Class interfaces and implementation
     // ==================================
@@ -3232,7 +3232,7 @@ int main ()
     #include <CGAL/Optimisation/assertions.h>
    
 
-    CGAL_BEGIN_NAMESPACE
+    namespace CGAL {
 
     // Cartesian version
     // -----------------
@@ -3301,7 +3301,7 @@ int main ()
         @<Optimisation_sphereHd prod method>
     };
 
-     CGAL_END_NAMESPACE
+     } //namespace CGAL
 
     #endif // CGAL_OPTIMISATION_SPHERE_D_H
 

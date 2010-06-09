@@ -46,7 +46,7 @@
 #include <CGAL/CORE/Impl.h>
 #include <ctime>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 class Timer {
 private:
@@ -73,5 +73,5 @@ public:
   }
 };
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_TIMER_H_

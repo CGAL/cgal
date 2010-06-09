@@ -46,7 +46,7 @@
 #include <CGAL/Kinetic/internal/triangulation_helpers_3.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! A class to display a 3D triangulation.
 /*!
@@ -423,5 +423,5 @@ void SoQt_triangulation_3<K,G,M>::generate_geometry()
   //wa.apply(parent_.get());
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

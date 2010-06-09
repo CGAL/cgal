@@ -25,7 +25,7 @@
 
 namespace CGAL {
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+namespace SegmentDelaunayGraph_2 {
 
 template<class K>
 class Are_same_points_C2
@@ -90,7 +90,7 @@ public:
   }
 };
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
+} //namespace SegmentDelaunayGraph_2
 
 } //namespace CGAL
 

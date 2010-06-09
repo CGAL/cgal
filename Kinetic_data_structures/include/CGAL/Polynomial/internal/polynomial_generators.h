@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 template <class K>
 class Chebychev_generator
@@ -169,5 +169,5 @@ class Mignotte_generator
         T k_;
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif                                            // CGAL_POLYNOMIAL_GENERATORS_H

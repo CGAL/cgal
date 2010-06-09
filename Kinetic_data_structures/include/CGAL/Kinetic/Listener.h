@@ -22,7 +22,7 @@
 #define CGAL_TOOLS_LISTENER_BASE_H
 #include <CGAL/Kinetic/basic.h>
 #include <boost/utility.hpp>
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! This is the base class for all listener objects.
 /*!  An object which wishes to provide runtime notifications to other
@@ -286,5 +286,5 @@ private:						\
   
 
   
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

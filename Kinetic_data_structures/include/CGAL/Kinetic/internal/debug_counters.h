@@ -20,7 +20,7 @@
 
 #include <CGAL/Kinetic/basic.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 namespace internal {
   extern unsigned int zero_certificates__;
   extern unsigned int function_degeneracies__;
@@ -29,4 +29,4 @@ namespace internal {
 
   void write_debug_counters(std::ostream &out);
 }
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic

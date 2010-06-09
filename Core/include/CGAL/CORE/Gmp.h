@@ -5,7 +5,7 @@
 #include <CGAL/CORE/Impl.h>
 #include <gmp.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 std::ostream& io_write (std::ostream &, mpz_srcptr);
 std::ostream& io_write (std::ostream &, mpq_srcptr);
@@ -16,5 +16,5 @@ std::istream& io_read (std::istream &, mpq_ptr);
 //std::istream& operator>> (std::istream &, mpz_ptr);
 //std::istream& operator>> (std::istream &, mpq_ptr);
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_GMP_H_

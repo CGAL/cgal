@@ -41,7 +41,7 @@ MA 02110-1301, USA. */
 
 using namespace std;
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 int
 __gmp_istream_set_base (istream &i, char &c, bool &zero, bool &showbase)
@@ -255,4 +255,4 @@ io_write (ostream &o, mpq_srcptr q)
   return o << mpq_get_str (0, 10, q);
 }
 
-CORE_END_NAMESPACE
+} //namespace CORE

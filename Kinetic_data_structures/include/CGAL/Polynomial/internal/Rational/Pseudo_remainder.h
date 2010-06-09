@@ -27,7 +27,7 @@
   \file Pseudo_remainder.h A class to compute pseudo remainders.
 */
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 //! Compute the Pseudo remainder of two polynomials.
 /*!
@@ -108,5 +108,5 @@ r = r * v[n];
     }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

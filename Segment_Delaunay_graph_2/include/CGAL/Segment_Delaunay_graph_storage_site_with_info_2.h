@@ -31,11 +31,11 @@ namespace CGAL {
       intersection of two non-parallel segments (if defined)
    */
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+namespace SegmentDelaunayGraph_2 {
 
 template<class STraits> class Construct_storage_site_with_info_2;
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
+} //namespace SegmentDelaunayGraph_2
 
 
 template <class STraits, typename Info_, class Base_storage_site>

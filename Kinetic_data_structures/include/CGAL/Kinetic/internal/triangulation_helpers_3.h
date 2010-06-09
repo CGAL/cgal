@@ -24,7 +24,7 @@
 #include <CGAL/utility.h>
 #include <vector>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 /*template <class C>
 typename C::first_type hi_there(C){
@@ -412,5 +412,5 @@ out << " " << label(e);
 }
 */
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 #endif

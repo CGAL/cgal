@@ -27,7 +27,7 @@
 #include <CGAL/Polynomial/internal/Rational/Sturm_root_counter.h>
 #include <CGAL/Polynomial/internal/Simple_interval_root.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 template <class Poly>
 class Upper_bound_root_stack_Descartes_traits: public internal::Root_stack_traits_base<Poly>
@@ -49,5 +49,5 @@ public:
   }
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif

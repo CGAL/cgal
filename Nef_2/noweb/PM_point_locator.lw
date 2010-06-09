@@ -1392,7 +1392,7 @@ if ( K.first_pair_closer_than_second(b,d,a,c) ) { // flip
 #include <CGAL/Nef_2/geninfo.h>
 <<Conditional persistent point location inclusion>>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 <<Naive point locator>>
 <<Triangulation point locator>>
@@ -1400,7 +1400,7 @@ CGAL_BEGIN_NAMESPACE
 <<TPL destruction>>
 <<TPL walk in triangulation>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PM_POINT_LOCATOR_H
 

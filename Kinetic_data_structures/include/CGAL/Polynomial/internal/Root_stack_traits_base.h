@@ -26,7 +26,7 @@
 #include <CGAL/Polynomial/internal/Isolating_interval.h>
 #include <CGAL/Polynomial/internal/Rational/Rational_traits_base.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class Poly>
 class Root_stack_traits_base: public Rational_traits_base<Poly>
@@ -39,5 +39,5 @@ class Root_stack_traits_base: public Rational_traits_base<Poly>
   typedef CGAL_POLYNOMIAL_NS::internal::Isolating_interval<typename P::FT> Isolating_interval;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

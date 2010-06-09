@@ -23,7 +23,7 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/CORE_BigRat.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 struct CORE_polynomial {
   typedef CORE::Polynomial<CORE::BigRat> P;
@@ -270,5 +270,5 @@ CORE_polynomial operator*(const CORE_polynomial::NT &a,
   return CORE_polynomial(CORE_polynomial::P(0, &a)*p.core_polynomial());
 }
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+namespace ApolloniusGraph_2 {
 
 //-----------------------------------------------------------------------
 //                        Vertex conflict
@@ -320,7 +320,7 @@ public:
     }
 };
 
-CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
+} //namespace ApolloniusGraph_2
 
 } //namespace CGAL
 

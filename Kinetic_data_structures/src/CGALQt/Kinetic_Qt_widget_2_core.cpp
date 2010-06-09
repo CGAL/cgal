@@ -23,7 +23,7 @@
 
 #include "Kinetic_Qt_widget_2_core.moc"
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 void Qt_widget_2_core::redraw() {
   lock();
   clear();
@@ -40,4 +40,4 @@ Qt_widget_2_core::Qt_widget_2_core(QMainWindow *parent): ::CGAL::Qt_widget(paren
   //drawable_=NULL;
   is_drawn_=false;
 }
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal

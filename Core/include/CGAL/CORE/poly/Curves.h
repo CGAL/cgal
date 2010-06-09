@@ -74,7 +74,7 @@
 #include <list>
 #include "CGAL/CORE/poly/Poly.h"
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 // ==================================================
 // Curve Class
@@ -519,7 +519,7 @@ void showIntervals(char* s, BFVecInterval &vI);
 #include <CGAL/CORE/poly/Curves.tcc>
 
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif
 /*************************************************************************** */
 // END

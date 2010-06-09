@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <functional>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! An object to help convert between moving objects and their static representations to wrap a predicate.
 /*!  A ref counted pointer is stored to the part of the
@@ -165,5 +165,5 @@ protected:
   Kinetic_predicate kpred_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

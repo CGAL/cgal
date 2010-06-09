@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <vector>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class K>
 class Rational_multiplicity
@@ -66,5 +66,5 @@ protected:
   K k_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

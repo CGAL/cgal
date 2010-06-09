@@ -25,11 +25,11 @@ cyclic structure defines the first element of the list.
 #include <CGAL/basic.h>
 
 #define CGAL_USING(t) typedef typename HDS::t t
-CGAL_BEGIN_NAMESPACE  
+namespace CGAL {  
 
 <<PM decorator simple>>
 
-CGAL_END_NAMESPACE  
+} //namespace CGAL  
 #undef CGAL_USING
 #endif //PM_DECORATOR_SIMPLE_H
 

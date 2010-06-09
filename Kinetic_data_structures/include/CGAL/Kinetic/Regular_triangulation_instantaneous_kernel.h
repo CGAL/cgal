@@ -48,7 +48,7 @@
   }
 
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 
 template <class Traitst >
@@ -77,5 +77,5 @@ public:
 };
 #undef CGAL_MSA
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

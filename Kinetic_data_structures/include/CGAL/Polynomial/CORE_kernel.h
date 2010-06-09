@@ -26,7 +26,7 @@
 #include <CGAL/Polynomial/internal/CORE_polynomial.h>
 #include <CGAL/Polynomial/CORE_Expr_root_stack.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 
 
@@ -43,5 +43,5 @@ public:
 
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif

@@ -1235,7 +1235,7 @@ struct ring_or_field<double> {
   { return 1.0; }
 };
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class NT> class Polynomial_rep;
 
@@ -1261,7 +1261,7 @@ double Polynomial<double>::R_;
 <<polynomial statics>>
 // SPECIALIZE_IMPLEMENTATION(NT,int double) END
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_POLYNOMIAL_H
 

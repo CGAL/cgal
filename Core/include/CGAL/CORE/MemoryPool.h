@@ -36,7 +36,7 @@
 #include <new>           // for placement new
 #include <cassert>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 #define CORE_EXPANSION_SIZE 1024
 template< class T, int nObjects = CORE_EXPANSION_SIZE >
@@ -103,6 +103,6 @@ void MemoryPool< T, nObjects >::free(void* t) {
    head = reinterpret_cast<Thunk*>(t);
 }
 
-CORE_END_NAMESPACE
+} //namespace CORE
 
 #endif // _CORE_MEMORYPOOL_H_

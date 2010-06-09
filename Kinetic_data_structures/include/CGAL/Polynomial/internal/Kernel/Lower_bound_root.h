@@ -28,7 +28,7 @@
 
 
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 template <class Kernel>
 struct Lower_bound_root {
   typedef typename Kernel::Function first_argument_type;
@@ -87,5 +87,5 @@ struct Lower_bound_root {
     return last;
   }
 };
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

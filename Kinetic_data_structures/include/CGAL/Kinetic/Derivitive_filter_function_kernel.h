@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/Numeric_root_stack.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class Traits>
 struct Derivitive_filter_function_kernel: public Traits
@@ -80,5 +80,5 @@ struct Derivitive_filter_function_kernel: public Traits
   using Traits::negate_variable_object;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif                                            // inclusion guard

@@ -24,7 +24,7 @@
 
 #include "Kinetic_Qt_core.moc"
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 Qt_core::Qt_core() {
   //playable_=NULL;
@@ -75,4 +75,4 @@ void Qt_core::slower_button() {
   mode_=SLOWER;
   CGAL_KINETIC_NOTIFY(LAST_BUTTON_PRESSED);
 }
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal

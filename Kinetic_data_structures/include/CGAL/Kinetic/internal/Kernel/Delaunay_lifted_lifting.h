@@ -22,7 +22,7 @@
 #define CGAL_KINETIC_INTERNAL_DELAUNAY_LIFTED_LIFTING_H
 #include <CGAL/Kinetic/basic.h>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class K>
 struct Delaunay_lifted_lifting
@@ -40,5 +40,5 @@ struct Delaunay_lifted_lifting
     }
 };
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 #endif

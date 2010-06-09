@@ -205,9 +205,8 @@ EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = CGAL_INCLUDE_PATH
 INCLUDE_FILE_PATTERNS  =
-PREDEFINED             = "CGAL_DOCUMENTATION" \
-                         "CGAL_BEGIN_NAMESPACE=namespace CGAL {" \
-                         "CGAL_END_NAMESPACE=}"
+PREDEFINED             = "CGAL_DOCUMENTATION"
+
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

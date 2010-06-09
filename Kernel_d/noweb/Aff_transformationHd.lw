@@ -33,12 +33,12 @@
 #include <CGAL/Kernel_d/DirectionHd.h>
 #include <CGAL/Kernel_d/HyperplaneHd.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 <<defining Aff_transformationHd_rep>>
 <<defining Aff_transformationHd>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_AFF_TRANSFORMATIONHD_H
 
 @ The implementation file contains the following.
@@ -51,11 +51,11 @@ CGAL_END_NAMESPACE
 
 #ifndef CGAL_AFF_TRANSFORMATIONHD_C
 #define CGAL_AFF_TRANSFORMATIONHD_C
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 <<implementing Aff_transformationHd>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_AFF_TRANSFORMATIONHD_C
 
 @ \subsection{The Representation Class}

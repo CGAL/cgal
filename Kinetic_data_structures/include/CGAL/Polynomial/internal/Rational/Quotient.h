@@ -27,7 +27,7 @@
   \file Quotient.h A class to compute quotients of polynomials.
 */
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 //! Compute the quotient of two polynomials.
 /*!
@@ -59,5 +59,5 @@ class Quotient : private Quotient_remainder<Polynomial>
         }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_POLYNOMIAL_INTERNAL_QUOTIENT_H

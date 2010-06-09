@@ -21,7 +21,7 @@
 #ifndef CGAL_KDS_EVENT_BASE_H
 #define CGAL_KDS_EVENT_BASE_H
 #include <CGAL/Kinetic/basic.h>
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class KDS_ptr>
 class Event_base {
@@ -58,5 +58,5 @@ protected:
   KDS_handle kds_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

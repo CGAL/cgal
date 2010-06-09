@@ -29,13 +29,6 @@
 */
 #include <CGAL/basic.h>
 
-#define CGAL_POLYNOMIAL_BEGIN_NAMESPACE namespace CGAL { \
-namespace POLYNOMIAL \
-{ \
-
-    #define CGAL_POLYNOMIAL_END_NAMESPACE } \
-} //namespace CGAL
-
 #define CGAL_POLYNOMIAL_NS CGAL::POLYNOMIAL
 #define CGAL_Polynomial_assertion(x) CGAL_assertion(x)
 #define CGAL_Polynomial_assertion_code(x) CGAL_assertion_code(x)
@@ -60,12 +53,6 @@ namespace POLYNOMIAL \
   When no CGAL is present
 */
 
-#define CGAL_POLYNOMIAL_BEGIN_NAMESPACE \
-namespace Polynomial \
-{ \
-
-    #define CGAL_POLYNOMIAL_END_NAMESPACE }
-
 #define POLYNOMIAL_NS Polynomial
 
 #include <cassert>
@@ -82,10 +69,4 @@ namespace Polynomial \
 #define CGAL_Polynomial_exactness_precondition(x)
 #endif
 
-#define CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE CGAL_POLYNOMIAL_BEGIN_NAMESPACE \
-namespace internal \
-{ \
-
-    #define CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE } \
-CGAL_POLYNOMIAL_END_NAMESPACE
 #endif

@@ -41,7 +41,7 @@
 //int queue_insertions__=0;
 //int queue_front_insertions__=0;
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 
 template <class Item>
@@ -302,9 +302,9 @@ struct Two_list_event_queue_item_allocator
   }
   };*/
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 
 
@@ -1035,5 +1035,5 @@ std::ostream &operator<<(std::ostream &out, const Two_list_pointer_event_queue<D
 }
 
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

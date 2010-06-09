@@ -52,7 +52,7 @@
   #include <ieeefp.h>
 #endif
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 const int POWTWO_26 = (1 << 26);  ///< constant 2^26
 
@@ -187,5 +187,5 @@ inline std::ostream & operator<< (std::ostream & os, const filteredFp& fp) {
   return os;
 }
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_FILTER_H_

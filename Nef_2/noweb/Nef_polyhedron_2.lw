@@ -1939,12 +1939,12 @@ After line (*) |N3| is the intersection of |N1| and |N2|.}*/
 #define _DEBUG 11
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 <<nef polyhedron definition>>
 <<nef polyhedron input and output>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #undef CGAL_SIMPLE_HDS
 #endif //CGAL_NEF_POLYHEDRON_2_H
@@ -2022,11 +2022,11 @@ The header just wraps the above operations.
 #include <CGAL/Nef_polyhedron_2.h>
 #include <CGAL/Nef_2/PM_visualizor.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 <<window stream output>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // NEF_POLYHEDRON_2_WINDOW_STREAM_H
 
@@ -2094,11 +2094,11 @@ operations of the extended kernel. See its interface in Section
 #include <CGAL/basic.h>
 #include <CGAL/Nef_2/PM_const_decorator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 <<PM explorer>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PM_EXPLORER_H
 

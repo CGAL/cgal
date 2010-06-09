@@ -7,7 +7,7 @@
 #define ZERO_EPSILON    0.000001
 #define ERR_EPSILON     0.001
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Double {
 public:
@@ -262,6 +262,6 @@ public:
 #endif
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

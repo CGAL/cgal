@@ -40,7 +40,7 @@
 #include <CGAL/CORE/Impl.h>
 #include <CGAL/CORE/CoreAux.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 #ifndef LONG_MAX
 #error "haven't define LONG_MAX"
@@ -290,5 +290,5 @@ inline bool extLong::isNaN() const {
   return (flag == 2);
 }
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_EXTLONG_H_

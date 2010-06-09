@@ -4,7 +4,7 @@
 #include <CGAL/Kinetic/Ref_counted.h>
 
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class Refiner>
 class Interval_root {
@@ -209,7 +209,7 @@ std::pair<double,double> to_interval(const Interval_root<D>& a) {
   }*/
 
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 
 namespace CGAL { 
 
@@ -244,7 +244,7 @@ namespace std {
   };
 };
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class Data>
 struct Interval_simulator_traits {
@@ -302,6 +302,6 @@ struct Interval_simulator_traits {
   }
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 
 #endif

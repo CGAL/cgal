@@ -38,7 +38,7 @@
 //extern int too_late__;
 //extern int filtered__;
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class KD, class RS>
 class Delaunay_event_base_3: public Event_base<KD*>
@@ -1389,5 +1389,5 @@ inline std::ostream &operator<<(std::ostream &out,
 }
 
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 #endif

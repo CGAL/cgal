@@ -30,7 +30,7 @@
 #pragma warning(disable:1572)
 #endif*/
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 static double max_error_value=.00005;
 
@@ -264,4 +264,4 @@ double evaluate_polynomial(const double *b, const double *e, double t)
 }
 
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal

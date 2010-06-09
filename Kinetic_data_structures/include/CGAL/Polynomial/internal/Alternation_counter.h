@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 /*!
   \file Alternation_counter.h Used by the Descartes roots counters to count the number of alternations in an interval
@@ -102,5 +102,5 @@ class Alternation_counter
 
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE;
+} } //namespace CGAL::POLYNOMIAL;
 #endif

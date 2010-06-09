@@ -28,7 +28,7 @@
 #include <CGAL/Polynomial/internal/Simple_interval_root.h>
 #include <CGAL/Polynomial/internal/Isolating_interval.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 template <class Traits>
 class Upper_bound_root_stack_filtered_Descartes_traits: public internal::Filtered_rational_traits<Traits>
@@ -54,5 +54,5 @@ class Upper_bound_root_stack_filtered_Descartes_traits: public internal::Filtere
         }
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif

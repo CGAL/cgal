@@ -42,7 +42,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/sensors/SoOneShotSensor.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE;
+namespace CGAL { namespace Kinetic {;
 
 //! A graphical moving point set in 3D
 /*!
@@ -461,5 +461,5 @@ void SoQt_moving_points_3<Tr, G>::write(std::ostream &out) const
 }
 
 
-CGAL_KINETIC_END_NAMESPACE;
+} } //namespace CGAL::Kinetic;
 #endif                                            // guard

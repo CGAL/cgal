@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/Tools/Alternation_counter.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE;
+namespace CGAL { namespace POLYNOMIAL { namespace internal {;
 
 template <class Kernel>
 class Descartes_has_root
@@ -66,5 +66,5 @@ class Descartes_has_root
     protected:
         typename Kernel::Map_rational_interval_to_positive map_;
 };
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE;
+} } } //namespace CGAL::POLYNOMIAL::internal;
 #endif

@@ -27,7 +27,7 @@
 #include <CGAL/NT_converter.h>
 #include <CGAL/number_utils_classes.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 template <class NT1, class NT2>
 class NT_converter: public CGAL::NT_converter<NT1, NT2>
@@ -48,14 +48,14 @@ double to_double(const NT &nt) {
   return CGAL::to_double(nt);
   }*/
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 
 #else
 
 Not implemented yet;
 #endif
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 //! This does not use any CGAL code.
 template <class NT>
@@ -70,5 +70,5 @@ struct Identity_converter
     }
 };
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif

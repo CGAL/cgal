@@ -25,7 +25,7 @@
 
 //#include <CGAL/Kinetic/kernel/Cartesian_moving_sphere_3.h>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 
 
@@ -811,5 +811,5 @@ typename CC::result_type pt3(Cartesian_moving_lifted_point_3<C> a,
 }
 #endif
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 #endif

@@ -30,7 +30,7 @@
 
 namespace CGAL {
 
-CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+namespace ApolloniusGraph_2 {
 
 template<class K, class MTag>
 class Orientation_2
@@ -106,7 +106,7 @@ public:
 
 //--------------------------------------------------------------------
 
-CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
+} //namespace ApolloniusGraph_2
 
 } //namespace CGAL
 

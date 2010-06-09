@@ -654,7 +654,7 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
 #define TRACEN(t) std::cerr << t << std::endl
 #define TRACEV(t) std::cerr << #t << " = " << (t) << std::endl
  
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 <<Lift_to_paraboloidCd function object>>
 <<Project_along_d_axisCd function object>>
@@ -676,7 +676,7 @@ CGAL_BEGIN_NAMESPACE
 <<Linearly_independentCd function object>>
 <<Linear_baseCd function object>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_FUNCTION_OBJECTSCD_H
 
 @ 

@@ -26,7 +26,7 @@
 
 namespace CGAL {
 
-CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
+namespace ApolloniusGraph_2 {
 
 class comparator_profiler
 {
@@ -158,7 +158,7 @@ unsigned long comparator_profiler::counter_rr_e = 0;
 unsigned long comparator_profiler::counter_rr_r0 = 0;
 //unsigned long comparator_profiler::counter_rr_jneg = 0;
 
-CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
+} //namespace ApolloniusGraph_2
 
 } //namespace CGAL
 

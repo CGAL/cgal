@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Event_base.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE;
+namespace CGAL { namespace Kinetic {;
 
 //! Delete a single moving object from the MOT at a particular time.
 /*!
@@ -62,5 +62,5 @@ std::ostream &operator<<(std::ostream &out, const Erase_event<MH> &moi)
 }
 
 
-CGAL_KINETIC_END_NAMESPACE;
+} } //namespace CGAL::Kinetic;
 #endif

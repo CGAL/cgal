@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 template <class Kernel, class NTT>
 unsigned int filtered_root_multiplicity(const typename Kernel::Function &fh,
 					const NTT &t, const Kernel &k)
@@ -129,5 +129,5 @@ protected:
   Kernel kernel_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

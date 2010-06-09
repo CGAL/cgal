@@ -33,7 +33,7 @@
 
 namespace CGAL {
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+namespace SegmentDelaunayGraph_2 {
 
 namespace Internal {
 
@@ -87,7 +87,7 @@ public:
 };
 
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
+} //namespace SegmentDelaunayGraph_2
 
 } //namespace CGAL
 

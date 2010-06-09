@@ -34,7 +34,7 @@
 #include <CGAL/Kinetic/Event_base.h>
 #include <CGAL/Kinetic/Triangulation_default_traits_2.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 #ifdef NDEBUG
 #define CGAL_TRIANGULATION_2_DEBUG(x)
 #else
@@ -755,5 +755,5 @@ void Triangulation_2<Sim, Del, W, T>::audit() const  {
   }
 }
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 #include <CGAL/Polynomial/internal/Polynomial_impl.h>
 
-CGAL_POLYNOMIAL_BEGIN_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL {
 
 //! A polynomial specialized for interval number types
 /*!
@@ -83,5 +83,5 @@ inline std::ostream &operator<<(std::ostream &out, const Interval_polynomial& ip
 }
 
 
-CGAL_POLYNOMIAL_END_NAMESPACE
+} } //namespace CGAL::POLYNOMIAL
 #endif

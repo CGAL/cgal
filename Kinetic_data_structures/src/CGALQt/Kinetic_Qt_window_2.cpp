@@ -24,7 +24,7 @@
 #include <CGAL/Kinetic/IO/internal/pixmaps.h>
 #include "Kinetic_Qt_window_2.moc"
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
         
 Qt_window_2::Qt_window_2(int xmin, int xmax, int ymin, int ymax) {
   widget_= new Qt_widget_2_core(this);
@@ -120,4 +120,4 @@ Qt_window_2::Qt_window_2(int xmin, int xmax, int ymin, int ymax) {
 
 
 }
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal

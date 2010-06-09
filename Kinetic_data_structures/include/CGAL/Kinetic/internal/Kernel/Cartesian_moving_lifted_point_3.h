@@ -24,7 +24,7 @@
 #include <iostream>
 #include <CGAL/Kinetic/Kernel/Cartesian_moving_point_3.h>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE;
+namespace CGAL { namespace Kinetic { namespace internal {;
 
 template <class Coordinate_t>
 class Cartesian_moving_lifted_point_3
@@ -132,5 +132,5 @@ std::ostream &operator<<(std::ostream &out, const Cartesian_moving_lifted_point_
 }
 
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE;
+} } } //namespace CGAL::Kinetic::internal;
 #endif

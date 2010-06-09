@@ -29,7 +29,7 @@
   that consists monic polynomials.
 */
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 template<class Kernel_t>
 class Monic_Sturm_sequence
 : public Sturm_sequence_base<Kernel_t>
@@ -96,5 +96,5 @@ class Monic_Sturm_sequence
         }
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_POLYNOMIAL_INTERNAL_MONIC_STURM_SEQUENCE_H

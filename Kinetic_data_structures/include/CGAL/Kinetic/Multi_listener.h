@@ -21,7 +21,7 @@
 #ifndef CGAL_TOOLS_MULTI_LISTENER_BASE_H
 #define CGAL_TOOLS_MULTI_LISTENER_BASE_H
 #include <CGAL/basic.h>
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! This is a variant of Listener which supports more than one object receiving notifications
 /*!
@@ -233,5 +233,5 @@ private:                                                                \
 
 #define CGAL_KINETIC_MULTILISTENER_DESTRUCTOR CGAL_assertion(listeners_.empty())
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

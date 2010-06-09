@@ -29,7 +29,7 @@
 #include <sstream>
 #include <algorithm>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation_visitor_base_3
 {
@@ -120,5 +120,5 @@ struct Delaunay_triangulation_event_log_visitor_3: public Delaunay_triangulation
     std::vector<std::string> log_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

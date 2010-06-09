@@ -22,7 +22,7 @@
 #define CGAL_KINETIC_IO_KERNEL_CERTIFICATE_GENERATOR_H
 #include <CGAL/Kinetic/basic.h>
 //#include <CGAL/Kinetic/internal/Kernel/Certificate.h>
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 template <class KK_t, class Generator>
 struct Certificate_generator {
   typedef typename KK_t::Certificate result_type;
@@ -139,6 +139,6 @@ protected:
   typename KK_t::Function_kernel fk_;
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 
 #endif

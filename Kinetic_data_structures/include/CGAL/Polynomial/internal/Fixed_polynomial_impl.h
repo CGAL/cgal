@@ -30,7 +30,7 @@
 
 #define CGAL_EXCESSIVE(x)
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class This, class NT_t, int D>
 class Fixed_polynomial_impl;
@@ -489,5 +489,5 @@ inline T operator-(int a, const Fixed_polynomial_impl<T, NT, D> &poly)
 
 
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

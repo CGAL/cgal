@@ -1815,12 +1815,12 @@ void assert_type_precondition() const
 #define LEDA_MEMORY(t) 
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 <<PM traits classes for segment overlay>>
 <<PM overlayer>>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_PM_OVERLAYER_H
 
 @ \section{Test snippets}

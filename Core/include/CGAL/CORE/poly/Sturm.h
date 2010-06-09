@@ -62,7 +62,7 @@
 #include "CGAL/CORE/Expr.h"
 #include "CGAL/CORE/poly/Poly.h"
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 // ==================================================
 // Sturm Class
@@ -1143,6 +1143,6 @@ CORE_INLINE void testNewtonSturm(const Polynomial<NT>&P, int prec, int n = -1) {
   }
 }// testNewtonSturm
 
-CORE_END_NAMESPACE
+} //namespace CORE
 
 #endif

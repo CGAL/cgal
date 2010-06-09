@@ -35,7 +35,7 @@
 #include "CGAL/CORE/CoreAux.h"
 #include <gmp.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 ////////////////////////////////////////////////////////////
 //  More useful functions to implement:
@@ -209,4 +209,4 @@ void core_error(std::string msg, std::string file, int lineno, bool err) {
 }
 
 
-CORE_END_NAMESPACE
+} //namespace CORE

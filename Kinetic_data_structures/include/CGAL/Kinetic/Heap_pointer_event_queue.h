@@ -31,7 +31,7 @@
 #include <CGAL/Kinetic/internal/infinity_or_max.h>
 #include <algorithm>
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 template <class Priority>
 class Heap_pointer_event_queue_item_handle;
@@ -177,9 +177,9 @@ protected:
   Event event_;
 };
 
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class Priority> class Bin_pointer_event_queue;
 
@@ -646,5 +646,5 @@ std::ostream &operator<<(std::ostream &out, const Heap_pointer_event_queue<D, IN
 }
 
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

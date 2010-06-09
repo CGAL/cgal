@@ -132,7 +132,7 @@
 
 //std::cout << "UCName of " << f << " and " << fp << std::endl;
 
-                                CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+                                namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
                                 template <class Filter_traits_t, template<class Fn> class Rational_traits = internal::Rational_traits_base>
                                 class Filtered_rational_traits
@@ -299,6 +299,6 @@
                                         Exact_to_interval_converter efc_;
                                 };
 
-                                CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+                                } } } //namespace CGAL::POLYNOMIAL::internal
 //#undef DF_UNARY_CONSTUCTION
 #endif

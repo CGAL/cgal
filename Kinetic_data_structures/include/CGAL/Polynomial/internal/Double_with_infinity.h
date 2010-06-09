@@ -23,7 +23,7 @@
 #define CGAL_POLYNOMIAL_INTERNAL_WRAPPED_DOUBLE_H
 #include <CGAL/Polynomial/basic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
  template <bool S, bool Q>
   struct Double_with_infinity_default {
@@ -67,7 +67,7 @@ protected:
   double d_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 
 namespace std {
   template <>

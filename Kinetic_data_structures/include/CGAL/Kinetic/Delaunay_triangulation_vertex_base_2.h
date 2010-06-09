@@ -24,7 +24,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template < typename GT,
            typename Vb = Triangulation_vertex_base_2<GT> >
@@ -65,6 +65,6 @@ public:
 };
 
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 
 #endif

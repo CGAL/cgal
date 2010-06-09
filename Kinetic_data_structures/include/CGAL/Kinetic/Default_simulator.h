@@ -27,7 +27,7 @@
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Multi_listener.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 #ifdef CGAL_KINETIC_CHECK_EXPENSIVE
 #ifndef CGAL_KINETIC_DISABLE_AUDITING
@@ -733,5 +733,5 @@ void Default_simulator<S, PQ>::audit_all_kdss()
 CGAL_OUTPUT2(Default_simulator)
 
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

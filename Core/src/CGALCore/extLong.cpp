@@ -40,7 +40,7 @@
 
 #include <CGAL/CORE/extLong.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 const extLong& extLong::getNaNLong() {
   static extLong NaNLong(true);
@@ -191,4 +191,4 @@ std::ostream& operator<< (std::ostream& o, const extLong& x) {
   return o;
 }
 
-CORE_END_NAMESPACE
+} //namespace CORE

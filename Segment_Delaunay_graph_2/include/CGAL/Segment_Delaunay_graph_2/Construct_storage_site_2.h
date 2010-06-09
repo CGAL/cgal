@@ -25,7 +25,7 @@
 
 namespace CGAL {
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
+namespace SegmentDelaunayGraph_2 {
 
 template<class STraits>
 class Construct_storage_site_2
@@ -359,7 +359,7 @@ public:
 //----------------------------------------------------------------------
 
 
-CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
+} //namespace SegmentDelaunayGraph_2
 
 } //namespace CGAL
 

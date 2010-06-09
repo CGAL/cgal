@@ -33,7 +33,7 @@
 
 #include "CGAL/CORE/CoreDefs.h"
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 //  Default Values
 
@@ -150,5 +150,5 @@ long defInitialProgressivePrec = 64;
  *  true = turn on rational reduction */
 bool rationalReduceFlag = false;
 
-CORE_END_NAMESPACE
+} //namespace CORE
 

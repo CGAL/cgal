@@ -26,7 +26,7 @@
 #include <CGAL/Polynomial/internal/Alternation_counter.h>
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE;
+namespace CGAL { namespace POLYNOMIAL { namespace internal {;
 
 //! A class for computing filtered exact and approximate descartes root bounds.
 /*!
@@ -175,5 +175,5 @@ class Filtered_Descartes_root_counter
         Kernel kernel_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE;
+} } } //namespace CGAL::POLYNOMIAL::internal;
 #endif

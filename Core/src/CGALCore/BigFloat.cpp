@@ -44,7 +44,7 @@
 #include <CGAL/CORE/BigFloat.h>
 #include <CGAL/CORE/Expr.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 
 ////////////////////////////////////////////////////////////
@@ -1283,4 +1283,4 @@ BigFloat root(const BigFloat& x, unsigned long k,
   }
 }//root
 
-CORE_END_NAMESPACE
+} //namespace CORE

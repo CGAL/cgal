@@ -24,7 +24,7 @@
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Listener.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 //! This is a base class for implementing GUIs for kinetic simulations
 /*!  Use this if you need to implement your on GUI. See Qt_gui_2 for a
   simple example of using it.
@@ -328,5 +328,5 @@ protected:
   //Listener *drawable_;
   bool processing_;
 };
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

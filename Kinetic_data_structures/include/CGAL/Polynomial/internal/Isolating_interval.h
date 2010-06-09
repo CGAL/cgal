@@ -24,7 +24,7 @@
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 #include <iostream>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 //! necessary to support filtered_numbers which I don't like
 template <class NT, class Functor>
@@ -598,7 +598,7 @@ OStream &operator<<(OStream &out, const Isolating_interval<NT> &ii)
   return ii.to_interval();
   }*/
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 
 #ifdef CGAL_POLYNOMIAL_USE_CGAL
 

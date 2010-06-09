@@ -1,8 +1,8 @@
 %------------------------------------------------------------------------------
 %KILLSTART DISS REP
 %LDEL TRACE.*?\)\;
-%LDEL CGAL_BEGIN_NAMESPACE.*
-%LDEL CGAL_END_NAMESPACE.*
+%LDEL namespace CGAL {.*
+%LDEL } //namespace CGAL.*
 \documentclass[a4paper]{article}
 \usepackage{MyLweb}
 \input{defs}
@@ -248,10 +248,10 @@ public:
 #define _DEBUG 19
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 <<some predefinitions>>
 <<class Constrained_triang_traits>>
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_PM_CONSTR_TRIANG_TRAITS_H
 
 @ \end{ignoreindiss} The geometry concept |GEOM| allows us to import
@@ -914,7 +914,7 @@ void operator()(ARG&) const {}
 
 #include <CGAL/Nef_2/PM_visualizor.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class GT>
 class Constrained_triang_anim {
@@ -956,7 +956,7 @@ void post_completion_animation(GT& gpst)
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_PM_CONSTR_TRIANG_ANIM_H
 
 @ \section{A Test of the plane map triangulation}

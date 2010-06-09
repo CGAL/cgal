@@ -25,7 +25,7 @@
 
 #include "Kinetic_Qt_timer.moc"
 
-CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace Kinetic { namespace internal {
 
 Qt_timer::Qt_timer(): tick_(0), id_(-1) {
   connect( &timer_, SIGNAL(timeout()),
@@ -43,4 +43,4 @@ void Qt_timer::timerDone() {
   CGAL_KINETIC_NOTIFY(TICKS);
   //cb_->new_notification(Listener::TICKS);
 }
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::Kinetic::internal

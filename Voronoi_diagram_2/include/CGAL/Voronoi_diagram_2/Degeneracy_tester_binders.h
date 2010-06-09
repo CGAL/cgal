@@ -24,7 +24,7 @@
 
 namespace CGAL {
 
-CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
+namespace VoronoiDiagram_2 { namespace Internal {
 
 //=======================================================================
 
@@ -74,7 +74,7 @@ private:
 
 //=======================================================================
 
-CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
+} } //namespace VoronoiDiagram_2::Internal
 
 } //namespace CGAL
 

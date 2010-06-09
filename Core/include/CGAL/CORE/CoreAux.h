@@ -38,7 +38,7 @@
 #include <fstream>
 #include "CGAL/CORE/Impl.h"
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 #ifndef LONG_BIT // such as in Linux
   #define LONG_BIT (sizeof(long) * 8)
@@ -178,5 +178,5 @@ inline void core_debug(std::string msg){
 }
 
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_COREAUX_H_

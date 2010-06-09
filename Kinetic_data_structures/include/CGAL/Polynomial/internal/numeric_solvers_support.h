@@ -23,7 +23,7 @@
 #include <CGAL/Polynomial/basic.h>
 #include <vector>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template <class NT>
 inline bool root_is_good(NT r, NT c, NT lb, NT ub, NT tol=.0000005)
@@ -56,5 +56,5 @@ void filter_solver_roots(const double *begin, const double *end,
 			 double lb, double ub, double last,
 			 std::vector<double> &roots);
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif

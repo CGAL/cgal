@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
+namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
 template<class Kernel, class M_t = CGAL::Field_tag>
 class Filtered_root_bound_evaluator
@@ -43,5 +43,5 @@ class Filtered_root_bound_evaluator
         typename Kernel::Interval_kernel::Root_bound rb_;
 };
 
-CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
+} } } //namespace CGAL::POLYNOMIAL::internal
 #endif                                            // CGAL_POLYNOMIAL_ROOT_BOUND_EVALUATOR_H

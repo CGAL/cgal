@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/internal/Kernel/Cartesian_kinetic_kernel_base.h>
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 //! A kinetic kernel using cartesian coordinates
 /*!  It takes a PolynomialKernel as a template parameter. The
@@ -43,7 +43,7 @@ public:
   Cartesian(){}
 };
 
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 
 //#include <CGAL/Kinetic_internals/kernel_undefs.h>
 #endif

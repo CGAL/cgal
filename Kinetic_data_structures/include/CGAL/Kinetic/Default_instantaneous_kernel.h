@@ -41,7 +41,7 @@
 
 #define CGAL_TSO(name) typedef typename Static_kernel::name name
 
-CGAL_KINETIC_BEGIN_NAMESPACE
+namespace CGAL { namespace Kinetic {
 
 template <class CIK>
 class Default_instantaneous_kernel_rep: public Ref_counted<Default_instantaneous_kernel_rep<CIK> >
@@ -384,5 +384,5 @@ protected:
 };
 #undef CGAL_MSA
 #undef CGAL_TSO
-CGAL_KINETIC_END_NAMESPACE
+} } //namespace CGAL::Kinetic
 #endif

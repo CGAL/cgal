@@ -39,7 +39,7 @@
 #include <CGAL/CORE/CoreDefs.h>
 #include <CGAL/CORE/extLong.h>
 
-CORE_BEGIN_NAMESPACE
+namespace CORE { 
 
 //  forward reference
 class BigFloat;
@@ -442,5 +442,5 @@ inline void BigFloatRep::dump() const {
   std::cout << " -- End of BFRep " << this << " -- " << std::endl;
 }
 
-CORE_END_NAMESPACE
+} //namespace CORE
 #endif // _CORE_BIGFLOATREP_H_
