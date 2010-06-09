@@ -25,11 +25,11 @@ namespace CGAL {
 template <typename Previous_level>
 class Null_mesh_visitor_level
 {
-  Previous_level previous;
+  Previous_level& previous;
 public:
   typedef Previous_level Previous_visitor;
 
-  Null_mesh_visitor_level(Previous_level p) : previous(p)
+  Null_mesh_visitor_level(Previous_level& p) : previous(p)
   {
   }
 
