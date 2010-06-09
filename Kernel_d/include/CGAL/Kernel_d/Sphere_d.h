@@ -28,7 +28,7 @@
 #include <vector>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R> class Sphere_d;
 template <class R> bool equal_as_sets(const Sphere_d<R>&, const Sphere_d<R>&);
@@ -331,7 +331,7 @@ center. We may tentatively assume that $c_d = 1$, solve the
 corresponding linear system, and then define the center.
 */
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SPHERE_D_H
 //----------------------- end of file ----------------------------------

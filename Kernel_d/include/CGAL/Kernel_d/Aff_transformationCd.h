@@ -28,7 +28,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/rational_rotation.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class FT, class LA > class Aff_transformationCd;
 template <class FT, class LA > class Aff_transformationCd_rep;
@@ -209,5 +209,5 @@ std::istream& operator>>(
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_AFF_TRANSFORMATIONCD_H

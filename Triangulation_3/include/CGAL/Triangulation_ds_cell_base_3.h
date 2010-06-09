@@ -26,7 +26,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Dummy_tds_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename TDS = void >
 class Triangulation_ds_cell_base_3
@@ -238,6 +238,6 @@ public:
   struct Rebind_TDS { typedef Triangulation_ds_cell_base_3<TDS2> Other; };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_DS_CELL_BASE_3_H

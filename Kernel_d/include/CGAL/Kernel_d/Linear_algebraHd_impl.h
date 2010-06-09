@@ -29,7 +29,7 @@
 //---------------------------------------------------------------------
 #ifndef CGAL_LINEAR_ALGEBRAHD_C
 #define CGAL_LINEAR_ALGEBRAHD_C
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class RT_, class AL_>
 bool Linear_algebraHd<RT_,AL_>::
@@ -1017,5 +1017,5 @@ Linear_algebraHd<RT_,AL_>::transpose(const Matrix& M)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_LINEAR_ALGEBRAHD_C

@@ -30,7 +30,7 @@
 #include <CGAL/intersection_3.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_> struct Convex_hull_d_traits_3
 {
@@ -269,6 +269,6 @@ template <class R_> struct Convex_hull_d_traits_3
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONVEX_HULL_D_TRAITS_3_H

@@ -29,7 +29,7 @@
 // Some tools for basic template metaprogramming.
 // These bits should move to CGAL/mpl.h in STL_Extension, or taken from Boost.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // The additionnal int parameter is to obtain different types.
 template < typename A, typename B, int = 0 >
@@ -42,6 +42,6 @@ struct First_if_different<A, A, i> {
   struct Type{};
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

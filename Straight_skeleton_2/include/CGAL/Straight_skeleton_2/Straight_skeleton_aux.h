@@ -30,7 +30,7 @@
 //
 // The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
 //
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i
 {
@@ -201,7 +201,7 @@ public:
       }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 namespace boost
 {

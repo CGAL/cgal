@@ -33,7 +33,7 @@
 #include <CGAL/Triangulation_hierarchy_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A class that answers point-location and queries
@@ -342,7 +342,7 @@ protected:
   void build_triangulation();  
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_triangulation_pl_functions.h>

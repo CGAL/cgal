@@ -30,7 +30,7 @@
 #include <CGAL/Optimisation/debug.h>
 #include <CGAL/IO/Verbose_ostream.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Function declarations
 // =====================
@@ -47,6 +47,6 @@ _optimisation_is_valid_fail( CGAL::Verbose_ostream& verr,
     verr << "  object is NOT valid!" << std::endl;
     return false;
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_OPTIMISATION_BASIC_H

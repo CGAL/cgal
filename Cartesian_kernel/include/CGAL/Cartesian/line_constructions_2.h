@@ -27,7 +27,7 @@
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/Cartesian/Line_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class K >
 inline
@@ -49,6 +49,6 @@ perpendicular_through_point(const LineC2<K> &l,
   return LineC2<K>(a, b, c);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_LINE_CONSTRUCTIONS_2_H

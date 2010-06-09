@@ -21,7 +21,7 @@
 #ifndef CGAL_EIGEN_2_H
 #define CGAL_EIGEN_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -112,6 +112,6 @@ namespace internal {
   } // end eigen_symmetric_2
 } // end namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_EIGEN_2_H

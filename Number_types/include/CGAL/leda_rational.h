@@ -53,7 +53,7 @@
 
 #include <CGAL/leda_integer.h> // for GCD in Fraction_traits
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <> class Algebraic_structure_traits< leda_rational >
   : public Algebraic_structure_traits_base< leda_rational,
@@ -279,7 +279,7 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // Unary + is missing for leda::rational
 namespace leda{

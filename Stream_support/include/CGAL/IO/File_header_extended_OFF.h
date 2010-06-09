@@ -30,7 +30,7 @@
 #include <string>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class  File_header_extended_OFF {
     bool     m_verbose;     // Print error messages if true.
@@ -122,6 +122,6 @@ inline std::istream& skip_comment_OFF( std::istream& in) {
     return in;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_FILE_HEADER_EXTENDED_OFF_H //
 // EOF //

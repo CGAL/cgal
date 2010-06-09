@@ -30,7 +30,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
  
 enum Ridge_interrogation_type {MAX_RIDGE, MIN_RIDGE, CREST_RIDGE};
 
@@ -893,6 +893,6 @@ template < class TriangulatedSurfaceMesh,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

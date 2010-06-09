@@ -24,7 +24,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class _HDS, class _ChullType>
 class Build_polyhedron_from_chull : public Modifier_base< _HDS>
@@ -116,5 +116,5 @@ void convex_hull_d_to_polyhedron_3(
   P.delegate( get_surface );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_CONVEX_HULL_D_TO_POLYHEDRON_3_H

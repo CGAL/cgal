@@ -26,7 +26,7 @@
  * Definition of the Arr_naive_point_location<Arrangement> template.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A class that answers point-location and vertical ray-shooting queries
@@ -105,7 +105,7 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_naive_point_location_impl.h>

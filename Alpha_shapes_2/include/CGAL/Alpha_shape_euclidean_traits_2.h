@@ -22,12 +22,12 @@
 #define CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_H
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R >
 class Alpha_shape_euclidean_traits_2 : public R
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

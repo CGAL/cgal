@@ -28,7 +28,7 @@
 #include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_construction_helper.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_spherical_insertion_helper
  * A helper class for the insertion sweep-line visitors, suitable
@@ -154,6 +154,6 @@ void Arr_spherical_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -27,7 +27,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class SegmentC3
@@ -215,6 +215,6 @@ collinear_has_on(const typename SegmentC3<R>::Point_3 &p) const
   return collinear_are_ordered_along_line(source(), p, target());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_SEGMENT_3_H

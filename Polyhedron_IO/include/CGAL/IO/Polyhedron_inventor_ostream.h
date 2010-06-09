@@ -25,7 +25,7 @@
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <CGAL/Polyhedron_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Traits,
            class Items,
@@ -41,6 +41,6 @@ operator<<( Inventor_ostream_base& out,
     return out;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H //
 // EOF //

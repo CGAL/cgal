@@ -9,7 +9,7 @@
 #define CGAL_NEF_DEBUG 547
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_, typename PointComparison, 
          typename FTComparison, typename Container>
@@ -214,5 +214,5 @@ class Edge_sorter : public Modifier_base<typename Nef_::SNC_and_PL> {
   }
 };
   
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_NEF3_EDGE_SORTER_H

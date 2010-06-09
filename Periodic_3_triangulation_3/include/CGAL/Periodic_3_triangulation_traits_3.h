@@ -26,7 +26,7 @@
 #include <CGAL/triangulation_assertions.h>
 
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template < class K, class Predicate_ >
   class Traits_with_offsets_adaptor {
@@ -244,13 +244,13 @@ protected:
 template < typename K, typename Off = CGAL::Periodic_3_offset_3 >
 class Periodic_3_triangulation_traits_3;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // Partial specialization for Filtered_kernel<CK>.
 #include <CGAL/Periodic_3_triangulation_filtered_traits_3.h>
 #include <CGAL/Filtered_kernel.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This declaration is needed to break the cyclic dependency.
 template < typename K >
@@ -270,6 +270,6 @@ class Periodic_3_triangulation_traits_3
   : public Periodic_3_triangulation_traits_base_3<K, Off>
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H

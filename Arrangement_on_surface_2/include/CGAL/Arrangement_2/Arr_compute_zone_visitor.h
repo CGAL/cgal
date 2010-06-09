@@ -24,7 +24,7 @@
  * Definition of the Arr_compute_zone_visitor class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A visitor class for Arrangement_zone_2, which outputs the
@@ -188,6 +188,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

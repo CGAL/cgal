@@ -32,7 +32,7 @@
 #include <algorithm>
 #include <boost/bind.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator
 ch_bykat(InputIterator first, InputIterator last, 
@@ -246,6 +246,6 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
   #endif // no postconditions ...
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CH_BYKAT_C

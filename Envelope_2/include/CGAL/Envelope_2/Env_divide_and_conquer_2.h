@@ -27,7 +27,7 @@
 #include <vector>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A class implementing the divide-and-conquer algorithm for computing the
@@ -367,7 +367,7 @@ protected:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Envelope_2/Env_divide_and_conquer_2_impl.h>
 

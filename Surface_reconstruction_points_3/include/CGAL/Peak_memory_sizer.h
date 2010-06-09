@@ -31,7 +31,7 @@
 #include <cfloat>
 #include <climits>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// Peak_memory_sizer extends Memory_sizer with new memory statistics.
@@ -187,6 +187,6 @@ private:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PEAK_MEMORY_SIZER_H

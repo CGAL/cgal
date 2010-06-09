@@ -30,7 +30,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class VertexBase>
 class HalfedgeDS_in_place_list_vertex
@@ -714,6 +714,6 @@ public:
 
 //  #undef CGAL__HDS_IP_List
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_HALFEDGEDS_LIST_H //
 // EOF //

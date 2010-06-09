@@ -27,7 +27,7 @@
 #include <CGAL/Triangle_3.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template <class R>
 class Orientation_xy_3 
@@ -131,6 +131,6 @@ public:
 };
   
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif // CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H

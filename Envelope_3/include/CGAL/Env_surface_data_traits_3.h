@@ -26,7 +26,7 @@
 #include <CGAL/Arr_geometry_traits/Curve_data_aux.h>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A generic traits class for maintaining the envelope of surfaces that have
@@ -129,6 +129,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

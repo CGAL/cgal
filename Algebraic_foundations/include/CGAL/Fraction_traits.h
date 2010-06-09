@@ -37,7 +37,7 @@
 
 #include <CGAL/number_type_basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \ingroup NiX_Fraction_traits_spec
  *  \brief Traits class for accessing numerator and denominator.\n 
@@ -62,7 +62,7 @@ public:
     typedef Null_functor Compose;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_FRACTION_TRAITS_H
 // EOF

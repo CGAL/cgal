@@ -31,7 +31,7 @@
 for(x = (L).begin(); x != (L).end(); ++x) 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /* |spherical_orientation| takes three points of one hemisphere and
 returns the orientation of $p_3$ with respect to the halfcircle
@@ -405,6 +405,6 @@ intersection(const CGAL::Sphere_circle<R>& c,
   return -1;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_SPHERE_PREDICATES_H

@@ -21,7 +21,7 @@
 #include <climits> // Neeeded by the following Boost header for CHAR_BIT.
 #include <boost/pending/relaxed_heap.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class IndexedType_ 
          ,class Compare_ = std::less<IndexedType_>
@@ -82,7 +82,7 @@ private:
     
 } ;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif
  

@@ -24,7 +24,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template < class Traits_, class Predicate_ >
 class Point_offset_adaptor {
@@ -128,6 +128,6 @@ public:
   PT _pt;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_REMOVE_TRAITS_3_H

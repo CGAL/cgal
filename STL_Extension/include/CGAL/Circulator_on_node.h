@@ -28,7 +28,7 @@
 
 #include <CGAL/circulator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Node,
            class Next,
@@ -95,6 +95,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_CIRCULATOR_ON_NODE_H //
 // EOF //

@@ -35,7 +35,7 @@
 
 #include <set>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A class representing planar subdivisions induced by a set of arbitrary
@@ -983,7 +983,7 @@ overlay (const Arrangement_on_surface_with_history_2<GeomTraits, TopTraits1>&
   res._overlay (arr1, arr2, ovl_traits);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // The function definitions can be found under:
 #include <CGAL/Arrangement_2/Arr_on_surface_with_history_2_impl.h>

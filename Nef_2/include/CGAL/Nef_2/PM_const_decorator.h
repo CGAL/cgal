@@ -31,7 +31,7 @@
 #define CGAL_NEF_DEBUG 7
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Iter, typename Move>
 inline CGAL::Circulator_tag  
@@ -584,5 +584,5 @@ void print_as_leda_graph(std::ostream& os, const PMCDEC& D,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_PM_CONST_DECORATOR_H

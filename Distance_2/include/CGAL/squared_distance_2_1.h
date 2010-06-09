@@ -39,7 +39,7 @@
 #include <CGAL/wmult.h>
 #include <CGAL/squared_distance_utils.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
   
@@ -759,6 +759,6 @@ squared_distance(const Line_2<K> &line1, const Line_2<K> &line2)
   return internal::squared_distance(line1, line2, K());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

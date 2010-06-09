@@ -29,7 +29,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/squared_distance_2_1.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -60,6 +60,6 @@ do_intersect(const Circle_2<K> & circ1,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -22,7 +22,7 @@
 
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 
@@ -186,6 +186,6 @@ value_type(const Polygon_2_curve_iterator<X_monotone_curve_2_,Polygon_>&)
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

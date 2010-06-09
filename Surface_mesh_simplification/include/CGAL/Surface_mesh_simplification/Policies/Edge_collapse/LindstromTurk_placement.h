@@ -21,7 +21,7 @@
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Surface_mesh_simplification  
 {
@@ -57,7 +57,7 @@ private:
 
 } // namespace Surface_mesh_simplification
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H //
 // EOF //

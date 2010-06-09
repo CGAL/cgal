@@ -35,7 +35,7 @@
 #include <CGAL/Polynomials_for_line_3.h>
 #include <CGAL/Bbox_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename RT_ >
 class Root_for_spheres_2_3 {
@@ -239,6 +239,6 @@ operator>>(std::istream & is, Root_for_spheres_2_3<RT> &r)
   return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ROOT_FOR_SPHERES_2_3_H

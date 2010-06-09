@@ -33,7 +33,7 @@
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*
 template<typename Items>
@@ -443,5 +443,5 @@ typedef CGAL::Constrained_triangulation_plus_2<YZ_tri>     YZ_tri_plus;
    return is_nef;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_VERTEX_CYCLE_TO_NEF_3_H

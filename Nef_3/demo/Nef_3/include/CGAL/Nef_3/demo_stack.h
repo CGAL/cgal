@@ -52,7 +52,7 @@ using std::endl;
 using std::strcmp;
 using std::exit;
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Kernel>
 class demo_stack {
@@ -595,6 +595,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NEF_DEMO_STACK_H

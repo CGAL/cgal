@@ -27,7 +27,7 @@
 
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A class that answers point-location and vertical ray-shooting queries
@@ -193,7 +193,7 @@ protected:
 					      bool shoot_up) const;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_walk_along_line_pl_impl.h>

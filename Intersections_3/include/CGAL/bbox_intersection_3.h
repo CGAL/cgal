@@ -28,7 +28,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Object.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This function intersects a bbox with a ray, line or segment 
 // Its essentially a copy of the function that was in Bbox_3_intersections.cpp
@@ -159,6 +159,6 @@ intersection_bl(const Bbox_3 &box,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_BBOX_INTERSECTION_3_H

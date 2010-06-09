@@ -21,7 +21,7 @@
 
 #include <CGAL/Search_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// A Point_vertex_handle_3 objects wraps either
@@ -182,6 +182,6 @@ class Search_traits_vertex_handle_3
 {};
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEARCH_TRAITS_VERTEX_HANDLE_3_H

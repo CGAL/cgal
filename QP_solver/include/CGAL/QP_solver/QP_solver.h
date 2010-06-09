@@ -48,7 +48,7 @@
 #include <numeric>
 #include <algorithm>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // ==================
 // class declarations
@@ -1976,7 +1976,7 @@ compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
        
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/QP_solver/Unbounded_direction.h>
 #include <CGAL/QP_solver/QP_solver_nonstandardform_impl.h>

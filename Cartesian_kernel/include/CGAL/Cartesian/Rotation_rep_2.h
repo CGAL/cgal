@@ -26,7 +26,7 @@
 
 #include <CGAL/rational_rotation.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R >
 class Rotation_repC2: public Aff_transformation_rep_baseC2<R>
@@ -175,6 +175,6 @@ private:
   FT sinus_, cosinus_;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_ROTATION_REP_2_H

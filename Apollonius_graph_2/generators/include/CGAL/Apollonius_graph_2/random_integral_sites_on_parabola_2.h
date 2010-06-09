@@ -4,7 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/random_integer.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // creates a random site of the form {(t, t^2), t^2}, where t is in
 // the range [-M, M], M = 2^b - 1
@@ -49,6 +49,6 @@ private:
   Random r_;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_RANDOM_INTEGRAL_SITES_ON_PARABOLA_2_H

@@ -51,7 +51,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/named_function_params.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
   enum vertex_is_fixed_t             { vertex_is_fixed             } ;  
   enum set_cache_policy_t            { set_cache_policy            } ;
@@ -266,6 +266,6 @@ CGAL_BEGIN_NAMESPACE
     return Dispatcher::const_get_value(p, t2, tag2);
   }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP

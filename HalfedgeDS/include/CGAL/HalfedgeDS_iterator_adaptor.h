@@ -26,7 +26,7 @@
 
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //  The iterator identity adaptor will be used for the HDS implementations
 //  that are based on STL (or other) container classes which do not
@@ -156,7 +156,7 @@ public:
     bool operator>=( const Self& i) const { return !(*this < i); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // we don't need Koenig lookup here
 template < class D, class I>

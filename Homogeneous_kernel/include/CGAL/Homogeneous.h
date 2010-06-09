@@ -29,7 +29,7 @@
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/Quotient.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename RT_, typename FT_, typename Kernel >
 struct Homogeneous_base_ref_count
@@ -55,6 +55,6 @@ struct Homogeneous
                 Homogeneous<RT_, FT_> >
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HOMOGENEOUS_H

@@ -27,7 +27,7 @@
 #  define CGAL_HDS_PARAM_ class HDS
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Surface_mesh_simplification
 {
@@ -121,7 +121,7 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
 
 } // namespace Surface_mesh_simplification
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #undef CGAL_HDS_
 

@@ -27,7 +27,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Origin
 {};
@@ -39,6 +39,6 @@ class Null_vector
 
 extern const Null_vector NULL_VECTOR;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ORIGIN_H

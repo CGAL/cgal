@@ -85,7 +85,7 @@ the furthest site triangulation.
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Convex_hull_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename R_, typename Lifted_R_ = R_>
 class Delaunay_d : public Convex_hull_d<Lifted_R_>
@@ -1053,5 +1053,5 @@ all_points() const
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_DELAUNAY_D_H

@@ -19,7 +19,7 @@
 #ifndef CGAL_MINKOWSKI_SUM_LABELS_H
 #define CGAL_MINKOWSKI_SUM_LABELS_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A label for endpoints of Minkowski-sum curves.
@@ -282,6 +282,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

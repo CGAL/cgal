@@ -20,7 +20,7 @@
 #ifndef CGAL_PREDICATES_FOR_VORONOI_INTERSECTION_CARTESIAN_2_3_H
 #define CGAL_PREDICATES_FOR_VORONOI_INTERSECTION_CARTESIAN_2_3_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class RT>
 Oriented_side
@@ -146,6 +146,6 @@ side_of_plane_centered_sphereC3(const RT &ax, const RT &ay, const RT &az,
 						   rx-px, ry-py,rz-pz);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PREDICATES_FOR_VORONOI_INTERSECTION_CARTESIAN_2_3_H

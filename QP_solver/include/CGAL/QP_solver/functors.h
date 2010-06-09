@@ -28,7 +28,7 @@
 #include <functional>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // ==================
 // class declarations
@@ -267,7 +267,7 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_QP_SOLVER_FUNCTORS_H
 

@@ -24,7 +24,7 @@
 // This file contains the low level homogeneous predicates
 // used by the 2D regular triangulation.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class RT>
 Comparison_result
@@ -120,6 +120,6 @@ power_testH2( const RT &phx, const RT &phy, const RT &phw, const RT &pwt,
 				                          ta, dtz, dthw);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REGULAR_TRIANGULATION_RTH2_H

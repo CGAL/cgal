@@ -24,7 +24,7 @@
 #include <CGAL/Minkowski_sum_2/Arr_labeled_traits_2.h>
 #include <CGAL/Minkowski_sum_2/Union_of_segment_cycles_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A class for computing the Minkowski sum of two simple polygons based on the
@@ -680,6 +680,6 @@ private:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

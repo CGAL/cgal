@@ -32,7 +32,7 @@
 #include <CGAL/IO/Arrangement_2_reader.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Write an arrangement to an output stream using a given formatter.
@@ -120,6 +120,6 @@ std::istream&
   return (is);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

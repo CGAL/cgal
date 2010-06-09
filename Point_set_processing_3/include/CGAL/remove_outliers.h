@@ -28,7 +28,7 @@
 #include <algorithm>
 #include <map>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // ----------------------------------------------------------------------------
@@ -238,6 +238,6 @@ remove_outliers(
 /// @endcond
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REMOVE_OUTLIERS_H

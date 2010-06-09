@@ -34,7 +34,7 @@
 #include <vector>
 #include <map>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #define CGAL_POINT_IS_LEFT_LOW(p,q)                     \
   (traits->compare_xy_2_object()((p),(q)) == SMALLER)
@@ -3450,7 +3450,7 @@ protected:
   double depth_threshold,size_threshold;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #ifndef CGAL_TD_X_TRAPEZOID_H
 #include <CGAL/Arr_point_location/Td_X_trapezoid.h>

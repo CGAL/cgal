@@ -22,7 +22,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Data_t = int>
 class Directed_graph_node
@@ -165,6 +165,6 @@ private:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_DIRECTED_GRAPH_H

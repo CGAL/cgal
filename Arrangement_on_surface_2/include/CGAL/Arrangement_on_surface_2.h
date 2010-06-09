@@ -48,7 +48,7 @@
 #include <vector>
 #include <algorithm>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arrangement_on_surface_2
  * The arrangement class, representing 2-dimensional subdivisions induced on
@@ -3061,7 +3061,7 @@ bool do_intersect (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
                    const Curve& c);
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // The function definitions can be found under:
 #include <CGAL/Arrangement_2/Arrangement_on_surface_2_impl.h>

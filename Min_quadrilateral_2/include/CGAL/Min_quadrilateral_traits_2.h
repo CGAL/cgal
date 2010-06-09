@@ -31,7 +31,7 @@
 #include <functional>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Optimisation {
   template < class Kernel_ >
@@ -412,7 +412,7 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_MIN_QUADRILATERAL_TRAITS_2_H)
 

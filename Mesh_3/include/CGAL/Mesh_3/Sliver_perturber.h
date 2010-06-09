@@ -48,7 +48,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Mesh_3 {
   
@@ -795,6 +795,6 @@ reset_perturbation_counters()
 } // end namespace Mesh_3
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_3_SLIVERS_PERTURBER_H

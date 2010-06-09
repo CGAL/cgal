@@ -26,7 +26,7 @@
 // includes
 #include <CGAL/QP_solver/QP_pricing_strategy.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // =================
 // class declaration
@@ -173,7 +173,7 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_QP_FULL_EXACT_PRICING_H
 

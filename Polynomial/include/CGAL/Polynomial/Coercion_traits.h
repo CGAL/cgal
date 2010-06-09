@@ -40,7 +40,7 @@
 
 #include <CGAL/Polynomial/misc.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal{
 
@@ -183,6 +183,6 @@ class Coercion_traits_for_level<B,Polynomial<A>,CTL_POLYNOMIAL  >
 
 // COERCION_TRAITS END
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_COERCION_TRAITS_H

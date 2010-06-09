@@ -30,7 +30,7 @@
 #ifndef CGAL_TEST_RATIONAL_TRAITS_H
 #define CGAL_TEST_RATIONAL_TRAITS_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Rational>
 void test_rational_traits(){
@@ -50,6 +50,6 @@ void test_rational_traits(){
     assert( x == Rational(7)/Rational(2));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //  CGAL_TEST_RATIONAL_TRAITS_H

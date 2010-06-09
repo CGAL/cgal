@@ -25,7 +25,7 @@
 #include <CGAL/Segment_Delaunay_graph_storage_site_with_info_2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Construct_storage_site_with_info_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Gt, typename Info_, class Converter, class Merger>
 class Segment_Delaunay_graph_storage_traits_with_info_2
@@ -83,6 +83,6 @@ public:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_STORAGE_TRAITS_WITH_INFO_2_H

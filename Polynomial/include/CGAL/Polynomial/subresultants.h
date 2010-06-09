@@ -26,7 +26,7 @@
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial/bezout_matrix.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
   namespace internal {
@@ -872,6 +872,6 @@ CGAL_BEGIN_NAMESPACE
 
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif// CGAL_POLYNOMIAL_SUBRESULTANTS_H

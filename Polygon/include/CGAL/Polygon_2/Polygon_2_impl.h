@@ -25,7 +25,7 @@
 //                          operator==
 //-----------------------------------------------------------------------//
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace i_polygon {
 template <class Equal_2, class Point_2>
@@ -155,4 +155,4 @@ transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p)
   return result;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

@@ -33,7 +33,7 @@
 #include <vector>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A simple sweep-line visitor that reports all intersection points among a
@@ -316,6 +316,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

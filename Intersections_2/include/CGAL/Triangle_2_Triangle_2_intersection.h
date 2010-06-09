@@ -28,7 +28,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/Triangle_2_Triangle_2_do_intersect.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class K>
 inline
@@ -40,7 +40,7 @@ intersection(const Triangle_2<K> &tr1,
   return Intersect()(tr1, tr2);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Intersections_2/Triangle_2_Triangle_2_intersection_impl.h>
 

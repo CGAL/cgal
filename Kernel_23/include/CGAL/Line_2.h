@@ -29,7 +29,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Line_2 : public R_::Kernel_base::Line_2
@@ -286,6 +286,6 @@ operator>>(std::istream &is, Line_2<R> &l)
   return extract(is, l);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_LINE_2_H

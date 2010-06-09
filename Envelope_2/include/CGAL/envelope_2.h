@@ -26,7 +26,7 @@
 
 #include <CGAL/Envelope_2/Env_divide_and_conquer_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Compute the lower envelope of a range of curves.
@@ -120,6 +120,6 @@ void upper_envelope_x_monotone_2 (InputIterator begin, InputIterator end,
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

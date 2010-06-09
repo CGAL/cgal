@@ -24,7 +24,7 @@
 // class implementation continued
 //=================================
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 //--------------------------------------------------------------------
@@ -2058,7 +2058,7 @@ Apollonius_graph_2<Gt,Agds,LTag>::file_input(std::istream& is)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_IMPL_H

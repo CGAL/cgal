@@ -22,7 +22,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Vertex_iterator, 
 	  class Cell_iterator,
@@ -54,6 +54,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MARCHING_TETRAHEDRA_OBSERVER_DEFAULT_3_H

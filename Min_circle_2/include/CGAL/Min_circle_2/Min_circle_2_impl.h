@@ -19,7 +19,7 @@
 
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class implementation (continued)
 // ================================
@@ -102,6 +102,6 @@ operator >> ( std::istream& is, CGAL::Min_circle_2<Traits_>& min_circle)
     return( is);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // ===== EOF ==================================================================

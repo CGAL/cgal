@@ -25,7 +25,7 @@
 
 template <bool> class Interval_nt;
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // A number type converter usable as default, using the conversion operator.
 
@@ -100,6 +100,6 @@ struct NT_converter < Interval_nt<b>, Interval_nt<b> >
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NT_CONVERTER_H

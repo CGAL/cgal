@@ -36,7 +36,7 @@
 #  pragma warning(push)
 #  pragma warning(disable:4396)
 #endif
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // +----------------------------------------------------------------+
 // | Emptyset_iterator
@@ -2187,7 +2187,7 @@ dispatch_or_drop_output(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6,O7 out7)
 
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

@@ -39,7 +39,7 @@
 #  include <CGAL/Lazy_kernel.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #ifdef CGAL_DONT_USE_LAZY_KERNEL
 
@@ -63,6 +63,6 @@ typedef Lazy_kernel<Simple_cartesian<Quotient<MP_Float> > >
 
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H

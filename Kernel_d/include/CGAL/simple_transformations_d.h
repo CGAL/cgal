@@ -26,7 +26,7 @@
 
 #include <CGAL/Homogeneous_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 /*{\Moptions outfile=Simple_transformations.man}*/
 /*{\Manpage{}{}{Simple Affine Transformations}{}}*/
 
@@ -91,5 +91,5 @@ Line_d<R> reflect(const Line_d<R>& s, const Line_d<R>& l)
 /*{\Mfunc returns |s| reflected across line |l|.}*/
 { return Line_d<R>(reflect(s.point(0),l),reflect(s.point(1),l)); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_SIMPLE_TRANSFORMATIONS_D_H

@@ -24,7 +24,7 @@
  * Definition of the Arr_with_history_accessor<Arrangement> class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A class that provides access to some of the internal methods of the
@@ -153,6 +153,6 @@ public:
   }  
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

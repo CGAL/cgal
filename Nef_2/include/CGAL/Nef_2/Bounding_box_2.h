@@ -23,7 +23,7 @@
 
 #include<CGAL/Box_intersection_d/Box_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // template<typename T, typename K> class Bounding_box_2;
 
@@ -112,5 +112,5 @@ class Bounding_box_2<Tag_false,Kernel>
     
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_BOUNDING_BOX_D_H

@@ -27,7 +27,7 @@
 
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \enum
  * Selection of a curve end.
@@ -203,6 +203,6 @@ InputStream& operator>>(
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

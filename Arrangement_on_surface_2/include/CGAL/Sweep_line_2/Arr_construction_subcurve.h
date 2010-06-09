@@ -27,7 +27,7 @@
 
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_construction_subcurve 
  *  
@@ -162,6 +162,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif 

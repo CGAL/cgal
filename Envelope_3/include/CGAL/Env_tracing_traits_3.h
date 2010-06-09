@@ -41,7 +41,7 @@
 #include <CGAL/number_utils.h> 
 #include <CGAL/Envelope_3/Envelope_base.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * \class The traits class
@@ -261,6 +261,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

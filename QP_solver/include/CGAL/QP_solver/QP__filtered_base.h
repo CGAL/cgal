@@ -28,7 +28,7 @@
 #include <CGAL/QP_solver/QP_solver.h>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // ==================
 // class declarations
@@ -290,7 +290,7 @@ set_q(int c, int b, Tag_false)
    q = std::ldexp( 1.015625 * ( c+b+2) * ( c+b+3), -53);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/QP_solver/QP__filtered_base_impl.h>
 

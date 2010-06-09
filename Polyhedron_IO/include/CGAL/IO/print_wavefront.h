@@ -25,7 +25,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Polyhedron>
 void print_polyhedron_wavefront( std::ostream& out, const Polyhedron& P) {
@@ -48,6 +48,6 @@ print_wavefront( std::ostream& out,
     generic_print_polyhedron( out, P, writer);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_PRINT_WAVEFRONT_H //
 // EOF //

@@ -26,7 +26,7 @@
 #define CGAL_NEF_DEBUG 37
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Node, class Object>
 struct Project_shalfedge_point {
@@ -499,6 +499,6 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 #endif
 }; // SNC_intersection
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_SNC_INTERSECTION_H

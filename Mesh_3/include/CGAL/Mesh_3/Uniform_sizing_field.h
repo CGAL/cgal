@@ -24,7 +24,7 @@
 #ifndef CGAL_MESH_3_UNIFORM_SIZING_FIELD_H
 #define CGAL_MESH_3_UNIFORM_SIZING_FIELD_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Mesh_3 {
   
@@ -52,6 +52,6 @@ public:
 } // end namespace Mesh_3
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_3_UNIFORM_SIZING_FIELD_H

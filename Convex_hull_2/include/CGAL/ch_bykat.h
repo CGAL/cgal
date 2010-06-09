@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // same as |convex_hull_2(first,last,result)|. {\sc traits}: 
 // uses |Traits::Point_2|, |Traits::Less_signed_distance_to_line_2|,
@@ -67,7 +67,7 @@ ch_bykat_with_threshold(InputIterator first, InputIterator last,
     return ch_bykat_with_threshold( first, last, result, Kernel());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Convex_hull_2/ch_bykat_impl.h>
 

@@ -21,7 +21,7 @@
 #ifndef CGAL_CONSTRUCTIONS_ON_WEIGHTED_POINTS_HOMOGENEOUS_2_H
 #define CGAL_CONSTRUCTIONS_ON_WEIGHTED_POINTS_HOMOGENEOUS_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class RT, class We>
 void
@@ -83,5 +83,5 @@ radical_axisH2(const RT &phx, const RT &phy, const RT &phw, const We &pwt,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_CONSTRUCTIONS_ON_WEIGHTED_POINTS_HOMOGENEOUS_2_H

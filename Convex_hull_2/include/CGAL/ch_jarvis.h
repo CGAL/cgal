@@ -25,7 +25,7 @@
 #include <iterator>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // generates the counterclockwise ordered subsequence of
 // extreme points between |start_p| and |stop_p| of the points in the
@@ -81,7 +81,7 @@ ch_jarvis(ForwardIterator first, ForwardIterator last, OutputIterator  result)
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Convex_hull_2/ch_jarvis_impl.h>
 

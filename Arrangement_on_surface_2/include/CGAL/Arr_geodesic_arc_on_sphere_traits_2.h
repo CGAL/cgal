@@ -35,7 +35,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #define CGAL_X_MINUS_1_Y_0      0
 #define CGAL_X_MINUS_8_Y_6      1
@@ -3118,6 +3118,6 @@ operator>>(InputStream & is,
   return is;
 }  
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

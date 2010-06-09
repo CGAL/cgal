@@ -28,7 +28,7 @@
 
 #include <CGAL/circulator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class C,
            class Ref = typename C::reference,
@@ -138,6 +138,6 @@ operator+( Dist n, Circulator_identity<C,Ref,Ptr> i) {
   return i += n;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_CIRCULATOR_IDENTITY_H //
 // EOF //

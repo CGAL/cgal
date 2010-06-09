@@ -30,7 +30,7 @@
 #include <CGAL/Nef_2/Line_to_epoint.h>
 #include <CGAL/Is_extended_kernel.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class T> class Extended_cartesian;
@@ -438,5 +438,5 @@ const char* output_identifier() const { return "Extended_cartesian"; }
 
 
 #undef Polynomial
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_EXTENDED_CARTESIAN_H

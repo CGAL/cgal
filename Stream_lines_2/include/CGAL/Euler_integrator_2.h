@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // The class Euler_integrator_2 is a model of the concept Integrator
 template <class VectorField_2>
@@ -116,6 +116,6 @@ Euler_integrator_2<Vector_field>::operator()
   return euler_integrator(p, vector_field_2, default_integration_step,index);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

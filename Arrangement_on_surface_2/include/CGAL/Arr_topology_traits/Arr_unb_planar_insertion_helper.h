@@ -29,7 +29,7 @@
 #include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_construction_helper.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_unb_planar_insertion_helper
  * A helper class for the insertion sweep-line visitors, suitable
@@ -224,6 +224,6 @@ before_handle_event (Event* event)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -26,7 +26,7 @@
 
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// The class Param_mesh_patch_vertex_list is the type of
@@ -159,6 +159,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_PARAM_MESH_PATCH_ITERATORS_H

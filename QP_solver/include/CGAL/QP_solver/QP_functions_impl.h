@@ -26,7 +26,7 @@
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_solution.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace QP_functions_detail {
   // test whether the system is of the form A x == b (equations only)
@@ -424,6 +424,6 @@ Quadratic_program_solution<ET> solve_nonnegative_linear_program
     solve_program(lp, dummy, Tag_true(), Tag_true(), options);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_QP_FUNCTIONS_IMPL_H

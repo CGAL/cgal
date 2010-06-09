@@ -24,7 +24,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This is the specialization for Sqrt_extension
 template <class COEFF, class INTERNAL>
@@ -79,6 +79,6 @@ public:
     };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

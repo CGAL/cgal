@@ -28,7 +28,7 @@
 
 #include <CGAL/Identity_policy_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //=========================================================================
 //=========================================================================
@@ -65,6 +65,6 @@ struct Apollonius_graph_caching_degeneracy_removal_policy_2
 //=========================================================================
 //=========================================================================
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_ADAPTATION_POLICIES_2_H

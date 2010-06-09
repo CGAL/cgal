@@ -37,7 +37,7 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_> 
   class Circle_3
@@ -197,6 +197,6 @@ operator>>(std::istream & is, Circle_3<R> &c)
   return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CIRCLE_3_H

@@ -27,7 +27,7 @@
 #include <math.h>
 #include <utility>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 inline
 unsigned int fact(unsigned int n){
@@ -757,6 +757,6 @@ switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
 //   return out_stream;
 // }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_MONGE_VIA_JET_FITTING_H_

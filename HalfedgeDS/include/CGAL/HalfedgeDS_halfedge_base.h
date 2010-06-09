@@ -26,7 +26,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Refs, class TP, class TV, class TF>
 struct HalfedgeDS_halfedge_base_base {
@@ -331,7 +331,7 @@ public:
         // is true if `h' is a border halfedge.
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HALFEDGEDS_HALFEDGE_BASE_H //
 // EOF //

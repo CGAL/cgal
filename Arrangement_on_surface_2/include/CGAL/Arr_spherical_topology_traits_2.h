@@ -53,7 +53,7 @@
 
 #include <map>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Forward declaration:
 template <class GeomTraits, class TopTraits> 
@@ -786,7 +786,7 @@ protected:
   //@}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Arr_topology_traits/Arr_spherical_topology_traits_2_impl.h>
 

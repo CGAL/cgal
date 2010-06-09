@@ -24,7 +24,7 @@
 #include <CGAL/Constraint_hierarchy_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Tr the base triangulation class 
 // Tr has to be Constrained or Constrained_Delaunay
@@ -649,6 +649,6 @@ vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb)
   return  hierarchy.vertices_in_constraint_end(va,vb);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H

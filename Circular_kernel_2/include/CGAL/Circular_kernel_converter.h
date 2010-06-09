@@ -32,7 +32,7 @@
 // TODO :
 // - we should have a better default than Cartesian_converter.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class C1, class C2,
   class LK_converter = Cartesian_converter<C1, C2>,
@@ -227,6 +227,6 @@ public:
 
 }; 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CCIRCULAR_KERNEL_CONVERTER_H

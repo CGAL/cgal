@@ -26,7 +26,7 @@
 
 #include <utility>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class RayH3
@@ -168,6 +168,6 @@ bool
 RayH3<R>::operator!=( const RayH3<R>& r) const
 { return !operator==(r); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RAYH3_H

@@ -25,7 +25,7 @@
 #include <CGAL/Apollonius_graph_2/basic.h>
 #include <CGAL/determinant.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
@@ -181,6 +181,6 @@ ad_left_bitangent_lineC2(const FT &x1, const FT &y1, const FT &w1,
 
 CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_FTC2_H

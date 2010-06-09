@@ -27,7 +27,7 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This template class is a wrapper that implements the filtering for any
 // predicate (dynamic filters with IA).
@@ -414,6 +414,6 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_FILTERED_PREDICATE_H

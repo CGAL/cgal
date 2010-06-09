@@ -28,7 +28,7 @@
 
 #include <CGAL/Identity_policy_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //=========================================================================
 //=========================================================================
@@ -67,6 +67,6 @@ struct Delaunay_triangulation_caching_degeneracy_removal_policy_2
 //=========================================================================
 //=========================================================================
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_ADAPTATION_POLICIES_2_H

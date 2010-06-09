@@ -24,7 +24,7 @@
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Cartesian_converter.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 /// NGHK: Is the converter needed or do we just use the Cartesian_converter
 template <class SkinSurface_3,
@@ -59,6 +59,6 @@ public:
   const SkinSurface_3 &ss_3;
 };
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif // CGAL_MARCHING_TETRAHEDRA_TRAITS_SKIN_SURFACE_3_H

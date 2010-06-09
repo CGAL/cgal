@@ -26,7 +26,7 @@
  */
 #include <CGAL/Interval_arithmetic.h> 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * Representation of a one-root number - that is, a number of the form
@@ -527,6 +527,6 @@ CGAL::Comparison_result compare (const _One_root_number<NT, FL>& x,
     return (EQUAL);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

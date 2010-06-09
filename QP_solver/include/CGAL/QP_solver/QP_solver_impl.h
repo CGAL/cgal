@@ -22,7 +22,7 @@
 
 #include <CGAL/QP_solver/Initialization.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // =============================
 // class implementation (cont'd)
@@ -3328,6 +3328,6 @@ get_l() const
     return l;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // ===== EOF ==================================================================

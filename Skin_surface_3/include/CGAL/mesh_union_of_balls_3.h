@@ -22,7 +22,7 @@
 
 #include <CGAL/mesh_skin_surface_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class UnionOfBalls_3, class Polyhedron>
 void mesh_union_of_balls_3(UnionOfBalls_3 const &union_of_balls, Polyhedron &p)
@@ -30,6 +30,6 @@ void mesh_union_of_balls_3(UnionOfBalls_3 const &union_of_balls, Polyhedron &p)
   union_of_balls.mesh_surface_3(p);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_UNION_OF_BALLS_3_H

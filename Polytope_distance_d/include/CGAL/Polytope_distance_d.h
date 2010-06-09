@@ -32,7 +32,7 @@
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // To determine the polytope distance, we set up the following QP:
 // 
@@ -962,7 +962,7 @@ operator >> ( std::istream& is,
   return( is);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYTOPE_DISTANCE_D_H
 

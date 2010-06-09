@@ -32,7 +32,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_sqrt_field_C2.h>
 #endif // CGAL_SDG_USE_OLD_INCIRCLE
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
@@ -77,7 +77,7 @@ public:
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 

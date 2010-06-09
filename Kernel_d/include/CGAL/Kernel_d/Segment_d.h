@@ -29,7 +29,7 @@
 #include <CGAL/Kernel_d/Ray_d.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R> std::istream& operator>>
   (std::istream&, Segment_d<R>&);
@@ -245,6 +245,6 @@ $O(|s.dimension()|)$. The space requirement is $O(|s.dimension()|)$.
 }*/
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_SEGMENT_D_H
 //----------------------- end of file ----------------------------------

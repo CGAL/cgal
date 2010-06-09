@@ -25,7 +25,7 @@
 #include <iterator>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // computes the sorted sequence of extreme points which are not left 
 // of $pq$ and reports this sequence in a range starting at |result|,
@@ -105,7 +105,7 @@ ch_upper_hull_scan( InputIterator  first,
                     OutputIterator result,
                     const Traits&  ch_traits);
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Convex_hull_2/ch_graham_andrew_impl.h>
 

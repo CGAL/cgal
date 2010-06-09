@@ -602,7 +602,7 @@ CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 
 #ifdef CGAL_POLYNOMIAL_USE_CGAL
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template <class NT>
 std::pair<double, double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Isolating_interval<NT> &ii)
 {
@@ -610,6 +610,6 @@ std::pair<double, double> to_interval(const typename CGAL_POLYNOMIAL_NS::interna
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif
 #endif

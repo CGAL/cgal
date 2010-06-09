@@ -28,7 +28,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Repres >
 class Triangulation_geom_traits_3 : public Repres
@@ -74,6 +74,6 @@ public:
   typedef typename Rep::Compare_distance_3         Compare_distance_3;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_GEOM_TRAITS_3_H

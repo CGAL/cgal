@@ -26,7 +26,7 @@
 
 #include <CGAL/circulator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class  S>
 class Forward_circulator_over_struct
@@ -683,7 +683,7 @@ operator+=( I n) {
     return *this;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CIRCULATOR_IMPL_H //
 // EOF //

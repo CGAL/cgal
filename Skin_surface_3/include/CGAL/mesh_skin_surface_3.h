@@ -27,7 +27,7 @@
 #include <CGAL/Skin_surface_marching_tetrahedra_observer_3.h>
 #include <CGAL/Skin_surface_polyhedral_items_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class SkinSurface_3, class Polyhedron>
 void mesh_skin_surface_3(SkinSurface_3 const &skin_surface, Polyhedron &p)
@@ -47,6 +47,6 @@ void mesh_skin_surface_3(SkinSurface_3 const &skin_surface, Polyhedron &p)
 //
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_SKIN_SURFACE_3_H

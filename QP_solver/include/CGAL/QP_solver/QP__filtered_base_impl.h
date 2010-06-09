@@ -20,7 +20,7 @@
 //                 Franz Wessendorp
 //                 Kaspar Fischer
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // =============================
 // class implementation (cont'd)
@@ -374,6 +374,6 @@ transition( )
     transition( n, Is_linear());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // ===== EOF ==================================================================

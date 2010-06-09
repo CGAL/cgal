@@ -22,7 +22,7 @@
 
 #include <CGAL/Triangulation_vertex_base_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename GT,
            typename Vb = Triangulation_vertex_base_2<GT> >
@@ -57,6 +57,6 @@ public:
   int&       id()       { return _id; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_VERTEX_BASE_WITH_ID_2_H

@@ -27,7 +27,7 @@
 #define CGAL_NEF_DEBUG 43
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_>
 class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_PL> {
@@ -138,5 +138,5 @@ class External_structure_builder : public Modifier_base<typename Nef_::SNC_and_P
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_CD3_EXTERNAL_STRUCTURE_BUILDER_H

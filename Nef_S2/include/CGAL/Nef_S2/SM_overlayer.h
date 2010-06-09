@@ -39,7 +39,7 @@
 #define LEDA_MEMORY(t) 
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Decorator_, typename I>
 struct SMO_from_segs {
@@ -2331,6 +2331,6 @@ typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_SM_OVERLAYER_H

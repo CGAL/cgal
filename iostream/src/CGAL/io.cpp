@@ -28,7 +28,7 @@
 #include <sstream>
 #include <string>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 int IO::mode = std::ios::xalloc();
 
@@ -121,4 +121,4 @@ swallow(std::istream &is, const std::string& s ) {
     }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

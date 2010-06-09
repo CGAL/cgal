@@ -22,7 +22,7 @@
 
 //#include <CGAL/Cartesian/redefine_names_2.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 
 template < class RT >
@@ -84,5 +84,5 @@ radical_axisC2(const RT &px, const RT &py, const We &pw,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_CONSTRUCTIONS_ON_WEIGHTED_POINTS_CARTESIAN_2_H

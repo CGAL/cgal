@@ -21,7 +21,7 @@
 // class implementation continued
 //=================================
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //====================================================================
 //====================================================================
@@ -3281,6 +3281,6 @@ file_input(std::istream& is, bool read_handle_vector,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // EOF

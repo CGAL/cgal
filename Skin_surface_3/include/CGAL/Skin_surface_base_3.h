@@ -47,7 +47,7 @@
 #include <CGAL/Skin_surface_refinement_policy_3.h>
 #include <CGAL/subdivide_skin_surface_mesh_3.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template <class MixedComplexTraits_3> 
 class Skin_surface_base_3 {
@@ -805,6 +805,6 @@ get_weighted_circumcenter(const Simplex &s, Gt2 &traits) {
   return result;
 }
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif // CGAL_SKIN_SURFACE_BASE_3_H

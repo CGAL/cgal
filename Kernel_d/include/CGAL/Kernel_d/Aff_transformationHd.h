@@ -29,7 +29,7 @@
 #include <CGAL/rational_rotation.h>
 #include <CGAL/Handle_for.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class RT, class LA > class Aff_transformationHd;
 template <class RT, class LA > class Aff_transformationHd_rep;
@@ -249,5 +249,5 @@ requirement is $O(|t.dimension()|^2)$. }*/
 // ----------------------------- end of file ----------------------------
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_AFF_TRANSFORMATIONHD_H

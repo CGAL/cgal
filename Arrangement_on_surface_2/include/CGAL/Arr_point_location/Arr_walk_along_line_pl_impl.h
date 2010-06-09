@@ -27,7 +27,7 @@
  * Arr_walk_along_line_point_location<Arrangement> class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Locate the arrangement feature containing the given point.
@@ -928,6 +928,6 @@ _first_around_vertex (Vertex_const_handle v, bool shoot_up) const
   }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

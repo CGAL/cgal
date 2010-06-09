@@ -25,7 +25,7 @@
 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class interface
 // ===============
@@ -438,7 +438,7 @@ template < class K_ >
 std::istream&
 operator >> ( std::istream&, CGAL::Optimisation_ellipse_2<K_>&);
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Min_ellipse_2/Optimisation_ellipse_2_impl.h>
 

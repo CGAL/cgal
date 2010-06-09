@@ -34,7 +34,7 @@
 #define CGAL_NEF_DEBUG 83
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename K, typename I, typename M> class SNC_sphere_map;
 template <typename R> class SM_decorator;
@@ -52,5 +52,5 @@ class SNC_items {
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SNC_ITEMS_H

@@ -22,7 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename GT, typename DSVb = Triangulation_ds_vertex_base_3<> >
 class Triangulation_vertex_base_3
@@ -81,6 +81,6 @@ operator<<(std::ostream &os, const Triangulation_vertex_base_3<GT, DSVb> &v)
   return os << static_cast<const DSVb&>(v) << v.point();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_VERTEX_BASE_3_H

@@ -34,7 +34,7 @@
 #include <CGAL/intersection_3.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CommonKernelFunctors {
 
@@ -2712,6 +2712,6 @@ namespace CommonKernelFunctors {
 
 } // namespace CommonKernelFunctors
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_KERNEL_FUNCTION_OBJECTS_H

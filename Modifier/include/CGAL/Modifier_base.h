@@ -24,7 +24,7 @@
 #ifndef CGAL_MODIFIER_BASE_H
 #define CGAL_MODIFIER_BASE_H 1
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 class Modifier_base {
@@ -37,7 +37,7 @@ public:
     virtual ~Modifier_base() {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MODIFIER_BASE_H //
 // EOF //

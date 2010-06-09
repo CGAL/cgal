@@ -39,7 +39,7 @@
 #include <LEDA/numbers/bigfloat.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <> class Algebraic_structure_traits< leda_bigfloat >
   : public Algebraic_structure_traits_base< leda_bigfloat,
@@ -146,7 +146,7 @@ class Is_valid< leda_bigfloat >
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // Unary + is missing for leda::bigfloat
 namespace leda {

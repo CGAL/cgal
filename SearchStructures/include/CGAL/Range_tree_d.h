@@ -38,7 +38,7 @@
 // access the data.
 // cf. file Tree_interface.h, class point_interface for the requirements.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class C_Data, class C_Window, class C_Interface>
 class Range_tree_d;
@@ -619,5 +619,5 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_RANGE_TREE_D_H

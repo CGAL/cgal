@@ -18,7 +18,7 @@
 #include "IO/Null_output_stream.h"
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 bool dummy(bool b) {
   CGAL_assertion( b );
@@ -961,7 +961,7 @@ bool test_filtered_traits_hierarchy_algo(InputStream& is)
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 

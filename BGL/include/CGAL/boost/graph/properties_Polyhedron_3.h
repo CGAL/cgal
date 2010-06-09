@@ -30,7 +30,7 @@
 #  define CGAL_HDS_PARAM_ class HDS
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 class Polyhedron_edge_weight_map : public boost::put_get_helper<double, Polyhedron_edge_weight_map<Gt, I, HDS, A> >
@@ -302,7 +302,7 @@ struct Polyhedron_property_map<vertex_external_index_t>
   };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 namespace boost
 {

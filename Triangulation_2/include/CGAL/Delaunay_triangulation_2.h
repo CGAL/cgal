@@ -27,7 +27,7 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/iterator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Gt, 
            class Tds = Triangulation_data_structure_2 <
@@ -2583,6 +2583,6 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
   return v;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_2_H

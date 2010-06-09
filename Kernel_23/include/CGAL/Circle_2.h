@@ -31,7 +31,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Circle_2 : public R_::Kernel_base::Circle_2
@@ -296,6 +296,6 @@ operator>>(std::istream &is, Circle_2<R> &c)
   return extract(is,c);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_CIRCLE_2_H

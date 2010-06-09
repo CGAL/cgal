@@ -24,7 +24,7 @@
 
 #include <CGAL/Hyperbola_segment_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Gt >
 class Hyperbola_ray_2 : public Hyperbola_segment_2< Gt >
@@ -144,6 +144,6 @@ Stream& operator<<(Stream &s, const Hyperbola_ray_2<Gt> &H)
   return s;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HYPERBOLA_RAY_2_H

@@ -25,7 +25,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 #define PointCd PointCd2
 
 template <class FT, class LA>
@@ -232,6 +232,6 @@ bool weak_equality(const HyperplaneCd<FT,LA>& h1,
 }
 
 #undef PointCd
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_HYPERPLANECD_H
 //----------------------- end of file ----------------------------------

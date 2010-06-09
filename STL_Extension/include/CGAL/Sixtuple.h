@@ -26,7 +26,7 @@
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class T >
 struct Sixtuple
@@ -44,7 +44,7 @@ struct Sixtuple
   {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NO_DEPRECATED_CODE
 

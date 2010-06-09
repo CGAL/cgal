@@ -33,7 +33,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Filtered_hexagon_circular_kernel_2/hexagon_primitives.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template < class HK, 
@@ -256,6 +256,6 @@ public:
               << " ]]" << std::endl;
   }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CIRCULAR_ARC_WITH_HEXAGON_2_H

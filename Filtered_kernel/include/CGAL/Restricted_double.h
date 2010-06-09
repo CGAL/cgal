@@ -33,7 +33,7 @@
 #include <CGAL/basic.h>
 // #include <CGAL/double.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #ifdef CGAL_IA_CHECK_RESTRICT
 struct Restricted_double
@@ -84,6 +84,6 @@ to_double(const Restricted_double &f)
 typedef double Restricted_double;
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RESTRICTED_DOUBLE_H

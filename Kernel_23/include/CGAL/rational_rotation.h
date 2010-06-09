@@ -27,7 +27,7 @@
 
 #include <algorithm>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class NT >
 void
@@ -264,6 +264,6 @@ rational_rotation_approximation( const double& angle,
   denom   = iden;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RATIONAL_ROTATION_H

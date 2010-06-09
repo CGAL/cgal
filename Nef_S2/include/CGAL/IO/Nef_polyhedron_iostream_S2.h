@@ -23,7 +23,7 @@
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Nef_3/SM_io_parser.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*
 template <typename Kernel, typename Items, typename Mark, typename Map>
@@ -51,6 +51,6 @@ std::istream& operator>>
   return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_NEF_POLYHEDRON_IOSTREAM_3_H

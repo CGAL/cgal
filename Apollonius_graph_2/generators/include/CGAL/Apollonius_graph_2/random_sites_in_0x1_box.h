@@ -4,7 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Random.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Site>
 class Random_sites_in_0x1_box
@@ -32,6 +32,6 @@ private:
   Random random_;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_RANDOM_SITES_IN_0X1_BOX_H

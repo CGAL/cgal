@@ -19,7 +19,7 @@
 #ifndef CGAL_DECOMPOSITION_MARK_H
 #define CGAL_DECOMPOSITION_MARK_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Decomposition_mark {
 
@@ -63,5 +63,5 @@ std::istream& operator>>(std::istream& in, Decomposition_mark& m) {
   return in;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_DECOMPOSITION_MARK_H

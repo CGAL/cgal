@@ -36,7 +36,7 @@
 
 #include <boost/tuple/tuple.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class VectorField_2, class Integrator_2>
 class Stream_lines_2
@@ -906,6 +906,6 @@ Stream_lines_2<VectorField_2, Integrator_2>::get_pq()
   return _list;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -27,7 +27,7 @@
 
 #include <CGAL/Homogeneous/PointH3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
@@ -124,6 +124,6 @@ bool
 less_z(const PointH3<R> &p, const PointH3<R> &q)
 { return   (p.hz() * q.hw() < q.hz() * p.hw() ); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PREDICATES_ON_POINTSH3_H

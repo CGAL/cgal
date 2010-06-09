@@ -41,7 +41,7 @@
 #define CGAL_NEF_DEBUG 19
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #if defined (CGAL_NEF3_TIMER_OVERLAY) || defined(CGAL_NEF3_TIMER_INTERSECTION)
 CGAL::Timer timer_overlay;
@@ -656,5 +656,5 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     }
 
   };
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_NEF_BINARY_OPERATION_H

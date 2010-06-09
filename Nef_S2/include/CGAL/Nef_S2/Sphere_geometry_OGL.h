@@ -39,7 +39,7 @@
 #define CGAL_NEF_LGREY CGAL::Color(170,170,200)
 #define CGAL_NEF_DGREY CGAL::Color(30,30,50)
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 namespace OGL {
 
 struct Gen_object {
@@ -787,7 +787,7 @@ class NefS2_to_UnitSphere
 };
 
 } // OGL
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 

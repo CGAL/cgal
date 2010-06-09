@@ -30,7 +30,7 @@
 #include <boost/parameter.hpp>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace parameters {
 
@@ -69,6 +69,6 @@ BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_3_GLOBAL_PARAMETERS_H

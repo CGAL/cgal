@@ -24,7 +24,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 template < class T = void >
 struct Triangulation_cw_ccw_static_2 {
 
@@ -54,6 +54,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRIANGULATION_UTILS_2_H

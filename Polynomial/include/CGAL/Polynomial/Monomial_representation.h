@@ -28,7 +28,7 @@
 #include <CGAL/Polynomial/misc.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal{
 template <typename Polynomial> struct Monomial_representation; 
@@ -86,6 +86,6 @@ public:
 };
 
 } // namespace internal
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_POLYNOMIAL_MONOMIAL_REPRESENTAION_H

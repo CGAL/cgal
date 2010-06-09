@@ -27,7 +27,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Moptions outfile=predicates_d.man}*/
 /*{\Mtext \setopdims{4cm}{2cm}\computewidths
@@ -216,5 +216,5 @@ bool linearly_independent(
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_PREDICATES_D_H

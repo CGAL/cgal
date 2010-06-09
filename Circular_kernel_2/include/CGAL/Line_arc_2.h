@@ -25,7 +25,7 @@
 #ifndef CGAL_LINE_ARC_2_H
 #define CGAL_LINE_ARC_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class CircularKernel> 
 class Line_arc_2 
@@ -323,7 +323,7 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LINE_ARC_2_H
 

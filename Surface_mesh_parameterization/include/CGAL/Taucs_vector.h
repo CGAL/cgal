@@ -21,7 +21,7 @@
 #ifndef CGAL_TAUCS_VECTOR
 #define CGAL_TAUCS_VECTOR
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// The class Taucs_vector
@@ -114,6 +114,6 @@ private:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TAUCS_VECTOR

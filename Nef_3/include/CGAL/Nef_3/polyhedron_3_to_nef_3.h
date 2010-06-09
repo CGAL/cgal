@@ -31,7 +31,7 @@
 #define CGAL_NEF_DEBUG 29
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Node, class Object>
 struct Project_vertex_point {
@@ -306,6 +306,6 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_NEF_POLYHEDRON_3_TO_NEF_3_H

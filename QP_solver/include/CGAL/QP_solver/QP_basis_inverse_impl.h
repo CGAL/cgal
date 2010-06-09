@@ -20,7 +20,7 @@
 //                 Franz Wessendorp 
 //                 Kaspar Fischer 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // =============================
 // class implementation (cont'd)
@@ -707,6 +707,6 @@ print( )
     vout.out() << "denominator = " << d << std::endl;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // ===== EOF ==================================================================

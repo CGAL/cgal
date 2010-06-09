@@ -4,7 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class InputIterator, class OutputIterator, class Traits>
 OutputIterator
@@ -34,6 +34,6 @@ make_degenerate(InputIterator first,
   return oit;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_MAKE_DEGENERATE_H

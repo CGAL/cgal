@@ -11,13 +11,13 @@
 typedef CGAL::Gmpq                     exact_ring_t;
 typedef CGAL::Gmpq                     exact_field_t;
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 // needed for the drawing methods
 Gmpq sqrt(const Gmpq& x) {
   return Gmpq(  CGAL::sqrt( CGAL::to_double(x) )  );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #else
 
 #  include <CGAL/MP_Float.h>

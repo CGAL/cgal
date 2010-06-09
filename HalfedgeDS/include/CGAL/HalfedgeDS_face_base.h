@@ -26,7 +26,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // We use Tag_false to indicate that no plane type is provided.
 
@@ -153,7 +153,7 @@ public:
     //Normal                normal() const { return pln.orthogonal_vector();}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HALFEDGEDS_FACE_BASE_H //
 // EOF //

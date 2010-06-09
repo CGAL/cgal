@@ -25,7 +25,7 @@
  * Definition of the Arr_batched_pl_sl_visitor class-template.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #include <CGAL/Object.h>
 
@@ -192,6 +192,6 @@ bool Arr_batched_pl_sl_visitor<Hlpr, OutIt>::after_handle_event
   return (true);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

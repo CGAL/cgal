@@ -30,7 +30,7 @@
 #include <vector>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // ==================
 // class declarations
@@ -231,7 +231,7 @@ transition( )
 		    static_cast< unsigned int>(N.size()));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_QP__PARTIAL_BASE_H
 

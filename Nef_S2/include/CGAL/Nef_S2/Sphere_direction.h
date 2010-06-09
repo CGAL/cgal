@@ -22,7 +22,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Manpage{Sphere_direction}{R}{Directions on the unit sphere}{c}}*/
 
@@ -114,5 +114,5 @@ bool strictly_ordered_ccw_at(const Sphere_point<R>& p,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SPHERE_DIRECTION_H

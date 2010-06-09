@@ -26,7 +26,7 @@
 
 #include <CGAL/determinant.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class FT >
 CGAL_KERNEL_INLINE
@@ -416,6 +416,6 @@ scaled_distance_to_lineC2( const FT &px, const FT &py,
   return determinant<FT>(px-rx, py-ry, qx-rx, qy-ry);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONSTRUCTIONS_KERNEL_FTC2_H

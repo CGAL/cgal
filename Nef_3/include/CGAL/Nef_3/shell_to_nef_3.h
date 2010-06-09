@@ -31,7 +31,7 @@
 #define CGAL_NEF_DEBUG 29
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class SNC_structure>
 class Shell_to_nef_3
@@ -154,6 +154,6 @@ void shell_to_nef_3(const Nef_polyhedron& N,
   N.visit_shell_objects(sf, s2n);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_NEF_SHELL_TO_NEF_3_H

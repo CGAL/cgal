@@ -31,7 +31,7 @@
 
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // polynomials of the form aX + +bY + cZ + d
 template < typename FT_ >
@@ -116,6 +116,6 @@ same_solutions ( const Polynomial_1_3<FT> & p1,
          (p2.d() * p1.a() == p1.d() * p2.a());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_ALGEBRAIC_KERNEL_POLYNOMIALS_1_3_H

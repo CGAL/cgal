@@ -29,7 +29,7 @@
 #ifndef CGAL_CURVED_KERNEL_GLOBAL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIALS_1_3_H
 #define CGAL_CURVED_KERNEL_GLOBAL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIALS_1_3_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class AK >
 inline 
@@ -51,6 +51,6 @@ construct_polynomials_for_line_3(const typename AK::FT& a1,
 			         const typename AK::FT& b3)
 { return AK().construct_polynomials_for_line_3_object()(a1, b1, a2, b2, a3, b3); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CURVED_KERNEL_GLOBAL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIALS_1_3_H

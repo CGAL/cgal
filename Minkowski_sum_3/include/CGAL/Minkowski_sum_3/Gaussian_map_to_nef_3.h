@@ -23,7 +23,7 @@
 #include <CGAL/Minkowski_sum_3/Gaussian_map.h>
 #include <CGAL/Modifier_base.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef3>
   class Gaussian_map_to_nef_3 : public Modifier_base<typename Nef3::SNC_structure > {
@@ -250,5 +250,5 @@ template<typename Nef3>
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_MS3_GAUSSIAN_MAP_TO_NEF_3_H

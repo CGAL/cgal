@@ -33,7 +33,7 @@
 
 #include <CGAL/Kernel/solve.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! A plane that contains the origin extended with a few methods */
 template <class Kernel_>
@@ -274,6 +274,6 @@ inline std::ostream & operator<<(std::ostream & os,
   return os;
 }  
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

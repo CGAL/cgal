@@ -26,7 +26,7 @@
  * Arr_unb_planar_topology_traits_2<GeomTraits> class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Default constructor.
@@ -918,6 +918,6 @@ _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
   return (res1 != res2);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

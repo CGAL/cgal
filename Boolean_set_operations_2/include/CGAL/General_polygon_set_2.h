@@ -28,7 +28,7 @@
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
 #include <CGAL/Arrangement_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // General_polygon_set_2
 template <class Traits_, class Dcel_ = Gps_default_dcel<Traits_> >
@@ -115,6 +115,6 @@ public:
   //@}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

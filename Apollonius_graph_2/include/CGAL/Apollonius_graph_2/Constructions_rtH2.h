@@ -26,7 +26,7 @@
 
 #include <CGAL/Apollonius_graph_2/Constructions_ftC2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class RT, class We >
 inline
@@ -78,6 +78,6 @@ ad_left_bitangent_lineH2(const FT &hx1, const FT &hy1, const We &w1,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_CONSTRUCTIONS_RTH2_H

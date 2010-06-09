@@ -25,7 +25,7 @@
 #include <iostream>
 #include <sstream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //! A type which provides opaque, typed identifiers.
 /*!
@@ -78,6 +78,6 @@ public:
 
 CGAL_OUTPUT1(Label)
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

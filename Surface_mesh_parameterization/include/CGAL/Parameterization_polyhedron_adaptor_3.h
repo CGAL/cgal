@@ -31,7 +31,7 @@
 
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// Parameterization_polyhedron_adaptor_3 is an adaptor class to access to a Polyhedron
@@ -1116,6 +1116,6 @@ private:
 }; // Parameterization_polyhedron_adaptor_3
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_SURFACE_MESH_PARAMETERIZATION_POLYHEDRON_ADAPTOR3_H

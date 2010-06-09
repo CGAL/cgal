@@ -26,7 +26,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Refs>
 struct HalfedgeDS_halfedge_min_base_base {
@@ -74,7 +74,7 @@ private:
     void  set_opposite( Halfedge_handle h)  { Base_base::set_opposite(h);}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HALFEDGEDS_HALFEDGE_MIN_BASE_H //
 // EOF //

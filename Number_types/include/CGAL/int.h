@@ -28,7 +28,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Modular_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace INTERN_INT {
     template< class Type >
@@ -252,6 +252,6 @@ template <> class Real_embeddable_traits< short int >
 
 // Note : "long long" support is in <CGAL/long_long.h>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_INT_H

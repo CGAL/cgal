@@ -32,7 +32,7 @@
 #include <CGAL/predicates/predicates_on_weighted_points_cartesian_3.h>
 #include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // returns minus the sign of the determinant of the lifted points
 // associated with p,q,r,s,t  [P,Q,R,S,T]
@@ -745,14 +745,14 @@ compare_power_distance_3 (const Point &p,
   return compare_power_distance_3(p,q,r, Tag());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // Partial specialization for Filtered_kernel<CK>.
 
 #include <CGAL/internal/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Filtered_kernel.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal{
   // This declaration is needed to break the cyclic dependency.
@@ -769,6 +769,6 @@ public:
 };
  
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_3_H

@@ -40,7 +40,7 @@
 #  include <CGAL/IEEE_754_unions.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #ifdef CGAL_CFG_IEEE_754_BUG
 
@@ -189,6 +189,6 @@ split_numerator_denominator(double d)
   return std::make_pair(num, den);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_DOUBLE_H

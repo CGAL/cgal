@@ -27,7 +27,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Kernel_d/Tuple_d.h> 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class FT, class LA> class DirectionCd;
 template <class FT, class LA>
@@ -136,6 +136,6 @@ friend std::ostream& operator<< <>
 }; // end of class DirectionCd
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_DIRECTIONCD_H
 //----------------------- end of file ----------------------------------

@@ -24,7 +24,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <climits>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // These tag classes help dispatching functions based on a geometric dimension.
 
@@ -69,6 +69,6 @@ struct Feature_dimension
   typedef typename K::template Feature_dimension<T>::type type;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_DIMENSION_H

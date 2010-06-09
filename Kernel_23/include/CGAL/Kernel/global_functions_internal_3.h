@@ -27,7 +27,7 @@
 // Generic functions calling the kernel functor.
 // See comments in CGAL/Kernel/global_functions_internal_3.h.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -928,6 +928,6 @@ lexicographically_xyz_smaller_or_equal(const typename K::Point_3 &p,
 
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_KERNEL_GLOBAL_FUNCTIONS_INTERNAL_3_H

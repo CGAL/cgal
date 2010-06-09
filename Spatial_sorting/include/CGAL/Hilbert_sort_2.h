@@ -25,7 +25,7 @@
 #include <cstddef>
 #include <CGAL/Hilbert_sort_base.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
     template <class K, int x, bool up> struct Hilbert_cmp_2;
@@ -117,6 +117,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif//CGAL_HILBERT_SORT_2_H

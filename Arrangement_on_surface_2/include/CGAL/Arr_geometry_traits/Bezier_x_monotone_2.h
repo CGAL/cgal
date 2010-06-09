@@ -30,7 +30,7 @@
 #include <CGAL/Arr_geometry_traits/Bezier_cache.h>
 #include <ostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * Representation of an x-monotone Bezier subcurve, specified by a Bezier curve
@@ -2671,6 +2671,6 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_exact_vertical_position
   return (EQUAL);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -28,14 +28,14 @@
 
 #include <iostream>
 
-/*CGAL_BEGIN_NAMESPACE
+/*namespace CGAL {
 double to_double(const CORE::BigInt &bi)
 {
   return bi.doubleValue();
   }
 
 
-  CGAL_END_NAMESPACE*/
+  } //namespace CGAL*/
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 

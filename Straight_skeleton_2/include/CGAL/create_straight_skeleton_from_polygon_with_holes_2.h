@@ -22,7 +22,7 @@
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template<class K, class NT>
@@ -80,7 +80,7 @@ create_exterior_straight_skeleton_2 ( Polygon_with_holes_2<Exact_predicates_inex
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //

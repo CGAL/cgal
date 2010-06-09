@@ -43,7 +43,7 @@
 #endif
 
 //-------------------------------------------------------------------
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 //-------------------------------------------------------------------
 
 namespace internal{
@@ -1924,7 +1924,7 @@ Alpha_shape_3<Dt>::print_alpha_status(const Alpha_status& as) const
   std::cerr << std::endl;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/alpha_shape_geomview_ostream_3.h>

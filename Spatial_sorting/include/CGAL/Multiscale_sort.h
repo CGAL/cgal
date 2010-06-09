@@ -24,7 +24,7 @@
 #include <iterator>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Sort>
 class Multiscale_sort
@@ -53,6 +53,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MULTISCALE_SORT_H

@@ -27,7 +27,7 @@
 #include <vector>
 #include <CGAL/Sorted_matrix_search_traits_adaptor.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template < class Matrix >
 class Padded_matrix {
 public:
@@ -409,7 +409,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
   return ((*active_cells.begin()).min)();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_SORTED_MATRIX_SEARCH_H)
 // ----------------------------------------------------------------------------

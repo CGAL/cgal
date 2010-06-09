@@ -47,7 +47,7 @@
 #include <CGAL/mpq_class.h>
 #include <CGAL/gmpxx_coercion_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template < typename T, typename U >
@@ -58,6 +58,6 @@ template < typename T, typename U >
 class Real_embeddable_traits< ::__gmp_expr<T,U> >
     : public Real_embeddable_traits< ::__gmp_expr<T,T> >{};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_GMPXX_H

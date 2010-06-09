@@ -29,7 +29,7 @@
 // For the numerical limits
 #include <cfloat>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // SECTION: A Timer Measuring Real-Time
 // ========================================================================
@@ -111,7 +111,7 @@ inline double Real_timer::time() const {
     return elapsed;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REAL_TIMER_H //
 // EOF //

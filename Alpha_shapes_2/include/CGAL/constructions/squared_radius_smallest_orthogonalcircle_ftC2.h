@@ -24,7 +24,7 @@
 #include <CGAL/enum.h>
 
 //-------------------------------------------------------------------
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 //-------------------------------------------------------------------
 
 template< class FT >
@@ -70,7 +70,7 @@ squared_radius_smallest_orthogonalcircleC2(
 }
 
 //-------------------------------------------------------------------
-CGAL_END_NAMESPACE
+} //namespace CGAL
 //-------------------------------------------------------------------
 
 #endif //CGAL_SQUARED_RADIUS_SMALLEST_ORTHOGONALCIRCLE_ftC2_H

@@ -31,7 +31,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_curve_pair.h>
 #include <CGAL/Arrangement_2/Open_hash.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * Sweep_line_2 is a class that implements the sweep line algorithm based
@@ -244,7 +244,7 @@ protected:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // The member-function definitions can be found in:
 #include <CGAL/Sweep_line_2/Sweep_line_2_impl.h>

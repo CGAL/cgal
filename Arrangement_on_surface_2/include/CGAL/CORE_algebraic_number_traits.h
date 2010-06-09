@@ -28,7 +28,7 @@
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_Expr.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * \class A traits class for CORE's algebraic number types.
@@ -614,6 +614,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

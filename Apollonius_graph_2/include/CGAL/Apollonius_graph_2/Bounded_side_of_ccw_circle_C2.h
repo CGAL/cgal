@@ -26,7 +26,7 @@
 #include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
@@ -97,6 +97,6 @@ public:
 
 CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_BOUNDED_SIDE_OF_CCW_CIRCLE_C2_H

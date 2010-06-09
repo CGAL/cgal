@@ -41,7 +41,7 @@
 #include <CGAL/HalfedgeDS_iterator_adaptor.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template < class Traits_, class HalfedgeDSItems, class Alloc>
@@ -673,6 +673,6 @@ public:
 #endif
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_HALFEDGEDS_VECTOR_H //
 // EOF //

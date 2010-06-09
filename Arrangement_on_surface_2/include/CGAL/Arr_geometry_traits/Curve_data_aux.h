@@ -25,7 +25,7 @@
  * Definition of auxiliary classes for the Arr_curve_data_traits_2<> template.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * \struct A simple merge functor.
@@ -113,6 +113,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

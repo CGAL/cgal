@@ -35,7 +35,7 @@
 // C_Interface: Interface for the class with functions that allow to access the
 //             data. cf. file _interface.h for the requirements.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class C_Data, class C_Window, class C_Interface>
 class Segment_tree_d;
@@ -707,6 +707,6 @@ template <class C_Data, class C_Window, class C_Interface>
 std::allocator<Segment_tree_node<C_Data,C_Window,C_Interface> > 
     Segment_tree_d<C_Data,C_Window,C_Interface>::alloc;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

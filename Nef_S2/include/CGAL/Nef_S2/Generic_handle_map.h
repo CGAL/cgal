@@ -22,7 +22,7 @@
 
 #include <CGAL/Unique_hash_map.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Void_handle_hash_function {
     std::size_t operator() (void* h) const { 
@@ -49,5 +49,5 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_GENERIC_HANDLE_MAP_H

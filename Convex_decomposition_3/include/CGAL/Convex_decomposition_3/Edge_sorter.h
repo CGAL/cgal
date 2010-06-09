@@ -29,7 +29,7 @@
 #define CGAL_NEF_DEBUG 547
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Halfedge_handle, typename Point_comparison>
 class Compare_halfedges_in_reflex_edge_sorter
@@ -272,5 +272,5 @@ template<typename Nef_, typename FTComparison, typename Container>
   }
 };
   
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_CD3_EDGE_SORTER_H

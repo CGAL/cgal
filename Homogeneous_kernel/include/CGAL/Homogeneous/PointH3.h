@@ -30,7 +30,7 @@
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/logical.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class PointH3
@@ -201,6 +201,6 @@ typename R::Point_3
 PointH3<R>::transform(const typename PointH3<R>::Aff_transformation_3& t) const
 { return t.transform(static_cast<const Point_3&>(*this)); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HOMOGENEOUS_POINT_3_H

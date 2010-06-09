@@ -31,7 +31,7 @@
 
 #include <CGAL/less_partial.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Rt >
 class Weighted_alpha_shape_2 : public Alpha_shape_2<Rt>
@@ -235,6 +235,6 @@ Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_vertex
     }
 }
  
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_WEIGHTED_ALPHA_2_H

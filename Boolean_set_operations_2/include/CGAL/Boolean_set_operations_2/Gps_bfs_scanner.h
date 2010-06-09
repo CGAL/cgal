@@ -24,7 +24,7 @@
 #include <queue>
 #include <stack>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Arrangement_, class Visitor_>
 class Gps_bfs_scanner
@@ -116,6 +116,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

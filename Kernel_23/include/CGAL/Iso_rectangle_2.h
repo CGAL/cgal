@@ -30,7 +30,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Iso_rectangle_2 : public R_::Kernel_base::Iso_rectangle_2
@@ -250,6 +250,6 @@ operator>>(std::istream &is, Iso_rectangle_2<R> &r)
   return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ISO_RECTANGLE_2_H

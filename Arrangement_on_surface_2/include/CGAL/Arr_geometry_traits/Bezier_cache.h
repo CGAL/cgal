@@ -28,7 +28,7 @@
 #include <map>
 #include <ostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class _Bezier_cache
  * Stores all cached intersection points and vertical tangency points.
@@ -865,6 +865,6 @@ _Bezier_cache<NtTraits>::_compute_resultant
   return (det);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

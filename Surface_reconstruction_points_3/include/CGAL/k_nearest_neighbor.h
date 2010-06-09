@@ -23,7 +23,7 @@
 #include <CGAL/Search_traits_vertex_handle_3.h>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// Wrapper around Orthogonal_k_neighbor_search for Triangulation_3 Vertex_handles.
@@ -92,6 +92,6 @@ public:
 }; // K_nearest_neighbor
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_K_NEIGHBOR_NEIGHBOR_H

@@ -29,7 +29,7 @@
 #define CGAL_NEF_DEBUG 31
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //--------------------------------------------------------------------------
 /* We introduce a template that is a point that refers to a vertex.
@@ -645,5 +645,5 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   CGAL_NEF_TRACEN("exit FM");
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SNC_FM_DECORATOR_H

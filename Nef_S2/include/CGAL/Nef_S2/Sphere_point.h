@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Origin.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Mtext \headerline{Restricted Spherical Geometry}
 
@@ -128,5 +128,5 @@ typename R::Point_3 operator+
   (const typename R::Point_3& p, const Sphere_point<R>& q)
 { return p + (q-CGAL::ORIGIN); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SPHERE_POINT_H

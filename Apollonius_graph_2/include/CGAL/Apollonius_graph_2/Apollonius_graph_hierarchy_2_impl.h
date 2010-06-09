@@ -24,7 +24,7 @@
 // class implementation
 //---------------------
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Gt, class Agds, class LTag>
 void
@@ -547,7 +547,7 @@ file_output(std::ostream& os) const
   delete[] V_down;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_APOLLONIUS_GRAPH_HIERARCHY_2_IMPL_H

@@ -18,7 +18,7 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_IMPL_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_IMPL_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Surface_mesh_simplification 
 {
@@ -806,7 +806,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Update_neighbors( vertex_descriptor
 
 } // namespace Surface_mesh_simplification
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_IMPL_H //
 // EOF //

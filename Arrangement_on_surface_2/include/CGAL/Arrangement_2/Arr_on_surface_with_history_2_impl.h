@@ -27,7 +27,7 @@
  * class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Default constructor.
@@ -300,6 +300,6 @@ _unregister_observer(Arr_observer<Self> *p_obs)
           (reinterpret_cast<Arr_observer<Base_arr_2>*>(p_obs)));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

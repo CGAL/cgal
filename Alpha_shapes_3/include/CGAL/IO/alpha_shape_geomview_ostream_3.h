@@ -29,7 +29,7 @@
 // - If interfaces were more similar, we could think of sharing 2d and 3d ?
 
 //-------------------------------------------------------------------
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 //-------------------------------------------------------------------
 
 // This one is to show the edges of a 3D triangulation.
@@ -137,7 +137,7 @@ operator<<( Geomview_stream &gv, Alpha_shape_3<Dt>& A)
 }
 
 //-------------------------------------------------------------------
-CGAL_END_NAMESPACE
+} //namespace CGAL
 //-------------------------------------------------------------------
 
 #endif // CGAL_IO_ALPHA_SHAPE_GEOMVIEW_OSTREAM_3_H

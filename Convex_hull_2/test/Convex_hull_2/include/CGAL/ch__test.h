@@ -31,7 +31,7 @@
 #include <CGAL/ch_jarvis.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 enum ch_Algorithm{ ch_JARVIS, 
                         ch_GRAHAM_ANDREW, 
@@ -67,7 +67,7 @@ ch__test(InputIterator first, InputIterator last,
               const Traits& ch_traits);
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/ch__test_impl.h>
 

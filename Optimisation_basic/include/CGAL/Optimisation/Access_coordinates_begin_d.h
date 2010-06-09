@@ -25,7 +25,7 @@
 #define CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_D_H
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Cartesian_tag;
 class Homogeneous_tag;
@@ -74,7 +74,7 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_D_H
 

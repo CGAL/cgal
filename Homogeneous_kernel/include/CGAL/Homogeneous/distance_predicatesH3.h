@@ -25,7 +25,7 @@
 #ifndef CGAL_DISTANCE_PREDICATESH3_H
 #define CGAL_DISTANCE_PREDICATESH3_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 Comparison_result
@@ -328,6 +328,6 @@ has_smaller_signed_distance_to_plane(const PointH3<R>& p,
                                      const PointH3<R>& t)
 { return cmp_signed_dist_to_plane(p,q,r,s,t) == SMALLER; }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_DISTANCE_PREDICATESH3_H

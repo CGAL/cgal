@@ -30,7 +30,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Iso_cuboid_3 : public R_::Kernel_base::Iso_cuboid_3
@@ -263,6 +263,6 @@ operator>>(std::istream& is, Iso_cuboid_3<R>& r)
   return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ISO_CUBOID_3_H

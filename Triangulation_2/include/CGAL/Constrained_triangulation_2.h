@@ -31,7 +31,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct No_intersection_tag{};
 struct Exact_intersections_tag{}; // to be used with an exact number type
@@ -1233,6 +1233,6 @@ limit_intersection(const Gt& gt,
   return i;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_CONSTRAINED_TRIANGULATION_2_H

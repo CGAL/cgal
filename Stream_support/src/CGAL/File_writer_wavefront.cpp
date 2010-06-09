@@ -25,7 +25,7 @@
 #include <iostream>
 #include <CGAL/IO/File_writer_wavefront.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 void
 File_writer_wavefront::
@@ -45,5 +45,5 @@ write_header( std::ostream& o,
     out() << "# ------------------------------------------\n\n";
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 // EOF //

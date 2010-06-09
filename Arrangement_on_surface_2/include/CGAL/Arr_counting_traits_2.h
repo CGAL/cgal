@@ -32,7 +32,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class 
  * A model of the ArrangementTraits_2 concept that counts the methods invoked.
@@ -852,6 +852,6 @@ Out_stream & operator<<(Out_stream & os,
   return os;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

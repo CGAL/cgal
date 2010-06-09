@@ -21,7 +21,7 @@
 #ifndef CGAL_TRIANGLE_3_PLANE_3_DO_INTERSECT_H
 #define CGAL_TRIANGLE_3_PLANE_3_DO_INTERSECT_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -97,6 +97,6 @@ inline bool do_intersect(const Plane_3<K>    &h,
 */
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRIANGLE_3_PLANE_3_DO_INTERSECT_H

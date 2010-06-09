@@ -30,7 +30,7 @@
 
 #include <CGAL/Envelope_3/Envelope_pm_dcel.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * Representation of an envelope diagram (a minimization diagram or a
@@ -190,6 +190,6 @@ class is_arrangement_2<
 // };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

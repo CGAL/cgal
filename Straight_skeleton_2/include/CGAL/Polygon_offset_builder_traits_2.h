@@ -28,7 +28,7 @@
 #include "boost/mpl/if.hpp"
 #include "boost/mpl/or.hpp"
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i {
 
@@ -380,7 +380,7 @@ CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_offset_against_event_time_
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_terminal_offset_point_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_offset_point_2)
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_POLYGON_OFFSET_BUILDER_TRAITS_2_H //

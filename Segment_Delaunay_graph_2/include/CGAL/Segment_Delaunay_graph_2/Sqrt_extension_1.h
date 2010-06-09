@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class NT>
 class Sqrt_extension_1;
@@ -297,7 +297,7 @@ operator<<(Stream& os, const Sqrt_extension_1<NT>& x)
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 

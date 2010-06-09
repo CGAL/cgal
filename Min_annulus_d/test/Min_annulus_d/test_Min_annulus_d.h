@@ -32,7 +32,7 @@
 #  include <CGAL/IO/Verbose_ostream.h>
 #include <cassert>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #define COVER(text,code) \
             verr0.out().width( 32); verr0 << text << "..." << flush; \
@@ -200,7 +200,7 @@ test_Min_annulus_d( ForwardIterator first, ForwardIterator last,
     verr0 << endl;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TEST_MIN_ANNULUS_D_H
 

@@ -35,7 +35,7 @@
 
 #include <CGAL/Union_find.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template < 
@@ -1318,6 +1318,6 @@ triangulate_mixed_complex_3(RegularTriangulation_3 const &regular,
   triangulate_mixed_complex_3(regular, shrink_factor, tmc, observer, verbose);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATE_MIXED_COMPLEX_H

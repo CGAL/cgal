@@ -27,7 +27,7 @@
 #include <algorithm>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// Randomly deletes a user-specified fraction of the input points.
@@ -112,6 +112,6 @@ random_simplify_point_set(
 /// @endcond
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RANDOM_SIMPLIFY_POINT_SET_H

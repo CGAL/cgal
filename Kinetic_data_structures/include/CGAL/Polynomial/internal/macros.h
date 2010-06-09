@@ -29,12 +29,12 @@
 */
 #include <CGAL/basic.h>
 
-#define CGAL_POLYNOMIAL_BEGIN_NAMESPACE CGAL_BEGIN_NAMESPACE \
+#define CGAL_POLYNOMIAL_BEGIN_NAMESPACE namespace CGAL { \
 namespace POLYNOMIAL \
 { \
 
     #define CGAL_POLYNOMIAL_END_NAMESPACE } \
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #define CGAL_POLYNOMIAL_NS CGAL::POLYNOMIAL
 #define CGAL_Polynomial_assertion(x) CGAL_assertion(x)

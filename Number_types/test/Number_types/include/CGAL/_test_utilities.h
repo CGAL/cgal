@@ -27,7 +27,7 @@
 #include <sstream> 
 #include <cassert>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Used to shut down some warnings about unused variables.
 template < class T >
@@ -377,6 +377,6 @@ test_utilities(const NT& x)
   return true; 
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

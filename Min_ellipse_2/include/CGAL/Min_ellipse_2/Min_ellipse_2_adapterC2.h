@@ -24,7 +24,7 @@
 #  include <CGAL/ConicCPA2.h>
 #  include <CGAL/Optimisation/assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class declarations
 // ==================
@@ -416,7 +416,7 @@ operator >> ( std::istream& is,
     return( is);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MIN_ELLIPSE_2_ADAPTERC2_H
 

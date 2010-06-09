@@ -12,7 +12,7 @@
 //extern "C" int srandom(unsigned);
 //extern "C" long random();
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // powers of 2 from 2^0 to 2^53
 double
@@ -104,7 +104,7 @@ double random_even_integer(Random& r, unsigned int b,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_RANDOM_INTEGER_H

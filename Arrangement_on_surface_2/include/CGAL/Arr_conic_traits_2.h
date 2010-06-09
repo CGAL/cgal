@@ -32,7 +32,7 @@
 
 #include <fstream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * \class A traits class for maintaining an arrangement of conic arcs (bounded
@@ -801,6 +801,6 @@ public:
   //@}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

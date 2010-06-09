@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class MinimizationDiagram_2>
 class Envelope_overlay_functor
@@ -462,6 +462,6 @@ protected:
   Boundary_cache          traversed_vertices; 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

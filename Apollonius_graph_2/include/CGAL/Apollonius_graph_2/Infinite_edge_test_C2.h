@@ -27,7 +27,7 @@
 #include <CGAL/Apollonius_graph_2/Predicate_constructions_C2.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
@@ -314,7 +314,7 @@ public:
 
 CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_INFINITE_EDGE_TEST_C2_H

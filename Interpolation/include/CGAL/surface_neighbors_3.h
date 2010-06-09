@@ -29,7 +29,7 @@
 // the function object Project_vertex_iterator_to_point
 #include <CGAL/surface_neighbor_coordinates_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //without Delaunay filtering
 template <class OutputIterator, class InputIterator, class Kernel>
@@ -261,6 +261,6 @@ surface_neighbors_3(const Dt& dt,
 			     p, out, traits);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SURFACE_NEIGHBORS_3_H

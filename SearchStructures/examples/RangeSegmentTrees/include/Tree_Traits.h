@@ -23,7 +23,7 @@
 #include <functional>
 #include <utility>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Tree_traits_1{
  public:
@@ -395,7 +395,7 @@ class Tree_traits_4{
   typedef C_Key_4 key_4;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif
 

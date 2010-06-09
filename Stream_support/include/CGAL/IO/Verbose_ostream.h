@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #define CGAL__VERB(x) if (b) *o << x; return *this
 
@@ -73,6 +73,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_VERBOSE_OSTREAM_H

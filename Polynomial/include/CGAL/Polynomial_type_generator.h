@@ -26,7 +26,7 @@
 
 #include <CGAL/Polynomial_traits_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class T, int d>
 struct Polynomial_type_generator
@@ -40,6 +40,6 @@ public:
 template <class T>
 struct Polynomial_type_generator<T,0>{ typedef T Type; };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_GENERATOR_H

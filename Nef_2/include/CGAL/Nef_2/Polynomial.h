@@ -36,7 +36,7 @@
 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Nef {
 
@@ -1969,7 +1969,7 @@ using Nef::is_finite;
 using Nef::is_valid;
 using Nef::gcd;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 

@@ -34,7 +34,7 @@
 
 #define stlvector
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //link type definition of an ordinary vertex of the tree
 template < typename Node >
@@ -232,6 +232,6 @@ protected:
   bool is_anchor()const {return true;}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

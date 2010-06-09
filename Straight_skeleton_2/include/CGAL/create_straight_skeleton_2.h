@@ -22,7 +22,7 @@
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i
 {
@@ -427,7 +427,7 @@ create_exterior_straight_skeleton_2 ( Polygon const& aContour )
   return create_exterior_straight_skeleton_2(aContour, Exact_predicates_inexact_constructions_kernel() );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //

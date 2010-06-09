@@ -26,7 +26,7 @@
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/utility.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // the struct "Project_vertex_output_iterator"
 // is used in the (next two) functions
@@ -368,6 +368,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NATURAL_NEIGHBOR_COORDINATES_2_H

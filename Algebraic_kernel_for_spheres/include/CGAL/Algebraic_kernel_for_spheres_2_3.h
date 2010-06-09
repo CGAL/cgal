@@ -40,7 +40,7 @@
 #include <CGAL/global_functions_on_roots_and_polynomials_2_3.h>
 #include <CGAL/global_functions_on_root_for_sphere_2_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
   template< class RT_ >
   struct Algebraic_kernel_for_spheres_2_3
@@ -120,6 +120,6 @@ CGAL_BEGIN_NAMESPACE
 
   };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ALGEBRAIC_KERNEL_FOR_SPHERES_2_3_H

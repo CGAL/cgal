@@ -29,7 +29,7 @@
 
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Generic call with custom predicate traits parameter.
 template< class RandomAccessIter1, class RandomAccessIter2,
@@ -390,6 +390,6 @@ void box_self_intersection_all_pairs_d(
                                        topology);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

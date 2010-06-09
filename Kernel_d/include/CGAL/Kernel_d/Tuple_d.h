@@ -29,7 +29,7 @@
 #include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 #include <sstream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 #define PointCd PointCd2
 #define PointHd PointHd2
 
@@ -279,5 +279,5 @@ int copy_and_count(InputIterator first, InputIterator last,
 
 #undef PointCd
 #undef PointHd
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_TUPLE_D_H

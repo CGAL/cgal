@@ -32,7 +32,7 @@
 	#define CGAL_TRAP_PRINT_DEBUG(expr)
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Locate the arrangement feature containing the given point.
@@ -289,6 +289,6 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

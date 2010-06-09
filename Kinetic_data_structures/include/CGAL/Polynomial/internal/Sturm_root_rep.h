@@ -928,7 +928,7 @@ operator<<(Stream& os, const Sturm_root_rep<S,I>& r)
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*template<class S, class I>
   double
@@ -1003,7 +1003,7 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 namespace std
 {

@@ -38,7 +38,7 @@
 #  include <boost/thread/tss.hpp>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
 
@@ -1850,6 +1850,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LAZY_H

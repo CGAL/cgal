@@ -26,7 +26,7 @@
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /////////// COERCION_TRAITS BEGIN
 
@@ -276,7 +276,7 @@ public:
 
 /////////// COERCION_TRAITS END
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #undef CGAL_int
 

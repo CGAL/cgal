@@ -25,7 +25,7 @@
 #ifndef CGAL_ARR_DEFAULT_OVERLAY_TRAITS_BASE_H
 #define CGAL_ARR_DEFAULT_OVERLAY_TRAITS_BASE_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * \class
@@ -137,6 +137,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

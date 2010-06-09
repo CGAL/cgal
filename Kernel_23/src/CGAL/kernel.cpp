@@ -24,7 +24,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/aff_transformation_tags.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 Translation             TRANSLATION;
 Rotation                ROTATION;
@@ -35,4 +35,4 @@ Identity_transformation IDENTITY;
 const Origin      ORIGIN = Origin();
 const Null_vector NULL_VECTOR = Null_vector();
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

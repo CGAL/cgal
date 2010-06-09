@@ -25,7 +25,7 @@
 
 #include <boost/optional.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // ---------------------------------------------------------------------------
 // Construct the lower/upper envelope of the given list of non-vertical curves.
@@ -1332,6 +1332,6 @@ Envelope_divide_and_conquer_2<Traits,Diagram>::_split_edge
   return (new_v);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

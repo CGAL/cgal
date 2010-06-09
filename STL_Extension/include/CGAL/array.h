@@ -29,7 +29,7 @@
 #  include <boost/array.hpp>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace cpp0x {
 
@@ -140,6 +140,6 @@ make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
 
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ARRAY_H

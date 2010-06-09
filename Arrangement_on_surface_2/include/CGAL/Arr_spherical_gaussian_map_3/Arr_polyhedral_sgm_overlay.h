@@ -23,7 +23,7 @@
 
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Sgm>
 class Arr_polyhedral_sgm_overlay {
@@ -190,6 +190,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

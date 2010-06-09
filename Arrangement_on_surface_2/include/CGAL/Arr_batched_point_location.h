@@ -28,7 +28,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Issue a batched point-location query on an arrangement given an input
@@ -134,6 +134,6 @@ OutputIterator locate
   return (oi);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

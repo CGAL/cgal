@@ -10,7 +10,7 @@
 #include <CGAL/Modifier_base.h>
 #include <qapplication.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename SNC_>
 class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
@@ -252,5 +252,5 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
   */
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_VISUAL_HULL_CREATOR_H

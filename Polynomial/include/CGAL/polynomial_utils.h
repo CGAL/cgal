@@ -68,7 +68,7 @@
     return typename PT::functor()(p,second,index);                      \
   }  
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // GetCoefficient
 template <typename Polynomial_d> inline  
@@ -389,7 +389,7 @@ Polynomial<NT> reversal(const Polynomial<NT>& p)
 { Polynomial<NT> q(p); q.reversal(); return q; }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #undef CGAL_UNARY_POLY_FUNCTION
 #undef CGAL_UNARY_POLY_FUNCTION_INDEX

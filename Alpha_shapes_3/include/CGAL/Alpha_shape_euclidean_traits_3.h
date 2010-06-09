@@ -20,12 +20,12 @@
 #ifndef CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
 #define CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class K>
 class Alpha_shape_euclidean_traits_3 : public K {};
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H

@@ -28,7 +28,7 @@
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class FT >
 inline
@@ -532,6 +532,6 @@ has_smaller_signed_dist_to_planeC3(
 	    prx, pry, prz, px, py, pz, qx, qy, qz) == SMALLER;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PREDICATES_KERNEL_FTC3_H

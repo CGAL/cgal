@@ -26,7 +26,7 @@
 #include <CGAL/Arr_point_location/Arr_lm_generator_base.h>
 #include <CGAL/Random.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_random_landmarks_generator
  * A generator for the landmarks point-locatoion class, which uses a
@@ -144,7 +144,7 @@ protected:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif

@@ -27,7 +27,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class DirectionC2
@@ -98,6 +98,6 @@ DirectionC2<R>::to_vector() const
   return Vector_2(dx(), dy());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_DIRECTION_2_H

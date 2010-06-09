@@ -24,7 +24,7 @@
 #include <CGAL/Inverse_index.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Polyhedron, class Writer>
 void
@@ -65,6 +65,6 @@ generic_print_polyhedron( std::ostream&     out,
     writer.write_footer();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_GENERIC_PRINT_POLYHEDRON_H //
 // EOF //

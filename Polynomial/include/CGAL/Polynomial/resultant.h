@@ -46,7 +46,7 @@
 #include <CGAL/primes.h>
 #include <CGAL/Polynomial/Cached_extended_euclidean_algorithm.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // The main function provided within this file is CGAL::internal::resultant(F,G),
@@ -410,7 +410,7 @@ Coeff  resultant(
 }
 
 } // namespace internal    
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 

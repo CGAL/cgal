@@ -32,7 +32,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Vector_3 : public R_::Kernel_base::Vector_3
@@ -327,6 +327,6 @@ operator>>(std::istream& is, Vector_3<R>& v)
   return extract(is, v, typename R::Kernel_tag() );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VECTOR_3_H

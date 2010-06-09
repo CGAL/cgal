@@ -24,7 +24,7 @@
 #include <CGAL/determinant.h>
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class FT >
 Comparison_result
@@ -277,7 +277,7 @@ does_simplex_intersect_weighted_dual_supportC3(
 }
 
 //-------------------------------------------------------------------
-CGAL_END_NAMESPACE
+} //namespace CGAL
 //-------------------------------------------------------------------
 
 #endif //CGAL_PREDICATES_ON_WEIGHTED_POINTS_CARTESIAN_3

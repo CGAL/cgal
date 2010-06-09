@@ -29,7 +29,7 @@
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class ConicTraits_2>
 class Env_sphere_traits_3 : public ConicTraits_2
@@ -1284,6 +1284,6 @@ bool operator== (const typename Kernel::Sphere_3& a,
   return (CGAL::compare (a.squared_radius(), b.squared_radius()) == EQUAL);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ENVELOPE_SPHERES_TRAITS_3_H

@@ -26,7 +26,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Kernel/Dimension_utils.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // TODO :
 // - Add support for more types of objects.
@@ -145,6 +145,6 @@ bounding_box(ForwardIterator f, ForwardIterator l)
   return bounding_box(f, l, Kernel());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_BOUNDING_BOX_H

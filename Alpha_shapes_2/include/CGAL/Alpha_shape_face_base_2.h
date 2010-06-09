@@ -22,7 +22,7 @@
 
 #include <CGAL/utility.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Gt, class Fb = Triangulation_face_base_2<Gt> >
 class Alpha_shape_face_base_2 : public Fb
@@ -81,6 +81,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //ALPHA_SHAPE_FACE_BASE_2_H

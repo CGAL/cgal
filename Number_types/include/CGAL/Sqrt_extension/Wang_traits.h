@@ -26,7 +26,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Sqrt_extension/Sqrt_extension_type.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 namespace internal{
 
 template <class NT_> class Wang_traits; 
@@ -72,6 +72,6 @@ public:
 
 
 } // namespace internal
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SQRT_EXTENSION_WANG_TRAITS_H

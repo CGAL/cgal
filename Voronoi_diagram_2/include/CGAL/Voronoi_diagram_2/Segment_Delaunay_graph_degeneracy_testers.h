@@ -24,7 +24,7 @@
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_base_2.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
@@ -254,6 +254,6 @@ class Segment_Delaunay_graph_face_tester_2
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_SEGMENT_DELAUNAY_GRAPH_DEGENERACY_TESTERS_H

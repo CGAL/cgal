@@ -31,7 +31,7 @@
 #include <vector>
 #include <algorithm>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class BidirectionalIterator, class OutputIterator, class Traits>
 OutputIterator
@@ -312,6 +312,6 @@ ch_upper_hull_scan( InputIterator  first,
   return res.to_output_iterator();
   #endif // no postconditions ...
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CH_GRAHAM_ANDREW_C

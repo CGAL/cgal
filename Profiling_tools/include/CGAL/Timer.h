@@ -27,7 +27,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // SECTION: A Timer for User-Process Time
 // ========================================================================
@@ -109,7 +109,7 @@ inline double Timer::time() const {
     return elapsed;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TIMER_H //
 // EOF //

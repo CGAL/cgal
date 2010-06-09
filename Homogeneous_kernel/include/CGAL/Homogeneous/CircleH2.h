@@ -27,7 +27,7 @@
 #include <CGAL/Interval_nt.h>
 #include <boost/tuple/tuple.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class CircleH2
@@ -249,6 +249,6 @@ bool
 CircleH2<R>::operator!=(const CircleH2<R>& c) const
 { return !(*this == c); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CIRCLEH2_H

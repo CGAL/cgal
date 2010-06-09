@@ -29,7 +29,7 @@
 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template < class Gt,
@@ -145,6 +145,6 @@ protected:
 
 
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif // CGAL_TRIANGULATION_FACE_BASE_WITH_EDGES_2_H

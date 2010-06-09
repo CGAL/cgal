@@ -38,7 +38,7 @@
 #include <CGAL/Origin.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Guess which compiler needs this work around ?
 namespace internal {
@@ -313,6 +313,6 @@ public:
   const T& operator()(const T&t) const { return t; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_CONVERTER_H

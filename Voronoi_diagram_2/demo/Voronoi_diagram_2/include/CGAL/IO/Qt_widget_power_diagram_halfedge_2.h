@@ -25,7 +25,7 @@
 
 #include <CGAL/Voronoi_diagram_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class VDA>
 class Power_diagram_halfedge_2
@@ -132,7 +132,7 @@ Qt_widget& operator<<(Qt_widget& qt_w,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_QT_WIDGET_POWER_DIAGRAM_HALFEDGE_2_H

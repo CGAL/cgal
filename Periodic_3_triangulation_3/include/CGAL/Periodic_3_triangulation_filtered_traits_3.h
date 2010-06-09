@@ -31,7 +31,7 @@
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This template class is a wrapper that implements the filtering for any
 // predicate (dynamic filters with IA).
@@ -566,11 +566,11 @@ public:
   Approximate_iso_cuboid_3 _domain_f;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Periodic_3_triangulation_statically_filtered_traits_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename K >
 class Periodic_3_triangulation_filtered_traits_3
@@ -578,6 +578,6 @@ class Periodic_3_triangulation_filtered_traits_3
   Periodic_3_triangulation_filtered_traits_base_3<K> > {
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_FILTERED_TRAITS_3_H

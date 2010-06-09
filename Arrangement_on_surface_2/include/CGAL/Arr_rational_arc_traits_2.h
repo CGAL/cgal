@@ -28,7 +28,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Rational_arc_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A traits class for maintaining an arrangement of bounded arcs (segments) of
@@ -756,6 +756,6 @@ public:
   //@}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

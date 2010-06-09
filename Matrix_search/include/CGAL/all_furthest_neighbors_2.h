@@ -28,7 +28,7 @@
 #include <algorithm>
 #include <boost/bind.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template < class Operation, class RandomAccessIC >
 class All_furthest_neighbor_matrix
 : public Cartesian_matrix< Operation, RandomAccessIC, RandomAccessIC >
@@ -72,9 +72,9 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #include <iterator>
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class RandomAccessIC,
            class OutputIterator,
@@ -190,7 +190,7 @@ all_furthest_neighbors( RandomAccessIC points_begin,
                         OutputIterator o)
 { return all_furthest_neighbors_2( points_begin, points_end, o); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_ALL_FURTHEST_NEIGHBORS_2_H)
 // ----------------------------------------------------------------------------

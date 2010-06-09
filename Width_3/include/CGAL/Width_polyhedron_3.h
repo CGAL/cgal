@@ -27,7 +27,7 @@
 #include <map>
 #include <CGAL/width_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 
@@ -214,6 +214,6 @@ class Data_access {
 
 } // namespace Width_3_internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //WIDTH_POLYHEDRON_3_H

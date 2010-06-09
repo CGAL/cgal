@@ -25,7 +25,7 @@
 #define CGAL_NEF_DEBUG 229
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_>
 class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure> {
@@ -215,5 +215,5 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_CD3_REFLEX_VERTEX_SEARCHER_H

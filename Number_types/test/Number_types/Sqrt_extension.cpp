@@ -13,7 +13,7 @@
 #include <sstream>
 
 // TODO: Included from EXACUS/NumeriX/include/NiX/number_type_utils.h
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template <class NT , class RT>
 inline 
 void convert_to(const NT& x, RT& r){ 
@@ -22,7 +22,7 @@ void convert_to(const NT& x, RT& r){
     BOOST_STATIC_ASSERT((::boost::is_same<Type,RT>::value));
     r = typename CT::Cast()(x);
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 // end included from number_type_utils.h
 
 template <class NT>

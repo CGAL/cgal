@@ -31,7 +31,7 @@
 #include <CGAL/IO/File_header_OFF.h>
 #include <algorithm>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 File_header_OFF::File_header_OFF( bool verbose)
 :   File_header_extended_OFF( verbose),
@@ -370,5 +370,5 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     return in;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 // EOF //

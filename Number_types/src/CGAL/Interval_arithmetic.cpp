@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/FPU.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
 // For compilers which bug on denormalized values at compile time.
@@ -53,4 +53,4 @@ int dummy_symbol_for_stopping_VC_linker_warning;
 } // namespace
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

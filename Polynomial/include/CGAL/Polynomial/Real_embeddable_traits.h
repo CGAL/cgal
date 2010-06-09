@@ -29,7 +29,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 template< class Polynomial , class TAG> class Real_embeddable_traits_poly_base;
@@ -117,5 +117,5 @@ struct Real_embeddable_traits<Polynomial<NT> >
   typename Real_embeddable_traits<typename internal::Innermost_coefficient_type<NT>::Type>::Is_real_embeddable>
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_POLYNOMIAL_REAL_EMBEDDABLE_TRAITS_H

@@ -27,7 +27,7 @@
 #include <cstddef>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Circulator_tag {};                   // any circulator.
 struct Iterator_tag {};                     // any iterator.
@@ -128,7 +128,7 @@ class Random_access_circulator_ptrbase   // random access circulator.
         Random_access_circulator_ptrbase(void* p) : _ptr(p) {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CIRCULATOR_BASES_H //
 // EOF //

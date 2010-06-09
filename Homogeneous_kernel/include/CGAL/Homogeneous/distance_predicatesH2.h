@@ -27,7 +27,7 @@
 
 #include <CGAL/determinant.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
@@ -278,6 +278,6 @@ has_larger_signed_distance_to_line(const PointH2<R>& p,
   return ( scaled_dist_r_minus_scaled_dist_s > RT0 );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_DISTANCE_PREDICATESH2_H

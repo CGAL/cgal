@@ -29,7 +29,7 @@
 #define CGAL_NEF_DEBUG 61
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Manpage{Pluecker_line_3}{R}{Straight lines in 3-space}{pl}}*/  
 
@@ -351,5 +351,5 @@ struct Pluecker_line_lt {
   { return CGAL::Pluecker_line_3<Tag,R>::cmp(l1,l2)<0; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_PLUECKER_LINE_3_H

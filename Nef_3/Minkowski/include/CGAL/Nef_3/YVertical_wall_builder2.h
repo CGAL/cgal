@@ -5,7 +5,7 @@
 #include <CGAL/Nef_3/Single_wall_creator3.h>
 #include <CGAL/Nef_3/External_structure_builder.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_>
 class YVertical_wall_builder2 : public Modifier_base<typename Nef_::SNC_and_PL> {
@@ -95,5 +95,5 @@ class YVertical_wall_builder2 : public Modifier_base<typename Nef_::SNC_and_PL> 
   Vertical_redge_iterator redges_end()   { return redges.end(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF3_YVERTICAL_WALL_BUILDER2_H

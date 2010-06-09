@@ -26,7 +26,7 @@
 
 #include <CGAL/array.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Iso_rectangleH2
@@ -96,6 +96,6 @@ bounded_side(const typename Iso_rectangleH2<R>::Point_2& p) const
   return ON_BOUNDED_SIDE;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ISO_RECTANGLEH2_H

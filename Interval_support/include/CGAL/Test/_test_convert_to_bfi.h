@@ -36,7 +36,7 @@
 #ifndef CGAL_TEST_CONVERT_TO_BFI_H
 #define CGAL_TEST_CONVERT_TO_BFI_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // BFI = Bigfloat_interval 
 
@@ -69,6 +69,6 @@ void test_convert_to_bfi(){
   test_convert_to_bfi_from( BFI() , EXT());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TEST_REAL_COMPARABLE_H

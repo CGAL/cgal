@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A minimization (or a maximization) diagram that represents the lower (or the
@@ -461,6 +461,6 @@ private:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

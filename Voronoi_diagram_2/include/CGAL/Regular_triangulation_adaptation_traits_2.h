@@ -27,7 +27,7 @@
 #include <CGAL/Voronoi_diagram_2/Construct_dual_points.h>
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class RT2>
 struct Regular_triangulation_adaptation_traits_2
@@ -43,6 +43,6 @@ struct Regular_triangulation_adaptation_traits_2
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REGULAR_TRIANGULATION_ADAPTATION_TRAITS_2_H

@@ -28,7 +28,7 @@
 
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Bisect the control polygon of a given Bezier curves into the left and
@@ -220,6 +220,6 @@ de_Casteljau_2
   return (vec[0]);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

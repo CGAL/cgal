@@ -33,7 +33,7 @@
 
 //#define CGAL_LA_SELFTEST
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class _FT, class _AL = CGAL_ALLOCATOR(_FT) >
 class Linear_algebraCd
@@ -115,7 +115,7 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Kernel_d/Linear_algebraCd_impl.h>
 

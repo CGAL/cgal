@@ -30,7 +30,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Apollonius_graph_2/Kernel_wrapper_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
@@ -219,6 +219,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_TRAITS_2_H

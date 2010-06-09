@@ -31,7 +31,7 @@
 #define CGAL_NEF_DEBUG 17
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Point_2, class Point_3> 
 Point_2 point_3_get_x_y_point_2(Point_3 p) {
@@ -103,7 +103,7 @@ Bounded_side bounded_side_3(IteratorForward first,
   return side;  
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #ifdef WRONG_IMPLEMENTATION
 /* The following code is wrong since Proyector_.. structures must not return

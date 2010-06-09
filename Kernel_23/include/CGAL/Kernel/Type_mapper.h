@@ -26,7 +26,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This is a tool to obtain the K2::Point_2 from K1 and K1::Point_2.
 // Similarly for other kernel types.
@@ -48,6 +48,6 @@ struct Type_mapper
 
 #include <CGAL/Kernel/interface_macros.h>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_KERNEL_TYPE_MAPPER_H

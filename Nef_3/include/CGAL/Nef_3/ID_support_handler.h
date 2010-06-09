@@ -28,7 +28,7 @@
 #define CGAL_NEF_DEBUG 131
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Items, typename Decorator>
 class ID_support_handler {
@@ -424,5 +424,5 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_ID_SUPPORT_HANDLER

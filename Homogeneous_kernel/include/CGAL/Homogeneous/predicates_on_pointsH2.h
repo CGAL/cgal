@@ -27,7 +27,7 @@
 
 #include <CGAL/Homogeneous/PointH2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R>
 CGAL_KERNEL_INLINE
@@ -75,6 +75,6 @@ compare_deltax_deltay(const PointH2<R>& p,
 }
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PREDICATES_ON_POINTSH2_H

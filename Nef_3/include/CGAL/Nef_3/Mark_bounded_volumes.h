@@ -18,7 +18,7 @@
 
 #include <CGAL/Nef_polyhedron_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Decorator, typename Mark>
 class Volume_setter {
@@ -83,5 +83,5 @@ public:
    }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF3_MARK_BOUNDED_VOLUMES_H

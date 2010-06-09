@@ -31,7 +31,7 @@
 #include <algorithm>
 #include <boost/bind.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class List, class ListIterator, class Traits>
 void
@@ -135,6 +135,6 @@ ch_eddy(InputIterator first, InputIterator last,
   return std::copy( L.begin(), w, result );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CH_EDDY_C

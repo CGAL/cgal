@@ -34,7 +34,7 @@
 #endif
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class NumberType>
 struct Cartesian_double_to_Homogeneous
@@ -102,6 +102,6 @@ struct Cartesian_float_to_H_double_int
 };
 #endif // CGAL_USE_LEDA
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_KERNEL_TO_KERNEL_H

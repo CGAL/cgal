@@ -24,7 +24,7 @@
 #ifndef CGAL_OPTIMISATION_ACCESS_DIMENSION_3_H
 #define CGAL_OPTIMISATION_ACCESS_DIMENSION_3_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class declaration
 // =================
@@ -54,7 +54,7 @@ class Access_dimension_3 {
     int  operator() ( const Point& p) const { return p.dimension(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_OPTIMISATION_ACCESS_DIMENSION_3_H
 

@@ -26,7 +26,7 @@
 #include <CGAL/Polynomial/misc.h>
 #include <CGAL/Polynomial/Polynomial_type.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 namespace internal {
 
 // square-free factorization
@@ -354,6 +354,6 @@ int filtered_square_free_factorize_utcf( const Polynomial<Coeff>& p,
 }
 
 } // namespace internal
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_SQUARE_FREE_FACTORIZATION_H

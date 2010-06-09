@@ -29,7 +29,7 @@
 #include <iostream>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class File_writer_OFF {
     std::ostream*           m_out;
@@ -102,6 +102,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_FILE_WRITER_OFF_H //
 // EOF //

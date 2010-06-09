@@ -28,7 +28,7 @@
 #define CGAL_NEF_DEBUG 229
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_>
 class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
@@ -194,5 +194,5 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_CD3_SINGLE_WALL_CREATOR2_H

@@ -22,7 +22,7 @@
 #include<CGAL/Nef_3/SNC_decorator.h>
 #include<CGAL/Convex_decomposition_3/is_reflex_sedge.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_, typename Positively_sorted_set, typename Negatively_sorted_set>
 class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> {
@@ -129,5 +129,5 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
   Negative_reflex_edge_iterator negative_redges_end() { return neg.end(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_CD3_REFLEX_EDGE_SEARCHER_H

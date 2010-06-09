@@ -21,7 +21,7 @@
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Surface_mesh_simplification
 {
@@ -61,7 +61,7 @@ struct Edge_collapse_visitor_base
 
 } // namespace Surface_mesh_simplification
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_VISITOR_BASE_H //
 // EOF //

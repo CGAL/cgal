@@ -28,7 +28,7 @@
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Kernel_>
 class Dxf_bsop_reader
@@ -240,6 +240,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

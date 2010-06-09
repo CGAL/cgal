@@ -25,7 +25,7 @@
 
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Aff_transformation_3 : public R_::Kernel_base::Aff_transformation_3
@@ -98,6 +98,6 @@ operator>>(std::istream& is, CGAL::Aff_transformation_3<R>& t)
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_3
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_AFF_TRANSFORMATION_3_H

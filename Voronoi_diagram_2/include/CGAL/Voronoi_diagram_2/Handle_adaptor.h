@@ -22,7 +22,7 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
@@ -66,6 +66,6 @@ class Handle_adaptor
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_HANDLE_ADAPTOR_H

@@ -26,7 +26,7 @@
 #include <fstream>
 #include <ios>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Log
 {
@@ -150,5 +150,5 @@ struct Set_log_state{
   Log::Level old_level_;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif

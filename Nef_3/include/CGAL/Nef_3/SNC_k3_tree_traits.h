@@ -28,7 +28,7 @@
 #define CGAL_NEF_DEBUG 503
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <typename Kernel, typename Coordinate>
@@ -628,6 +628,6 @@ Side_of_plane<SNC_decorator>::operator()
   //#endif
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NEF_SNC_K3_TREE_TRAITS_H

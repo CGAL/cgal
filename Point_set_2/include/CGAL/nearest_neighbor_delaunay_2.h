@@ -31,7 +31,7 @@
 #include <stack>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 
@@ -255,6 +255,6 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
 } 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

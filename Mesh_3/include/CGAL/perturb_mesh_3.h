@@ -30,7 +30,7 @@
 #include <CGAL/Mesh_3/Sliver_perturber.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace parameters { namespace default_values {
   const double perturb_sliver_bound = 0.;
@@ -91,7 +91,7 @@ perturb_mesh_3_impl(C3T3& c3t3,
   
   
   
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_PERTURB_MESH_3_H

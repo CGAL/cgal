@@ -26,7 +26,7 @@
 
 #include <CGAL/determinant.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class FT >
 CGAL_KERNEL_INLINE
@@ -401,6 +401,6 @@ squared_areaC3(const FT &px, const FT &py, const FT &pz,
     return (CGAL_NTS square(vx) + CGAL_NTS square(vy) + CGAL_NTS square(vz))/4;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONSTRUCTIONS_KERNEL_FTC3_H

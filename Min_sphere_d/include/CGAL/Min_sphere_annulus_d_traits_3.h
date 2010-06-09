@@ -29,7 +29,7 @@
 #  include <CGAL/Optimisation/Access_coordinates_begin_3.h>
 #  include <CGAL/Optimisation/Construct_point_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class declaration
 // =================
@@ -83,7 +83,7 @@ class Min_sphere_annulus_d_traits_3 {
         { return Construct_point_d(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MIN_SPHERE_ANNULUS_D_TRAITS_3_H
 

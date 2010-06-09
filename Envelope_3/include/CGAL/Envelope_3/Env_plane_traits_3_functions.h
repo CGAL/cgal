@@ -22,7 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class K>
 Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1, 
@@ -199,6 +199,6 @@ Object ray_under_linear_constraint(const typename K::Ray_2&  ray,
 }
  
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

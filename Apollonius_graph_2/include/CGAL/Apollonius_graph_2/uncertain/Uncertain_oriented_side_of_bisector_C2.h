@@ -27,7 +27,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Apollonius_graph_2/uncertain/uncertain_functions_on_signs.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //--------------------------------------------------------------------
 
@@ -120,6 +120,6 @@ public:
 
 //--------------------------------------------------------------------
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_UNCERTAIN_ORIENTED_SIDE_OF_BISECTOR_C2_H

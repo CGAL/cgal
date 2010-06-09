@@ -30,7 +30,7 @@ Enriched incremental builder for CGAL Polyhedral Surfaces.
 #include <vector>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class HalfedgeDS_>
 class Enriched_polyhedron_incremental_builder_3 {
@@ -816,7 +816,7 @@ remove_unconnected_vertices( Tag_true) {
     return true;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 #endif // CGAL_Enriched_polyhedron_incremental_builder_3_H //

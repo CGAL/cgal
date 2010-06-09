@@ -25,7 +25,7 @@
 
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class pR>
 class Aff_transformation_d : public pR::Aff_transformation_d_base
@@ -72,5 +72,5 @@ class Aff_transformation_d : public pR::Aff_transformation_d_base
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_AFF_TRANSFORMATION_D_H

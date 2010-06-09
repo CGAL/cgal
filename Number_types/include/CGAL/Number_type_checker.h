@@ -34,7 +34,7 @@
 // #define CGAL_NT_CHECK_DEBUG(s) std::cerr << s << std::endl
 #define CGAL_NT_CHECK_DEBUG(s)
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -912,6 +912,6 @@ operator>> (std::istream & is, Number_type_checker<NT1, NT2, Cmp> &b)
   return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NUMBER_TYPE_CHECKER_H

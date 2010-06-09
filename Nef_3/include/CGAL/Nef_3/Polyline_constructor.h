@@ -18,7 +18,7 @@
 
 #include <CGAL/Nef_3/SNC_indexed_items.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Items, typename SNC_structure>
 class Sphere_map_creator {
@@ -151,5 +151,5 @@ class Polyline_constructor : public Modifier_base<typename Nef3::SNC_structure> 
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_POLYLINE_CONSTRUCTOR_H

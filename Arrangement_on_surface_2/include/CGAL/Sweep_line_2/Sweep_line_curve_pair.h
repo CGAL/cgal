@@ -25,7 +25,7 @@
  * Definition of the Curve_pair<Subcurve> class and related functors.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A pair of subcurves.
@@ -213,6 +213,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

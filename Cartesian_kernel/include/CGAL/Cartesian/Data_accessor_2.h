@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_DATA_ACCESSOR_2_H
 #define CGAL_CARTESIAN_DATA_ACCESSOR_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // 2D Cartesian point data accessor
 template < class R_ >
@@ -44,6 +44,6 @@ public:
     void set( Point& p, const FT &x, const FT &y) const { p=Point(x,y); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_DATA_ACCESSOR_2_H

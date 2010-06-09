@@ -22,7 +22,7 @@
 #ifndef CGAL_IN_PLACE_EDGE_LIST_H
 #define CGAL_IN_PLACE_EDGE_LIST_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Edge>
 class In_place_edge_list {
@@ -199,7 +199,7 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_IN_EDGE_PLACE_LIST_H

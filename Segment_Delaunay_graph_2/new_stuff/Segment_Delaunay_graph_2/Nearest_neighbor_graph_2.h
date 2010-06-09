@@ -26,7 +26,7 @@
 
 #include "Directed_graph.h"
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class NIT, class NH>
 class Node_iterator_wrapper
@@ -240,6 +240,6 @@ private:
   Traits tr_;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NEAREST_NEIGHBOR_GRAPH_2_H

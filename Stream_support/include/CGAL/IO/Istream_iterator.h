@@ -26,7 +26,7 @@
 
 #include <CGAL/circulator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class T, class Stream>
 class Istream_iterator {
@@ -78,6 +78,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_ISTREAM_ITERATOR_H

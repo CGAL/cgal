@@ -22,7 +22,7 @@
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * An auxiliary base class for computing the union of the interiors of cycles
@@ -220,6 +220,6 @@ private:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

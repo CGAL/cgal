@@ -23,7 +23,7 @@
 #define CGAL_NEF_DEBUG 239
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*
   int is_reflex_edge(Halfedge_handle e) {    
@@ -164,5 +164,5 @@ int is_reflex_sedge(typename SNC_structure::SHalfedge_handle se,
   return result;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_CD3_IS_REFLEX_SEDGE_H

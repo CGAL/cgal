@@ -26,7 +26,7 @@
 
 #include <CGAL/determinant.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R >
 class Aff_transformation_rep_baseC3
@@ -309,6 +309,6 @@ Aff_transformation_repC3<R>::transpose() const
                                t13, t23, t33, t34);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H

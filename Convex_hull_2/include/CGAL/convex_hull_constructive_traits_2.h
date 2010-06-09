@@ -26,7 +26,7 @@
 
 #include <CGAL/ch_function_objects_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template <class K_>
 class Convex_hull_constructive_traits_2 : public K_
 {
@@ -75,6 +75,6 @@ class convex_hull_constructive_traits_2 :
 {
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONVEX_HULL_CONSTRUCTIVE_TRAITS_2_H

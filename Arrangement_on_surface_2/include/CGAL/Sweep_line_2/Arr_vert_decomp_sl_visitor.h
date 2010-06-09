@@ -24,7 +24,7 @@
  * Definition of the Arr_vert_decomp_sl_visitor class-template.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #include <CGAL/Object.h>
 
@@ -323,6 +323,6 @@ void Arr_vert_decomp_sl_visitor<Hlpr, OutIt>::after_sweep ()
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

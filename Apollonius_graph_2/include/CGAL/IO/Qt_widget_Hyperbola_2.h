@@ -24,7 +24,7 @@
 #include <CGAL/Hyperbola_ray_2.h>
 #include <CGAL/IO/Qt_widget.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template< class Gt >
 inline
@@ -42,6 +42,6 @@ Qt_widget& operator<<(Qt_widget &s, Hyperbola_ray_2<Gt> &H)
   return s;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_QT_WIDGET_HYPERBOLA_2_H

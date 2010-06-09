@@ -26,7 +26,7 @@
 
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * \class A class that stores additional information with the point's 
@@ -164,6 +164,6 @@ private:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

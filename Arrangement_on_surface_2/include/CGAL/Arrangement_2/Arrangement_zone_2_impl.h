@@ -26,7 +26,7 @@
  * Member-function definitions for the Arrangement_zone_2 class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Initialize the zone-computation process with a given curve and an object
@@ -1533,6 +1533,6 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
   return (false);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

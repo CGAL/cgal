@@ -43,7 +43,7 @@
 #include <CGAL/Sweep_line_2/Arr_vert_decomp_sl_visitor.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_planar_topology_traits_base_2
  * A base topology-traits class that encapsulates the embedding of 2D
@@ -486,6 +486,6 @@ is_in_face(const Face *f, const Point_2& p, const Vertex *v) const
   return ((n_ray_intersections % 2) != 0);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

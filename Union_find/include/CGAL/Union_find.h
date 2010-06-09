@@ -30,7 +30,7 @@
 #include <CGAL/memory.h>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -249,6 +249,6 @@ void Union_find<T,A>::unify_sets( handle p, handle q) {
     --sets;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_UNION_FIND_H

@@ -211,7 +211,7 @@ std::pair<double,double> to_interval(const Interval_root<D>& a) {
 
 CGAL_KINETIC_END_NAMESPACE
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template <class D>
 Comparison_result compare(const typename Kinetic::Interval_root<D>& a,
@@ -229,7 +229,7 @@ std::pair<double,double> to_interval(const typename Kinetic::Interval_root<D>& a
   return a.interval_value();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 namespace std {
   template <class D>

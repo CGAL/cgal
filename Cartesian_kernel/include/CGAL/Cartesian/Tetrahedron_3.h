@@ -29,7 +29,7 @@
 #include <vector>
 #include <functional>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class TetrahedronC3
@@ -217,6 +217,6 @@ TetrahedronC3<R>::is_degenerate() const
   return orientation() == COPLANAR;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_TETRAHEDRON_3_H

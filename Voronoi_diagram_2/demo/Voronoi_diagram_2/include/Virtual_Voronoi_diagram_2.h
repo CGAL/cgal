@@ -30,7 +30,7 @@
 #include <CGAL/IO/Qt_widget_Voronoi_diagram_halfedge_2.h>
 #include <CGAL/IO/Qt_widget_power_diagram_halfedge_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 struct Virtual_Voronoi_diagram_2
@@ -506,7 +506,7 @@ class Concrete_Apollonius_diagram_2
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_VIRTUAL_VORONOI_DIAGRAM_2_H

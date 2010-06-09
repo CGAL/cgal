@@ -27,7 +27,7 @@
 
 #include <CGAL/Sweep_line_2/Arr_basic_insertion_traits_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A meta-traits class that stores a halfedge handle with every x-monotone
@@ -190,6 +190,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

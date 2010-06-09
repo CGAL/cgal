@@ -24,7 +24,7 @@
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -766,6 +766,6 @@ fitting_line_3(const typename K::FT covariance[6], // covariance matrix
 
 } // end namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_UTIL_H

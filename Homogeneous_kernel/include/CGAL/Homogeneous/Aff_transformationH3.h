@@ -27,7 +27,7 @@
 #include <CGAL/Handle_for_virtual.h>
 #include <CGAL/determinant.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // forward declaration
 template < class R >
@@ -891,6 +891,6 @@ operator<< ( std::ostream & out,
  << "| "<< RT0   <<' '<< RT0   <<' '<< RT0   <<' '<< r.t33 << " |\n";
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_AFF_TRANSFORMATIONH3_H

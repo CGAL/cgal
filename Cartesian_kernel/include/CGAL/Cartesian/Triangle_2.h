@@ -27,7 +27,7 @@
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 #include <CGAL/array.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class TriangleC2
@@ -69,6 +69,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_TRIANGLE_2_H

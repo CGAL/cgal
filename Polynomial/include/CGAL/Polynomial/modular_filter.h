@@ -32,7 +32,7 @@
 #include <CGAL/Polynomial/prs_resultant.h>
 #include <CGAL/Modular_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
     template <class NT> inline
@@ -180,6 +180,6 @@ bool may_have_multiple_factor( const Polynomial<NT>& P ) {
 }
 
 } //namespace internal
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_MODULAR_FILTER_H

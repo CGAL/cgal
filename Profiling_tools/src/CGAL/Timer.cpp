@@ -53,7 +53,7 @@
 #include <cfloat>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // Static member variable for Timer
@@ -132,6 +132,6 @@ double Timer::max BOOST_PREVENT_MACRO_SUBSTITUTION () const {
 #endif // CGAL__GETRUSAGE //
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // EOF //

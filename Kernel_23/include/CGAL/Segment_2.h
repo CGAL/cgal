@@ -30,7 +30,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Segment_2 : public R_::Kernel_base::Segment_2
@@ -304,6 +304,6 @@ operator>>(std::istream &is, Segment_2<R> &s)
     return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //  CGAL_SEGMENT_2_H

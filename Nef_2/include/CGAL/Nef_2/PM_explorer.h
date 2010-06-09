@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_2/PM_const_decorator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Moptions print_title=yes }*/ 
 /*{\Moptions outfile=Explorer.man }*/
@@ -138,6 +138,6 @@ bool is_frame_edge(Halfedge_const_handle e) const
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PM_EXPLORER_H

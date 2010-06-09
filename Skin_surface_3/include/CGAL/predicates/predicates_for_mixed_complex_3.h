@@ -24,7 +24,7 @@
 #include <CGAL/determinant.h>
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /* q: circumcenter(p1,p2)
  *   <p1-x,p1-q> - s*<p1-q,p1-q>
@@ -119,6 +119,6 @@ side_of_mixed_cellC3(const FT &p1x, const FT &p1y, const FT &p1z, const FT &p1w,
 		  ((1-s)*p1z+s*qz-xz)*nz);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PREDICATES_FOR_MIXED_COMPLEX_3_H

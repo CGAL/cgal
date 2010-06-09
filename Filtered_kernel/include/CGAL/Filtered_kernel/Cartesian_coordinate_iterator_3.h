@@ -25,7 +25,7 @@
 #include <iterator>
 #include <boost/variant.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This class should go away.
 // It is now only used by the Filtered_kernel.
@@ -142,6 +142,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_COORDINATE_ITERATOR_3_H

@@ -29,7 +29,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class VectorH2
@@ -245,6 +245,6 @@ VectorH2<R>::perpendicular(const Orientation& o) const
       return typename R::Vector_2(hy(), -hx(), hw());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HOMOGENEOUS_VECTOR_2_h

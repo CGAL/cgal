@@ -27,7 +27,7 @@
 
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Memory_sizer
 {
@@ -36,7 +36,7 @@ struct Memory_sizer
     size_type resident_size() const { return 0; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #else // defined _MSC_VER ||  defined __linux__ || defined __APPLE__
 
@@ -52,7 +52,7 @@ CGAL_END_NAMESPACE
 #include <mach/mach_init.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // A class giving access to the memory currently used by the process.
 // Both the virtual memory size and the resident size.
@@ -160,7 +160,7 @@ private:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif
 

@@ -29,7 +29,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/Arr_tags.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A meta-traits class that stores a red or a blue halfedge handle with every
@@ -1137,6 +1137,6 @@ public:
   
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

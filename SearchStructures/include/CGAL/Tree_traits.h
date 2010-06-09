@@ -25,7 +25,7 @@
 // (e.g. Range_tree_d.h and Segment_tree_d.h).
 // Any other interface must at least provide the interface of this class.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Interface as it is expected for one layer of a Range Tree
 template<class C_Data, class C_Window, class C_Key,          
@@ -80,6 +80,6 @@ class tree_interval_traits{
     {return  C_Compare()(key1, key2);} 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

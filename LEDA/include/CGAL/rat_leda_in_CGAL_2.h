@@ -38,7 +38,7 @@
 #include <LEDA/geo/rat_line.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 inline
 bool
@@ -191,7 +191,7 @@ has_larger_signed_dist_to_line(const leda_rat_point& p,
                                const leda_rat_point& s)
 { return ( cmp_signed_dist_to_line(p,q,r,s) == LARGER ); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RAT_LEDA_IN_CGAL_2_H
 

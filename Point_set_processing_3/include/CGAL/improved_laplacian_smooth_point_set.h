@@ -26,7 +26,7 @@
 #include <iterator>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // ----------------------------------------------------------------------------
@@ -330,6 +330,6 @@ improved_laplacian_smooth_point_set(
 /// @endcond
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IMPROVED_LAPLACIAN_SMOOTH_POINT_SET_H

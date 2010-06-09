@@ -39,7 +39,7 @@ char* get_fname(const CGAL::Gmpq&, const char* ifname) {
 
 //========================================================================
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class SDG>
 struct Level_finder
@@ -568,7 +568,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 

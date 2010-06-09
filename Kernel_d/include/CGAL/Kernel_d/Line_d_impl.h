@@ -23,7 +23,7 @@
 
 #ifndef CGAL_LINE_D_C
 #define CGAL_LINE_D_C
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R> 
 Line_d<R> Segment_d<R>::supporting_line() const
@@ -36,5 +36,5 @@ template <class R>
 Line_d<R> Ray_d<R>::supporting_line() const
 { return Line_d<R>(Base(*this)); } 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_LINE_D_C

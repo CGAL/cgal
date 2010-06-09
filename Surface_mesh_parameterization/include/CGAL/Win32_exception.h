@@ -25,7 +25,7 @@
 #include <eh.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /// C++ class wrapping a Win32 structured exception.
 class Win32_exception
@@ -121,6 +121,6 @@ private:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_WIN32_EXCEPTION_H

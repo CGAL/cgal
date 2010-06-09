@@ -77,7 +77,7 @@
 // 1. overlapping surfaces
 // 2. a vertical surface that contributes only edge (or edges) to the envelope
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // The algorithm has 5 template parameters:
 // 1. EnvelopeTraits_3        - the geometric traits class
@@ -1823,6 +1823,6 @@ protected:
   bool                      m_is_lower;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_ENVELOPE_DIVIDE_AND_CONQUER_3_H

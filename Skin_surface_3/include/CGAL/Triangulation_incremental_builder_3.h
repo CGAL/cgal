@@ -27,7 +27,7 @@
 #include <list>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Triangulation_3 >
 class Triangulation_incremental_builder_3 {
@@ -239,6 +239,6 @@ Triangulation_incremental_builder_3< TDS_ >::construct_infinite_cells() {
   CGAL_assertion(ch_edges.empty());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TDS_INCREMENTAL_BUILDER_3_H //

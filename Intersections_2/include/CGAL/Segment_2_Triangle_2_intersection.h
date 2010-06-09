@@ -34,7 +34,7 @@
 #include <CGAL/Straight_2.h>
 #include <CGAL/Object.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -227,6 +227,6 @@ do_intersect(const Triangle_2<K> &tr, const Segment_2<K> &seg)
   return Do_intersect()(seg, tr);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

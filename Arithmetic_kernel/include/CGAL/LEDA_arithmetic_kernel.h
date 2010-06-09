@@ -42,7 +42,7 @@
 #include <CGAL/leda_bigfloat_interval.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The LEDA set of exact number types
@@ -85,7 +85,7 @@ struct Get_arithmetic_kernel<CGAL::leda_bigfloat_interval>{
   typedef LEDA_arithmetic_kernel Arithmetic_kernel;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_USE_LEDA

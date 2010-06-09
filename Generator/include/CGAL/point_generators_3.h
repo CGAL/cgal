@@ -27,7 +27,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/number_type_basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class P, class Creator = 
                    Creator_uniform_3<typename Kernel_traits<P>::Kernel::RT,P> >
@@ -193,7 +193,7 @@ points_on_cube_grid_3( double a, std::size_t n, OutputIterator o)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POINT_GENERATORS_3_H //
 // EOF //

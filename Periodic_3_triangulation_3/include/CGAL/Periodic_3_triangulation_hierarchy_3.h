@@ -28,7 +28,7 @@
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class PTr >
 class Periodic_3_triangulation_hierarchy_3
@@ -525,6 +525,6 @@ random_level()
   return std::min(die()-1, level_mult_cover);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_HIERARCHY_3_H

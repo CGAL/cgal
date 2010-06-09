@@ -1,7 +1,7 @@
 #ifndef CGAL_NEF_NARY_UNION_STRATEGY_H
 #define CGAL_NEF_NARY_UNION_STRATEGY_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Polyhedron>
 class Nary_union_strategy {
@@ -10,5 +10,5 @@ class Nary_union_strategy {
   Polyhedron get_union() = 0;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_NARY_UNION_STRATEGY_H

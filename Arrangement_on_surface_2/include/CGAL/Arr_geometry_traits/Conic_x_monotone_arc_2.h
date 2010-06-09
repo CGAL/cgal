@@ -29,7 +29,7 @@
 #include <map>
 #include <ostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Representation of an x-monotone conic arc.
@@ -2130,6 +2130,6 @@ std::ostream& operator<< (std::ostream& os,
   return (os);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

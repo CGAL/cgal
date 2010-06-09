@@ -14,7 +14,7 @@ extern CGAL::Window_stream W;
 #define _DEBUG 11
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 typedef enum { XY, NXY, ZX, NZX, YZ, NYZ, UNINIT } Plane_label;
 
@@ -258,6 +258,6 @@ void triangulate_nef3_facet( Halffacet_handle facet,
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // TRIAGULATE_NEF3_FACET_H

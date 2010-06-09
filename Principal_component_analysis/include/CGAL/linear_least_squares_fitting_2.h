@@ -32,7 +32,7 @@
 
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename InputIterator, 
            typename Kernel,
@@ -87,6 +87,6 @@ linear_least_squares_fitting_2(InputIterator first,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_2_H

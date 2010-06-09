@@ -44,7 +44,7 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template < class Gt, class Tds > class Triangulation_2;
 template < class Gt, class Tds > std::istream& operator>>
     (std::istream& is, Triangulation_2<Gt,Tds> &tr);
@@ -3424,7 +3424,7 @@ operator>>(std::istream& is, Triangulation_2<Gt, Tds> &tr)
   return is;
 }
  
-CGAL_END_NAMESPACE
+} //namespace CGAL
     
 
 #endif //CGAL_TRIANGULATION_2_H

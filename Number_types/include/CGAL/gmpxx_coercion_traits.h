@@ -34,7 +34,7 @@
 #include <gmpxx.h>
 #include <mpfr.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //mpz_class internal coercions:
 //self for mpz_class / mpq_class
@@ -105,7 +105,7 @@ template <class U, class T>
 struct Coercion_traits< int , ::__gmp_expr< T , U> >
     :public Coercion_traits< ::__gmp_expr< T , U>, int >{};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_GMPXX_COERCION_TRAITS_H 1
 //EOF

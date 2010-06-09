@@ -54,7 +54,7 @@
 #include <string>
 #include <map>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Profile_counter
 {
@@ -177,6 +177,6 @@ private:
 #  define CGAL_BRANCH_PROFILER_BRANCH_2(NAME) 
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PROFILE_COUNTER_H

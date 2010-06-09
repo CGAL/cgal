@@ -23,7 +23,7 @@
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/iterator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
@@ -80,7 +80,7 @@ class Dummy_iterator : public Emptyset_iterator
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_VORONOI_DIAGRAM_2_DUMMY_ITERATOR_H

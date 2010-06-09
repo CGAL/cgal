@@ -36,10 +36,10 @@
 // will be available in C++.
 // In the mean time, this should be a mostly/hopefully internal hack.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Return_base_tag {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

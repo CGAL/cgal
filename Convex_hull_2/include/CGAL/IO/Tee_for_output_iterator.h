@@ -26,7 +26,7 @@
 #include <vector>
 #include <CGAL/Handle.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template <class T> class _Tee_for_output_iterator_rep;
 
 template <class OutputIterator, class T>
@@ -99,6 +99,6 @@ public:
   std::vector<T> output_so_far;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_TEE_FOR_OUTPUT_ITERATOR_H

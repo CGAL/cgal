@@ -26,7 +26,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Refs>
 class HalfedgeDS_vertex_min_base {
@@ -45,7 +45,7 @@ public:
     typedef typename Refs::Face                  Face;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HALFEDGEDS_VERTEX_MIN_BASE_H //
 // EOF //

@@ -24,7 +24,7 @@
 #ifndef CGAL_SIMPLE_OBJECTS_H
 #define CGAL_SIMPLE_OBJECTS_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 struct Lt_from_compare {
@@ -49,6 +49,6 @@ struct Eq_from_method {
   { return p1 == p2; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SIMPLE_OBJECTS_H

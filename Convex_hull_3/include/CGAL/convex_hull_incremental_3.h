@@ -26,7 +26,7 @@
 #include <CGAL/Convex_hull_d_to_polyhedron_3.h>
 #include <CGAL/Convex_hull_2/ch_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class InputIterator, class Polyhedron>
 void
@@ -44,6 +44,6 @@ convex_hull_incremental_3(InputIterator first, InputIterator beyond,
   CGAL::convex_hull_d_to_polyhedron_3(CH,P);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONVEX_HULL_INCREMENTAL_3_H

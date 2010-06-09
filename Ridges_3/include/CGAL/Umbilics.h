@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/PolyhedralSurf_neighbors.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 enum Umbilic_type { NON_GENERIC_UMBILIC = 0, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILIC};
 
@@ -285,6 +285,6 @@ template < class TriangulatedSurfaceMesh,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

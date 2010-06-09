@@ -20,7 +20,7 @@
 #ifndef CGAL_CURVE_WITH_HALFEDGE_H
 #define CGAL_CURVE_WITH_HALFEDGE_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Arrangement_>
 class Curve_with_halfedge
@@ -54,5 +54,5 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif

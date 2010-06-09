@@ -27,7 +27,7 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
   /** A Site is either a point or a segment or a point defined as the
       intersection of two non-parallel segments (if defined)
@@ -213,6 +213,6 @@ protected:
 
 //-------------------------------------------------------------------------
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_SIMPLE_STORAGE_SITE_H

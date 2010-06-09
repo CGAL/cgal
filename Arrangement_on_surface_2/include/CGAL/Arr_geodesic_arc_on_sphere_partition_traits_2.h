@@ -40,7 +40,7 @@
 
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class T_Kernel, class Container_P =
@@ -307,7 +307,7 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_ARR_GEODESIC_ARC_ON_SPHERE_PARTITION_TRAITS_2_H
 
@@ -354,7 +354,7 @@ CGAL_END_NAMESPACE
 
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class T_Kernel, class Container_P = std::vector<
@@ -607,6 +607,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_ARR_GEODESIC_ARC_ON_SPHERE_PARTITION_TRAITS_2_H

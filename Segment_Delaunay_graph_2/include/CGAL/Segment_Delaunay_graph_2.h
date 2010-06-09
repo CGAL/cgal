@@ -61,7 +61,7 @@
 */
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
@@ -1764,7 +1764,7 @@ std::ostream& operator<<(std::ostream& os,
   return os;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #include <CGAL/Segment_Delaunay_graph_2/Segment_Delaunay_graph_2_impl.h>

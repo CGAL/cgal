@@ -27,7 +27,7 @@
 #include <stdexcept>
 #include <typeinfo>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -643,6 +643,6 @@ Uncertain<T> enum_cast(Uncertain<U> u)
 
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_UNCERTAIN_H

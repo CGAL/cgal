@@ -351,7 +351,7 @@ public:
 
 } // namespace boost
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Functions required by the IncidenceGraph concept:
 // -------------------------------------------------
@@ -600,6 +600,6 @@ edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
   return std::make_pair (gt_arr.edges_begin(), gt_arr.edges_end());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

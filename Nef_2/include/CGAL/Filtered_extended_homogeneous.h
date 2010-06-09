@@ -55,7 +55,7 @@ std::cout << #c##" " << c##_exception << "/" << c##_total << std::endl
 #define PRINT_STATISTICS(c)
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename RT>
 class SPolynomial {
@@ -1271,7 +1271,7 @@ const char* output_identifier() const
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #undef CHECK
 #undef KERNEL_CHECK

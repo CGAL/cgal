@@ -33,7 +33,7 @@
 #include <list>
 #include <functional>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class T>
 class Td_dag_base : public Handle
@@ -436,7 +436,7 @@ template<class T> std::ostream& operator<<(std::ostream&  out,
   return out ;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif
 

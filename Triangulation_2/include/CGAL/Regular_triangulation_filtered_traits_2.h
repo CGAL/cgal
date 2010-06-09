@@ -24,7 +24,7 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Filtered_predicate.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 // The Weighted_converter is parametrized by a usual kernel converter,
 // and adds the conversions for the Weighted_point.
@@ -91,6 +91,6 @@ public:
   // Construct_radical_axis_2
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REGULAR_TRIANGULATION_FILTERED_TRAITS_2_H

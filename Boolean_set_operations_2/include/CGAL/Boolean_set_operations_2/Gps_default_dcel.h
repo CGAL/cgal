@@ -29,7 +29,7 @@
 
 #include <CGAL/Arr_default_dcel.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Gps_face_base : public Arr_face_base
 {
@@ -101,6 +101,6 @@ public:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

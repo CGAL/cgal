@@ -24,7 +24,7 @@
 
 #include <CGAL/Triangulation_face_base_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename Info_, typename GT,
            typename Fb = Triangulation_face_base_2<GT> >
@@ -63,6 +63,6 @@ public:
   Info&       info()       { return _info; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_FACE_BASE_WITH_INFO_2_H

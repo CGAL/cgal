@@ -6,7 +6,7 @@
 #include <CGAL/Nef_3/Distinct_polyhedron_uniter.h>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Polyhedron>
 class Nary_union_using_distinct_uniter {
@@ -123,5 +123,5 @@ class Nary_union_using_distinct_uniter {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_NARY_UNION_USING_DISTINCT_UNITER_H

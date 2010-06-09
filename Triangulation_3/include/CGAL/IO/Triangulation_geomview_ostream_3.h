@@ -28,7 +28,7 @@
 // - Use the stream color instead of built-in constant/random.
 // - If interfaces were more similar, we could think of sharing 2d and 3d ?
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This one is to show the edges of a 3D triangulation.
 template < class GT, class TDS >
@@ -92,6 +92,6 @@ operator<<( Geomview_stream &gv, const Triangulation_3<GT,TDS> &T)
     return gv;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_TRIANGULATION_GEOMVIEW_OSTREAM_3_H

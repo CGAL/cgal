@@ -32,7 +32,7 @@
 #include <iostream>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 //===================================================================================
@@ -223,6 +223,6 @@ write_xyz_points(
 /// @endcond
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_WRITE_XYZ_POINTS_H

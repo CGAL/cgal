@@ -28,7 +28,7 @@
 #include <CGAL/Interval_nt.h>
 #include <boost/tuple/tuple.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class SphereC3
@@ -286,6 +286,6 @@ SphereC3<R>::opposite() const
                                CGAL::opposite(orientation()) );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_SPHERE_3_H

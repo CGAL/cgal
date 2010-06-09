@@ -24,7 +24,7 @@
 #include <CGAL/enum.h>
 
 //-------------------------------------------------------------------
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 //-------------------------------------------------------------------
 
 template< class FT >
@@ -46,7 +46,7 @@ in_smallest_orthogonalcircleC2(const FT &px, const FT &py, const FT  &pw,
 }
 
 //-------------------------------------------------------------------
-CGAL_END_NAMESPACE
+} //namespace CGAL
 //-------------------------------------------------------------------
 
 #endif //CGAL_IN_SMALLEST_ORTHOGONALCIRCLEC2_H

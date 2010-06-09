@@ -33,7 +33,7 @@
 #  include <CGAL/IEEE_754_unions.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #ifdef CGAL_CFG_IEEE_754_BUG
 
@@ -127,6 +127,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_FLOAT_H

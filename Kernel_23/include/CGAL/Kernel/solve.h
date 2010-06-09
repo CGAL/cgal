@@ -25,7 +25,7 @@
 #ifndef CGAL_SOLVE_H
 #define CGAL_SOLVE_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class FT>
@@ -62,6 +62,6 @@ void solve_quadratic (const FT &a1, const FT &a2, const FT &a3,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SOLVE_H

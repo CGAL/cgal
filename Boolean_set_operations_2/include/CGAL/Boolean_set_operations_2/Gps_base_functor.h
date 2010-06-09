@@ -20,7 +20,7 @@
 #ifndef CGAL_GPS_BASE_FUNCTOR_H
 #define CGAL_GPS_BASE_FUNCTOR_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class Arrangement_>
@@ -93,6 +93,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

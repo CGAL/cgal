@@ -26,7 +26,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Interval_arithmetic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class AC, class EC, class FC, class C2E, class C2F,
 	  class E2C, class F2C,	bool Protection = true>
@@ -108,7 +108,7 @@ public:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_FILTERED_CONSTRUCTION_H

@@ -12,7 +12,7 @@
   mpfr_ ## o (r.fr(), a.fr(), b.fr(), GMP_RND ## d);    \
   return r;
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -127,7 +127,7 @@ public:
 };
 
 } // namespace internal
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 namespace boost {
 namespace numeric {
@@ -144,7 +144,7 @@ std::ostream& operator <<
 }//namespace numeric
 }//namespace boost
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 typedef boost::numeric::interval< 
         Gmpfr, 
@@ -160,7 +160,7 @@ Gmpfr_interval;
 inline bool operator == (const Gmpfr_interval& x , const Gmpfr_interval& y)
 {return x.operator==(y) ;}
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 //#endif // CGAL_USE_LEDA
 #undef OP
 #endif //  CGAL_GMPFR_INTERVAL_TYPE_H

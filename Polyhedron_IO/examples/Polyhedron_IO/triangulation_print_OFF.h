@@ -5,7 +5,7 @@
 
 #include <map>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Triang >
 void
@@ -67,7 +67,7 @@ triangulation_print_OFF( std::ostream& out,
     writer.write_footer();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_PRINT_OFF_H //
 // EOF //

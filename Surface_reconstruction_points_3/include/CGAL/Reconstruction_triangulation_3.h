@@ -33,7 +33,7 @@
 
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// The Reconstruction_vertex_base_3 class is the default
@@ -462,6 +462,6 @@ public:
 }; // end of Reconstruction_triangulation_3
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IMPLICIT_FCT_DELAUNAY_TRIANGULATION_H

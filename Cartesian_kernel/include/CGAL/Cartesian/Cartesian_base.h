@@ -67,7 +67,7 @@
 #include <CGAL/Cartesian/function_objects.h>
 #include <CGAL/Uncertain.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename K_, typename FT_>
 struct Cartesian_base
@@ -144,6 +144,6 @@ struct Cartesian_base
     typedef ConicCPA2<Point_2,Data_accessor_2>          Conic_2;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_BASE_H

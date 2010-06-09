@@ -16,7 +16,7 @@
 #ifndef CGAL_NEF_POLYGON_CONSTRUCTOR_H
 #define CGAL_NEF_POLYGON_CONSTRUCTOR_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Nef3, typename forward_iterator>
 class Polygon_constructor : public Modifier_base<typename Nef3::SNC_structure> {
@@ -101,5 +101,5 @@ class Polygon_constructor : public Modifier_base<typename Nef3::SNC_structure> {
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_POLYGON_CONSTRUCTOR_H

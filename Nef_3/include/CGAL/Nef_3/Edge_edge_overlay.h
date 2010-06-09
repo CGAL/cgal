@@ -29,7 +29,7 @@
 #define CGAL_NEF_DEBUG 71
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename SNC_structure_>
 class Edge_edge_overlay
@@ -1027,5 +1027,5 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_EDGE_EDGE_OVERLAY_H

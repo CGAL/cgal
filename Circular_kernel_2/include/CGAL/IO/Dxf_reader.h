@@ -34,7 +34,7 @@
 #include <string>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename K>
 class Dxf_reader {
@@ -300,6 +300,6 @@ void operator()(std::istream& is, Polygons& polygons, Centers_and_radii& car)
 }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_DXF_READER_H

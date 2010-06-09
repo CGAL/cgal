@@ -24,7 +24,7 @@
 #include <utility>
 #include <CGAL/Optimisation/assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Matrix >
 class Dynamic_matrix
@@ -116,7 +116,7 @@ Dynamic_matrix< Matrix >
 dynamic_matrix( const Matrix& m)
 { return Dynamic_matrix< Matrix >( m); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_DYNAMIC_MATRIX_H)
 // ----------------------------------------------------------------------------

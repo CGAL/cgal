@@ -20,7 +20,7 @@
 #ifndef CGAL_CH_FUNCTION_OBJECTS_2_H
 #define CGAL_CH_FUNCTION_OBJECTS_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -66,6 +66,6 @@ private:
 
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CH_FUNCTION_OBJECTS_2_H	

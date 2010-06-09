@@ -43,7 +43,7 @@
 #include <LEDA/numbers/real.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 //LEDA internal coercions:
@@ -129,7 +129,7 @@ template <> struct Coercion_traits< ::leda::rational, ::leda::bigfloat >
     :public Coercion_traits< ::leda::bigfloat , ::leda::rational >{};
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_USE_LEDA
 #endif //CGAL_LEDA_COERCION_TRAITS_H
 //EOF

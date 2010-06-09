@@ -22,7 +22,7 @@
 
 #include <CGAL/Nef_3/SNC_constructor.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class SNC_structure, class SNC_point_locator>
 class Insert_vertex_into_edge {
@@ -73,5 +73,5 @@ class Insert_vertex_into_edge {
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_CD3_INSERT_VERTEX_INTO_EDGE_H

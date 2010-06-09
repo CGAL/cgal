@@ -28,7 +28,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CartesianKernelFunctors {
 
@@ -103,6 +103,6 @@ struct Cartesian_I
                 Cartesian_I<FT_> >
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_I_H

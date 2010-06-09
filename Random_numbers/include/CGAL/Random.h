@@ -27,7 +27,7 @@
 #include <utility>
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Random {
   public:
@@ -88,7 +88,7 @@ class Random {
 // ================
 extern  Random  default_random;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // ============================================================================
 
@@ -97,7 +97,7 @@ CGAL_END_NAMESPACE
 // includes
 #  include <cstdlib>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // operations
 inline
@@ -135,7 +135,7 @@ operator () ( int upper)
     return( get_int( 0, upper));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RANDOM_H
 

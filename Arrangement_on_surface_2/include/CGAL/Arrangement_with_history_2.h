@@ -27,7 +27,7 @@
 #include <CGAL/Arrangement_on_surface_with_history_2.h>
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arrangement_on_history_2
  * The arrangement with history class, representing planar subdivisions
@@ -270,6 +270,6 @@ protected:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

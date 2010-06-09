@@ -29,7 +29,7 @@
 #include <iterator>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // ----------------------------------------------------------------------------
@@ -205,6 +205,6 @@ pca_smooth_point_set(
 /// @endcond
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PCA_SMOOTH_POINT_SET_H

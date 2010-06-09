@@ -23,7 +23,7 @@
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Extended_cartesian.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Kernel>
 struct Default_items {
@@ -40,5 +40,5 @@ struct Default_items<CGAL::Extended_cartesian<NT> > {
   typedef CGAL::SNC_items Items;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif

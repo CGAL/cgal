@@ -25,7 +25,7 @@
 #include <iostream>
 #include <CGAL/Timer.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class SNC_decorator>
 struct binop_intersection_test_segment_tree {
@@ -186,6 +186,6 @@ struct binop_intersection_test_segment_tree {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

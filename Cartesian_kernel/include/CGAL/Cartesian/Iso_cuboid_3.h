@@ -28,7 +28,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Cartesian/predicates_on_points_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class Iso_cuboidC3
@@ -332,6 +332,6 @@ Iso_cuboidC3<R>::is_degenerate() const
       || (this->min)().hz() == (this->max)().hz();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_ISO_CUBOID_3_H

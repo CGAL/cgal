@@ -34,7 +34,7 @@
 #include <map>
 #include <set>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A class for computing the zone of a given $x$-monotone curve in a given
@@ -431,7 +431,7 @@ private:
   bool _zone_in_overlap ();
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // The function definitions can be found under:
 #include <CGAL/Arrangement_2/Arrangement_zone_2_impl.h>

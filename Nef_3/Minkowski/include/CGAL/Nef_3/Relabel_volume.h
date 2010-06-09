@@ -19,7 +19,7 @@
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_3/Mark_bounded_volumes.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*
 template<typename Decorator, typename Mark>
@@ -78,5 +78,5 @@ class Relabel_volume : public Modifier_base<typename Nef_3::SNC_structure> {
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF3_RELABEL_VOLUME_H

@@ -32,7 +32,7 @@
 #define CGAL_NEF_DEBUG 83
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Refs>
 class Volume_base  {
@@ -104,5 +104,5 @@ class Volume_base  {
 
 }; // Volume_base
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_NEF_VOLUME_H

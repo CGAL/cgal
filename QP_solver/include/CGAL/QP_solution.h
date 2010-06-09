@@ -34,7 +34,7 @@
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // forward references
 template <typename Q, typename ET, typename Tags>
@@ -828,7 +828,7 @@ namespace QP_solution_detail {
     const QP* s;
   };
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/QP_solver/QP_solution_impl.h>
 

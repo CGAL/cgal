@@ -35,7 +35,7 @@
 #include <string>
 #include <locale>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // TODO : benchmark without ref-counting, and maybe give the possibility
 // to select ref-counting or not, then... => template class.
@@ -435,6 +435,6 @@ inline Gmpz max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpz& x,const Gmpz& y){
 #include <CGAL/auto_link/MPFR.h>
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_GMPZ_TYPE_H

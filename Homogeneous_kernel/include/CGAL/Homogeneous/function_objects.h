@@ -29,7 +29,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace HomogeneousKernelFunctors {
 
@@ -4572,6 +4572,6 @@ namespace HomogeneousKernelFunctors {
 
 } // namespace HomogeneousKernelFunctors
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HOMOGENEOUS_FUNCTION_OBJECTS_H

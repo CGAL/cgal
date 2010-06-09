@@ -27,7 +27,7 @@
 #include <string>
 #include <boost/lexical_cast.hpp> 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // [Sylvain] This was originaly written in the Exacus library.
 // I kept most doxygen comments.
@@ -183,6 +183,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_EXCEPTIONS_H

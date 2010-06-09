@@ -24,7 +24,7 @@
 #include <CGAL/triangulation_assertions.h>
 //#include <CGAL/Triangulation_iterator_adaptator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Tds>
 class Triangulation_ds_edge_iterator_2
@@ -212,6 +212,6 @@ operator*() const
   edge.first = pos;
   return edge;
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRIANGULATION_DS_ITERATORS_2_H

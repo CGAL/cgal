@@ -26,7 +26,7 @@
 
 #include <CGAL/circulator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This proxy is for the Ostream_iterator.
 template <class T, class Stream>
@@ -60,6 +60,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_OSTREAM_ITERATOR_H

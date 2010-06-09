@@ -23,7 +23,7 @@
 
 #ifndef CGAL_DIRECTIONCD_C
 #define CGAL_DIRECTIONCD_C
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class FT, class LA> 
 DirectionCd<FT,LA>::DirectionCd(const VectorCd<FT,LA>& v) : Base(v) {}
@@ -73,6 +73,6 @@ template <class FT, class LA>
 std::ostream& operator<<(std::ostream& O, const DirectionCd<FT,LA>& dir)
 { dir.ptr()->print(O,"DirectionCd"); return O; } 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_DIRECTIONCD_C
 //----------------------- end of file ----------------------------------

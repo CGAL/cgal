@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_landmarks_generator_base
 * A pure virtual class that handles the changes in a the arrangement in a generic
@@ -414,6 +414,6 @@ protected:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

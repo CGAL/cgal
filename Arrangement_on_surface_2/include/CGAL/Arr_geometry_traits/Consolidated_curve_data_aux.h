@@ -25,7 +25,7 @@
  * Arr_consolidated_curve_data_traits_2<Traits,Data> class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * Representation of a set of data objects (without duplicates), using a
@@ -195,6 +195,6 @@ struct _Consolidate_unique_lists
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

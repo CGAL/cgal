@@ -31,7 +31,7 @@
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/Polynomial/modular_filter.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Extend to a UFDomain as coefficient range
 // Forward declaration for <NiX/polynomial_gcd.h> for NT_traits<Poly...>::Gcd
@@ -348,5 +348,5 @@ template< class NT > class Algebraic_structure_traits< Polynomial< NT > >
     typedef typename Algebraic_structure_traits< NT >::Is_exact Is_exact;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_POLYNOMIAL_ALGEBRAIC_STRUCTURE_TRAITS_H

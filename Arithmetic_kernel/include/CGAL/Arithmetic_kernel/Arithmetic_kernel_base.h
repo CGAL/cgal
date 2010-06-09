@@ -27,7 +27,7 @@
 #ifndef CGAL_ARITHMETIC_KERNEL_ARITHMETIC_KERNEL_BASE_H
 #define CGAL_ARITHMETIC_KERNEL_ARITHMETIC_KERNEL_BASE_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 namespace internal{
 
 class Arithmetic_kernel_base{
@@ -43,6 +43,6 @@ public:
 };
 
 }// namespace internal
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ARITHMETIC_KERNEL_ARITHMETIC_KERNEL_BASE_H

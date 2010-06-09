@@ -23,7 +23,7 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_polyhedron_builder.h>
 #include <CGAL/value_type_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// Gets reconstructed surface out of a SurfaceMeshComplex_2InTriangulation_3 object.
@@ -70,6 +70,6 @@ output_surface_facets_to_triangle_soup(
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_OUTPUT_SURFACE_FACETS_TO_TRIANGLE_SOUP_H

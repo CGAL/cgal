@@ -30,7 +30,7 @@
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Writer>
 void
@@ -96,6 +96,6 @@ generic_copy_OFF( std::istream& in, std::ostream& out, Writer& writer,
     generic_copy_OFF( scanner, out, writer);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_GENERIC_COPY_OFF_H //
 // EOF //

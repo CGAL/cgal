@@ -29,7 +29,7 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Forward declaration.
 template <class Type> class Dual;
@@ -415,7 +415,7 @@ public:
   {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/iterator/counting_iterator.hpp>
@@ -503,7 +503,7 @@ class graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > > :
 
 } // namespace boost
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Functions required by the IncidenceGraph concept:
 // -------------------------------------------------
@@ -739,6 +739,6 @@ edges (const CGAL::Dual<CGAL::
   return std::make_pair (darr.edges_begin(), darr.edges_end());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

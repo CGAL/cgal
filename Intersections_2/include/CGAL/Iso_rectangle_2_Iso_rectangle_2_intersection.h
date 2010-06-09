@@ -28,7 +28,7 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Object.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -101,6 +101,6 @@ do_intersect(const Iso_rectangle_2<K> &irect1,
     return ! intersection(irect1, irect2).is_empty();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

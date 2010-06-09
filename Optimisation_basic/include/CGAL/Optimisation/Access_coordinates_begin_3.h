@@ -26,7 +26,7 @@
 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class declarations
 // ==================
@@ -123,7 +123,7 @@ class Access_coordinates_begin_3 {
     operator() ( const Point& p) const { return Coordinate_iterator( p); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_3_H
 

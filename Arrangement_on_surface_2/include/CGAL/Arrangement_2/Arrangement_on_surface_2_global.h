@@ -44,7 +44,7 @@
 
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Insert a curve into the arrangement (incremental insertion).
@@ -1596,6 +1596,6 @@ bool do_intersect (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

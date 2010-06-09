@@ -22,7 +22,7 @@
 
 #include <CGAL/aff_transformation_tags.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------//
 //                          Interpolation_gradient_fitting_traits_2
@@ -149,6 +149,6 @@ public:
     {return Compute_squared_distance_d();}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_INTERPOLATION_GRADIENT_FITTING_TRAITS_2_H

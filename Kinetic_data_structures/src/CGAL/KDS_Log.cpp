@@ -22,9 +22,9 @@
 #include <CGAL/Tools/Log.h>
 #include <CGAL/Kinetic/internal/debug_counters.h>
 #include <iostream>
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 Log::State Log::state_;
-CGAL_END_NAMESPACE
+} //namespace CGAL
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
   unsigned int function_degeneracies__=0;

@@ -23,7 +23,7 @@
 #include <list>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// The class Parameterization_mesh_feature_extractor
@@ -380,6 +380,6 @@ private:
 }; // Parameterization_mesh_feature_extractor
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_MESH_FEATURE_EXTRACTOR_H

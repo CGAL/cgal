@@ -29,7 +29,7 @@
 #include <CGAL/known_bit_size_integers.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 inline void
 I_Binary_write_integer32(std::ostream& out, Integer32 i) {
@@ -109,6 +109,6 @@ I_Binary_read_big_endian_float32(std::istream& in, float& f) {
     I_swap_to_big_endian( f);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_BINARY_FILE_IO_H

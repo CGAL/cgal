@@ -27,7 +27,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/type_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // REMARK: Some of the following comments and references are just copy & pasted
 //         from EXACUS and have to be adapted/removed in the future.
@@ -602,6 +602,6 @@ namespace INTERN_AST {
       }
   };
 } // INTERN_AST
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_ALGEBRAIC_STRUCTURE_TRAITS_H

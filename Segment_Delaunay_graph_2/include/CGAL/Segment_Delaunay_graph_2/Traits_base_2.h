@@ -24,7 +24,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Kernel_wrapper_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Internal {
 
@@ -265,6 +265,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_TRAITS_BASE_2_H

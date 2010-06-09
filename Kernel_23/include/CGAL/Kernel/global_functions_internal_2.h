@@ -31,7 +31,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -873,6 +873,6 @@ y_equal(const typename K::Point_2 &p,
 
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_KERNEL_GLOBAL_FUNCTIONS_INTERNAL_2_H

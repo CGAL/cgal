@@ -29,7 +29,7 @@
 
 #include <CGAL/Iterator_project.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class I, class Fct>
 class Iterator_transform {
@@ -159,6 +159,6 @@ operator+( Dist n, Iterator_transform<I,Fct> i) {
   return i += n;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_Iterator_transform_H //
 // EOF //

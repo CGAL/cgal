@@ -28,7 +28,7 @@
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A visitor class for Arrangement_zone_2, which performs incremental 
@@ -444,6 +444,6 @@ _split_edge (Halfedge_handle he, const Point_2& p,
     arr_access.split_edge_ex (he, p, sub_cv2, sub_cv1);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

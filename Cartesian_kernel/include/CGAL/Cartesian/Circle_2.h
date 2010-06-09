@@ -27,7 +27,7 @@
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 #include <boost/tuple/tuple.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_ >
 class CircleC2
@@ -76,6 +76,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_CIRCLE_2_H

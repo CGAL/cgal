@@ -26,7 +26,7 @@
 
 #include <CGAL/IO/Arrangement_2_writer.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * An auxiliary class for writing an arrangement with history to an
@@ -119,6 +119,6 @@ protected:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

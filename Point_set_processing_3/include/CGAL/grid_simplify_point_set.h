@@ -28,7 +28,7 @@
 #include <algorithm>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // ----------------------------------------------------------------------------
@@ -214,6 +214,6 @@ grid_simplify_point_set(
 /// @endcond
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_GRID_SIMPLIFY_POINT_SET_H

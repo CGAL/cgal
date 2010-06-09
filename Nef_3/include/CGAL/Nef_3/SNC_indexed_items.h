@@ -31,7 +31,7 @@
 #define CGAL_NEF_DEBUG 83
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Index_generator {
   
@@ -188,5 +188,5 @@ class SNC_indexed_items {
   };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_SNC_INDEXED_ITEMS_H

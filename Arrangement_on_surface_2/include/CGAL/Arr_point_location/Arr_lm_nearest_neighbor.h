@@ -27,7 +27,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
 * A class that answers nearest neighbor queries.
@@ -240,6 +240,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -36,7 +36,7 @@
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/Polyhedron_traits_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class VertexBase>
 class I_Polyhedron_vertex  : public VertexBase  {
@@ -1532,6 +1532,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYHEDRON_3_H //

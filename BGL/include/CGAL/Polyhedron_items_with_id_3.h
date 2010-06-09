@@ -24,7 +24,7 @@
 #include <CGAL/HalfedgeDS_halfedge_max_base_with_id.h>
 #include <CGAL/HalfedgeDS_face_max_base_with_id.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Polyhedron_items_with_id_3 {
 public:
@@ -69,7 +69,7 @@ void set_halfedgeds_items_id ( HalfedgeDS_with_id& hds )
     fit->id() = face_id ++ ;    
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYHEDRON_ITEMS_WITH_ID_3_H //
 // EOF //

@@ -27,7 +27,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class HDS >
 class HDS_all_undirected_edges_const_iterator 
@@ -70,6 +70,6 @@ public :
   typedef typename HDS::Vertex::Point Point ;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_BOOST_GRAPH_HALFEDGE_GRAPH_TRAITS_HALFEDGEDS_H

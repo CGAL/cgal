@@ -23,7 +23,7 @@
 // This file contains the low level cartesian predicates
 // used by the 3D regular triangulation.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // return minus the sign of the 5x5 determinant [P,Q,R,S,T]
 // where column [P] = transpose[px,py,pz,p^2 -wp,1]
@@ -155,6 +155,6 @@ power_testC3(const FT &pwt, const FT &qwt)
     return CGAL_NTS compare(qwt, pwt);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REGULAR_TRIANGULATION_FTC3_H

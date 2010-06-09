@@ -28,7 +28,7 @@
 #include <CGAL/determinant.h>
 #include <CGAL/wmult.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -304,6 +304,6 @@ same_direction(const typename K::Vector_2 &u,
 
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SQUARED_DISTANCE_UTILS_H

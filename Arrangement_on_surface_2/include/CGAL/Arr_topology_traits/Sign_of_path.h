@@ -26,7 +26,7 @@
 
 #include <CGAL/config.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -335,7 +335,7 @@ protected:
 
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ARR_TOPOLOGY_TRAITS_SIGN_OF_PATH_H
 // EOF

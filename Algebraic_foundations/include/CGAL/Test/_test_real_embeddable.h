@@ -50,7 +50,7 @@
 #ifndef CGAL_TEST_REAL_EMBEDDABLE_H
 #define CGAL_TEST_REAL_EMBEDDABLE_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
     template<class Type, class ToDouble>
     class Test_to_double {
@@ -291,6 +291,6 @@ void test_not_real_embeddable() {
 //    test_rounded_log2_abs(Type(0), F(), C());
 //}
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TEST_REAL_COMPARABLE_H

@@ -22,7 +22,7 @@
 
 #include <boost/mpl/assert.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Traits_, class Curve_data_, class Point_data_>
 class Gps_traits_decorator
@@ -553,6 +553,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

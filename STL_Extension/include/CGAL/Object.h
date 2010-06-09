@@ -33,7 +33,7 @@
 
 #include <typeinfo>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class T>
 class Wrapper : public Ref_counted_virtual
@@ -211,6 +211,6 @@ T object_cast(const Object & o)
     return *result;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_OBJECT_H

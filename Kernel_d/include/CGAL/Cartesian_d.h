@@ -46,7 +46,7 @@
 #include <CGAL/Kernel_d/simple_objects.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class pFT, class pLA = Linear_algebraCd<pFT> >
 class Cartesian_d
@@ -394,7 +394,7 @@ public:
 }; // Cartesian_d<R>
  
  
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Kernel_d/Point_d.h>
 #include <CGAL/Kernel_d/Vector_d.h>

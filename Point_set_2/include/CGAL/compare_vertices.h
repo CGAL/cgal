@@ -20,7 +20,7 @@
 #ifndef CGAL_COMPARE_VERTICES_H
 #define CGAL_COMPARE_VERTICES_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -45,6 +45,6 @@ class compare_vertices {
 } // namespace internal
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_COMPARE_VERTICES_H

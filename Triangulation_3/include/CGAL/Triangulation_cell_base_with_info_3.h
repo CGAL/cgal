@@ -24,7 +24,7 @@
 
 #include <CGAL/Triangulation_cell_base_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename Info_, typename GT,
            typename Cb = Triangulation_cell_base_3<GT> >
@@ -60,6 +60,6 @@ public:
   Info&       info()       { return _info; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_CELL_BASE_WITH_INFO_3_H

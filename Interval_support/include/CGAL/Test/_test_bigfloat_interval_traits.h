@@ -34,7 +34,7 @@
 #ifndef CGAL_TEST_BIGFLOAT_INTERVAL_TRAITS_H
 #define CGAL_TEST_BIGFLOAT_INTERVAL_TRAITS_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Bigfloat_interval_>
 void test_bigfloat_interval_traits() { 
@@ -72,6 +72,6 @@ void test_bigfloat_interval_traits() {
   assert(CGAL::relative_precision(CGAL::hull(BFI(8),BFI(7)))==2);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TEST_REAL_COMPARABLE_H

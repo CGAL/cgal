@@ -22,7 +22,7 @@
 
 #include <CGAL/HalfedgeDS_halfedge_base.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Refs, class ID>
 class HalfedgeDS_halfedge_max_base_with_id : public HalfedgeDS_halfedge_base< Refs, Tag_true, Tag_true, Tag_true >
@@ -46,7 +46,7 @@ public:
     size_type const& id() const { return mID; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HALFEDGEDS_HALFEDGE_MAX_BASE_WITH_ID_H //
 // EOF //

@@ -30,7 +30,7 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Bbox_2_Ray_2_pair_impl;
 
@@ -72,7 +72,7 @@ inline bool do_intersect_ray_2(
 {
     return do_intersect_ray_2(box, ray);
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 

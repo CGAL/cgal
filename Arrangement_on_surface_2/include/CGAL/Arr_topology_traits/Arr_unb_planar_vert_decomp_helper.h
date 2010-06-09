@@ -25,7 +25,7 @@
  * Definition of the Arr_unb_planar_vert_decomp_helper class-template.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #include <CGAL/Sweep_line_empty_visitor.h>
 
@@ -184,6 +184,6 @@ after_handle_event (Event* event)
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

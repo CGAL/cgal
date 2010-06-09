@@ -24,7 +24,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Traits,
            class Items,
@@ -62,6 +62,6 @@ void scan_OFF( std::istream& in, Polyhedron_3<Traits,Items,HDS,Alloc>& P,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_SCAN_OFF_H //
 // EOF //

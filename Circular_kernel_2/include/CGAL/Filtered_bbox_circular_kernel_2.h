@@ -30,7 +30,7 @@
 #include <CGAL/Circular_arc_point_2.h>
 #include <CGAL/Filtered_bbox_circular_kernel_2/bbox_filtered_predicates.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -95,6 +95,6 @@ struct Filtered_bbox_circular_kernel_2
   typedef Filtered_bbox_circular_kernel_2< CircularKernel >      Self;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_FILTERED_BBOX_CIRCULAR_KERNEL_2_H

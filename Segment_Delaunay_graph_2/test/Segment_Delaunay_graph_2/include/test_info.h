@@ -6,7 +6,7 @@
 #include <CGAL/Random.h>
 #include "IO/io_aux.h"
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class SDG>
 bool test_info(SDG& sdg, const char* fname)
@@ -45,6 +45,6 @@ bool test_info(SDG& sdg, const char* fname)
   return valid;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TEST_INFO_H

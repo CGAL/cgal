@@ -27,7 +27,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Traits,
            class Items,
@@ -43,6 +43,6 @@ operator<<( VRML_2_ostream& out,
     return out;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_POLYHEDRON_VRML_2_OSTREAM_H //
 // EOF //

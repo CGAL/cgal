@@ -27,8 +27,8 @@
 
 #include  <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template< class NT > struct Get_arithmetic_kernel;
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_GET_ARITHMETIC_KERNEL_H

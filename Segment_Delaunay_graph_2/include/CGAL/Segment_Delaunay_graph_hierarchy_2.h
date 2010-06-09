@@ -38,7 +38,7 @@
 #include <CGAL/Segment_Delaunay_graph_face_base_2.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
@@ -496,7 +496,7 @@ std::ostream& operator<<(std::ostream& os,
 }
 			 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #include <CGAL/Segment_Delaunay_graph_2/Segment_Delaunay_graph_hierarchy_2_impl.h>

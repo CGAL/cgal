@@ -27,7 +27,7 @@
 #include <CGAL/Segment_Delaunay_graph_storage_site_2.h>
 #include <CGAL/Segment_Delaunay_graph_simple_storage_site_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template < class Vbb, class Info_ >
@@ -71,6 +71,6 @@ private:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_VERTEX_BASE_WITH_INFO_2_H

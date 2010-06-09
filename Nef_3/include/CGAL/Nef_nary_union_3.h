@@ -22,7 +22,7 @@
 
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Polyhedron>
 class Nef_nary_union_3 {
@@ -63,5 +63,5 @@ class Nef_nary_union_3 {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_NARY_UNION_H

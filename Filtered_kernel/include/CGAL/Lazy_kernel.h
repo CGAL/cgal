@@ -33,7 +33,7 @@
 #include <CGAL/Lazy.h>
 #include <boost/mpl/if.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Exact_kernel = exact kernel that will be made lazy
 // Kernel = lazy kernel
@@ -275,6 +275,6 @@ struct Lazy_kernel
              Lazy_kernel<Exact_kernel, Approximate_kernel, E2A> >
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LAZY_KERNEL_H

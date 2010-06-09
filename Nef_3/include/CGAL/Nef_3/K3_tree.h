@@ -45,7 +45,7 @@
 #define CGAL_NEF_DEBUG 503
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Triangle_3>
 void sort_triangle_by_lexicographically_smaller_vertex
@@ -1294,6 +1294,6 @@ bool is_point_on_cell( const Point_3& p, const Node* target, const Node* current
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NEF_K3_TREE_H

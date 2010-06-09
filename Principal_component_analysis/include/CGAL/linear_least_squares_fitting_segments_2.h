@@ -31,7 +31,7 @@
 #include <vector>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 // Fits a line to a 2D segment set.
@@ -171,6 +171,6 @@ linear_least_squares_fitting_2(InputIterator first,
 
 } // end namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_SEGMENTS_2_H

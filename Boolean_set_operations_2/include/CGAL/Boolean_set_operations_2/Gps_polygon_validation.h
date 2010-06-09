@@ -50,7 +50,7 @@
     Construct_vertex_2
   
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*Arrangement is templated with extended face dcel*/
 template<typename Arrangement_2>
@@ -803,6 +803,6 @@ bool is_valid_unknown_polygon(const typename Traits_2::Polygon_2& pgn,
   return is_valid_polygon(pgn, traits);
 }
   
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -28,7 +28,7 @@
 #include <CGAL/IO/File_header_extended_OFF.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Info structure for OFF file headers
 // ===================================
@@ -114,6 +114,6 @@ std::ostream& operator<<( std::ostream& out, const File_header_OFF& h);
 // Scan header. Marks streams badbit if not in SKEL format nor in OFF.
 std::istream& operator>>( std::istream& in, File_header_OFF& h);
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_FILE_HEADER_OFF_H //
 // EOF //

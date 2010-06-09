@@ -28,7 +28,7 @@
 #include <vector>
 #include <CGAL/IO/Verbose_ostream.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class p_HDS >
 class HalfedgeDS_const_decorator
@@ -370,7 +370,7 @@ is_valid( bool verb, int level) const {
     return valid;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HALFEDGEDS_CONST_DECORATOR_H //
 // EOF //

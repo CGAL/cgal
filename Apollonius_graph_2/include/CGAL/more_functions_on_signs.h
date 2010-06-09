@@ -24,7 +24,7 @@
 
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 inline
 Sign
 sign_of_first_root(const Sign &sb, const Sign &sc)
@@ -58,6 +58,6 @@ sign_of_second_root(const Sign &sb, const Sign &sc)
   return sc;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MORE_FUNCTIONS_ON_SIGNS_H

@@ -27,7 +27,7 @@
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 void
 File_scanner_OFF::
@@ -120,5 +120,5 @@ skip_to_next_facet( int current_facet) {
     }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 // EOF //

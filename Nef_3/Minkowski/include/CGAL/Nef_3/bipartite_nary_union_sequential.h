@@ -18,7 +18,7 @@
 #include <CGAL/Nef_3/Nary_union_by_small_queue.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_polyhedron>
 Nef_polyhedron 
@@ -98,5 +98,5 @@ bipartite_nary_union_sequential(Nef_polyhedron& N0,
   return result;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_BIPARTITE_NARY_UNION_SEQUENTIAL_H

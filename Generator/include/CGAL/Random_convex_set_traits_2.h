@@ -26,7 +26,7 @@
 
 #include <CGAL/Point_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Kernel >
 struct Random_convex_set_traits_2 : public Kernel {
@@ -111,6 +111,6 @@ CGAL_random_convex_set_2( int n,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_RANDOM_CONVEX_SET_TRAITS_2_H)

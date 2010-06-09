@@ -38,7 +38,7 @@
 #ifndef CGAL_USE_LEDA
 #define LEDA_MEMORY(t) 
 #endif
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Decorator_, typename IT, typename INFO>
 struct SM_subdivision {
@@ -670,6 +670,6 @@ complete_support(SVertex_iterator v_start, SVertex_iterator v_end,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #undef CGAL_USING
 #endif //CGAL_SM_TRIANGULATOR_H

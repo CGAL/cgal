@@ -29,7 +29,7 @@
 #include <CGAL/Algebraic_kernel_for_circles/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 #include <CGAL/Algebraic_kernel_for_circles/internal_functions_comparison_root_for_circles_2_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace AlgebraicFunctors {
   
@@ -221,6 +221,6 @@ namespace AlgebraicFunctors {
 
 } // namespace AlgebraicFunctors
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_FUNCTION_OBJECTS_ON_ROOTS_AND_POLYNOMIALS_2_H

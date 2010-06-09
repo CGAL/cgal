@@ -30,7 +30,7 @@
 
 #include <CGAL/Line_2_Line_2_intersection.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -347,4 +347,4 @@ intersection(const typename K::Triangle_2 &tr1,
 
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

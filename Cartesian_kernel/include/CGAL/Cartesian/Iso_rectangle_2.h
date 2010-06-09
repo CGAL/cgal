@@ -26,7 +26,7 @@
 
 #include <CGAL/array.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Iso_rectangleC2
@@ -67,6 +67,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_ISO_RECTANGLE_2_H

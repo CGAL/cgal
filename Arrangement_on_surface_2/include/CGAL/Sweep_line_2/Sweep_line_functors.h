@@ -32,7 +32,7 @@
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A functor used to compare events and event points in an xy-lexicographic
@@ -395,6 +395,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

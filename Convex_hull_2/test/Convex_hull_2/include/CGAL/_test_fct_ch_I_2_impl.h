@@ -25,7 +25,7 @@
 #include <CGAL/_test_fct_ch_I_2.h>
 #include <cassert>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Traits>
 bool
@@ -132,6 +132,6 @@ ch__batch_test( const Traits& chI )
   return true;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // _TEST_FCT_CH_I_2_IMPL_H

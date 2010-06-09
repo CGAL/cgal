@@ -31,7 +31,7 @@
 #include <iterator>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // ----------------------------------------------------------------------------
@@ -228,6 +228,6 @@ pca_estimate_normals(
 /// @endcond
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PCA_ESTIMATE_NORMALS_H

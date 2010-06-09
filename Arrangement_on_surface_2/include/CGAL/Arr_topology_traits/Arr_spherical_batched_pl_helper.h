@@ -26,7 +26,7 @@
  * Definition of the Arr_spherical_batched_pl_helper class-template.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #include <CGAL/Sweep_line_empty_visitor.h>
 
@@ -91,6 +91,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

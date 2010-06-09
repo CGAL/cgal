@@ -38,7 +38,7 @@
 
 #include <boost/operators.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 #define CGAL_double(T) typename First_if_different<double, T>::Type
@@ -286,6 +286,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_NEF_POLYNOMIAL_H

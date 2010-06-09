@@ -26,7 +26,7 @@
 #ifndef CGAL_ASSERTIONS_BEHAVIOUR_H
 #define CGAL_ASSERTIONS_BEHAVIOUR_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 enum Failure_behaviour { ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE,
                          THROW_EXCEPTION };
@@ -54,6 +54,6 @@ set_error_behaviour(Failure_behaviour eb);
 Failure_behaviour
 set_warning_behaviour(Failure_behaviour eb);
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ASSERTIONS_BEHAVIOUR_H

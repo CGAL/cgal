@@ -24,7 +24,7 @@
 #include <CGAL/IO/Color.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 const Color BLACK  = Color(0, 0, 0);
 const Color WHITE  = Color(255, 255, 255);
@@ -41,5 +41,5 @@ const Color RED    = Color(255, 0, 0);
 const Color ORANGE = Color(235, 150, 0);
 const Color YELLOW = Color(255, 255, 0);
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 

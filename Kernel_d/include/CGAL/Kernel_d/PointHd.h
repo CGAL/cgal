@@ -31,7 +31,7 @@
 #include <CGAL/Kernel_d/Aff_transformationHd.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 #define PointHd PointHd2
 
 template <class RT, class LA> class PointHd;
@@ -289,6 +289,6 @@ coordinate access and conversions take constant time.  The space
 requirement for points is $O(|p.dimension()|)$.}*/
 
 #undef PointHd 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_POINTHD_H 
 //----------------------- end of file ----------------------------------

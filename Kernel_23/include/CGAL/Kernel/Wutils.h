@@ -31,7 +31,7 @@
 
 // Functions wmult() and wcross().
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -324,6 +324,6 @@ wcross(const Point_3<K> &p,
     return internal::wcross_functor_3<K>()(p, q, r);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_KERNEL_WUTILS_H

@@ -26,7 +26,7 @@
 #ifndef CGAL_COLOR_H
 #define CGAL_COLOR_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Color {
 public:
@@ -92,6 +92,6 @@ extern const Color ORANGE ;
 extern const Color YELLOW ;
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_COLOR_H

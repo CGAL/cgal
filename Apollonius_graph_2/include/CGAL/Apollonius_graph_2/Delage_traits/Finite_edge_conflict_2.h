@@ -24,7 +24,7 @@
 
 #include <CGAL/Apollonius_graph_2/Delage_traits/Edge_conflict_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
@@ -85,6 +85,6 @@ public:
 
 CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_FINITE_EDGE_CONFLICT_2_H

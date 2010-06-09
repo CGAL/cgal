@@ -26,7 +26,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Perform a vertical decomposition of an arrangement, by performing a
@@ -142,6 +142,6 @@ decompose(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

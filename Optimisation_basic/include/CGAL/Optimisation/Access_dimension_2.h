@@ -26,7 +26,7 @@
 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class declaration
 // =================
@@ -56,7 +56,7 @@ class Access_dimension_2 {
     int  operator() ( const Point& p) const { return p.dimension(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_OPTIMISATION_ACCESS_DIMENSION_2_H
 

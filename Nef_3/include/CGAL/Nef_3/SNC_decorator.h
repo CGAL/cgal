@@ -39,7 +39,7 @@
 #define CGAL_NEF_DEBUG 19
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Map>
 class SNC_decorator : public SNC_const_decorator<Map> { 
@@ -988,5 +988,5 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SNC_DECORATOR_H

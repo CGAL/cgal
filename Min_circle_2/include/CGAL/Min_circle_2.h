@@ -28,7 +28,7 @@
 #  include <algorithm>
 #  include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class declaration
 // =================
@@ -581,7 +581,7 @@ template < class Traits_ >
 std::istream&
 operator >> ( std::istream& is,       Min_circle_2<Traits_>& mc);
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Min_circle_2/Min_circle_2_impl.h>
 

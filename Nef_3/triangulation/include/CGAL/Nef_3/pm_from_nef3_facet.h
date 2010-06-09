@@ -5,7 +5,7 @@
 #define _DEBUG 5
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Cycle_circulator, typename Planar_map>
 typename Planar_map::Face_handle
@@ -162,6 +162,6 @@ pm_from_nef3_facet( typename SNC_structure::Halffacet_const_handle f,
   return pm_face;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // PM_FROM_NEF3_FACET_2_H

@@ -31,7 +31,7 @@
 //TODO : More if-else's with object cast for all the possible 
 //       types that could be returned by object-returning functions
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename LK>
 Object
@@ -407,6 +407,6 @@ template <typename L1>
   
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LAZY_CIRCULAR_KERNEL_CONSTRUCTIONS_H

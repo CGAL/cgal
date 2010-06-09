@@ -31,7 +31,7 @@
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------
 // the Traits classes
@@ -161,6 +161,6 @@ Segment_Delaunay_graph_traits_without_intersections_2<Filtered_kernel<R>,
 					    Field_with_sqrt_tag>
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_TRAITS_2_H

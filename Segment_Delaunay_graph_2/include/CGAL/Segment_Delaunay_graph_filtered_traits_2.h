@@ -40,7 +40,7 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/number_utils_classes.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #define SDG2_INS CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal
 
@@ -240,6 +240,6 @@ struct Segment_Delaunay_graph_filtered_traits_without_intersections_2
 
 #undef SDG2_INS
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_FILTERED_TRAITS_2_H

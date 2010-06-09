@@ -25,7 +25,7 @@
 #include <iostream>
 #include <CGAL/IO/File_writer_OFF.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 void
 File_writer_OFF::
@@ -44,5 +44,5 @@ write_header( std::ostream& o,
     // Print header.
     out() << m_header;
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 // EOF //

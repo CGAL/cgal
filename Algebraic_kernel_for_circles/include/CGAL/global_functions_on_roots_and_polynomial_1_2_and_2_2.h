@@ -25,7 +25,7 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_GLOBAL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIAL_1_2_AND_2_2_H
 #define CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_GLOBAL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIAL_1_2_AND_2_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template< class AK, class OutputIterator>
 inline
@@ -57,6 +57,6 @@ construct_polynomial_1_2( const typename AK::RT& a,
 		            const typename AK::RT& c)
 { return AK().construct_polynomial_1_2_object()(a, b, c); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_GLOBAL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIAL_1_2_AND_2_2_H

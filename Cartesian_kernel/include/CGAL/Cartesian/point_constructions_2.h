@@ -26,7 +26,7 @@
 
 #include <CGAL/Cartesian/Point_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class K >
 inline
@@ -49,6 +49,6 @@ line_project_point(const LineC2<K> &l,
   return PointC2<K>(x, y);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_POINT_CONSTRUCTIONS_2_H

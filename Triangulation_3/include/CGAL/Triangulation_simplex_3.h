@@ -21,7 +21,7 @@
 #ifndef CGAL_TRIANGULATION_SIMPLEX_3_H
 #define CGAL_TRIANGULATION_SIMPLEX_3_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class TriangulationDataStructure_3 >
 class Triangulation_simplex_3 {
@@ -279,6 +279,6 @@ operator<< (std::ostream& os,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_SIMPLEX_3_H

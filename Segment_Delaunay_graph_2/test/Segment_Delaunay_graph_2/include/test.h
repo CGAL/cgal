@@ -4,7 +4,7 @@
 #include "IO/io_aux.h"
 #include "test_types.h"
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class InputStream>
 bool test_x(InputStream& is, const char* ifname, bool test_remove = true)
@@ -66,7 +66,7 @@ bool test_base(InputStream&, const SDG& sdg, const char* ifname, const char* ofn
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_SDG_TEST_H

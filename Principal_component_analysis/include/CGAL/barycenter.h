@@ -36,7 +36,7 @@
 // TODO : Grep for "barycenter" and "centroid" in CGAL to check existing usages.
 // TODO : Add barycentric_coordinates() (to the kernel, this time).
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This one takes an iterator range over std::pair<K::Point_[23], K::FT>
 template < typename InputIterator, typename K >
@@ -122,6 +122,6 @@ barycenter(PointInputIterator begin, PointInputIterator end,
   return CGAL::barycenter(begin, end, wbegin, K());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

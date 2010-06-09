@@ -41,7 +41,7 @@
 #include <CGAL/Modifiable_priority_queue.h>
 #include <CGAL/boost/graph/halfedge_graph_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Surface_mesh_simplification 
 {
@@ -108,7 +108,7 @@ inline std::string optional_to_string( boost::optional<T> const& o )
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #if   defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE)    \
    || defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE) 

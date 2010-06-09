@@ -27,7 +27,7 @@
 #include <iterator>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // ----------------------------------------------------------------------------
@@ -201,7 +201,7 @@ compute_average_spacing(
 /// @endcond
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_AVERAGE_SPACING_3_H
 

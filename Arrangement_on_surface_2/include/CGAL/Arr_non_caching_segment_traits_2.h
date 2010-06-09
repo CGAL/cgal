@@ -35,7 +35,7 @@
 #include <CGAL/Arr_non_caching_segment_basic_traits_2.h>
 #include <CGAL/intersections.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class 
  * A model of the ArrangementTraits_2 concept that handles general 
@@ -407,6 +407,6 @@ public:
   //@}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

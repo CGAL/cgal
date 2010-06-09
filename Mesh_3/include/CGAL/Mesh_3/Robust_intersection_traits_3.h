@@ -28,7 +28,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Mesh_3 {
 
@@ -94,6 +94,6 @@ struct Robust_intersection_traits_3
 
 } // end namespace Mesh_3
   
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_3_ROBUST_INTERSECTION_TRAITS_3_H

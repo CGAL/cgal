@@ -33,7 +33,7 @@
 #  pragma warning(disable:4355) // complaint about using 'this' to
 #endif                          // initialize a member
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //!!! STL-extensions
 template < class T >
@@ -646,8 +646,8 @@ three_cover_points(
   return o;
 
 } // three_cover_points(d, o, ok)
-CGAL_END_NAMESPACE
-CGAL_BEGIN_NAMESPACE
+} //namespace CGAL
+namespace CGAL {
 template < class OutputIterator, class Traits >
 OutputIterator
 four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
@@ -1023,7 +1023,7 @@ struct Four_covering_algorithm {
   { return four_cover_points(d, o, ok); }
 }; // class Four_covering_algorithm
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

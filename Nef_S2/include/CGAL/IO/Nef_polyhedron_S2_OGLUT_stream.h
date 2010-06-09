@@ -24,7 +24,7 @@
 #include <CGAL/Nef_S2/SM_visualizor.h>
 #include <string>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 struct OGLUT_stream { // dummy class
@@ -55,6 +55,6 @@ static CGAL::OGLUT_stream& operator<<(CGAL::OGLUT_stream& ogls,
   return ogls;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NEF_POLYHEDRON_S2_OGLUT_STREAM_H

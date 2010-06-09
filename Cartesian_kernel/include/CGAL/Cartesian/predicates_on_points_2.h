@@ -27,7 +27,7 @@
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class K >
 inline
@@ -60,6 +60,6 @@ compare_lexicographically_yx(const PointC2<K> &p,
   return compare_lexicographically_xyC2(p.y(), p.x(), q.y(), q.x());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_2_H

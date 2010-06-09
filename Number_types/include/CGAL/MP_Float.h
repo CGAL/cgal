@@ -58,7 +58,7 @@
 //   - nothing
 //   - convert to double, take approximation, compute over double, reconstruct
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class MP_Float;
 
@@ -856,6 +856,6 @@ CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(MP_Float)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, MP_Float)
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MP_FLOAT_H

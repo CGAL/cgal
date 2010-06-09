@@ -31,7 +31,7 @@
 #include <CGAL/constructions/kernel_ftC3.h>
 #include <CGAL/Cartesian/solve_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CartesianKernelFunctors {
 
@@ -4044,6 +4044,6 @@ namespace CartesianKernelFunctors {
 
 } // namespace CartesianKernelFunctors
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_FUNCTION_OBJECTS_H

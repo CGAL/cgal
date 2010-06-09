@@ -27,7 +27,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Enum_converter
 {
@@ -41,7 +41,7 @@ struct Enum_converter
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_ENUM_CONVERTER_H

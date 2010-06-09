@@ -44,7 +44,7 @@
 // hence the const_cast<> used below in the functions implementation.
 //
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //
 // Const versions
@@ -187,7 +187,7 @@ next_edge_cw( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_des
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #undef CGAL_HDS_
 

@@ -44,7 +44,7 @@ typename CGAL::internal::Innermost_coefficient_type<T>::Type , 2>::Type
 #include <sstream>
 #include <CGAL/Polynomial/misc.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class NT> class Polynomial;
 template <class NT> class Scalar_factor_traits;
@@ -1449,7 +1449,7 @@ struct Needs_parens_as_product<Polynomial<COEFF> >{
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #undef CGAL_icoeff
 #undef CGAL_int

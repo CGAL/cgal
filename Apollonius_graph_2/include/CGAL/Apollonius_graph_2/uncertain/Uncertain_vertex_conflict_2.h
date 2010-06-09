@@ -27,7 +27,7 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------
 //                        Vertex conflict
@@ -402,6 +402,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_UNCERTAIN_VERTEX_CONFLICT_2_H

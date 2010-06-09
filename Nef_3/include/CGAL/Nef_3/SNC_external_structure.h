@@ -39,7 +39,7 @@
 #define CGAL_NEF_DEBUG 43
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct int_lt {
   bool operator()(const int& i1, const int& i2) const { return i1<i2; }
@@ -1342,5 +1342,5 @@ public:
   }
 }; 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SNC_EXTERNAL_STRUCTURE_H

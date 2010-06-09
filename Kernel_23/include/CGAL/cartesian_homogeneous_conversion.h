@@ -27,7 +27,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class RT>
 Point_2< Cartesian<RT> >
@@ -126,6 +126,6 @@ quotient_cartesian_to_homogeneous(
   }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_HOMOGENEOUS_CONVERSION_H

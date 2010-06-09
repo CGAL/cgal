@@ -40,7 +40,7 @@
 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Dt >
 class Alpha_shape_2 : public Dt 
@@ -1828,7 +1828,7 @@ Alpha_shape_2<Dt>::print_edge_map() {
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif //CGAL_ALPHA_SHAPE_2_H

@@ -23,7 +23,7 @@
 #include <iostream>
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template < class K >
@@ -82,6 +82,6 @@ operator>>(std::istream& is, Apollonius_site_2<K>& wp)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_SITE_2_H

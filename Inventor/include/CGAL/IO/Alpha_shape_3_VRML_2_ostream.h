@@ -27,7 +27,7 @@
 #include <CGAL/IO/VRML_2_ostream.h>
 
 #ifdef CGAL_ALPHA_SHAPE_3_H
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Dt >
 VRML_2_ostream&
@@ -96,7 +96,7 @@ operator<<(VRML_2_ostream& os,
   return os;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_ALPHA_SHAPE_3_H
 
 #endif CGAL_ALPHA_SHAPE_3_VRML_2_OSTREAM_H

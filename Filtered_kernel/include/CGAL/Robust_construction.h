@@ -22,7 +22,7 @@
 
 #include <CGAL/config.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This template class is a functor adaptor targetting geometric constructions.
 //
@@ -136,6 +136,6 @@ public:
 #endif
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ROBUST_CONSTRUCTION_H

@@ -47,7 +47,7 @@
 #include <CGAL/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/internal/Triangulation_ds_circulators_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // TODO : noms : Vb != Vertex_base : clarifier.
 
@@ -3335,6 +3335,6 @@ count_cells(size_type & i, bool verbose, int level) const
   return true;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_DATA_STRUCTURE_3_H

@@ -28,7 +28,7 @@
 #include <CGAL/Conic_misc.h>
 #include <CGAL/kernel_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class PT, class DA>
 class ConicHPA2;
@@ -627,7 +627,7 @@ std::istream& operator >> ( std::istream& is, ConicHPA2<_PT,_DA>& c)
 }
 #endif // CGAL_NO_OSTREAM_INSERT_CONICHPA2
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONICHPA2_H
 

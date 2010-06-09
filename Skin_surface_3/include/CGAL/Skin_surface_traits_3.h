@@ -23,7 +23,7 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/predicates/predicates_for_mixed_complex_3.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 /** Input: a list of n weighted points p_1...p_n and a query point x.
     There is a plane separating the mixed cell defined by p_1...p_n-1
@@ -163,7 +163,7 @@ public:
   enum { Has_filtered_predicates=false };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // Now specialize for Filtered_kernel<CK>, to get
 // the filtered traits automatically.
@@ -171,7 +171,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Filtered_kernel.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Just FK would be nicer, but VC 2005 messes it up with an "FK" in a base class when compiling degenerate_test.cpp
 template < typename Sst3FK >
@@ -189,5 +189,5 @@ public:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_SKIN_SURFACE_TRAITS_3_H

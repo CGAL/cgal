@@ -38,7 +38,7 @@
 # endif
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 enum object_kind { VERTEX, EDGE_CROSSING, EDGE_COLLINEAR };
 
@@ -997,6 +997,6 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
   return Object_handle(); // never reached warning acceptable
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PM_POINT_LOCATOR_H

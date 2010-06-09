@@ -28,7 +28,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * An empty sweep-line visitor that does nothing. It is used as a base-class
@@ -276,6 +276,6 @@ private:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

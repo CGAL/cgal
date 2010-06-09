@@ -25,7 +25,7 @@
 #ifndef CGAL_DATA_ACCESSORH2_H
 #define CGAL_DATA_ACCESSORH2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R >
 class Data_accessorH2
@@ -54,6 +54,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_DATA_ACCESSORH2_H

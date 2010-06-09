@@ -25,7 +25,7 @@
 #ifndef CGAL_DETERMINANT_H
 #define CGAL_DETERMINANT_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class RT>
 inline
@@ -207,6 +207,6 @@ determinant(
   return m012345;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_DETERMINANT_H

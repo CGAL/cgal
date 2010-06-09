@@ -23,7 +23,7 @@
 
 #include <CGAL/config.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // The function constant<T, int i>() returns a const reference to T(i).
 // TODO : is it worth documenting ?
@@ -37,6 +37,6 @@ constant()
   return t;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONSTANT_H

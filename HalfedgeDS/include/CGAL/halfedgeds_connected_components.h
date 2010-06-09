@@ -28,7 +28,7 @@
 #include <CGAL/iterator.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class HDS, class Output_iterator, 
           class Halfedge_iterator, class Halfedge_handle>
@@ -85,6 +85,6 @@ halfedgeds_connected_components( HDS& hds) {
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_HALFEDGEDS_CONNECTED_COMPONENTS_H //
 // EOF //

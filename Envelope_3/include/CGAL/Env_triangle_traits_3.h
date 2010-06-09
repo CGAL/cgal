@@ -33,7 +33,7 @@
 
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Kernel_> class Env_triangle_3;
 
@@ -1660,6 +1660,6 @@ InputStream& operator>> (InputStream& is, Env_triangle_3<Kernel>& tri)
   return (is);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif 

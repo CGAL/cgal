@@ -23,7 +23,7 @@
 #ifndef CGAL_QP_SOLVER_UNBOUNDED_DIRECTION_H
 #define CGAL_QP_SOLVER_UNBOUNDED_DIRECTION_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template < typename Q, typename ET, typename Tags >
 ET QP_solver<Q, ET, Tags>::unbounded_direction_value(int i) const
 {
@@ -35,7 +35,7 @@ ET QP_solver<Q, ET, Tags>::unbounded_direction_value(int i) const
    return et0;
  }
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_QP_SOLVER_UNBOUNDED_DIRECTION_H
 

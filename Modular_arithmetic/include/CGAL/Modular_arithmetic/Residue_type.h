@@ -30,7 +30,7 @@
 #  include <boost/thread/tss.hpp>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Residue;
     
@@ -317,6 +317,6 @@ inline std::istream& operator >> (std::istream& is, Residue& p) {
     return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RESIDUE_TYPE_H

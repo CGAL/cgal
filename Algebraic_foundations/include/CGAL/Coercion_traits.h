@@ -132,7 +132,7 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
         };                                                              \
     };    
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 namespace INTERN_CT{ 
@@ -236,6 +236,6 @@ template<class A , class B>
 struct Coercion_traits :public Coercion_traits_for_level<A,B,CTL_TOP>{};
 
  
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //NiX_COERCION_TRAITS_H

@@ -26,7 +26,7 @@
 
 #include <CGAL/array.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Iso_cuboidH3
@@ -389,6 +389,6 @@ transform(const typename Iso_cuboidH3<R>::Aff_transformation_3&t) const
                              t.transform((this->max)() ) );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ISO_CUBOIDH3_H

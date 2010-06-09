@@ -25,7 +25,7 @@
 #include <CGAL/Boolean_set_operations_2/Gps_on_surface_base_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_polygon_validation.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 namespace Boolean_set_operation_2_internal
@@ -149,6 +149,6 @@ private:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_GENERAL_POLYGON_SET_ON_SURFACE_2_H

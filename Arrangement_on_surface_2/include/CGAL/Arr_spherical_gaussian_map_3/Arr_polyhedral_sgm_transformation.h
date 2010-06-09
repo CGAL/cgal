@@ -20,7 +20,7 @@
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_TRANSFORMATION_H
 #define CGAL_ARR_POLYHEDRAL_SGM_TRANSFORMATION_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /* This function rotates the face when the arrangement is Arr_polyhedral_sgm */
 
@@ -38,6 +38,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

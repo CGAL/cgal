@@ -23,7 +23,7 @@
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class RegularTriangulation_3>
 class Compute_anchor_3
@@ -585,6 +585,6 @@ Compute_anchor_3<RegularTriangulation3>::compute_anchor_vor (Facet const &f) {
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_COMPUTE_ANCHOR_3_H

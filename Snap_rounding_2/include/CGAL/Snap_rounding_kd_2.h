@@ -27,7 +27,7 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/utility.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Traits, class SAVED_OBJECT>
 class My_point : public Traits::Point_2 {
@@ -485,6 +485,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

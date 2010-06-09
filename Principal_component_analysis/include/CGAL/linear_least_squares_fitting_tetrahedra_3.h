@@ -31,7 +31,7 @@
 
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -316,6 +316,6 @@ linear_least_squares_fitting_3(InputIterator first,
 
 } // end namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_TETRAHEDRA_3_H

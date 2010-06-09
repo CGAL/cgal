@@ -25,7 +25,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Tools/Label.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //! An integer iterator
 /*!  It looks like an iterator but just wraps an integer. All the
@@ -171,6 +171,6 @@ Counter<T> counter(T t)
     return Counter<T>(t);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

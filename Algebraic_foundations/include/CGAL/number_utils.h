@@ -26,7 +26,7 @@
 
 #include <CGAL/number_type_basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 CGAL_NTS_BEGIN_NAMESPACE
 
 
@@ -300,6 +300,6 @@ to_interval( const Real_embeddable& x) {
 
 
 CGAL_NTS_END_NAMESPACE
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NUMBER_UTILS_H

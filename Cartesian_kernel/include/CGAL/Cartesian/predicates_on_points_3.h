@@ -26,7 +26,7 @@
 
 #include <CGAL/predicates/kernel_ftC3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class K >
 inline
@@ -98,6 +98,6 @@ dominance(const PointC3<K> &p,
 		     q.x(), q.y(), q.z());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_PREDICATES_ON_POINTS_3_H

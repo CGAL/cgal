@@ -23,7 +23,7 @@
 
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -223,6 +223,6 @@ void eigen_symmetric(const FT *mat,
 
 } // end namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_EIGEN_H

@@ -23,7 +23,7 @@
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/Triangulation_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // There are 2 drawing functions for triangulations : depending on the wired
 // mode of the Geomview_stream, we draw either the edges or the faces.
@@ -113,6 +113,6 @@ operator<<( Geomview_stream &gv, const Triangulation_2<GT,TDS> &T)
     return gv;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_TRIANGULATION_GEOMVIEW_OSTREAM_2_H

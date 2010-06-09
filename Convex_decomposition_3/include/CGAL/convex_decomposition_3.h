@@ -30,7 +30,7 @@
 #include <CGAL/Convex_decomposition_3/Edge_sorter.h>
 #include <CGAL/Convex_decomposition_3/is_reflex_sedge.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_polyhedron>
 void convex_decomposition_3(Nef_polyhedron& N) 
@@ -159,5 +159,5 @@ void convex_decomposition_3(Nef_polyhedron& N)
       CGAL_assertion(!CGAL::is_reflex_sedge_in_any_direction<Nef_polyhedron>(cse)));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_CONVEX_DECOMPOSITION_3_H

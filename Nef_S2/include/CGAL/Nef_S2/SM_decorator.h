@@ -35,7 +35,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/IO/Verbose_ostream.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Moptions print_title=yes }*/ 
 /*{\Moptions outfile=SM_decorator.man }*/
@@ -958,5 +958,5 @@ void check_integrity_and_topological_planarity(bool faces=true) const {
 }; // SM_decorator
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_SM_DECORATOR_H

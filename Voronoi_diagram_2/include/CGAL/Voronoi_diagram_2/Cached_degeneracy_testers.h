@@ -29,7 +29,7 @@
 #include <CGAL/Edge_hash_function.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
@@ -464,6 +464,6 @@ class Cached_face_rejector<Identity_face_rejector<DG>,Tag_true>
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_CACHED_DEGENERACY_TESTERS_H

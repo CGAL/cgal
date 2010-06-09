@@ -24,7 +24,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/array.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_> class Sphere_triangle_rep 
 { typedef Sphere_point<R_>  Point;
@@ -113,5 +113,5 @@ std::istream& operator>>(std::istream& is,
   t = CGAL::Sphere_triangle<R>(p1,p2,p3,c1,c2,c3);
   return is; }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SPHERE_TRIANGLE_H

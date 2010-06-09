@@ -26,7 +26,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Refs>
 class HalfedgeDS_face_min_base {
@@ -48,7 +48,7 @@ public:
     typedef Plane_not_supported                  Plane;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HALFEDGEDS_FACE_MIN_BASE_H //
 // EOF //

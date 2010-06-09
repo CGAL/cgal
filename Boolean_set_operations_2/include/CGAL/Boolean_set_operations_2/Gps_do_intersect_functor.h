@@ -20,7 +20,7 @@
 #ifndef CGAL_GPS_DO_INTERSECT_FUNCTOR_H
 #define CGAL_GPS_DO_INTERSECT_FUNCTOR_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Arrangement_>
 class Gps_do_intersect_functor 
@@ -125,6 +125,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

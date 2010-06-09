@@ -28,7 +28,7 @@
 #include <CGAL/Polynomial/bezout_matrix.h>
 #include <CGAL/Polynomial/subresultants.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -482,6 +482,6 @@ template<typename Polynomial_traits_d,
       return CGAL::number_of_real_roots(stha.begin(),stha.end());
   }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_STURM_HABICHT

@@ -22,7 +22,7 @@
 #ifndef CGAL_SDG_IN_PLACE_EDGE_LIST_FOR_SDG_H
 #define CGAL_SDG_IN_PLACE_EDGE_LIST_FOR_SDG_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
   template<class E>
@@ -286,7 +286,7 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_SDG_IN_EDGE_PLACE_LIST_FOR_SDG_H

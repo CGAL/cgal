@@ -26,7 +26,7 @@
 #include <CGAL/Apollonius_graph_2/Oriented_side_of_bisector_C2.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
@@ -751,6 +751,6 @@ public:
 
 CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_FINITE_EDGE_TEST8_C2_H

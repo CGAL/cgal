@@ -22,7 +22,7 @@
 
 #include <CGAL/Convex_hull_traits_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Kernel_>
 class Width_default_traits_3 {
@@ -70,6 +70,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_WIDTH_DEFAULT_TRAITS_3_H

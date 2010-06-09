@@ -22,7 +22,7 @@
 
 #include<CGAL/QP_functions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // creation & initialization
 // -------------------------
@@ -660,6 +660,6 @@ init_additional_data_members()
   tmp_x_2.insert(tmp_x_2.end(), l, et0);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // ===== EOF ==================================================================

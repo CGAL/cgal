@@ -20,7 +20,7 @@
 #ifndef CGAL_CCB_CURVE_ITERATOR_H
 #define CGAL_CCB_CURVE_ITERATOR_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
  /*! \class
     * A circulator adapter that iterates over all curves in a CCB.
@@ -113,6 +113,6 @@ CGAL_BEGIN_NAMESPACE
    };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

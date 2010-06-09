@@ -27,7 +27,7 @@
 #include <CGAL/Skin_surface_polyhedral_items_3.h>
 
 #include <CGAL/intersection_3_1.h>
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class SkinSurface_3, class Polyhedron_3>
@@ -127,7 +127,7 @@ protected:
   Skin_surface const &ss_3;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_SKIN_SURFACE_REFINEMENT_POLICY_3_H

@@ -26,7 +26,7 @@
 
 #include <CGAL/Origin.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class PointC3
@@ -133,6 +133,6 @@ PointC3<R>::homogeneous(int i) const
   return base.homogeneous(i);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_POINT_3_H

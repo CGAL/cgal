@@ -37,7 +37,7 @@
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Curve>
 struct Default_arr_traits
@@ -214,6 +214,6 @@ bool do_curves_intersect (CurveInputIterator curves_begin,
   return do_curves_intersect (curves_begin, curves_end, m_traits);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

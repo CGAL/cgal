@@ -29,7 +29,7 @@
 #  include <CGAL/Optimisation/Access_coordinates_begin_d.h>
 #  include <CGAL/Optimisation/Construct_point_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class declaration
 // =================
@@ -81,7 +81,7 @@ class Optimisation_d_traits_d {
         { return Construct_point_d(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_OPTIMISATION_D_TRAITS_D_H
 

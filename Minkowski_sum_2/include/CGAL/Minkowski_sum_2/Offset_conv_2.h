@@ -22,7 +22,7 @@
 #include <CGAL/Minkowski_sum_2/Union_of_curve_cycles_2.h>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A class for computing the offset of a given polygon by a given radius
@@ -195,6 +195,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -36,7 +36,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class K1, class K2,
           class RT_Converter = NT_converter<typename K1::RT, typename K2::RT>,
@@ -246,6 +246,6 @@ struct Homogeneous_converter <K, K, C1, C2>
   const T& operator()(const T&t) const { return t; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HOMOGENEOUS_CONVERTER_H

@@ -27,7 +27,7 @@
 #define CGAL_NEF_DEBUG 233
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_>
 class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
@@ -209,5 +209,5 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
   }
 };
   
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_CD3_RAY_HIT_GENERATOR2_H

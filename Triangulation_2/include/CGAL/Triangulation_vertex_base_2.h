@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename GT,
            typename Vb = Triangulation_ds_vertex_base_2<> >
@@ -143,6 +143,6 @@ handle()
   return Vertex_handle();				    
 }
 #endif
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRIANGULATION_VERTEX_BASE_2_H

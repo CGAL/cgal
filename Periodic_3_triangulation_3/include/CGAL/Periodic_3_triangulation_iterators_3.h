@@ -24,7 +24,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/iterator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class T >
 class Periodic_3_triangulation_tetrahedron_iterator_3 {
@@ -1070,6 +1070,6 @@ public:
   operator Vertex_handle() const { return Base::base(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_ITERATORS_3_H

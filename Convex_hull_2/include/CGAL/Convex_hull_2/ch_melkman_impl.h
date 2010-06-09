@@ -28,7 +28,7 @@
 #include <queue>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator
@@ -124,6 +124,6 @@ ch_melkman( InputIterator first, InputIterator last,
   
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CH_MELKMAN_IMPL_H

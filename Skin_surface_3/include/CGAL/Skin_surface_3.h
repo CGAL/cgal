@@ -24,7 +24,7 @@
 #include <CGAL/triangulate_mixed_complex_3.h>
 #include <CGAL/FPU.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template <class MixedComplexTraits_3> 
 class Skin_surface_3 : public Skin_surface_base_3<MixedComplexTraits_3> {
@@ -108,6 +108,6 @@ Skin_surface_3(WP_iterator begin, WP_iterator end,
   CGAL_assertion(triangulated_mixed_complex().dimension() == 3);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SKIN_SURFACE_3_H

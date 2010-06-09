@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/SM_const_decorator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename SMCDEC>
 class SNC_SM_explorer : public SMCDEC {
@@ -40,6 +40,6 @@ class SNC_SM_explorer : public SMCDEC {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_SNC_SM_EXPLORER_H

@@ -20,7 +20,7 @@
 #ifndef CGAL_LINE_TO_EPOINT_H
 #define CGAL_LINE_TO_EPOINT_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Kernel_>
 struct Line_to_epoint {
@@ -67,5 +67,5 @@ struct Line_to_epoint {
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_LINE_TO_EPOINT_H

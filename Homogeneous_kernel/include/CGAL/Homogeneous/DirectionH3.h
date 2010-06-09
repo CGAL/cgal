@@ -27,7 +27,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class DirectionH3
@@ -129,6 +129,6 @@ cross_product( const DirectionH3<R>& d1,
                const DirectionH3<R>& d2)
 { return cross_product(d1.to_vector(),d2.to_vector()).direction(); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HOMOGENEOUS_DIRECTION_3_H

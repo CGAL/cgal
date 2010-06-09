@@ -31,7 +31,7 @@
 #define CGAL_NEF_LGREY CGAL::Color(170,170,200)
 #define CGAL_NEF_DGREY CGAL::Color(30,30,50)
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Map_>
 class SNC_SM_BooleColor 
@@ -216,7 +216,7 @@ void show_sphere_map_of(typename Map_::Vertex_handle v)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 //#undef CGAL_NEF_LGREY
 //#undef CGAL_NEF_DGREY
 #endif // CGAL_SNC_SM_VISUALIZOR_H

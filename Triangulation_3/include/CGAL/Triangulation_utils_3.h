@@ -23,7 +23,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // We use the following template class in order to avoid having a static data
  // member of a non-template class which would require src/Triangulation_3.C .
@@ -79,6 +79,6 @@ struct Triangulation_utils_3
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_UTILS_3_H

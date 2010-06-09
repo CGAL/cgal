@@ -29,7 +29,7 @@
 #include <CGAL/Kernel_d/VectorHd.h> 
 #include <CGAL/Kernel_d/Aff_transformationHd.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 #define PointHd PointHd2
 
 template <class RT, class LA>
@@ -348,7 +348,7 @@ $O(|h.dimension()|)$. coordinate access and |dimension()| take
 constant time.  The space requirement is $O(|h.dimension()|)$.  }*/
 
 #undef PointHd
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_HYPERPLANEHD_H
 
 //----------------------- end of file ----------------------------------

@@ -44,7 +44,7 @@
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/iterator.h> 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Arrangement_, class Bfs_visitor_>
 class Gps_agg_op
@@ -172,6 +172,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -25,7 +25,7 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // For backward compatibility
 
@@ -35,6 +35,6 @@ class Apollonius_graph_data_structure_2
 {};
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_DATA_STRUCTURE_2_H

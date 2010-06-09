@@ -27,7 +27,7 @@
 #include <CGAL/Minkowski_sum_2/Labels.h>
 #include <CGAL/Minkowski_sum_2/Arr_labeled_traits_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A base class for approximating the offset of a given polygon by a given
@@ -597,6 +597,6 @@ protected:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -30,7 +30,7 @@
 
 #include <CGAL/Bbox_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 bool
 inline
@@ -40,6 +40,6 @@ do_intersect(const CGAL::Bbox_3& c,
   return CGAL::do_overlap(c, bbox);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_BBOX_3_DO_INTERSECT_H

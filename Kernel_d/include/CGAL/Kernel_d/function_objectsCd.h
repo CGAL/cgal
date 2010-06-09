@@ -34,7 +34,7 @@
 #define CGAL_KD_TRACEN(t) std::cerr << t << std::endl
 #define CGAL_KD_TRACEV(t) std::cerr << #t << " = " << (t) << std::endl
  
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 struct Lift_to_paraboloidCd {
@@ -461,5 +461,5 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_FUNCTION_OBJECTSCD_H

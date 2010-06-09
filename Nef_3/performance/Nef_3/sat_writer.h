@@ -3,7 +3,7 @@
 
 #include <CGAL/Nef_3/SNC_decorator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Nef_>
 class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
@@ -283,5 +283,5 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF3_SAT_WRITER

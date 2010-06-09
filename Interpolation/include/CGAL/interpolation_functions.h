@@ -23,7 +23,7 @@
 #include <utility>
 #include <CGAL/double.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //Functor class for accessing the function values/gradients
 template< class Map >
@@ -336,6 +336,6 @@ farin_c1_interpolation(RandomAccessIterator first,
   return std::make_pair(result/(CGAL_NTS square(norm)*norm), true);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_INTERPOLATION_FUNCTIONS_H

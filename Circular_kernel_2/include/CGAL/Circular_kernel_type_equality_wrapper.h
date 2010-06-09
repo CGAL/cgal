@@ -34,7 +34,7 @@
 #include <CGAL/Root_of_2.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This is a kernel wrapper which provides the type equality between
 // Kernel::Point_2 and CGAL::Point_2<Kernel>, by deriving from
@@ -58,6 +58,6 @@ struct Circular_kernel_type_equality_wrapper
     //typedef Root_of_2<Kernel>                    Root_of_2;   
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CIRCULAR_KERNEL_TYPE_EQUALITY_WRAPPER_H

@@ -29,7 +29,7 @@
 
 // If you add/change one type here, please update Is_a_predicate.h as well.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 enum  Sign
 {
@@ -115,6 +115,6 @@ T enum_cast(const U& u)
 
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ENUM_H

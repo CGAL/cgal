@@ -24,7 +24,7 @@
  * Definition of the Arr_do_intersect_zone_visitor_2 class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A visitor class for Arrangement_zone_2, which check whether
@@ -131,6 +131,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

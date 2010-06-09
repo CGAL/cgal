@@ -25,7 +25,7 @@
 
 #include <CGAL/Interval_nt.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_ >
 class CircleC3 {
@@ -293,6 +293,6 @@ CircleC3<R>::operator!=(const CircleC3<R> &t) const
   return !(*this == t);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_CIRCLEC3_H

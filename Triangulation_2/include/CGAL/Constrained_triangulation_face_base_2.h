@@ -23,7 +23,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_ds_face_base_2.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template <class Gt, class Fb = Triangulation_face_base_2<Gt> >
 class Constrained_triangulation_face_base_2
@@ -152,6 +152,6 @@ cw_permute()
   set_constraints(C[1],C[2],C[0]);
 }
   
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
   
 #endif //CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_2_H

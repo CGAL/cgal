@@ -87,7 +87,7 @@
  * - .rafine_approx()   ??
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class NT> class Lazy_exact_nt;
 
@@ -1412,6 +1412,6 @@ class Modular_traits<Lazy_exact_nt<ET> >
 #undef CGAL_int
 #undef CGAL_To_interval
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LAZY_EXACT_NT_H

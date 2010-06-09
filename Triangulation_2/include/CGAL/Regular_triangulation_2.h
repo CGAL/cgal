@@ -27,7 +27,7 @@
 
 #include <boost/bind.hpp>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template < typename K_ >
 struct Weighted_point_mapper_2 
@@ -2125,6 +2125,6 @@ nearest_power_vertex(const Bare_point& p) const
 }
 
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif // CGAL_REGULAR_TRIANGULATION_2_H

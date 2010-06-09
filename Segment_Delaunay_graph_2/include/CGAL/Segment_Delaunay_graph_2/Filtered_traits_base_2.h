@@ -33,7 +33,7 @@
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Cartesian_converter.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 //-----------------------------------------------------------------------
@@ -451,6 +451,6 @@ public:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_FILTERED_TRAITS_BASE_2_H

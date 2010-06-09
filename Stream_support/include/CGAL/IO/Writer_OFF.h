@@ -26,7 +26,7 @@
 #include <CGAL/IO/File_writer_OFF.h>
 #include <CGAL/IO/Generic_writer.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Pt >
 class Writer_OFF : public Generic_writer<File_writer_OFF,Pt> {
@@ -49,6 +49,6 @@ public:
     ) {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_WRITER_OFF_H //
 // EOF //

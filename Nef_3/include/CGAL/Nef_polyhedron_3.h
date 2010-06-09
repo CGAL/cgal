@@ -88,7 +88,7 @@
 #define CGAL_NEF_DEBUG 11
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename K, typename I, typename M> class Nef_polyhedron_3;
 template <typename K, typename I, typename M> class Nef_polyhedron_3_rep;
@@ -2060,6 +2060,6 @@ extract_boundary() {
   simplify();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_NEF_POLYHEDRON_3_H

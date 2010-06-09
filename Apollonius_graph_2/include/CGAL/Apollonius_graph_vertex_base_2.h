@@ -25,7 +25,7 @@
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/triangulation_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class AGVB2_Iterator>
 struct Apollonius_graph_vertex_base_nested_iterator_traits
@@ -148,6 +148,6 @@ private:
   Site_2 _p;
 };
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif // CGAL_APOLLONIUS_GRAPH_VERTEX_BASE_2_H

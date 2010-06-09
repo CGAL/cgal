@@ -32,7 +32,7 @@
 // We recommend that you use cpp0x::tuple or cpp0x::array instead
 // for new uses.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -275,6 +275,6 @@ operator<(const Quadruple<T1, T2, T3, T4>& x,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_UTILITY_H

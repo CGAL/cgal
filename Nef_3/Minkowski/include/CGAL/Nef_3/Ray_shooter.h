@@ -5,7 +5,7 @@
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename SNC_>
 class Ray_shooter : 
@@ -26,5 +26,5 @@ public Modifier_base<CGAL::SNC_point_locator<CGAL::SNC_decorator<SNC_> > {
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF3_DELEGATED_RAY_SHOOTER_H

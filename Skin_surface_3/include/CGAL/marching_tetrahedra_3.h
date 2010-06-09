@@ -25,7 +25,7 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Marching_tetrahedra_observer_default_3.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 // If TriangulationDataStructure_3 only gets a Cell_handle range
 // it is not possible to derive the Vertex_handle type.
@@ -270,6 +270,6 @@ void marching_tetrahedra_3(
   polyhedron.delegate(builder);
 }
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif // CGAL_MARCHING_TETRAHEDRA_H

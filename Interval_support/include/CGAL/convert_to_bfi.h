@@ -27,7 +27,7 @@
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Cache.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class NTX>
 typename Get_arithmetic_kernel<NTX>::Arithmetic_kernel::Bigfloat_interval
@@ -38,6 +38,6 @@ convert_to_bfi(const NTX& x) {
     return typename CT::Cast()(x);
 }
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif // CGAL_CONVERT_TO_BFI_H

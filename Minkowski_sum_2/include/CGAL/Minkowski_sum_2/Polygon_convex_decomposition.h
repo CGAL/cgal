@@ -21,7 +21,7 @@
 
 #include <CGAL/partition_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Tag_optimal_convex_parition
 {
@@ -125,6 +125,6 @@ private:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

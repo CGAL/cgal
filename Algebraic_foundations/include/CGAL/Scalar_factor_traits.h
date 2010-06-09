@@ -31,7 +31,7 @@
 /*! \file NiX/Scalar_factor_traits.h
  *  \brief Definition of traits class NiX::Scalar_factor_traits.
  */
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \nosubgrouping
  *  \ingroup NiX_Scalar_factor_traits_spec
@@ -157,7 +157,7 @@ scalar_factor(const NT& x,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // NiX_SCALAR_FACTOR_TRAITS_H
 // EOF

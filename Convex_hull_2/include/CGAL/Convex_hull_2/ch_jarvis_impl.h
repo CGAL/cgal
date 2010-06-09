@@ -29,7 +29,7 @@
 #include <algorithm>
 #include <boost/bind.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class ForwardIterator, class OutputIterator, 
           class Point, class Traits>
@@ -114,6 +114,6 @@ ch_jarvis(ForwardIterator first, ForwardIterator last,
   return ch_jarvis_march( first, last, *start, *start, result, ch_traits);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CH_JARVIS_C

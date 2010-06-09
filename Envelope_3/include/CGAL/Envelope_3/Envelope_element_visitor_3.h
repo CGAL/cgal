@@ -36,7 +36,7 @@
 #include <iostream>
 #include <deque>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Return the comparison result of the halfedge's source and target vertices.
 #ifndef HE_COMP_RES
@@ -3239,6 +3239,6 @@ protected:
 
 #undef HE_COMP_RES
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

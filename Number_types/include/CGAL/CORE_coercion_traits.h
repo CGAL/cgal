@@ -34,7 +34,7 @@
 
 //#include <NiX/Coercion_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //CORE internal coercions:
 
@@ -156,7 +156,7 @@ template <> struct Coercion_traits< ::CORE::Expr, CORE::BigFloat >
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::CORE::Expr)
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::CORE::Expr)
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_USE_CORE
 #endif //CGAL_CORE_COERCION_TRAITS_H 1

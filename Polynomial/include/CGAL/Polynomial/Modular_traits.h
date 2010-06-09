@@ -31,7 +31,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Modular_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \ingroup CGAL_Polynomial
  *  \ingroup CGAL_Modular_traits_spec
@@ -73,5 +73,5 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_POLYNOMIAL_MODULAR_TRAITS_TRAITS_H

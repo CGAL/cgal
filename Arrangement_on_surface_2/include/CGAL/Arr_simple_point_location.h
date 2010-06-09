@@ -26,7 +26,7 @@
 
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A class that answers point-location and vertical ray-shooting queries
@@ -164,7 +164,7 @@ protected:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_simple_point_location_impl.h>

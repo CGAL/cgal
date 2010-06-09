@@ -23,7 +23,7 @@
 
 #include <CGAL/Uncertain.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -453,6 +453,6 @@ do_intersect(const Triangle_3<K> &t1,
   return typename K::Do_intersect_3()(t1,t2);
 }
 	
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGLE_3_TRIANGLE_3_DO_INTERSECT_H

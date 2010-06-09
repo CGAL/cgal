@@ -22,7 +22,7 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
@@ -79,6 +79,6 @@ struct Point_accessor
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_SITE_ACCESSORS_H

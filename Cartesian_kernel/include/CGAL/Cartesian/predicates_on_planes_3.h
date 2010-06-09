@@ -26,7 +26,7 @@
 
 #include <CGAL/predicates/kernel_ftC3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class K >
 inline
@@ -47,6 +47,6 @@ equal_plane(const PlaneC3<K> &h, const PlaneC3<K> &p)
 	               p.a(), p.b(), p.c(), p.d());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_PREDICATES_ON_PLANES_3_H

@@ -20,7 +20,7 @@
 //                 Franz Wessendorp
 //                 Kaspar Fischer
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Looks in x_O_v_i which bound is present for variable i and returns
 // the variable's value corresponding to this bound.
@@ -223,6 +223,6 @@ init_w()
   multiply__2D_OxN_O(w.begin());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // ===== EOF ==================================================================

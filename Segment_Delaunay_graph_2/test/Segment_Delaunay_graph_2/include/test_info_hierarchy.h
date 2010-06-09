@@ -6,7 +6,7 @@
 #include "IO/io_aux.h"
 #include "test_info.h"
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class SDG>
 bool test_info_hierarchy(SDG& sdg, const char* fname)
@@ -30,6 +30,6 @@ bool test_info_hierarchy(SDG& sdg, const char* fname)
   return valid;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TEST_INFO_HIERARCHY_H

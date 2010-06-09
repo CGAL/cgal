@@ -31,7 +31,7 @@
 #include <algorithm>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * An auxiliary class for reading an arrangement from an input stream.
@@ -389,6 +389,6 @@ protected:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_ARRANGEMENT_2_READER_H 

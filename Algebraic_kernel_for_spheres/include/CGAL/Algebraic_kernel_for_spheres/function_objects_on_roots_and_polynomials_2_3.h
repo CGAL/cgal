@@ -31,7 +31,7 @@
 #include <CGAL/Algebraic_kernel_for_spheres/internal_functions_on_roots_and_polynomials_2_3.h>
 #include <CGAL/Algebraic_kernel_for_spheres/internal_functions_on_roots_and_polynomial_1_3_and_2_3.h>
 #include <CGAL/Algebraic_kernel_for_spheres/internal_functions_on_roots_and_polynomials_1_3.h>
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace AlgebraicSphereFunctors {
   
@@ -398,6 +398,6 @@ namespace AlgebraicSphereFunctors {
 
 } // namespace AlgebraicSphereFunctors
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ALGEBRAIC_KERNEL_FOR_SPHERES_FUNCTION_OBJECTS_ON_ROOTS_AND_POLYNOMIALS_3_H

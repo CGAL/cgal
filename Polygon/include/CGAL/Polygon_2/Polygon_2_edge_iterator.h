@@ -27,7 +27,7 @@
 #include <iterator>
 #include <CGAL/circulator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Traits_, class Container_> class Polygon_2;
 
@@ -191,6 +191,6 @@ value_type(const Polygon_2_edge_iterator<Traits_,Container_>&)
 // { return a+n; }
 //--------------------------------------------------------------------//
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

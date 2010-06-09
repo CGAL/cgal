@@ -27,7 +27,7 @@
 #include <CGAL/Quotient.h>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Takes an iterator over RT, and make one over FT, by dividing
 // by the last element.
@@ -89,6 +89,6 @@ make_cartesian_const_iterator_end(RT_iterator w)
   return Cartesian_const_iterator_d<RT_iterator>(w, w);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_CONST_ITERATOR_D_H

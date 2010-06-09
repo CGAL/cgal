@@ -31,7 +31,7 @@
 #endif
 #include <CGAL/Homogeneous.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class use_rat_leda_kernel;
 template <>
@@ -186,6 +186,6 @@ compare_xy(const leda_rat_point& p, const leda_rat_point& q)
    if (p.ycoord() < q.ycoord()) return CGAL::SMALLER;
    return CGAL::EQUAL;
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RAT_LEDA_H

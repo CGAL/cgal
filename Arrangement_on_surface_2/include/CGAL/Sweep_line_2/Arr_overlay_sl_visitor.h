@@ -29,7 +29,7 @@
 #include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
 #include <CGAL/Unique_hash_map.h> 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_overlay_sl_visitor
  * A sweep-line visitor for overlaying a "red" arrangement and a "blue"
@@ -1049,6 +1049,6 @@ _create_edge (Subcurve *sc, Halfedge_handle new_he)
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -28,7 +28,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename FT_, typename Kernel_ >
 struct Cartesian_base_no_ref_count
@@ -59,6 +59,6 @@ struct Simple_cartesian
                 Simple_cartesian<FT_> >
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SIMPLE_CARTESIAN_H

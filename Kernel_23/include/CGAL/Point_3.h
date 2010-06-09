@@ -33,7 +33,7 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Point_3 : public R_::Kernel_base::Point_3
@@ -297,6 +297,6 @@ operator>>(std::istream& is, Point_3<R>& p)
   return extract(is, p, typename R::Kernel_tag() );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POINT_3_H

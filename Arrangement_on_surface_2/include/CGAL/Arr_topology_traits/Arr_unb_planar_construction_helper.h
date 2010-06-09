@@ -29,7 +29,7 @@
 #include <CGAL/Sweep_line_empty_visitor.h>
 #include <CGAL/Unique_hash_map.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_unb_planar_construction_helper
  * A helper class for the construction sweep-line visitor, suitable
@@ -331,6 +331,6 @@ before_handle_event (Event* event)
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // returns true, if the point elements in [|first|,|last|) form a 
 // counterclockwise oriented strongly convex polygon. Strongly means, 
@@ -122,7 +122,7 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
                                          Kernel());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Convex_hull_2/convexity_check_2_impl.h>
 

@@ -28,7 +28,7 @@
 #define CGAL_NEF_DEBUG 79
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Handle, class Vector>
 CGAL_MEDIUM_INLINE
@@ -89,6 +89,6 @@ void normal_vector_newell_3( IC first, IC last, Vector& n )
     CGAL_NEF_TRACEN("newell normal vector "<<n);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NORMAL_VECTOR_NEWELL_3_H

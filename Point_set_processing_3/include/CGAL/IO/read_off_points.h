@@ -34,7 +34,7 @@
 #include <sstream>
 #include <string>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 //===================================================================================
@@ -266,6 +266,6 @@ read_off_points(
 /// @endcond
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_READ_OFF_POINTS_H

@@ -35,7 +35,7 @@
 #include <CGAL/Nef_nary_union_3.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #ifdef CGAL_NEF_NARY_UNION_L1_SORT
 template<typename Point_3>
@@ -226,5 +226,5 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   return nary_union.get_union();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_MS3_BIPARTITE_NARY_UNION_SORTED_COMBINED_H

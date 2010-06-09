@@ -28,7 +28,7 @@
 
 #include <CGAL/Arr_topology_traits/Arr_spherical_construction_helper.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_spherical_overlay_helper
  * A helper class for the overlay sweep-line visitor, suitable for the overlay
@@ -185,6 +185,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

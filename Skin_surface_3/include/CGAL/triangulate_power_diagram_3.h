@@ -30,7 +30,7 @@
 
 #include <CGAL/Union_find.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template < 
@@ -784,6 +784,6 @@ triangulate_power_diagram_3(RegularTriangulation_3 const &regular,
   triangulate_power_diagram_3(regular, tmc, observer, verbose);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATE_POWER_DIAGRAM_3_H

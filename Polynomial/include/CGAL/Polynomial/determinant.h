@@ -24,7 +24,7 @@
 #ifndef CGAL_POLYNOMIAL_DETERMINANT_H
 #define CGAL_POLYNOMIAL_DETERMINANT_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #include <CGAL/basic.h>
 
@@ -359,6 +359,6 @@ namespace internal {
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_DETERMINANT_H

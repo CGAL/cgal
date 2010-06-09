@@ -5,7 +5,7 @@
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_S2/SM_walls.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_>
 class SFace_separator : public Modifier_base<typename Nef_::SNC_structure> {
@@ -66,5 +66,5 @@ class SFace_separator : public Modifier_base<typename Nef_::SNC_structure> {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_NEF3_SFACE_SEPARATOR_H

@@ -30,7 +30,7 @@
 #include <CGAL/Handle_for.h>
 #include <boost/type_traits/is_same.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename RT_ >
 class Root_for_circles_2_2 {
@@ -130,6 +130,6 @@ operator>>(std::istream & is, Root_for_circles_2_2<RT> &r)
   return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_ROOT_FOR_CIRCLES_2_2_H

@@ -36,7 +36,7 @@
 #include <map>
 #include <CGAL/array.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 class Dxf_reader_doubles {
@@ -238,6 +238,6 @@ void operator()(std::istream& is, Polygons& polygons, Circles& circles)
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_DXF_READER_DOUBLES_H

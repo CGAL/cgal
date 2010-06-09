@@ -26,7 +26,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/General_polygon_set_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Traits>
 std::ostream & operator<< (std::ostream& os,
@@ -46,6 +46,6 @@ std::ostream & operator<< (std::ostream& os,
   return os;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -25,7 +25,7 @@
 #include<string>
 #include<CGAL/QP_solver/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 enum Quadratic_program_pricing_strategy 
 { 
@@ -132,6 +132,6 @@ std::ostream& operator<< (std::ostream& o,
   return o;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_QP_OPTIONS_H

@@ -23,7 +23,7 @@
 
 #include <CGAL/Circulator_project.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// This class inherits from Circulator_project<> +
@@ -79,6 +79,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_CONVERTIBLE_CIRCULATOR_PROJECT_H

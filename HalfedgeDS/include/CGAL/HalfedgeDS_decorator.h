@@ -33,7 +33,7 @@
 #include <map>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class p_HDS >
 class HalfedgeDS_decorator : public HalfedgeDS_items_decorator<p_HDS> {
@@ -1128,7 +1128,7 @@ inside_out( Tag_true) {
     }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HALFEDGEDS_DECORATOR_H //
 // EOF //

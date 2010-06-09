@@ -24,7 +24,7 @@
 
 #include <CGAL/wmult.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -1093,4 +1093,4 @@ do_intersect(const Plane_3<K> &p,
   return typename K::Do_intersect_3()(p, s);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

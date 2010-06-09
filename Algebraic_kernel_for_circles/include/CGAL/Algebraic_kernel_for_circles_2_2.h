@@ -33,7 +33,7 @@
 
 #include <CGAL/Algebraic_kernel_for_circles/function_objects_on_roots_and_polynomials_2_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
   template< class RT_ >
   struct Algebraic_kernel_for_circles_2_2
@@ -94,6 +94,6 @@ CGAL_BEGIN_NAMESPACE
 
   };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_2_2_H

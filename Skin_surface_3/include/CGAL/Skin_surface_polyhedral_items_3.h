@@ -23,7 +23,7 @@
 #include <CGAL/HalfedgeDS_face_base.h>
 #include <CGAL/Polyhedron_items_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Refs, class SkinSurface3>
 struct Skin_Surface_polyhedral_face : public CGAL::HalfedgeDS_face_base<Refs> {
@@ -44,6 +44,6 @@ struct Skin_surface_polyhedral_items_3 : public Polyhedron_items_3 {
   };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SKIN_SURFACE_POLYHEDRAL_ITEMS_3_H

@@ -32,7 +32,7 @@
 	#define CGAL_TRG_PRINT_DEBUG(expr)
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Locate the arrangement feature containing the given point.
@@ -293,6 +293,6 @@ void Arr_triangulation_point_location<Arrangement_2>
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

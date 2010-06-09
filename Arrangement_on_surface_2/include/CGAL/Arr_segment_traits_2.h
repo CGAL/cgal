@@ -31,7 +31,7 @@
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
 #include <fstream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Kernel_> class Arr_segment_2;
 
@@ -1167,6 +1167,6 @@ InputStream& operator>> (InputStream& is, Arr_segment_2<Kernel>& seg)
   return (is);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -31,7 +31,7 @@
 #include <CGAL/IO/Tee_for_output_iterator.h>
 #include <boost/bind.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
@@ -146,6 +146,6 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   #endif // no postconditions ...
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CH_AKL_TOUSSAINT_C

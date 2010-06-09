@@ -29,7 +29,7 @@
 
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Rational>
 Rational
@@ -89,6 +89,6 @@ to_rational(double x)
     return compose(num,den);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TO_RATIONAL_H

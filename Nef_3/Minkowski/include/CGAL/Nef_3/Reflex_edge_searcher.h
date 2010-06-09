@@ -4,7 +4,7 @@
 #include<CGAL/Nef_3/SNC_decorator.h>
 #include<CGAL/Nef_3/is_reflex_sedge.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_, typename Reflex_vertex_map>
 class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> {
@@ -137,5 +137,5 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
   Reflex_sedge_iterator negative_redges_end() { return neg.end(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF3_REFLEX_EDGE_SEARCHER_H

@@ -22,7 +22,7 @@
 #include <algorithm>
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //---------------------------------------------------------------------------
 //T_Gate : element of the priority queue. A gate is a halfedge and a
@@ -293,6 +293,6 @@ reset_is_visited_map(std::vector<Vertex_const_handle> &vces)
   for (;itb != ite; itb++) is_visited_map[*itb] = false;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

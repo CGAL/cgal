@@ -25,7 +25,7 @@
 
 #include <boost/optional/optional.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class MatrixC33 
@@ -250,7 +250,7 @@ boost::optional< MatrixC33<R> > inverse_matrix ( MatrixC33<R> const& m )
   return rInverse ;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_MATRIXC33_H //
 // EOF //

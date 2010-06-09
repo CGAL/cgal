@@ -29,7 +29,7 @@
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This class is deprecated, but must be kept for backward compatibility.
 //
@@ -705,6 +705,6 @@ random_level()
   return (std::min)(die(), (int)maxlevel)-1;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_HIERARCHY_3_H

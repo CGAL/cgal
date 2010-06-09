@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_hash_function.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 class Edge_hash_function
@@ -43,7 +43,7 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_EDGE_HASH_FUNCTION_H

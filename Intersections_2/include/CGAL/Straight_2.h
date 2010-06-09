@@ -29,7 +29,7 @@
 #include <CGAL/squared_distance_utils.h>
 #include <CGAL/Kernel/global_functions_internal_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -350,7 +350,7 @@ collinear_order(typename K::Point_2 const &pt1, typename K::Point_2 const & pt2)
 
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 

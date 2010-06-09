@@ -28,7 +28,7 @@
 #include <CGAL/Polynomial/misc.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal{
 
@@ -80,6 +80,6 @@ public:
 };
 
 } // namespace internal
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_POLYNOMIAL_DEGREE_H

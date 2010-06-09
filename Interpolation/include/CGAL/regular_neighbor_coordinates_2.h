@@ -26,7 +26,7 @@
 //for definition of class Project_vertex_output_iterator
 #include <CGAL/natural_neighbor_coordinates_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // in this functions, the traits class is defined via the regular
 // triangulation
@@ -412,6 +412,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REGULAR_NEIGHBOR_COORDINATES_2_H

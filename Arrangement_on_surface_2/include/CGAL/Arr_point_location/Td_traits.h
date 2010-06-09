@@ -21,7 +21,7 @@
 
 #include <CGAL/Arr_point_location/Td_X_trapezoid.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Pm_traits_,class X_curve_> class Td_traits : public Pm_traits_
 {
@@ -191,7 +191,7 @@ private:
   static X_curve * CURVE_AT_INFINITY;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Arr_point_location/Td_traits_functions.h>
 

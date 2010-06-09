@@ -30,7 +30,7 @@
 #include <CGAL/Arr_point_location/Td_traits.h>
 #include <CGAL/Arr_observer.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * \class
@@ -381,7 +381,7 @@ protected:
                               const Point_2& p, bool shoot_up) const;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_trapezoid_ric_pl_impl.h>

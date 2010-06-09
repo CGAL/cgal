@@ -25,7 +25,7 @@
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Arr_traits_2/Polyline_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Export a polyline to a window stream 
@@ -37,6 +37,6 @@ Qt_widget & operator<<(Qt_widget & ws, const _Polyline_2<T_SegmentTraits> & cv)
   return ws;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

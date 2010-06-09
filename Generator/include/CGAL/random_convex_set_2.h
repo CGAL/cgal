@@ -32,7 +32,7 @@
 #include <CGAL/Random_convex_set_traits_2.h>
 #include <CGAL/centroid.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class OutputIterator, class Point_generator, class Traits >
 OutputIterator
@@ -119,6 +119,6 @@ random_convex_set_2( int n,
 
 } // random_convex_set_2( n, o, pg, t)
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_RANDOM_CONVEX_SET_2_H)

@@ -24,7 +24,7 @@
 #ifndef CGAL_INTERFACE_CLASSES_H
 #define CGAL_INTERFACE_CLASSES_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R> class Point_d;
 template <class R> class Vector_d;
@@ -37,6 +37,6 @@ template <class R> class Ray_d;
 template <class R> class Line_d;
 template <class R> class Aff_transformation_d;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_INTERFACE_CLASSES_H

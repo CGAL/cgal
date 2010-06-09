@@ -24,7 +24,7 @@
 #include <CGAL/Handle_for.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_> class Sphere_segment_rep 
 { 
@@ -383,5 +383,5 @@ bool do_intersect_internally(const Sphere_circle<R>& c1,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SPHERE_SEGMENT_H

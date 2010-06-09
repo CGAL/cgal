@@ -24,7 +24,7 @@
 #include <CGAL/Random.h>
 #include <ctime>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class implementation (continued)
 // ================================
@@ -78,4 +78,4 @@ Random::restore_state( const Random::State& state)
 // ================
 Random  default_random;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

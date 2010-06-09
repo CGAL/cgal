@@ -26,7 +26,7 @@
 
 #include <CGAL/array.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class PlaneH3
@@ -539,6 +539,6 @@ PlaneH3<R>::to_3d(const typename PlaneH3<R>::Point_2& p)  const
   return hp.transform( transform_to_2d().inverse() );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_PLANEH3_H

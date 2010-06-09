@@ -27,7 +27,7 @@
 #include <CGAL/Kernel/solve.h>
 #include <CGAL/Cartesian/Vector_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Cartesian_internal {
 
@@ -47,6 +47,6 @@ void solve (const VectorC3<R> &v0,
 
 } // namespace Cartesian_internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_CARTESIAN_SOLVE_3_H

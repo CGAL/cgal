@@ -47,7 +47,7 @@
 #define CGAL_NEF3_UNMARKED_EDGE_COLOR 255,236,94
 #define CGAL_NEF3_UNMARKED_FACET_COLOR 249,215,44
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 namespace OGL {
 
 // ----------------------------------------------------------------------------
@@ -935,5 +935,5 @@ public:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_VISUALIZOR_OPENGL_3_H

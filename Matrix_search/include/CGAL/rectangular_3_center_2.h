@@ -29,7 +29,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class ForwardIterator, class OutputIterator,
            class FT, class Traits >
@@ -1507,6 +1507,6 @@ rectangular_3_center_2(
 
 } // rectangular_3_center_2( ... )
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_RECTANGULAR_3_CENTER_2_H)

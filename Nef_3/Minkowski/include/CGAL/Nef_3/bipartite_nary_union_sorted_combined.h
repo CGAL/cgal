@@ -15,7 +15,7 @@
 #include <CGAL/Nef_3/Nary_union_by_small_queue.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #ifdef CGAL_NEF_NARY_UNION_L1_SORT
 template<typename Point_3>
@@ -161,5 +161,5 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   return result;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_BIPARTITE_NARY_UNION_SORTED_COMBINED_H

@@ -267,7 +267,7 @@ QApplication * App;
 #error No traits (TRAITS) specified
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 inline std::ostream & operator<<(std::ostream & os, const Arr::Vertex & vertex)
 {
@@ -275,7 +275,7 @@ inline std::ostream & operator<<(std::ostream & os, const Arr::Vertex & vertex)
   return os;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 /*! Exporter of an arrangement to a window stream */
 inline Window_stream & operator<<(Window_stream & ws, Arr & arr)

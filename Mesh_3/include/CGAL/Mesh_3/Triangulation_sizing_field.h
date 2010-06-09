@@ -32,7 +32,7 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Mesh_3
 {
@@ -251,6 +251,6 @@ interpolate_on_facet_vertices(const Point_3& p, const CCell_handle& cell) const
 } // end namespace Mesh_3
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_3_TRIANGULATION_SIZING_FIELD_H

@@ -29,7 +29,7 @@
 
 #include <string>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Mesh_3 {
 
@@ -542,6 +542,6 @@ private:
 } // end namespace Mesh_3 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_3_LLOYD_MOVE_H

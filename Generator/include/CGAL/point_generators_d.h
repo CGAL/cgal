@@ -28,7 +28,7 @@
 #include <CGAL/iterator.h>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template < class P>
 class Random_points_in_iso_box_d : public Generator_base<P> 
 {
@@ -72,6 +72,6 @@ generate_point()
     creator( N_Random_double_iterator(rdii), N_Random_double_iterator(d));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_POINT_GENERATORS_D_H //
 // EOF //

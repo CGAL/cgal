@@ -32,7 +32,7 @@
 #include <memory>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -593,6 +593,6 @@ void vector<T, Alloc>::insert( iterator position, size_type n, const T& x) {
 
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VECTOR_H //

@@ -23,7 +23,7 @@
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/tags.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
@@ -162,6 +162,6 @@ struct Tag_converter
 
 //CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_TAGS_H

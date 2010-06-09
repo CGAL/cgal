@@ -28,7 +28,7 @@
 #include <cassert>
 
 // These are test functions for the Coercion_traits
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // this test implicit interoperable 
 template< class A, class B, class Type > void test_implicit_interoperable();
@@ -382,4 +382,4 @@ template  <class FROM, class TO>
 void test_explicit_interoperable_from_to(){
     test_explicit_interoperable<FROM,TO,TO>();
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL

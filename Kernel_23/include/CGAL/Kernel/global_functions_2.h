@@ -33,7 +33,7 @@
 #include <CGAL/Kernel/global_functions_internal_2.h>
 #include <CGAL/Kernel/mpl.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class K >
 typename K::Boolean
@@ -992,6 +992,6 @@ y_equal(const Point_2<K> &p, const Point_2<K> &q)
   return internal::y_equal(p, q, K());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_KERNEL_GLOBAL_FUNCTIONS_2_H

@@ -41,7 +41,7 @@
 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \brief <tt>\#include <CGAL/Handle_with_policy.h></tt> for handles with policy
     parameter for reference counting and union-find strategy. Uses 
@@ -1396,6 +1396,6 @@ public:
 
 //@}
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HANDLE_WITH_POLICY_H

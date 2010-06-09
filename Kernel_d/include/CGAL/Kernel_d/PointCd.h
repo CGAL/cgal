@@ -27,7 +27,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel_d/Tuple_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 #define PointCd PointCd2
 
 template <class FT, class LA> class PointCd;
@@ -182,6 +182,6 @@ FT z()  const { return cartesian(2); }
 }; // PointCd
 
 #undef PointCd
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_POINTCDXXX_H 
 //----------------------- end of file ----------------------------------

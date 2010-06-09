@@ -31,7 +31,7 @@
 
 #include "boost/optional.hpp"
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // Note: Tt, Ss, and Dd are here for backwards compatibility, they are
@@ -210,7 +210,7 @@ operator+( D n, const
     return tmp += Dist(n);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CIRCULATOR_H //
 // EOF //

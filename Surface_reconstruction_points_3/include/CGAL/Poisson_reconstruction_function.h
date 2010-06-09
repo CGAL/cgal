@@ -38,7 +38,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// Given a set of 3D points with oriented normals sampled on the boundary of a 3D solid,
@@ -777,6 +777,6 @@ private:
 }; // end of Poisson_reconstruction_function
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POISSON_RECONSTRUCTION_FUNCTION_H

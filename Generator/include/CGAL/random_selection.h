@@ -28,7 +28,7 @@
 #include <iterator>
 #include <CGAL/Random.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class RandomAccessIterator, class Size, class OutputIterator,
           class Random>
@@ -59,6 +59,6 @@ OutputIterator random_selection( RandomAccessIterator first,
     return random_selection( first, last, n, result, default_random);
 }
 
-CGAL_END_NAMESPACE    
+} //namespace CGAL    
 
 #endif // CGAL_RANDOM_SELECTION_H //

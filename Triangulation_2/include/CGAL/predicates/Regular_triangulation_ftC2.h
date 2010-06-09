@@ -24,7 +24,7 @@
 // This file contains the low level cartesian predicates
 // used by the 2D regular triangulation.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class FT>
 Comparison_result
@@ -89,6 +89,6 @@ power_testC2( const FT &px, const FT &py, const FT &pwt,
     return cmpy * sign_of_determinant(dpy, dpz, dqy, dqz);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REGULAR_TRIANGULATION_FTC2_H

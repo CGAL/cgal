@@ -24,7 +24,7 @@
 #include <CGAL/Cartesian.h>
 #include "streamlines_assertions.h"
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // The class  Regular_grid_2 provides a rectangular visualization
 // domain, with a vector field defined on a regular grid, and also a
@@ -221,6 +221,6 @@ Regular_grid_2<StreamLinesTraits_2>::get_integration_step() const
   return 1.0;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

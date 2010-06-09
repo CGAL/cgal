@@ -31,7 +31,7 @@
 #include <algorithm>
 #include <utility>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /* Defines functors:
    - Is_zero
@@ -117,6 +117,6 @@ struct Compare
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NUMBER_UTILS_CLASSES_H

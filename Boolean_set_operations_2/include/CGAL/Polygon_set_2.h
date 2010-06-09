@@ -28,7 +28,7 @@
 
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Kernel,
           typename Containter = std::vector<typename Kernel::Point_2>,
@@ -245,6 +245,6 @@ private:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

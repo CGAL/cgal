@@ -28,7 +28,7 @@
 #include <set>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 //-----------------------------------------------------------------------//
@@ -436,4 +436,4 @@ Orientation orientation_2(ForwardIterator first,
   return traits.orientation_2_object()(*prev, *i, *next);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

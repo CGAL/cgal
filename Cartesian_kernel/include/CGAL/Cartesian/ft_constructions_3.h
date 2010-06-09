@@ -29,7 +29,7 @@
 #include <CGAL/Cartesian/Plane_3.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class K >
 inline
@@ -64,6 +64,6 @@ scaled_distance_to_plane(const PointC3<K> &hp,
                                     p.x(), p.y(), p.z());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_FT_CONSTRUCTIONS_3_H

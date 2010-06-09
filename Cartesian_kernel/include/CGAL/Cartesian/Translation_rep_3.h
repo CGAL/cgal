@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_TRANSLATION_REP_3_H
 #define CGAL_CARTESIAN_TRANSLATION_REP_3_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R >
 class Translation_repC3 : public Aff_transformation_rep_baseC3<R>
@@ -151,6 +151,6 @@ private:
   Vector_3   translationvector_;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_TRANSLATION_REP_3_H

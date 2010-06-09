@@ -43,7 +43,7 @@
 #include <CGAL/Arr_topology_traits/Sign_of_path.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Default constructor.
@@ -5168,6 +5168,6 @@ _are_curves_ordered_cw_around_vertrex (Vertex_const_handle v) const
   return (true);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

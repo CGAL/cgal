@@ -26,7 +26,7 @@
 #include <CGAL/Boolean_set_operations_2/Curve_with_halfedge.h>
 #include <CGAL/Boolean_set_operations_2/Point_with_vertex.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Arrangement_>
 class Gps_agg_curve_data : public Curve_with_halfedge<Arrangement_>
@@ -606,6 +606,6 @@ class Gps_agg_meta_traits :
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

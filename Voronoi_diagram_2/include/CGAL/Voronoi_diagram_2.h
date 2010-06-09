@@ -46,7 +46,7 @@
 
 #include <boost/variant.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //=========================================================================
 //=========================================================================
@@ -821,6 +821,6 @@ std::istream& operator>>(std::istream& is,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_H

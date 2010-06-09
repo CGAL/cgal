@@ -35,7 +35,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/Uncertain.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -473,6 +473,6 @@ intersection(const Segment_2<K> &seg1,
   return Intersect()(seg1, seg2);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

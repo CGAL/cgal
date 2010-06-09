@@ -18,7 +18,7 @@
 #ifndef CGAL_STRAIGHT_SKELETON_CONS_FTC2_H
 #define CGAL_STRAIGHT_SKELETON_CONS_FTC2_H 1
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 namespace CGAL_SS_i
 {
@@ -766,7 +766,7 @@ optional< typename Kernel_traits<Trisegment_2>::Kernel::Point_2 > construct_offs
 
 } // namnepsace CGAIL_SS_i
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_CONS_FTC2_H //
 // EOF //

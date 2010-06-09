@@ -103,7 +103,7 @@ extern "C" {
 #  define CGAL_FPU_HAS_EXCESS_PRECISION
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -410,6 +410,6 @@ inline void force_ieee_double_precision()
 #endif
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_FPU_H

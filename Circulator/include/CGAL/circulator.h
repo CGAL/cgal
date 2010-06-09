@@ -69,7 +69,7 @@
 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class C>
 struct I_Circulator_traits {
@@ -1113,6 +1113,6 @@ operator+( D n, const
     return tmp += Dist(n);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CIRCULATOR_H //

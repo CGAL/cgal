@@ -22,7 +22,7 @@
 #include <CGAL/Minkowski_sum_2/Decomposition_strategy_adapter.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * \class
@@ -81,6 +81,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -32,7 +32,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Object.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -249,6 +249,6 @@ intersection(const Iso_rectangle_2<K> &iso, const Line_2<K> &line)
     return Intersect()(line, iso);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

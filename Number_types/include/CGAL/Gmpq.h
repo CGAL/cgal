@@ -25,7 +25,7 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmp_coercion_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // AST for Gmpq-class
 template <> class Algebraic_structure_traits< Gmpq >
@@ -132,7 +132,7 @@ public:
     };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 //since types are included by Gmp_coercion_traits.h:
 #include <CGAL/Gmpz.h>

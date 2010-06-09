@@ -26,7 +26,7 @@
 #include <fstream>
 #include <cstdio>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * FIG colors.
@@ -1748,6 +1748,6 @@ protected:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -24,7 +24,7 @@
 #ifndef CGAL_MESH_OPTIMIZATION_RETURN_CODE_H
 #define CGAL_MESH_OPTIMIZATION_RETURN_CODE_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 enum Mesh_optimization_return_code
 {
@@ -36,6 +36,6 @@ enum Mesh_optimization_return_code
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_OPTIMIZATION_RETURN_CODE_H

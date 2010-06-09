@@ -25,7 +25,7 @@
 #include <CGAL/Boolean_set_operations_2/Gps_default_traits.h>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /// \name _do_intersect() functions.
 //@{
@@ -202,6 +202,6 @@ void _complement(const Pgn& pgn, Pwh& res)
 
 //@}
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -48,7 +48,7 @@
 #endif
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // #define CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG 1
 
@@ -408,6 +408,6 @@ public:
   friend class CGAL::Arr_sgm_initializer<Self>;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -29,7 +29,7 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
   /** A Site is either a point or a segment or a point defined as the
       intersection of two non-parallel segments (if defined)
@@ -351,6 +351,6 @@ operator<<(Stream& str, Segment_Delaunay_graph_site_2<R>& t)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_SITE_H

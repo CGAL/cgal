@@ -25,7 +25,7 @@
 #include <CGAL/basic.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // EEA computing the normalized gcd
 // Modern Computer Algebra (Hardcover)
@@ -72,6 +72,6 @@ AS extended_euclidean_algorithm(const AS& f, const AS& g, AS& s_, AS& t_){
     return h; 
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // NiX_EXTENDED_EUCLIDEAN_ALGORITHM_H //

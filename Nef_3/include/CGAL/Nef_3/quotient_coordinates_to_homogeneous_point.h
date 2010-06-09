@@ -20,7 +20,7 @@
 #ifndef CGAL_NEF_QUOTIENT_COORDINATES_TO_HOMOGENEOUS_POINT_H
 #define CGAL_NEF_QUOTIENT_COORDINATES_TO_HOMOGENEOUS_POINT_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Homogeneous>
 typename Homogeneous::Point_3
@@ -46,6 +46,6 @@ quotient_coordinates_to_homogeneous_point(
   }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NEF_QUOTIENT_COORDINATES_TO_HOMOGENEOUS_POINT_H

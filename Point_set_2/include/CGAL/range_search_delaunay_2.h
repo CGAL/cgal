@@ -30,7 +30,7 @@
 #include <stack>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // was 
 // std::map<typename Dt::Vertex *,int, std::less<typename Dt::Vertex *> >
@@ -445,6 +445,6 @@ OutputIterator range_search(Dt& delau,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

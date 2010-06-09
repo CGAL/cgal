@@ -26,7 +26,7 @@
  * Arr_landmarks_point_location<Arrangement, Generator> class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Locate the arrangement feature containing the given point.
@@ -1087,6 +1087,6 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
   return (left_res != right_res);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

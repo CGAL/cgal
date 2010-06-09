@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_SCALING_REP_2_H
 #define CGAL_CARTESIAN_SCALING_REP_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R >
 class Scaling_repC2: public Aff_transformation_rep_baseC2<R>
@@ -135,6 +135,6 @@ private:
   FT scalefactor_;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_SCALING_REP_2_H

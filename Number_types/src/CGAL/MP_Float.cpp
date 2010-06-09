@@ -25,7 +25,7 @@
 #include <functional>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 using std::pair;
 
@@ -524,4 +524,4 @@ operator>> (std::istream & is, MP_Float &b)
   return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

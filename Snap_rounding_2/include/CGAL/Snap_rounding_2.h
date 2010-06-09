@@ -32,7 +32,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 enum SEG_Direction {SEG_UP_RIGHT,SEG_UP_LEFT,SEG_DOWN_RIGHT,SEG_DOWN_LEFT,
                 SEG_UP,SEG_DOWN,SEG_LEFT,SEG_RIGHT,SEG_POINT_SEG};
@@ -777,6 +777,6 @@ void snap_rounding_2(InputIterator begin,
 
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

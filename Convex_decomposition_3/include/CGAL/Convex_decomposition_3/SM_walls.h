@@ -23,7 +23,7 @@
 #define CGAL_NEF_DEBUG 227
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename SMap>
 class SM_walls : SM_decorator<SMap> {
@@ -582,5 +582,5 @@ class SM_walls : SM_decorator<SMap> {
   }    
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_CD3_SM_WALLS_H

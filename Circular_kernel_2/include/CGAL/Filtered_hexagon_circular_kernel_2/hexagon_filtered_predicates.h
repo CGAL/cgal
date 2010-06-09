@@ -34,7 +34,7 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Filtered_hexagon_circular_kernel_2/hexagon_primitives.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Hexagon_functors {
 
@@ -703,6 +703,6 @@ class Do_overlap_2
   
 } //Hexagon_functors
 
-CGAL_END_NAMESPACE  
+} //namespace CGAL  
 
 #endif // CGAL_HEXAGON_FILTERED_PREDICATES_H  

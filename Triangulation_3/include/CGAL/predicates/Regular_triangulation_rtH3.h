@@ -25,7 +25,7 @@
 
 #include <CGAL/predicates/Regular_triangulation_ftC3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class RT>
 Oriented_side
@@ -81,6 +81,6 @@ power_testH3(
 // The 2 degenerate are not speed critical, and they are quite boring and error
 // prone to write, so we use the Cartesian version, using FT.
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REGULAR_TRIANGULATION_RTH3_H

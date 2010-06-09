@@ -20,7 +20,7 @@
 #ifndef CGAL_POLYNOMIAL_INTERPOLATE_H
 #define CGAL_POLYNOMIAL_INTERPOLATE_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 namespace internal {
 
 // Class for interpolation of univariate or multivariate polynomials. 
@@ -129,6 +129,6 @@ public:
 };
 
 } // namespace internal
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_INTERPOLATE_H 

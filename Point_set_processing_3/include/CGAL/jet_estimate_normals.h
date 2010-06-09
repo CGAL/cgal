@@ -30,7 +30,7 @@
 #include <iterator>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // ----------------------------------------------------------------------------
@@ -238,6 +238,6 @@ jet_estimate_normals(
 /// @endcond
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_JET_ESTIMATE_NORMALS_H

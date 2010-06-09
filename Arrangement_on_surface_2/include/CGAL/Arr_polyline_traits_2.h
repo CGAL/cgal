@@ -31,7 +31,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Polyline_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class T_SegmentTraits_2>
 class Arr_polyline_traits_2 {
@@ -1114,6 +1114,6 @@ private:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

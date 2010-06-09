@@ -25,7 +25,7 @@
 #ifndef CGAL_CIRCULAR_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
 #define CGAL_CIRCULAR_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // temporary function : where to put it, if we want to keep it ?
 template< class CK>
@@ -189,6 +189,6 @@ namespace CircularFunctors {
 
 } // namespace CircularFunctors
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CIRCULAR_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H

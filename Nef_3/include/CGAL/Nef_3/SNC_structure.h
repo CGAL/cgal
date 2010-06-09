@@ -44,7 +44,7 @@
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename HE>
 struct move_shalfedge_around_facet {
@@ -1493,5 +1493,5 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
   }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_SNC_STRUCTURE_H

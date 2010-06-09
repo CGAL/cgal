@@ -25,7 +25,7 @@
 #include <CGAL/Envelope_3/Envelope_divide_and_conquer_3.h>
 #include <CGAL/Arr_accessor.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Construct the lower envelope of a given set of surfaces.
@@ -124,6 +124,6 @@ upper_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

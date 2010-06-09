@@ -24,7 +24,7 @@
 #ifndef CGAL_POLYNOMIAL_HGDELTA_UPDATE_H
 #define CGAL_POLYNOMIAL_HGDELTA_UPDATE_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This subroutine has been retained here for use in both new files.
 namespace internal {
@@ -47,6 +47,6 @@ namespace internal {
     }
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_HGDELTA_UPDATE_H

@@ -53,7 +53,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal{
 
@@ -207,6 +207,6 @@ hull(Interval interval1, Interval interval2) {
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_INTERVAL_TRAITS_H

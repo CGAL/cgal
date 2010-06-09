@@ -24,7 +24,7 @@
 
 #include <CGAL/ch__test.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template <class InputIterator, class Traits>
 bool
 ch__test(InputIterator first, InputIterator last, const Traits& ch_traits)
@@ -285,6 +285,6 @@ ch__test(InputIterator first, InputIterator last, const Traits& ch_traits,
   }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CH__TEST_IMPL_H

@@ -51,7 +51,7 @@
 #endif
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace OGL {
 
@@ -665,5 +665,5 @@ namespace OGL {
 
 } // namespace OGL
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_OPENGL_HELPER_H

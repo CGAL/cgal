@@ -28,7 +28,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class LineC2
@@ -91,6 +91,6 @@ LineC2<R>::operator!=(const LineC2<R> &l) const
   return ! (*this == l);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_LINE_2_H

@@ -25,7 +25,7 @@
 #include <iterator>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // traverses the range [|first|,|last|). After execution, the value of |n| is
@@ -206,7 +206,7 @@ ch_w_point( ForwardIterator first, ForwardIterator last, ForwardIterator& w)
     ch_w_point(first, last, w, Kernel());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Convex_hull_2/ch_selected_extreme_points_2_impl.h>
 

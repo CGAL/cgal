@@ -28,7 +28,7 @@
 #include <CGAL/array.h>
 #include <CGAL/constant.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class VectorC3
@@ -259,6 +259,6 @@ VectorC3<R>::direction() const
   return Direction_3(*this);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_VECTOR_3_H

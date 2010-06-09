@@ -29,7 +29,7 @@
 #include <iostream>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class HDS>
 class Polyhedron_scan_OFF :  public Modifier_base<HDS> {
@@ -138,6 +138,6 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
     B.end_surface();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_POLYHEDRON_SCAN_OFF_H //
 // EOF //

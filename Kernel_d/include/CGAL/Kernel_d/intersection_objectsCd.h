@@ -27,7 +27,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Kernel_d/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Manpage{Line_line_intersectionCd}{R}{intersecting two lines}}*/
 
@@ -136,7 +136,7 @@ not degenerate.}*/
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Kernel_d/intersection_objects_d.h>
 

@@ -25,7 +25,7 @@
  * class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Locate the arrangement feature containing the given point.
@@ -506,6 +506,6 @@ Arr_simple_point_location<Arrangement>::_first_around_vertex
     return (top_right->twin());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -36,7 +36,7 @@
 #include <CGAL/Interval_traits.h>
 #include <CGAL/Bigfloat_interval_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <> class Algebraic_structure_traits< Gmpfr_interval >
   : public Algebraic_structure_traits_base < Gmpfr_interval, 
@@ -332,5 +332,5 @@ struct Coercion_traits<CGAL::Gmpq,CGAL::Gmpfr_interval>
 // lower GMP types:
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(Gmpfr,Gmpfr_interval)
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //  CGAL_GMPFR_INTERVAL_H

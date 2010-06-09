@@ -71,7 +71,7 @@ void check_result_type(CGAL::Null_functor, ResultType){}
   typedef typename AST::Kth_root Kth_root;                     \
   typedef typename AST::Root_of Root_of;
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 	
 template< class  AS  >
 bool test_equality_epsilon( const  AS & a,
@@ -918,6 +918,6 @@ void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {
             !(::boost::is_same<Is_numerical_sensitive, CGAL::Null_tag>::value));
 }
   
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TEST_ALGEBRAIC_STRUCTURE_H

@@ -19,7 +19,7 @@
 #include <CGAL/Triangulation_euclidean_traits_xy_3.h>
 #include <CGAL/intersections.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Homogeneous_tag;
 class Cartesian_tag;
@@ -141,5 +141,5 @@ struct Exact_triangulation_euclidean_traits_xy_3
       { return Intersect_2(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF3_EXACT_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H

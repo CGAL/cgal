@@ -26,7 +26,7 @@
  * Member-function definitions of the Sweep_line_2 class-template.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Initialize the data structures for the sweep-line algorithm.
@@ -889,6 +889,6 @@ _fix_finished_overlap_subcurve (Subcurve* sc)
   _fix_finished_overlap_subcurve(orig_sc_2);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

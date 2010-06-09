@@ -24,7 +24,7 @@
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <CGAL/Polyhedron_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Polyhedron_writer_geomview {
     Geomview_stream*  out;
@@ -75,7 +75,7 @@ operator<<( Geomview_stream &gv,
     return gv;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_POLYHEDRON_GEOMVIEW_OSTREAM_H //
 // EOF //

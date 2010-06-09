@@ -25,7 +25,7 @@
  * Arr_spherical_topology_traits_2<GeomTraits> class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \brief constructs default */
 template <class GeomTraits, class Dcel>
@@ -931,6 +931,6 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
   return (counter == 1);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

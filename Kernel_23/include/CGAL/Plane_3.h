@@ -29,7 +29,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Plane_3 : public R_::Kernel_base::Plane_3
@@ -275,6 +275,6 @@ operator>>(std::istream &is, Plane_3<R> &p)
     return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PLANE_3_H

@@ -28,7 +28,7 @@
 #  include <CGAL/Kernel_d/Interface_classes.h>
 #  include <CGAL/Kernel_d/Point_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class declaration
 // =================
@@ -61,7 +61,7 @@ class _Construct_point_d {
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_OPTIMISATION_CONSTRUCT_POINT_D_H
 

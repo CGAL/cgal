@@ -34,7 +34,7 @@
 
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class StreamLinesTraits_2>
 class Triangular_field_2
@@ -222,6 +222,6 @@ Triangular_field_2<StreamLinesTraits_2>::get_integration_step() const
   return 1.0;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

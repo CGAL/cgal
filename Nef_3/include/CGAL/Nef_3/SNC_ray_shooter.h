@@ -41,7 +41,7 @@
 #define CGAL_NEF_DEBUG 37
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // ----------------------------------------------------------------------------
 // SNC_ray_shooting
@@ -219,6 +219,6 @@ public:
 
 }; // SNC_ray_shooter
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_SNC_RAY_SHOOTER_H

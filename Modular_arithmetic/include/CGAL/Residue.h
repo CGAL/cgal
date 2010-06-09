@@ -31,7 +31,7 @@
 #include <CGAL/Modular_arithmetic/Residue_type.h>
 #include <CGAL/Coercion_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /*! \brief Specialization of CGAL::NT_traits for \c Residue, which is a model
@@ -49,7 +49,7 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,CGAL::Residue)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int  ,CGAL::Residue)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long ,CGAL::Residue)
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //#ifnedef CGAL_RESIDUE_H 1
  

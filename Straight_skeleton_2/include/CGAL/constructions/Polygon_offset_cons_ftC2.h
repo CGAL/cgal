@@ -20,7 +20,7 @@
 
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i
 {
@@ -187,7 +187,7 @@ optional< typename Kernel_traits<Trisegment_2>::Kernel::Point_2 > construct_offs
 
 } // namespace CGAL_SS_i
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYGON_OFFSET_CONS_FTC2_H //
 // EOF //

@@ -31,7 +31,7 @@
 #include <LEDA/graphics/color.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 static int frame_default = 100;
 
 template <typename CIRC>
@@ -116,6 +116,6 @@ ps_file& operator<<(ps_file& PS, const Nef_polyhedron_2<T>& P)
   return PS;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NEF_POLYHEDRON_2_PS_STREAM_H

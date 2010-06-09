@@ -29,7 +29,7 @@
 #include <CGAL/intersections.h> 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Auxiliary classes and functions to make polyhedron_cut_plane_3 work.
 // See below for the implementations of polyhedron_cut_plane_3.
@@ -147,6 +147,6 @@ polyhedron_cut_plane_3( Poly& poly,
     return polyhedron_cut_plane_3( poly, h, plane, Kernel());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_POLYHEDRON_CUT_PLANE_3_H //
 // EOF //

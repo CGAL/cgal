@@ -23,7 +23,7 @@
 
 #ifndef CGAL_VECTORHD_C
 #define CGAL_VECTORHD_C
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 #define PointHd PointHd2
 
 template <class RT,class LA>
@@ -66,5 +66,5 @@ std::ostream& operator<<(std::ostream& O, const VectorHd<RT,LA>& v)
 { v.ptr()->print(O,"VectorHd"); return O; } 
 
 #undef PointHd
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_VECTORHD_C

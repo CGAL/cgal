@@ -23,7 +23,7 @@
 #include <CGAL/Minkowski_sum_3/bipartite_nary_union_sorted_combined.h> 
 #include <CGAL/Is_extended_kernel.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_polyhedron_3>
 Nef_polyhedron_3 
@@ -58,5 +58,5 @@ minkowski_sum_3(Nef_polyhedron_3& N0, Nef_polyhedron_3& N1)
   return result;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_MINKOWSKI_SUM_3_H

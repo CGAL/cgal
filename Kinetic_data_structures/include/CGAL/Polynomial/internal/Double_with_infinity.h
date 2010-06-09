@@ -81,12 +81,12 @@ namespace std {
 }
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 inline double to_double(CGAL_POLYNOMIAL_NS::internal::Double_with_infinity d) {
   return to_double(static_cast<double>(d));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
   
 #endif

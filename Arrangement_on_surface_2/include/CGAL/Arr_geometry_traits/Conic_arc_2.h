@@ -30,7 +30,7 @@
 
 #include <ostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /*!
@@ -1864,6 +1864,6 @@ operator<< (std::ostream& os,
   return (os);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -28,7 +28,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Counting_iterator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Circ, class E>
 class HDS_in_halfedge_circulator : public Circ
@@ -267,6 +267,6 @@ public :
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_BOOST_GRAPH_GRAPH_TRAITS_HALFEDGEDS_H

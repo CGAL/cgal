@@ -23,7 +23,7 @@
 #include <CGAL/Minkowski_sum_2/Offset_conv_2.h>
 #include <CGAL/Minkowski_sum_2/Offset_decomp_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Compute the offset of a given simple polygon by a given radius,
@@ -160,6 +160,6 @@ inset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
   return (oi);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

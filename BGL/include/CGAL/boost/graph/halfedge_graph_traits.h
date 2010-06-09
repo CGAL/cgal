@@ -23,10 +23,10 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class T> struct halfedge_graph_traits ;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_BOOST_GRAPH_HALFEDGE_GRAPH_TRAITS_H

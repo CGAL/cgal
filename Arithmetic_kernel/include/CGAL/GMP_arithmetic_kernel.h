@@ -44,7 +44,7 @@
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Gmpfi.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The GMP set of exact number types
@@ -74,7 +74,7 @@ struct Get_arithmetic_kernel<Gmpfi>{
   typedef GMP_arithmetic_kernel Arithmetic_kernel;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_USE_MPFI
 #endif //CGAL_USE_GMP  

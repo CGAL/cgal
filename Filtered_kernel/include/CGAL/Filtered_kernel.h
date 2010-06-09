@@ -45,7 +45,7 @@
 //   so maybe they should not be passed as template parameter, but use a
 //   traits-like mechanism ?
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // CK = eventually rebound construction kernel (gets Point_2 from).
 // Exact_kernel = exact kernel called when needed by the filter.
@@ -130,6 +130,6 @@ struct Filtered_kernel
 	       UseStaticFilters >
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_FILTERED_KERNEL_H

@@ -36,7 +36,7 @@
 #  pragma warning(disable:4355) // complaint about using 'this' to
 #endif                          // initialize a member
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Gt, class Tds_ = Default >
 class Regular_triangulation_3
@@ -1446,7 +1446,7 @@ is_valid(bool verbose, int level) const
   return true;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

@@ -26,7 +26,7 @@
 #include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /////////// MODULAR_TRAITS BEGIN
 
@@ -78,6 +78,6 @@ public:
 
 /////////// MODULAR_TRAITS END
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

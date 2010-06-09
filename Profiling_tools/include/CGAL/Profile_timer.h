@@ -40,7 +40,7 @@
 #include <string>
 #include <CGAL/Timer.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Profile_timer
 {
@@ -75,6 +75,6 @@ private:
 #  define CGAL_TIME_PROFILER(NAME)
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PROFILE_TIMER_H

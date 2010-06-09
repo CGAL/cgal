@@ -50,7 +50,7 @@
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_overlay.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_initializer_visitor.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  */
@@ -817,6 +817,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

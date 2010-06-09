@@ -23,7 +23,7 @@
 #include <CGAL/Skin_surface_refinement_policy_3.h>
 #include <CGAL/Polyhedron_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class UnionOfBalls_3, class Polyhedron_3>
 void subdivide_union_of_balls_mesh_3(
@@ -36,6 +36,6 @@ void subdivide_union_of_balls_mesh_3(
   }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SUBDIVIDE_UNION_OF_BALLS_MESH_3_H

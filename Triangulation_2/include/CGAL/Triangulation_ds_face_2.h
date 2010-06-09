@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_utils_2.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template < class Fb >
 class  Triangulation_ds_face_2
@@ -124,6 +124,6 @@ is_valid(bool verbose, int level) const
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRIANGULATION_DS_FACE_2_H

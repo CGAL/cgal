@@ -28,7 +28,7 @@
 #include <CGAL/Conic_misc.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class Optimisation_ellipse_2;
@@ -303,7 +303,7 @@ std::ostream& operator << ( std::ostream& os, const Conic_2<R_>& c)
 }
 #endif // CGAL_NO_OSTREAM_INSERT_CONIC_2
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONIC_2_H
 

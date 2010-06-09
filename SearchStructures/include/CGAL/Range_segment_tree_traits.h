@@ -27,7 +27,7 @@
 #include <CGAL/predicates_on_points_3.h>
 #include <utility>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template<class Key_1>
@@ -382,5 +382,5 @@ class Range_segment_tree_set_traits_2{
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_RANGE_SEGMENT_TREE_TRAITS_H

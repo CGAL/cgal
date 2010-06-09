@@ -25,7 +25,7 @@
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Extended_tag, typename Kernel> class Bounding_box_3;
 
@@ -92,5 +92,5 @@ public:
   }	  
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_BOUNDING_BOX_3_H

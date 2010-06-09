@@ -24,7 +24,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Moptions outfile=PMDecorator.man }*/
 /*{\Msubst 
@@ -902,6 +902,6 @@ clone_skeleton(const HDS& H, const LINKDA& L) const
   }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_PM_DECORATOR_H

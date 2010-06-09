@@ -31,7 +31,7 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Sphere_3 : public R_::Kernel_base::Sphere_3
@@ -344,6 +344,6 @@ operator>>(std::istream& is, Sphere_3<R>& c)
   return extract(is, c, typename R::Kernel_tag() );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SPHERE_3_H

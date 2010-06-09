@@ -54,7 +54,7 @@
   typedef typename Base::D_iterator D_iterator;\
   typedef typename Base::C_iterator C_iterator;\
   typedef typename Base::C_entry C_entry
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // default iterator types to used to make linear / nonnegative models
 // conform to QuadraticProgramInterface
@@ -1543,6 +1543,6 @@ private:
   
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_QP_MODELS_H

@@ -29,7 +29,7 @@
 #include <CGAL/Homogeneous/PointH2.h>
 #include <CGAL/Homogeneous/LineH2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
@@ -70,6 +70,6 @@ squared_distance( const PointH2<R>& p, const PointH2<R>& q )
   return FT( sq_dist_numerator ) / FT( sq_dist_denominator );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_BASIC_CONSTRUCTIONSH2_H

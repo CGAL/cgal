@@ -20,7 +20,7 @@
 // includes
 #  include <CGAL/Optimisation/assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class implementation (continued)
 // ================================
@@ -93,6 +93,6 @@ operator >> ( std::istream& is, CGAL::Optimisation_circle_2<K_>& c)
     return( is);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // ===== EOF ==================================================================

@@ -27,7 +27,7 @@
 #include <CGAL/basic.h>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Writer>
 class I_Generic_writer_vertex_proxy {
@@ -163,6 +163,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_GENERIC_WRITER_H //
 // EOF //

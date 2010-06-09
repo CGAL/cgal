@@ -29,7 +29,7 @@
 #include <iostream>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class File_writer_gocad {
     int m_vertex_index;
@@ -77,6 +77,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_FILE_WRITER_GOCAD_H //
 // EOF //

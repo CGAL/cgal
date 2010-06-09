@@ -25,7 +25,7 @@
 #include <iostream>
 #include <CGAL/IO/File_writer_VRML_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 void
 File_writer_VRML_2::
@@ -70,5 +70,5 @@ write_footer() const {
              "        } #Group" << std::endl;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 // EOF //

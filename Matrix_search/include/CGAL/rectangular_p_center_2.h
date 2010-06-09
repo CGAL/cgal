@@ -28,7 +28,7 @@
 #include <CGAL/Rectangular_p_center_traits_2.h>
 #include <CGAL/Cartesian_matrix.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Operation,
            class RandomAccessIC_row,
@@ -393,6 +393,6 @@ rectangular_p_center_2(ForwardIterator f,
   return rectangular_p_center_2(f, l, o, r, p, t);
 } // rectangular_p_center_2( ... )
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_RECTANGULAR_P_CENTER_2_H)

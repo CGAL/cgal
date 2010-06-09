@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <limits>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Box_intersection_d {
 
@@ -59,7 +59,7 @@ struct box_limits<double> {
 } // end namespace Box_intersection_d
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif

@@ -33,7 +33,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class HANDLE>
 struct _Less_handle
@@ -467,6 +467,6 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
   return (oi);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

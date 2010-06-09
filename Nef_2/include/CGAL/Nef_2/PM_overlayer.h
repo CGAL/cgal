@@ -33,7 +33,7 @@
 #define LEDA_MEMORY(t) 
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename PMD, typename I, typename DA>
 struct PMO_from_segs {
@@ -881,5 +881,5 @@ void assert_type_precondition() const
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_PM_OVERLAYER_H

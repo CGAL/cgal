@@ -27,7 +27,7 @@
 #include <list>
 using std::list; // to avoid compiler crash on MSVC++
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*=======================================================================
  * Kdtree_interface -
@@ -1054,6 +1054,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  /* CGAL_KDTREE_D_H */

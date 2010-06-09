@@ -28,7 +28,7 @@
 #include <CGAL/Nef_2/iterator_tools.h>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*
 template <typename HE>
@@ -102,6 +102,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SM_LIST_H

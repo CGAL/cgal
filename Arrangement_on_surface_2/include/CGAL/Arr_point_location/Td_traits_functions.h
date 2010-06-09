@@ -20,7 +20,7 @@
 #include <CGAL/Arr_point_location/Td_traits.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Traits,class X_curve_plus>
 const typename Td_traits<Traits,X_curve_plus>::Point&
@@ -76,4 +76,4 @@ template <class Traits,class X_curve_plus>
 typename Td_traits<Traits,X_curve_plus>::X_curve *
 Td_traits<Traits,X_curve_plus>::CURVE_AT_INFINITY = 0;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

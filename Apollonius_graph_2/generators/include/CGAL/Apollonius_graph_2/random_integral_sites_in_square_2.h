@@ -4,7 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/random_integer.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // creates a random site with x, y in [-M,M]x[-M,M]
 // where M = 2^b - 1 and r in [0,R], R = 2^B - 1
@@ -49,6 +49,6 @@ private:
   Random r_;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_RANDOM_INTEGRAL_SITES_IN_SQUARE_2_H

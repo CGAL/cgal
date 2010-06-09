@@ -37,7 +37,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \struct Integer_hash_function
  * An auxiliary hash functor for integers.
@@ -1062,6 +1062,6 @@ _map_new_halfedge (unsigned int i, Halfedge_handle he)
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

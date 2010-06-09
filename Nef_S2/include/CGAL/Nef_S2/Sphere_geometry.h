@@ -29,7 +29,7 @@
 #define CGAL_NEF_DEBUG 113
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R> class Sphere_point;
 template <class R> class Sphere_segment;
@@ -37,7 +37,7 @@ template <class R> class Sphere_triangle;
 template <class R> class Sphere_circle;
 template <class R> class Sphere_direction;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Nef_S2/Sphere_point.h>
 #include <CGAL/Nef_S2/Sphere_circle.h>
@@ -46,7 +46,7 @@ CGAL_END_NAMESPACE
 #include <CGAL/Nef_S2/Sphere_triangle.h>
 #include <CGAL/Nef_S2/sphere_predicates.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename R_>
 struct Positive_halfsphere_geometry {
@@ -255,5 +255,5 @@ get_negative_halfsphere_geometry(int a) const {
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SPHERE_GEOMETRY_H

@@ -29,7 +29,7 @@
 #include <vector>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #define NEWTON
 
@@ -1236,7 +1236,7 @@ struct Updatable_Delaunay_triangulation_2 {
   typename KDel::Handle kdel_;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif
 #undef CGAL_UD_DEBUG

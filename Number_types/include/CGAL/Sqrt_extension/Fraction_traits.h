@@ -24,7 +24,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 
@@ -229,6 +229,6 @@ class Cofraction_traits<Sqrt_extension<Coeff,Root> >
 };
 */
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

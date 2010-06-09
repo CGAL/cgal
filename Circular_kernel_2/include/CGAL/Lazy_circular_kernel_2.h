@@ -41,7 +41,7 @@
 #include <CGAL/Kernel/Type_mapper.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Some specializations (move to another file ?)
 template < typename K1, typename K2 >
@@ -210,6 +210,6 @@ struct Lazy_circular_kernel_2
              Lazy_circular_kernel_2<EK, AK, E2A> >
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LAZY_CIRCULAR_KERNEL_H

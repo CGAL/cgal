@@ -25,7 +25,7 @@
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Gt, class Vb = Triangulation_vertex_base_3<Gt> >
 class Alpha_shape_vertex_base_3
@@ -69,6 +69,6 @@ public:
   void set_alpha_status(Alpha_status_iterator as) {_as= as;}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ALPHA_SHAPE_VERTEX_BASE_3_H

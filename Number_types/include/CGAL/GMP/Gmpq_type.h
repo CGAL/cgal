@@ -38,7 +38,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Profile_counter.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Wrapper around mpq_t to get the destructor call mpq_clear.
 // Contrary to mpz_t, there are no mpq_init_set_* functions,
@@ -536,6 +536,6 @@ inline Gmpq max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpq& x,const Gmpq& y){
   return (x>=y)?x:y;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_GMPQ_TYPE_H

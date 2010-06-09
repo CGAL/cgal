@@ -31,7 +31,7 @@
 #define CGAL_NEF_DEBUG 223
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class K, class Nef, class Mark_ = PointMark<K> >
@@ -1223,5 +1223,5 @@ std::ostream& operator<<(std::ostream& out, const CGAL::Gaussian_map<Kernel, Nef
   return out;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_MS3_GAUSSIAN_MAP

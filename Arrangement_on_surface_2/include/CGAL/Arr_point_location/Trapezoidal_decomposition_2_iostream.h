@@ -23,7 +23,7 @@
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Traits>
 std::ostream& operator<<(
@@ -270,6 +270,6 @@ std::ostream& operator<<(std::ostream &out,const Td_X_trapezoid<Traits>& t)
   return out;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRAPEZOIDAL_DECOMPOSITION_2_IOSTREAM_H

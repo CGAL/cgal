@@ -24,7 +24,7 @@
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Parameterizer_traits_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 //
@@ -362,6 +362,6 @@ protected:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_CIRCULARBORDERPARAMETERIZER_3_H

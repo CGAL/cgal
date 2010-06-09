@@ -24,7 +24,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template< class COEFF, class ROOT >
 class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
@@ -88,6 +88,6 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
         }
     };
 };
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

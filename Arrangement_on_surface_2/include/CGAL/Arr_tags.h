@@ -34,7 +34,7 @@
  * Definition of the tags for the arrangement package.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Arr_boundary_side_tag {};
 struct Arr_oblivious_side_tag : public virtual Arr_boundary_side_tag {};
@@ -431,6 +431,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

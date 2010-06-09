@@ -29,7 +29,7 @@
 #include <CGAL/Nef_2/debug.h>
 #include <CGAL/Nef_2/Line_to_epoint.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class T> class Bounded_kernel;
 
@@ -443,5 +443,5 @@ public:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_BOUNDED_KERNEL_H

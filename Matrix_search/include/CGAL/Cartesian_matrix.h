@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Operation,
            class RandomAccessIC_row,
@@ -98,7 +98,7 @@ cartesian_matrix( RandomAccessIC_row r_f,
   ( r_f, r_l, c_f, c_l, o);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_CARTESIAN_MATRIX_H)
 // ----------------------------------------------------------------------------

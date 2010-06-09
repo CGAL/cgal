@@ -27,7 +27,7 @@
 #include <cmath>
 #include <CGAL/Handle_for_virtual.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Identity_transformation;
 template < class R > class Aff_transformation_rep_baseC2;
@@ -36,14 +36,14 @@ template < class R > class Translation_repC2;
 template < class R > class Rotation_repC2;
 template < class R > class Scaling_repC2;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Cartesian/Aff_transformation_rep_2.h>
 #include <CGAL/Cartesian/Translation_rep_2.h>
 #include <CGAL/Cartesian/Rotation_rep_2.h>
 #include <CGAL/Cartesian/Scaling_rep_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class Aff_transformationC2
@@ -196,6 +196,6 @@ operator<<(std::ostream& os, const Aff_transformationC2<R>& t)
 }
 #endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC2
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_AFF_TRANSFORMATION_2_H

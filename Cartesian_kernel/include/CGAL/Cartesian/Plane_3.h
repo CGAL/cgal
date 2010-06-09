@@ -28,7 +28,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Cartesian/solve_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class PlaneC3
@@ -304,6 +304,6 @@ is_degenerate() const
          CGAL_NTS is_zero(c());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_PLANE_3_H

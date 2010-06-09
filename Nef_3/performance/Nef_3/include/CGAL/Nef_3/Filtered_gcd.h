@@ -6,7 +6,7 @@
 #undef _DEBUG
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*
 template <typename NT> 
@@ -25,5 +25,5 @@ Lazy_exact_nt<NT> gcd(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b) {
   return Lazy_exact_nt<NT>(CGAL_NTS gcd(nta,ntb));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_FILTERED_GCD_H

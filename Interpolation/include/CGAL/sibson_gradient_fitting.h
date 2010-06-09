@@ -24,7 +24,7 @@
 #include <CGAL/natural_neighbor_coordinates_2.h>
 #include <CGAL/regular_neighbor_coordinates_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class ForwardIterator, class Functor, class Traits>
 typename Traits::Vector_d
@@ -146,6 +146,6 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
      traits);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SIBSON_GRADIENT_FITTING_H

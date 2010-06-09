@@ -28,7 +28,7 @@
 
 #include <CGAL/make_union_of_balls_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class WP_iterator,
 	  class Polyhedron_3>
@@ -59,6 +59,6 @@ void make_skin_surface_mesh_3(Polyhedron_3 &p,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MAKE_SKIN_SURFACE_MESH_3_H

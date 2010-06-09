@@ -32,7 +32,7 @@
   #include <boost/property_map.hpp>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// The Point_with_normal_3 class represents a 3D point with:
@@ -170,7 +170,7 @@ make_normal_of_point_with_normal_pmap(Iter)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif //CGAL_POINT_WITH_NORMAL_3_H

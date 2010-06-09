@@ -25,7 +25,7 @@
 #  include <CGAL/basic_constructions_2.h>
 #  include <CGAL/squared_distance_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class declaration
 // =================
@@ -222,7 +222,7 @@ template < class K_ >
 std::istream&
 operator >> ( std::istream&, CGAL::Optimisation_circle_2<K_>&);
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Min_circle_2/Optimisation_circle_2_impl.h>
 

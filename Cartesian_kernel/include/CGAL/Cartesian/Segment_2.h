@@ -27,7 +27,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template < class R_ >
 class SegmentC2
 {
@@ -63,6 +63,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_SEGMENT_2_H

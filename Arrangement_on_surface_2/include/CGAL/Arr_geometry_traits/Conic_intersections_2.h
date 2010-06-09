@@ -24,7 +24,7 @@
  * Implementation of functions related to the intersection of conics curves.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Compute the roots of the resultants of the two bivariate polynomials:
@@ -229,6 +229,6 @@ int _compute_resultant_roots (Nt_traits& nt_traits,
   return (xs_end - xs);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

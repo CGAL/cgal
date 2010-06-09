@@ -25,7 +25,7 @@
 #include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template <class ForwardIterator, class Traits>
 void
 ch_nswe_point( ForwardIterator first, ForwardIterator last,
@@ -150,6 +150,6 @@ ch_w_point( ForwardIterator first, ForwardIterator last,
     ++first;
  }
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CH_SELECTED_EXTREME_POINTS_2_C

@@ -36,7 +36,7 @@
 #define CGAL_NEF_DEBUG 67
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Map_>
 class SM_const_decorator { 
@@ -411,5 +411,5 @@ number_of_connected_components() const
   return comp_num;   
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_SM_CONST_DECORATOR_H

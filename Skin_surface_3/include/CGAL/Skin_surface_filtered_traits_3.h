@@ -27,7 +27,7 @@
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Filtered_predicate.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template <class K>
 class Skin_surface_filtered_traits_3
@@ -66,5 +66,5 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_SKIN_SURFACE_FILTERED_TRAITS_3_H

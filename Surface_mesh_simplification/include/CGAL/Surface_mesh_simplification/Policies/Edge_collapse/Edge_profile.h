@@ -23,7 +23,7 @@
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Surface_mesh_simplification
 {
@@ -185,7 +185,7 @@ private:
   
 } // namespace Surface_mesh_simplification
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile_impl.h>
 

@@ -22,7 +22,7 @@
 
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Polygon_>
 class General_polygon_with_holes_2
@@ -192,6 +192,6 @@ std::istream &operator>>(std::istream &is, General_polygon_with_holes_2<Polygon_
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

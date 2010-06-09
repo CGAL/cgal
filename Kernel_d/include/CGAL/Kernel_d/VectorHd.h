@@ -30,7 +30,7 @@
 #include <CGAL/Kernel_d/PointHd.h>
 #include <CGAL/Kernel_d/Aff_transformationHd.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 #define PointHd PointHd2
 
 template <class RT, class LA> class VectorHd;
@@ -417,6 +417,6 @@ $O(|v.dimension()|)$.}*/
 
 
 #undef PointHd
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_VECTORHD_H 
 //----------------------- end of file ----------------------------------

@@ -30,7 +30,7 @@
 
 #include <algorithm>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -76,6 +76,6 @@ void hilbert_sort (RandomAccessIterator begin, RandomAccessIterator end)
     hilbert_sort (begin, end, Kernel());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif//CGAL_HILBERT_SORT_H

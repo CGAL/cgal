@@ -29,7 +29,7 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/Object.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -116,6 +116,6 @@ intersection(const Point_2<K> &pt, const Segment_2<K> &seg)
     return Intersect()(pt, seg);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

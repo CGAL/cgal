@@ -26,7 +26,7 @@
 #include <CGAL/Voronoi_diagram_2/Identity_rejectors.h>
 #include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template<class DG, class AT>
@@ -42,7 +42,7 @@ struct Identity_policy_2
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_IDENTITY_POLICY_2_H

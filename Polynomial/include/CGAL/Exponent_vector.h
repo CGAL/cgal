@@ -30,7 +30,7 @@
 #include <CGAL/assertions.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 class Exponent_vector :  
@@ -160,7 +160,7 @@ inline std::ostream& operator << (std::ostream& os, const Exponent_vector& ev) {
   return os;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 namespace std{
 template <> inline 

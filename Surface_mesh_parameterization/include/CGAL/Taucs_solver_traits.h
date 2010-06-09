@@ -41,7 +41,7 @@
 #include <cfloat>
 #include <climits>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// The class Taucs_symmetric_solver_traits
@@ -329,6 +329,6 @@ private:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TAUCS_SOLVER_TRAITS_H

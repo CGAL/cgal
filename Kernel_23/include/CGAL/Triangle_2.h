@@ -30,7 +30,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Triangle_2 : public R_::Kernel_base::Triangle_2
@@ -205,6 +205,6 @@ operator>>(std::istream &is, Triangle_2<R> &t)
     return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGLE_2_H

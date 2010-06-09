@@ -23,7 +23,7 @@
 
 #include <CGAL/IO/File_writer_inventor.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 void
 File_writer_inventor::
@@ -59,5 +59,5 @@ write_footer() const {
              "} #Separator" << std::endl;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 // EOF //

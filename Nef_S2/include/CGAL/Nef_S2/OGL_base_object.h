@@ -23,7 +23,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace OGL {
 
@@ -44,5 +44,5 @@ namespace OGL {
   };
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_OGL_BASE_OBJECT_H

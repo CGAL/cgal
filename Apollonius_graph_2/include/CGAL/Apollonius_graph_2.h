@@ -47,7 +47,7 @@
 #include <CGAL/Concatenate_iterator.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 namespace internal {
@@ -1328,7 +1328,7 @@ std::istream& operator>>(std::istream& is,
   return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Apollonius_graph_2/Apollonius_graph_2_impl.h>
 

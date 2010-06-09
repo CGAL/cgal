@@ -35,7 +35,7 @@
 #  include <CGAL/Quotient.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 #ifdef CGAL_USE_GMP
@@ -48,6 +48,6 @@ CGAL_BEGIN_NAMESPACE
   typedef CGAL::Algebraic_kernel_for_spheres_2_3<NT1>          Algebraic_k1;
   typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>     Exact_spherical_kernel_3;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_EXACT_SPHERICAL_3_KERNEL_H

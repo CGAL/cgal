@@ -24,7 +24,7 @@
 
 #include <iostream> //TO DO : to remove
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // ====================== Geometric Traits utilities =========================================
 // === Declarations
@@ -367,6 +367,6 @@ construct_circumcenter(const typename DT::Facet &f,const typename DT::Geom_trait
      Q); 
 }
  
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NATURAL_NEIGHBORS_3_H

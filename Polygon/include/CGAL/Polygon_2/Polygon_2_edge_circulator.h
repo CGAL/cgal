@@ -29,7 +29,7 @@
 #include <CGAL/Polygon_2/Polygon_2_vertex_circulator.h>
 #include <CGAL/Polygon_2/polygon_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class _Traits, class _Container> class Polygon_2;
 
@@ -219,6 +219,6 @@ value_type(const Polygon_2_const_edge_circulator<_Traits,_Container>&)
 // { return a+n; }
 //--------------------------------------------------------------------//
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

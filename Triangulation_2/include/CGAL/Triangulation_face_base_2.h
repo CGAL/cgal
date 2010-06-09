@@ -24,7 +24,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_ds_face_base_2.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template < typename Gt, typename Fb = Triangulation_ds_face_base_2<> >
 class Triangulation_face_base_2 
@@ -96,6 +96,6 @@ mirror_index(int i) const
 }
 #endif
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif //CGAL_TRIANGULATION_FACE_BASE_2_H

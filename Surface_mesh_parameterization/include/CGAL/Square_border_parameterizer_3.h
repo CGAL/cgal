@@ -28,7 +28,7 @@
 #include <climits>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 //
@@ -441,6 +441,6 @@ protected:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_SQUAREBORDERPARAMETERIZER_3_H

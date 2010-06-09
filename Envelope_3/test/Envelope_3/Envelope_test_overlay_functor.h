@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // this overlay functor compares the data over the 2 features that create new
 // features in the new map
@@ -164,7 +164,7 @@ public:
   
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif
 

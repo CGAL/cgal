@@ -28,7 +28,7 @@
 
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // Forward declaration
@@ -459,6 +459,6 @@ template<> struct Taucs_traits<taucs_scomplex> {
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TAUCS_MATRIX_H

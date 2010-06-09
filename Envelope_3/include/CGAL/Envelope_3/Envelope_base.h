@@ -21,7 +21,7 @@
 #ifndef CGAL_ENVELOPE_BASE_H
 #define CGAL_ENVELOPE_BASE_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Envelope types:
 enum Envelope_type {
@@ -45,6 +45,6 @@ enum Dac_decision
   DAC_DECISION_NOT_SET
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ENVELOPE_BASE_3_H

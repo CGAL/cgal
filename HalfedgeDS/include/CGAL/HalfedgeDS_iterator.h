@@ -25,7 +25,7 @@
 #define CGAL_HALFEDGEDS_ITERATOR_H 1
 #include <CGAL/circulator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 
@@ -410,6 +410,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_HALFEDGEDS_ITERATOR_H //
 // EOF //

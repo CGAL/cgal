@@ -37,7 +37,7 @@
 #include<boost/optional.hpp>
 #include<boost/none.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename HE>
 class move_edge_around_svertex {
@@ -571,5 +571,5 @@ pointer_update(const Sphere_map<K, I, M>& D)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_SPHERE_MAP_H

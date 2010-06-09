@@ -29,7 +29,7 @@
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Sweep_line_2/Arr_default_overlay_traits_base.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * \class
@@ -92,6 +92,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

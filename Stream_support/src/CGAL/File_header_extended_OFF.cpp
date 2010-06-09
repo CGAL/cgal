@@ -32,7 +32,7 @@
 #include <algorithm>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 bool File_header_extended_OFF::
 is_POL()  const {
@@ -191,5 +191,5 @@ std::istream& operator>>( std::istream& in, File_header_extended_OFF& h) {
 #undef CGAL_IN
 #undef CGAL_INBOOL
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 // EOF //

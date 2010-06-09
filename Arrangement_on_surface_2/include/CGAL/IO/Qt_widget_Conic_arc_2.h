@@ -25,7 +25,7 @@
 #include <CGAL/Arr_conic_traits_2.h>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Draw an x-monotone conic arc.
@@ -106,6 +106,6 @@ Qt_widget& operator<<
   return (ws); 
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -23,7 +23,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 #include <CGAL/determinant.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
@@ -76,7 +76,7 @@ public:
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_ARE_PARALLEL_C2_H

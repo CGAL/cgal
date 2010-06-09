@@ -27,7 +27,7 @@
 
 #include <boost/type_traits.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Has_qrt {};
 
@@ -47,6 +47,6 @@ struct Qualified_result_of
   : qrt_or_not<Functor, boost::is_base_and_derived<Has_qrt, Functor>::value>
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_QUALIFIED_RESULT_OF_H

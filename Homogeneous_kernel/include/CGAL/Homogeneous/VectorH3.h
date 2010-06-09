@@ -28,7 +28,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class VectorH3
@@ -241,6 +241,6 @@ VectorH3<R>::operator/(const typename VectorH3<R>::FT& f) const
 { return typename R::Vector_3(hx()*f.denominator(), hy()*f.denominator(),
 		              hz()*f.denominator(), hw()*f.numerator() ); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HOMOGENEOUS_VECTOR_3_H

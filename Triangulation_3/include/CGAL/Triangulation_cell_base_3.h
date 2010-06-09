@@ -26,7 +26,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_ds_cell_base_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename GT, typename Cb = Triangulation_ds_cell_base_3<> >
 class Triangulation_cell_base_3
@@ -98,6 +98,6 @@ operator<<(std::ostream &os, const Triangulation_cell_base_3<GT, Cb> &c)
 }
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_CELL_BASE_3_H

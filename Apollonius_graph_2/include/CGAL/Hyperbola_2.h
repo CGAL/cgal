@@ -28,7 +28,7 @@
 #include <CGAL/Apollonius_site_2.h>
 #include <CGAL/Kernel_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Gt >
 class Hyperbola_2
@@ -312,6 +312,6 @@ Stream& operator<<(Stream& s, const Hyperbola_2<Gt> &H)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HYPERBOLA_2_H

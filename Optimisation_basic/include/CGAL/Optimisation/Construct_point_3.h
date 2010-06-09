@@ -29,7 +29,7 @@
 #include <functional>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class declaration
 // =================
@@ -72,7 +72,7 @@ class _Construct_point_3 {
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_OPTIMISATION_CONSTRUCT_POINT_3_H
 

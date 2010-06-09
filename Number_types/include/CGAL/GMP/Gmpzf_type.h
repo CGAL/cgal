@@ -35,7 +35,7 @@
 #include <string>
 #include <utility>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //internal fwd
 class Gmpzf;
@@ -582,6 +582,6 @@ inline Gmpzf max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpzf& x,const Gmpzf& y)
   return (x>=y)?x:y; 
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_GMPZF_TYPE_H

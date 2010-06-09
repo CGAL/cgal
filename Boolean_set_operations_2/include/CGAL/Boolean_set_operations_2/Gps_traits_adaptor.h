@@ -20,7 +20,7 @@
 #ifndef CGAL_GPS_TRAITS_ADAPTOR_H
 #define CGAL_GPS_TRAITS_ADAPTOR_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Traits_>
 class Gps_traits_adaptor : public Traits_
@@ -166,6 +166,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

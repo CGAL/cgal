@@ -35,7 +35,7 @@
 #include <CGAL/Subdivision_method_impl_3.h>
 #include <CGAL/Subdivision_mask_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // ======================================================================
 namespace Subdivision_method_3 {
@@ -82,6 +82,6 @@ namespace Subdivision_method_3 {
   }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_POLYHEDRON_SUBDIVISION_H_01292002

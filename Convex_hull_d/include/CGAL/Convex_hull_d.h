@@ -77,7 +77,7 @@ Let |j = C.index_of_vertex_in_opposite_facet(f,i)|. Then
 
 #include <CGAL/Kernel_d/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename HP, typename H> class Facet_iterator_rep_;
 template <typename HP, typename H> class Facet_iterator_;
@@ -1502,5 +1502,5 @@ visible_facets_search(Simplex_handle S, const Point_d& x,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_CONVEX_HULL_D_H

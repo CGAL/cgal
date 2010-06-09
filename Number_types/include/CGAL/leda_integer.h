@@ -45,7 +45,7 @@
 #include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template<>
@@ -278,7 +278,7 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // Unary + is missing for leda::integer
 namespace leda {

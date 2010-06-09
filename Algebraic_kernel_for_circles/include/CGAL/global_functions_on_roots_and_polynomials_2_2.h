@@ -25,7 +25,7 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_GLOBAL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIALS_2_2_H
 #define CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_GLOBAL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIALS_2_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template< class AK, class OutputIterator>
 inline
@@ -71,6 +71,6 @@ y_critical_points(const typename AK::Polynomial_for_circles_2_2 & c,
                            OutputIterator res)
 { return AK().y_critical_points_object()(c,res); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_GLOBAL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIALS_2_2_H

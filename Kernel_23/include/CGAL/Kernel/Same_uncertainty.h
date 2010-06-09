@@ -26,7 +26,7 @@
 
 #include <CGAL/config.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename T1, typename T2 >
 struct Same_uncertainty
@@ -48,6 +48,6 @@ template < typename T1, typename NT >
 struct Same_uncertainty_nt
   : Same_uncertainty <T1, typename Sgn<NT>::result_type > {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SAME_UNCERTAINTY_H

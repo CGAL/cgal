@@ -24,7 +24,7 @@
 #include <CGAL/Marching_tetrahedra_observer_default_3.h>
 #include <CGAL/Skin_surface_polyhedral_items_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Vertex_iterator,
 	  class Cell_iterator,
@@ -83,6 +83,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SKIN_SURFACE_MARCHING_TETRAHEDRA_OBSERVER_3_H

@@ -36,7 +36,7 @@
 #ifndef CGAL_TEST_INTERVAL_TRAITS_H
 #define CGAL_TEST_INTERVAL_TRAITS_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Interval>
 void test_with_empty_interval(CGAL::Tag_false) {
@@ -205,6 +205,6 @@ void test_interval_traits() {
     assert(width(hull(Interval(2),Interval(3))) == Bound(1));   
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TEST_REAL_COMPARABLE_H

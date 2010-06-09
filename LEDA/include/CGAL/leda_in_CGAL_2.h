@@ -38,7 +38,7 @@
 #include <LEDA/geo/line.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 inline
 bool
@@ -119,6 +119,6 @@ cmp_signed_dist_to_line( const leda_point & p, const leda_point & q,
 #endif  // __LEDA__ >= 360
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LEDA_IN_CGAL_2_H

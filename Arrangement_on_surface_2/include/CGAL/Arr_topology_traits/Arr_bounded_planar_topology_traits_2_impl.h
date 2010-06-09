@@ -25,7 +25,7 @@
  * Arr_bounded_planar_topology_traits_2<GeomTraits> class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Assign the contents of another topology-traits class.
@@ -85,6 +85,6 @@ void Arr_bounded_planar_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

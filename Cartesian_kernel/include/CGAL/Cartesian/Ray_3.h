@@ -27,7 +27,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class RayC3
@@ -186,6 +186,6 @@ collinear_has_on(const typename RayC3<R>::Point_3 &p) const
   return true; // p == source()
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_RAY_3_H

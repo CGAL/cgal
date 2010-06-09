@@ -24,7 +24,7 @@
 #include <CGAL/Nef_S2/SM_const_decorator.h>
 
 #define CGAL_USING(t) typedef typename Base::t t
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Moptions outfile=SM_checker.man }*/
 /*{\Manpage {SM_checker}{PMCDEC,GEOM}{Plane map checking}{}}*/
@@ -250,7 +250,7 @@ The input and output is mainly triggered by an IO Decorator which
 has the control over the IO format and does some basic parsing when
 reading input.
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #undef CGAL_USING
 #endif // CGAL_SM_CHECKER_H

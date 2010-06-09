@@ -13,7 +13,7 @@
 #include <CGAL/IO/Qt_widget_Nef_3.h>
 #include <qapplication.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Kernel, typename K2, 
 	  typename Vertex, 
@@ -965,4 +965,4 @@ class Trunk_offset {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

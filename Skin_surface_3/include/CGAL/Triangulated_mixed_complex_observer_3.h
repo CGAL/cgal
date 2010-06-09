@@ -23,7 +23,7 @@
 #include <CGAL/Skin_surface_quadratic_surface_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class T>
 struct SS_Dereference_type {
@@ -210,6 +210,6 @@ public:
   R2S_converter r2s_converter;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATED_MIXED_COMPLEX_OBSERVER_3

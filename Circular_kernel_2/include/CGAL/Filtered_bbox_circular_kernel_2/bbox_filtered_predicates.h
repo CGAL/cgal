@@ -31,7 +31,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/Bbox_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Bbox_functors {
 
@@ -1381,6 +1381,6 @@ class Construct_bbox_2 : public BK::Circular_kernel::Construct_bbox_2
   
 } //Bbox_functors
 
-CGAL_END_NAMESPACE  
+} //namespace CGAL  
 
 #endif // CGAL_BBOX_FILTERED_PREDICATES_H  

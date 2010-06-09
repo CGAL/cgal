@@ -23,7 +23,7 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class Vbb>
@@ -67,7 +67,7 @@ private:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_HIERARCHY_VERTEX_BASE_2_H

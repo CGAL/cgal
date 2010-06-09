@@ -24,7 +24,7 @@
 
 #include <functional>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Td_traits> class Trapezoidal_decomposition_2;
 
@@ -73,6 +73,6 @@ struct Trapezoid_handle_less : public std::binary_function<_Tp, _Tp, bool>
 };
 /* Return if two trapezoids are the same */
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TD_PREDICATES_H

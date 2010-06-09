@@ -26,7 +26,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R> class Segment_d;
 template <class R> class Ray_d;
@@ -92,5 +92,5 @@ void print(std::ostream& os, const char* _name) const
 
 }; // Pair_d<R>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_PAIR_D_H

@@ -25,7 +25,7 @@
 #include <CGAL/Voronoi_diagram_2/Cached_degeneracy_testers.h>
 #include <CGAL/Voronoi_diagram_2/Default_site_inserters.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
@@ -69,7 +69,7 @@ public:
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_VORONOI_DIAGRAM_2_ADAPTATION_TRAITS_BASE_2_H

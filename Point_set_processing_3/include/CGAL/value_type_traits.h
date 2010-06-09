@@ -21,7 +21,7 @@
 
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// Traits class to get the value type of any iterator,
@@ -45,6 +45,6 @@ struct value_type_traits<std::back_insert_iterator<T> >
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VALUE_TYPE_TRAITS_H

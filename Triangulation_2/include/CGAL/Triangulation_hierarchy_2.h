@@ -29,7 +29,7 @@
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // parameterization of the  hierarchy
 //const float Triangulation_hierarchy_2__ratio    = 30.0;
@@ -738,6 +738,6 @@ random_level()
 
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_HIERARCHY_2_H

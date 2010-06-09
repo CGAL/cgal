@@ -31,7 +31,7 @@
 #  include <CGAL/IO/Verbose_ostream.h>
 #include <cassert>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #define COVER(text,code) \
             verr0.out().width( 26); verr0 << text << "..." << flush; \
@@ -189,7 +189,7 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
     )
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TEST_POLYTOPE_DISTANCE_D_H
 

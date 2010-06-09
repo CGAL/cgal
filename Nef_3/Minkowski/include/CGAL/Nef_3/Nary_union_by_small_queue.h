@@ -6,7 +6,7 @@
 #endif
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Polyhedron>
 class Nary_union_by_small_queue {
@@ -54,5 +54,5 @@ class Nary_union_by_small_queue {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_NARY_UNION_BY_SMALL_QUEUE_H

@@ -29,7 +29,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // see <CGAL/Scalar_factor_traits.h>
 /*! \ingroup CGAL_Polynomial
@@ -90,5 +90,5 @@ public:
     };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_POLYNOMIAL_SCALAR_FACTOR_TRAITS_H

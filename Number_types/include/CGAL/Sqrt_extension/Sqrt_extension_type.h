@@ -45,7 +45,7 @@
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class NT_,class ROOT_> class Sqrt_extension;
 template<class NT, class ROOT>
@@ -629,7 +629,7 @@ CGAL::Comparison_result compare (
   return x.compare(y,in_same_extension);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #undef CGAL_int
 

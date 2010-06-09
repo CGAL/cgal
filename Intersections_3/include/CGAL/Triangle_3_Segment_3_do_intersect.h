@@ -21,7 +21,7 @@
 #ifndef CGAL_TRIANGLE_3_SEGMENT_3_DO_INTERSECT_H
 #define CGAL_TRIANGLE_3_SEGMENT_3_DO_INTERSECT_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -327,6 +327,6 @@ inline bool do_intersect(const Segment_3<K>  &s,
 }
 */
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRIANGLE_3_SEGMENT_3_DO_INTERSECT_H

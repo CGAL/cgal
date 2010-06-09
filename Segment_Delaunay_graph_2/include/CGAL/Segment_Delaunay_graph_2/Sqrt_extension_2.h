@@ -28,7 +28,7 @@
 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template<class NT>
@@ -323,7 +323,7 @@ operator<<(Stream& os, const Sqrt_extension_2<NT>& x)
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_SQRT_EXTENSION_2_H

@@ -20,7 +20,7 @@
 #ifndef CGAL_POINT_WITH_VERTEX_H
 #define CGAL_POINT_WITH_VERTEX_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Arrangement_>
 class Point_with_vertex
@@ -54,5 +54,5 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif

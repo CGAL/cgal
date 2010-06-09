@@ -43,7 +43,7 @@
 // Then it computes for each part in the arragement the surfaces on the envelope over it
 // by comparing them all.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class EnvelopeTraits_3, class MinimizationDiagram_2>
 class Envelope_triangles_test_3
@@ -672,6 +672,6 @@ protected:
   Point_2            current_point_inside_edge;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_ENVELOPE_TRIANGLES_TEST_3_H

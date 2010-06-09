@@ -36,7 +36,7 @@
 #include <string>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Mesh_3 {
   
@@ -1246,6 +1246,6 @@ private:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_3_VERTEX_PERTURBATION_H

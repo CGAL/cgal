@@ -26,7 +26,7 @@
 #include <CGAL/Triangulation_ds_face_base_2.h>
 
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template < typename Gt, typename Fb = Triangulation_ds_face_base_2<> >
 class Segment_Delaunay_graph_face_base_2 
@@ -141,6 +141,6 @@ public:
 };
 
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif //CGAL_SEGMENT_DELAUNAY_GRAPH_FACE_BASE_2_H

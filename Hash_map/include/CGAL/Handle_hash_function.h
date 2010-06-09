@@ -28,7 +28,7 @@
 #include <CGAL/basic.h>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Handle_hash_function {
     typedef std::size_t result_type;
@@ -39,7 +39,7 @@ struct Handle_hash_function {
     } 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HANDLE_HASH_FUNCTION_H
 // EOF

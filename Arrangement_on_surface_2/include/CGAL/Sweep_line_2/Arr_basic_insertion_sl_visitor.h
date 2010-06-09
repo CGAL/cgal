@@ -26,7 +26,7 @@
  * Definition of the Arr_basic_insertion_sl_visitor class-template.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_basic_insertion_sl_visitor
  * A sweep-line visitor for inserting new curves into an existing arrangement
@@ -799,6 +799,6 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_ray_shoot_up (Subcurve* sc)
   return (this->m_helper.top_face());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

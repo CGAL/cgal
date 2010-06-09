@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_FT_CONSTRUCTIONS_2_H
 #define CGAL_CARTESIAN_FT_CONSTRUCTIONS_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class K >
 inline
@@ -70,6 +70,6 @@ line_x_at_y(const LineC2<K> &l, const typename K::FT &y)
   return line_y_at_xC2(l.b(), l.a(), l.c(), y);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_FT_CONSTRUCTIONS_2_H

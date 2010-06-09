@@ -25,7 +25,7 @@
 #include <CGAL/Voronoi_diagram_2/Identity_rejectors.h>
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //=========================================================================
 
@@ -42,7 +42,7 @@ struct Adaptation_policy_concept
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_ADAPTATION_POLICY_CONCEPT_H

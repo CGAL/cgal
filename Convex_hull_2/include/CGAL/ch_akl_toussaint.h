@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // same as |convex_hull_2(first,last,result)|.
 // {\sc traits}: operates on |Traits::Point_2| using |Traits::Less_xy_2|, 
@@ -48,7 +48,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
     return ch_akl_toussaint( first, last, result, Kernel()); 
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Convex_hull_2/ch_akl_toussaint_impl.h>
 

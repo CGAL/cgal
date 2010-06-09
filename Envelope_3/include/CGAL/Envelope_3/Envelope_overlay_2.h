@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class MinimizationDiagram_2, 
           class OverlayFunctor = Envelope_overlay_functor<MinimizationDiagram_2> >
@@ -247,6 +247,6 @@ protected:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

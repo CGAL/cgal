@@ -31,7 +31,7 @@
 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class STraits, class Vb = Triangulation_ds_vertex_base_2<> >
 class Segment_Delaunay_graph_vertex_base_2
@@ -92,6 +92,6 @@ private:
 };
 
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_VERTEX_BASE_2_H

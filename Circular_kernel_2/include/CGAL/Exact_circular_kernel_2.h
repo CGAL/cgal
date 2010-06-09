@@ -45,7 +45,7 @@
 //#include <CGAL/Lazy_circular_kernel_2.h>
 #include <CGAL/Filtered_bbox_circular_kernel_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -73,6 +73,6 @@ namespace internal {
 
 typedef Filtered_bbox_circular_kernel_2<internal::CK1>   Exact_circular_kernel_2;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_EXACT_CIRCULAR_2_KERNEL_H

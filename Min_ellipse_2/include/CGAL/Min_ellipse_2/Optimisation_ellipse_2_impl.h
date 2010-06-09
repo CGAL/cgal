@@ -17,7 +17,7 @@
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class implementation (continued)
 // ================================
@@ -120,6 +120,6 @@ operator >> ( std::istream& is, CGAL::Optimisation_ellipse_2<K_>& e)
     return( is);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // ===== EOF ==================================================================

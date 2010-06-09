@@ -27,7 +27,7 @@
  * Member-function definitions for the Basic_sweep_line_2 class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Constructor.
@@ -811,6 +811,6 @@ _push_event (const X_monotone_curve_2& cv, Arr_curve_end ind,
   return (std::make_pair(e, !exist));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

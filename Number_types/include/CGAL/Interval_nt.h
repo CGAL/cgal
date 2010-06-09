@@ -44,7 +44,7 @@
 #include <CGAL/Interval_traits.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <bool Protected = true>
 class Interval_nt
@@ -1372,6 +1372,6 @@ public:
   };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_INTERVAL_NT_H

@@ -23,7 +23,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Base, class Handle>
 struct Triangulation_iterator_handle_adaptor
@@ -50,6 +50,6 @@ struct Triangulation_iterator_handle_adaptor
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRIANGULATION_ITERATOR_ADAPTATOR_H

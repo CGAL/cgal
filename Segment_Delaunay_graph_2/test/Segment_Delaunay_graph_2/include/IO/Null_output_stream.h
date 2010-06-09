@@ -4,7 +4,7 @@
 #include <CGAL/basic.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 struct Null_output_stream {};
@@ -23,6 +23,6 @@ operator<<(Null_output_stream& nos, const T&)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NULL_OUTPUT_STREAM_H

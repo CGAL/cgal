@@ -46,7 +46,7 @@
 #include <CGAL/Bigfloat_interval_traits.h>
 #include <CGAL/ipower.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 namespace internal {
 
 struct Rounding_for_leda_bigfloat {
@@ -140,7 +140,7 @@ public:
 };
 
 } // namespace internal
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 namespace boost {
 namespace numeric {
@@ -160,7 +160,7 @@ std::ostream& operator <<
 }//namespace numeric
 }//namespace boost
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 typedef boost::numeric::interval
 < leda::bigfloat,
@@ -485,6 +485,6 @@ leda_bigfloat_interval inline ipower(const leda_bigfloat_interval& x, int i ){
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_USE_LEDA
 #endif //  CGAL_LEDA_BIGFLOAT_INTERVAL_H

@@ -20,7 +20,7 @@
 //                 Franz Wessendorp
 //                 Kaspar Fischer
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename Q, typename ET, typename Tags >
 bool QP_solver<Q, ET, Tags>::has_finite_lower_bound(int i) const
@@ -93,6 +93,6 @@ QP_solver<Q, ET, Tags>::upper_bnd(int i) const
     return Bnd(true, false, ET(0));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // ===== EOF ==================================================================

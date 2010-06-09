@@ -25,7 +25,7 @@
 #include <CGAL/Edge_hash_function.h>
 #include <CGAL/circulator_bases.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 namespace internal {
@@ -554,7 +554,7 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_EDGE_LIST_H

@@ -27,7 +27,7 @@
 
 #include <CGAL/Arr_dcel_base.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * \class
@@ -278,6 +278,6 @@ public:
   {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif 

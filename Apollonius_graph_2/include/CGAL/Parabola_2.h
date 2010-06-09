@@ -25,7 +25,7 @@
 #include <CGAL/determinant.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template < class Gt >
@@ -329,6 +329,6 @@ Stream& operator<<(Stream& s, const Parabola_2<Gt> &P)
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PARABOLA_2_H

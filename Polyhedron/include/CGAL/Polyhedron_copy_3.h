@@ -25,7 +25,7 @@
 #include <CGAL/Inverse_index.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Poly, class HDS >
 class Polyhedron_copy_3 : public Modifier_base<HDS> {
@@ -81,6 +81,6 @@ Polyhedron_copy_3<Poly,HDS>:: operator()( HDS& target) {
     target.normalize_border();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_POLYHEDRON_COPY_3_H //
 // EOF //

@@ -25,7 +25,7 @@
 #include <CGAL/rat_leda.h>
 #include <CGAL/predicates_on_points_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class use_rat_leda_kernel>
@@ -67,6 +67,6 @@ collinear(const Point_2<use_rat_leda_kernel>& p,
 */
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PREDICATES_ON_POINTS_RAT_LEDA_2_H

@@ -20,7 +20,7 @@
 #ifndef CGAL_NEF_SM_DECORATOR_TRAITS_H
 #define CGAL_NEF_SM_DECORATOR_TRAITS_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Refs_>
 class SM_decorator_traits {
@@ -90,5 +90,5 @@ class SM_decorator_const_traits {
   typedef typename Refs::SFace_cycle_const_iterator SFace_cycle_const_iterator;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_SM_DECORATOR_TRAITS_H

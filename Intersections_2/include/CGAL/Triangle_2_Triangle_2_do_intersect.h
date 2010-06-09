@@ -23,7 +23,7 @@
 
 #include <CGAL/Triangle_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 
@@ -181,6 +181,6 @@ inline bool do_intersect(const Triangle_2<K> &t1,
   return Do_intersect()(t1,t2);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRIANGLE_2_TRIANGLE_2_DO_INTERSECT_H

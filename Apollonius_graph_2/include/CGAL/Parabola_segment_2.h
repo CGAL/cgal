@@ -24,7 +24,7 @@
 
 #include <CGAL/Parabola_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Qt {
   template <typename K> class PainterOstream;
@@ -172,6 +172,6 @@ Stream& operator<<(Stream &s, const Parabola_segment_2<Gt> &P)
   return s;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PARABOLA_SEGMENT_2_H

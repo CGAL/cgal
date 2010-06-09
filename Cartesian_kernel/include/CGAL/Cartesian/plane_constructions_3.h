@@ -27,7 +27,7 @@
 #include <CGAL/Cartesian/Point_3.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 CGAL_KERNEL_LARGE_INLINE
@@ -56,6 +56,6 @@ plane_from_point_direction(const PointC3<R> &p,
   return PlaneC3<R>(A, B, C, D);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_PLANE_CONSTRUCTIONS_3_H

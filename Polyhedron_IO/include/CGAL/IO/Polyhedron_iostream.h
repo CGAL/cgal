@@ -25,7 +25,7 @@
 #include <CGAL/IO/scan_OFF.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Traits,
            class Items,
@@ -55,6 +55,6 @@ std::istream& operator>>(std::istream& in,
     return in;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_POLYHEDRON_IOSTREAM_H //
 // EOF //

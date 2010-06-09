@@ -43,7 +43,7 @@
 #define CGAL_NEF_DEBUG 43
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Infi_box, typename Vertex_handle>
 struct Frame_point_lt {
@@ -2158,5 +2158,5 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SNC_CONSTRUCTOR_H

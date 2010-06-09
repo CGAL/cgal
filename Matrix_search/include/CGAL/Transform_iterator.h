@@ -29,7 +29,7 @@ namespace std {
 }
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class OutputIterator, class Operation >
 struct Transform_iterator {
@@ -80,6 +80,6 @@ query_circulator_or_iterator(
   const Transform_iterator< OutputIterator, Operation >&)
 { return Iterator_tag(); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRANSFORM_ITERATOR_H

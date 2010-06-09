@@ -29,7 +29,7 @@
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_construction_helper.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Traits, class Arrangement_, class Event,class Subcurve>
 class Gps_agg_op_base_visitor :
@@ -311,6 +311,6 @@ private:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -32,7 +32,7 @@
 #include <cmath>
 #include <climits>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Gt, class Tds = Triangulation_data_structure_2 <Triangulation_vertex_base_2<Gt> > >
 class  Point_set_2 : public  Delaunay_triangulation_2<Gt,Tds>
@@ -439,7 +439,7 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif

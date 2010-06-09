@@ -27,7 +27,7 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Interval_nt.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Algebraic structure traits
 template <> class Algebraic_structure_traits< Gmpzf >
@@ -173,7 +173,7 @@ public:
     };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 //since types are included by Gmp_coercion_traits.h:
 #include <CGAL/Gmpz.h>

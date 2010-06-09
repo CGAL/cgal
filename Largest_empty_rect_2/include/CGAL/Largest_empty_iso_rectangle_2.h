@@ -32,7 +32,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
   Largest_empty_iso_rectangle_2 is a class that implements the largest
@@ -1415,6 +1415,6 @@ Largest_empty_iso_rectangle_2<T>::clear()
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LARGEST_EMPTY_ISO_RECTANGLE_2_H

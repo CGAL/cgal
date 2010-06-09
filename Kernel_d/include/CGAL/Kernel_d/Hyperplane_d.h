@@ -26,7 +26,7 @@
 
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class pR>
 class Hyperplane_d : public pR::Hyperplane_d_base
@@ -82,6 +82,6 @@ public:
   { return Base::operator!=(w); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_HYPERPLANE_D_H

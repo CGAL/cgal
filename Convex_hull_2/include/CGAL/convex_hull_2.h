@@ -26,7 +26,7 @@
 #include <CGAL/ch_bykat.h>
 #include <iterator> 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class InputIterator, class OutputIterator, class Traits>
 inline
@@ -188,6 +188,6 @@ upper_hull_points_2(ForwardIterator first, ForwardIterator last,
     return upper_hull_points_2(first, last, result, Kernel());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONVEX_HULL_2_H

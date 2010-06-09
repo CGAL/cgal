@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_PREDICATES_ON_DIRECTIONS_2_H
 #define CGAL_CARTESIAN_PREDICATES_ON_DIRECTIONS_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class K >
 inline
@@ -44,6 +44,6 @@ compare_angle_with_x_axis(const DirectionC2<K> &d1,
   return K().compare_angle_with_x_axis_2_object()(d1, d2);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_PREDICATES_ON_DIRECTIONS_2_H

@@ -6,7 +6,7 @@
 #include <CGAL/Nef_3/SNC_point_locator.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Nef_, typename Container>
 class Edge_sorter2 : public Modifier_base<typename Nef_::SNC_and_PL> {
@@ -132,5 +132,5 @@ class Edge_sorter2 : public Modifier_base<typename Nef_::SNC_and_PL> {
   }
 };
   
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_NEF3_EDGE_SORTER2_H

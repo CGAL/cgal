@@ -29,7 +29,7 @@
 #define CGAL_NEF_DEBUG 41
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename SNC_structure>
 class SNC_simplify_base : public SNC_decorator<SNC_structure> {
@@ -749,5 +749,5 @@ class SNC_simplify<SNC_indexed_items, SNC_structure>
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_SNC_STRUCTURE_H

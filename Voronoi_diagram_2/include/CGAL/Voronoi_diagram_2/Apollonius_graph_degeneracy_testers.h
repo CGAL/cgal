@@ -25,7 +25,7 @@
 #include <CGAL/Voronoi_diagram_2/Identity_rejectors.h>
 #include <CGAL/Triangulation_utils_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
@@ -108,6 +108,6 @@ class Apollonius_graph_edge_tester_2
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_APOLLONIUS_GRAPH_DEGENERACY_TESTERS_H

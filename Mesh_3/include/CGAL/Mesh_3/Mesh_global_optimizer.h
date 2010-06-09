@@ -39,7 +39,7 @@
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Mesh_3 {
   
@@ -586,6 +586,6 @@ sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
   
 } // end namespace Mesh_3
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_3_MESH_GLOBAL_OPTIMIZER_H

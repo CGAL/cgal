@@ -28,7 +28,7 @@
 #include <CGAL/Sqrt_extension/Sqrt_extension_type.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template<class NT, class ROOT>
@@ -164,6 +164,6 @@ std::istream& operator >> (std::istream& is, Sqrt_extension<NT,ROOT>& ext) {
     return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

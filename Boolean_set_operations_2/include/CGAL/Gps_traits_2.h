@@ -25,7 +25,7 @@
 #include <CGAL/Boolean_set_operations_2/Gps_polygon_validation.h>
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Arr_traits,
           typename General_polygon_t = General_polygon_2<Arr_traits> >
@@ -168,6 +168,6 @@ public:
   Is_unbounded construct_is_unbounded_object() { return Is_unbounded(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

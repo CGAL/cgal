@@ -36,7 +36,7 @@
 #  pragma warning(disable:4355) // complaint about using 'this' to
 #endif                          // initialize a member
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Do_nothing {
 Do_nothing() {}
@@ -423,7 +423,7 @@ public:
 
 }; // Constrained_triang_traits<PMDEC,GEOM,NEWEDGE>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

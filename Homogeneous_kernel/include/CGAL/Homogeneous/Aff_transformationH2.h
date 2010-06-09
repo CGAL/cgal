@@ -27,7 +27,7 @@
 #include <CGAL/Handle_for_virtual.h>
 #include <CGAL/rational_rotation.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 class Aff_transformationH2;
@@ -1053,6 +1053,6 @@ cartesian(int i, int j) const
   return FT(0);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_AFF_TRANSFORMATIONH2_H

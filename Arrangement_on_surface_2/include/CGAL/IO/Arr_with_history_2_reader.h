@@ -26,7 +26,7 @@
 #include <CGAL/IO/Arrangement_2_reader.h>
 #include <CGAL/Arrangement_2/Arr_with_history_accessor.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * An auxiliary class for reading an arrangement with history from an
@@ -128,6 +128,6 @@ protected:
    
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

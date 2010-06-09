@@ -28,7 +28,7 @@
 // #include <CGAL/Triangulation_vertex_2.h>
 // #include <CGAL/Triangulation_handles_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class Triangulation_ > //  < class Gt, class Tds >
@@ -696,5 +696,5 @@ collinear_outside() const
            _tr->is_infinite(fh->neighbor(ccw(i))));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_TRIANGULATION_LINE_FACE_CIRCULATOR_2_H

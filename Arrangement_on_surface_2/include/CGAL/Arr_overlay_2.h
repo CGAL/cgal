@@ -37,7 +37,7 @@
 #include <boost/static_assert.hpp>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Compute the overlay of two input arrangements.
@@ -220,6 +220,6 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   overlay (arr1, arr2, arr_res, ovl_traits);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -27,7 +27,7 @@
 #include <CGAL/constructions/constructions_for_voronoi_intersection_cartesian_2_3.h>
 #include <CGAL/function_objects.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Traits>
 class Orientation_with_normal_plane_2_3
@@ -548,6 +548,6 @@ plane_intersected_bisector_3(const Point &a, const Vector& n,
   return Line(Point(x1,y1,z1), Point(x2,y2,z2));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VORONOI_INTERSECTION_2_TRAITS_3_H

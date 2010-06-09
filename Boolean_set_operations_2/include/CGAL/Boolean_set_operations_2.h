@@ -32,7 +32,7 @@
 #include <CGAL/iterator.h> 
 #include <CGAL/Boolean_set_operations_2/Bso_internal_functions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /// \name do_intersect() functions.
 //@{
@@ -1245,6 +1245,6 @@ Oriented_side oriented_side(const typename Polygon_::Point_2& p,
 //@}
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

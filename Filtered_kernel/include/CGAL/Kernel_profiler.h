@@ -26,7 +26,7 @@
 #include <CGAL/basic.h>
 #include <typeinfo>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Primitive wrapper which handles the profiling.
 template < typename P >
@@ -130,6 +130,6 @@ struct Kernel_profiler
 #include <CGAL/Kernel/interface_macros.h>
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_KERNEL_PROFILER_H

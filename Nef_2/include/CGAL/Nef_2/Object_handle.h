@@ -27,10 +27,10 @@
 
 #include <CGAL/Object.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 typedef Object Object_handle;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_OBJECT_HANDLE_H

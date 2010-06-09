@@ -27,7 +27,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Translation {};
 class Rotation {};
@@ -41,6 +41,6 @@ extern  Scaling                  SCALING;
 extern  Reflection               REFLECTION;
 extern  Identity_transformation  IDENTITY;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_AFF_TRANSFORMATION_TAGS_H

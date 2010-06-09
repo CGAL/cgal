@@ -35,7 +35,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/memory.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Forward declarations
 namespace internal {
@@ -738,6 +738,6 @@ void In_place_list<T,managed,Alloc>::sort() {
   swap(counter[fill-1]);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IN_PLACE_LIST_H

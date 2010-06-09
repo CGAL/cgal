@@ -22,7 +22,7 @@
 
 #include <CGAL/Skin_surface_traits_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class SkinSurfaceQuadraticSurfaceTraits_3 >
 class Skin_surface_quadratic_surface_3 {
@@ -188,6 +188,6 @@ private:
   FT c;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SKIN_SURFACE_QUADRATIC_SURFACE_H

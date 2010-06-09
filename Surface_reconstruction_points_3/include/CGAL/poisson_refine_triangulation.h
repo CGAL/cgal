@@ -28,7 +28,7 @@
 #include <CGAL/surface_reconstruction_points_assertions.h>
 #include <CGAL/Surface_mesh_traits_generator_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// Utility class for poisson_refine_triangulation():
@@ -251,6 +251,6 @@ unsigned int poisson_refine_triangulation(
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POISSON_REFINE_TRIANGULATION_H

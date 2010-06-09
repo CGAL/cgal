@@ -28,7 +28,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template<class R>
 class Compare_yz_3
@@ -115,5 +115,5 @@ public:
 
 };
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 #endif // CGAL_TRIANGULATION_2_TRAITS_3_H

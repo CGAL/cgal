@@ -34,7 +34,7 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class File_scanner_OFF : public File_header_OFF {
     std::istream&  m_in;
@@ -450,7 +450,7 @@ file_scan_normal( File_scanner_OFF& scanner, Vector& v) {
     return v;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_FILE_SCANNER_OFF_H //
 // EOF //

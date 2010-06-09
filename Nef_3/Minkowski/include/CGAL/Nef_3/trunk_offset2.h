@@ -10,7 +10,7 @@
 #include <CGAL/Box_intersection_d/box_limits.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename pIt, class InpIt, class ForIt, class OutIt, class AdBiFct>
   OutIt fold_indices_polyhedron( const pIt points, InpIt first1, InpIt beyond1,
@@ -251,4 +251,4 @@ class Trunk_offset {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

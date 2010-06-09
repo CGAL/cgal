@@ -37,7 +37,7 @@
 #include <iterator>
 #include <algorithm>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Geomview_stream {
 public:
@@ -588,6 +588,6 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
 }
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_GEOMVIEW_STREAM_H

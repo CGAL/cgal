@@ -33,7 +33,7 @@
 #include <CGAL/leda_rational.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Homogeneous_tag;
 class Cartesian_tag;
@@ -370,5 +370,5 @@ CGAL::Sphere_circle<R> normalized(const CGAL::Sphere_circle<R>& c) {
    return Normalizing<typename R::Kernel_tag>::normalized(c);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NORMALIZING_H

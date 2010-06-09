@@ -25,7 +25,7 @@
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Arrangement, class Transformation_3, class TransformTraits>
 void Arr_transform_on_sphere(Arrangement & arr,
@@ -223,4 +223,4 @@ void Arr_transform_on_sphere(Arrangement & arr,
     tran_tr.rotate_face(f1, aff);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

@@ -34,7 +34,7 @@
 #include <list>
 #include <ostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class _Bezier_curve_2
  * Representation of a Bezier curve, specified by (n+1) control points
@@ -952,6 +952,6 @@ bool _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::has_same_support
   return (true);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

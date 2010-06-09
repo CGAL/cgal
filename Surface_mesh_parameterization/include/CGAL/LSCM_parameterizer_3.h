@@ -31,7 +31,7 @@
 
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // ------------------------------------------------------------------------------------
@@ -659,6 +659,6 @@ is_one_to_one_mapping(const Adaptor& mesh,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_LSCM_PARAMETERIZER_3_H

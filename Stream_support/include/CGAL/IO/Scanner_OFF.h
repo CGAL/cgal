@@ -31,7 +31,7 @@
 #include <utility>
 #include <CGAL/IO/File_scanner_OFF.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // The Facet_iterator's value type is vector<Integer32>
 // that contains the vertex indices.
@@ -298,6 +298,6 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_SCANNER_OFF_H //
 // EOF //

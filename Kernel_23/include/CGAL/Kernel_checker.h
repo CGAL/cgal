@@ -36,7 +36,7 @@
 #include <utility>
 #include <typeinfo>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Small utility to manipulate pairs for kernel objects, and
 // simple things for bool, Sign...  Object is yet another case...
@@ -317,6 +317,6 @@ public:
 #include <CGAL/Kernel/interface_macros.h>
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_KERNEL_CHECKER_H

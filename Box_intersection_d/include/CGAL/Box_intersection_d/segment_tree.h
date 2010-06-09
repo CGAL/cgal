@@ -33,7 +33,7 @@
 #include <climits>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Box_intersection_d {
 
@@ -399,6 +399,6 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

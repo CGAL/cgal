@@ -27,7 +27,7 @@
 // These functors come from the 2D-3D kernels.
 // Since they have changed there, they now need to be copied here.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -148,6 +148,6 @@ class Intersect
 };
 
 } // end namespace internal
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_KERNEL_D_FUNCTION_OBJECTS_H

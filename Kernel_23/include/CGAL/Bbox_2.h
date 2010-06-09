@@ -29,7 +29,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/array.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename T >
 struct Simple_cartesian;
@@ -194,6 +194,6 @@ operator>>(std::istream &is, Bbox_2 &b)
     return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_BBOX_2_H

@@ -27,7 +27,7 @@
 
 #include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * Representation of a subcurve in the overlay process. A subcurve can
@@ -167,6 +167,6 @@ public:
   }
 };
   
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

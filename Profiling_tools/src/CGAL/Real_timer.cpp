@@ -37,7 +37,7 @@
 #  include <sys/time.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Static member variable for Real_timer
 // =====================================
@@ -106,4 +106,4 @@ double Real_timer::precision() const {
     return prec;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

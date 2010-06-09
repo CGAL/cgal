@@ -4,7 +4,7 @@
 #include <CGAL/basic.h>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 double log2(double x)
 {
@@ -18,6 +18,6 @@ unsigned int bits(double x)
   return static_cast<unsigned int>(log2( fabs(x) )) + 1;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_BITS_H

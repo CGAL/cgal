@@ -28,7 +28,7 @@
 #include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<>
 struct Root_of_traits<CORE::BigInt>: public internal::Root_of_traits_helper<CORE::BigInt,
@@ -195,7 +195,7 @@ public:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_Expr.h>

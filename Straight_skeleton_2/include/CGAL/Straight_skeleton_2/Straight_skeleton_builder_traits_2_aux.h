@@ -38,7 +38,7 @@
 #  include <CGAL/CORE_BigFloat.h>  
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i {
 
@@ -602,7 +602,7 @@ struct SS_converter : Converter
         }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_AUX_H //

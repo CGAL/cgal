@@ -637,7 +637,7 @@ bool is_rational(const Simple_interval_root<F> &f)
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class T>
@@ -698,7 +698,7 @@ public:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 namespace std
 {

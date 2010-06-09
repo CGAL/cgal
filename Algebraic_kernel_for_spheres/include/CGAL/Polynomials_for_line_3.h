@@ -29,7 +29,7 @@
 
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename FT_ >
 class Polynomials_for_line_3
@@ -96,6 +96,6 @@ operator == ( const Polynomials_for_line_3<FT> & p1,
 	  (p1.b3() == p2.b3()));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_ALGEBRAIC_KERNEL_POLYNOMIALS_FOR_LINE_3_H

@@ -32,7 +32,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Random.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template < class T >
 class Generator_base {
 protected:
@@ -104,6 +104,6 @@ class Random_double_in_interval : public Random_generator_base<double> {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_GENERATORS_H //
 // EOF //

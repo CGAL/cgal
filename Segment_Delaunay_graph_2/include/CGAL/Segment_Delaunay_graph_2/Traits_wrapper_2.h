@@ -22,7 +22,7 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Gt_base>
 class Segment_Delaunay_graph_traits_wrapper_2 : public Gt_base
@@ -38,6 +38,6 @@ public:
   Segment_Delaunay_graph_traits_wrapper_2(const Gt_base&) {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_TRAITS_WRAPPER_2_H

@@ -22,7 +22,7 @@
 
 
 #include <cassert>
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Tds>
 void
@@ -54,4 +54,4 @@ _test_cls_tds_vertex( const Tds&)
   // They are tested in _test_tds__2.h
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

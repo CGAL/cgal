@@ -30,7 +30,7 @@
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <CGAL/constructions/kernel_ftC2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class FT >
 inline
@@ -606,6 +606,6 @@ side_of_oriented_lineC2(const FT &a, const FT &b, const FT &c,
   return CGAL_NTS sign(a*x+b*y+c);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_PREDICATES_KERNEL_FTC2_H

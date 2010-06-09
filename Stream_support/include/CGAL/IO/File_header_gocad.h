@@ -24,7 +24,7 @@
 #include <iostream>
 #include <string>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class File_header_gocad {
 private:
@@ -57,5 +57,5 @@ inline std::ostream& operator<<( std::ostream& out, const File_header_gocad& h){
     "TFACE\n";
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_FILE_HEADER_GOCAD_H

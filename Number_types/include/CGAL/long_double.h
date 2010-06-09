@@ -35,7 +35,7 @@
 // #include <CGAL/FPU.h>
 #include <CGAL/Interval_nt.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Is_valid moved to top, since used by is_finite
 #ifdef CGAL_CFG_IEEE_754_BUG
@@ -160,6 +160,6 @@ template <> class Real_embeddable_traits< long double >
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LONG_DOUBLE_H

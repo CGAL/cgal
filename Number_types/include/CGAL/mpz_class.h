@@ -43,7 +43,7 @@
     BOOST_STATIC_ASSERT(                                                \
             (::boost::is_same< ::__gmp_expr< T , T >,Type>::value ));
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // AST for mpz_class
 
@@ -318,7 +318,7 @@ struct Split_double<mpz_class>
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #undef CGAL_CHECK_GMP_EXPR
 

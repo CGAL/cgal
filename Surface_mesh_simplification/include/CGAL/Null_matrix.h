@@ -18,13 +18,13 @@
 #ifndef CGAL_NULL_MATRIX_H
 #define CGAL_NULL_MATRIX_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Null_matrix {};
 
 static const Null_matrix NULL_MATRIX = Null_matrix() ;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NULL_MATRIX_H //
 

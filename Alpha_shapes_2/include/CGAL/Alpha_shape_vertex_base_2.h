@@ -24,7 +24,7 @@
 #include <CGAL/Triangulation_vertex_base_2.h>
 
 //-------------------------------------------------------------------
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 //-------------------------------------------------------------------
 
 template <class Gt, class Vb = Triangulation_vertex_base_2<Gt> >
@@ -77,7 +77,7 @@ public:
 };
 
 //-------------------------------------------------------------------
-CGAL_END_NAMESPACE
+} //namespace CGAL
 //-------------------------------------------------------------------
 
 #endif //ALPHA_SHAPE_VERTEX_BASE_2_H

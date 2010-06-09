@@ -26,7 +26,7 @@
 #ifndef CGAL_IPOWER_H
 #define CGAL_IPOWER_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename NT>
 inline
@@ -76,6 +76,6 @@ NT ipower(const NT& base, long expn) {
     return res;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IPOWER_H

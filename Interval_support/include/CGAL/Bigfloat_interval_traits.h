@@ -33,7 +33,7 @@
 #endif
 
 #include <boost/static_assert.hpp>
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // TODO: rename this into MPFI_traits ? 
 // add a better rounding control 
@@ -60,6 +60,6 @@ template<typename BFI> inline long relative_precision(const BFI& bfi) {
       relative_precision;
     return relative_precision(bfi);
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_BIGFLOAT_INTERVAL_TRAITS_H

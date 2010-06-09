@@ -34,7 +34,7 @@
 
 #include <fstream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Kernel> class Arr_x_monotone_great_circular_arc_on_cylinder_3;
 template <typename Kernel> class Arr_great_circular_arc_on_cylinder_3;
@@ -3056,6 +3056,6 @@ operator>>(InputStream & is,
   return is;
 }  
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

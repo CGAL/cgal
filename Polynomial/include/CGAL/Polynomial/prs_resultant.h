@@ -37,7 +37,7 @@
 #ifndef CGAL_POLYNOMIAL_PRS_RESULTANT_H
 #define CGAL_POLYNOMIAL_PRS_RESULTANT_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class NT> inline
 NT prs_resultant_integral_domain(Polynomial<NT> A, Polynomial<NT> B) {
@@ -254,7 +254,7 @@ NT prs_resultant(Polynomial<NT> A, Polynomial<NT> B) {
     return INTERN_PRS_RESULTANT::prs_resultant_(A, B, Algebraic_category());     
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_PRS_RESULTANT_H
 

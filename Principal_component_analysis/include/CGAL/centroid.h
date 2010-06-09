@@ -39,7 +39,7 @@
 // TODO : Grep for "barycenter" and "centroid" in CGAL to check existing usages.
 // TODO : Add barycentric_coordinates() (to the kernel, this time).
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -938,6 +938,6 @@ centroid(InputIterator begin, InputIterator end)
   return CGAL::centroid(begin, end, K());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

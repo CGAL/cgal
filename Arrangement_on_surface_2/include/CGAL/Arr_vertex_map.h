@@ -34,7 +34,7 @@
 #endif
 #include <boost/graph/properties.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * An auxiliary class that automatically maintains a mapping of the
@@ -379,6 +379,6 @@ void put (CGAL::Arr_vertex_property_map<Arrangement, Type>& prop_map,
   prop_map[v] = t;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

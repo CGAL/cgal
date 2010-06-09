@@ -25,7 +25,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Uncertain.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class RT >
 Uncertain<Sign>
@@ -142,7 +142,7 @@ sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f_plus_d_sqrt_e_x_f(const RT &a,
 }
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_UNCERTAIN_FUNCTIONS_ON_SIGNS_H

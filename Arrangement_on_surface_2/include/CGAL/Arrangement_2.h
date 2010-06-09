@@ -29,7 +29,7 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arrangement_2
  * The arrangement class, representing planar subdivisions induced by
@@ -253,6 +253,6 @@ protected:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

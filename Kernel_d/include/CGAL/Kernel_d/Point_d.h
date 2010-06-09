@@ -26,7 +26,7 @@
 
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class pR>
 class Point_d : public pR::Point_d_base
@@ -80,5 +80,5 @@ public:
   
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_POINT_D_H

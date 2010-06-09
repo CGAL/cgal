@@ -31,7 +31,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Vector_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // ======================================================================
 /// The stencil of the Primal-Quadrilateral-Quadrisection 
@@ -374,6 +374,6 @@ public:
   //void border_node(Halfedge_handle edge, Point& ept, Point& vpt) {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_POLYHEDRON_SUBDIVISION_STENCILS_H_01292002

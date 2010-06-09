@@ -34,7 +34,7 @@
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_vert_decomp_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Forward declaration:
 template <class GeomTraits_, class TopTraits_> 
@@ -710,7 +710,7 @@ protected:
   //@}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_topology_traits_2_impl.h>
 

@@ -36,7 +36,7 @@
 #define CGAL_NEF_DEBUG 19
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Map, typename SNC_point_locator>
 class Combine_with_halfspace : public SNC_decorator<Map> { 
@@ -168,5 +168,5 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_COMBINE_WITH_HALFSPACE_H

@@ -29,7 +29,7 @@
 #include "CGAL/Arr_counting_traits_2.h"
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \file
  * A traits class-template for constructing and maintaining Gaussian maps
@@ -76,6 +76,6 @@ protected:
 public:
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

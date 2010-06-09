@@ -27,7 +27,7 @@
 #include <CGAL/basic.h>
 #include <queue>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #define INFINITE_SIZE 1e30
 #define INFINITE_MEASURE 1e30
@@ -617,6 +617,6 @@ private:
 }// end namespace Mesh_3
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_3_SIZING_GRID_H

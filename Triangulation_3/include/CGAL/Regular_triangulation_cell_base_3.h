@@ -25,7 +25,7 @@
 #include <list>
 #include <CGAL/Triangulation_vertex_base_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename GT,
            typename Cb = Triangulation_cell_base_3<GT>,
@@ -83,6 +83,6 @@ private:
   Point_container _hidden;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REGULAR_TRIANGULATION_CELL_BASE_3_H

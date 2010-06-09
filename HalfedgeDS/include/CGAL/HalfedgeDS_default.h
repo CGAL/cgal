@@ -28,7 +28,7 @@
 #include <CGAL/HalfedgeDS_list.h>
 #include <CGAL/memory.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 
@@ -66,6 +66,6 @@ struct HalfedgeDS_default {
 
 #endif // CGAL_CFG_NO_TMPL_IN_TMPL_PARAM //
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_HALFEDGEDS_DEFAULT_H //
 // EOF //

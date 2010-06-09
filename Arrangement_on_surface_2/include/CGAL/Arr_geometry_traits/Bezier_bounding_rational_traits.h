@@ -33,7 +33,7 @@
 #include <list>
 #include <math.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \struct _Bez_point_bound
  * Representation of a bounding interval for a point on a Bezier curve.
@@ -1509,6 +1509,6 @@ private:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_BEZIER_BOUNDING_RATIONAL_TRAITS_H

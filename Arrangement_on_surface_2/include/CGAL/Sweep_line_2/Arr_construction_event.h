@@ -30,7 +30,7 @@
 #include <CGAL/assertions.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_construction_event
  *
@@ -262,6 +262,6 @@ public:
   
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

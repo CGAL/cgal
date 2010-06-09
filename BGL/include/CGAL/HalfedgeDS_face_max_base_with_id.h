@@ -22,7 +22,7 @@
 
 #include <CGAL/HalfedgeDS_vertex_base.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Refs, class Pln, class ID>
 class HalfedgeDS_face_max_base_with_id : public HalfedgeDS_face_base< Refs, Tag_true, Pln>
@@ -47,7 +47,7 @@ public:
     size_type const& id() const { return mID; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HALFEDGEDS_FACE_MAX_BASE_WITH_ID_H //
 // EOF //

@@ -30,7 +30,7 @@
 #include <CGAL/Filtered_hexagon_circular_kernel_2/Line_arc_with_hexagon_2.h>
 #include <CGAL/Filtered_hexagon_circular_kernel_2/hexagon_filtered_predicates.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class CK>
  class Filtered_hexagon_circular_kernel_2 : public CK {
@@ -164,6 +164,6 @@ template <class CK>
 	{ return Is_vertical_2(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_FILTERED_HEXAGON_CIRCULAR_KERNEL_2_H

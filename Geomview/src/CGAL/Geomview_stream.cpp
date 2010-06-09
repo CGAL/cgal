@@ -38,7 +38,7 @@
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/binary_file_io.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 Geomview_stream::Geomview_stream(const Bbox_3 &bbox,
 				 const char *machine,
@@ -548,15 +548,15 @@ Geomview_stream::get_new_id(const std::string & s)
     return str.str();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #else
 
 // Add a dummy symbol to prevent warnings of empty translation unit.
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 namespace {
 int dummy;
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_USE_GEOMVIEW

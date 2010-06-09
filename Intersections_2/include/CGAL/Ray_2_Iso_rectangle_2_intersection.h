@@ -34,7 +34,7 @@
 #include <CGAL/Object.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -236,6 +236,6 @@ intersection(const Ray_2<K>&ray, const Iso_rectangle_2<K>&iso)
   return Intersect()(ray, iso);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RAY_2_iSO_RECTANGLE_2_INTERSECTION_H

@@ -37,7 +37,7 @@
 #include <list>
 #include <string>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // complete set of parameters
 template < typename InputIterator, 
@@ -93,6 +93,6 @@ linear_least_squares_fitting_3(InputIterator first,
   return CGAL::linear_least_squares_fitting_3(first,beyond,object,centroid,tag);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_3_H

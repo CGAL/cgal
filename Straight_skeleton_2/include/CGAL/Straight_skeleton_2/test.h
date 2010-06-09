@@ -44,7 +44,7 @@
 
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i {
 
@@ -167,7 +167,7 @@ inline bool is_time_clearly_within_possibly_inexact_bisector_time_interval( FT c
 
 } // namespace CGAL_SS_i
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif
 

@@ -28,7 +28,7 @@
 #include <iostream>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class File_writer_VRML_2 {
     std::ostream*      m_out;
@@ -53,6 +53,6 @@ public:
     void write_facet_end() { out() << "-1,\n"; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_FILE_WRITER_VRML_2_H //
 // EOF //

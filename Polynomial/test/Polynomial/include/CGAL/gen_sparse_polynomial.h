@@ -7,7 +7,7 @@
 #include <CGAL/Random.h>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Polynomial_d_>
 Polynomial_d_
@@ -93,6 +93,6 @@ generate_polynomial_degree_each(CGAL::Random random, int max_degree = 6, int bit
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //  CGAL_GEN_SPARSE_POLYNOMIAL_H

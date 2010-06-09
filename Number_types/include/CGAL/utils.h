@@ -23,7 +23,7 @@
 
 #include <CGAL/number_type_basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // use Min
 template< class T >
@@ -57,6 +57,6 @@ inline bool is_valid( const T& x ) {
   return Is_valid< T >()( x );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_UTILS_H

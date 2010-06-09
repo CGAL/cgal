@@ -34,7 +34,7 @@
 #  error "You need LEDA or CORE installed."
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #ifdef CGAL_USE_LEDA
 typedef Simple_cartesian< leda_real >
@@ -44,6 +44,6 @@ typedef Simple_cartesian< CORE::Expr >
         Exact_predicates_exact_constructions_kernel_with_sqrt;
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_WITH_SQRT_H

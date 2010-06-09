@@ -31,7 +31,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename K >
 class Robust_construct_weighted_circumcenter_3
@@ -141,6 +141,6 @@ class Robust_weighted_circumcenter_traits_3
   { return Compute_squared_radius_3(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_ROBUST_CIRCUMCENTER_TRAITS_3_H

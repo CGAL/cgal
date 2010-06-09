@@ -29,7 +29,7 @@
 #include <CGAL/Kernel_d/Line_d.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 std::istream& operator>>(std::istream&, Ray_d<R>&);
@@ -203,6 +203,6 @@ identity test take constant time. The space requirement is
 $O(|r.dimension()|)$.}*/
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_RAYHD_H
 //----------------------- end of file ----------------------------------

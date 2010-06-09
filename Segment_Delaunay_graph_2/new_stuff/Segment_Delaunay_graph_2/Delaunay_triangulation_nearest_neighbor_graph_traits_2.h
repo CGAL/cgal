@@ -24,7 +24,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/Voronoi_diagram_2/Site_accessors.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class DG>
 class Delaunay_triangulation_nearest_neighbor_graph_traits_2
@@ -78,6 +78,6 @@ private:
   const Geom_traits& gt_;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_NEAREST_NEIGHBOR_GRAPH_TRAITS_2_H

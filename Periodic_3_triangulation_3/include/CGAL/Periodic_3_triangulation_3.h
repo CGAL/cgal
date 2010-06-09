@@ -51,7 +51,7 @@
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class GT, class TDS > class Periodic_3_triangulation_3;
 
@@ -3879,6 +3879,6 @@ operator!=(const Periodic_3_triangulation_3<GT,TDS1> &t1,
   return ! (t1 == t2);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_3_H

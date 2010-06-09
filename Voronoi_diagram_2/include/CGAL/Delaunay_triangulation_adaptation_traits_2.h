@@ -28,7 +28,7 @@
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class DT2>
 struct Delaunay_triangulation_adaptation_traits_2
@@ -44,6 +44,6 @@ struct Delaunay_triangulation_adaptation_traits_2
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_ADAPTATION_TRAITS_2_H

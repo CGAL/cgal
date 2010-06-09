@@ -28,7 +28,7 @@
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
     
 namespace parameters { namespace default_values {
   const double exude_sliver_bound = 0.;
@@ -74,6 +74,6 @@ exude_mesh_3_impl(C3T3& c3t3,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_EXUDE_MESH_3_H

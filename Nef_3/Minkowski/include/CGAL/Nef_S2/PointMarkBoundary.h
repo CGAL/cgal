@@ -1,7 +1,7 @@
 #ifndef CGAL_POINT_MARK_BOUNDARY_H
 #define CGAL_POINT_MARK_BOUNDARY_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class K>
 class PointMarkBoundary {
@@ -78,5 +78,5 @@ const PointMark<Kernel> operator+(const PointMark<Kernel>& pm1,
   return ret;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif

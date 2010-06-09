@@ -23,7 +23,7 @@
 
 #include <cassert>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Tds>
 void
@@ -191,4 +191,4 @@ _test_cls_tds_face( const Tds )
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

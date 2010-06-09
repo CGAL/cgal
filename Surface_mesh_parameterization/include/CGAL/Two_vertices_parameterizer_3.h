@@ -27,7 +27,7 @@
 #include <cfloat>
 #include <climits>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 //
@@ -262,6 +262,6 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED

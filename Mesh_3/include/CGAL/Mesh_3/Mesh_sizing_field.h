@@ -25,7 +25,7 @@
 #ifndef CGAL_MESH_3_MESH_SIZING_FIELD_H
 #define CGAL_MESH_3_MESH_SIZING_FIELD_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Mesh_3
 {
@@ -254,6 +254,6 @@ interpolate_on_facet_vertices(const Point_3& p, const Cell_handle& cell) const
 } // end namespace Mesh_3
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MESH_3_MESH_SIZING_FIELD_H

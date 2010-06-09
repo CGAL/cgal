@@ -27,7 +27,7 @@
 #include <CGAL/memory.h>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Container class representing a red-black tree, which is a balanced binary
@@ -3992,6 +3992,6 @@ void Multiset<Type, Compare, Allocator>::_deallocate_node (Node* nodeP)
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

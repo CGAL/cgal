@@ -23,7 +23,7 @@
 
 #ifndef CGAL_DIRECTIONHD_C
 #define CGAL_DIRECTIONHD_C
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class RT, class LA> 
 DirectionHd<RT,LA>::DirectionHd(const VectorHd<RT,LA>& v) : Base(v) {}
@@ -79,5 +79,5 @@ std::ostream& operator<<(std::ostream& O, const DirectionHd<RT,LA>& dir)
 //----------------------- end of file ----------------------------------
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_DIRECTIONHD_C

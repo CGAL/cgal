@@ -27,7 +27,7 @@
 
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename RT_ >
 class Polynomial_1_2
@@ -67,6 +67,6 @@ operator == ( const Polynomial_1_2<RT> & p1,
               (p1.c() == p2.c()) );
 }
     
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_POLYNOMIALS_1_2_H

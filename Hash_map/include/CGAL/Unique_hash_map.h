@@ -30,7 +30,7 @@
 #include <CGAL/Tools/chained_map.h>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Key_, class Data_, 
           class UniqueHashFunction = Handle_hash_function>
@@ -117,7 +117,7 @@ public:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 namespace boost {
   template <typename UniquePairAssociativeContainer>

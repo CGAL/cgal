@@ -27,7 +27,7 @@
 
 #include <CGAL/determinant.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class RT>
 inline
@@ -107,6 +107,6 @@ sign_of_determinant(
                                          a50, a51, a52, a53, a54, a55));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PREDICATES_SIGN_OF_DETERMINANT_H

@@ -28,7 +28,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/predicates/kernel_ftC3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class DirectionC3
@@ -130,6 +130,6 @@ DirectionC3<R>::to_vector() const
   return Vector_3(dx(), dy(), dz());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_DIRECTION_3_H

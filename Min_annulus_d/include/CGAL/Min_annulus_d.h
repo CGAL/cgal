@@ -78,7 +78,7 @@
 // the objective function involves terms p^Tp that might not be exactly
 // computed -> document all this!!!
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace MA_detail {
 
@@ -865,7 +865,7 @@ operator >> ( std::istream& is, CGAL::Min_annulus_d<Traits_>& min_annulus)
   return( is);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_MIN_ANNULUS_D_H
 

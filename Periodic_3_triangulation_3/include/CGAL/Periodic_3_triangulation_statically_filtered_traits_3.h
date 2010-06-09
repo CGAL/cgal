@@ -41,7 +41,7 @@
 // TODO :
 // - add more predicates :
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // The K_base argument is supposed to provide exact primitives.
 template < typename Traits >
@@ -70,6 +70,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_STATICALLY_FILTERED_TRAITS_3_H

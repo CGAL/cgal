@@ -26,7 +26,7 @@
 
 #include <CGAL/Triangle_3_Triangle_3_do_intersect.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -85,6 +85,6 @@ inline bool do_intersect(const Triangle_3<K> &tr,
   return typename K::Do_intersect_3()(tr,tet);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGLE_3_TETRAHEDRON_3_DO_INTERSECT_H

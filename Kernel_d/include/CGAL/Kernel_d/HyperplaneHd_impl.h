@@ -23,7 +23,7 @@
 
 #ifndef CGAL_HYPERPLANEHD_C
 #define CGAL_HYPERPLANEHD_C
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class RT, class LA>
 VectorHd<RT,LA>  HyperplaneHd<RT,LA>::
@@ -103,5 +103,5 @@ template <class RT, class LA>
 std::ostream& operator<<(std::ostream& O, const HyperplaneHd<RT,LA>& h)
 { h.ptr()->print(O,"HyperplaneHd"); return O; }  
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_HYPERPLANEHD_C

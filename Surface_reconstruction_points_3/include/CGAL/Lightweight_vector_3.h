@@ -23,7 +23,7 @@
 #include <CGAL/Vector_3.h>
 #include <CGAL/Origin.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// The Lightweight_vector_3 class represents a 3D vector (oriented).
@@ -212,6 +212,6 @@ private:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_LIGHTWEIGHT_VECTOR_3_H

@@ -80,7 +80,7 @@
 //   could point back to the container, so that we can do more interesting
 //   things (e.g. freeing empty blocks automatically) ?
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // The following base class can be used to easily add a squattable pointer
 // to a class (maybe you loose a bit of compactness though).
@@ -893,6 +893,6 @@ namespace internal {
 
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_COMPACT_CONTAINER_H

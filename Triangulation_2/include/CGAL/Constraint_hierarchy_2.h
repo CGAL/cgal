@@ -27,7 +27,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/triangulation_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // T               is expected to be Vertex_handle
 // Data            is intended to store info on a Vertex
@@ -754,5 +754,5 @@ print() const
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_CONSTRAINT_HIERARCHY_2_H

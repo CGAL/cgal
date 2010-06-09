@@ -26,7 +26,7 @@
 
 #include <CGAL/number_type_basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace INTERN_RET {
 
@@ -175,6 +175,6 @@ template< class Type_ >
 class Real_embeddable_traits 
   : public INTERN_RET::Real_embeddable_traits_base<Type_,CGAL::Tag_false> {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_REAL_EMBEDDABLE_TRAITS_H

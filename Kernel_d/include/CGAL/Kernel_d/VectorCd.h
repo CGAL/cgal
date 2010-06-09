@@ -26,7 +26,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Kernel_d/Tuple_d.h> 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 #define PointCd PointCd2
 
 template <class FT, class LA> class VectorCd;
@@ -236,6 +236,6 @@ friend std::ostream& operator<< <>
 }; // end of class VectorCd
 
 #undef PointCd
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_VECTORCD_H 
 //----------------------- end of file ----------------------------------

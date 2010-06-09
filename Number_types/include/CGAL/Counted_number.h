@@ -29,7 +29,7 @@
 #include <boost/iterator/transform_iterator.hpp> // for Root_of_selector
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class NT>
 class Counted_number {
@@ -781,6 +781,6 @@ const Counted_number<NT> & y){
   return CGAL::Max<Counted_number<NT> > ()(x,y);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

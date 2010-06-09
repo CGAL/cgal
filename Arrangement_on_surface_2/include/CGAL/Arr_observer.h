@@ -26,7 +26,7 @@
  * Definition of the Arr_observer<Arrangement> base class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A base class for arrangement observers.
@@ -671,6 +671,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

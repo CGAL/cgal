@@ -31,7 +31,7 @@
 #include <CGAL/IO/Color.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class IO {
 public:
@@ -278,6 +278,6 @@ void swallow(std::istream &is, const std::string& s );
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_H

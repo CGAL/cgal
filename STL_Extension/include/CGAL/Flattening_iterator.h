@@ -28,7 +28,7 @@
 
 // LiS2CGAL check whether Nested_iterator in CGAL works in STL_extensions
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! Suppose you have an iterator range and suppose further that
  *  the values in that iterator range are containers and thus
@@ -262,6 +262,6 @@ flattener(InputIterator it);
 #endif // DOXYGEN_RUNNING
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // LiS_FLATTENING_ITERATOR_H

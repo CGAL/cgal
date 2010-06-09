@@ -42,7 +42,7 @@
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_Expr.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The CORE set of exact number types
@@ -81,7 +81,7 @@ struct Get_arithmetic_kernel<CORE::BigFloat>{
   typedef CORE_arithmetic_kernel Arithmetic_kernel;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_USE_CORE
 

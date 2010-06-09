@@ -25,13 +25,13 @@
 #include <cassert>
 #include <CGAL/ch__test.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Traits>
 bool
 ch__batch_test( const Traits& chI );
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/_test_fct_ch_I_2_impl.h>
 

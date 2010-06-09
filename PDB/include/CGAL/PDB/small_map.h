@@ -92,13 +92,13 @@ bool operator< (const K& k, const small_map_value_type<K,D>& sm)
 
 /*}}
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template <class K, class D>
 CGAL::Comparison_result compare(const PDB::small_map_value_type<K,D> &a,
 				const PDB::small_map_value_type<K,D> &b) {
   return CGAL::compare(a.key(), b.key());
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 namespace CGAL { namespace PDB {*/
 /*template <class K, class D>

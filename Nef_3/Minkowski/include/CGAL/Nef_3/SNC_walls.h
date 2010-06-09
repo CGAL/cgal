@@ -5,7 +5,7 @@
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_S2/SM_walls.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename SNC_>
 class SNC_walls : public SNC_decorator<SNC_> {
@@ -191,5 +191,5 @@ class SNC_walls : public SNC_decorator<SNC_> {
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SNC_WALLS_H

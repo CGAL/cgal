@@ -29,7 +29,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Dummy_tds_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename TDS = void >
 class Periodic_3_triangulation_ds_cell_base_3
@@ -307,6 +307,6 @@ public:
   };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_DS_CELL_BASE_3_H

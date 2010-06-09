@@ -25,7 +25,7 @@
 
 #include <boost/variant.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
@@ -176,6 +176,6 @@ class Regular_triangulation_nearest_site_2
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_REGULAR_TRIANGULATION_NEAREST_SITE_2_H

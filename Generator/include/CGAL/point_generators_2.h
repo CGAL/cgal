@@ -27,7 +27,7 @@
 #include <iterator>
 #include <CGAL/number_type_basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class P, class Creator = 
                   Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P> >
@@ -497,6 +497,6 @@ OutputIterator random_collinear_points_2(
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_POINT_GENERATORS_2_H //
 // EOF //

@@ -24,7 +24,7 @@
 #ifndef CGAL_CONSTRUCTIONS_D_H
 #define CGAL_CONSTRUCTIONS_D_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Moptions outfile=constructions_d.man}*/
 
@@ -76,5 +76,5 @@ in |result|. The returned iterator marks the end of the output.
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_CONSTRUCTIONS_D_H

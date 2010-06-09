@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator
@@ -43,7 +43,7 @@ ch_melkman( InputIterator first, InputIterator last,  OutputIterator result)
     return ch_melkman( first, last, result, Kernel()); 
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Convex_hull_2/ch_melkman_impl.h>
 

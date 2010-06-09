@@ -32,7 +32,7 @@
 #define CGAL_TD_INLINE inline
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * Implementation of a pseudo-trapezoid as two curves(top,bottom)
@@ -697,6 +697,6 @@ class Td_X_trapezoid : public Handle
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

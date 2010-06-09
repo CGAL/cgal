@@ -35,7 +35,7 @@
 #  error "The old remove() code has been removed.  Please report any issue you may have with the current one."
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Gt,
            class Tds_ = Default,
@@ -1461,7 +1461,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
   return true;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/internal/Delaunay_triangulation_hierarchy_3.h>
 

@@ -25,7 +25,7 @@
  * class.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------------
 // Locate the arrangement feature containing the given point.
@@ -112,6 +112,6 @@ Object Arr_naive_point_location<Arrangement>::locate (const Point_2& p) const
   return (CGAL::make_object (f_inner));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

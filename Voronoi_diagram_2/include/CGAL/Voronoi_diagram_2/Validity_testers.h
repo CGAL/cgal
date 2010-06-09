@@ -26,7 +26,7 @@
 #include <CGAL/Voronoi_diagram_2/Finder_classes.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_VORONOI_DIAGRAM_2_BEGIN_NAMESPACE
 
@@ -106,6 +106,6 @@ class Vertex_validity_tester
 
 CGAL_VORONOI_DIAGRAM_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_VALIDITY_TESTERS_H

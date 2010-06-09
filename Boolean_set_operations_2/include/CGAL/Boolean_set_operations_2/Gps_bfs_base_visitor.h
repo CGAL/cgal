@@ -23,7 +23,7 @@
 
 #include <CGAL/Unique_hash_map.h> 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //! Gps_bfs_base_visitor
 /*! This is a base class for all visitors that are responsible for merging
@@ -103,6 +103,6 @@ protected:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

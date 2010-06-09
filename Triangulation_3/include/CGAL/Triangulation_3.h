@@ -49,7 +49,7 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class GT, class Tds = Default > class Triangulation_3;
 
@@ -4998,6 +4998,6 @@ operator!=(const Triangulation_3<GT, Tds1> &t1,
   return ! (t1 == t2);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_3_H

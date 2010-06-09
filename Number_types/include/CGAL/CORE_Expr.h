@@ -30,7 +30,7 @@
 #include <utility>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <> class Algebraic_structure_traits< CORE::Expr >
   : public Algebraic_structure_traits_base< CORE::Expr,
@@ -179,7 +179,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_Expr.h>

@@ -23,7 +23,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Constrained_triangulation_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class Gt, 
@@ -692,5 +692,5 @@ is_valid(bool verbose, int level) const
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H

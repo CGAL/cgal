@@ -33,7 +33,7 @@
 #  pragma warning(disable:4396)
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class It>
 struct Nested_iterator_traits
@@ -244,7 +244,7 @@ bool operator!=(const Nested_iterator<Base_it,Traits>& it1,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

@@ -27,7 +27,7 @@
 #define CGAL_SPHERICAL_KERNEL_GLOBAL_FUNCTIONS_CIRCULAR_KERNEL_3_H
 
 // global functions
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class SK>
 Circular_arc_point_3<SK>
@@ -216,6 +216,6 @@ theta_extremal_points(const Circle_3<SK>& circle,const Sphere_3<SK>& sphere,Outp
   return SphericalFunctors::theta_extremal_points<SK>(circle,sphere,out_it);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SPHERICAL_KERNEL_GLOBAL_FUNCTIONS_CIRCULAR_KERNEL_3_H

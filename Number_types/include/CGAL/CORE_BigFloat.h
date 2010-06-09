@@ -29,7 +29,7 @@
 #include <CGAL/Interval_traits.h> 
 #include <CGAL/Bigfloat_interval_traits.h> 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // ######### Interval_traits 
 
@@ -515,7 +515,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_Expr.h>

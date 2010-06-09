@@ -25,7 +25,7 @@
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Dummy_tds_2.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template < typename TDS = void>
 class Triangulation_ds_face_base_2 
@@ -353,6 +353,6 @@ public:
 
 
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif //CGAL_DS_TRIANGULATION_FACE_BASE_2_H

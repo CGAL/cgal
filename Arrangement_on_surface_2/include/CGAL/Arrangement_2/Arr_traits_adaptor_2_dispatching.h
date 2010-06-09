@@ -34,7 +34,7 @@
  * Definition of the dispatching tags and classes for the traits adaptor
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //! tag to specify to use a dummy implementation
 struct Arr_use_dummy_tag {};
@@ -773,6 +773,6 @@ public:
 
 } // namespace internal
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ARR_TRAITS_ADAPTOR_2_DISPATCHING_H

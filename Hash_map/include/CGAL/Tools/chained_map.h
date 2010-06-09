@@ -23,7 +23,7 @@
 #ifndef CGAL_CHAINED_MAP_H
 #define CGAL_CHAINED_MAP_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -346,6 +346,6 @@ void chained_map<T>::statistics() const
 }
 
 } // namespace internal
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CHAINED_MAP_H

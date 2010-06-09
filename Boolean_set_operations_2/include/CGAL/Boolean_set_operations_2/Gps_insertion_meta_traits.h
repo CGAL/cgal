@@ -24,7 +24,7 @@
 #include <CGAL/Boolean_set_operations_2/Curve_with_halfedge.h>
 #include <CGAL/Boolean_set_operations_2/Point_with_vertex.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Arrangement_>
 class Gps_insertion_meta_traits : 
@@ -132,6 +132,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

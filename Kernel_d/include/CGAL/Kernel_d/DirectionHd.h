@@ -31,7 +31,7 @@
 #include <CGAL/Kernel_d/VectorHd.h>
 #include <CGAL/Kernel_d/Aff_transformationHd.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class RT, class LA> class DirectionHd;
 template <class RT, class LA>
@@ -219,6 +219,6 @@ requirement is $O(|d.dimension()|)$.  }*/
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_DIRECTIONHD_H
 //----------------------- end of file ----------------------------------

@@ -26,7 +26,7 @@
 
 #include <CGAL/Origin.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class PointC2
@@ -100,6 +100,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_POINT_2_H

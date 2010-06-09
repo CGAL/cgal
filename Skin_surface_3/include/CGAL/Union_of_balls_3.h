@@ -23,7 +23,7 @@
 #include <CGAL/Skin_surface_base_3.h>
 #include <CGAL/triangulate_power_diagram_3.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template <class MixedComplexTraits_3> 
 class Union_of_balls_3 : public Skin_surface_base_3<MixedComplexTraits_3> {
@@ -112,6 +112,6 @@ Union_of_balls_3(WP_iterator begin, WP_iterator end,
 }
   
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_UNION_OF_BALLS_3_H

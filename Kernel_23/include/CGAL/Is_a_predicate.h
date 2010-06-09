@@ -29,7 +29,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -68,6 +68,6 @@ struct Is_a_predicate {
                    typename Functor::result_type>::type type;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IS_A_PREDICATE_H

@@ -35,7 +35,7 @@
 #include <CGAL/Tree_traits.h>
 #include <CGAL/Segment_tree_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class C_Traits_1>
 class Segment_tree_1
@@ -443,6 +443,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

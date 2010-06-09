@@ -29,7 +29,7 @@
 #include <CGAL/constant.h>
 #include <CGAL/Handle_for.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class VectorC2
@@ -147,6 +147,6 @@ operator!=(const Null_vector &n, const VectorC2<R> &v)
   return !(v == n);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_VECTOR_2_H

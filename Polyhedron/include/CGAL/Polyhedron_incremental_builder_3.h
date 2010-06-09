@@ -28,7 +28,7 @@
 #include <vector>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class HalfedgeDS_>
 class Polyhedron_incremental_builder_3 {
@@ -834,7 +834,7 @@ remove_unconnected_vertices( Tag_true) {
     return true;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYHEDRON_INCREMENTAL_BUILDER_3_H //
 // EOF //

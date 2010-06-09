@@ -23,7 +23,7 @@
 // class implementation continued
 //=================================
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 //===========================================================================
@@ -1146,7 +1146,7 @@ file_input(std::istream& is)
 //--------------------------------------------------------------------
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 // EOF

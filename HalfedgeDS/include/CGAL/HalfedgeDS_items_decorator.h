@@ -27,7 +27,7 @@
 #include <CGAL/basic.h>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class p_HDS >
 class HalfedgeDS_items_decorator {
@@ -521,7 +521,7 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HALFEDGEDS_ITEMS_DECORATOR_H //
 // EOF //

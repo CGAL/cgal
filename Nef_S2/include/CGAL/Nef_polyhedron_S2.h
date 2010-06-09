@@ -43,7 +43,7 @@
 #define CGAL_NEF_DEBUG 53
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename K, typename I, typename Mk, typename M> class Nef_polyhedron_S2;
 template <typename K, typename I, typename Mk, typename M> class Nef_polyhedron_S2_rep;
@@ -721,5 +721,5 @@ std::istream& operator>>
 #  pragma warning(pop)
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_NEF_POLYHEDRON_S2_H

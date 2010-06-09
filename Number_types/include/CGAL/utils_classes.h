@@ -19,7 +19,7 @@
 #define CGAL_UTILS_CLASSES_H
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class A, class B = A >
 struct Equal_to : public std::binary_function< A, B, bool > {
@@ -86,6 +86,6 @@ class Is_valid
     };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_UTILS_CLASSES_H

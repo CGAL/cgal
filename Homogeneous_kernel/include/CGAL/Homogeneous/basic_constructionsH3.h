@@ -25,7 +25,7 @@
 #ifndef CGAL_BASIC_CONSTRUCTIONSH3_H
 #define CGAL_BASIC_CONSTRUCTIONSH3_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 typename R::Point_3
@@ -80,6 +80,6 @@ typename R::FT
 squared_distance( PointH3<R> const& p, PointH3<R> const& q)
 { return (p-q)*(p-q); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_BASIC_CONSTRUCTIONSH3_H

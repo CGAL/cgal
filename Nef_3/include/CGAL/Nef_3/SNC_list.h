@@ -23,7 +23,7 @@
 #include <CGAL/Nef_S2/SM_list.h>
 #include <CGAL/Unique_hash_map.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Sphere_map>
 class SNC_in_place_list_sm
@@ -767,6 +767,6 @@ pointer_update(const SNC_list<Kernel,Items>& D)
   }
 }
 */
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SNC_LIST_H

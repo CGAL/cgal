@@ -43,7 +43,7 @@
 #include <CGAL/IO/File_header_OFF.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template < class Vb = Triangulation_ds_vertex_base_2<>, 
            class Fb = Triangulation_ds_face_base_2<> >
@@ -2174,6 +2174,6 @@ operator<<(std::ostream& os,
 }
 
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif //CGAL_TRIANGULATION_DATA_STRUCTURE_2_H

@@ -24,7 +24,7 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/basic_constructions_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class A, class S >
 struct Select : public std::binary_function< A, A, A > {
@@ -329,6 +329,6 @@ construct_bounding_box_union_2(const Rectangle& r1, const Rectangle& r2)
   return construct_bounding_box_union_2(r1, r2, t);
 } // construct_bounding_box_union_2(r1, r2)
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H)

@@ -28,7 +28,7 @@
 
 // #include <CGAL/assertions_behaviour.h> // for backward compatibility
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // function declarations
 // =====================
@@ -274,7 +274,7 @@ inline bool possibly(Uncertain<bool> c);
 #define CGAL_error_msg(MSG) ::CGAL::assertion_fail( "", __FILE__, __LINE__, MSG )
 #define CGAL_error()        ::CGAL::assertion_fail( "", __FILE__, __LINE__ )
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 // This comes last as it is dependant on the macros to be defined.
 // But the macros need CGAL::possibly().

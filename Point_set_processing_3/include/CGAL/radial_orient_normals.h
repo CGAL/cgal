@@ -24,7 +24,7 @@
 
 #include <math.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// Radial orientation of the [first, beyond) range of points.
@@ -166,6 +166,6 @@ radial_orient_normals(
 /// @endcond
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RADIAL_ORIENT_NORMALS_H

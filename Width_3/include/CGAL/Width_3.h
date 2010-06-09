@@ -32,7 +32,7 @@
 #include <CGAL/Width_polyhedron_3.h>
 #include <CGAL/width_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Traits_>
 class Width_3 {
@@ -1596,6 +1596,6 @@ class Width_3 {
   }
 };  
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

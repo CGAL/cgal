@@ -22,7 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/circulator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Iter, typename Move> 
 class CircFromIt : public Iter {
@@ -106,5 +106,5 @@ template <class H>
 std::string PH(H h)
 { if (h == H()) return "nil"; return h->debug(); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_ITERATORTOOLS_H

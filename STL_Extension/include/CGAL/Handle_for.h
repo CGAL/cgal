@@ -33,7 +33,7 @@
 #  pragma warning(push)
 #  pragma warning(disable:4345) // Avoid warning  http://msdn.microsoft.com/en-us/library/wewb47ee(VS.80).aspx
 #endif
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class T, class Alloc = CGAL_ALLOCATOR(T) >
 class Handle_for
@@ -302,7 +302,7 @@ get(const T &t)
     return t;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

@@ -30,7 +30,7 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Direction_2 : public R_::Kernel_base::Direction_2
@@ -276,6 +276,6 @@ operator>>(std::istream& is, Direction_2<R>& d)
   return extract(is, d, typename R::Kernel_tag() );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_DIRECTION_2_H

@@ -31,7 +31,7 @@
 #include <list>
 #include <ostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class _Bezier_point_2
  * Representation of a point on a Bezier curve. The point has algebraic
@@ -1679,6 +1679,6 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
   CGAL_error();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

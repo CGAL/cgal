@@ -30,7 +30,7 @@
 #ifndef CGAL_TEST_FRACTION_TRAITS_H
 #define CGAL_TEST_FRACTION_TRAITS_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class T>
 void test_fraction_traits(){
@@ -72,6 +72,6 @@ void test_fraction_traits(){
     assert(common_factor(Den(-12),Den(-15)) == Den(3));    
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //  CGAL_TEST_FRACTION_TRAITS_H

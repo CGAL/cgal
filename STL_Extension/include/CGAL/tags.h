@@ -27,7 +27,7 @@
 
 #include <CGAL/IO/io_tags.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 struct Void {};
 
@@ -80,6 +80,6 @@ inline
 void
 assert_equal_types( const T&, const T&) {}
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TAGS_H

@@ -34,7 +34,7 @@
 #include <algorithm>
 #include <CGAL/Arr_enums.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Subdivide a range of input curves into x-monotone objects.
@@ -195,6 +195,6 @@ void prepare_for_sweep (Arrangement& arr,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

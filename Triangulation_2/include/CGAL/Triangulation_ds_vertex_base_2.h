@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class TDS = void >
 class Triangulation_ds_vertex_base_2 
@@ -88,6 +88,6 @@ operator<<(std::ostream &os, const Triangulation_ds_vertex_base_2<TDS> &)
 {
   return os;
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRIANGULATION_DS_VERTEX_BASE_2_H

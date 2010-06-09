@@ -30,7 +30,7 @@
 #  pragma warning(disable:4800) // complaint about performance where we can't do anything
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_BEGIN_NAMESPACE
 
@@ -731,7 +731,7 @@ public:
 
 CGAL_SEGMENT_DELAUNAY_GRAPH_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #if defined(BOOST_MSVC)

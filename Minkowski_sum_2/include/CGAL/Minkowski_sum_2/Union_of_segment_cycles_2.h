@@ -21,7 +21,7 @@
 
 #include <CGAL/Minkowski_sum_2/Union_of_cycles_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * An auxiliary class for computing the union of the interiors of segment
@@ -129,6 +129,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

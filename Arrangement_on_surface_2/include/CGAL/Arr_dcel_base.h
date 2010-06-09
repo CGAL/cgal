@@ -36,7 +36,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 inline void* _clean_pointer (const void* p)
 {
@@ -1656,6 +1656,6 @@ protected:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif 

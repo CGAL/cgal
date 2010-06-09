@@ -30,7 +30,7 @@
 
 #include <numeric> // for std::accumulate
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template< class T >
 class Algebraic_extension_traits {
@@ -79,7 +79,7 @@ public:
     };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // NiX_ALGEBRAIC_NUMBER_TRAITS_H
 // EOF

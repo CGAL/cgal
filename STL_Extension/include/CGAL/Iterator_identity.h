@@ -28,7 +28,7 @@
 
 #include <CGAL/circulator.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class I,
            class Ref  = typename std::iterator_traits<I>::reference,
@@ -141,6 +141,6 @@ Iterator_identity<I,Ref,Ptr,Val,Dist,Ctg>
 operator+( Dist n, Iterator_identity<I,Ref,Ptr,Val,Dist,Ctg> i)
 { return i += n; }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_ITERATOR_IDENTITY_H //
 // EOF //

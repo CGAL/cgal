@@ -24,7 +24,7 @@
 #include <CGAL/Surface_mesh_simplification/Detail/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Surface_mesh_simplification
 {
@@ -124,7 +124,7 @@ int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop )
 
 } // namespace Surface_mesh_simplification
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_H //
 // EOF //

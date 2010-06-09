@@ -22,7 +22,7 @@
 
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
    
@@ -35,7 +35,7 @@ class Weighted_alpha_shape_euclidean_traits_3 : public
 Regular_triangulation_euclidean_traits_3<K>
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_NO_DEPRECATED_CODE
   
   

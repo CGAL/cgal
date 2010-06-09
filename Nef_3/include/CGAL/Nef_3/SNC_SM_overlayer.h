@@ -40,7 +40,7 @@
 #define LEDA_MEMORY(t) 
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Manpage {SNC_SM_overlayer}{Refs_}{Overlay in the sphere}{O}}*/
 
@@ -473,5 +473,5 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SNC_SM_OVERLAYER_H

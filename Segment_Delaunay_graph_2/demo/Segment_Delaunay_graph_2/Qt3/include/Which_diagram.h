@@ -24,7 +24,7 @@
 #include <CGAL/Segment_Delaunay_graph_2.h>
 #include <CGAL/Segment_Delaunay_graph_hierarchy_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Matching_class> struct Which_diagram;
 
@@ -40,7 +40,7 @@ struct Which_diagram< Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS_,LTag> >
   typedef Tag_true  Is_hierarchy;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // WHICH_DIAGRAM_H

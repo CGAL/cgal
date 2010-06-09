@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <CGAL/Extremal_polygon_traits_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //!!! This will eventually be integrated into function_objects.h
 template < class Array, class Index, class Element >
@@ -742,6 +742,6 @@ CGAL_maximum_inscribed_k_gon_2(
   return o;
 } // CGAL_maximum_inscribed_k_gon_2( ... )
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_EXTREMAL_POLYGON_2_H)

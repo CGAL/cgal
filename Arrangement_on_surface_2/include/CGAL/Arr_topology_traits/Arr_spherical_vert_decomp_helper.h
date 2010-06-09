@@ -25,7 +25,7 @@
  * Definition of the Arr_spherical_vert_decomp_helper class-template.
  */
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #include <CGAL/Sweep_line_empty_visitor.h>
 
@@ -170,6 +170,6 @@ Arr_spherical_vert_decomp_helper<Tr, Arr>::after_handle_event (Event *event)
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

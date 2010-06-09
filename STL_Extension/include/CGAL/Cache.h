@@ -29,7 +29,7 @@
 
 #include <map>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \brief The Cache serves as a constructor for an object of type Output from
  * a object of type Input.
@@ -160,6 +160,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

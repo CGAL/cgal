@@ -32,7 +32,7 @@
 #include <CGAL/Periodic_3_triangulation_remove_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Gt,
             class Tds = Triangulation_data_structure_3 <
@@ -1236,6 +1236,6 @@ struct Periodic_3_Delaunay_triangulation_3<GT,Tds>::Vertex_remover
 };
 #endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_3_H

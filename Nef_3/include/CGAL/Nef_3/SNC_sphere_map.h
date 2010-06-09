@@ -35,7 +35,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename K, typename I, typename M> class SNC_structure;
 
@@ -438,6 +438,6 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
 };  // SNC_sphere_map
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //  CGAL_SNC_SPHERE_MAP_H

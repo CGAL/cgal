@@ -24,7 +24,7 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class NT>
 class  Alpha_status 
@@ -106,6 +106,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ALPHA_SHAPE_CELL_BASE_3_H

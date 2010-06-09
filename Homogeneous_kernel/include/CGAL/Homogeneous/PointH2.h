@@ -31,7 +31,7 @@
 #include <boost/mpl/logical.hpp>
 #include <boost/utility.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class PointH2
@@ -149,6 +149,6 @@ typename PointH2<R>::Direction_2
 PointH2<R>::direction() const
 { return typename PointH2<R>::Direction_2(*this); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HOMOGENEOUS_POINT_2_H

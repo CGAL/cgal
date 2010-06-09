@@ -32,7 +32,7 @@
 
 #include <CGAL/Bbox_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /*! \class
@@ -262,6 +262,6 @@ std::istream & operator>> (std::istream & is,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

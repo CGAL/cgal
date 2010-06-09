@@ -25,7 +25,7 @@
 
 #include <CGAL/Arr_point_location/Arr_lm_generator_base.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
 * This class is related to the Landmarks point location, and given as 
@@ -145,6 +145,6 @@ protected:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

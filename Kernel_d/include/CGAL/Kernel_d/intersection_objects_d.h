@@ -24,7 +24,7 @@
 #ifndef CGAL_INTERSECTION_OBJECTS_D_H
 #define CGAL_INTERSECTION_OBJECTS_D_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 class Line_d_Line_d_pair {
@@ -670,6 +670,6 @@ Segment_d_Hyperplane_d_pair<R>::intersection(Segment_d& s)
   s = _s; return true;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_INTERSECTION_OBJECTS_D_H

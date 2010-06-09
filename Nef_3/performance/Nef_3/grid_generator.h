@@ -4,7 +4,7 @@
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <sstream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename Nef_>
 class grid_generator : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
@@ -775,4 +775,4 @@ public:
   }						      
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

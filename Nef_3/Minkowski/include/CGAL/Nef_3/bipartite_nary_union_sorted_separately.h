@@ -18,7 +18,7 @@
 
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Const_decorator>
 struct Sort_volumes_by_smallest_vertex {
@@ -131,5 +131,5 @@ bipartite_nary_union_sorted_separately(Nef_polyhedron& N0,
   return result;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_BIPARTITE_NARY_UNION_SORTED_SEPARATELY_H

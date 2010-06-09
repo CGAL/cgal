@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <iosfwd>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // copy_n is usually in the STL as well, but not in the official
 // standard. We provide our own copy_n.  It is planned for C++0x.
@@ -305,6 +305,6 @@ output_range(std::ostream& os,
     return os;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_ALGORITHM_H

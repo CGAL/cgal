@@ -59,7 +59,7 @@
 // #define CGAL_NEF_CLOG(t) std::clog <<" "<<t<<std::endl; std::clog.flush()
 #define CGAL_NEF_CLOG(t)
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename SNC_decorator>
 class SNC_point_locator
@@ -1384,5 +1384,5 @@ private:
 };
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_NEF_SNC_POINT_LOCATOR_H

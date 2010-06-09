@@ -26,7 +26,7 @@
 
 #include <CGAL/user_classes.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // This is a kernel wrapper which provides the type equality between
 // Kernel::Point_2 and CGAL::Point_2<Kernel>, by deriving from
@@ -48,6 +48,6 @@ struct Type_equality_wrapper
     typedef CGAL::Aff_transformation_3<Kernel_>      Aff_transformation_3;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_KERNEL_TYPE_EQUALITY_WRAPPER_H

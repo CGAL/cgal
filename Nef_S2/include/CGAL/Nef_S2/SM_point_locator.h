@@ -30,7 +30,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Moptions print_title=yes }*/ 
 
@@ -654,5 +654,5 @@ marks_of_halfspheres(Mark& lower, Mark& upper, int axis) {
   }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_SM_POINT_LOCATOR_H

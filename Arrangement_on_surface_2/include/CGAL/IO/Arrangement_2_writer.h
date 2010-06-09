@@ -28,7 +28,7 @@
 #include <CGAL/Arr_accessor.h>
 #include <map>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * An auxiliary class for writing an arrangement to an output stream.
@@ -350,6 +350,6 @@ protected:
   }  
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_ARRANGEMENT_2_WRITER_H 

@@ -28,7 +28,7 @@
 typedef CGAL::Simple_cartesian<double> Rcart;
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Bbox_2_Line_2_pair_impl
 {
@@ -363,4 +363,4 @@ bool do_intersect_ray_2(
     return pair.intersection_type() != Bbox_2_Ray_2_pair::NO_INTERSECTION;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

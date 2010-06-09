@@ -33,7 +33,7 @@
 #  include <boost/tuple/tuple.hpp>
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace cpp0x {
 
@@ -177,6 +177,6 @@ struct Is_in_tuple <V,cpp0x::tuple<V,T1,T2,T3,T4,T5,T6> >
 
 #endif 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TUPLE_H

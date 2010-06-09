@@ -26,7 +26,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template < class K_ >
 struct Extremal_polygon_area_traits_2 {
   typedef          K_                                K;
@@ -139,13 +139,13 @@ protected:
   K k;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #include <CGAL/Optimisation/assertions.h>
 #include <cmath>
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_real.h>
 #endif // CGAL_USE_LEDA
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class K_ >
 struct Extremal_polygon_perimeter_traits_2 {
@@ -353,7 +353,7 @@ maximum_perimeter_inscribed_k_gon(
     points_begin, points_end, k, o);
 } // maximum_perimeter_inscribed_k_gon( ... )
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_EXTREMAL_POLYGON_TRAITS_2_H)
 // ----------------------------------------------------------------------------

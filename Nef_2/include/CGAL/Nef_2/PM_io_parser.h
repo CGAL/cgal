@@ -24,7 +24,7 @@
 #include <CGAL/Nef_2/Object_index.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Moptions outfile=PM_io_parser.man }*/
 /*{\Manpage {PM_io_parser}{PMDEC}{IO of plane maps}{IO}}*/
@@ -398,5 +398,5 @@ void PM_io_parser<PMDEC>::dump(const PMDEC& D, std::ostream& os)
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_PM_IO_PARSER_H

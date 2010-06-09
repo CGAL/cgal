@@ -27,7 +27,7 @@
 #include <cmath>
 #include <CGAL/kernel_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R>
 class Conic_2;
@@ -153,7 +153,7 @@ int solve_cubic (NT c3, NT c2, NT c1, NT c0,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONIC_MISC_H
 

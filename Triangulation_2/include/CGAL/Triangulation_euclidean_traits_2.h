@@ -32,7 +32,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Segment_2_Segment_2_intersection.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template < class R >
 class Triangulation_euclidean_traits_2 {
@@ -121,6 +121,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE 
+} //namespace CGAL 
 
 #endif // CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_2_H

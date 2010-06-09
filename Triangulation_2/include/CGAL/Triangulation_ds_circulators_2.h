@@ -27,7 +27,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Tds>
 class Triangulation_ds_face_circulator_2
@@ -614,6 +614,6 @@ operator!=(Nullptr_t CGAL_triangulation_assertion_code(n)) const
 }
        
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRIANGULATION_DS_CIRCULATORS_2_H

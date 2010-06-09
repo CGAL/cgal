@@ -23,7 +23,7 @@
 #include <CGAL/IO/Polyhedron_inventor_ostream.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Polyhedron>
 void print_polyhedron_inventor( std::ostream& out, const Polyhedron& P) {
@@ -46,6 +46,6 @@ print_inventor( std::ostream& out,
     os << P;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_PRINT_INVENTOR_H //
 // EOF //

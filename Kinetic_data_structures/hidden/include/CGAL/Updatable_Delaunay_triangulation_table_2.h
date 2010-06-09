@@ -36,7 +36,7 @@
 #include <CGAL/Polynomial/Interval_polynomial.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE;
+namespace CGAL {;
 
 
 bool disable_filter_0_=false;
@@ -2073,5 +2073,5 @@ protected:
   }*/
 //typename Updatable_Delaunay_triangulation_table_2<IK, KK>::Protected_array_pointer<T,n>
   
-CGAL_END_NAMESPACE;
+} //namespace CGAL;
 #endif

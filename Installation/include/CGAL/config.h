@@ -70,9 +70,6 @@
 // It only works for public releases.
 #define CGAL_VERSION_NUMBER(x,y,z) (1000001 + 10000*x + 100*y + 10*z) * 1000
 
-#define CGAL_BEGIN_NAMESPACE namespace CGAL {
-#define CGAL_END_NAMESPACE }
-
 #ifndef CGAL_CFG_NO_CPP0X_LONG_LONG
 #  define CGAL_USE_LONG_LONG
 #endif
@@ -236,11 +233,11 @@ using std::max;
 #endif
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Typedef for the type of NULL.
 typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONFIG_H

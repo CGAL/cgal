@@ -25,7 +25,7 @@
 
 #include <CGAL/IO/io.h>
  
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! 
  * oformat flag for parentheses if needed for a coefficient
@@ -97,6 +97,6 @@ template <> struct Needs_parens_as_product<long double>{
     bool operator()(const long double& x){return x < (long double)(0);} 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  //CGAL_NEEDS_PARENTHESES_AS_PRODUCT_H

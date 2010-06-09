@@ -41,7 +41,7 @@
 
 #include <CGAL/Circular_kernel_2/function_objects_on_circle_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -92,6 +92,6 @@ struct Circular_kernel_2
   >
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SIMPLE_CIRCULAR_KERNEL_2_H

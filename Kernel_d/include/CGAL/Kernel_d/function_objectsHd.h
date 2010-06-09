@@ -33,7 +33,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 struct Lift_to_paraboloidHd {
@@ -467,6 +467,6 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
 }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_FUNCTION_OBJECTSHD_H

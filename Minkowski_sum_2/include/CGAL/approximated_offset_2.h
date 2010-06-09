@@ -23,7 +23,7 @@
 #include <CGAL/Minkowski_sum_2/Offset_conv_2.h>
 #include <CGAL/Minkowski_sum_2/Offset_decomp_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Approximate the offset of a given simple polygon by a given radius,
@@ -163,6 +163,6 @@ approximated_inset_2 (const Polygon_2<Kernel, Container>& pgn,
   return (oi);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -29,7 +29,7 @@
 
 #include <string>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // ==================
 // class declarations
@@ -309,7 +309,7 @@ price_dantzig (int j, const NT& mu, const NT& nt0,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_QP_PRICING_STRATEGY_H
 

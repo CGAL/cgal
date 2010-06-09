@@ -27,7 +27,7 @@
 #include <CGAL/Voronoi_diagram_2/Dummy_iterator.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template<class K>
@@ -358,7 +358,7 @@ operator<<(std::ostream& os,
   return os;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_DELAUNAY_GRAPH_CONCEPT_H

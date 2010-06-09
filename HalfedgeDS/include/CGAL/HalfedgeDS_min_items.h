@@ -27,7 +27,7 @@
 #include <CGAL/HalfedgeDS_halfedge_min_base.h>
 #include <CGAL/HalfedgeDS_face_min_base.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class HalfedgeDS_min_items {
 public:
@@ -45,6 +45,6 @@ public:
     };
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_HALFEDGEDS_MIN_ITEMS_H //
 // EOF //

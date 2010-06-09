@@ -25,7 +25,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Get_arithmetic_kernel.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class COEFF>
 struct Get_arithmetic_kernel<Polynomial<COEFF> >{
@@ -33,6 +33,6 @@ struct Get_arithmetic_kernel<Polynomial<COEFF> >{
   typedef typename GET::Arithmetic_kernel Arithmetic_kernel;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

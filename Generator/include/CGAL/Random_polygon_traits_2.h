@@ -24,7 +24,7 @@
 #ifndef CGAL_RANDOM_POLYGON_TRAITS_2_H
 #define CGAL_RANDOM_POLYGON_TRAITS_2_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------//
 //                          Random_polygon_traits_2
@@ -49,6 +49,6 @@ class Random_polygon_traits_2
     { return Orientation_2(); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RANDOM_POLYGON_TRAITS_2_H

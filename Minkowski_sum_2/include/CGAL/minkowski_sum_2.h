@@ -25,7 +25,7 @@
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_decomp_2.h>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*!
  * Compute the Minkowski sum of two simple polygons using the convolution
@@ -85,6 +85,6 @@ minkowski_sum_2 (const Polygon_2<Kernel,Container>& pgn1,
                                                   sum_holes.end()));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

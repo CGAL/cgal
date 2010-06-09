@@ -28,7 +28,7 @@
 #include <algorithm>
 #include <functional>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class FT, class AL >
 typename Linear_algebraCd<FT,AL>::Matrix
@@ -438,5 +438,5 @@ rank(const Matrix &M)
   return independent_columns(M,q);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_LINEAR_ALGEBRACD_C

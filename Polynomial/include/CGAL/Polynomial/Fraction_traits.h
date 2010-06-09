@@ -29,7 +29,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // We need to play a similar game to provide Fraction_traits
 
@@ -150,5 +150,5 @@ class Fraction_traits< Polynomial<NT_> >
     // nothing new
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_POLYNOMIAL_FRACTION_TRAITS_H

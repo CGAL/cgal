@@ -26,7 +26,7 @@
 
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class pR>
 class Direction_d : public pR::Direction_d_base
@@ -68,5 +68,5 @@ class Direction_d : public pR::Direction_d_base
   { return Base::operator!=(w); }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_DIRECTION_D_H

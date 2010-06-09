@@ -22,7 +22,7 @@
 #include <CGAL/Minkowski_sum_2/Labels.h>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A meta-traits class that adds lables to points and to x-monotone curves,
@@ -415,6 +415,6 @@ public:
   //@}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

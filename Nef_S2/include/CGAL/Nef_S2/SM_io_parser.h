@@ -32,7 +32,7 @@
 #  pragma warning(disable:4355) // complaint about using 'this' to
 #endif                          // initialize a member
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Moptions outfile=SM_io_parser.man }*/
 /*{\Manpage {SM_io_parser}{Decorator_}{IO of embedded maps}{IO}}*/
@@ -481,7 +481,7 @@ void SM_io_parser<Decorator_>::dump(const Decorator_& D, std::ostream& os)
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #if defined(BOOST_MSVC)

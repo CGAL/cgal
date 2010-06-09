@@ -29,7 +29,7 @@
 #include <typeinfo>
 #include <cstddef>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Ref_counted_virtual
 {
@@ -177,6 +177,6 @@ protected:
 template <class RefCounted>
 inline bool identical(const Handle_for_virtual<RefCounted> &h1, const Handle_for_virtual<RefCounted> &h2) { return h1.identical(h2); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HANDLE_FOR_VIRTUAL_H

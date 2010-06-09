@@ -24,7 +24,7 @@
 #include <vector>
 #include <functional>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template < class Matrix, class RandomAccessIterator >
 inline
 void
@@ -202,7 +202,7 @@ _reduce_matrix(
   
   M.shrink_to_quadratic_size();
 } // _reduce_matrix( M, t)
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_MONOTONE_MATRIX_SEARCH_H)
 // ----------------------------------------------------------------------------

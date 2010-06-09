@@ -29,7 +29,7 @@
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/Apollonius_graph_2/compare_quadratic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
@@ -631,6 +631,6 @@ public:
 
 CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_FINITE_EDGE_TEST_C2_H

@@ -27,7 +27,7 @@
 #include <CGAL/Gps_segment_traits_2.h>
 #include <CGAL/Gps_traits_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Polygon>
 struct Gps_default_traits
@@ -62,6 +62,6 @@ struct Gps_default_traits<CGAL::General_polygon_2<Arr_traits> >
   typedef Gps_traits_2<Arr_traits>    Traits;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

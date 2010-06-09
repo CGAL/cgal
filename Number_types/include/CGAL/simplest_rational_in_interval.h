@@ -29,7 +29,7 @@
 #include <climits>
 #include <cmath>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /* simplest_rational_in_interval(x,y) returns the rational number with
      the smallest denominator in the interval [x,y].  See Knuth,
@@ -106,6 +106,6 @@ simplest_rational_in_interval(double x, double y) {
   return Compose()(r_numerator, r_denominator);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_SIMPLEST_RATIONAL_IN_INTERVAL_H

@@ -41,7 +41,7 @@
 
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template <class Traits>
@@ -452,7 +452,7 @@ template < class Traits >
 std::istream&
 operator >> ( std::istream& is, Min_sphere_d<Traits> & ms);
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Min_sphere_d/Min_sphere_d_impl.h>
 

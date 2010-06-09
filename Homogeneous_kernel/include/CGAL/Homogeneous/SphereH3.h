@@ -28,7 +28,7 @@
 #include <CGAL/Homogeneous/predicates_on_pointsH3.h>
 #include <boost/tuple/tuple.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class SphereH3
@@ -224,6 +224,6 @@ SphereH3<R>::opposite() const
                          CGAL::opposite(orientation()) );
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SPHEREH3_H

@@ -68,7 +68,7 @@
 
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Basic_Sweep_line_2 
  * A class that implements the sweep line algorithm for general x-monotone
@@ -588,7 +588,7 @@ protected:
   #include <CGAL/Sweep_line_2/Sweep_line_2_debug.h>
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Sweep_line_2/Basic_sweep_line_2_impl.h>
 

@@ -35,7 +35,7 @@
 
 #ifdef CGAL_USE_GMP
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //Gmp internal coercions:
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(Gmpz)
@@ -67,7 +67,7 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(Gmpfr,Gmpq)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,Gmpq)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,Gmpq)
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_USE_GMP

@@ -28,7 +28,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Rep
 {
@@ -88,6 +88,6 @@ class Handle
 
 inline bool identical(const Handle &h1, const Handle &h2) { return h1.identical(h2); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HANDLE_H

@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <boost/bind.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class ForwardIterator, class Traits>
 bool
@@ -215,6 +215,6 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
   return true;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CONVEXITY_CHECK_2_C

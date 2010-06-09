@@ -25,7 +25,7 @@
 #include <vector>
 #include <algorithm>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Kernel,
           class Containter = std::vector<typename Kernel::Point_2> >
@@ -221,6 +221,6 @@ inline bool operator!=(const Polygon_2<Kernel_, Container_>& p1,
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

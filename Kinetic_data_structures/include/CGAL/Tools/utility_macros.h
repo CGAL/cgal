@@ -341,7 +341,7 @@ template <class A, class B>			\
     
 
 #define CGAL_REAL_EMBEDDABLE1(name)					\
-  CGAL_BEGIN_NAMESPACE							\
+  namespace CGAL {							\
   template <class T>							\
   class Real_embeddable_traits< name<T> >				\
     : public INTERN_RET::Real_embeddable_traits_base<name<T>, Tag_true>{ \
@@ -349,11 +349,11 @@ template <class A, class B>			\
     typedef name<T>  Type;						\
     CGAL_REAL_EMBEDDABLE_BODY;						\
   };									\
-  CGAL_END_NAMESPACE							
+  } //namespace CGAL							
 
 
 #define CGAL_REAL_EMBEDDABLE2(name)					\
-  CGAL_BEGIN_NAMESPACE							\
+  namespace CGAL {							\
   template <class T, class A>						\
   class Real_embeddable_traits< name<T, A> >				\
     : public INTERN_RET::Real_embeddable_traits_base< name<T, A>, Tag_true>{ \
@@ -361,7 +361,7 @@ template <class A, class B>			\
     typedef name<T, A>  Type;						\
     CGAL_REAL_EMBEDDABLE_BODY;						\
   };									\
-  CGAL_END_NAMESPACE							
+  } //namespace CGAL							
 
 
 #define CGAL_HAS_INFINITY1(name)					\
@@ -380,7 +380,7 @@ template <class A, class B>			\
 
 
 #define CGAL_REAL_EMBEDABLE2(name)					\
-  CGAL_BEGIN_NAMESPACE							\
+  namespace CGAL {							\
   template <class T,class U>						\
   class Real_embeddable_traits< name<T, U> >				\
     : public INTERN_RET::Real_embeddable_traits_base< name<T, U> , Tag_true>{ \
@@ -388,7 +388,7 @@ template <class A, class B>			\
     typedef name<T, U>  Type;						\
     CGAL_REAL_EMBEDDABLE_BODY						\
   };									\
-  CGAL_END_NAMESPACE							
+  } //namespace CGAL							
 
 #define CGAL_HAS_INFINITY2(name)					\
   namespace std								\

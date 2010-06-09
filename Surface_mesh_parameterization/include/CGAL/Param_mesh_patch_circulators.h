@@ -31,7 +31,7 @@
 
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// Class Mesh_patch_vertex_around_vertex_cir
@@ -611,6 +611,6 @@ private:
 }; // Mesh_patch_vertex_around_facet_cir
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_PARAM_MESH_PATCH_CIRCULATORS_H

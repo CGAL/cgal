@@ -36,7 +36,7 @@
 #include <CGAL/Kernel_d/Matrix__.h>
 
 // #define CGAL_LA_SELFTEST
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*{\Moptions outfile=Linear_algebra.man}*/
 /*{\Manpage {Linear_algebraHd}{RT}{Linear Algebra on RT}{LA}}*/
@@ -203,7 +203,7 @@ $c^T A = 0$ and $c^T b \not= 0$.}*/
 }; // Linear_algebraHd
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Kernel_d/Linear_algebraHd_impl.h>
 

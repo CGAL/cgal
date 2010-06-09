@@ -33,7 +33,7 @@
 
 #include <CGAL/Polynomial.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // leading coefficient
 //////////////////////
@@ -165,7 +165,7 @@ substitute_xy(
     return sub;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_POLYNOMIAL_FUNCTIONS_H
 // EOF

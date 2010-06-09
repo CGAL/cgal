@@ -27,7 +27,7 @@
 #include <CGAL/IO/Verbose_ostream.h>
 #include <vector>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
                     
 // =================
 // class declaration
@@ -1126,7 +1126,7 @@ update_entry( ET& entry, const ET& d_new, const ET& y, const ET& d_old) const
     entry = CGAL::integral_division(entry, d_old);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/QP_solver/QP_basis_inverse_impl.h>
 

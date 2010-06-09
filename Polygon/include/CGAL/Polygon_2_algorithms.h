@@ -29,7 +29,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_2/polygon_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //-----------------------------------------------------------------------//
 //                  algorithms for sequences of 2D points
@@ -265,7 +265,7 @@ Orientation orientation_2(ForwardIterator first,
   return orientation_2(first, last, K());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Polygon_2/Polygon_2_algorithms_impl.h>
 

@@ -20,7 +20,7 @@
 #ifndef CGAL_TD_NINETUPLE_H
 #define CGAL_TD_NINETUPLE_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class F0,class F1,class F2,class F3,class F4,class F5,class F6,
   class F7,class F8>
@@ -52,6 +52,6 @@ public:
   {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

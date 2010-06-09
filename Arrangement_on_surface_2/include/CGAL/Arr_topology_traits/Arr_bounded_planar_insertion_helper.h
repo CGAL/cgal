@@ -28,7 +28,7 @@
 #include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_bounded_planar_insertion_helper
  * A helper class for the insertion sweep-line visitors, suitable
@@ -79,6 +79,6 @@ public:
   {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

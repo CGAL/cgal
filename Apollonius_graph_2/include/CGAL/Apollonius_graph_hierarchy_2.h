@@ -34,7 +34,7 @@
 
 #include <CGAL/Apollonius_graph_2/Traits_wrapper_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // parameterization of the  hierarchy
@@ -354,7 +354,7 @@ std::istream& operator>>(std::istream& is,
   return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #include <CGAL/Apollonius_graph_2/Apollonius_graph_hierarchy_2_impl.h>

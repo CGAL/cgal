@@ -27,7 +27,7 @@
 #include <CGAL/basic.h>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A class defining a textual (ASCII) input/output format for arrangements
@@ -183,6 +183,6 @@ private:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

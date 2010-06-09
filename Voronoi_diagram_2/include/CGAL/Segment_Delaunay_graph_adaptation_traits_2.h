@@ -28,7 +28,7 @@
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class SDG2>
 struct Segment_Delaunay_graph_adaptation_traits_2
@@ -46,6 +46,6 @@ struct Segment_Delaunay_graph_adaptation_traits_2
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_ADAPTATION_TRAITS_2_H

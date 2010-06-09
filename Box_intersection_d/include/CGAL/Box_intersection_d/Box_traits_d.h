@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <functional>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Box_intersection_d {
 
@@ -163,6 +163,6 @@ struct Predicate_traits_d : public BoxTraits {
 } // end namespace Box_intersection_d
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

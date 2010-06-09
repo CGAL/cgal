@@ -48,7 +48,7 @@
 #include <CGAL/HalfedgeDS_halfedge_base.h>
 #include <CGAL/HalfedgeDS_face_base.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! The extended Polyhedron vertex type */
 template <class T_Refs, class T_Point>
@@ -212,6 +212,6 @@ struct Arr_polyhedral_sgm_polyhedron_3 :
   Arr_polyhedral_sgm_polyhedron_3() {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

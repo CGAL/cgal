@@ -33,7 +33,7 @@
 #include <CGAL/Arr_geometry_traits/Bezier_cache.h>
 #include <CGAL/Arr_geometry_traits/Bezier_bounding_rational_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A traits class for maintaining an arrangement of Bezier curves with
@@ -808,6 +808,6 @@ public:
   //@}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

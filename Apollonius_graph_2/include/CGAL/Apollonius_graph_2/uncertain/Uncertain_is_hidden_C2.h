@@ -27,7 +27,7 @@
 #include <CGAL/number_type_basic.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //--------------------------------------------------------------------
 
@@ -92,6 +92,6 @@ public:
 //--------------------------------------------------------------------
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_UNCERTAIN_IS_HIDDEN_C2_H

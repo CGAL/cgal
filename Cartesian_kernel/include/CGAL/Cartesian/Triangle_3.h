@@ -27,7 +27,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/array.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class TriangleC3
@@ -140,6 +140,6 @@ TriangleC3<R>::is_degenerate() const
   return collinear(vertex(0),vertex(1),vertex(2));
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_TRIANGLE_3_H

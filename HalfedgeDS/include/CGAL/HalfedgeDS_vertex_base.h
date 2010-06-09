@@ -26,7 +26,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // We use Tag_false to indicate that no point type is provided.
 
@@ -127,7 +127,7 @@ public:
     const Point&          point() const                     { return p; }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HALFEDGEDS_VERTEX_BASE_H //
 // EOF //

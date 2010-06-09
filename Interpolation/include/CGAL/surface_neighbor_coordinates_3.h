@@ -28,7 +28,7 @@
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/regular_neighbor_coordinates_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class OutputIterator, class InputIterator, class Kernel>
 inline
@@ -278,6 +278,6 @@ surface_neighbor_coordinates_3(const Dt& dt,
            p, out, traits);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SURFACE_NEIGHBOR_COORDINATES_3_H

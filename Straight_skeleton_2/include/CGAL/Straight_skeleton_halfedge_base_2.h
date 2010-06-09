@@ -19,7 +19,7 @@
 #define CGAL_STRAIGHT_SKELETON_HALFEDGE_BASE_2_H 1
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Refs, class FT_>
 class Straight_skeleton_halfedge_base_base_2
@@ -164,7 +164,7 @@ private:
 
 } ;
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_HALFEDGE_BASE_2_H //
 // EOF //

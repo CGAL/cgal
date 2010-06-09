@@ -30,7 +30,7 @@
 
 #include <CGAL/number_type_basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<> class Algebraic_structure_traits< long long int >
   : public Algebraic_structure_traits_base< long long int,
@@ -86,7 +86,7 @@ typedef  unsigned long long int  UInteger64;
 #define CGAL_HAS_INTEGER64
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Interval_nt.h>
 

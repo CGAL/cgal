@@ -28,7 +28,7 @@
 
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_construction_helper.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Arr_unb_planar_overlay_helper
  * A helper class for the overlay sweep-line visitor, suitable for the overlay
@@ -214,6 +214,6 @@ before_handle_event (Event* e)
   return;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

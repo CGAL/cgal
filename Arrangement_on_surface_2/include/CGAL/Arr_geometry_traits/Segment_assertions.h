@@ -20,7 +20,7 @@
 #ifndef CGAL_SEGMENT_ASSERTIONS_H
 #define CGAL_SEGMENT_ASSERTIONS_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Traits_>
 class Segment_assertions
@@ -65,6 +65,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

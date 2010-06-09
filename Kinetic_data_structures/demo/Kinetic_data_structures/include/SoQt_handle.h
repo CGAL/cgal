@@ -37,7 +37,7 @@ void intrusive_ptr_release(SoNode *n)
 }
 
 
-CGAL_BEGIN_NAMESPACE;
+namespace CGAL {;
 
 //! A reference counting pointer for storing pointers to Inventor objects.
 /*!  Inventor objects already have reference counts built in, so I
@@ -55,5 +55,5 @@ public:
   SoQt_handle(): P(){}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif

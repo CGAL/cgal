@@ -21,7 +21,7 @@
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class SNC_decorator>
 class Nef_box : public Box_intersection_d::Box_d< double, 3 > {
@@ -155,6 +155,6 @@ class Nef_box : public Box_intersection_d::Box_d< double, 3 > {
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_NEF_BOX_H

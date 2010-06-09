@@ -24,7 +24,7 @@
 #include <CGAL/Fixed_border_parameterizer_3.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 /// The class Mean_value_coordinates_parameterizer_3
@@ -190,6 +190,6 @@ protected:
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_MEAN_VALUE_COORDINATES_PARAMETERIZER_3_H

@@ -22,7 +22,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Dummy TDS which provides all types that a vertex_base or cell_base can use.
 struct Dummy_tds_2 {
@@ -45,6 +45,6 @@ struct Dummy_tds_2 {
   typedef std::size_t size_type;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_DUMMY_TDS_2_H

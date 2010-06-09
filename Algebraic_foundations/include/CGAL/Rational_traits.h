@@ -29,7 +29,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Fraction_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal{
 
@@ -87,7 +87,7 @@ typename Fraction_traits<T>::Denominator_type
 >::value >
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_RATIONAL_TRAITS_H
 // EOF

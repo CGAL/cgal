@@ -308,7 +308,7 @@ std::ostream &operator<<(std::ostream &out, const Filtered_number<NT> &a)
 
 CGAL_POLYNOMIAL_END_NAMESPACE
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 template <class NT>
 double to_double(const CGAL_POLYNOMIAL_NS::Filtered_number<NT> &a)
 {
@@ -323,7 +323,7 @@ std::pair<double, double> to_interval(const CGAL_POLYNOMIAL_NS::Filtered_number<
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 template <class NT>
 std::ostream &operator<<(std::ostream &out, const CGAL_POLYNOMIAL_NS::Filtered_number<NT> &a)

@@ -38,7 +38,7 @@
 #define CGAL_NEF_DEBUG 293
 #include <CGAL/Nef_2/debug.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename T>
 class moreLeft : public T {
@@ -2040,5 +2040,5 @@ void SNC_io_parser<EW>::add_infi_box() {
   }
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SNC_IO_PARSER_H

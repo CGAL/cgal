@@ -21,7 +21,7 @@
 #ifndef CGAL_OPTIMISATION_SPHERE_D_H
 #define CGAL_OPTIMISATION_SPHERE_D_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Class declarations
 // ==================
@@ -35,7 +35,7 @@ class Optimisation_sphere_d<Homogeneous_tag, FT, RT, PT, Traits>;
 template <class FT, class RT, class PT, class Traits>
 class Optimisation_sphere_d<Cartesian_tag, FT, RT, PT, Traits>;
     
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
     // Class interfaces and implementation
     // ==================================
@@ -47,7 +47,7 @@ CGAL_END_NAMESPACE
     #include <CGAL/Optimisation/assertions.h>
 
 
-    CGAL_BEGIN_NAMESPACE
+    namespace CGAL {
 
     // Cartesian version
     // -----------------
@@ -595,7 +595,7 @@ CGAL_END_NAMESPACE
         
     };
 
-     CGAL_END_NAMESPACE
+     } //namespace CGAL
 
     #endif // CGAL_OPTIMISATION_SPHERE_D_H
 

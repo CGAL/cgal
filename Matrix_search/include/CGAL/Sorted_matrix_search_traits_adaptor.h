@@ -20,7 +20,7 @@
 #ifndef CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H
 #define CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H 1
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class FeasibilityTest_, class Matrix_ >
 class Sorted_matrix_search_traits_adaptor {
@@ -63,7 +63,7 @@ sorted_matrix_search_traits_adaptor(FeasibilityTest f, const Matrix&)
   return Traits(f);
 } // sorted_matrix_search_traits_adaptor( ... )
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // ! (CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H)
 // ----------------------------------------------------------------------------

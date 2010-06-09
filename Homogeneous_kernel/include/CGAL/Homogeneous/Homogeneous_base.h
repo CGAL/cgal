@@ -73,7 +73,7 @@
 
 #include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename RT_, typename FT_, typename K_ >
 struct Homogeneous_base
@@ -157,6 +157,6 @@ struct Homogeneous_base
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_HOMOGENEOUS_BASE_H

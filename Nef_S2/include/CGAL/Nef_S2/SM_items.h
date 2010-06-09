@@ -31,7 +31,7 @@
 #include <string>
 #include <sstream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //template <typename K, typename I,typename C> class Sphere_map;
 template <typename SM> class SM_const_decorator;
@@ -335,5 +335,5 @@ public:
 }; // SM_items
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_SM_ITEMS_H

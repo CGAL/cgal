@@ -25,7 +25,7 @@
 #include <CGAL/QP_options.h>
 #include <CGAL/QP_solution.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace QP_functions_detail { 
   // internal routine; writes P to out in MPS format
@@ -154,7 +154,7 @@ Quadratic_program_solution<ET> solve_nonnegative_linear_program
 (const NonnegativeLinearProgram &lp, const ET&,
 const Quadratic_program_options& options = Quadratic_program_options());
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/QP_solver/QP_functions_impl.h>
 

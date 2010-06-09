@@ -30,7 +30,7 @@
 #include <CGAL/Kernel/global_functions_2.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename O>
 inline
@@ -41,6 +41,6 @@ parallel(const O &o1, const O &o2)
   return internal::parallel(o1, o2, K());
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_KERNEL_GLOBAL_FUNCTIONS_H

@@ -24,7 +24,7 @@
 
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 #if 0
 inline
 Sign
@@ -133,7 +133,7 @@ sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f_plus_d_sqrt_e_x_f(const RT &a,
 			   e);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/more_functions_on_signs.h>
 

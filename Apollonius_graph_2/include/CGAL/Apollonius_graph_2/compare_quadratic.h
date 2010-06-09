@@ -25,7 +25,7 @@
 #include <CGAL/Apollonius_graph_2/basic.h>
 #include <CGAL/functions_on_signs.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
@@ -985,6 +985,6 @@ ke_compare_r1_r2_filtered(const CT& a1, const CT& b1, const CT& c1,
 
 CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_COMPARE_QUADRATIC_H

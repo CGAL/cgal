@@ -27,7 +27,7 @@
 #include <utility>
 #include <CGAL/Handle_for.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class LineC3
@@ -151,6 +151,6 @@ LineC3<R>::is_degenerate() const
   return to_vector() == NULL_VECTOR;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CARTESIAN_LINE_3_H

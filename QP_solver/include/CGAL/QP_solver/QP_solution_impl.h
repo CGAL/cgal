@@ -21,7 +21,7 @@
 
 #include<iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 // checks whether the solution actually solves program p  
 // this performs exactly the checks described in the doc
 // of the class Quadratic_program_solution
@@ -728,6 +728,6 @@ void  Quadratic_program_solution<ET>::add_c
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_QP_SOLUTION_IMPL_H

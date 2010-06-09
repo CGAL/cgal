@@ -39,7 +39,7 @@
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Modular_traits.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Gmpq;
 
@@ -213,7 +213,7 @@ class Modular_traits< Gmpz > {
     };    
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

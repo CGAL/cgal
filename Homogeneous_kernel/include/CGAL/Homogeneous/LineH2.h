@@ -26,7 +26,7 @@
 
 #include <CGAL/array.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class R_ >
 class LineH2
@@ -93,6 +93,6 @@ bool
 LineH2<R>::operator!=(const LineH2<R>& l) const
 { return !(*this == l); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_LINEH2_H

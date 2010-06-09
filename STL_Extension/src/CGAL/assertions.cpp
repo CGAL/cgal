@@ -29,7 +29,7 @@
 #include <cstdlib>
 #include <iostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace {
 
@@ -218,4 +218,4 @@ set_warning_behaviour(Failure_behaviour eb)
     return result;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL

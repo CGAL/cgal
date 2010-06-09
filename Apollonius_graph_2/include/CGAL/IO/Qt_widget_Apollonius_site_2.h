@@ -24,7 +24,7 @@
 #include <CGAL/Apollonius_site_2.h>
 #include <CGAL/IO/Qt_widget.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class K>
 Qt_widget&
@@ -38,7 +38,7 @@ operator<<(Qt_widget &qt_w, const Apollonius_site_2<K>& wp)
   return qt_w << p << c;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #include <CGAL/IO/Qt_widget_Hyperbola_2.h>

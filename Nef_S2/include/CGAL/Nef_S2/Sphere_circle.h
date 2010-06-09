@@ -22,7 +22,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R> class Sphere_segment;
 
@@ -173,5 +173,5 @@ Sphere_point<R> intersection(const Sphere_circle<R>& c1,
 }
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif //CGAL_SPHERE_CIRCLE_H

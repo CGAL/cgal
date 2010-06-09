@@ -22,7 +22,7 @@
 
 #include <CGAL/IO/Polyhedron_VRML_2_ostream.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Polyhedron>
 void print_polyhedron_VRML_2( std::ostream& out, const Polyhedron& P) {
@@ -45,6 +45,6 @@ print_VRML_2( std::ostream& out,
     os << P;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_IO_PRINT_VRML_2_H //
 // EOF //

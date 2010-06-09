@@ -35,7 +35,7 @@
 #include <fstream>
 #include <cassert>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<typename Kernel>
 class test_Nef_3 {
@@ -1219,5 +1219,5 @@ public:
 template<typename Kernel>
 const char* test_Nef_3<Kernel>::datadir="data/";
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_TEST_NEF_3

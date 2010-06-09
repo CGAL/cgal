@@ -29,7 +29,7 @@
 #include <ostream>
 #include <CGAL/Arr_enums.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class _Base_rational_arc_2
  * Representation of an segment of a rational function, given as:
@@ -2520,6 +2520,6 @@ protected:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

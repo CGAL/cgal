@@ -37,7 +37,7 @@
 // base class Inventor_ostream_base, which is common for
 // both output streams.
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class VRML_1_ostream : public Inventor_ostream_base {
 public:
@@ -57,7 +57,7 @@ private:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_VRML_1_OSTREAM_H
 
@@ -65,7 +65,7 @@ CGAL_END_NAMESPACE
 #ifndef CGAL_IO_VRML_1_TETRAHEDRON_3
 #define CGAL_IO_VRML_1_TETRAHEDRON_3
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R >
 VRML_1_ostream&
@@ -101,7 +101,7 @@ operator<<(VRML_1_ostream& os,
   return os;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_IO_VRML_1_TETRAHEDRON_3
 #endif // CGAL_TETRAHEDRON_3_H

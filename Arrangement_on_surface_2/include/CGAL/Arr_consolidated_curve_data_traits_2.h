@@ -28,7 +28,7 @@
 #include<CGAL/Arr_curve_data_traits_2.h>
 #include<CGAL/Arr_geometry_traits/Consolidated_curve_data_aux.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class
  * A generic traits class for maintaining an arrangement of curves that have
@@ -92,6 +92,6 @@ public:
                                                       Arr_right_side_category;
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

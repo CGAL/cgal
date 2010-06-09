@@ -36,7 +36,7 @@
 #include <CGAL/number_utils_classes.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 //-----------------------------------------------------------------------
@@ -411,7 +411,7 @@ public:
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 
 #endif // CGAL_APOLLONIUS_GRAPH_NEW_FILTERED_TRAITS_2_H

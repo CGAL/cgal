@@ -30,7 +30,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R_>
 class Tetrahedron_3 : public R_::Kernel_base::Tetrahedron_3
@@ -182,6 +182,6 @@ operator>>(std::istream &is, Tetrahedron_3<R> &t)
     return is;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif  // CGAL_TETRAHEDRON_3_H

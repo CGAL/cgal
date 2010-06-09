@@ -31,7 +31,7 @@
 #include <CGAL/Multiset.h>
 #include <CGAL/assertions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Sweep_line_subcurve
  *
@@ -344,6 +344,6 @@ public:
   }
 #endif
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -9,7 +9,7 @@
 
 #include <CGAL/ch_timing_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class ForwardIterator, class OutputIterator, class Traits>
 void
@@ -108,6 +108,6 @@ ch_timing( ForwardIterator first, ForwardIterator last,
 
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_CH_TIMING_2_IMPL_H

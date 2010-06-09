@@ -31,7 +31,7 @@
 #include <map>
 #include <ostream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Forward declaration:
 template <class NumberType_, bool Filter_> class _One_root_point_2;
@@ -2458,6 +2458,6 @@ operator<< (std::ostream& os,
   return (os);
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

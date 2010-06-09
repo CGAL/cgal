@@ -29,7 +29,7 @@
 #include <CGAL/Kernel_d/Ray_d.h>
 #include <CGAL/Dimension.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 std::istream& operator>>(std::istream&, Line_d<R>&);
@@ -217,6 +217,6 @@ calculation also take time $O(|l.dimension()|)$. The space requirement
 is $O(|l.dimension()|)$.}*/
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_LINE_D_H
 //----------------------- end of file ----------------------------------

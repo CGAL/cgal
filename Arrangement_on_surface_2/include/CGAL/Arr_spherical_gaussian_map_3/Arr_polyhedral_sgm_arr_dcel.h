@@ -23,7 +23,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! Extend the arrangement vertex */
 template <class Point_2>
@@ -116,6 +116,6 @@ public:
   Arr_polyhedral_sgm_arr_dcel() {}
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

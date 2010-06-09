@@ -28,7 +28,7 @@
 
 #include <functional>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Value>
 struct Identity {
@@ -526,6 +526,6 @@ struct Pair_lexicographical_less_than {
 };
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_FUNCTION_OBJECTS_H

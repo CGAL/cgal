@@ -24,7 +24,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/Box_d.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Box_intersection_d {
 
@@ -72,6 +72,6 @@ public:
 } // end namespace Box_intersection_d
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

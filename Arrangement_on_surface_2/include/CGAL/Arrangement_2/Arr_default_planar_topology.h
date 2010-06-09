@@ -32,7 +32,7 @@
 #include <CGAL/Arr_bounded_planar_topology_traits_2.h>
 #include <CGAL/Arr_unb_planar_topology_traits_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace internal {
 
@@ -71,6 +71,6 @@ struct Default_planar_topology :
 >
 {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

@@ -30,7 +30,7 @@
 #include <list>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! \class Sweep_line_event
  *
@@ -588,6 +588,6 @@ public:
   } 
 #endif // CGAL_SL_VERBOSE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

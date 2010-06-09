@@ -24,7 +24,7 @@
 
 #include <CGAL/Apollonius_graph_2/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
@@ -160,6 +160,6 @@ unsigned long comparator_profiler::counter_rr_r0 = 0;
 
 CGAL_APOLLONIUS_GRAPH_2_END_NAMESPACE
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_COMPARATOR_PROFILER_H

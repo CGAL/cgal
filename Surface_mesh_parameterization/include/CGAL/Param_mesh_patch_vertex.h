@@ -25,7 +25,7 @@
 
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 // Forward reference
@@ -433,6 +433,6 @@ private:
 }; // Param_mesh_patch_vertex_const_handle
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_PARAM_MESH_PATCH_VERTEX_H

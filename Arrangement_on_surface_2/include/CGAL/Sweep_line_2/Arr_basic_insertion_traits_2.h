@@ -32,7 +32,7 @@
 #include <list>
 #include <iterator>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 /*! 
  * A basic meta-traits class that stores a halfedge handle with every
@@ -843,6 +843,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif

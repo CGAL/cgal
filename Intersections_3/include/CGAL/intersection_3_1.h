@@ -27,7 +27,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/bbox_intersection_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R>
 Object
@@ -324,7 +324,7 @@ do_intersect(const Iso_cuboid_3<R> &j, const Segment_3<R> &s)
 	return ! CGAL::intersection(s, j).empty();
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #include <CGAL/Intersections_3/intersection_3_1_impl.h>
 

@@ -34,7 +34,7 @@
   #define CGAL_CORE_DENOMINATOR(X) (denominator((X)))
 //#else
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //
 // Algebraic structure traits
@@ -223,7 +223,7 @@ public:
     }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_Expr.h>

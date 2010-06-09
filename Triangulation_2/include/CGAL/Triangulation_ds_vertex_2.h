@@ -22,7 +22,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class Vb>
 class  Triangulation_ds_vertex_2 
@@ -118,6 +118,6 @@ is_valid(bool verbose, int level)
   return result;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_TRIANGULATION_DS_VERTEX_2_H

@@ -28,7 +28,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Test/_test_coercion_traits.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
   typedef CGAL::Interval_nt<false> Interval;  
 
@@ -122,5 +122,5 @@ template <typename ARK>
 void test_arithmetic_kernel(){
   test_coercion_arithmetic_kernel<ARK>();
 }
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_TEST_ARITHMETIC_KERNEL_H

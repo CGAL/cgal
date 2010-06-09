@@ -26,7 +26,7 @@
 #ifndef CGAL_ITERATOR_PROJECT_H
 #define CGAL_ITERATOR_PROJECT_H 1
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 // Relies on iterator traits. Quite simplified compared to earlier version.
 
@@ -161,6 +161,6 @@ operator+( Dist n, Iterator_project<I,Fct,D1,D2,D3,D4> i) {
   return i += n;
 }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_ITERATOR_PROJECT_H //
 // EOF //

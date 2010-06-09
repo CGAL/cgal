@@ -24,11 +24,11 @@
 #ifndef CGAL_REPRESENTATION_TAGS_H
 #define CGAL_REPRESENTATION_TAGS_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Cartesian_tag {};
 class Homogeneous_tag {};
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_REPRESENTATION_TAGS_H

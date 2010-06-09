@@ -45,7 +45,7 @@
 #endif
 #endif
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class R> class RC_simplex_d;
 template <class R> class RC_vertex_d;
@@ -728,5 +728,5 @@ of simplices.  }*/
 
 
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 #endif // CGAL_REGULAR_COMPLEX_D_H

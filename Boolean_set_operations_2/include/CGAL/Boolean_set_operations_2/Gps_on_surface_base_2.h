@@ -51,7 +51,7 @@
 */
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace Boolean_set_operation_2_internal
 {
@@ -1412,6 +1412,6 @@ protected:
 
 #include <CGAL/Boolean_set_operations_2/Gps_on_surface_base_2_impl.h>
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_GPS_ON_SURFACE_BASE_2_H

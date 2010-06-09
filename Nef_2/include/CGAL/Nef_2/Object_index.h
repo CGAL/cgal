@@ -25,7 +25,7 @@
 #include <string>
 #include <sstream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <typename I>
 class Object_index {
@@ -52,6 +52,6 @@ public:
   }
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_NEF_2_OBJECT_INDEX_H

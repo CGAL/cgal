@@ -27,7 +27,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/Construct_storage_site_2.h>
 
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
@@ -113,6 +113,6 @@ private:
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_STORAGE_TRAITS_2_H

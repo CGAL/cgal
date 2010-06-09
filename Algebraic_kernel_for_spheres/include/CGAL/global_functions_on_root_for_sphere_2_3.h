@@ -29,7 +29,7 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_GLOBAL_FUNCTIONS_ON_ROOT_FOR_SPHERE_2_3_H
 #define CGAL_ALGEBRAIC_KERNEL_GLOBAL_FUNCTIONS_ON_ROOT_FOR_SPHERE_2_3_H
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class AK >
 inline 
@@ -66,6 +66,6 @@ compare_xyz(const typename AK::Root_for_spheres_2_3& r1,
 	     const typename AK::Root_for_spheres_2_3& r2)
 { return AK().compare_xyz_object()(r1, r2); }
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif //CGAL_ALGEBRAIC_KERNEL_GLOBAL_FUNCTIONS_ON_ROOT_FOR_SPHERE_2_3_H
