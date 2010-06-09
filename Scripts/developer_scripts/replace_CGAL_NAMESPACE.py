@@ -15,7 +15,7 @@ if len(argv)!=2:
 for dirname, dirnames, filenames in os.walk(argv[1]):
     for filename in filenames:
         l=len(filename)
-        if l>4 and ( filename[(l-2):l]==".h" or filename[(l-4):l]==".cpp"):
+        if ( l>2 and filename[(l-2):l]==".h") or ( l> 4 and filename[(l-4):l]==".cpp"):
           fname=os.path.join(dirname, filename)
           for lines in fileinput.FileInput(fname, inplace=1):
             lines = lines.replace("CGAL_BEGIN_NAMESPACE","namespace CGAL {")
