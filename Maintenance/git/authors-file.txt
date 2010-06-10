@@ -105,6 +105,7 @@ stayeb = Stéphane Tayeb <Stephane.Tayeb@sophia.inria.fr>
 sven = Sven Schönherr <sven@inf.ethz.ch>
 talizvi = Tali Zvi <talizvi@post.tau.ac.il>
 teillaud = Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+tgeorgiou = Teo Georgiou <georgiou.teo@gmail.com>
 trung = Trung Nguyen <ttnguyen@sophia.inria.fr>
 wein = Ron Wein <wein@post.tau.ac.il>
 wenzlaff = Patrick Wenzlaff <wenzlaff@mpi-inf.mpg.de>
