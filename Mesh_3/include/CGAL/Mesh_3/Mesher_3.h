@@ -26,15 +26,14 @@
 #ifndef CGAL_MESH_3_MESHER_3_H
 #define CGAL_MESH_3_MESHER_3_H
 
-#ifdef CGAL_MESH_3_VERBOSE
-#define CGAL_MESHER_3_SCAN_VERBOSE
-#endif
-
-
 #include<CGAL/Mesh_3/Refine_facets_3.h>
 #include<CGAL/Mesh_3/Refine_cells_3.h>
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>
+#include <CGAL/Mesher_level_visitors.h>
+
+#ifdef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 #include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
+#endif
 
 #include <CGAL/Timer.h>
 
@@ -84,13 +83,18 @@ public:
       Cells_level,
       Null_mesh_visitor>                            Facets_visitor;
   
+#ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
+  /// Cells visitor : it just need to know previous level
+  typedef Null_mesh_visitor_level<Facets_visitor>   Cells_visitor;
+#else
   /// Cells visitor : to update surface (restore restricted Delaunay)
   /// when refining cells
   typedef Surface_mesher::Visitor<
       Triangulation,
       Facets_level,
       Facets_visitor>                               Cells_visitor;
-  
+#endif
+
   /// Constructor
   Mesher_3(C3T3&               c3t3,
            const MeshDomain&   domain,
@@ -143,19 +147,13 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                 c3t3)
 , null_visitor_()
 , facets_visitor_(&cells_mesher_, &null_visitor_)
+#ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
+, cells_visitor_(facets_visitor_)
+#else
 , cells_visitor_(&facets_mesher_, &facets_visitor_)
+#endif
 , r_c3t3_(c3t3)
 {
-#ifdef CGAL_MESHER_3_SCAN_VERBOSE
-  std::cerr << "Start scan... ";
-#endif
-  facets_mesher_.scan_triangulation();
-  cells_mesher_.scan_triangulation();
-#ifdef CGAL_MESHER_3_SCAN_VERBOSE
-  std::cerr << "end scan. [";
-  std::cerr << "Bad facets:" << facets_mesher_.size() << "] [";
-  std::cerr << "Bad tets:" << cells_mesher_.size() << "]\n\n";
-#endif
 }
 
 
@@ -166,12 +164,65 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
 {
   CGAL::Timer timer;
   timer.start();
+  double elapsed_time = 0.;
   
 #ifndef CGAL_MESH_3_VERBOSE
+  // Scan surface and refine it
+  facets_mesher_.scan_triangulation();
+  facets_mesher_.refine(facets_visitor_);
+
+  // Then activate facet to surface visitor (surface could be
+  // refined again if it is encroached)
+  facets_visitor_.activate();
+
+  // Then scan volume and refine it
+  cells_mesher_.scan_triangulation();
   cells_mesher_.refine(cells_visitor_);
 #else
+  std::cerr << "Start surface scan...";
+  facets_mesher_.scan_triangulation();
+  std::cerr << "end scan. [Bad facets:" << facets_mesher_.size() << "]";
+  std::cerr << std::endl << std::endl;
+  elapsed_time += timer.time();
+  timer.stop(); timer.reset(); timer.start();
+  
   const Triangulation& r_tr = r_c3t3_.triangulation();
   int nbsteps = 0;
+  
+  std::cerr << "Refining Surface...\n";
+  std::cerr << "Legende of the following line: "
+            << "(#vertices,#steps," << cells_mesher_.debug_info_header()
+            << ")\n";
+  
+  std::cerr << "(" << r_tr.number_of_vertices() << ","
+            << nbsteps << "," << cells_mesher_.debug_info() << ")";
+  
+  while ( ! facets_mesher_.is_algorithm_done() )
+  {
+    facets_mesher_.one_step(facets_visitor_);
+    std::cerr
+    << boost::format("\r             \r"
+                     "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+    % r_tr.number_of_vertices()
+    % nbsteps % cells_mesher_.debug_info()
+    % (nbsteps / timer.time());
+    ++nbsteps;
+  }
+  std::cerr << std::endl;
+  std::cerr << "Total refining surface time: " << timer.time() << "s" << std::endl;
+  std::cerr << std::endl;
+
+  elapsed_time += timer.time();
+  timer.stop(); timer.reset(); timer.start();
+  nbsteps = 0;
+  
+  facets_visitor_.activate();
+  std::cerr << "Start volume scan...";
+  cells_mesher_.scan_triangulation();
+  std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
+  std::cerr << std::endl << std::endl;
+  elapsed_time += timer.time();
+  timer.stop(); timer.reset(); timer.start();
   
   std::cerr << "Refining...\n";
   std::cerr << "Legende of the following line: "
@@ -192,12 +243,15 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
     ++nbsteps;
   }
   std::cerr << std::endl;
-  std::cerr << "Total refining time: " << timer.time() << "s" << std::endl;
+  timer.stop();
+  std::cerr << "Total refining volume time: " << timer.time() << "s" << std::endl;
+  std::cerr << "Total refining time: " << timer.time()+elapsed_time << "s" << std::endl;
   std::cerr << std::endl;
 #endif
   
   timer.stop();
-  return timer.time();
+  elapsed_time += timer.time();
+  return elapsed_time;
 }
     
 }  // end namespace Mesh_3
