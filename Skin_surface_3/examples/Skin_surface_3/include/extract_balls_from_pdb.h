@@ -1,45 +1,39 @@
-// AUTHOR: Daniel Russel drussel@graphics.stanford.edu
-
-// See http://graphics.stanford.edu/~drussel/pdb for documentation.
-// 
-// Feel free to contact me (Daniel, drussel@graphics.stanford.edu) 
-// if you have any suggestions or patches. Thanks.
-
 #ifndef EXTRACT_BALLS_FROM_PDB_H
 #define EXTRACT_BALLS_FROM_PDB_H
 
-#include <CGAL/PDB/PDB.h>
-#include <CGAL/PDB/range.h>
-#include <fstream>
+#include <ESBTL/atom_classifier.h>
+#include <ESBTL/weighted_atom_iterator.h>
 
-template <class Range, class OIt>
-void copy(Range r, OIt out) {
-  std::copy(r.begin(), r.end(), out);
-}
 
-template <class Traits, class OutputIterator>
-void extract_balls_from_pdb(const char *filename, 
-			    Traits const &t,
-			    OutputIterator weighted_points) 
+template <class K,class System, class OutputIterator>
+void extract_balls_from_pdb(const char *filename,
+                            std::vector<System>& systems,
+                            OutputIterator weighted_points) 
 {
-  std::ifstream in(filename);
-
-  if (!in) {
-    std::cerr << "Error opening input file " << filename << std::endl;
-  }
-
-  using namespace CGAL::PDB;
-
-  PDB pdb(in);
-  Model m=pdb.models().begin()->model();
-  Chain c=m.chains().begin()->chain();
-  // get all weighted_points
-    
   
-::copy
-    (make_weighted_point_range(make_atom_range(m.atoms()), t),
-     weighted_points);
+  typedef ESBTL::Generic_classifier<ESBTL::Radius_of_atom<double,typename System::Atom> >     T_Atom_classifier;
+  typedef ESBTL::Accept_none_occupancy_policy<ESBTL::PDB::Line_format<> >                     Accept_none_occupancy_policy;
+  typedef ESBTL::Weighted_atom_iterator<typename System::Model,
+                                        CGAL::Weighted_point<typename K::Point_3,double>,
+                                        ESBTL::Weight_of_atoms<T_Atom_classifier> >  Weighted_atom_iterator;  
+  
+  ESBTL::PDB_line_selector sel;
+  
+  ESBTL::All_atom_system_builder<System> builder(systems,sel.max_nb_systems());
+  T_Atom_classifier atom_classifier;
+  
+  ESBTL::read_a_pdb_file(filename,sel,builder,Accept_none_occupancy_policy());
+
+  if ( systems.empty() || systems[0].has_no_model() ){
+      std::cerr << "No atoms found" << std::endl;
+      exit(EXIT_FAILURE);
+  }
+  const typename System::Model& model=* systems[0].models_begin();
+  std::copy(Weighted_atom_iterator(model.atoms_begin(),&atom_classifier),
+            Weighted_atom_iterator(model.atoms_end(),&atom_classifier),
+            weighted_points);  
+
 }
-			    
+
 
 #endif // EXTRACT_BALLS_FROM_PDB_H

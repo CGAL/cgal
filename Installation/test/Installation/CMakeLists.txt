@@ -51,10 +51,6 @@ if ( CGAL_FOUND )
     create_link_to_program(CGAL_ImageIO)
   endif()
   
-  if ( WITH_CGAL_PDB )
-    create_link_to_program(CGAL_PDB)
-  endif()
-  
   if ( WITH_CGAL_Qt3 )
     create_link_to_program(CGAL_Qt3)
   endif()

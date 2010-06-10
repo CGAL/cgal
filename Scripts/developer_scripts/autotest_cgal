@@ -525,7 +525,7 @@ cmake '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
                            -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
                            VERBOSE=1 \\
                            ../../..;
-${MAKE_CMD} VERBOSE=ON -k -fMakefile  CGAL CGAL_Core CGAL_PDB CGAL_ImageIO CGAL_Qt3 CGAL_Qt4 ;
+${MAKE_CMD} VERBOSE=ON -k -fMakefile  CGAL CGAL_Core CGAL_ImageIO CGAL_Qt3 CGAL_Qt4 ;
 cd ..;
 EOF
         chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript"

@@ -97,7 +97,7 @@ message( STATUS "System: ${CMAKE_SYSTEM_NAME}" )
 
 # The base name of all CGAL libraries (including "CGAL" itself. That
 # variables can be used by foreach() loops that deal with library variables.
-set(ALL_CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_PDB CGAL_Qt3 CGAL_Qt4 CACHE INTERNAL "Name of all CGAL libraries.")
+set(ALL_CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_Qt3 CGAL_Qt4 CACHE INTERNAL "Name of all CGAL libraries.")
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -212,11 +212,6 @@ cache_set(CGAL_Qt4_3RD_PARTY_DEFINITIONS    "" )
 cache_set(CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS   "" )
 cache_set(CGAL_Qt4_3RD_PARTY_LIBRARIES      "" )
 cache_set(CGAL_Qt4_3RD_PARTY_LIBRARIES_DIRS "" ) 
-
-cache_set(CGAL_PDB_3RD_PARTY_DEFINITIONS    "" )
-cache_set(CGAL_PDB_3RD_PARTY_INCLUDE_DIRS   "" )
-cache_set(CGAL_PDB_3RD_PARTY_LIBRARIES      "" )
-cache_set(CGAL_PDB_3RD_PARTY_LIBRARIES_DIRS "" ) 
 
 include(CGAL_SetupDependencies)
 
@@ -366,7 +361,6 @@ add_subdirectory(src)
 cache_get(CGAL_LIBRARY)
 cache_get(CGAL_Core_LIBRARY)
 cache_get(CGAL_ImageIO_LIBRARY)
-cache_get(CGAL_PDB_LIBRARY)
 cache_get(CGAL_Qt3_LIBRARY)
 cache_get(CGAL_Qt4_LIBRARY)
 
@@ -394,11 +388,6 @@ cache_get(CGAL_Qt4_3RD_PARTY_DEFINITIONS   )
 cache_get(CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_Qt4_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_Qt4_3RD_PARTY_LIBRARIES_DIRS) 
-
-cache_get(CGAL_PDB_3RD_PARTY_DEFINITIONS   )
-cache_get(CGAL_PDB_3RD_PARTY_INCLUDE_DIRS  )
-cache_get(CGAL_PDB_3RD_PARTY_LIBRARIES     )
-cache_get(CGAL_PDB_3RD_PARTY_LIBRARIES_DIRS) 
 
 hide_variable(EXECUTABLE_OUTPUT_PATH)
 hide_variable(LIBRARY_OUTPUT_PATH)

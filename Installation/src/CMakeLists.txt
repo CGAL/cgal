@@ -18,6 +18,5 @@ else(NOT CGAL_NO_CORE)
 endif(NOT CGAL_NO_CORE)
 
 configure_component( CGALimageIO ImageIO )
-configure_component( CGALPDB     PDB     )
 configure_component( CGALQt      Qt3     )
 configure_component( CGALQt4     Qt4     )

@@ -5,7 +5,11 @@
 #include <CGAL/Skin_surface_polyhedral_items_3.h>
 #include <list>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+#include <ESBTL/CGAL/EPIC_kernel_with_atom.h>
+#include <ESBTL/default.h>
+
+typedef ESBTL::CGAL::EPIC_kernel_with_atom                  K;
+typedef ESBTL::CGAL::Default_system                         System;
 typedef CGAL::Skin_surface_traits_3<K>                      Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::FT                                  FT;
@@ -13,11 +17,10 @@ typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
-#include <extract_balls_from_pdb.h>
-
 #include <list>
 #include <fstream>
 #include "skin_surface_writer.h"
+#include "include/extract_balls_from_pdb.h"
 
 
 int main(int argc, char *argv[]) {
@@ -27,12 +30,19 @@ int main(int argc, char *argv[]) {
   } else {
     filename = "data/1t7i.pdb";
   }
-
+  
+ 
   std::list<Weighted_point> l;
   double                    shrinkfactor = 0.5;
-
+  //Container for molecular system
+  std::vector<System> systems;
+  
+  
+  
   // Retrieve input balls:
-  extract_balls_from_pdb(filename, Traits(), std::back_inserter(l));
+  extract_balls_from_pdb<K>(filename,systems,std::back_inserter(l));
+  
+
 
   // Construct skin surface:
   Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
