@@ -827,7 +827,7 @@ struct Dispatch_centroid_3
   // Workaround for VC++ and Intel compiler
   // (avoids wrong template function instanciation)
   template <typename K>
-  struct Dispatch_centroid_3<Point_3<K>, Point_3<K>, Point_3<K> >
+  struct Dispatch_centroid_3<Point_3<K>, Point_3<K>, Dynamic_dimension_tag >
   {
     typedef void result_type;
   };
