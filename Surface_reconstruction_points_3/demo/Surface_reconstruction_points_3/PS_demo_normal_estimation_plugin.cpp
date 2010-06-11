@@ -26,6 +26,7 @@ class PS_demo_normal_estimation_plugin :
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
   QAction* actionNormalEstimation;
+  QAction* actionNormalInversion;
 
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
@@ -36,14 +37,21 @@ public:
       connect(actionNormalEstimation, SIGNAL(triggered()),
               this, SLOT(on_actionNormalEstimation_triggered()));
     }
+
+    actionNormalInversion = this->getActionFromMainWindow(mw, "actionNormalInversion");
+    if(actionNormalInversion) {
+      connect(actionNormalInversion, SIGNAL(triggered()),
+              this, SLOT(on_actionNormalInversion_triggered()));
+    }
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionNormalEstimation;
+    return QList<QAction*>() << actionNormalEstimation << actionNormalInversion;
   }
 
 public slots:
   void on_actionNormalEstimation_triggered();
+  void on_actionNormalInversion_triggered();
 
 }; // end PS_demo_smoothing_plugin
 
@@ -62,6 +70,27 @@ class Point_set_demo_normal_estimation_dialog : public QDialog, private Ui::Norm
     QString orientationMethod() const { return m_inputOrientation->currentText(); }
     int orientationNbNeighbors() const { return m_inputNbNeighborsOrientation->value(); }
 };
+
+
+void PS_demo_normal_estimation_plugin::on_actionNormalInversion_triggered()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Point_set_scene_item* item =
+    qobject_cast<Point_set_scene_item*>(scene->item(index));
+
+  if(item)
+  {
+    // Gets point set
+    Point_set* points = item->point_set();
+    if(points == NULL)
+        return;
+  
+    for(Point_set::iterator it = points->begin(); it != points->end(); ++it){
+      it->normal() = -1 * it->normal();
+    }
+  }
+}
 
 void PS_demo_normal_estimation_plugin::on_actionNormalEstimation_triggered()
 {
