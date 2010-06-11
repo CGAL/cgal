@@ -48,6 +48,14 @@ inline typename Poly::const_iterator vertices_begin ( boost::shared_ptr<Poly> co
 template<class Poly>
 inline typename Poly::const_iterator vertices_end ( boost::shared_ptr<Poly> const& aPoly ) { return aPoly->end() ; }
 
+template<class K, class C>
+inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_begin ( boost::shared_ptr< Polygon_2<K,C> > const& aPoly ) 
+{ return aPoly->vertices_begin() ; }
+
+template<class K, class C>
+inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_end( boost::shared_ptr< Polygon_2<K,C> > const& aPoly ) 
+{ return aPoly->vertices_end() ; }
+
 }
 
 template<class PointIterator, class HoleIterator, class WeightIterator, class WeightSequenceIterator, class NT, class K >
