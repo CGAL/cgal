@@ -77,6 +77,26 @@ struct Tester
                   CGAL::parameters::no_exude(),
                   CGAL::parameters::no_perturb());
 
+#ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
+    // Using adjacencies instead of calling oracle to update restricted
+    // Delaunay of the surface during the refinement of the volume
+    // does not ensure that refinement is idempotent
+    // BUT it should be after a few runs (all connected components should
+    // have been discovered...)
+    int n = 0;
+    while ( c3t3.triangulation().number_of_vertices() != v && ++n < 11 )
+    {
+      refine_mesh_3(c3t3,domain,criteria,
+                    CGAL::parameters::no_exude(),
+                    CGAL::parameters::no_perturb());
+      
+      v = c3t3.triangulation().number_of_vertices();
+      f = c3t3.number_of_facets();
+      c = c3t3.number_of_cells();      
+    }
+    assert ( n < 11 );
+#endif
+    
     verify_c3t3(c3t3,v,v,f,f,c,c);
     
     // Exude.
@@ -103,7 +123,7 @@ struct Tester
     C3t3 odt_c3t3(c3t3);
     std::cerr << "Odt...\n";
     CGAL::odt_optimize_mesh_3(odt_c3t3, domain, CGAL::parameters::time_limit=5,
-                              CGAL::parameters::convergence=0.001, CGAL::parameters::sliver_bound=0.0005);
+                              CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
     verify_c3t3(odt_c3t3,v,v);
     
     // Lloyd-smoothing
@@ -111,7 +131,7 @@ struct Tester
     C3t3 lloyd_c3t3(c3t3);
     std::cerr << "Lloyd...\n";
     CGAL::lloyd_optimize_mesh_3(lloyd_c3t3, domain, CGAL::parameters::time_limit=5,
-                                CGAL::parameters::convergence=0.001, CGAL::parameters::sliver_bound=0.0005);
+                                CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
     verify_c3t3(lloyd_c3t3,v,v);
   }
 
