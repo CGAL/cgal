@@ -57,8 +57,8 @@ namespace CGAL {
 
 namespace internal{
 
-template<typename T> struct Interval_traits_base{
-    
+template<typename T> class Interval_traits_base{
+public:
   typedef Interval_traits_base<T> Self; 
   typedef T                  Type;
   // typedef T                  Interval; 
@@ -83,7 +83,8 @@ template<typename T> struct Interval_traits_base{
 };
 }
 
-template <typename T> struct Interval_traits: public internal::Interval_traits_base<T>{};
+template <typename T> class Interval_traits : public internal::Interval_traits_base<T>{};
+
 class Exception_intersection_is_empty{}; 
 
 // function returning type Bound 
