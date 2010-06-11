@@ -498,17 +498,17 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
                         
             double lb,ub;
            
-            Type x_lower = CGAL::lower(CGAL::internal::round(CGAL::lower(x),51));
-            Type x_upper = CGAL::upper(CGAL::internal::round(CGAL::upper(x),51));
+            Type x_lower = CGAL::lower(CGAL::internal::round(CGAL::lower(x),50));
+            Type x_upper = CGAL::upper(CGAL::internal::round(CGAL::upper(x),50));
             
-            // since matissa has 51 bits only, conversion to double is exact 
+            // since matissa has 50 bits only, conversion to double is exact 
             lb = x_lower.doubleValue();
             CGAL_postcondition(lb == x_lower);
             ub = x_upper.doubleValue();
             CGAL_postcondition(ub == x_upper);             
             
             std::pair<double, double> result(lb,ub);
-            CGAL_postcondition( result.first <=  CORE::Expr(CGAL::lower(x)));
+            CGAL_postcondition( result.first  <=  CORE::Expr(CGAL::lower(x)));
             CGAL_postcondition( result.second >=  CORE::Expr(CGAL::upper(x)));
             return result;      
         }
