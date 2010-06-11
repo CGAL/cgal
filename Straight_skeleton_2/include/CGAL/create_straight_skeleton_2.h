@@ -389,7 +389,7 @@ create_exterior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
   return create_exterior_straight_skeleton_2(aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aHolesBegin, aHolesEnd, Exact_predicates_inexact_constructions_kernel() ) ;
 }
 
-template<class PointIterator, class HoleIterator, class K>
+template<class PointIterator, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
 create_exterior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                     , PointIterator aOuterContour_VerticesEnd

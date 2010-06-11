@@ -25,7 +25,8 @@
 
 #include <CGAL/test_sls_types.h>
 
-#include <CGAL/create_straight_skeleton_2.h>
+#include <CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
+#include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 
 void test_polygon_vertices_range()
 {
@@ -44,6 +45,11 @@ void test_polygon_vertices_range()
 
 struct Test
 {
+  typedef CGAL::Polygon_2<IK>            Poly ;
+  typedef boost::shared_ptr<Poly>        PolyPtr ;
+  typedef CGAL::Polygon_with_holes_2<IK> PolyWH ;
+  typedef std::vector<PolyPtr>           PolyPtrContainer ;
+  
   Test()
   {
     IPoint lOPts[4]= { IPoint(0,0), IPoint(10,0), IPoint(10,10), IPoint(0,10) } ;
@@ -57,10 +63,11 @@ struct Test
     mHolesP.push_back( IPolygonPtr( new IPolygon(lHPts, lHPts+4) ) ) ;
     mHolesW.push_back( IWeightsPtr( new IWeights(lWts , lWts +4) ) ) ;
     
-    mWeight = 1.0 ;
+    mWeight         = 1.0 ;
+    mOffsetDistance = 2.0 ;
   }
   
-  void test_create_stright_skeleton_2_A()
+  void test_create_straight_skeleton_2_A()
   {
     mSls = CGAL::create_straight_skeleton_2(mOuterP->begin()
                                            ,mOuterP->end()
@@ -96,7 +103,7 @@ struct Test
                                            );
   }
   
-  void test_create_stright_skeleton_2_B()
+  void test_create_straight_skeleton_2_B()
   {
     mSls = CGAL::create_straight_skeleton_2(mOuterP->begin()
                                            ,mOuterP->end()
@@ -123,7 +130,7 @@ struct Test
                                            );
   }
   
-  void test_create_stright_skeleton_2_C()
+  void test_create_straight_skeleton_2_C()
   {
     mSls = CGAL::create_straight_skeleton_2(mOuterP->begin()
                                            ,mOuterP->end()
@@ -147,7 +154,7 @@ struct Test
                                            );
   }
   
-  void test_create_stright_skeleton_2_D()
+  void test_create_straight_skeleton_2_D()
   {
     mSls = CGAL::create_straight_skeleton_2(mOuterP->begin()
                                            ,mOuterP->end()
@@ -168,34 +175,138 @@ struct Test
                                            );
   }
   
-  void test_create_stright_skeleton_2_E()
+  void test_create_straight_skeleton_2_E()
   {
-    mSls = CGAL::create_straight_skeleton_2(mOuterP
+    mSls = CGAL::create_straight_skeleton_2(*mOuterP
                                            ,mWeight
                                            ,mMaxT
                                            ,mK
                                            
                                            );
-    mSls = CGAL::create_straight_skeleton_2(mOuterP
+    mSls = CGAL::create_straight_skeleton_2(*mOuterP
                                            ,mWeight
                                            ,mMaxT
                                            );
                                                    
-    mSls = CGAL::create_straight_skeleton_2(mOuterP
+    mSls = CGAL::create_straight_skeleton_2(*mOuterP
                                            ,mWeight
                                            );
                                            
-    mSls = CGAL::create_straight_skeleton_2(mOuterP);
+    mSls = CGAL::create_straight_skeleton_2(*mOuterP);
+  }
+  
+  void test_create_straight_skeleton_2_PWH()
+  {
+    mSls = CGAL::create_straight_skeleton_2(mPWH, mWeight, mMaxT, mK);
+    mSls = CGAL::create_straight_skeleton_2(mPWH, mWeight, mMaxT);
+  }
+  
+  void test_create_interior_straight_skeleton_2_A()
+  {
+    mSls = CGAL::create_interior_straight_skeleton_2(mOuterP->begin()
+                                                    ,mOuterP->end()
+                                                    ,mHolesP. begin()
+                                                    ,mHolesP. end()
+                                                    ,mK
+                                                    );
+                                                    
+    mSls = CGAL::create_interior_straight_skeleton_2(mOuterP->begin()
+                                                    ,mOuterP->end()
+                                                    ,mHolesP. begin()
+                                                    ,mHolesP. end()
+                                                   );
+  }
+  
+  void test_create_interior_straight_skeleton_2_B()
+  {
+    mSls = CGAL::create_interior_straight_skeleton_2(mOuterP->begin()
+                                                    ,mOuterP->end()
+                                                    ,mK
+                                                    );
+                                                    
+    mSls = CGAL::create_interior_straight_skeleton_2(mOuterP->begin()
+                                                    ,mOuterP->end()
+                                                   );
+  }
+  
+  void test_create_interior_straight_skeleton_2_C()
+  {
+    mSls = CGAL::create_interior_straight_skeleton_2(*mOuterP
+                                                    ,mK
+                                                    );
+                                                    
+    mSls = CGAL::create_interior_straight_skeleton_2(*mOuterP
+                                                    );
+  }
+  
+  void test_create_interior_straight_skeleton_2_PWH()
+  {
+    mSls = CGAL::create_interior_straight_skeleton_2(mPWH, mMaxT);
+    mSls = CGAL::create_interior_straight_skeleton_2(mPWH);
+  }
+  
+  void test_create_exterior_straight_skeleton_2_A()
+  {
+    mSls = CGAL::create_exterior_straight_skeleton_2(mOuterP->begin()
+                                                    ,mOuterP->end()
+                                                    ,mHolesP. begin()
+                                                    ,mHolesP. end()
+                                                    ,mK
+                                                    );
+                                                    
+    mSls = CGAL::create_exterior_straight_skeleton_2(mOuterP->begin()
+                                                    ,mOuterP->end()
+                                                    ,mHolesP. begin()
+                                                    ,mHolesP. end()
+                                                   );
+  }
+  
+  void test_create_exterior_straight_skeleton_2_B()
+  {
+    mSls = CGAL::create_exterior_straight_skeleton_2(mOuterP->begin()
+                                                    ,mOuterP->end()
+                                                    ,mK
+                                                    );
+                                                    
+    mSls = CGAL::create_exterior_straight_skeleton_2(mOuterP->begin()
+                                                    ,mOuterP->end()
+                                                   );
+  }
+  
+  void test_create_exterior_straight_skeleton_2_C()
+  {
+    mSls = CGAL::create_exterior_straight_skeleton_2(*mOuterP
+                                                    ,mK
+                                                    );
+                                                    
+    mSls = CGAL::create_exterior_straight_skeleton_2(*mOuterP
+                                                    );
+  }
+  
+  void test_create_exterior_straight_skeleton_2_PWH()
+  {
+    mSls = CGAL::create_exterior_straight_skeleton_2(mPWH, mMaxT);
+    mSls = CGAL::create_exterior_straight_skeleton_2(mPWH);
+  }
+  
+  void test_create_offset_polygons_2_A()
+  {
+    mOffsetP = CGAL::create_offset_polygons_2<Poly>(mOffsetDistance, *mSls, mK);
+    
+    mOffsetP = CGAL::create_offset_polygons_2(mOffsetDistance, *mSls, mK);
   }
   
   IPolygonPtr             mOuterP ;
   IWeightsPtr             mOuterW ;
   IBoundaries             mHolesP ;
   IWeightsPtrContainer    mHolesW ;
+  PolyWH                  mPWH ;
   IK                      mK ;
   boost::optional<double> mMaxT ;
   double                  mWeight ; 
   ISlsPtr                 mSls ;
+  PolyPtrContainer        mOffsetP ;
+  double                  mOffsetDistance ;
   
 } ;
 
@@ -205,11 +316,24 @@ int main( int argc, char const* argv[] )
   
   Test t ;
   
-  t.test_create_stright_skeleton_2_A();
-  t.test_create_stright_skeleton_2_B();
-  t.test_create_stright_skeleton_2_C();
-  t.test_create_stright_skeleton_2_D();
-  t.test_create_stright_skeleton_2_E();
+  t.test_create_straight_skeleton_2_A();
+  t.test_create_straight_skeleton_2_B();
+  t.test_create_straight_skeleton_2_C();
+  t.test_create_straight_skeleton_2_D();
+  t.test_create_straight_skeleton_2_E();
+  t.test_create_straight_skeleton_2_PWH();
+  
+  t.test_create_interior_straight_skeleton_2_A();
+  t.test_create_interior_straight_skeleton_2_B();
+  t.test_create_interior_straight_skeleton_2_C();
+  t.test_create_interior_straight_skeleton_2_PWH();
+  
+  t.test_create_exterior_straight_skeleton_2_A();
+  t.test_create_exterior_straight_skeleton_2_B();
+  t.test_create_exterior_straight_skeleton_2_C();
+  t.test_create_exterior_straight_skeleton_2_PWH();
+  
+  t.test_create_offset_polygons_2_A();
   
   return 0 ;
 }
