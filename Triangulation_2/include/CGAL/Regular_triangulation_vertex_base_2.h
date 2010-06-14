@@ -63,7 +63,7 @@ public:
   bool is_hidden() { return _hidden ;}
   void set_point(const Weighted_point & p) { _p = p; }
   const Weighted_point&  point() const { return _p; }
-  //Weighted_point&  point() const { return _p; }
+  Weighted_point&  point() { return _p; }
   bool is_valid(bool /* verbose */ = false, int /* level */ = 0) const
     {return true;}
 };
