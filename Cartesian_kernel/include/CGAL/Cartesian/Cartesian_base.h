@@ -136,8 +136,8 @@ struct Cartesian_base
     typedef CircleC3<Kernel>                            Circle_3;
     typedef Aff_transformationC3<Kernel>                Aff_transformation_3;
 
-    typedef const FT_*                                  Cartesian_const_iterator_2;
-    typedef const FT_*                                  Cartesian_const_iterator_3;
+    typedef typename cpp0x::array<FT_, 2>::const_iterator Cartesian_const_iterator_2;
+    typedef typename cpp0x::array<FT_, 3>::const_iterator Cartesian_const_iterator_3;
 
     // Undocumented stuff.
     typedef Data_accessorC2<Kernel>                     Data_accessor_2;
