@@ -38,9 +38,8 @@ void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintEventQueue()
   Event_queue_iterator iter = m_queue->begin();
   while ( iter != m_queue->end() )
   {
-    CGAL_SL_DEBUG(std::cout << "Point (" << iter->first << ")" << std::endl;)
-    Event *e = iter->second;
-    e->Print();
+    Event *e = *iter;
+     e->Print();
     ++iter;
   }
   CGAL_SL_DEBUG(std::cout << "--------------------------------" << std::endl;)
