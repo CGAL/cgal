@@ -1,5 +1,5 @@
-#include "Viewer.h"
-#include "Scene_draw_interface.h"
+#include <CGAL_demo/Viewer.h>
+#include <CGAL_demo/Scene_draw_interface.h>
 
 Viewer::Viewer(QWidget* parent, bool antialiasing)
   : QGLViewer(parent),

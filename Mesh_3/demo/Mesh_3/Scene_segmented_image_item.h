@@ -1,8 +1,8 @@
 #ifndef SCENE_SEGMENTED_IMAGE_ITEM_H
 #define SCENE_SEGMENTED_IMAGE_ITEM_H
 
-#include "Scene_item.h"
-#include "Scene_interface.h"
+#include <CGAL_demo/Scene_item.h>
+#include <CGAL_demo/Scene_interface.h>
 #include "Image_type_fwd.h"
 #include "Scene_segmented_image_item_config.h"
 #include <CGAL/gl.h>

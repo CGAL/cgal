@@ -2,7 +2,7 @@
 #define SCENE_POLYHEDRON_ITEM_H
 
 #include "Scene_polyhedron_item_config.h"
-#include "Scene_item_with_display_list.h"
+#include <CGAL_demo/Scene_item_with_display_list.h>
 #include "Polyhedron_type_fwd.h"
 #include <iostream>
 

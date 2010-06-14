@@ -1,6 +1,5 @@
-#include "config.h"
-#include "Scene.h"
-#include "Scene_item.h"
+#include <CGAL_demo/Scene.h>
+#include <CGAL_demo/Scene_item.h>
 
 #include <QString>
 #include <QGLWidget>

@@ -1,7 +1,7 @@
 //#define CGAL_MESH_3_VERBOSE
 #include "C3t3_type.h"
 #include "Scene_c3t3_item.h"
-#include "Implicit_function_interface.h"
+#include "implicit_functions/Implicit_function_interface.h"
 
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/make_mesh_3.h>

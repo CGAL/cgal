@@ -70,26 +70,32 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  qt4_wrap_ui( UI_FILES MainWindow.ui )
-  qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui)
-  qt4_wrap_ui( optimUI_FILES  Smoother_dialog.ui LocalOptim_dialog.ui)
-  qt4_wrap_ui( ribUI_FILES  Rib_dialog.ui)
-  qt4_wrap_ui( funcUI_FILES  Function_dialog.ui)
+  qt4_wrap_ui( UI_FILES ui_files/MainWindow.ui )
+  qt4_wrap_ui( meshingUI_FILES  ui_files/Meshing_dialog.ui)
+  qt4_wrap_ui( optimUI_FILES  ui_files/Smoother_dialog.ui ui_files/LocalOptim_dialog.ui)
+  qt4_wrap_ui( ribUI_FILES  ui_files/Rib_dialog.ui)
+  qt4_wrap_ui( funcUI_FILES  ui_files/Function_dialog.ui)
 
   include(AddFileDependencies)
+
+  # Shared demo files directory
+  set(DEMO_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/CGAL_demo")
+  set(DEMO_H_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/CGAL_demo")
 
   qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" MainWindow_moc.cpp )
   add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
 
-  qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" Viewer_moc.cpp )
-  add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
+  qt4_generate_moc( "${DEMO_H_DIR}/Viewer.h" Viewer_moc.cpp )
+  add_file_dependencies( Viewer_moc.cpp "${DEMO_H_DIR}/Viewer.h" )
 
-  qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" Scene_moc.cpp )
-  add_file_dependencies( Scene_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" )
+  qt4_generate_moc( "${DEMO_H_DIR}/Scene.h" Scene_moc.cpp )
+  add_file_dependencies( Scene_moc.cpp "${DEMO_H_DIR}/Scene.h" )
+
+  qt4_generate_moc( "${DEMO_H_DIR}/Scene_item.h" Scene_item_moc.cpp )
+  add_file_dependencies( Scene_item_moc.cpp "${DEMO_H_DIR}/Scene_item.h" )
 
   qt4_add_resources ( RESOURCE_FILES Mesh_3.qrc )
 
-  qt4_automoc( Scene_item.cpp )
   qt4_automoc( Scene_polyhedron_item.cpp )
   qt4_automoc( Scene_polygon_soup.cpp )
   qt4_automoc( Scene_segmented_image_item.cpp )
@@ -102,13 +108,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   # AUXILIARY LIBRARIES
   add_library(viewer SHARED
-    Viewer.cpp Viewer_moc.cpp)
+    ${DEMO_SRC_DIR}/Viewer.cpp Viewer_moc.cpp)
   target_link_libraries(viewer ${QGLVIEWER_LIBRARIES})
 
   add_library(scene_item SHARED
-    Scene_item.cpp Scene_item.moc
-    Scene_item_with_display_list.cpp
-    Polyhedron_demo_plugin_helper.cpp)
+    ${DEMO_SRC_DIR}/Scene_item.cpp
+    Scene_item_moc.cpp
+    ${DEMO_SRC_DIR}/Scene_item_with_display_list.cpp
+    ${DEMO_SRC_DIR}/Plugin_helper.cpp)
 
   add_library(scene_segmented_image_item SHARED
     Scene_segmented_image_item.cpp Scene_segmented_image_item.moc)
@@ -139,7 +146,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_definitions(-DQT_STATICPLUGIN)
     add_executable  ( Mesh_3 MainWindow.cpp
       Mesh_3.cpp
-      Scene.cpp
+      ${DEMO_SRC_DIR}/Scene.cpp
       MainWindow_moc.cpp
       Scene_moc.cpp
       ${UI_FILES} ${RESOURCE_FILES} )

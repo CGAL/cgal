@@ -10,8 +10,8 @@
 #include <CGAL/gl.h>
 #include <CGAL/Mesh_3/dihedral_angle_3.h>
 
-#include "Scene_item_with_display_list.h"
-#include "Scene_interface.h"
+#include <CGAL_demo/Scene_item_with_display_list.h>
+#include <CGAL_demo/Scene_interface.h>
 #include <QtCore/qglobal.h>
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>

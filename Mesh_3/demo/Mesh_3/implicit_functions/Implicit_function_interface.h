@@ -26,7 +26,7 @@
 
 #include <QObject>
 #include <QString>
-#include "Scene_interface.h"
+#include <CGAL_demo/Scene_interface.h>
 
 class Implicit_function_interface 
 {

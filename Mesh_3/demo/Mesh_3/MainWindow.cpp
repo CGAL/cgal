@@ -1,7 +1,7 @@
 #include "config.h"
 #include "MainWindow.h"
-#include "Scene.h"
-#include "Scene_item.h"
+#include <CGAL_demo/Scene.h>
+#include <CGAL_demo/Scene_item.h>
 #include <CGAL/Qt/debug.h>
 
 #include <QDragEnterEvent>
@@ -19,8 +19,8 @@
 #include <QMessageBox>
 #include <QScrollBar>
 
-#include "Polyhedron_demo_plugin_interface.h"
-#include "Polyhedron_demo_io_plugin_interface.h"
+#include <CGAL_demo/Plugin_interface.h>
+#include <CGAL_demo/Io_plugin_interface.h>
 
 #include "ui_MainWindow.h"
 

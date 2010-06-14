@@ -1,8 +1,8 @@
 #include "config.h"
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
-#include "Messages_interface.h"
+#include <CGAL_demo/Plugin_helper.h>
+#include <CGAL_demo/Plugin_interface.h>
+#include <CGAL_demo/Messages_interface.h>
 #include "ui_Meshing_dialog.h"
 
 #include <QObject>
@@ -18,7 +18,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_segmented_image_item.h"
 #include "Scene_implicit_function_item.h"
-#include "Implicit_function_interface.h"
+#include "implicit_functions/Implicit_function_interface.h"
 #include "Scene_c3t3_item.h"
 #include "Image_type.h"
 

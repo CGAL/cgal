@@ -1,7 +1,7 @@
 #ifndef VIEWER_H
 #define VIEWER_H
 
-#include "Viewer_config.h"
+#include <CGAL_demo/Viewer_config.h>
 #include <QGLViewer/qglviewer.h>
 
 // forward declarations

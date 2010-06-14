@@ -1,9 +1,8 @@
 #ifndef SCENE_H
 #define SCENE_H
-#include "config.h"
 
-#include "Scene_interface.h"
-#include "Scene_draw_interface.h"
+#include <CGAL_demo/Scene_interface.h>
+#include <CGAL_demo/Scene_draw_interface.h>
 
 #include <QtOpenGL/qgl.h>
 #include <QAbstractListModel>

@@ -5,7 +5,7 @@
 #include "Scene_segmented_image_item.h"
 #include "Scene_implicit_function_item.h"
 
-#include "Implicit_function_interface.h"
+#include "implicit_functions/Implicit_function_interface.h"
 
 #include <CGAL/optimize_mesh_3.h>
 #include <CGAL/Bbox_3.h>

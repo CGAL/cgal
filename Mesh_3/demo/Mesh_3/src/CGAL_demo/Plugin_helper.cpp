@@ -1,4 +1,4 @@
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL_demo/Plugin_helper.h>
 #include <QMainWindow>
 #include <QAction>
 #include <QMetaObject>

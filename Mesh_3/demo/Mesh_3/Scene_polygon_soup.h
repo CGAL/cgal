@@ -2,7 +2,7 @@
 #define SCENE_POLYGON_SOUP_H
 
 #include "Scene_polygon_soup_config.h"
-#include "Scene_item_with_display_list.h"
+#include <CGAL_demo/Scene_item_with_display_list.h>
 #include <iostream>
 
 struct Polygon_soup;

@@ -526,7 +526,7 @@
   <customwidget>
    <class>Viewer</class>
    <extends>QWidget</extends>
-   <header>Viewer.h</header>
+   <header>CGAL_demo/Viewer.h</header>
   </customwidget>
  </customwidgets>
  <resources>

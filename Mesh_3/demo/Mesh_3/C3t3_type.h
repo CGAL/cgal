@@ -3,7 +3,7 @@
 
 #include "Polyhedron_type.h"
 #include "Image_type.h"
-#include "Implicit_function_interface.h"
+#include "implicit_functions/Implicit_function_interface.h"
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>

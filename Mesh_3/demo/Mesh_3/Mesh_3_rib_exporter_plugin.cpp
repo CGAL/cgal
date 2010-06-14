@@ -1,6 +1,6 @@
-#include "Viewer.h"
-#include "Polyhedron_demo_plugin_interface.h"
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL_demo/Viewer.h>
+#include <CGAL_demo/Plugin_interface.h>
+#include <CGAL_demo/Plugin_helper.h>
 #include "ui_Rib_dialog.h"
 
 #include "Scene_c3t3_item.h"

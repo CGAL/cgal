@@ -23,7 +23,7 @@ namespace Ui {
 
 #include "Polyhedron_type_fwd.h"
 
-#include "Messages_interface.h"
+#include <CGAL_demo/Messages_interface.h>
 
 class MainWindow : 
   public CGAL::Qt::DemosMainWindow,

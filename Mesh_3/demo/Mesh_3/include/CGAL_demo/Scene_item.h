@@ -1,8 +1,8 @@
 #ifndef SCENE_ITEM_H
 #define SCENE_ITEM_H
 
-#include "Scene_item_config.h"
-#include "Scene_interface.h"
+#include <CGAL_demo/Scene_item_config.h>
+#include <CGAL_demo/Scene_interface.h>
 #include <QString>
 #include <QPixmap>
 #include <QFont>

@@ -4,7 +4,7 @@
 #include "Scene_segmented_image_item.h"
 #include "Image_type.h"
 
-#include "Polyhedron_demo_io_plugin_interface.h"
+#include <CGAL_demo/Io_plugin_interface.h>
 #include <fstream>
 
 class Mesh_3_image_loader_plugin :

@@ -3,7 +3,7 @@
 
 #include "Scene_c3t3_item_config.h"
 #include "C3t3_type.h"
-#include "Scene_item_with_display_list.h"
+#include <CGAL_demo/Scene_item_with_display_list.h>
 
 #include <QVector>
 #include <QColor>

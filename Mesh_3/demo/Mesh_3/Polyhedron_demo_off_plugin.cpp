@@ -2,7 +2,7 @@
 #include "Scene_polygon_soup.h"
 #include "Polyhedron_type.h"
 
-#include "Polyhedron_demo_io_plugin_interface.h"
+#include <CGAL_demo/Io_plugin_interface.h>
 #include <fstream>
 
 class Polyhedron_demo_off_plugin :

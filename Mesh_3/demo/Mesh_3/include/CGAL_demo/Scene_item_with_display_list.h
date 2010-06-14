@@ -1,7 +1,7 @@
 #ifndef SCENE_ITEM_WITH_DISPLAY_LIST_H
 #define SCENE_ITEM_WITH_DISPLAY_LIST_H
 
-#include "Scene_item.h"
+#include <CGAL_demo/Scene_item.h>
 #include <CGAL/gl.h>
 
 // This class represents an object in the scene with an OpenGL rendering using display lists

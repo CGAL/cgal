@@ -21,9 +21,9 @@
 // File Description : 
 //******************************************************************************
 
-#include "Polyhedron_demo_plugin_interface.h"
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Implicit_function_interface.h"
+#include <CGAL_demo/Plugin_interface.h>
+#include <CGAL_demo/Plugin_helper.h>
+#include "implicit_functions/Implicit_function_interface.h"
 #include "Scene_implicit_function_item.h"
 #include "ui_Function_dialog.h"
 

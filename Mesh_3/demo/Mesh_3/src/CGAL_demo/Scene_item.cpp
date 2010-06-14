@@ -1,4 +1,4 @@
-#include "Scene_item.h"
+#include <CGAL_demo/Scene_item.h>
 
 const QColor Scene_item::defaultColor = QColor(100, 100, 255);
 
@@ -29,6 +29,3 @@ QString Scene_item::renderingModeName() const
       return tr("unknown");
   }
 } 
-
-#include "Scene_item.moc"
-

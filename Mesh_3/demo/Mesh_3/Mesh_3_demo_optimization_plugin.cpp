@@ -1,8 +1,8 @@
 #include "config.h"
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
-#include "Messages_interface.h"
+#include <CGAL_demo/Plugin_helper.h>
+#include <CGAL_demo/Plugin_interface.h>
+#include <CGAL_demo/Messages_interface.h>
 #include "ui_Smoother_dialog.h"
 #include "ui_LocalOptim_dialog.h"
 

@@ -1,10 +1,10 @@
 #ifndef SCENE_IMPLICIT_FUNCTION_ITEM_H
 #define SCENE_IMPLICIT_FUNCTION_ITEM_H
 
-#include "Scene_item_with_display_list.h"
-#include "Scene_interface.h"
+#include <CGAL_demo/Scene_item_with_display_list.h>
+#include <CGAL_demo/Scene_interface.h>
 #include "Scene_implicit_function_item_config.h"
-#include "Implicit_function_interface.h"
+#include "implicit_functions/Implicit_function_interface.h"
 #include "Color_ramp.h"
 
 #include <QGLViewer/manipulatedFrame.h>

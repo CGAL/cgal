@@ -1,7 +1,7 @@
 #ifndef POLYHEDRON_DEMO_OPERATION_HELPER_H
 #define POLYHEDRON_DEMO_OPERATION_HELPER_H
 
-#include "Scene_item_config.h" //defines SCENE_ITEM_EXPORT
+#include <CGAL_demo/Scene_item_config.h> //defines SCENE_ITEM_EXPORT
 
 #include <QString>
 #include <QStringList>
@@ -12,7 +12,7 @@ struct QMetaObject;
 class QMainWindow;
 class Scene_interface;
 
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL_demo/Plugin_interface.h>
 
 class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
   : public Polyhedron_demo_plugin_interface
