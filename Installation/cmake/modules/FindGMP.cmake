@@ -15,7 +15,7 @@ if(GMP_INCLUDE_DIR)
 else()
   set(GMP_in_cache FALSE)
 endif()
-if( CGAL_AUTO_LINK_ENABLED )
+if( CGAL_AUTO_LINK_GMP )
   if(NOT GMP_LIBRARIES_DIR)
     set(GMP_in_cache FALSE)
   endif()
@@ -43,7 +43,7 @@ else()
     cache_set( GMP_IN_CGAL_AUXILIARY TRUE )
   endif()
   
-  if ( CGAL_AUTO_LINK_ENABLED )
+  if ( CGAL_AUTO_LINK_GMP )
   
     find_path(GMP_LIBRARIES_DIR 
               NAMES "gmp-${CGAL_TOOLSET}-mt.lib" "gmp-${CGAL_TOOLSET}-mt-gd.lib"
@@ -54,8 +54,9 @@ else()
     
   else()
   
-    find_library(GMP_LIBRARIES NAMES gmp 
+    find_library(GMP_LIBRARIES NAMES gmp gmp-1 gmp-2 gmp-3 gmp-4 gmp-5
                  PATHS ENV GMP_LIB_DIR
+                 ${CMAKE_SOURCE_DIR}/auxiliary/gmp/lib
                  DOC "Path to the GMP library"
                 )
                 
@@ -70,7 +71,7 @@ else()
     include( GMPConfig OPTIONAL )
   endif()
   
-  if(CGAL_AUTO_LINK_ENABLED)
+  if(CGAL_AUTO_LINK_GMP)
     find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_LIBRARIES_DIR GMP_INCLUDE_DIR)
   else()
     find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_LIBRARIES GMP_INCLUDE_DIR)
