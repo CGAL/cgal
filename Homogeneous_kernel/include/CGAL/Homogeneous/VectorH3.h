@@ -51,7 +51,7 @@ class VectorH3
 
 public:
 
-  typedef Cartesian_const_iterator_d<const RT*> Cartesian_const_iterator;
+  typedef Cartesian_const_iterator_d<typename Rep::const_iterator> Cartesian_const_iterator;
 
   typedef R_                 R;
 

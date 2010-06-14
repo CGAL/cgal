@@ -55,7 +55,7 @@ public:
 
   typedef const FT Cartesian_coordinate_type;
   typedef const RT& Homogeneous_coordinate_type;
-  typedef Cartesian_const_iterator_d<const RT*> Cartesian_const_iterator;
+  typedef Cartesian_const_iterator_d<typename Rep::const_iterator> Cartesian_const_iterator;
 
   typedef R_                                    R;
 

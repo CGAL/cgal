@@ -140,8 +140,8 @@ struct Homogeneous_base
     typedef CircleC3<Kernel>                        Circle_3;
     typedef Aff_transformationH3<Kernel>            Aff_transformation_3;
 
-    typedef Cartesian_const_iterator_d<const RT *>  Cartesian_const_iterator_2;
-    typedef Cartesian_const_iterator_d<const RT *>  Cartesian_const_iterator_3;
+    typedef typename Cartesian_const_iterator_d<typename cpp0x::array<RT, 3>::const_iterator> Cartesian_const_iterator_2;
+    typedef typename Cartesian_const_iterator_d<typename cpp0x::array<RT, 4>::const_iterator> Cartesian_const_iterator_3;
 
     typedef FT_                                     Cartesian_coordinate_type;
     typedef const RT_&                              Homogeneous_coordinate_type;
