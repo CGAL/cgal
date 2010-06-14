@@ -704,18 +704,18 @@ operator<< (std::ostream& os,
 {
   if (c.orientation() == COLLINEAR)
   {
-    os<< "segment: " << c.source() << " -> " << c.target() << std::endl;
+    os<< "segment: " << c.source() << " -> " << c.target();
   }
   else
   {
     if(!c.is_full())
     {
       os << "circular arc: " << c.supporting_circle() << ' '
-         << c.source() << " -> " << c.target() << std::endl;
+         << c.source() << " -> " << c.target();
     }
     else
     {
-      os << "circular arc: " << c.supporting_circle()<<std::endl;
+      os << "circular arc: " << c.supporting_circle();
     }
   }
 
@@ -2454,7 +2454,7 @@ operator<< (std::ostream& os,
   if (! arc.is_linear())
     os << "(" << arc.supporting_circle() << ") ";
 
-  os << "[" << arc.source() << " --> " << arc.target() << "]" << std::endl;
+  os << "[" << arc.source() << " --> " << arc.target() << "]";
   return (os);
 }
 
