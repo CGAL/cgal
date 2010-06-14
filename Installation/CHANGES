@@ -23,8 +23,9 @@ x.y 2D Mesh Generation
   - The execution of the 2D mesh generator is now deterministic (same at
     each run).
 
-x CGAL_PDB is no longer provided with CGAL. An alternative solution for people
-  interested in reading PDB files is to use ESBTL (http://esbtl.sourceforge.net/).
+x CGAL_PDB is no longer provided with CGAL. An alternative solution for
+  people interested in reading PDB files is to use ESBTL
+  (http://esbtl.sourceforge.net/).
 
 ----------------------------- Release 3.6.1 --------------------------------
 CGAL 3.6.1 is a bug-fixes release. The following has been changed
