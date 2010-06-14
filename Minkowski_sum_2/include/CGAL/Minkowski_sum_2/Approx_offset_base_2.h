@@ -17,6 +17,7 @@
 // Author(s)     : Ron Wein       <wein@post.tau.ac.il>
 //                 Andreas Fabri  <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
+//                 Efi Fogel      <efif@post.tau.ac.il>
 
 #ifndef CGAL_APPROXIMATED_OFFSET_BASE_H
 #define CGAL_APPROXIMATED_OFFSET_BASE_H
@@ -489,30 +490,33 @@ protected:
         // offset source of the current edge.
         CGAL::Orientation     orient = f_orient (*prev, *curr, *next);
 
-        if (orient == CGAL::LEFT_TURN)
-        {
+        /* Degenerate cases may result in coolinear orientation. 
+         * we do not support offsetting of non-simple polygons, except for
+         * the simple degenerate case, where the polygon consists of a single
+         * line segment.
+         * As a matter of fact the following code supports all cases where
+         * an "antena", which consists of a single line segment, creates
+         * a possitive spike. A negative spike must be treated as a right
+         * turn.
+         */ 
+        if ((orient == CGAL::LEFT_TURN) || (orient == CGAL::COLLINEAR)) {
           // Connect prev_op and op1 with a circular arc, whose supporting
           // circle is (x1, x2) with radius r.
           arc = Curve_2 (*curr, r, CGAL::COUNTERCLOCKWISE,
                          Tr_point_2 (prev_op.x(), prev_op.y()),
                          Tr_point_2 (op1.x(), op1.y()));
 
-          // Subdivide the arc into x-monotone subarcs and insert them to the
+          // Subdivide the arc into x-monotone subarcs and insert them into the
           // convolution cycle.
           xobjs.clear();
           f_make_x_monotone (arc, std::back_inserter(xobjs));
 
-          for (xobj_it = xobjs.begin(); xobj_it != xobjs.end(); ++xobj_it)
-          {
+          for (xobj_it = xobjs.begin(); xobj_it != xobjs.end(); ++xobj_it) {
             assign_success = CGAL::assign (xarc, *xobj_it);
             CGAL_assertion (assign_success);
-
-            *oi = Labeled_curve_2 (xarc,
-                                   X_curve_label (xarc.is_directed_right(),
-                                                  cycle_id,
-                                                  curve_index));
-            ++oi;
-            curve_index++;
+            *oi++ = Labeled_curve_2 (xarc,
+                                     X_curve_label (xarc.is_directed_right(),
+                                                    cycle_id, curve_index++));
           }
         }
         else if (orient == CGAL::RIGHT_TURN)
@@ -522,37 +526,25 @@ protected:
           // and op1 by a circular arc (as the case above): it is sufficient
           // to shortcut the circular arc using a segment, whose sole purpose
           // is to guarantee the continuity of the convolution cycle (we know
-          // this segment will not be part of the output offset or inet).
+          // this segment will not be part of the output offset or inset).
           seg_short = X_monotone_curve_2(prev_op, op1);
 
           dir_right_short = (f_comp_xy (prev_op, op1) == CGAL::SMALLER);
-          *oi = Labeled_curve_2 (seg_short,
-                                 X_curve_label (dir_right_short,
-                                                cycle_id,
-                                                curve_index));
-          oi++;
-          curve_index++;
+          *oi++ = Labeled_curve_2 (seg_short,
+                                   X_curve_label (dir_right_short,
+                                                  cycle_id, curve_index++));
         }
       }
 
       // Append the offset segment(s) to the convolution cycle.
       CGAL_assertion (n_segments == 1 || n_segments == 2);
-
-      *oi = Labeled_curve_2 (seg1,
-                             X_curve_label (dir_right1,
-                                            cycle_id,
-                                            curve_index));
-      oi++;
-      curve_index++;
+      *oi++ = Labeled_curve_2 (seg1, X_curve_label (dir_right1,
+                                                    cycle_id, curve_index++));
 
       if (n_segments == 2)
       {
-        *oi = Labeled_curve_2 (seg2,
-                               X_curve_label (dir_right2,
-                                              cycle_id,
-                                              curve_index));
-        ++oi;
-        curve_index++;
+        *oi++ = Labeled_curve_2 (seg2, X_curve_label (dir_right2,
+                                                      cycle_id, curve_index++));
       }
     
       // Proceed to the next polygon vertex.
@@ -570,8 +562,6 @@ protected:
 
     // Subdivide the arc into x-monotone subarcs and insert them to the
     // convolution cycle.
-    bool           is_last;
-
     xobjs.clear();
     f_make_x_monotone (arc, std::back_inserter(xobjs));
 
@@ -582,14 +572,11 @@ protected:
       CGAL_assertion (assign_success);
       
       ++xobj_it;
-      is_last = (xobj_it == xobjs.end());
+      bool is_last = (xobj_it == xobjs.end());
 
-      *oi = Labeled_curve_2 (xarc,
-                             X_curve_label (xarc.is_directed_right(),
-                                            cycle_id,
-                                            curve_index,
-                                            is_last));
-      curve_index++;
+      *oi++ = Labeled_curve_2 (xarc,
+                               X_curve_label (xarc.is_directed_right(),
+                                              cycle_id, curve_index++, is_last));
     }
 
     return (oi);
