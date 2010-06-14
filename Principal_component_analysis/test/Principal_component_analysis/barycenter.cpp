@@ -104,7 +104,8 @@ void test_3()
           == CGAL::midpoint(p0, p1) );
 
   // Test other CGAL::centroid overloads
-  assert( CGAL::centroid(p0,p1,p0,p1) == CGAL::midpoint(p0,p1) );
+  Point_3 c = CGAL::centroid(p0,p1,p0,p1);
+  c = CGAL::centroid(p0,p1,p0);
 }
 
 
