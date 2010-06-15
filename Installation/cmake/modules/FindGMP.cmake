@@ -34,8 +34,8 @@ else()
 
   find_path(GMP_INCLUDE_DIR 
             NAMES gmp.h 
-            PATHS ${CMAKE_SOURCE_DIR}/auxiliary/gmp/include
-                  ENV GMP_INC_DIR
+            PATHS ENV GMP_INC_DIR
+                  ${CMAKE_SOURCE_DIR}/auxiliary/gmp/include
   	        DOC "The directory containing the GMP header files"
            )
 
@@ -47,8 +47,8 @@ else()
   
     find_path(GMP_LIBRARIES_DIR 
               NAMES "gmp-${CGAL_TOOLSET}-mt.lib" "gmp-${CGAL_TOOLSET}-mt-gd.lib"
-              PATHS ${CMAKE_SOURCE_DIR}/auxiliary/gmp/lib
-                    ENV GMP_LIB_DIR
+              PATHS ENV GMP_LIB_DIR
+                    ${CMAKE_SOURCE_DIR}/auxiliary/gmp/lib
               DOC "Directory containing the GMP library"
              ) 
     
