@@ -5,10 +5,10 @@
 
 class Io_c3t3_plugin :
   public QObject,
-  public Polyhedron_demo_io_plugin_interface
+  public Io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_io_plugin_interface);
+  Q_INTERFACES(Io_plugin_interface);
 
 public:
   virtual QStringList nameFilters() const;

@@ -6,10 +6,10 @@
 
 class Scene_item;
 
-class Polyhedron_demo_io_plugin_interface 
+class Io_plugin_interface 
 {
 public:
-  virtual ~Polyhedron_demo_io_plugin_interface() {}
+  virtual ~Io_plugin_interface() {}
 
   virtual QStringList nameFilters() const = 0;
 
@@ -20,7 +20,7 @@ public:
   virtual bool save(const Scene_item*, QFileInfo fileinfo) = 0;
 };
 
-Q_DECLARE_INTERFACE(Polyhedron_demo_io_plugin_interface,
+Q_DECLARE_INTERFACE(Io_plugin_interface,
                     "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 #endif // POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H

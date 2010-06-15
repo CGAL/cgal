@@ -60,10 +60,10 @@ std::string translate(CGAL::Mesh_optimization_return_code rc);
 // Mesh_3_demo_optimization_plugin class
 class Mesh_3_demo_optimization_plugin : 
   public QObject,
-  protected Polyhedron_demo_plugin_helper
+  protected Plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Plugin_interface);
 public:
   virtual void init(QMainWindow*, Scene_interface*, Messages_interface*);
   inline virtual QList<QAction*> actions() const;

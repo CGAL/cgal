@@ -179,8 +179,8 @@ void MainWindow::loadPlugins()
 bool MainWindow::initPlugin(QObject* obj)
 {
   QObjectList childs = this->children();
-  Polyhedron_demo_plugin_interface* plugin =
-    qobject_cast<Polyhedron_demo_plugin_interface*>(obj);
+  Plugin_interface* plugin =
+    qobject_cast<Plugin_interface*>(obj);
   if(plugin) {
     // Call plugin's init() method
     plugin->init(this, this->scene, this);
@@ -201,8 +201,8 @@ bool MainWindow::initPlugin(QObject* obj)
 
 bool MainWindow::initIOPlugin(QObject* obj)
 {
-  Polyhedron_demo_io_plugin_interface* plugin =
-    qobject_cast<Polyhedron_demo_io_plugin_interface*>(obj);
+  Io_plugin_interface* plugin =
+    qobject_cast<Io_plugin_interface*>(obj);
   if(plugin) {
 //     std::cerr << "I/O plugin\n";
     io_plugins << plugin;
@@ -312,7 +312,7 @@ void MainWindow::open(QString filename)
   QFileInfo fileinfo(filename);
   Scene_item* item = 0;
   if(fileinfo.isFile() && fileinfo.isReadable()) {
-    Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, 
+    Q_FOREACH(Io_plugin_interface* plugin, 
               io_plugins)
     {
       if(plugin->canLoad()) {
@@ -431,7 +431,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::on_actionLoad_triggered()
 {
   QStringList filters;
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
+  Q_FOREACH(Io_plugin_interface* plugin, io_plugins) {
     if(plugin->canLoad()) {
       filters += plugin->nameFilters();
     }
@@ -463,9 +463,9 @@ void MainWindow::on_actionSaveAs_triggered()
   if(!item)
     return;
 
-  QVector<Polyhedron_demo_io_plugin_interface*> canSavePlugins;
+  QVector<Io_plugin_interface*> canSavePlugins;
   QStringList filters;
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
+  Q_FOREACH(Io_plugin_interface* plugin, io_plugins) {
     if(plugin->canSave(item)) {
       canSavePlugins << plugin;
       filters += plugin->nameFilters();
@@ -497,7 +497,7 @@ void MainWindow::on_actionSaveAs_triggered()
      QMessageBox::Yes)
   {
 
-    Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, canSavePlugins) {
+    Q_FOREACH(Io_plugin_interface* plugin, canSavePlugins) {
       if(plugin->save(item, fileinfo))
         break;
     }

@@ -68,10 +68,10 @@ double get_approximate(double d, int precision, int& decimals);
 
 class Polyhedron_demo_mesh_3_plugin : 
   public QObject,
-  protected Polyhedron_demo_plugin_helper
+  protected Plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Plugin_interface);
 public:
   virtual void init(QMainWindow* mainWindow, 
                     Scene_interface* scene_interface,

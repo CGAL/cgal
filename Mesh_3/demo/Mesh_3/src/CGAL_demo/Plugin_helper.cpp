@@ -8,7 +8,7 @@
 #include <QSet>
 
 QAction*
-Polyhedron_demo_plugin_helper::
+Plugin_helper::
 getActionFromMainWindow(QMainWindow* mw,
                         QString action_name)
 {
@@ -16,13 +16,13 @@ getActionFromMainWindow(QMainWindow* mw,
 }
 
 QStringList 
-Polyhedron_demo_plugin_helper::actionsNames() const
+Plugin_helper::actionsNames() const
 {
   return QStringList();
 }
 
 void
-Polyhedron_demo_plugin_helper::
+Plugin_helper::
 init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
   mw = mainWindow;
   scene = scene_interface;
@@ -34,13 +34,13 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
 }
 
 QList<QAction*> 
-Polyhedron_demo_plugin_helper::actions() const
+Plugin_helper::actions() const
 {
   return actions_map.values();
 }
 
 // Auto-connect actions to slots
-void Polyhedron_demo_plugin_helper::autoConnectActions()
+void Plugin_helper::autoConnectActions()
 {
   QObject* thisObject = dynamic_cast<QObject*>(this);
   if(!thisObject)

@@ -39,10 +39,10 @@
 
 class Io_implicit_function_plugin :
   public QObject,
-  protected Polyhedron_demo_plugin_helper
+  protected Plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface);
+  Q_INTERFACES(Plugin_interface);
   
 public:
   Io_implicit_function_plugin();

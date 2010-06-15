@@ -13,7 +13,7 @@ class Scene;
 class Viewer;
 class QTreeView;
 class QMenu;
-class Polyhedron_demo_io_plugin_interface;
+class Io_plugin_interface;
 
 class Scene_item;
 
@@ -98,7 +98,7 @@ private:
   Viewer* viewer;
   QTreeView* treeView;
   Ui::MainWindow* ui;
-  QVector<Polyhedron_demo_io_plugin_interface*> io_plugins;
+  QVector<Io_plugin_interface*> io_plugins;
 };
 
 #endif // ifndef MAINWINDOW_H

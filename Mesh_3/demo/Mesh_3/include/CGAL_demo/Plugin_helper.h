@@ -14,8 +14,8 @@ class Scene_interface;
 
 #include <CGAL_demo/Plugin_interface.h>
 
-class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
-  : public Polyhedron_demo_plugin_interface
+class SCENE_ITEM_EXPORT Plugin_helper
+  : public Plugin_interface
 {
 public:
   // get action object from its name
