@@ -1,5 +1,8 @@
 # This is the CMake script for compiling the CGAL Mesh_3 demo.
 
+# Add directory containing implicit function plugin source files
+add_subdirectory("implicit_functions")
+
 project( Mesh_3_demo )
 
 cmake_minimum_required(VERSION 2.4.5)
@@ -31,7 +34,7 @@ include_directories( BEFORE ./ ./include ../../include )
 
 #include_directories(BEFORE ../../../../candidate-packages/Mesh_3/include/)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} . )
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4 ImageIO)
@@ -270,3 +273,5 @@ else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
 
 endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+
+

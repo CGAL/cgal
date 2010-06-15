@@ -6,18 +6,12 @@ cmake_minimum_required(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-#option(MESH_3_DEMO_ENABLE_FORWARD_DECL "In the Mesh_3 demo, enable " OFF)
-#mark_as_advanced(MESH_3_DEMO_ENABLE_FORWARD_DECL)
-
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-# Include this package's headers first
-#include_directories( BEFORE ./ ./include ../../include )
-
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} . )
+# Include directory of demo includes
+include_directories( BEFORE ../include )
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)
@@ -33,6 +27,10 @@ find_package(Qt4)
 
 if(CGAL_Qt4_FOUND AND QT4_FOUND)
   include(${QT_USE_FILE})
+
+  # put plugins (which are shared libraries) at the same location as
+  # executable files
+  set(LIBRARY_OUTPUT_PATH ${RUNTIME_OUTPUT_PATH})
 
   ###########
   # PLUGINS #

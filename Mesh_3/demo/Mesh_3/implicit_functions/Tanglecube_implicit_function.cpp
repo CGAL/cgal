@@ -22,7 +22,7 @@
 //******************************************************************************
 
 #include <QObject>
-#include "../Implicit_function_interface.h"
+#include "Implicit_function_interface.h"
 
 
 const double radius = 4.;
