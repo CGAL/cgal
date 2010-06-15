@@ -54,7 +54,7 @@ else()
     
   else()
   
-    find_library(MPFR_LIBRARIES NAMES mpfr 
+    find_library(MPFR_LIBRARIES NAMES mpfr libmpfr-1
                  PATHS ENV MPFR_LIB_DIR
                  DOC "Path to the MPFR library"
                 )

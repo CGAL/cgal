@@ -54,7 +54,7 @@ else()
     
   else()
   
-    find_library(GMP_LIBRARIES NAMES gmp gmp-1 gmp-2 gmp-3 gmp-4 gmp-5
+    find_library(GMP_LIBRARIES NAMES gmp libgmp-10
                  PATHS ENV GMP_LIB_DIR
                  ${CMAKE_SOURCE_DIR}/auxiliary/gmp/lib
                  DOC "Path to the GMP library"
