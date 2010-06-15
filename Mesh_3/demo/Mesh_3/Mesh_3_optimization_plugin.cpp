@@ -57,8 +57,8 @@ Scene_c3t3_item* cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
 
 std::string translate(CGAL::Mesh_optimization_return_code rc);
 
-// Mesh_3_demo_optimization_plugin class
-class Mesh_3_demo_optimization_plugin : 
+// Mesh_3_optimization_plugin class
+class Mesh_3_optimization_plugin : 
   public QObject,
   protected Plugin_helper
 {
@@ -84,11 +84,11 @@ private:
   QAction* actionPerturb;
   QAction* actionExude;
   Messages_interface* msg;
-}; // end class Mesh_3_demo_optimization_plugin
+}; // end class Mesh_3_optimization_plugin
 
 
 void 
-Mesh_3_demo_optimization_plugin::
+Mesh_3_optimization_plugin::
 init(QMainWindow* mainWindow,
      Scene_interface* scene_interface,
      Messages_interface* msg_interface)
@@ -127,7 +127,7 @@ init(QMainWindow* mainWindow,
 
 inline
 QList<QAction*> 
-Mesh_3_demo_optimization_plugin::actions() const
+Mesh_3_optimization_plugin::actions() const
 {
   return QList<QAction*>() << actionOdt << actionLloyd 
                            << actionPerturb << actionExude;
@@ -135,7 +135,7 @@ Mesh_3_demo_optimization_plugin::actions() const
 
 
 void
-Mesh_3_demo_optimization_plugin::odt()
+Mesh_3_optimization_plugin::odt()
 {
   // -----------------------------------
   // Get source item
@@ -228,7 +228,7 @@ Mesh_3_demo_optimization_plugin::odt()
 
 
 void
-Mesh_3_demo_optimization_plugin::lloyd()
+Mesh_3_optimization_plugin::lloyd()
 {
   // -----------------------------------
   // Get source item
@@ -321,7 +321,7 @@ Mesh_3_demo_optimization_plugin::lloyd()
 
 
 void
-Mesh_3_demo_optimization_plugin::perturb()
+Mesh_3_optimization_plugin::perturb()
 {
   // -----------------------------------
   // Get source item
@@ -405,7 +405,7 @@ Mesh_3_demo_optimization_plugin::perturb()
 
 
 void
-Mesh_3_demo_optimization_plugin::exude()
+Mesh_3_optimization_plugin::exude()
 {
   // -----------------------------------
   // Get source item
@@ -483,7 +483,7 @@ Mesh_3_demo_optimization_plugin::exude()
 
 
 void
-Mesh_3_demo_optimization_plugin::
+Mesh_3_optimization_plugin::
 treat_result(Scene_c3t3_item& source_item,
              Scene_c3t3_item& result_item,
              const QString& name,
@@ -529,8 +529,8 @@ translate(CGAL::Mesh_optimization_return_code rc)
 }
 
 
-Q_EXPORT_PLUGIN2(Mesh_3_demo_optimization_plugin, Mesh_3_demo_optimization_plugin);
+Q_EXPORT_PLUGIN2(Mesh_3_optimization_plugin, Mesh_3_optimization_plugin);
 
-#include "Mesh_3_demo_optimization_plugin.moc"
+#include "Mesh_3_optimization_plugin.moc"
 
 #endif // CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER

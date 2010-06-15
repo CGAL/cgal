@@ -21,7 +21,7 @@
 #define CGAL_RIB_NON_TRANSPARENT_MATERIAL_ALPHA 1
 
 
-class Mesh_3_rib_exporter_plugin :
+class C3t3_rib_exporter_plugin :
   public QObject,
   protected Plugin_helper
 {
@@ -29,8 +29,8 @@ class Mesh_3_rib_exporter_plugin :
   Q_INTERFACES(Plugin_interface);
 
 public:
-  Mesh_3_rib_exporter_plugin();
-  virtual ~Mesh_3_rib_exporter_plugin() {}
+  C3t3_rib_exporter_plugin();
+  virtual ~C3t3_rib_exporter_plugin() {}
   
   virtual void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
   QList<QAction*> actions() const
@@ -148,8 +148,8 @@ private:
 };
 
 
-Mesh_3_rib_exporter_plugin::
-Mesh_3_rib_exporter_plugin()
+C3t3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin()
   : actionCreateRib(NULL)
   , viewer_(NULL)
   , zmax_(0)
@@ -163,7 +163,7 @@ Mesh_3_rib_exporter_plugin()
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 init(QMainWindow* mainWindow, Scene_interface* scene_interface)
 {
   this->scene = scene_interface;
@@ -186,7 +186,7 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface)
 
 
 void
-Mesh_3_rib_exporter_plugin::create_rib()
+C3t3_rib_exporter_plugin::create_rib()
 {
   if ( NULL == viewer_ )
   {
@@ -245,7 +245,7 @@ Mesh_3_rib_exporter_plugin::create_rib()
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 height_changed(int i)
 {
   parameters_.height = i;
@@ -253,7 +253,7 @@ height_changed(int i)
 }
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 width_changed(int i)
 {
   parameters_.width = i;
@@ -262,7 +262,7 @@ width_changed(int i)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 update_mask()
 {
   double ratio = double(parameters_.width) / double(parameters_.height);
@@ -279,7 +279,7 @@ update_mask()
 
 
 bool
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 get_parameters_from_dialog()
 {
   QDialog dialog(mw);
@@ -349,14 +349,14 @@ get_parameters_from_dialog()
   
 
 QStringList
-Mesh_3_rib_exporter_plugin::nameFilters() const
+C3t3_rib_exporter_plugin::nameFilters() const
 { 
   return QStringList() << "RenderMan file (*.rib)";
 }
 
 
 bool
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 save(const Scene_c3t3_item& c3t3_item, const QFileInfo& fileInfo)
 {
   QString path = fileInfo.absoluteFilePath();
@@ -410,7 +410,7 @@ save(const Scene_c3t3_item& c3t3_item, const QFileInfo& fileInfo)
 }
 
 void
-Mesh_3_rib_exporter_plugin::init_maps(const C3t3& c3t3, const QColor& color)
+C3t3_rib_exporter_plugin::init_maps(const C3t3& c3t3, const QColor& color)
 {
   surface_map_.clear();
   subdomain_map_.clear();
@@ -447,7 +447,7 @@ Mesh_3_rib_exporter_plugin::init_maps(const C3t3& c3t3, const QColor& color)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 init_point_radius(const C3t3& c3t3)
 {
   const CGAL::Bbox_3 bbox = c3t3.bbox();
@@ -464,7 +464,7 @@ init_point_radius(const C3t3& c3t3)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 init_parameters()
 {
   // Lights
@@ -481,8 +481,8 @@ init_parameters()
 }
 
 
-Mesh_3_rib_exporter_plugin::Point_3 
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::Point_3 
+C3t3_rib_exporter_plugin::
 camera_coordinates(const Point_3& p)
 {
   qglVec p_vec ( p.x(), p.y(), p.z() );
@@ -496,7 +496,7 @@ camera_coordinates(const Point_3& p)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 fill_points_and_edges_map(const C3t3& c3t3)
 {
   for ( C3t3::Cell_iterator it = c3t3.cells_begin(), end = c3t3.cells_end();
@@ -525,7 +525,7 @@ fill_points_and_edges_map(const C3t3& c3t3)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 add_edge(const Point_3& p, const Point_3& q, const QColor& color)
 {
   if ( p < q )
@@ -540,7 +540,7 @@ add_edge(const Point_3& p, const Point_3& q, const QColor& color)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 add_vertex(const Point_3& p, const QColor& color)
 {
   vertices_.insert(std::make_pair(p,color));    
@@ -548,7 +548,7 @@ add_vertex(const Point_3& p, const QColor& color)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_header(const std::string& filename, std::ofstream& out)
 {
   out << "Option \"limits\" \"numthreads\" [16]" << std::endl
@@ -598,7 +598,7 @@ write_header(const std::string& filename, std::ofstream& out)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_lights(std::ofstream& out)
 {
   if ( ! parameters_.is_preview )
@@ -623,7 +623,7 @@ write_lights(std::ofstream& out)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_turn_background_light(bool turn_on, std::ofstream& out)
 {
   switch (turn_on)
@@ -644,7 +644,7 @@ write_turn_background_light(bool turn_on, std::ofstream& out)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_facets(const C3t3& c3t3, std::ofstream& out)
 {
   for ( C3t3::Facet_iterator it = c3t3.facets_begin(), end = c3t3.facets_end();
@@ -666,7 +666,7 @@ write_facets(const C3t3& c3t3, std::ofstream& out)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
   typedef Kernel::Oriented_side Side;
@@ -698,7 +698,7 @@ write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
   typedef Kernel::Oriented_side Side;
@@ -742,7 +742,7 @@ write_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_triangle (const Point_3& p, const Point_3& q, const Point_3& r,
                 const QColor& color, const QColor& edge_color, std::ofstream& out)
 {
@@ -769,7 +769,7 @@ write_triangle (const Point_3& p, const Point_3& q, const Point_3& r,
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_point (const Point_3& p, std::ofstream& out)
 {
   // Transform point in camera coordinates
@@ -781,7 +781,7 @@ write_point (const Point_3& p, std::ofstream& out)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_point_sphere(const Point_3& p, std::ofstream& out)
 {
   // Transform point in camera coordinates
@@ -799,7 +799,7 @@ write_point_sphere(const Point_3& p, std::ofstream& out)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_edge_cylinder(const Point_3& p, const Point_3& q, std::ofstream& out)
 {
   // Transform point in camera coordinates
@@ -831,7 +831,7 @@ write_edge_cylinder(const Point_3& p, const Point_3& q, std::ofstream& out)
 
 
 void 
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_edges_flat(std::ofstream& out)
 {
   // Lights
@@ -859,7 +859,7 @@ write_edges_flat(std::ofstream& out)
 
 
 void 
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_edges_volumic(std::ofstream& out)
 {
   // Material
@@ -876,7 +876,7 @@ write_edges_volumic(std::ofstream& out)
 }
 
 void 
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_vertices_volumic(std::ofstream& out)
 {
   // Material
@@ -894,7 +894,7 @@ write_vertices_volumic(std::ofstream& out)
 
 
 void 
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_color(const QColor& color, bool use_transparency, std::ofstream& out)
 {
   if ( prev_color_ == color )
@@ -918,7 +918,7 @@ write_color(const QColor& color, bool use_transparency, std::ofstream& out)
 
 
 void
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_opacity(const double alpha, std::ofstream& out)
 {
   if ( alpha == prev_alpha_ )
@@ -935,7 +935,7 @@ write_opacity(const double alpha, std::ofstream& out)
 
 
 void 
-Mesh_3_rib_exporter_plugin::
+C3t3_rib_exporter_plugin::
 write_background(const QColor& color, std::ofstream& out)
 {
   write_turn_background_light(false,out);
@@ -956,5 +956,5 @@ write_background(const QColor& color, std::ofstream& out)
 
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Mesh_3_rib_exporter_plugin, Mesh_3_rib_exporter_plugin);
-#include "Mesh_3_rib_exporter_plugin.moc"
+Q_EXPORT_PLUGIN2(C3t3_rib_exporter_plugin, C3t3_rib_exporter_plugin);
+#include "C3t3_rib_exporter_plugin.moc"

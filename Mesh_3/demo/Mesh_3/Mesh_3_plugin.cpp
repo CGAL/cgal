@@ -66,7 +66,7 @@ Scene_c3t3_item* cgal_code_mesh_3(const Implicit_function_interface*,
 double get_approximate(double d, int precision, int& decimals);
 
 
-class Polyhedron_demo_mesh_3_plugin : 
+class Mesh_3_plugin : 
   public QObject,
   protected Plugin_helper
 {
@@ -99,9 +99,9 @@ private:
   QAction* actionMesh_3;
   Messages_interface* msg;
   
-}; // end class Polyhedron_demo_mesh_3_plugin
+}; // end class Mesh_3_plugin
 
-void Polyhedron_demo_mesh_3_plugin::mesh_3()
+void Mesh_3_plugin::mesh_3()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   
@@ -296,8 +296,8 @@ get_approximate(double d, int precision, int& decimals)
 }
 
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_mesh_3_plugin, Polyhedron_demo_mesh_3_plugin);
+Q_EXPORT_PLUGIN2(Mesh_3_plugin, Mesh_3_plugin);
 
-#include "Polyhedron_demo_mesh_3_plugin.moc"
+#include "Mesh_3_plugin.moc"
 
 #endif // CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
