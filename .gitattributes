@@ -2216,6 +2216,7 @@ Minkowski_sum_2/test/Minkowski_sum_2/data/F.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/G.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/comb_part1.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/comb_part2.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/data/deg_square.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/fork_part1.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/fork_part2.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/knife_part1.dat -text
