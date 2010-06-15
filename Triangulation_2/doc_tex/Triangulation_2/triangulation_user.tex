@@ -637,6 +637,9 @@ satisfied. Removal of a
 vertex of degree $d$ takes time $O(d^2)$.
 The degree $d$ is $O(1)$ for a random
 vertex in the triangulation.
+When the degree of the removed vertex is small ($\leq7$) a special
+procedure is used that allows to increase global removal time by a factor of 2
+for random points~\cite{d-vrtdd-09}.
 
 The displacement of a vertex $v$ at a point $p$ to a new location $p'$, first checks whether the triangulation embedding remains
 planar or not after moving $v$ to $p'$. If yes, it moves $v$ to $p'$ and simply performs a sequence of flips
