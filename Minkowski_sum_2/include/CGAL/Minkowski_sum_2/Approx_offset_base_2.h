@@ -479,27 +479,36 @@ protected:
         }
       }
 
-      if (curr == first)
-      {
+      if (curr == first) {
         // This is the first edge we visit -- store op1 for future use.
         first_op = op1;
       }
-      else
-      {
+      else {
+        CGAL::Orientation orient = f_orient (*prev, *curr, *next);
+        if (orient == CGAL::COLLINEAR) {
+          /* If the orientation is collinear, figure out whether it's a 180
+           * turn. If so, assume that it is an antena that generates
+           * a positive spike, and treat it as a left turn.
+           * A complete solution would need to distinguish between positive
+           * and negative spikes, and treat them as left and right turns,
+           * respectively.
+           */
+          typename Kernel::Compare_x_2 f_comp_x = ker.compare_x_2_object();
+          Comparison_result res1, res2;
+          res1 = f_comp_x(*prev, *curr);
+          if (res1 != CGAL::EQUAL)
+            res2 = f_comp_x(*curr, *next);
+          else {
+            typename Kernel::Compare_y_2 f_comp_y = ker.compare_y_2_object();
+            res1 = f_comp_y(*prev, *curr);
+            res2 = f_comp_y(*curr, *next);
+          }
+          if (res1 != res2) orient = CGAL::LEFT_TURN;
+        }
+        
         // Connect the offset target point of the previous edge to the
         // offset source of the current edge.
-        CGAL::Orientation     orient = f_orient (*prev, *curr, *next);
-
-        /* Degenerate cases may result in coolinear orientation. 
-         * we do not support offsetting of non-simple polygons, except for
-         * the simple degenerate case, where the polygon consists of a single
-         * line segment.
-         * As a matter of fact the following code supports all cases where
-         * an "antena", which consists of a single line segment, creates
-         * a possitive spike. A negative spike must be treated as a right
-         * turn.
-         */ 
-        if ((orient == CGAL::LEFT_TURN) || (orient == CGAL::COLLINEAR)) {
+        if (orient == CGAL::LEFT_TURN) {
           // Connect prev_op and op1 with a circular arc, whose supporting
           // circle is (x1, x2) with radius r.
           arc = Curve_2 (*curr, r, CGAL::COUNTERCLOCKWISE,
@@ -510,7 +519,6 @@ protected:
           // convolution cycle.
           xobjs.clear();
           f_make_x_monotone (arc, std::back_inserter(xobjs));
-
           for (xobj_it = xobjs.begin(); xobj_it != xobjs.end(); ++xobj_it) {
             assign_success = CGAL::assign (xarc, *xobj_it);
             CGAL_assertion (assign_success);
@@ -519,8 +527,7 @@ protected:
                                                     cycle_id, curve_index++));
           }
         }
-        else if (orient == CGAL::RIGHT_TURN)
-        {
+        else if (orient == CGAL::RIGHT_TURN) {
           // In case the current angle between the previous and the current
           // edge is larger than pi/2, it not necessary to connect prev_op
           // and op1 by a circular arc (as the case above): it is sufficient
