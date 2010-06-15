@@ -6,6 +6,7 @@
 #include "Scene_implicit_function_item.h"
 
 #include "implicit_functions/Implicit_function_interface.h"
+#include "Optimizer_thread.h"
 
 #include <CGAL/optimize_mesh_3.h>
 #include <CGAL/Bbox_3.h>
@@ -15,18 +16,49 @@
 #include <CGAL/Timer.h>
 
 namespace cgp = CGAL::parameters;
-void treat_new_item(Scene_c3t3_item& new_item, const bool create_new_item);
 
+
+// -----------------------------------
+// Optimization_function template class
+// -----------------------------------
+template <typename Domain, typename Function>
+class Optimization_function
+  : public Optimization_function_interface
+{
+public:
+  // This class takes the responsability of d
+  Optimization_function(Scene_c3t3_item* i, Domain* d, const Function& f)
+    : item_(i), domain_(d), function_(f) {}
+  
+  virtual ~Optimization_function()
+  {
+    delete domain_;
+  }
+  
+  virtual CGAL::Mesh_optimization_return_code launch() const
+  {
+    return function_(item_->c3t3(), *domain_);
+  }
+  
+  virtual Scene_c3t3_item* item() const
+  {
+    return item_;
+  }
+  
+private:
+  Scene_c3t3_item* item_;
+  Domain* domain_;
+  Function function_;
+};
 
 
 // -----------------------------------
 // Optimization generic function (responsible of dynamic casting)
 // -----------------------------------
 template <typename Function>
-Scene_c3t3_item* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
+Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
                                         const Function& f,
-                                        const bool create_new_item,
-                                        CGAL::Mesh_optimization_return_code& return_code)
+                                        const bool create_new_item)
 {
   // Create result item
   Scene_c3t3_item* p_result_item = create_new_item ? 
@@ -54,14 +86,13 @@ Scene_c3t3_item* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
       return NULL;
     }
     
-    Image_mesh_domain domain(*p_image, 1e-6);
+    Image_mesh_domain* p_domain = new Image_mesh_domain(*p_image, 1e-6);
     
-    // Launch
-    return_code = f(p_result_item, domain);
+    // Create thread
+    typedef Optimization_function<Image_mesh_domain,Function> Opt_function;
+    Opt_function* p_opt_function = new Opt_function(p_result_item, p_domain, f);
     
-    // Treat new item and exit
-    treat_new_item(*p_result_item, create_new_item);
-    return p_result_item;
+    return new Optimizer_thread(p_opt_function);
   }
   
   
@@ -78,14 +109,13 @@ Scene_c3t3_item* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
       return NULL;
     }
     
-    Mesh_domain domain(*p_poly);
+    Mesh_domain* p_domain = new Mesh_domain(*p_poly);
     
-    // Launch
-    return_code = f(p_result_item, domain);
+    // Create thread
+    typedef Optimization_function<Mesh_domain,Function> Opt_function;
+    Opt_function* p_opt_function = new Opt_function(p_result_item, p_domain, f);
     
-    // Treat new item and exit
-    treat_new_item(*p_result_item, create_new_item);
-    return p_result_item;
+    return new Optimizer_thread(p_opt_function);
   }
   
   // Function
@@ -98,23 +128,21 @@ Scene_c3t3_item* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     const Implicit_function_interface* p_function = function_item->function();
     if ( NULL == p_function ) { return NULL; }
     
-    CGAL::Bbox_3 domain_bbox (p_function->bbox().xmin,
-                              p_function->bbox().ymin,
-                              p_function->bbox().zmin,
-                              p_function->bbox().xmax,
-                              p_function->bbox().ymax,
-                              p_function->bbox().zmax);
+    CGAL::Bbox_3 dom_bbox (p_function->bbox().xmin,
+                           p_function->bbox().ymin,
+                           p_function->bbox().zmin,
+                           p_function->bbox().xmax,
+                           p_function->bbox().ymax,
+                           p_function->bbox().zmax);
     
-    Function_mesh_domain domain(Function_wrapper(*p_function),
-                                domain_bbox,
-                                1e-7);
+    Function_mesh_domain* p_domain =
+      new Function_mesh_domain(Function_wrapper(*p_function), dom_bbox, 1e-7);
     
-    // Launch
-    return_code = f(p_result_item, domain);
+    // Create thread
+    typedef Optimization_function<Function_mesh_domain,Function> Opt_function;
+    Opt_function* p_opt_function = new Opt_function(p_result_item, p_domain, f);
     
-    // Treat new item and exit
-    treat_new_item(*p_result_item, create_new_item);
-    return p_result_item;
+    return new Optimizer_thread(p_opt_function);
   }
   
   return NULL;
@@ -134,10 +162,10 @@ struct Odt_function
   
   template <typename Domain>
   CGAL::Mesh_optimization_return_code 
-  operator()(Scene_c3t3_item* p_item, const Domain& domain) const
+  operator()(C3t3& c3t3, const Domain& domain) const
   {
     // Odt
-    return CGAL::odt_optimize_mesh_3(p_item->c3t3(),
+    return CGAL::odt_optimize_mesh_3(c3t3,
                                      domain,
                                      cgp::time_limit = time_limit,
                                      cgp::convergence = convergence_ratio,
@@ -147,14 +175,13 @@ struct Odt_function
 };
 
 
-Scene_c3t3_item*
+Optimizer_thread*
 cgal_code_odt_mesh_3(Scene_c3t3_item& c3t3_item,
                      const double time_limit,
                      const double convergence_ratio,
                      const double freeze_ratio,
                      const int max_iteration_number,
-                     const bool create_new_item,
-                     CGAL::Mesh_optimization_return_code& return_code)
+                     const bool create_new_item)
 {
   Odt_function f;
   f.time_limit = time_limit;
@@ -162,7 +189,7 @@ cgal_code_odt_mesh_3(Scene_c3t3_item& c3t3_item,
   f.freeze_ratio = freeze_ratio;
   f.max_iteration_nb = max_iteration_number;
   
-  return cgal_code_optimization(c3t3_item, f, create_new_item, return_code);
+  return cgal_code_optimization(c3t3_item, f, create_new_item);
 }
 
 
@@ -179,10 +206,10 @@ struct Lloyd_function
   
   template <typename Domain>
   CGAL::Mesh_optimization_return_code  
-  operator()(Scene_c3t3_item* p_item, const Domain& domain) const
+  operator()(C3t3& c3t3, const Domain& domain) const
   {
     // Lloyd
-    return CGAL::lloyd_optimize_mesh_3(p_item->c3t3(),
+    return CGAL::lloyd_optimize_mesh_3(c3t3,
                                        domain,
                                        cgp::time_limit = time_limit,
                                        cgp::convergence = convergence_ratio,
@@ -192,14 +219,13 @@ struct Lloyd_function
 };
 
 
-Scene_c3t3_item*
+Optimizer_thread*
 cgal_code_lloyd_mesh_3(Scene_c3t3_item& c3t3_item,
                        const double time_limit,
                        const double convergence_ratio,
                        const double freeze_ratio,
                        const int max_iteration_number,
-                       const bool create_new_item,
-                       CGAL::Mesh_optimization_return_code& return_code)
+                       const bool create_new_item)
 {
   Lloyd_function f;
   f.time_limit = time_limit;
@@ -207,7 +233,7 @@ cgal_code_lloyd_mesh_3(Scene_c3t3_item& c3t3_item,
   f.freeze_ratio = freeze_ratio;
   f.max_iteration_nb = max_iteration_number;
   
-  return cgal_code_optimization(c3t3_item, f, create_new_item, return_code);
+  return cgal_code_optimization(c3t3_item, f, create_new_item);
 }
 
 
@@ -222,10 +248,10 @@ struct Perturb_function
   
   template <typename Domain>
   CGAL::Mesh_optimization_return_code  
-  operator()(Scene_c3t3_item* p_item, const Domain& domain) const
+  operator()(C3t3& c3t3, const Domain& domain) const
   {
     // Perturbation
-    return CGAL::perturb_mesh_3(p_item->c3t3(),
+    return CGAL::perturb_mesh_3(c3t3,
                                 domain,
                                 cgp::sliver_bound = sliver_bound,
                                 cgp::time_limit = time_limit);
@@ -233,30 +259,44 @@ struct Perturb_function
 };
 
 
-Scene_c3t3_item*
+Optimizer_thread*
 cgal_code_perturb_mesh_3(Scene_c3t3_item& c3t3_item,
                          const double time_limit,
                          const double sliver_bound,
-                         const bool create_new_item,
-                         CGAL::Mesh_optimization_return_code& return_code)
+                         const bool create_new_item)
 {
   Perturb_function f;
   f.sliver_bound = sliver_bound;
   f.time_limit = time_limit;
   
-  return cgal_code_optimization(c3t3_item, f, create_new_item, return_code);
+  return cgal_code_optimization(c3t3_item, f, create_new_item);
 }
 
 
 // -----------------------------------
 // Exudation
 // -----------------------------------
-Scene_c3t3_item*
+struct Exude_function
+{
+  double time_limit;
+  double sliver_bound;
+  
+  CGAL::Mesh_optimization_return_code  
+  operator()(C3t3& c3t3, int) const
+  {
+    // Perturbation
+    return CGAL::exude_mesh_3(c3t3,
+                              cgp::sliver_bound = sliver_bound,
+                              cgp::time_limit = time_limit);
+  }
+};
+
+
+Optimizer_thread*
 cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
                        const double time_limit,
                        const double sliver_bound,
-                       const bool create_new_item,
-                       CGAL::Mesh_optimization_return_code& return_code)
+                       const bool create_new_item)
 {
   // Create result item
   Scene_c3t3_item* p_result_item = create_new_item ? 
@@ -268,31 +308,13 @@ cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
   }
   
   // Exudation
-  return_code = CGAL::exude_mesh_3(p_result_item->c3t3(),
-                                   cgp::sliver_bound = sliver_bound,
-                                   cgp::time_limit = time_limit);
+  Exude_function f;
+  f.sliver_bound = sliver_bound;
+  f.time_limit = time_limit;
+
+  // Create thread
+  typedef Optimization_function<int,Exude_function> Opt_function;
+  Opt_function* p_opt_function = new Opt_function(p_result_item, NULL, f);
   
-  // Treat result and exit
-  treat_new_item(*p_result_item, create_new_item);
-  return p_result_item;
-}
-
-
-
-// -----------------------------------
-// Helper functions
-// -----------------------------------
-void treat_new_item(Scene_c3t3_item& new_item, const bool create_new_item)
-{
-  if ( create_new_item )
-  {
-    const Scene_item::Bbox& bbox = new_item.bbox();
-    new_item.setPosition((bbox.xmin + bbox.xmax)/2.f,
-                         (bbox.ymin + bbox.ymax)/2.f,
-                         (bbox.zmin + bbox.zmax)/2.f);
-  }
-  else
-  {
-    new_item.update_histogram();
-  }  
+  return new Optimizer_thread(p_opt_function);
 }

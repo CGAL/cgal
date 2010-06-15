@@ -9,6 +9,8 @@
 #include "Scene_c3t3_item.h"
 #include "C3t3_type.h"
 
+#include "Optimizer_thread.h"
+
 #include <QObject>
 #include <QAction>
 #include <QMainWindow>
@@ -27,33 +29,29 @@
 
 
 // declare the CGAL function
-Scene_c3t3_item* cgal_code_odt_mesh_3(Scene_c3t3_item& c3t3_item,
-                                      const double time_limit,
-                                      const double convergence_ratio,
-                                      const double freeze_ratio,
-                                      const int max_iteration_number,
-                                      const bool create_new_item,
-                                      CGAL::Mesh_optimization_return_code& return_code);
+Optimizer_thread* cgal_code_odt_mesh_3(Scene_c3t3_item& c3t3_item,
+                                       const double time_limit,
+                                       const double convergence_ratio,
+                                       const double freeze_ratio,
+                                       const int max_iteration_number,
+                                       const bool create_new_item);
 
-Scene_c3t3_item* cgal_code_lloyd_mesh_3(Scene_c3t3_item& c3t3_item,
-                                        const double time_limit,
-                                        const double convergence_ratio,
-                                        const double freeze_ratio,
-                                        const int max_iteration_number,
-                                        const bool create_new_item,
-                                        CGAL::Mesh_optimization_return_code& return_code);
+Optimizer_thread* cgal_code_lloyd_mesh_3(Scene_c3t3_item& c3t3_item,
+                                         const double time_limit,
+                                         const double convergence_ratio,
+                                         const double freeze_ratio,
+                                         const int max_iteration_number,
+                                         const bool create_new_item);
 
-Scene_c3t3_item* cgal_code_perturb_mesh_3(Scene_c3t3_item& c3t3_item,
-                                          const double time_limit,
-                                          const double sliver_bound,
-                                          const bool create_new_item,
-                                          CGAL::Mesh_optimization_return_code& return_code);
+Optimizer_thread* cgal_code_perturb_mesh_3(Scene_c3t3_item& c3t3_item,
+                                           const double time_limit,
+                                           const double sliver_bound,
+                                           const bool create_new_item);
 
-Scene_c3t3_item* cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
-                                        const double time_limit,
-                                        const double sliver_bound,
-                                        const bool create_new_item,
-                                        CGAL::Mesh_optimization_return_code& return_code);
+Optimizer_thread* cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
+                                         const double time_limit,
+                                         const double sliver_bound,
+                                         const bool create_new_item);
 
 std::string translate(CGAL::Mesh_optimization_return_code rc);
 
@@ -192,20 +190,23 @@ Mesh_3_optimization_plugin::odt()
   QTime timer;
   timer.start();
   
-  CGAL::Mesh_optimization_return_code return_code;
-  Scene_c3t3_item* result_item = cgal_code_odt_mesh_3(*item,
+  Optimizer_thread* opt_thread = cgal_code_odt_mesh_3(*item,
                                                       max_time,
                                                       convergence,
                                                       freeze,
                                                       max_iteration_nb,
-                                                      create_new_item,
-                                                      return_code);
+                                                      create_new_item);
   
-  if ( NULL == result_item )
+  if ( NULL == opt_thread )
   {
     QApplication::restoreOverrideCursor();
     return;
   }
+  
+  opt_thread->start();
+  opt_thread->wait();
+  Scene_c3t3_item* result_item = opt_thread->item();
+  CGAL::Mesh_optimization_return_code return_code = opt_thread->return_code();
   
   std::stringstream sstr;
   sstr << "Odt-smoothing of \"" << qPrintable(item->name()) << "\" done in "
@@ -285,20 +286,23 @@ Mesh_3_optimization_plugin::lloyd()
   QTime timer;
   timer.start();
   
-  CGAL::Mesh_optimization_return_code return_code;
-  Scene_c3t3_item* result_item = cgal_code_lloyd_mesh_3(*item,
+  Optimizer_thread* opt_thread = cgal_code_lloyd_mesh_3(*item,
                                                         max_time,
                                                         convergence,
                                                         freeze,
                                                         max_iteration_nb,
-                                                        create_new_item,
-                                                        return_code);
+                                                        create_new_item);
   
-  if ( NULL == result_item )
+  if ( NULL == opt_thread )
   {
     QApplication::restoreOverrideCursor();
     return;
   }
+
+  opt_thread->start();
+  opt_thread->wait();
+  Scene_c3t3_item* result_item = opt_thread->item();
+  CGAL::Mesh_optimization_return_code return_code = opt_thread->return_code();
   
   std::stringstream sstr;
   sstr << "Lloyd-smoothing of \"" << qPrintable(item->name()) << "\" done in "
@@ -372,19 +376,22 @@ Mesh_3_optimization_plugin::perturb()
   QTime timer;
   timer.start();
   
-  CGAL::Mesh_optimization_return_code return_code;
-  Scene_c3t3_item* result_item = cgal_code_perturb_mesh_3(*item,
+  Optimizer_thread* opt_thread = cgal_code_perturb_mesh_3(*item,
                                                           max_time,
                                                           sliver_bound,
-                                                          create_new_item,
-                                                          return_code);
+                                                          create_new_item);
   
 
-  if ( NULL == result_item )
+  if ( NULL == opt_thread )
   {
     QApplication::restoreOverrideCursor();
     return;
   }
+  
+  opt_thread->start();
+  opt_thread->wait();
+  Scene_c3t3_item* result_item = opt_thread->item();
+  CGAL::Mesh_optimization_return_code return_code = opt_thread->return_code();
   
   std::stringstream sstr;
   sstr << "Perturbation of \"" << qPrintable(item->name()) << "\" done in "
@@ -450,18 +457,21 @@ Mesh_3_optimization_plugin::exude()
   QTime timer;
   timer.start();
   
-  CGAL::Mesh_optimization_return_code return_code;
-  Scene_c3t3_item* result_item = cgal_code_exude_mesh_3(*item,
+  Optimizer_thread* opt_thread = cgal_code_exude_mesh_3(*item,
                                                         max_time,
                                                         sliver_bound,
-                                                        create_new_item,
-                                                        return_code);
+                                                        create_new_item);
 
-  if ( NULL == result_item )
+  if ( NULL == opt_thread )
   {
     QApplication::restoreOverrideCursor();
     return;
   }
+  
+  opt_thread->start();
+  opt_thread->wait();
+  Scene_c3t3_item* result_item = opt_thread->item();
+  CGAL::Mesh_optimization_return_code return_code = opt_thread->return_code();
 
   std::stringstream sstr;
   sstr << "Exudation of \"" << qPrintable(item->name()) << "\" done in "
@@ -494,6 +504,11 @@ treat_result(Scene_c3t3_item& source_item,
   
   if ( new_item_created )
   {
+    const Scene_item::Bbox& bbox = result_item.bbox();
+    result_item.setPosition((bbox.xmin + bbox.xmax)/2.f,
+                            (bbox.ymin + bbox.ymax)/2.f,
+                            (bbox.zmin + bbox.zmax)/2.f);
+    
     result_item.setColor(Qt::magenta);
     result_item.setRenderingMode(source_item.renderingMode());
     result_item.set_data_item(source_item.data_item());
@@ -508,6 +523,8 @@ treat_result(Scene_c3t3_item& source_item,
   }
   else
   {
+    result_item.update_histogram();
+    
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     scene->itemChanged(index);
   }

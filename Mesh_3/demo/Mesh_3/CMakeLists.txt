@@ -104,6 +104,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_automoc( Scene_segmented_image_item.cpp )
   qt4_automoc( Scene_c3t3_item.cpp )
   qt4_automoc( Scene_implicit_function_item.cpp )
+  qt4_automoc( Optimizer_thread.cpp )
 
   # put plugins (which are shared libraries) at the same location as
   # executable files
@@ -237,6 +238,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(mesh_3_optimization_plugin Mesh_3_optimization_plugin 
                          Mesh_3_optimization_plugin_cgal_code.cpp
+                         Optimizer_thread.cpp
                          Scene_c3t3_item.moc
                          ${optimUI_FILES})
 
