@@ -56,6 +56,7 @@ else()
   
     find_library(MPFR_LIBRARIES NAMES mpfr libmpfr-1
                  PATHS ENV MPFR_LIB_DIR
+                    ${CMAKE_SOURCE_DIR}/auxiliary/gmp/lib
                  DOC "Path to the MPFR library"
                 )
                 
