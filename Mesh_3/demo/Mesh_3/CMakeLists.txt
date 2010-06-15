@@ -197,24 +197,24 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   endmacro(polyhedron_demo_plugin)
 
-  polyhedron_demo_plugin(image_loader_plugin Mesh_3_image_loader_plugin)
-  target_link_libraries(image_loader_plugin scene_segmented_image_item)
+  polyhedron_demo_plugin(io_image_plugin Io_image_plugin)
+  target_link_libraries(io_image_plugin scene_segmented_image_item)
 
   if(GLEW_FOUND)
     target_link_libraries(image_loader_plugin ${GLEW_LIBRARIES})
   endif()
 
-  polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
-  target_link_libraries(off_plugin scene_polyhedron_item polygon_soup)
+  polyhedron_demo_plugin(io_off_plugin Io_off_plugin)
+  target_link_libraries(io_off_plugin scene_polyhedron_item polygon_soup)
 
-  polyhedron_demo_plugin(c3t3_saver_plugin Mesh_3_c3t3_saver_plugin)
-  target_link_libraries(c3t3_saver_plugin scene_c3t3_item)
+  polyhedron_demo_plugin(io_c3t3_plugin Io_c3t3_plugin)
+  target_link_libraries(io_c3t3_plugin scene_c3t3_item)
 
   polyhedron_demo_plugin(rib_exporter_plugin Mesh_3_rib_exporter_plugin ${ribUI_FILES})
   target_link_libraries(rib_exporter_plugin scene_c3t3_item viewer)
 
-  polyhedron_demo_plugin(implicit_function_loader_plugin Mesh_3_implicit_function_loader_plugin ${funcUI_FILES})
-  target_link_libraries(implicit_function_loader_plugin scene_implicit_function_item)
+  polyhedron_demo_plugin(io_implicit_function_plugin Io_implicit_function_plugin ${funcUI_FILES})
+  target_link_libraries(io_implicit_function_plugin scene_implicit_function_item)
 
   polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
     Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Mesh_3_demo_mesh_plugin_image_cgal_code.cpp Mesh_3_demo_mesh_plugin_function_cgal_code.cpp Scene_c3t3_item.moc ${meshingUI_FILES})

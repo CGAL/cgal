@@ -37,7 +37,7 @@
 #include <QMenu>
 #include <QList>
 
-class Mesh_3_implicit_function_loader_plugin :
+class Io_implicit_function_plugin :
   public QObject,
   protected Polyhedron_demo_plugin_helper
 {
@@ -45,8 +45,8 @@ class Mesh_3_implicit_function_loader_plugin :
   Q_INTERFACES(Polyhedron_demo_plugin_interface);
   
 public:
-  Mesh_3_implicit_function_loader_plugin();
-  virtual ~Mesh_3_implicit_function_loader_plugin() {}
+  Io_implicit_function_plugin();
+  virtual ~Io_implicit_function_plugin() {}
   
   virtual void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
   
@@ -67,15 +67,15 @@ private:
 
 
 
-Mesh_3_implicit_function_loader_plugin::
-Mesh_3_implicit_function_loader_plugin()
+Io_implicit_function_plugin::
+Io_implicit_function_plugin()
 {
   load_function_plugins();
 }
 
 
 void
-Mesh_3_implicit_function_loader_plugin::
+Io_implicit_function_plugin::
 init(QMainWindow* mainWindow, Scene_interface* scene_interface)
 {
   this->scene = scene_interface;
@@ -118,7 +118,7 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface)
 
 
 void
-Mesh_3_implicit_function_loader_plugin::
+Io_implicit_function_plugin::
 load_function() const
 {
   QDialog dialog(mw);
@@ -158,7 +158,7 @@ load_function() const
 }
 
 void
-Mesh_3_implicit_function_loader_plugin::
+Io_implicit_function_plugin::
 load_function_plugins()
 {
   QDir pluginsDir(qApp->applicationDirPath());
@@ -188,5 +188,5 @@ load_function_plugins()
 
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Mesh_3_implicit_function_loader_plugin, Mesh_3_implicit_function_loader_plugin);
-#include "Mesh_3_implicit_function_loader_plugin.moc"
+Q_EXPORT_PLUGIN2(Io_implicit_function_plugin, Io_implicit_function_plugin);
+#include "Io_implicit_function_plugin.moc"

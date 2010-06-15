@@ -5,7 +5,7 @@
 #include <CGAL_demo/Io_plugin_interface.h>
 #include <fstream>
 
-class Polyhedron_demo_off_plugin :
+class Io_off_plugin :
   public QObject,
   public Polyhedron_demo_io_plugin_interface
 {
@@ -21,17 +21,17 @@ public:
   bool save(const Scene_item*, QFileInfo fileinfo);
 };
 
-QStringList Polyhedron_demo_off_plugin::nameFilters() const {
+QStringList Io_off_plugin::nameFilters() const {
   return QStringList() << "OFF files (*.off)";
 };
 
-bool Polyhedron_demo_off_plugin::canLoad() const {
+bool Io_off_plugin::canLoad() const {
   return true;
 }
 
 
 Scene_item* 
-Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
+Io_off_plugin::load(QFileInfo fileinfo) {
 
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
@@ -62,14 +62,14 @@ Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Polyhedron_demo_off_plugin::canSave(const Scene_item* item)
+bool Io_off_plugin::canSave(const Scene_item* item)
 {
   // This plugin supports polyhedrons and polygon soups
   return qobject_cast<const Scene_polyhedron_item*>(item) ||
     qobject_cast<const Scene_polygon_soup*>(item);
 }
 
-bool Polyhedron_demo_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
+bool Io_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
 {
   // This plugin supports polyhedrons and polygon soups
   const Scene_polyhedron_item* poly_item = 
@@ -87,5 +87,5 @@ bool Polyhedron_demo_off_plugin::save(const Scene_item* item, QFileInfo fileinfo
 }
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Polyhedron_demo_off_plugin, Polyhedron_demo_off_plugin);
-#include "Polyhedron_demo_off_plugin.moc"
+Q_EXPORT_PLUGIN2(Io_off_plugin, Io_off_plugin);
+#include "Io_off_plugin.moc"

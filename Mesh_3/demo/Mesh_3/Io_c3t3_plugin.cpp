@@ -3,7 +3,7 @@
 #include <CGAL_demo/Io_plugin_interface.h>
 #include <fstream>
 
-class Mesh_3_c3t3_saver_plugin :
+class Io_c3t3_plugin :
   public QObject,
   public Polyhedron_demo_io_plugin_interface
 {
@@ -22,20 +22,20 @@ public:
 
 
 QStringList
-Mesh_3_c3t3_saver_plugin::nameFilters() const
+Io_c3t3_plugin::nameFilters() const
 { 
   return QStringList() << "Mesh (*.mesh)";
 }
 
 
 bool
-Mesh_3_c3t3_saver_plugin::canSave(const Scene_item* item)
+Io_c3t3_plugin::canSave(const Scene_item* item)
 {
   return true;
 }
 
 bool
-Mesh_3_c3t3_saver_plugin::save(const Scene_item* item, QFileInfo fileInfo)
+Io_c3t3_plugin::save(const Scene_item* item, QFileInfo fileInfo)
 {
   const Scene_c3t3_item* c3t3_item = qobject_cast<const Scene_c3t3_item*>(item);
   if ( NULL == c3t3_item )
@@ -52,5 +52,5 @@ Mesh_3_c3t3_saver_plugin::save(const Scene_item* item, QFileInfo fileInfo)
 
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Mesh_3_c3t3_saver_plugin, Mesh_3_c3t3_saver_plugin);
-#include "Mesh_3_c3t3_saver_plugin.moc"
+Q_EXPORT_PLUGIN2(Io_c3t3_plugin, Io_c3t3_plugin);
+#include "Io_c3t3_plugin.moc"

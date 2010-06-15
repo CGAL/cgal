@@ -7,7 +7,7 @@
 #include <CGAL_demo/Io_plugin_interface.h>
 #include <fstream>
 
-class Mesh_3_image_loader_plugin :
+class Io_image_plugin :
   public QObject,
   public Polyhedron_demo_io_plugin_interface
 {
@@ -15,7 +15,7 @@ class Mesh_3_image_loader_plugin :
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface);
 
 public:
-  Mesh_3_image_loader_plugin() {
+  Io_image_plugin() {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
     glewInit();
 #endif
@@ -29,18 +29,18 @@ public:
   bool save(const Scene_item*, QFileInfo fileinfo) { return false; }
 };
 
-QStringList Mesh_3_image_loader_plugin::nameFilters() const {
+QStringList Io_image_plugin::nameFilters() const {
   return QStringList() << "Inrimage files (*.inr *.inr.gz)"
                        << "Analyze files (*.hdr *.img *img.gz)"
                        << "All files (*.*)";
 };
 
-bool Mesh_3_image_loader_plugin::canLoad() const {
+bool Io_image_plugin::canLoad() const {
   return true;
 }
 
 Scene_item* 
-Mesh_3_image_loader_plugin::load(QFileInfo fileinfo) {
+Io_image_plugin::load(QFileInfo fileinfo) {
   Image* image = new Image;
   if(!image->read(fileinfo.filePath().toUtf8()))
   {
@@ -55,11 +55,11 @@ Mesh_3_image_loader_plugin::load(QFileInfo fileinfo) {
   return image_item;
 }
 
-bool Mesh_3_image_loader_plugin::canSave(const Scene_item* item)
+bool Io_image_plugin::canSave(const Scene_item* item)
 {
   return false;
 }
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Mesh_3_image_loader_plugin, Mesh_3_image_loader_plugin);
-#include "Mesh_3_image_loader_plugin.moc"
+Q_EXPORT_PLUGIN2(Io_image_plugin, Io_image_plugin);
+#include "Io_image_plugin.moc"
