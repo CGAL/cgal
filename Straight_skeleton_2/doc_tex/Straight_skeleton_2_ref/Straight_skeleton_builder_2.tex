@@ -15,44 +15,101 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Straight_skeleton_builder_2<Gt,Ss,Visitor>}
+\begin{ccRefClass}{Straight_skeleton_builder_2<Traits,SSkel,Visitor>}
 
 \ccDefinition
-The class \ccRefName\  encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter, \ccc{Gt}, must be a model of the \ccc{StraightSkeletonBuilderTraits_2} concept, its second template parameter, \ccc{Ss}, must be a model of the \ccc{StraightSkeleton_2} concept, and its third template paramter, \ccc{Visitor}, must be a model of the \ccc{StraightSkeletonBuilder_2_Visitor} concept. If this last parameter is ommitted, the class \ccc{CGAL::Dummy_straight_skeleton_builder_2_visitor<Skel>} is used.
+The class \ccRefName\  encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter, \ccc{Traits}, must be a model of the \ccc{StraightSkeletonBuilderTraits_2} concept, its second template parameter, \ccc{SSkel}, must be a model of the \ccc{StraightSkeleton_2} concept, and its third template parameter, \ccc{Visitor}, must be a model of the \ccc{StraightSkeletonBuilder_2_Visitor} concept. If this last parameter is ommitted, the class \ccc{CGAL::Dummy_straight_skeleton_builder_2_visitor<SSkel>} is used.
 
 \ccInclude{CGAL/Straight_skeleton_builder_2.h}
  
 \ccTypes
-  \ccNestedType{Gt}{The geometric traits (first template parameter)}{}
+  \ccNestedType{Traits}{The geometric traits (first template parameter)}{}
 \ccGlue
-  \ccNestedType{Ss}{The straight skeleton (second template parameter)}{}
+  \ccNestedType{SSkel}{The straight skeleton (second template parameter)}{}
+\ccGlue
+  \ccNestedType{Visitor}{The visitor type (third template parameter)}{}
+\ccGlue
+  \ccNestedType{K}{The kernel used, as given by the geometric traits}{}
+\ccGlue
+  \ccNestedType{FT}{The field-type as defined by the geometric traits}{}
 \ccGlue
   \ccNestedType{Point_2}{The 2D point type as defined by the geometric traits}{}
 
 \ccCreation
 \ccCreationVariable{b}
 
-\ccConstructor{StraightSkeletonBuilder_2();}{Default constructs the builder class.}
+\ccConstructor{StraightSkeletonBuilder_2( boost::optional<FT> aMaxTime = boost::none
+                                        , Traits const&                = Traits()
+                                        , Visitor const& aVisitor      = Visitor() );}
+{Constructs the builder class.
+
+\ccc{aMaxTime} is the event threshold for \textit{partial} straight-skeletons. If empty, a \textit{full} straight-skeleton is constructed. Otherwise, a partial straight-skeleton is constructed whose farthest event has a time no greater than \ccc{aMaxTime}. A partial straight skeleton can be used to obtain a polygon offset at a given maximum distance \ccc{d} by pasing \ccc{d} as the \ccc{aMaxTime} parameter.}
 
 \ccHeading{Methods}
-\ccMethod{template<class InputPointIterator>  Straight_skeleton_builder_2& enter_contour( InputPointIterator aBegin, InputPointIterator aEnd );}
-{Defines the \textit{contours} that form the \textit{non-degenerate strictly-simple polygon with holes} whose \textit{straight skeleton} is to be built. 
+\ccMethod{template<class InputPointIterator, class InputWeightIterator, class Converter> 
+ Straight_skeleton_builder_2&  enter_contour ( InputPointIterator  aPBegin
+                                             , InputPointIterator  aPEnd
+                                             , InputWeightIterator aWBegin
+                                             , InputWeightIterator aWEnd
+                                             , bool                aIsClosed      = true 
+                                             , Converter const&    aCvt           = Cartesian_converter<K,K>()
+                                             , bool                aCheckValidity = true 
+                                             );}
+{Inputs one of the \textit{contours} that bounds the \textit{non-degenerate strictly-simple polygon with holes} whose \textit{weighted straight skeleton} is to be built. 
 
-Each contour must be input in turn starting with the \textit{outer contour} and following with the holes (if any). The order of the holes is unimportant but the outer contour must be entered first. The outer contour must be oriented counter-clockwise while holes must be oriented clockwise. 
+Use this method to enter each such contour, starting with the \textit{outer contour} and following with the holes (if any). The orientatin of the outer contour must be the opposite of the orientation of the holes.
 
-It is an error to enter more than one outer contour or to enter a hole which is not inside the outer contour or inside another hole. It is also an error to enter a contour which crosses or touches any one another. It is possible however to enter a contour that touches itself in such a way that its interior region is still well defined and singly-connected (see the User Manual for examples).
+It is an error to enter more than one outer contour, or to enter a hole which is not inside the outer contour, or to enter a hole inside another hole. It is also an error to enter a contour
+which intersects any one another. In the presence of such errors, the construction algorithm might fail or return a topologically invalid skeleton.
 
-The sequence [aBegin,aEnd) must iterate over each 2D point that corresponds to a vertex of the contour being entered. Vertices cannot be coincident (except consecutively since the method simply skip consecutive coincident vertices). Consecutive collinear edges are allowed.
+The sequence \ccc{[aPBegin,aPEnd)} must iterate over each 2D point that corresponds to a vertex of the contour being entered. Vertices cannot be coincident (except consecutively since the method simply skip consecutive coincident vertices). Consecutive collinear edges are allowed.
 
-InputPointIterator must be an \textit{InputIterator} whose \ccc{value\_type} is \ccc{Point_2}.}
-   
+InputPointIterator must be an \textit{InputIterator} whose \ccc{value\_type} is \ccc{Point_2}.
+
+The sequence \ccc{[aWBegin,aWEnd)} must iterate over a range of numerical values corresponding to the weights of the edges.
+Each weight \ccc{*(aWBegin+i)} corresponds to the edge \ccc{*(aPBegin+i-1) -> *(aPBegin+i)}, having the corresponding vertex as its end-point.
+
+InputWeightIterator must be an \textit{InputIterator} whose \ccc{value\_type} is \ccc{FT}.
+
+A positive weight indicates that the edge moves to its left, a negative weight to its right, and a zero weight indicates that the edge does not move at all. 
+
+Therefore, if a contour is counter-clockwise oriented, positive weights corresponds to the interior straight skeleton, while negative weights corresponds to the exterior straight skeleton.
+
+
+
+}
 \ccGlue
-\ccMethod{boost::shared_ptr<Ss> construct_skeleton();}
+\ccMethod{template<class InputPointIterator, class NT, class Converter> 
+ Straight_skeleton_builder_2&  enter_contour ( InputPointIterator aBegin
+                                             , InputPointIterator aEnd
+                                             , NT                 aWeight        = 1.0
+                                             , bool               aIsClosed      = true 
+                                             , Converter const&   aCvt           = Cartesian_converter<K,K>()
+                                             , bool               aCheckValidity = true 
+                                             );}
+{Inputs one of the \textit{contours} that bound the \textit{non-degenerate strictly-simple polygon with holes} whose \textit{weighted straight skeleton} is to be built. 
+
+Each contour must be input in turn starting with the \textit{outer contour} and following with the holes (if any). The order of the holes is unimportant but the outer contour must be entered first.
+The orientatin of the outer contour must be the opposite of the orientation of the holes.
+
+It is an error to enter more than one outer contour, or to enter a hole which is not inside the outer contour, or to enter a hole inside another hole. It is also an error to enter a contour
+which intersects any one another. It is possible however to enter a contour that touches itself in such a way that its interior region is still well defined and singly-connected (see the User Manual for examples).
+
+The sequence \ccc{[aBegin,aEnd)} must iterate over each 2D point that corresponds to a vertex of the contour being entered. Vertices cannot be coincident (except consecutively since the method simply skip consecutive coincident vertices). Consecutive collinear edges are allowed.
+
+InputPointIterator must be an \textit{InputIterator} whose \ccc{value\_type} is \ccc{Point_2}.
+
+\ccc{aWeight} is a uniform weight given to all edges in this contour. It can be positive, zero or negative. A zero weight for all edges is equivalent to 
+
+
+}
+\ccGlue
+\ccMethod{boost::shared_ptr<SSkel> construct_skeleton();}
 {Constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined by the contours entered first by calling \ccc{enter_contour}. All the contours of the polygon with holes must be entered before calling \ccc{construct_skeleton}.
 
 After \ccc{construct_skeleton} completes, you cannot enter more contours and/or call \ccc{construct_skeleton()} again. If you need another straight skeleton for another polygon you must instantiate and use another builder.
 
-The result is a dynamically allocated instance of the \ccc{Ss} class, wrapped in a \ccc{boost::shared_ptr}.
+The result is a dynamically allocated instance of the \ccc{SSkel} class, wrapped in a \ccc{boost::shared_ptr}.
 
 If the construction process fails for whatever reason (such as a nearly-degenerate vertex whose internal or external angle is almost zero), the return value will be {\em null}, represented by a default constructed \ccc{shared_ptr}.
 

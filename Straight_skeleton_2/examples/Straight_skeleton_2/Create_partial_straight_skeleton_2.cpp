@@ -23,7 +23,9 @@ int main()
   std::ifstream is("sample_1.dat") ;
   is >> input ;
      
-  SsPtr ss = CGAL::create_partial_interior_straight_skeleton_2(input,2.5);
+  boost::optional<double> lMaxTime(2.5);
+  
+  SsPtr ss = CGAL::create_interior_straight_skeleton_2(input,lMaxTime);
 
   dump_to_eps(input,*ss,"partial_skeleton.eps");
   

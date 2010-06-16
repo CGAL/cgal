@@ -38,9 +38,9 @@ void test_polygon_vertices_range()
   
   CGAL::Polygon_2<IK> CGALPoly(Pts,Pts+3) ;
   
-  assert( equal( CGAL_ss_i::vertices_begin(VectorPoly)   , CGAL_ss_i::vertices_end(VectorPoly)   , Pts ) ) ;
-  assert( equal( CGAL_ss_i::vertices_begin(VectorPolyPtr), CGAL_ss_i::vertices_end(VectorPolyPtr), Pts ) ) ;
-  assert( equal( CGAL_ss_i::vertices_begin(CGALPoly)     , CGAL_ss_i::vertices_end(CGALPoly)     , Pts ) ) ;
+  assert( equal( CGAL::CGAL_SS_i::vertices_begin(VectorPoly)   , CGAL::CGAL_SS_i::vertices_end(VectorPoly)   , Pts ) ) ;
+  assert( equal( CGAL::CGAL_SS_i::vertices_begin(VectorPolyPtr), CGAL::CGAL_SS_i::vertices_end(VectorPolyPtr), Pts ) ) ;
+  assert( equal( CGAL::CGAL_SS_i::vertices_begin(CGALPoly)     , CGAL::CGAL_SS_i::vertices_end(CGALPoly)     , Pts ) ) ;
 }
 
 struct Test

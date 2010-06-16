@@ -117,12 +117,13 @@ public:
 
   typedef boost::shared_ptr<SSkel> SSkelPtr ;
 
-private :
-
   typedef typename Traits::Kernel K ;
   
-  typedef typename Traits::FT               FT ;
-  typedef typename Traits::Point_2          Point_2 ;
+  typedef typename Traits::FT      FT ;
+  typedef typename Traits::Point_2 Point_2 ;
+  
+private :
+  
   typedef typename Traits::Vector_2         Vector_2 ;
   typedef typename Traits::Direction_2      Direction_2 ;
   typedef typename Traits::Segment_2        Segment_2 ;
@@ -1015,8 +1016,8 @@ public:
   Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin
                                              , InputPointIterator aEnd
                                              , NT                 aWeight
-                                             , bool               aIsClosed
-                                             , Converter const&   aCvt
+                                             , bool               aIsClosed      = true
+                                             , Converter const&   aCvt           = Converter() 
                                              , bool               aCheckValidity = true 
                                              )
   {
