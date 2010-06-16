@@ -47,6 +47,11 @@
 #include <CGAL/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/internal/Triangulation_ds_circulators_3.h>
 
+#ifdef CGAL_HAS_THREADS
+#  include <boost/thread/tss.hpp>
+#endif
+
+
 namespace CGAL {
 
 // TODO : noms : Vb != Vertex_base : clarifier.
@@ -124,6 +129,44 @@ public:
   typedef Triple<Cell_handle, int, int>            Edge;
 
   typedef Triangulation_simplex_3<Tds>             Simplex;
+
+  //internally used for create_star_3
+  struct iAdjacency_info{
+    int v1;
+    Cell_handle v2;
+    int v3;
+    Cell_handle v4;
+    int v5;
+    int v6;
+    iAdjacency_info(){}
+    iAdjacency_info(int a1,Cell_handle a2,int a3,Cell_handle a4,int a5 ,int a6):
+      v1(a1),v2(a2),v3(a3),v4(a4),v5(a5),v6(a6) {}
+    void update_variables(int& a1,Cell_handle& a2,int& a3,Cell_handle& a4,int& a5 ,int& a6)
+    {
+      a1=v1;
+      a2=v2;
+      a3=v3;
+      a4=v4;
+      a5=v5;
+      a6=v6;
+    }
+  };
+
+  //a vector that calls reserve in its constructor
+  template <class T,int N>
+  class Vector_with_reserve: public std::vector<T> {
+  public:
+    using std::vector<T>::reserve;
+    using std::vector<T>::pop_back;
+    using std::vector<T>::push_back;
+    using std::vector<T>::empty;
+  
+    Vector_with_reserve(){
+      this->reserve(N);
+    }
+  };
+  
+ 
 
 public:
   Triangulation_data_structure_3()
@@ -1044,45 +1087,73 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
     cnew->set_vertex(li, v);
     Cell_handle c_li = c->neighbor(li);
     set_adjacency(cnew, li, c_li, c_li->index(c));
-
-    // Look for the other neighbors of cnew.
-    for (int ii=0; ii<4; ++ii) {
-      if (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle())
-	  continue;
-      cnew->vertex(ii)->set_cell(cnew);
-
-      // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
-      Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
-      Vertex_handle vj2 = c->vertex(next_around_edge(li, ii));
-      Cell_handle cur = c;
-      int zz = ii;
-      Cell_handle n = cur->neighbor(zz);
-      // turn around the oriented edge vj1 vj2
-      while ( n->tds_data().is_in_conflict() ) {
-	CGAL_triangulation_assertion( n != c );
-	cur = n;
-	zz = next_around_edge(n->index(vj1), n->index(vj2));
-	n = cur->neighbor(zz);
-      }
-      // Now n is outside region, cur is inside.
-
-      n->tds_data().clear(); // Reset the flag for boundary cells.
-
-      int jj1 = n->index(vj1);
-      int jj2 = n->index(vj2);
-      Vertex_handle vvv = n->vertex(next_around_edge(jj1, jj2));
-      Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
-      int zzz = nnn->index(vvv);
-      if (nnn == cur) {
-	// Neighbor relation is reciprocal, ie
-	// the cell we are looking for is not yet created.
-	nnn = create_star_3(v, nnn, zz, zzz);
-      }
-
-      set_adjacency(nnn, zzz, cnew, ii);
+    
+#ifdef CGAL_HAS_THREADS  
+    static boost::thread_specific_ptr< Vector_with_reserve<iAdjacency_info,64> > stack_safe_ptr;
+    if (stack_safe_ptr.get() == NULL) {
+      stack_safe_ptr.reset(new Vector_with_reserve<iAdjacency_info,64>());
     }
+    Vector_with_reserve<iAdjacency_info,64>& adjacency_info_stack=* stack_safe_ptr.get();
+#else
+    static Vector_with_reserve<iAdjacency_info,64> adjacency_info_stack;
+#endif  
+  
+    int ii=0;
+    do
+    {
+      // Look for the other neighbors of cnew.
+      if ( ! (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle()) ){
+        cnew->vertex(ii)->set_cell(cnew);
 
-    return cnew;
+        // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
+        Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
+        Vertex_handle vj2 = c->vertex(next_around_edge(li, ii));
+        Cell_handle cur = c;
+        int zz = ii;
+        Cell_handle n = cur->neighbor(zz);
+        // turn around the oriented edge vj1 vj2
+        while ( n->tds_data().is_in_conflict() ) {
+          CGAL_triangulation_assertion( n != c );
+          cur = n;
+          zz = next_around_edge(n->index(vj1), n->index(vj2));
+          n = cur->neighbor(zz);
+        }
+        // Now n is outside region, cur is inside.
+
+        n->tds_data().clear(); // Reset the flag for boundary cells.
+
+        int jj1 = n->index(vj1);
+        int jj2 = n->index(vj2);
+        Vertex_handle vvv = n->vertex(next_around_edge(jj1, jj2));
+        Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
+        int zzz = nnn->index(vvv);
+        if (nnn == cur) {
+          // Neighbor relation is reciprocal, ie
+          // the cell we are looking for is not yet created.
+          //re-run the loop
+          adjacency_info_stack.push_back( iAdjacency_info(zzz,cnew,ii,c,li,prev_ind2) );
+          c=nnn;  li=zz; prev_ind2=zzz; ii=0;
+          //copy-pasted from beginning to avoid if ii==0
+          CGAL_triangulation_precondition( c->tds_data().is_in_conflict() );
+          CGAL_triangulation_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
+          cnew = create_cell(c->vertex(0),c->vertex(1),c->vertex(2),c->vertex(3));
+          cnew->set_vertex(li, v);
+          c_li = c->neighbor(li);
+          set_adjacency(cnew, li, c_li, c_li->index(c));          
+          continue;
+        }
+        set_adjacency(nnn, zzz, cnew, ii);
+      }
+      while (++ii==4){
+        if ( adjacency_info_stack.empty() ) return cnew;
+        Cell_handle nnn=cnew; 
+        int zzz;
+        adjacency_info_stack.back().update_variables(zzz,cnew,ii,c,li,prev_ind2);
+        adjacency_info_stack.pop_back();
+        set_adjacency(nnn, zzz, cnew, ii);
+      }
+    }
+    while (true);
 }
 
 template <class Vb, class Cb >
