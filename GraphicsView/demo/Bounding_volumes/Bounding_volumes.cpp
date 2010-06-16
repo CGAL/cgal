@@ -1,6 +1,7 @@
 #include <fstream>
 
 // CGAL headers
+#include <CGAL/Cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
@@ -8,6 +9,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/min_quadrilateral_2.h>
+#include <CGAL/rectangular_p_center_2.h>
 
 // Qt headers
 #include <QtGui>
@@ -16,6 +18,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QGraphicsEllipseItem>
+#include <QGraphicsRectItem>
 
 // GraphicsView items and event filters (input classes)
 
@@ -33,6 +36,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
+typedef K::Vector_2 Vector_2;
 typedef K::Iso_rectangle_2 Iso_rectangle_2;
 
 typedef CGAL::Polygon_2<K> Polygon_2;
@@ -56,7 +60,10 @@ private:
   CGAL::Qt::PolygonGraphicsItem<Polygon_2> * min_rectangle_gi;
   CGAL::Qt::PolygonGraphicsItem<Polygon_2> * min_parallelogram_gi;
   QGraphicsEllipseItem* cgi;
+  QGraphicsRectItem *p_center[3];
+
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
+
 public:
   MainWindow();
 
@@ -101,6 +108,13 @@ MainWindow::MainWindow()
   cgi->setPen(QPen(Qt::red, 1, Qt::SolidLine));
   cgi->hide();
   scene.addItem(cgi);
+  
+  for(int i =0; i < 3; i++){
+    p_center[i] = new QGraphicsRectItem;
+    p_center[i]->setPen(QPen(Qt::magenta, 1, Qt::SolidLine));
+    p_center[i]->hide(); 
+    scene.addItem(p_center[i]);
+  }
 
   // Graphics Item for the input point set
   pgi = new CGAL::Qt::PointsGraphicsItem<std::vector<Point_2> >(&points);
@@ -233,6 +247,22 @@ MainWindow::processInput(CGAL::Object o)
  
     min_parallelogram.clear();
     CGAL::min_parallelogram_2(convex_hull.vertices_begin(), convex_hull.vertices_end(), std::back_inserter(min_parallelogram));
+
+    std::vector<Point_2> center;
+    double radius;
+    const int P = 3;
+    CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, P);
+    Vector_2 rvec(radius, radius);
+    int i;
+    CGAL::Qt::Converter<K> convert;  
+    for(i=0; i < center.size(); i++){
+      p_center[i]->setRect(convert(Iso_rectangle_2(center[i]-rvec, center[i]+rvec)));
+      p_center[i]->hide();
+      p_center[i]->show();
+    }
+    for(; i < P;i++){
+      p_center[i]->hide();
+    }
   }
   emit(changed());
 }
