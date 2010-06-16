@@ -27,6 +27,7 @@
 #include <CGAL/Circle_type.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_plane_3.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_point_3.h>
+#include <CGAL/Root_of_traits.h>
 
 namespace CGAL {
   namespace SphericalFunctors {
