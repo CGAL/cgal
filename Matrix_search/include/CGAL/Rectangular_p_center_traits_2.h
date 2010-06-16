@@ -63,9 +63,8 @@ struct I_Infinity_distance_2
 {
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const {
-    BOOST_USING_STD_MAX();
-    return max BOOST_PREVENT_MACRO_SUBSTITUTION (CGAL_NTS abs(q1.x() - q2.x()),
-						 CGAL_NTS abs(q1.y() - q2.y()));
+    return (std::max)(CGAL_NTS abs(q1.x() - q2.x()),
+                      CGAL_NTS abs(q1.y() - q2.y()));
   }
 };
 
@@ -77,8 +76,7 @@ struct I_Signed_infinity_distance_2
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
   { 
-    BOOST_USING_STD_MAX();
-    return max BOOST_PREVENT_MACRO_SUBSTITUTION (q1.x() - q2.x(), q1.y() - q2.y()); 
+    return (std::max)(q1.x() - q2.x(), q1.y() - q2.y()); 
   }
 };
 
