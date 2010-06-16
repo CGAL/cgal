@@ -130,7 +130,7 @@ public:
 
   typedef Triangulation_simplex_3<Tds>             Simplex;
 
-  //internally used for create_star_3
+  //internally used for create_star_3 (faster than a tuple)
   struct iAdjacency_info{
     int v1;
     Cell_handle v2;
@@ -152,7 +152,9 @@ public:
     }
   };
 
-  //a vector that calls reserve in its constructor
+  //a vector that calls reserve in its constructor 
+  //(since it is used as a static variable in a function,
+  //it avoid multiple call to reserve)
   template <class T,int N>
   class Vector_with_reserve: public std::vector<T> {
   public:
@@ -1070,6 +1072,16 @@ private:
   // counts AND checks the validity
 };
 
+
+//This function used to be recursive.
+//This design resulted in call stack overflow in some cases.
+//When we rewrote it, to emulate the class stack, we use a c++ stack.
+//The stack used is a enriched std::vector that call reserve(N) when constructed
+//(faster that testing capacity>N at each call of create_star_3).
+//We use the class iAdjacency_info instead of a tuple because
+//at the moment we made the change it was faster like this.
+//The stack is a static variable of the function because it was also
+//faster when we tested it.
 template <class Vb, class Cb >
 typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb>::
