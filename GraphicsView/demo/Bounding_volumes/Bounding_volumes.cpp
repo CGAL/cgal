@@ -226,6 +226,22 @@ MainWindow::update_from_points()
  
     min_parallelogram.clear();
     CGAL::min_parallelogram_2(convex_hull.vertices_begin(), convex_hull.vertices_end(), std::back_inserter(min_parallelogram));
+
+    std::vector<Point_2> center;
+    double radius;
+    const int P = 3;
+    CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, P);
+    Vector_2 rvec(radius, radius);
+    int i;
+    CGAL::Qt::Converter<K> convert;  
+    for(i=0; i < center.size(); i++){
+      p_center[i]->setRect(convert(Iso_rectangle_2(center[i]-rvec, center[i]+rvec)));
+      p_center[i]->hide();
+      p_center[i]->show();
+    }
+    for(; i < P;i++){
+      p_center[i]->hide();
+    }
 }
 
 
