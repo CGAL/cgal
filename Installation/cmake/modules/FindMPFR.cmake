@@ -15,7 +15,7 @@ if(MPFR_INCLUDE_DIR)
 else()
   set(MPFR_in_cache FALSE)
 endif()
-if( CGAL_AUTO_LINK_ENABLED )
+if( CGAL_AUTO_LINK_MPFR )
   if(NOT MPFR_LIBRARIES_DIR)
     set(MPFR_in_cache FALSE)
   endif()
@@ -34,28 +34,29 @@ else()
 
   find_path(MPFR_INCLUDE_DIR 
             NAMES mpfr.h 
-            PATHS ${CMAKE_SOURCE_DIR}/auxiliary/gmp/include
-                  ENV MPFR_INC_DIR
-  	        DOC "The directory containing the MPFR header files"
+            PATHS ENV MPFR_INC_DIR
+                  ${CMAKE_SOURCE_DIR}/auxiliary/gmp/include
+  	    DOC "The directory containing the MPFR header files"
            )
 
   if ( MPFR_INCLUDE_DIR STREQUAL "${CMAKE_SOURCE_DIR}/auxiliary/gmp/include" )
     cache_set( MPFR_IN_CGAL_AUXILIARY TRUE )
   endif()
   
-  if ( CGAL_AUTO_LINK_ENABLED )
+  if ( CGAL_AUTO_LINK_MPFR )
   
     find_path(MPFR_LIBRARIES_DIR 
               NAMES "mpfr-${CGAL_TOOLSET}-mt.lib" "mpfr-${CGAL_TOOLSET}-mt-gd.lib"
-              PATHS ${CMAKE_SOURCE_DIR}/auxiliary/gmp/lib
-                    ENV MPFR_LIB_DIR
+              PATHS ENV MPFR_LIB_DIR
+                    ${CMAKE_SOURCE_DIR}/auxiliary/gmp/lib
               DOC "Directory containing the MPFR library"
              ) 
     
   else()
   
-    find_library(MPFR_LIBRARIES NAMES mpfr 
+    find_library(MPFR_LIBRARIES NAMES mpfr libmpfr-1
                  PATHS ENV MPFR_LIB_DIR
+                    ${CMAKE_SOURCE_DIR}/auxiliary/gmp/lib
                  DOC "Path to the MPFR library"
                 )
                 
@@ -70,7 +71,7 @@ else()
     include( MPFRConfig OPTIONAL )
   endif()
 
-  if(CGAL_AUTO_LINK_ENABLED)
+  if(CGAL_AUTO_LINK_MPFR)
     find_package_handle_standard_args(MPFR "DEFAULT_MSG" MPFR_LIBRARIES_DIR MPFR_INCLUDE_DIR)
   else()
     find_package_handle_standard_args(MPFR "DEFAULT_MSG" MPFR_LIBRARIES MPFR_INCLUDE_DIR)
