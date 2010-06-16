@@ -84,7 +84,7 @@ template < class R >
 struct I_Construct_point_2_above_right_implicit_point_2 {
   // (p, q, r) |--> (p.x() + r, q.y() + r)
   typedef typename R::FT                     FT;
-  typedef Point_2< Cartesian< FT > >         P;
+  typedef typename R::Point_2                P;
 
   inline P
   operator()(const P& p, const P& q, FT r) const
@@ -95,7 +95,7 @@ template < class R >
 struct I_Construct_point_2_above_left_implicit_point_2 {
   // (p, q, r) |--> (p.x() - r, q.y() + r)
   typedef typename R::FT                     FT;
-  typedef Point_2< Cartesian< FT > >         P;
+  typedef typename R::Point_2                P;
 
   inline P
   operator()(const P& p, const P& q, FT r) const
@@ -106,7 +106,7 @@ template < class R >
 struct I_Construct_point_2_below_left_implicit_point_2 {
   // (p, q, r) |--> (p.x() - r, q.y() - r)
   typedef typename R::FT                     FT;
-  typedef Point_2< Cartesian< FT > >         P;
+  typedef typename R::Point_2                P;
 
   inline P
   operator()(const P& p, const P& q, FT r) const
@@ -117,7 +117,7 @@ template < class R >
 struct I_Construct_point_2_below_right_implicit_point_2 {
   // (p, q, r) |--> (p.x() + r, q.y() - r)
   typedef typename R::FT                     FT;
-  typedef Point_2< Cartesian< FT > >         P;
+  typedef typename R::Point_2                P;
 
   inline P
   operator()(const P& p, const P& q, FT r) const
