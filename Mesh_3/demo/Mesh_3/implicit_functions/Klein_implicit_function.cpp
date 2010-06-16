@@ -24,10 +24,7 @@
 #include <QObject>
 #include "Implicit_function_interface.h"
 
-
-void puiss(double& x, double& y, int n);
-
-class Knot3_implicit_function :
+class Klein_implicit_function :
   public QObject,
   public Implicit_function_interface
 {
@@ -35,67 +32,23 @@ class Knot3_implicit_function :
   Q_INTERFACES(Implicit_function_interface);
   
 public:
-  virtual QString name() const { return "Knot3 function"; }
+  virtual QString name() const { return "Klein function"; }
   
-  virtual double operator()(double a, double b, double c) const
+  virtual double operator()(double x, double y, double z) const
   {
-    double e=0.025;
-    
-    double x, y, z, t, den;
-    den=1+a*a+b*b+c*c;
-    x=2*a/den;
-    y=2*b/den;
-    z=2*c/den;
-    t=(1-a*a-b*b-c*c)/den;
-    
-    double x19=x, y19=y, z17=z, t17=t;
-    puiss(x19,y19,19);
-    puiss(z17,t17,17);
-    
-    double f1 = z17-x19;
-    double f2 = t17-y19;
-    
-    f1 = f1*f1;
-    f2 = f2*f2;
-    e=e*e/(den-1);
-    
-    return f1+f2-e;
+    return   (x*x+y*y+z*z+2*y-1)
+           * ( (x*x+y*y+z*z-2*y-1) *(x*x+y*y+z*z-2*y-1)-8*z*z)
+           + 16*x*z* (x*x+y*y+z*z-2*y-1);
   }
   
   virtual Bbox bbox() const
   {
-    const double radius = 4.;
-    double r = radius * 1.2;
+    const double radius = 6.;
+    double r = radius * 1.1;
     return Bbox(-r,-r,-r,r,r,r);
   }
 };
 
-
-
-void puiss(double& x, double& y, int n) {
-  
-  double xx = 1, yy = 0;
-  
-  while(n>0) {
-    if (n&1) {
-      double xxx = xx, yyy = yy;
-      xx = xxx*x - yyy*y;
-      yy = xxx*y + yyy*x;
-    }
-    
-    double xxx = x, yyy = y;
-    x=xxx*xxx-yyy*yyy;
-    y=2*xxx*yyy;
-    
-    n/=2;
-  }
-  
-  x = xx;
-  y = yy;
-}
-
-
-
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Knot3_implicit_function, Knot3_implicit_function);
-#include "Knot_implicit_function.moc"
+Q_EXPORT_PLUGIN2(Klein_implicit_function, Klein_implicit_function);
+#include "Klein_implicit_function.moc"

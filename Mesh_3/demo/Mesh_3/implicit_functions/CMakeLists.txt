@@ -60,7 +60,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND)
 
   polyhedron_demo_plugin(sphere_function_plugin Sphere_implicit_function)
   polyhedron_demo_plugin(tanglecube_function_plugin Tanglecube_implicit_function)
-  polyhedron_demo_plugin(knot_function_plugin Knot_implicit_function)
+  polyhedron_demo_plugin(klein_function_plugin Klein_implicit_function)
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND)
 
