@@ -8,7 +8,7 @@
 
 typedef double                                    FT;
 
-struct Kernel : public CGAL::Cartesian<FT> {};
+typedef CGAL::Cartesian<FT>                       Kernel;
 
 typedef Kernel::Point_2                           Point;
 typedef std::vector<int>                          Index_cont;
