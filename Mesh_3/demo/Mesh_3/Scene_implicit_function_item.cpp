@@ -23,9 +23,10 @@ Scene_implicit_function_item(Implicit_function_interface* f)
 {
   blue_color_ramp_.build_blue();
   red_color_ramp_.build_red();
+  compute_min_max();
+  compute_function_grid();
   
   connect(frame_, SIGNAL(modified()), this, SLOT(compute_function_grid()));
-  compute_function_grid();
 }
 
 
@@ -42,8 +43,9 @@ Scene_implicit_function_item::bbox() const
 }
 
 void
-Scene_implicit_function_item::draw() const
+Scene_implicit_function_item::direct_draw() const
 {
+  
   draw_function_grid(red_color_ramp_, blue_color_ramp_);
   draw_bbox();
 }
@@ -158,18 +160,18 @@ draw_grid_vertex(const Point_value& pv,
                  const Color_ramp& ramp_negative) const
 {
   const Point& p = pv.first;
-  const double& v = pv.second;
+  double v = pv.second;
   
   // determines grey level
   if ( v > 0 )
   {
-    unsigned int i = 255 - static_cast<unsigned int>(255. * v / max_value_);
-    ::glColor3ub(ramp_positive.r(i),ramp_positive.g(i),ramp_positive.b(i));
+    v = v/max_value_;
+    ::glColor3d(ramp_positive.r(v),ramp_positive.g(v),ramp_positive.b(v));
   }
   else
   {
-    unsigned int i = 255 - static_cast<unsigned int>(255. * v / min_value_);
-    ::glColor3ub(ramp_negative.r(i),ramp_negative.g(i),ramp_negative.b(i));
+    v = v/min_value_;
+    ::glColor3d(ramp_negative.r(v),ramp_negative.g(v),ramp_negative.b(v));
   }
   
   ::glVertex3d(p.x,p.y,p.z);
@@ -192,8 +194,6 @@ compute_function_grid()
                         m[1], m[5], m[9], m[13],
                         m[2], m[6], m[10], m[14]);
   
-  max_value_ = 0;
-  min_value_ = 0;
   double diag = bbox().diagonal_length() * .6;
   
   const double dx = diag;
@@ -212,8 +212,41 @@ compute_function_grid()
       double v = function_->operator()(query.x(), query.y(), query.z());
       
       implicit_grid_[i][j] = Point_value(Point(query.x(),query.y(),query.z()),v);
-      max_value_ = (std::max)(v, max_value_);
-      min_value_ = (std::min)(v, min_value_);
+    }
+  }
+  
+  // Update display list
+  this->changed();
+}
+
+void
+Scene_implicit_function_item::
+compute_min_max()
+{
+  max_value_ = 0;
+  min_value_ = 0;
+  
+  double probes_nb = double(grid_size_) / 2;
+  
+  // Probe bounding box
+  const Bbox& b = bbox();
+  
+  for ( int i = 0 ; i <= probes_nb ; ++i )
+  {
+    double x = b.xmin + double(i) * (b.xmax - b.xmin) / probes_nb;
+    
+    for ( int j = 0 ; j <= probes_nb ; ++j )
+    {
+      double y = b.ymin + double(j) * (b.ymax - b.ymin) / probes_nb;
+      
+      for ( int k = 0 ; k <= probes_nb ; ++k )
+      {
+        double z = b.zmin + double(k) * (b.zmax - b.zmin) / probes_nb;
+        
+        double v = (*function_)(x,y,z);
+        max_value_ = (std::max)(v,max_value_);
+        min_value_ = (std::min)(v,min_value_);
+      }
     }
   }
 }

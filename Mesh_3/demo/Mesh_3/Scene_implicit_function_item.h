@@ -10,7 +10,7 @@
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 
-#define SCENE_IMPLICIT_GRID_SIZE 100
+#define SCENE_IMPLICIT_GRID_SIZE 120
 
 
 class SCENE_IMPLICIT_FUNCTION_ITEM_EXPORT Scene_implicit_function_item 
@@ -37,11 +37,8 @@ public:
   virtual bool manipulatable() const { return true; }
   virtual ManipulatedFrame* manipulatedFrame() { return frame_; }
   
-  // draw
-  virtual void direct_draw() const { draw(); }
-  virtual void direct_draw_edges() const { draw_edges(); }
-  virtual void draw() const;
-  virtual void draw_edges() const { draw(); }
+  // draw (overload only direct_draw() to use display list of base class)
+  virtual void direct_draw() const;
   
   virtual QString toolTip() const;
 
@@ -56,6 +53,8 @@ private:
   void draw_function_grid(const Color_ramp&, const Color_ramp&) const;
   void draw_grid_vertex(const Point_value&,
                         const Color_ramp&, const Color_ramp&) const;
+  
+  void compute_min_max();
   
 private:
   Implicit_function_interface* function_;

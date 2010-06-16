@@ -1,145 +1,126 @@
 #include "Color_ramp.h"
+#include <iostream>
 
-
-Color_ramp::Color_ramp()
-{ 
-  build_thermal(); 
+// -----------------------------------
+// Color_component
+// -----------------------------------
+Color_component::
+Color_component()
+{
+  add(0,0);
+  add(1,1);
 }
 
-void 
-Color_ramp::rebuild()
+Color_component::
+Color_component(const double c0, const double c1)
 {
-  // build nodes
-  m_colors[3][0] = 1;
-  m_colors[3][255] = 1;
-  unsigned int nb_nodes = 0;
-  for(int i=0;i<256;i++)
+  add(0,c0);
+  add(1,c1);
+}
+
+double 
+Color_component::
+interpolate(const double v) const
+{
+  Values::const_iterator next = next_it(v);
+
+  // next is just after v
+  Values::const_iterator prev = --next;
+  ++next;
+
+  if ( v>=1 && next != values_.end())
+    std::cerr << ".";
+  
+  if ( next == values_.end() )
   {
-    if(m_colors[3][i])
-    {
-      m_nodes[nb_nodes] = i;
-      nb_nodes++;
-    }
+    return prev->second;
   }
   
-  // build color_ramp
-  for(int k=0;k<3;k++)
-    for(unsigned int i=0;i<(nb_nodes-1);i++)
-    {
-      int x1 = m_nodes[i];
-      int x2 = m_nodes[i+1];
-      int y1 = m_colors[k][x1];
-      int y2 = m_colors[k][x2];
-      float a = (float)(y2-y1) / (float)(x2-x1);
-      float b = (float)y1 - a*(float)x1;
-      for(int j=x1;j<x2;j++)
-        m_colors[k][j] = (unsigned char)(a*(float)j+b);
-    }
+  const double& a = prev->first;
+  const double& b = next->first;
+  return (b-v)/(b-a) * prev->second + (v-a)/(b-a) * next->second;
 }
 
-void 
-Color_ramp::reset()
+void
+Color_component::
+add(const double v, double color)
 {
-  for(int i=1;i<=254;i++)
-    m_colors[3][i] = 0;
-  m_colors[3][0] = 1;
-  m_colors[3][255] = 1;
+  if ( color > 1 ) { color = 1; }
+  if ( color < 0 ) { color = 0; }
+  
+  Values::iterator next = next_it(v);
+  values_.insert(next, std::make_pair(v,color));
 }
 
-void 
-Color_ramp::add_node(unsigned int index,
-                     unsigned char r,
-                     unsigned char g,
-                     unsigned char b)
+
+void
+Color_component::
+rebuild(const double c0, const double c1)
 {
-  m_colors[3][index] = 1;
-  m_colors[0][index] = r;
-  m_colors[1][index] = g;   
-  m_colors[2][index] = b;
+  values_.clear();
+  add(1,c1);
+  add(0,c0);
+}
+
+void
+Color_component::
+print() const
+{
+  for ( Values::const_iterator it = values_.begin(),
+       end = values_.end() ; it != end ; ++it )
+  { 
+    std::cout << "<" << it->first << "," << it->second << "> ";
+  }
+  
+  std::cout << std::endl;
+}
+
+
+// -----------------------------------
+// Color_ramp
+// -----------------------------------
+Color_ramp::Color_ramp()
+  : r_()
+  , g_()
+  , b_()
+{ 
 }
 
 void 
 Color_ramp::build_red()
 {
-  reset();
-  m_colors[3][0] = 1;
-  m_colors[0][0] = 128;
-  m_colors[1][0] = 0;
-  m_colors[2][0] = 0;
-  
-  m_colors[3][80] = 1;
-  m_colors[0][80] = 255;
-  m_colors[1][80] = 0;
-  m_colors[2][80] = 0;
-  
-  m_colors[3][160] = 1;
-  m_colors[0][160] = 255;
-  m_colors[1][160] = 128;
-  m_colors[2][160] = 0;
-  
-  m_colors[3][255] = 1;
-  m_colors[0][255] = 255;
-  m_colors[1][255] = 255;
-  m_colors[2][255] = 255;
-  
-  rebuild();
-}
+  r_.rebuild(1,0.5);
+  g_.rebuild(1,0);
+  b_.rebuild(1,0);
 
-void 
-Color_ramp::build_thermal()
-{
-  reset();
-  m_colors[3][0] = 1;
-  m_colors[0][0] = 0;
-  m_colors[1][0] = 0;
-  m_colors[2][0] = 0;
-  
-  m_colors[3][70] = 1;
-  m_colors[0][70] = 128;
-  m_colors[1][70] = 0;
-  m_colors[2][70] = 0;
-  
-  m_colors[3][165] = 1;
-  m_colors[0][165] = 255;
-  m_colors[1][165] = 128;
-  m_colors[2][165] = 0;
-  
-  m_colors[3][240] = 1;
-  m_colors[0][240] = 255;
-  m_colors[1][240] = 191;
-  m_colors[2][240] = 128;
-  
-  m_colors[3][255] = 1;
-  m_colors[0][255] = 255;
-  m_colors[1][255] = 255;
-  m_colors[2][255] = 255;
-  
-  rebuild();
+  r_.add(0.3,1);
+  r_.add(0.05,1);
+  g_.add(0.05,0.95);
+  g_.add(0.3,0.5);
+  b_.add(0.05,0);
 }
 
 void 
 Color_ramp::build_blue()
 {
-  reset();
-  m_colors[3][0] = 1;
-  m_colors[0][0] = 0;
-  m_colors[1][0] = 0;
-  m_colors[2][0] = 128;
+  r_.rebuild(1,0);
+  g_.rebuild(1,0);
+  b_.rebuild(1,0.5);
   
-  m_colors[3][80] = 1;
-  m_colors[0][80] = 0;
-  m_colors[1][80] = 0;
-  m_colors[2][80] = 255;
-  
-  m_colors[3][160] = 1;
-  m_colors[0][160] = 0;
-  m_colors[1][160] = 255;
-  m_colors[2][160] = 255;
-  
-  m_colors[3][255] = 1;
-  m_colors[0][255] = 255;
-  m_colors[1][255] = 255;
-  m_colors[2][255] = 255;
-  
-  rebuild();
+  b_.add(0.1,0.8);
+  g_.add(0.1,0.4);
+  r_.add(0.1,0.4);
 }
+
+void
+Color_ramp::
+print() const
+{
+  std::cout << "r: ";
+  r_.print();
+  std::cout << "g: ";
+  g_.print();
+  std::cout << "b: ";
+  b_.print();
+}
+
