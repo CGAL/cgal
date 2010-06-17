@@ -1,4 +1,3 @@
-//#define CGAL_MESH_3_VERBOSE
 #include "C3t3_type.h"
 #include "Scene_c3t3_item.h"
 #include "Scene_polyhedron_item.h"
@@ -9,12 +8,9 @@
 #include "Optimizer_thread.h"
 
 #include <CGAL/optimize_mesh_3.h>
-#include <CGAL/Mesh_3/Mesh_optimizer_interface.h>
 #include <CGAL/Bbox_3.h>
 
 #include <fstream>
-
-#include <CGAL/Timer.h>
 
 namespace cgp = CGAL::parameters;
 
