@@ -138,7 +138,7 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
    // vc80:
 #  define CGAL_LIB_TOOLSET "vc80"
 
-#elif defined(BOOST_MSVC) && (BOOST_MSVC >= 1500)
+#elif defined(BOOST_MSVC) && (BOOST_MSVC == 1500)
 
    // vc90:
 #  define CGAL_LIB_TOOLSET "vc90"
