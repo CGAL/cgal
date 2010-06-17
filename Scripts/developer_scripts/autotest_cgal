@@ -863,11 +863,24 @@ else
 fi
 
 # Acquire lock
-lockfile -r 5 "$LOCK_FILE";
+lockfile -r 1 "$LOCK_FILE";
 if [ ${?} != 0 ]; then
-  echo "COULD NOT AQUIRE LOCK!";
-  exit 1;
+  PID=`cat "$LOCK_FILE"`
+  if kill -0 "$PID"; then 
+    log "COULD NOT AQUIRE LOCK! LOCKING PROCESS PID=$PID";
+    exit 1;
+  else
+    # The locking process has died without erasing the lock file
+    rm -f "$LOCK_FILE"
+    lockfile -r 1 "$LOCK_FILE";
+    if [ ${?} != 0 ]; then
+      log "COULD NOT AQUIRE LOCK!";
+      exit 1
+    fi
+  fi
 fi
+# Put the PID of current process in the lock file
+echo $$ >> "$LOCK_FILE"
 
 # that line makes the script remove the lock file in case of unwanted exit
 trap "rm -f $LOCK_FILE" EXIT HUP INT TERM
