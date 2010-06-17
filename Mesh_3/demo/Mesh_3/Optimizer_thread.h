@@ -26,6 +26,8 @@
 
 #include <QThread>
 #include <QObject>
+#include <QString>
+#include <QStringList>
 
 #include <CGAL/Mesh_optimization_return_code.h>
 
@@ -35,28 +37,56 @@ class Optimization_function_interface
 {
 public:
   virtual ~Optimization_function_interface() {}
-  virtual CGAL::Mesh_optimization_return_code launch() const = 0;
-  virtual Scene_c3t3_item* item() const = 0;
+  
+  // Launch
+  virtual CGAL::Mesh_optimization_return_code launch() = 0;
+  
+  // Stop
+  virtual void stop() = 0;
+  
+  // Logs
+  virtual QString name() const = 0;
+  virtual QStringList parameters_log() const = 0;
 };
+
 
 class Optimizer_thread : public QThread
 {
   Q_OBJECT
 public:
-  Optimizer_thread(Optimization_function_interface* f)
-    : f_(f), rc_() {}
+  Optimizer_thread(Optimization_function_interface* f, Scene_c3t3_item* item)
+    : f_(f), item_(item), rc_(), time_(0) {}
   
   virtual ~Optimizer_thread();
   
-  Scene_c3t3_item* item() const { return f_->item(); }
+  // Scene item
+  Scene_c3t3_item* item() const { return item_; }
+  
+  // Infos about optimization
   CGAL::Mesh_optimization_return_code return_code() const { return rc_; }
+  double time() const { return time_; }
+  
+  // Logs
+  QString optimizer_name() const { return f_->name(); }
+  QStringList parameters_log() const { return f_->parameters_log(); }
+  
+public slots:
+  // Stop
+  void stop();
+  
+signals:
+  // Emitted at the end of the process
+  void done(Optimizer_thread*);
   
 protected:
-  void run();
+  // Overload of QThread function
+  virtual void run();
   
 private:
   Optimization_function_interface* f_;
+  Scene_c3t3_item* item_;
   CGAL::Mesh_optimization_return_code rc_;
+  double time_; // in seconds
 };
 
 #endif // DEMO_MESH_3_OPTIMIZER_THREAD_H

@@ -53,7 +53,7 @@ Optimizer_thread* cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
                                          const double sliver_bound,
                                          const bool create_new_item);
 
-std::string translate(CGAL::Mesh_optimization_return_code rc);
+QString translate(CGAL::Mesh_optimization_return_code rc);
 
 // Mesh_3_optimization_plugin class
 class Mesh_3_optimization_plugin : 
@@ -72,9 +72,13 @@ public slots:
   void perturb();
   void exude();
   
+  void optimization_done(Optimizer_thread* t);
+  
 private:
   void treat_result(Scene_c3t3_item& source_item, Scene_c3t3_item& result_item,
-                    const QString& name, bool new_item_created) const;
+                    const QString& name) const;
+  
+  void launch_thread(Optimizer_thread* thread, const QString& msg);
 
 private:
   QAction* actionOdt;
@@ -82,6 +86,9 @@ private:
   QAction* actionPerturb;
   QAction* actionExude;
   Messages_interface* msg;
+  QMessageBox* message_box_;
+  
+  Scene_c3t3_item* source_item_;
 }; // end class Mesh_3_optimization_plugin
 
 
@@ -187,8 +194,6 @@ Mesh_3_optimization_plugin::odt()
   // Launch optimization
   // -----------------------------------
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  QTime timer;
-  timer.start();
   
   Optimizer_thread* opt_thread = cgal_code_odt_mesh_3(*item,
                                                       max_time,
@@ -203,27 +208,8 @@ Mesh_3_optimization_plugin::odt()
     return;
   }
   
-  opt_thread->start();
-  opt_thread->wait();
-  Scene_c3t3_item* result_item = opt_thread->item();
-  CGAL::Mesh_optimization_return_code return_code = opt_thread->return_code();
-  
-  std::stringstream sstr;
-  sstr << "Odt-smoothing of \"" << qPrintable(item->name()) << "\" done in "
-       << timer.elapsed()/1000. << "s<br>"
-       << "End reason: '" << translate(return_code) << "'<br>"
-       << "( max time: " << max_time << " )<br>"
-       << "( convergence: " << convergence << " )<br>"
-       << "( freeze bound: " << freeze << " )<br>"
-       << "( max iteration number: " << max_iteration_nb << " )<br>";
-  msg->information(sstr.str().c_str());
-    
-  // -----------------------------------
-  // Treat result
-  // -----------------------------------
-  QString name("odt");
-  treat_result(*item, *result_item, name, create_new_item);
-  
+  source_item_ = item;
+  launch_thread(opt_thread, "Odt iterations are running...");
   QApplication::restoreOverrideCursor();
 }
 
@@ -283,8 +269,6 @@ Mesh_3_optimization_plugin::lloyd()
   // Launch optimization
   // -----------------------------------
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  QTime timer;
-  timer.start();
   
   Optimizer_thread* opt_thread = cgal_code_lloyd_mesh_3(*item,
                                                         max_time,
@@ -299,27 +283,8 @@ Mesh_3_optimization_plugin::lloyd()
     return;
   }
 
-  opt_thread->start();
-  opt_thread->wait();
-  Scene_c3t3_item* result_item = opt_thread->item();
-  CGAL::Mesh_optimization_return_code return_code = opt_thread->return_code();
-  
-  std::stringstream sstr;
-  sstr << "Lloyd-smoothing of \"" << qPrintable(item->name()) << "\" done in "
-       << timer.elapsed()/1000. << "s<br>"
-       << "End reason: '" << translate(return_code) << "'<br>"
-       << "( max time: " << max_time << " )<br>"
-       << "( convergence: " << convergence << " )<br>"
-       << "( freeze bound: " << freeze << " )<br>"
-       << "( max iteration number: " << max_iteration_nb << " )<br>";
-  msg->information(sstr.str().c_str());
-  
-  // -----------------------------------
-  // Treat result
-  // -----------------------------------
-  QString name("lloyd");
-  treat_result(*item, *result_item, name, create_new_item);
-  
+  source_item_ = item;
+  launch_thread(opt_thread, "Lloyd iterations are running...");
   QApplication::restoreOverrideCursor();
 }
 
@@ -373,8 +338,6 @@ Mesh_3_optimization_plugin::perturb()
   // Launch optimization
   // -----------------------------------
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  QTime timer;
-  timer.start();
   
   Optimizer_thread* opt_thread = cgal_code_perturb_mesh_3(*item,
                                                           max_time,
@@ -388,25 +351,8 @@ Mesh_3_optimization_plugin::perturb()
     return;
   }
   
-  opt_thread->start();
-  opt_thread->wait();
-  Scene_c3t3_item* result_item = opt_thread->item();
-  CGAL::Mesh_optimization_return_code return_code = opt_thread->return_code();
-  
-  std::stringstream sstr;
-  sstr << "Perturbation of \"" << qPrintable(item->name()) << "\" done in "
-       << timer.elapsed()/1000. << "s<br>"
-       << "End reason: '" << translate(return_code) << "'<br>"
-       << "( max time: " << max_time << " )<br>"
-       << "( sliver bound: " << sliver_bound << " )<br>";
-  msg->information(sstr.str().c_str());
-  
-  // -----------------------------------
-  // Treat result
-  // -----------------------------------
-  QString name("perturb");
-  treat_result(*item, *result_item, name, create_new_item);
-
+  source_item_ = item;
+  launch_thread(opt_thread, "Sliver perturbation is running...");
   QApplication::restoreOverrideCursor();
 }
 
@@ -454,8 +400,6 @@ Mesh_3_optimization_plugin::exude()
   // Launch optimization
   // -----------------------------------
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  QTime timer;
-  timer.start();
   
   Optimizer_thread* opt_thread = cgal_code_exude_mesh_3(*item,
                                                         max_time,
@@ -468,25 +412,8 @@ Mesh_3_optimization_plugin::exude()
     return;
   }
   
-  opt_thread->start();
-  opt_thread->wait();
-  Scene_c3t3_item* result_item = opt_thread->item();
-  CGAL::Mesh_optimization_return_code return_code = opt_thread->return_code();
-
-  std::stringstream sstr;
-  sstr << "Exudation of \"" << qPrintable(item->name()) << "\" done in "
-       << timer.elapsed()/1000. << "s<br>"
-       << "End reason: '" << translate(return_code) << "'<br>"
-       << "( max time: " << max_time << " )<br>"
-       << "( sliver bound: " << sliver_bound << " )<br>";
-  msg->information(sstr.str().c_str());
-  
-  // -----------------------------------
-  // Treat result
-  // -----------------------------------
-  QString name("exude");
-  treat_result(*item, *result_item, name, create_new_item);
-  
+  source_item_ = item;
+  launch_thread(opt_thread, "Sliver exudation is running...");
   QApplication::restoreOverrideCursor();
 }
 
@@ -496,13 +423,13 @@ void
 Mesh_3_optimization_plugin::
 treat_result(Scene_c3t3_item& source_item,
              Scene_c3t3_item& result_item,
-             const QString& name,
-             bool new_item_created) const
+             const QString& name) const
 {
   result_item.setName(tr("%1 [%2]").arg(source_item.name())
                                    .arg(name));
   
-  if ( new_item_created )
+  // If a new item has been created
+  if ( &source_item != &result_item)
   {
     const Scene_item::Bbox& bbox = result_item.bbox();
     result_item.setPosition((bbox.xmin + bbox.xmax)/2.f,
@@ -530,19 +457,87 @@ treat_result(Scene_c3t3_item& source_item,
   }
 }
 
-std::string
+
+void
+Mesh_3_optimization_plugin::
+optimization_done(Optimizer_thread* thread)
+{
+  CGAL::Mesh_optimization_return_code return_code = thread->return_code();
+  QString name = thread->optimizer_name();
+  
+  // Print message in console
+  QString str = QString("%1 of \"%2\" done in %3s<br>"
+                        "End reason: '%4'<br>")
+                  .arg(name)
+                  .arg(source_item_->name())
+                  .arg(thread->time())
+                  .arg(translate(return_code));
+  
+  Q_FOREACH( QString param, thread->parameters_log() )
+  {
+    str.append(QString("( %1 )<br>").arg(param));
+  }
+  
+  msg->information(qPrintable(str));
+  
+  // Treat new c3t3 item
+  Scene_c3t3_item* result_item = thread->item();
+  treat_result( *source_item_, *result_item, name);
+
+  // close message box
+  message_box_->close();
+  
+  // free memory
+  delete thread;
+}
+
+
+void
+Mesh_3_optimization_plugin::
+launch_thread(Optimizer_thread* opt_thread, const QString& window_text)
+{
+  // -----------------------------------
+  // Create message box with stop button
+  // -----------------------------------
+  message_box_ = new QMessageBox(QMessageBox::NoIcon,
+                                 "Optimization...",
+                                 window_text,
+                                 QMessageBox::Cancel,
+                                 mw);
+  
+  message_box_->setDefaultButton(QMessageBox::Cancel);
+  QAbstractButton* cancelButton = message_box_->button(QMessageBox::Cancel);
+  cancelButton->setText(tr("Stop"));
+  
+  QObject::connect(cancelButton, SIGNAL(clicked()),
+                   opt_thread,   SLOT(stop()));
+  
+  message_box_->show();
+  
+  // -----------------------------------
+  // Connect main thread to optimization thread and launch optimizer
+  // -----------------------------------
+  QObject::connect(opt_thread, SIGNAL(done(Optimizer_thread*)),
+                   this,       SLOT(optimization_done(Optimizer_thread*)));
+  
+  opt_thread->start();
+}
+
+
+QString
 translate(CGAL::Mesh_optimization_return_code rc)
 {
   switch (rc)
   {
-    case CGAL::BOUND_REACHED: return std::string("Bound reached");
-    case CGAL::TIME_LIMIT_REACHED: return std::string("Time limit reached");
-    case CGAL::CANT_IMPROVE_ANYMORE: return std::string("Can't improve anymore");
-    case CGAL::CONVERGENCE_REACHED: return std::string("Convergence reached");
-    case CGAL::MAX_ITERATION_NUMBER_REACHED: return std::string("Max iteration number reached");
+    case CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR: return QString("Unexpected error");
+    case CGAL::BOUND_REACHED: return QString("Bound reached");
+    case CGAL::TIME_LIMIT_REACHED: return QString("Time limit reached");
+    case CGAL::CANT_IMPROVE_ANYMORE: return QString("Can't improve anymore");
+    case CGAL::CONVERGENCE_REACHED: return QString("Convergence reached");
+    case CGAL::MAX_ITERATION_NUMBER_REACHED: return QString("Max iteration number reached");
   }
   
-  return std::string("ERROR");
+  return QString("ERROR");
 }
 
 

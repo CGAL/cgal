@@ -21,6 +21,7 @@
 // File Description : 
 //******************************************************************************
 
+#include <QTime>
 #include "Optimizer_thread.h"
 
 Optimizer_thread::~Optimizer_thread()
@@ -33,7 +34,23 @@ void
 Optimizer_thread::
 run()
 {
+  QTime timer;
+  timer.start();
+  
   rc_ = f_->launch();
+  
+  time_ = double(timer.elapsed()) / 1000;
+  
+  emit done(this);
 }
+
+
+void
+Optimizer_thread::
+stop()
+{
+  f_->stop();
+}
+
 
 #include "Optimizer_thread.moc"

@@ -28,6 +28,7 @@ namespace CGAL {
 
 enum Mesh_optimization_return_code
 {
+  MESH_OPTIMIZATION_UNKNOWN_ERROR=-1,
   BOUND_REACHED=0,
   TIME_LIMIT_REACHED,
   CANT_IMPROVE_ANYMORE,
