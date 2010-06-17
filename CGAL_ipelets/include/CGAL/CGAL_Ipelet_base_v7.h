@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://sloriot@scm.gforge.inria.fr/svn/cgal/trunk/CGAL_ipelets/include/CGAL/CGAL_Ipelet_base.h $
-// $Id: CGAL_Ipelet_base.h 52628 2009-10-20 08:59:26Z lrineau $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
