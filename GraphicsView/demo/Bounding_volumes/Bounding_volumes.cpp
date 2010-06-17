@@ -1,4 +1,5 @@
 #include <fstream>
+#include <cmath>
 
 // CGAL headers
 #include <CGAL/Cartesian.h>
@@ -66,6 +67,8 @@ private:
   CGAL::Qt::PolygonGraphicsItem<Polygon_2> * min_rectangle_gi;
   CGAL::Qt::PolygonGraphicsItem<Polygon_2> * min_parallelogram_gi;
   QGraphicsEllipseItem *cgi, *egi;
+
+  const int P;
   QGraphicsRectItem *p_center[3];
 
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
@@ -105,7 +108,7 @@ signals:
 
 
 MainWindow::MainWindow()
-  : DemosMainWindow()
+  : P(3), DemosMainWindow()
 {
   setupUi(this);
 
@@ -122,7 +125,7 @@ MainWindow::MainWindow()
   egi->hide();
   scene.addItem(egi);
   
-  for(int i =0; i < 3; i++){
+  for(int i =0; i < P; i++){
     p_center[i] = new QGraphicsRectItem;
     p_center[i]->setPen(QPen(Qt::magenta, 1, Qt::SolidLine));
     p_center[i]->hide(); 
@@ -236,6 +239,7 @@ MainWindow::update()
       Ellipse_2<K> e(me);
       double half_width = sqrt(e.va() * e.va());
       double half_height = sqrt(e.vb() * e.vb());
+      double angle = std::asin( e.va().y() / e.va().x() ) * 180.0/CGAL_PI;
       Vector_2 wh(half_width, half_height);
       CGAL::Qt::Converter<K> convert;
       Iso_rectangle_2 isor(e.center()+ wh, e.center()-wh);
@@ -243,7 +247,7 @@ MainWindow::update()
       // Rotate an item 45 degrees around (x, y).
       double x = e.center().x();
       double y = e.center().y();
-      egi->setTransform(QTransform().translate(x, y).rotate(45).translate(-x, -y));
+      egi->setTransform(QTransform().translate(x, y).rotate(angle).translate(-x, -y));
     } 
   }
 }
@@ -263,7 +267,7 @@ MainWindow::update_from_points()
 
     std::vector<Point_2> center;
     double radius;
-    const int P = 3;
+
     CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, P);
     Vector_2 rvec(radius, radius);
     int i;
@@ -301,7 +305,7 @@ MainWindow::processInput(CGAL::Object o)
 
     std::vector<Point_2> center;
     double radius;
-    const int P = 3;
+
     CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, P);
     Vector_2 rvec(radius, radius);
     int i;
@@ -359,6 +363,9 @@ MainWindow::on_actionClear_triggered()
   convex_hull.clear();
   min_rectangle.clear();
   min_parallelogram.clear();
+  for(int i=0; i < P;i++){
+    p_center[i]->hide();
+  }
   emit(changed());
 }
 
