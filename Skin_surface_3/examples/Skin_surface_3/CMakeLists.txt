@@ -12,7 +12,7 @@ if ( COMMAND cmake_policy )
 endif()
 
 find_package(CGAL)
-find_package(ESBTL)
+
 
 
 
@@ -29,6 +29,8 @@ if (CGAL_FOUND)
   create_single_source_cgal_program( "skin_surface_subdiv_with_normals.cpp" )
   create_single_source_cgal_program( "union_of_balls_simple.cpp" )
   create_single_source_cgal_program( "union_of_balls_subdiv.cpp" )  
+  
+  find_package(ESBTL)
   if(ESBTL_FOUND)
     include( ${ESBTL_USE_FILE} )
     create_single_source_cgal_program( "skin_surface_pdb_reader.cpp" )    
