@@ -5,6 +5,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
+#include <CGAL/Min_ellipse_2.h>
+#include <CGAL/Min_ellipse_2_traits_2.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Polygon_2.h>
@@ -34,6 +36,8 @@
 #include "ui_Bounding_volumes.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
+#include "Ellipse.h"
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
 typedef K::Vector_2 Vector_2;
@@ -42,6 +46,7 @@ typedef K::Iso_rectangle_2 Iso_rectangle_2;
 typedef CGAL::Polygon_2<K> Polygon_2;
 
 typedef CGAL::Min_circle_2<CGAL::Min_circle_2_traits_2<K> > Min_circle;
+typedef CGAL::Min_ellipse_2<CGAL::Min_ellipse_2_traits_2<K> > Min_ellipse;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -52,6 +57,7 @@ class MainWindow :
 private:  
   Polygon_2 convex_hull, min_rectangle, min_parallelogram;
   Min_circle mc; 
+  Min_ellipse me;
   QGraphicsScene scene;  
 
   std::vector<Point_2> points; 
@@ -59,7 +65,7 @@ private:
   CGAL::Qt::PolygonGraphicsItem<Polygon_2> * convex_hull_gi;
   CGAL::Qt::PolygonGraphicsItem<Polygon_2> * min_rectangle_gi;
   CGAL::Qt::PolygonGraphicsItem<Polygon_2> * min_parallelogram_gi;
-  QGraphicsEllipseItem* cgi;
+  QGraphicsEllipseItem *cgi, *egi;
   QGraphicsRectItem *p_center[3];
 
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
@@ -76,6 +82,8 @@ public slots:
   void processInput(CGAL::Object o);
 
   void on_actionShowMinCircle_toggled(bool checked);
+
+  void on_actionShowMinEllipse_toggled(bool checked);
 
   void on_actionInsertPoint_toggled(bool checked);
   
@@ -108,6 +116,11 @@ MainWindow::MainWindow()
   cgi->setPen(QPen(Qt::red, 1, Qt::SolidLine));
   cgi->hide();
   scene.addItem(cgi);
+  
+  egi = new QGraphicsEllipseItem;
+  egi->setPen(QPen(Qt::cyan, 1, Qt::SolidLine));
+  egi->hide();
+  scene.addItem(egi);
   
   for(int i =0; i < 3; i++){
     p_center[i] = new QGraphicsRectItem;
@@ -171,6 +184,7 @@ MainWindow::MainWindow()
   // Check two actions 
   this->actionInsertPoint->setChecked(true);
   this->actionShowMinCircle->setChecked(true);
+  this->actionShowMinEllipse->setChecked(true);
 
   //
   // Setup the scene and the view
@@ -210,7 +224,27 @@ MainWindow::update()
       c = K::Circle_2(mc.support_point(0), mc.support_point(1), mc.support_point(2));
     
     CGAL::Qt::Converter<K> convert;  
+
     cgi->setRect(convert(c.bbox()));
+  }
+
+  if (me.is_degenerate()){
+    egi->hide();
+  } else {
+    if (me.number_of_support_points() == 2) {
+    } else {
+      Ellipse_2<K> e(me);
+      double half_width = sqrt(e.va() * e.va());
+      double half_height = sqrt(e.vb() * e.vb());
+      Vector_2 wh(half_width, half_height);
+      CGAL::Qt::Converter<K> convert;
+      Iso_rectangle_2 isor(e.center()+ wh, e.center()-wh);
+      egi->setRect(convert(isor));
+      // Rotate an item 45 degrees around (x, y).
+      double x = e.center().x();
+      double y = e.center().y();
+      egi->setTransform(QTransform().translate(x, y).rotate(45).translate(-x, -y));
+    } 
   }
 }
 
@@ -252,6 +286,7 @@ MainWindow::processInput(CGAL::Object o)
   if(CGAL::assign(input, o)){
     Point_2 p = input.front();
     mc.insert(p);
+    me.insert(p);
     points.push_back(p);
     convex_hull.push_back(p);
     Polygon_2 tmp;
@@ -308,11 +343,18 @@ MainWindow::on_actionShowMinCircle_toggled(bool checked)
   cgi->setVisible(checked);
 }
 
+void
+MainWindow::on_actionShowMinEllipse_toggled(bool checked)
+{
+  egi->setVisible(checked);
+}
+
 
 void
 MainWindow::on_actionClear_triggered()
 {
   mc.clear();
+  me.clear();
   points.clear();
   convex_hull.clear();
   min_rectangle.clear();
@@ -348,6 +390,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   for(int i = 0; i < number_of_points; ++i){
     Point_2 p = *pg++;
     mc.insert(p);
+    me.insert(p);
     points.push_back(p);
   }
 
@@ -381,6 +424,7 @@ MainWindow::open(const QString& fileName)
   K::Point_2 p;
   while(ifs >> p) {
     mc.insert(p);
+    me.insert(p);
     points.push_back(p);
   }
   update_from_points();
