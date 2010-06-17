@@ -7,6 +7,7 @@ endif( WITH_GMP )
 
 if( NOT GMP_FOUND )
   set(CGAL_NO_CORE ON)
+  message( STATUS "CGAL_Core needs GMP, cannot be configured.")
 endif( NOT GMP_FOUND )
 
 option ( WITH_LEDA "Use the LEDA number types if available." OFF )

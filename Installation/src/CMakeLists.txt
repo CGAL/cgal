@@ -13,8 +13,6 @@ endmacro()
 
 if(NOT CGAL_NO_CORE)
   configure_component( CGALCore    Core    )
-else(NOT CGAL_NO_CORE)
-  message( STATUS "CGAL_Core needs GMP, cannot be configured.")
 endif(NOT CGAL_NO_CORE)
 
 configure_component( CGALimageIO ImageIO )
