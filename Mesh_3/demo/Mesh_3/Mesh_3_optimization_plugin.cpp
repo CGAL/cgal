@@ -436,7 +436,7 @@ treat_result(Scene_c3t3_item& source_item,
                             (bbox.ymin + bbox.ymax)/2.f,
                             (bbox.zmin + bbox.zmax)/2.f);
     
-    result_item.setColor(Qt::magenta);
+    result_item.setColor(QColor(59,74,226));
     result_item.setRenderingMode(source_item.renderingMode());
     result_item.set_data_item(source_item.data_item());
     

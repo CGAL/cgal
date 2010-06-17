@@ -266,7 +266,7 @@ void Mesh_3_plugin::mesh_3()
                            .arg(facet_sizing)
                            .arg(tet_sizing)
                            .arg(approx));
-      result_item->setColor(Qt::magenta);
+      result_item->setColor(QColor(45,169,70));
       result_item->setRenderingMode(item->renderingMode());
       result_item->set_data_item(item);
       
