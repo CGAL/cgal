@@ -64,18 +64,25 @@ which intersects any one another. In the presence of such errors, the constructi
 
 The sequence \ccc{[aPBegin,aPEnd)} must iterate over each 2D point that corresponds to a vertex of the contour being entered. Vertices cannot be coincident (except consecutively since the method simply skip consecutive coincident vertices). Consecutive collinear edges are allowed.
 
-InputPointIterator must be an \textit{InputIterator} whose \ccc{value\_type} is \ccc{Point_2}.
+\ccc{InputPointIterator} must be an \textit{InputIterator} whose \ccc{value\_type} is a 2D point.
 
 The sequence \ccc{[aWBegin,aWEnd)} must iterate over a range of numerical values corresponding to the weights of the edges.
-Each weight \ccc{*(aWBegin+i)} corresponds to the edge \ccc{*(aPBegin+i-1) -> *(aPBegin+i)}, having the corresponding vertex as its end-point.
+Each weight \ccc{*(aWBegin+i)} corresponds to the edge having the corresponding vertex as its end-point, that is: \ccc{*(aPBegin+i-1) -> *(aPBegin+i)}.
 
-InputWeightIterator must be an \textit{InputIterator} whose \ccc{value\_type} is \ccc{FT}.
+\ccc{InputWeightIterator} must be an \textit{InputIterator} whose \ccc{value\_type} is \ccc{FT}.
 
 A positive weight indicates that the edge moves to its left, a negative weight to its right, and a zero weight indicates that the edge does not move at all. 
 
-Therefore, if a contour is counter-clockwise oriented, positive weights corresponds to the interior straight skeleton, while negative weights corresponds to the exterior straight skeleton.
+If a contour is counter-clockwise oriented, positive weights corresponds to the interior straight skeleton, while negative weights corresponds to the exterior straight skeleton.
 
+Each edge has its own distinct weight. If there is a mix of positive and negative weights, the result might not be well-defined (but it is well defined to mix zero weights with either positive or negative weights)
 
+\ccc{aIsClosed} indicates whether the contour is a polygon or a polyline. If it is a polyline, this must be the only contour entered.
+
+\ccc{aCvt} is a \ccc{Cartesian_converter} that can convert the type of the input point to \ccc{Point_2}, as required by the algorithm.
+
+If \ccc{aCheckValidity} is true, consecutive coincident points are filtered out (along with the corresponding weights). The contour is then inserted if and only if the filtered contour contains at least 3 or 2 vertices left (for closed and open contours resp).
+ 
 
 }
 \ccGlue
@@ -87,25 +94,11 @@ Therefore, if a contour is counter-clockwise oriented, positive weights correspo
                                              , Converter const&   aCvt           = Cartesian_converter<K,K>()
                                              , bool               aCheckValidity = true 
                                              );}
-{Inputs one of the \textit{contours} that bound the \textit{non-degenerate strictly-simple polygon with holes} whose \textit{weighted straight skeleton} is to be built. 
+{Same as above, but with a single uniform weight for the entire contour}
 
-Each contour must be input in turn starting with the \textit{outer contour} and following with the holes (if any). The order of the holes is unimportant but the outer contour must be entered first.
-The orientatin of the outer contour must be the opposite of the orientation of the holes.
-
-It is an error to enter more than one outer contour, or to enter a hole which is not inside the outer contour, or to enter a hole inside another hole. It is also an error to enter a contour
-which intersects any one another. It is possible however to enter a contour that touches itself in such a way that its interior region is still well defined and singly-connected (see the User Manual for examples).
-
-The sequence \ccc{[aBegin,aEnd)} must iterate over each 2D point that corresponds to a vertex of the contour being entered. Vertices cannot be coincident (except consecutively since the method simply skip consecutive coincident vertices). Consecutive collinear edges are allowed.
-
-InputPointIterator must be an \textit{InputIterator} whose \ccc{value\_type} is \ccc{Point_2}.
-
-\ccc{aWeight} is a uniform weight given to all edges in this contour. It can be positive, zero or negative. A zero weight for all edges is equivalent to 
-
-
-}
 \ccGlue
-\ccMethod{boost::shared_ptr<SSkel> construct_skeleton();}
-{Constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined by the contours entered first by calling \ccc{enter_contour}. All the contours of the polygon with holes must be entered before calling \ccc{construct_skeleton}.
+\ccMethod{boost::shared_ptr<SSkel> construct_skeleton(bool aNull_if_failed = true ); }
+{Constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined by the contours entered previously by calling \ccc{enter_contour}. All the contours of the polygon with holes must be entered before calling \ccc{construct_skeleton}.
 
 After \ccc{construct_skeleton} completes, you cannot enter more contours and/or call \ccc{construct_skeleton()} again. If you need another straight skeleton for another polygon you must instantiate and use another builder.
 
