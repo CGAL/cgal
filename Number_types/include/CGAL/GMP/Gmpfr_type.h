@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@loria.fr>
 
 #ifndef CGAL_GMPFR_TYPE_H
 #define CGAL_GMPFR_TYPE_H
@@ -1069,12 +1069,16 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
         // this expensive assertion checks that we didn't lose bits when
         // multiplying or dividing by 2^exp
         CGAL_expensive_assertion_code( \
-                Gmpfr g(mant.bit_size()); \
-                mpfr_div_2si( \
-                        g.fr(), \
-                        f.fr(),                                         \
-                        neg_exp?-mpz_get_ui(exp.mpz()):mpz_get_ui(exp.mpz()),
-                        GMP_RNDN);)
+                Gmpfr g(0,static_cast<Gmpfr::Precision_type>( \
+                                MPFR_PREC_MIN<mant.bit_size()? \
+                                mant.bit_size(): \
+                                MPFR_PREC_MIN)); \
+                mpfr_div_2si(g.fr(), \
+                             f.fr(), \
+                             neg_exp? \
+                                -mpz_get_ui(exp.mpz()): \
+                                mpz_get_ui(exp.mpz()), \
+                             GMP_RNDN);)
         CGAL_expensive_assertion(g==mant);
 
         return is;
