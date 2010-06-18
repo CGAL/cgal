@@ -23,7 +23,7 @@ ch_graham_anderson( InputIterator  first, InputIterator  beyond,
   std::vector< Point_2 >  V (first, beyond);
   typename std::vector< Point_2 >::iterator it =
                std::min_element(V.begin(), V.end(), Less_xy_2());
-  std::sort( V.begin(), V.end(), bind(Less_rotate_ccw_2(), *it, _1, _2) );
+  std::sort( V.begin(), V.end(), boost::bind(Less_rotate_ccw_2(), *it, _1, _2) );
   if ( *(V.begin()) == *(V.rbegin()) )
   {
       *result = *(V.begin());  ++result;

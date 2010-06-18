@@ -68,7 +68,7 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
       Point previous_point = start_p; ) 
 
   ForwardIterator it = std::min_element( first, last, 
-                                         bind(rotation_predicate, boost::cref(start_p), _1, _2) );
+                                         boost::bind(rotation_predicate, boost::cref(start_p), _1, _2) );
   while (! equal_points(*it, stop_p) )
   {
       CGAL_ch_exactness_assertion( \
@@ -83,7 +83,7 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
           constructed_points <= count_points + 1 );
 
       it = std::min_element( first, last, 
-                             bind(rotation_predicate, *it, _1, _2) );
+                             boost::bind(rotation_predicate, *it, _1, _2) );
   } 
   CGAL_ch_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \
