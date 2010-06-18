@@ -75,6 +75,8 @@ public slots:
   void optimization_done(Optimizer_thread* t);
   
 private:
+  Scene_c3t3_item* get_c3t3_item() const;
+  
   void treat_result(Scene_c3t3_item& source_item, Scene_c3t3_item& result_item,
                     const QString& name) const;
   
@@ -143,22 +145,10 @@ void
 Mesh_3_optimization_plugin::odt()
 {
   // -----------------------------------
-  // Get source item
+  // Get c3t3 item
   // -----------------------------------
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_c3t3_item* item = qobject_cast<Scene_c3t3_item*>(scene->item(index));
-  
-  if ( NULL == item )
-  {
-    return;
-  }
-  
-  if ( NULL == item->data_item() )
-  {
-    QMessageBox::critical(mw,tr(""),
-                          tr("Can't optimize: data object has been destroyed !"));
-    return;
-  }
+  Scene_c3t3_item* item = get_c3t3_item();
+  if ( NULL == item ) { return; }
 
   // -----------------------------------
   // Dialog box
@@ -218,22 +208,10 @@ void
 Mesh_3_optimization_plugin::lloyd()
 {
   // -----------------------------------
-  // Get source item
+  // Get c3t3 item
   // -----------------------------------
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_c3t3_item* item = qobject_cast<Scene_c3t3_item*>(scene->item(index));
-  
-  if ( NULL == item )
-  {
-    return;
-  }
-  
-  if ( NULL == item->data_item() )
-  {
-    QMessageBox::critical(mw,tr(""),
-                          tr("Can't optimize: data object has been destroyed !"));
-    return;
-  }
+  Scene_c3t3_item* item = get_c3t3_item();
+  if ( NULL == item ) { return; }
   
   // -----------------------------------
   // Dialog box
@@ -293,22 +271,10 @@ void
 Mesh_3_optimization_plugin::perturb()
 {
   // -----------------------------------
-  // Get source item
+  // Get c3t3 item
   // -----------------------------------
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_c3t3_item* item = qobject_cast<Scene_c3t3_item*>(scene->item(index));
-  
-  if ( NULL == item )
-  {
-    return;
-  }
-  
-  if ( NULL == item->data_item() )
-  {
-    QMessageBox::critical(mw,tr(""),
-                          tr("Can't perturb: data object has been destroyed !"));
-    return;
-  }
+  Scene_c3t3_item* item = get_c3t3_item();
+  if ( NULL == item ) { return; }
   
   // -----------------------------------
   // Dialog box
@@ -361,15 +327,10 @@ void
 Mesh_3_optimization_plugin::exude()
 {
   // -----------------------------------
-  // Get source item
+  // Get c3t3 item
   // -----------------------------------
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_c3t3_item* item = qobject_cast<Scene_c3t3_item*>(scene->item(index));
-  
-  if ( NULL == item )
-  {
-    return;
-  }
+  Scene_c3t3_item* item = get_c3t3_item();
+  if ( NULL == item ) { return; }
   
   // -----------------------------------
   // Dialog box
@@ -415,6 +376,31 @@ Mesh_3_optimization_plugin::exude()
   source_item_ = item;
   launch_thread(opt_thread, "Sliver exudation is running...");
   QApplication::restoreOverrideCursor();
+}
+
+
+Scene_c3t3_item*
+Mesh_3_optimization_plugin::
+get_c3t3_item() const
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_c3t3_item* item = qobject_cast<Scene_c3t3_item*>(scene->item(index));
+  
+  if ( NULL == item )
+  {
+    QMessageBox::critical(mw,tr(""),
+                          tr("Selected object is not a mesh... optimization can't be performed"));
+    return NULL;
+  }
+  
+  if ( NULL == item->data_item() )
+  {
+    QMessageBox::critical(mw,tr(""),
+                          tr("Can't perturb: data object has been destroyed !"));
+    return NULL;
+  }
+  
+  return item;
 }
 
 
