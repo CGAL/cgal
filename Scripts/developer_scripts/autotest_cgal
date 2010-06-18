@@ -18,8 +18,8 @@
 # ----------------------------------------------------
 # ----------------------------------------------------
 #
-# $URL: $
-# $Id: $
+# $URL$
+# $Id$
 
 #sets the umask to 022 & 0777
 umask 022
@@ -782,6 +782,7 @@ put_on_web()
 # START OF MAIN BODY
 # ----------------------------------------------------
 
+log "${ACTUAL_LOGFILE}" "${0}, version \"$Id$\""
 
 # Parse command line arguments
 for arg in "$@"
