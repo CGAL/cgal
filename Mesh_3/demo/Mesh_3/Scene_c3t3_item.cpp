@@ -450,7 +450,10 @@ Scene_c3t3_item::setColor(QColor c)
 void
 Scene_c3t3_item::c3t3_changed()
 {
+  // Update colors
   // Fill indices map and get max subdomain value
+  indices_.clear();
+  
   int max = 0;
   for(C3t3::Cell_iterator cit = this->c3t3().cells_begin(), end = this->c3t3().cells_end();
       cit != end; ++cit)
@@ -460,6 +463,10 @@ Scene_c3t3_item::c3t3_changed()
   }
 
   d->colors.resize(max+1);
+  compute_color_map(color_);
+  
+  // Rebuild histogram
+  build_histogram();
 }
 
 void

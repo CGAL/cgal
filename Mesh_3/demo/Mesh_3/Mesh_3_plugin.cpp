@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QFileDialog>
+#include <QTimer>
 
 #include "Scene_polyhedron_item.h"
 #include "Scene_segmented_image_item.h"
@@ -89,6 +90,7 @@ public:
 public slots:
   void mesh_3();
   void meshing_done(Meshing_thread* t);
+  void status_report(QString str);
   
 private:
   void launch_thread(Meshing_thread* mesh_thread);
@@ -280,12 +282,28 @@ launch_thread(Meshing_thread* mesh_thread)
   message_box_->show();
   
   // -----------------------------------
-  // Connect main thread to optimization thread and launch optimizer
+  // Connect main thread to meshing thread
   // -----------------------------------
   QObject::connect(mesh_thread, SIGNAL(done(Meshing_thread*)),
                    this,        SLOT(meshing_done(Meshing_thread*)));
   
+  QObject::connect(mesh_thread, SIGNAL(status_report(QString)),
+                   this,        SLOT(status_report(QString)));
+  
+  // -----------------------------------
+  // Launch mesher
+  // -----------------------------------
   mesh_thread->start();
+}
+
+
+void
+Mesh_3_plugin::
+status_report(QString str)
+{
+  if ( NULL == message_box_ ) { return; }
+  
+  message_box_->setInformativeText(str);
 }
 
 
@@ -311,8 +329,10 @@ meshing_done(Meshing_thread* thread)
   
   // close message box
   message_box_->close();
+  message_box_ = NULL;
   
   // free memory
+  // TODO: maybe there is another way to do that
   delete thread;
 }
 
@@ -323,8 +343,9 @@ treat_result(Scene_item& source_item,
              Scene_c3t3_item& result_item) const
 {
   result_item.setName(tr("%1 [3D Mesh]").arg(source_item.name()));
+
+  result_item.c3t3_changed();
   
-  // If a new item has been created
   const Scene_item::Bbox& bbox = result_item.bbox();
   result_item.setPosition((bbox.xmin + bbox.xmax)/2.f,
                           (bbox.ymin + bbox.ymax)/2.f,
@@ -333,7 +354,7 @@ treat_result(Scene_item& source_item,
   result_item.setColor(default_mesh_color);
   result_item.setRenderingMode(source_item.renderingMode());
   result_item.set_data_item(&source_item);
-    
+  
   source_item.setVisible(false);
     
   const Scene_interface::Item_id index = scene->mainSelectionIndex();

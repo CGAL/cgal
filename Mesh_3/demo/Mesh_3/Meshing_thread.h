@@ -27,6 +27,8 @@
 #include <QThread>
 #include <QObject>
 #include <QStringList>
+#include <QString>
+#include <QTimer>
 
 class Scene_c3t3_item;
 
@@ -43,6 +45,7 @@ public:
   
   // Logs
   virtual QStringList parameters_log() const = 0;
+  virtual QString status(double time_period) const = 0;
 };
 
 
@@ -63,13 +66,19 @@ public:
   // Logs
   QStringList parameters_log() const { return f_->parameters_log(); }
   
-  public slots:
+public slots:
   // Stop
   void stop();
+  
+private slots:
+  // emit signal status report
+  void emit_status();
   
 signals:
   // Emitted at the end of the process
   void done(Meshing_thread*);
+  // Informs about status of meshing
+  void status_report(QString);
   
 protected:
   // Overload of QThread function
@@ -79,6 +88,8 @@ private:
   Mesh_function_interface* f_;
   Scene_c3t3_item* item_;
   double time_; // in seconds
+  QTimer* timer_;
+  double timer_period_;
 };
 
 #endif // CGAL_DEMO_MESH_3_MESHING_THREAD_H

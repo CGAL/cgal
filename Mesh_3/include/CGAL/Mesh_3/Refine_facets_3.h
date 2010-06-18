@@ -163,6 +163,10 @@ public:
     return "#facets to refine";
   }
 #endif
+  
+#ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
+  std::size_t queue_size() const { return this->size(); }
+#endif
 
 
 private:

@@ -38,6 +38,7 @@
 #include <CGAL/Timer.h>
 
 #include <boost/format.hpp>
+#include <string>
 
 namespace CGAL {
   
@@ -108,8 +109,21 @@ public:
   
   // Step-by-step methods
   void initialize();
+  void fix_c3t3();
   void one_step();
   bool is_algorithm_done();
+  
+#ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
+  struct Mesher_status
+  { 
+    std::size_t vertices, facet_queue, cells_queue;
+    
+    Mesher_status(std::size_t v, std::size_t f, std::size_t c)
+     : vertices(v), facet_queue(f), cells_queue(c) {}
+  };
+  
+  Mesher_status status() const;
+#endif
   
 private:
   /// Meshers
@@ -272,6 +286,18 @@ initialize()
 template<class C3T3, class MC, class MD>
 void
 Mesher_3<C3T3,MC,MD>::
+fix_c3t3()
+{
+  if ( ! facets_visitor_.is_active() )
+  {
+    cells_mesher_.scan_triangulation();    
+  }
+}
+
+
+template<class C3T3, class MC, class MD>
+void
+Mesher_3<C3T3,MC,MD>::
 one_step()
 {
   if ( ! facets_visitor_.is_active() )
@@ -298,6 +324,18 @@ is_algorithm_done()
   return cells_mesher_.is_algorithm_done();
 }
 
+
+#ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
+template<class C3T3, class MC, class MD>
+typename Mesher_3<C3T3,MC,MD>::Mesher_status
+Mesher_3<C3T3,MC,MD>::
+status() const
+{
+  return Mesher_status(r_c3t3_.triangulation().number_of_vertices(),
+                       facets_mesher_.queue_size(),
+                       cells_mesher_.queue_size());
+}  
+#endif
   
 }  // end namespace Mesh_3
   

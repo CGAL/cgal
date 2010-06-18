@@ -40,8 +40,6 @@ run()
   
   rc_ = f_->launch();
   time_ = double(timer.elapsed()) / 1000;
-
-  item_->c3t3_changed();
   
   emit done(this);
 }

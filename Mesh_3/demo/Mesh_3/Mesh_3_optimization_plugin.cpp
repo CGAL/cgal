@@ -414,6 +414,8 @@ treat_result(Scene_c3t3_item& source_item,
   result_item.setName(tr("%1 [%2]").arg(source_item.name())
                                    .arg(name));
   
+  result_item.c3t3_changed();
+  
   // If a new item has been created
   if ( &source_item != &result_item)
   {

@@ -23,6 +23,8 @@
 
 
 #include <QTime>
+#include <QApplication>
+
 #include "Meshing_thread.h"
 #include "Scene_c3t3_item.h"
 
@@ -32,8 +34,13 @@ Meshing_thread(Mesh_function_interface* f, Scene_c3t3_item* item)
   : f_(f)
   , item_(item)
   , time_(0)
+  , timer_(new QTimer(this))
+  , timer_period_(1)
 {
+  connect(timer_, SIGNAL(timeout()),
+          this,   SLOT(emit_status()));
   
+  timer_->start(timer_period_*1000);  
 }
 
 
@@ -41,6 +48,8 @@ Meshing_thread::
 ~Meshing_thread()
 {
   delete f_;
+  delete timer_;
+  QApplication::restoreOverrideCursor();
 }
 
 
@@ -54,8 +63,6 @@ run()
   f_->launch();
   time_ = double(timer.elapsed()) / 1000;
   
-  item_->c3t3_changed();
-  
   emit done(this);
 }
 
@@ -65,6 +72,17 @@ Meshing_thread::
 stop()
 {
   f_->stop();
+  
+  // Block application until thread is deleted
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+}
+
+
+void
+Meshing_thread::
+emit_status()
+{
+  emit (status_report(f_->status(timer_period_)));
 }
 
 
