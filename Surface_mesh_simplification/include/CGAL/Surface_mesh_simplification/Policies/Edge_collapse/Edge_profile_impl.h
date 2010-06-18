@@ -98,7 +98,7 @@ void Edge_profile<ECM>::Extract_borders( vertex_descriptor const& v
                                        )
 {
   in_edge_iterator eb, ee ; 
-  for ( tie(eb,ee) = in_edges(v,surface()) ; eb != ee ; ++ eb )
+  for ( boost::tie(eb,ee) = in_edges(v,surface()) ; eb != ee ; ++ eb )
   {
     edge_descriptor edge     = *eb ;
     edge_descriptor opp_edge = opposite_edge(edge,surface()) ;

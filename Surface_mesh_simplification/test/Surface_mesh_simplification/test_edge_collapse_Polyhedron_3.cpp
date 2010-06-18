@@ -136,7 +136,7 @@ public:
     Profile::Triangle_vector triangles ;
     
     out_edge_iterator eb, ee ; 
-    for ( tie(eb,ee) = boost::out_edges(mV,ecm()) ; eb != ee ; ++ eb )
+    for ( boost::tie(eb,ee) = boost::out_edges(mV,ecm()) ; eb != ee ; ++ eb )
     {
       edge_descriptor out_edge1 = *eb ;
       edge_descriptor out_edge2 = out_edge1->opposite()->next(); 

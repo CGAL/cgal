@@ -111,7 +111,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collect()
   CGAL_SURF_SIMPL_TEST_assertion_code ( size_type lNotInserted = 0 ) ;
 
   undirected_edge_iterator eb, ee ;
-  for ( tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb )
+  for ( boost::tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb )
   {
     edge_descriptor lEdge = *eb ;
   
@@ -215,7 +215,7 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::is_border( const_vertex_descriptor 
   bool rR = false ;
   
   const_in_edge_iterator eb, ee ; 
-  for ( tie(eb,ee) = in_edges(aV,mSurface) ; eb != ee ; ++ eb )
+  for ( boost::tie(eb,ee) = in_edges(aV,mSurface) ; eb != ee ; ++ eb )
   {
     const_edge_descriptor lEdge = *eb ;
     if ( is_undirected_edge_a_border(lEdge) )
@@ -268,7 +268,7 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_collapse_topologically_valid( Pr
   // The following loop checks the link condition for v0_v1.
   // Specifically, that for every vertex 'k' adjacent to both 'p and 'q', 'pkq' is a face of the mesh.
   // 
-  for ( tie(eb1,ee1) = out_edges(aProfile.v0(),mSurface) ; rR && eb1 != ee1 ; ++ eb1 )
+  for ( boost::tie(eb1,ee1) = out_edges(aProfile.v0(),mSurface) ; rR && eb1 != ee1 ; ++ eb1 )
   {
     edge_descriptor v0_k = *eb1 ;
     
@@ -276,7 +276,7 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_collapse_topologically_valid( Pr
     {
       vertex_descriptor k = target(v0_k,mSurface);
       
-      for ( tie(eb2,ee2) = out_edges(k,mSurface) ; rR && eb2 != ee2 ; ++ eb2 )
+      for ( boost::tie(eb2,ee2) = out_edges(k,mSurface) ; rR && eb2 != ee2 ; ++ eb2 )
       {
         edge_descriptor k_v1 = *eb2 ;
 
@@ -517,7 +517,7 @@ typename EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::edge_descriptor
 EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::find_connection ( const_vertex_descriptor const& v0, const_vertex_descriptor const& v1 ) const
 {
   out_edge_iterator eb, ee ; 
-  for ( tie(eb,ee) = out_edges(v0,mSurface) ; eb != ee ; ++ eb )
+  for ( boost::tie(eb,ee) = out_edges(v0,mSurface) ; eb != ee ; ++ eb )
   {
     edge_descriptor out = *eb ;
     if ( target(out,mSurface) == v1 )
@@ -729,7 +729,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile, 
                  
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
   out_edge_iterator eb1, ee1 ;     
-  for ( tie(eb1,ee1) = out_edges(rResult,mSurface) ; eb1 != ee1 ; ++ eb1 )  
+  for ( boost::tie(eb1,ee1) = out_edges(rResult,mSurface) ; eb1 != ee1 ; ++ eb1 )  
     CGAL_ECMS_TRACE(2, edge_to_string(*eb1) ) ;
 #endif
 
@@ -761,7 +761,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Update_neighbors( vertex_descriptor
   
   // (A.1) Loop around all vertices adjacent to the vertex kept
   in_edge_iterator eb1, ee1 ; 
-  for ( tie(eb1,ee1) = in_edges(aKeptV,mSurface) ; eb1 != ee1 ; ++ eb1 )
+  for ( boost::tie(eb1,ee1) = in_edges(aKeptV,mSurface) ; eb1 != ee1 ; ++ eb1 )
   {
     edge_descriptor lEdge1 = *eb1 ;
     
@@ -769,7 +769,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Update_neighbors( vertex_descriptor
     
     // (A.2) Loop around all edges incident on each adjacent vertex
     in_edge_iterator eb2, ee2 ; 
-    for ( tie(eb2,ee2) = in_edges(lAdj_k,mSurface) ; eb2 != ee2 ; ++ eb2 )
+    for ( boost::tie(eb2,ee2) = in_edges(lAdj_k,mSurface) ; eb2 != ee2 ; ++ eb2 )
     {
       edge_descriptor lEdge2 = primary_edge(*eb2) ;
       
