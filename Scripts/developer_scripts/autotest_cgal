@@ -217,7 +217,7 @@ download_latest()
 abort_if_latest_already_tested()
 {
   if [ -r "RELEASE_NR" ]; then
-    cmp LATEST RELEASE_NR > "${ACTUAL_LOGFILE}"
+    cmp LATEST RELEASE_NR >> "${ACTUAL_LOGFILE}"
     if [ ! ${?} != 0 ]; then
       log "${ACTUAL_LOGFILE}" "This release has already been tested."
       rm -f "$LOCK_FILE";
@@ -782,8 +782,6 @@ put_on_web()
 # START OF MAIN BODY
 # ----------------------------------------------------
 
-log "${ACTUAL_LOGFILE}" "${0}, version \""'$Id$'"\""
-
 # Parse command line arguments
 for arg in "$@"
 do
@@ -828,6 +826,8 @@ fi
 # Setup logfile
 ACTUAL_LOGFILE="${CGAL_ROOT}/`basename ${0}`.log"
 rm -f "${ACTUAL_LOGFILE}"
+
+echo "Running `basename ${0}`, revision "'$Revision$ ($Date$)' | tee "${ACTUAL_LOGFILE}" 
 
 # Sanity checks
 if [ "${REFERENCE_PLATFORMS_DIR}" = "must_be_set_in_.autocgalrc" ]; then
