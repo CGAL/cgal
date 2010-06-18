@@ -253,13 +253,14 @@ class Gmpfr:
         // on Windows, this compiler has sizeof(long double)==16, as
         // gcc/g++ on Linux, and the produces libmpfr-1.dll has a symbol
         // mpfr_set_ld which is binary incompatible with a call from MSVC.
-        // For those two reason, the constructor overload from 'long
-        // double' is removed on MSVC. As the conversion from long double
-        // to double is exact on MSVC, the removal of that constructor
-        // overload should not modify the semantic of a CGAL program, but
+        // For those two reason, the constructor from 'long
+        // double' calls 'mpfr_set_l' on MSVC, instead of 'mpfr_set_ld'.
+        // That should not modify the semantic of a CGAL program, but
         // only avoid the binary incompatibility of a CGAL program compiled
         // with MSVC with the libmpfr-1.dll compiled with mingw.
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+        _GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_l);
+#else
         _GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
 #endif
 
