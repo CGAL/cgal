@@ -3,6 +3,7 @@
 #include<iostream>
 #include<iomanip>
 #include<string>
+#include <fstream>
 
 #include<boost/shared_ptr.hpp>
 
