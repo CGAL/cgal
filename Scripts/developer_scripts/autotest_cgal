@@ -782,7 +782,7 @@ put_on_web()
 # START OF MAIN BODY
 # ----------------------------------------------------
 
-log "${ACTUAL_LOGFILE}" "${0}, version \"$Id$\""
+log "${ACTUAL_LOGFILE}" "${0}, version \""'$Id$'"\""
 
 # Parse command line arguments
 for arg in "$@"
