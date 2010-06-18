@@ -1412,7 +1412,7 @@ inline static void swallow(std::istream &is, char d) {
 template <class NT>
 Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
   char c;
-  int degr = -1, i;
+  int degr = -1, i=0;
 
   internal::swallow(is, 'P');
   internal::swallow(is, '[');
