@@ -21,26 +21,39 @@
 // File Description : 
 //******************************************************************************
 
+
 #include <QTime>
-#include "Optimizer_thread.h"
+#include "Meshing_thread.h"
 #include "Scene_c3t3_item.h"
 
-Optimizer_thread::~Optimizer_thread()
+
+Meshing_thread::
+Meshing_thread(Mesh_function_interface* f, Scene_c3t3_item* item)
+  : f_(f)
+  , item_(item)
+  , time_(0)
+{
+  
+}
+
+
+Meshing_thread::
+~Meshing_thread()
 {
   delete f_;
 }
 
 
 void
-Optimizer_thread::
+Meshing_thread::
 run()
 {
   QTime timer;
   timer.start();
   
-  rc_ = f_->launch();
+  f_->launch();
   time_ = double(timer.elapsed()) / 1000;
-
+  
   item_->c3t3_changed();
   
   emit done(this);
@@ -48,11 +61,11 @@ run()
 
 
 void
-Optimizer_thread::
+Meshing_thread::
 stop()
 {
   f_->stop();
 }
 
 
-#include "Optimizer_thread.moc"
+#include "Meshing_thread.moc"

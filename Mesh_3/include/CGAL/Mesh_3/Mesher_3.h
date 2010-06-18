@@ -106,6 +106,11 @@ public:
   /// Launch mesh refinement
   double refine_mesh();
   
+  // Step-by-step methods
+  void initialize();
+  void one_step();
+  bool is_algorithm_done();
+  
 private:
   /// Meshers
   Null_mesher_level null_mesher_;
@@ -253,7 +258,47 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   elapsed_time += timer.time();
   return elapsed_time;
 }
+
+
+template<class C3T3, class MC, class MD>
+void
+Mesher_3<C3T3,MC,MD>::
+initialize()
+{
+  facets_mesher_.scan_triangulation();
+}
+
+
+template<class C3T3, class MC, class MD>
+void
+Mesher_3<C3T3,MC,MD>::
+one_step()
+{
+  if ( ! facets_visitor_.is_active() )
+  {
+    facets_mesher_.one_step(facets_visitor_);
     
+    if ( facets_mesher_.is_algorithm_done() )
+    {
+      facets_visitor_.activate();
+      cells_mesher_.scan_triangulation();
+    }
+  }
+  else
+  {
+    cells_mesher_.one_step(cells_visitor_);    
+  }
+}
+  
+template<class C3T3, class MC, class MD>
+bool
+Mesher_3<C3T3,MC,MD>::
+is_algorithm_done()
+{
+  return cells_mesher_.is_algorithm_done();
+}
+
+  
 }  // end namespace Mesh_3
   
 }  // end namespace CGAL

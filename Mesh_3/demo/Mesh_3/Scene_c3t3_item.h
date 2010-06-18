@@ -23,6 +23,7 @@ class SCENE_C3T3_ITEM_EXPORT Scene_c3t3_item
 public:
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
 
+  Scene_c3t3_item();
   Scene_c3t3_item(const C3t3& c3t3);
   ~Scene_c3t3_item();
 
@@ -75,6 +76,9 @@ public:
   
   // rebuild histogram
   inline void update_histogram();
+  
+  // Call this if c3t3 has been modified
+  void c3t3_changed();
 
 public slots:
   inline void data_item_destroyed();

@@ -1,89 +1,34 @@
-//#define CGAL_MESH_3_VERBOSE
 #include "C3t3_type.h"
 #include "Scene_c3t3_item.h"
-#include <CGAL/Mesh_criteria_3.h>
+#include "Polyhedron_type.h"
+#include "Meshing_thread.h"
+#include "Mesh_function.h"
 
-#include <CGAL/Polyhedral_mesh_domain_3.h>
-#include <CGAL/make_mesh_3.h>
-
-#include <fstream>
-
-#include <CGAL/Timer.h>
+#include <CGAL/Bbox_3.h>
 
 
-// Mesh Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
-typedef Mesh_criteria::Facet_criteria Facet_criteria;
-typedef Mesh_criteria::Cell_criteria Cell_criteria;
-
-typedef Tr::Point Point_3;
-
-Scene_c3t3_item* cgal_code_mesh_3(const Polyhedron* pMesh,
-                                  const QString filename,
-                                  const double angle,
-                                  const double sizing,
-                                  const double approx,
-                                  const double tet_sizing,
-                                  const double tet_shape,
-                                  const bool lloyd,
-                                  const bool odt,
-                                  const bool perturb,
-                                  const bool exude)
+Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
+                                 const double facet_angle,
+                                 const double facet_sizing,
+                                 const double facet_approx,
+                                 const double tet_sizing,
+                                 const double tet_shape)
 {
-  if(!pMesh) return 0;
-
-  // remesh
-
-  typedef Tr::Geom_traits GT;
-
-  // Set mesh criteria
-  Facet_criteria facet_criteria(angle, sizing, approx); // angle, size, approximation
-  Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
-  Mesh_criteria criteria(facet_criteria, cell_criteria);
-
-  CGAL::Timer timer;
-  timer.start();
-  std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
-  std::cerr << "  angle: " << angle << std::endl
-            << "  facets size bound: " << sizing << std::endl
-            << "  approximation bound: " << approx << std::endl
-            << "  tetrahedra size bound: " << tet_sizing << std::endl
-            << "  tetrahedron radius-edge: " << tet_shape << std::endl;
-  std::cerr << "Build AABB tree...";
-  // Create domain
-  Mesh_domain domain(*pMesh);
-  std::cerr << "done (" << timer.time() << " s)" << std::endl;
-
-  // Meshing
-  timer.stop();timer.reset();timer.start();
-  std::cerr << "Mesh...";
+  typedef Mesh_function<Polyhedral_mesh_domain> Mesh_function;
   
-  namespace cgp = CGAL::parameters;
-  namespace cgpi = cgp::internal;
+  if( NULL == pMesh ) { return NULL; }
   
-  cgpi::Lloyd_options lloyd_obj = lloyd ? cgp::lloyd() : cgp::no_lloyd();
-  cgpi::Odt_options odt_obj = odt ? cgp::odt() : cgp::no_odt();
-  cgpi::Perturb_options perturb_obj = perturb ? cgp::perturb() : cgp::no_perturb();
-  cgpi::Exude_options exude_obj = exude ? cgp::exude() : cgp::no_exude();
+  Polyhedral_mesh_domain* p_domain = new Polyhedral_mesh_domain(*pMesh);
   
-  Scene_c3t3_item* new_item = new Scene_c3t3_item(
-    CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd_obj, odt_obj, perturb_obj, exude_obj));
+  Scene_c3t3_item* p_new_item = new Scene_c3t3_item();
   
-  std::cerr << "done (" << timer.time() << " s, "
-            << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;  
-
-  if(new_item->c3t3().triangulation().number_of_vertices() > 0)
-  {
-    std::ofstream medit_out("out.mesh");
-    new_item->c3t3().output_to_medit(medit_out);
-    const Scene_item::Bbox& bbox = new_item->bbox();
-    new_item->setPosition((bbox.xmin + bbox.xmax)/2.f,
-                          (bbox.ymin + bbox.ymax)/2.f,
-                          (bbox.zmin + bbox.zmax)/2.f);
-    return new_item;
-  }
-  else {
-    delete new_item;
-    return 0;
-  }
+  Mesh_parameters param;
+  param.facet_angle = facet_angle;
+  param.facet_sizing = facet_sizing;
+  param.facet_approx = facet_approx;
+  param.tet_sizing = tet_sizing;
+  param.tet_shape = tet_shape;
+  
+  Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(), p_domain, param);
+  return new Meshing_thread(p_mesh_function, p_new_item);
 }

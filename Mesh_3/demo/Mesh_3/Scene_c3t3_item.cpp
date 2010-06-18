@@ -67,30 +67,32 @@ double complex_diag(const Scene_item* item) {
 
 
 struct Scene_c3t3_item_priv {
+  Scene_c3t3_item_priv() : c3t3() {}
   Scene_c3t3_item_priv(const C3t3& c3t3_) : c3t3(c3t3_) {}
 
   C3t3 c3t3;
   QVector<QColor> colors;
 };
 
+
+Scene_c3t3_item::
+Scene_c3t3_item()
+  : d(new Scene_c3t3_item_priv())
+  , frame(new ManipulatedFrame())
+  , histogram_()
+  , data_item_(NULL)
+  , indices_()
+{
+  connect(frame, SIGNAL(modified()), this, SLOT(changed()));
+  c3t3_changed();
+}
+
 Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   : d(new Scene_c3t3_item_priv(c3t3)), frame(new ManipulatedFrame())
   , histogram_(), data_item_(NULL), indices_()
 {
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
-  
-  // Fill indices map and get max subdomain value
-  int max = 0;
-  for(C3t3::Cell_iterator cit = this->c3t3().cells_begin(), end = this->c3t3().cells_end();
-      cit != end; ++cit)
-  {
-    max = (std::max)(max, cit->subdomain_index());
-    indices_.insert(cit->subdomain_index());
-  }
-  
-  d->colors.resize(max+1);
-  
-  compute_color_map(QColor());
+  c3t3_changed();
 }
 
 Scene_c3t3_item::~Scene_c3t3_item()
@@ -445,6 +447,20 @@ Scene_c3t3_item::setColor(QColor c)
   compute_color_map(c);
 }
 
+void
+Scene_c3t3_item::c3t3_changed()
+{
+  // Fill indices map and get max subdomain value
+  int max = 0;
+  for(C3t3::Cell_iterator cit = this->c3t3().cells_begin(), end = this->c3t3().cells_end();
+      cit != end; ++cit)
+  {
+    max = (std::max)(max, cit->subdomain_index());
+    indices_.insert(cit->subdomain_index());
+  }
+
+  d->colors.resize(max+1);
+}
 
 void
 Scene_c3t3_item::compute_color_map(const QColor& c)

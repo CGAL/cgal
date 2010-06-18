@@ -81,6 +81,11 @@ namespace Mesh_3 {
         active_=true;
       }
       
+      bool is_active() const
+      {
+        return active_;
+      }
+      
     private:
       bool active_;
       

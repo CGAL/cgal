@@ -105,6 +105,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_automoc( Scene_c3t3_item.cpp )
   qt4_automoc( Scene_implicit_function_item.cpp )
   qt4_automoc( Optimizer_thread.cpp )
+  qt4_automoc( Meshing_thread.cpp )
 
   # put plugins (which are shared libraries) at the same location as
   # executable files
@@ -224,6 +225,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
                          Mesh_3_plugin_polyhedron_cgal_code.cpp
                          Mesh_3_plugin_image_cgal_code.cpp
                          Mesh_3_plugin_implicit_function_cgal_code.cpp
+                         Meshing_thread.cpp
                          Scene_c3t3_item.moc
                          ${meshingUI_FILES})
 
