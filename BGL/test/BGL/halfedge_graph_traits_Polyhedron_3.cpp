@@ -48,7 +48,7 @@ bool test_aux ( Graph& aG )
     
     // Check operations on vertices
     vertex_iterator vb,ve ;
-    for ( tie(vb,ve) = vertices(aG) ; vb != ve ; ++ vb )
+    for ( boost::tie(vb,ve) = vertices(aG) ; vb != ve ; ++ vb )
     {
       vertex_descriptor v = *vb ;
       
@@ -65,7 +65,7 @@ bool test_aux ( Graph& aG )
       size_t iec = 0, oec = 0 ;
       
       in_edge_iterator ieb,iee ;
-      for ( tie(ieb,iee) = in_edges(v,aG) ; ieb != iee ; ++ ieb )
+      for ( boost::tie(ieb,iee) = in_edges(v,aG) ; ieb != iee ; ++ ieb )
       {
         edge_descriptor ie = *ieb ;
       
@@ -85,7 +85,7 @@ bool test_aux ( Graph& aG )
       }
     
       out_edge_iterator oeb,oee ;
-      for ( tie(oeb,oee) = out_edges(v,aG) ; oeb != oee ; ++ oeb )
+      for ( boost::tie(oeb,oee) = out_edges(v,aG) ; oeb != oee ; ++ oeb )
       {
         edge_descriptor oe = *oeb ;
       
@@ -121,7 +121,7 @@ bool test_aux ( Graph& aG )
     // Check operations on halfedges
     size_t ec = 0 ;
     edge_iterator eb,ee ;
-    for ( tie(eb,ee) = edges(aG) ; eb != ee ; ++ eb )
+    for ( boost::tie(eb,ee) = edges(aG) ; eb != ee ; ++ eb )
     {
       edge_descriptor e    = *eb ;
       edge_descriptor oe   = opposite_edge(e,aG);
@@ -170,7 +170,7 @@ bool test_aux ( Graph& aG )
     
     size_t uec = 0 ;
     undirected_edge_iterator ueb,uee ;
-    for ( tie(ueb,uee) = undirected_edges(aG) ; ueb != uee ; ++ ueb )
+    for ( boost::tie(ueb,uee) = undirected_edges(aG) ; ueb != uee ; ++ ueb )
     {
       edge_descriptor ue = *ueb ;
       edge_descriptor oe = opposite_edge(ue,aG);
