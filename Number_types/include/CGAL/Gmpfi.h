@@ -83,6 +83,8 @@ public Algebraic_structure_traits_base<Gmpfi,Field_with_kth_root_tag>{
         struct Divides:
         public std::binary_function<Type,Type,Boolean>{
                 Boolean operator()(const Type &d,const Type &n)const{
+                        // Avoid compiler warning
+		        (void)n;
                         return !(d.is_zero());
                 };
                 Boolean operator()(const Type &d,const Type &n,Type &c)const{

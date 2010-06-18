@@ -593,6 +593,8 @@ public:
     
     template< class Input_iterator >
     Polynomial_d operator()( Input_iterator begin, Input_iterator end, bool is_sorted) const {
+      // Avoid compiler warning
+      (void)is_sorted;
       if(begin == end ) return Polynomial_d(0);
       Monom_rep monom_rep(begin,end);
       // if(!is_sorted) 
