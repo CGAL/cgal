@@ -76,10 +76,7 @@ The full template declaration is:
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccParameters)
 
-template$<$  \\
-class \ccc{ParameterizationMesh_3},   \\
-class \ccc{BorderParameterizer_3} = \ccc{Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>},   \\
-class \ccc{SparseLinearAlgebraTraits_d} = \ccc{OpenNL::DefaultLinearSolverTraits<typename ParameterizationMesh_3::NT>}$>$   \\
+template$<$class \ccc{ParameterizationMesh_3}, class \ccc{BorderParameterizer_3} = \ccc{Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>}, class \ccc{SparseLinearAlgebraTraits_d} = \ccc{OpenNL::DefaultLinearSolverTraits<typename ParameterizationMesh_3::NT>}$>$   \\
 class \ccc{Fixed_border_parameterizer_3};
 
 %END-AUTO(\ccParameters)
