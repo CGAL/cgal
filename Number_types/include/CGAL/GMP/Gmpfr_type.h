@@ -294,8 +294,25 @@ class Gmpfr:
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(unsigned,mpfr_set_ui);
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(unsigned long,mpfr_set_ui);
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(double,mpfr_set_d);
-        CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
 
+        // With the MSVC compiler, 'long double' and 'double' are two
+        // different types, but with the same size: sizeof(long double)==8.
+        // For that reason, the cast of a long double to a double is
+        // exact.
+        // What is more, if one compile the mpfr library with mingw(32|64),
+        // on Windows, this compiler has sizeof(long double)==16, as
+        // gcc/g++ on Linux, and the produces libmpfr-1.dll has a symbol
+        // mpfr_set_ld which is binary incompatible with a call from MSVC.
+        // For those two reason, the constructor from 'long
+        // double' calls 'mpfr_set_l' on MSVC, instead of 'mpfr_set_ld'.
+        // That should not modify the semantic of a CGAL program, but
+        // only avoid the binary incompatibility of a CGAL program compiled
+        // with MSVC with the libmpfr-1.dll compiled with mingw.
+#ifdef _MSC_VER
+        CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_d);
+#else
+        CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
+#endif
 #undef CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE
 
 #define CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT(_class,_member,_fun,_preccode) \
@@ -318,6 +335,7 @@ class Gmpfr:
         }
 
         CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpz,mpz(),mpfr_set_z,x.bit_size());
+        CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpq,mpq(),mpfr_set_q);
 
 #undef CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT
 

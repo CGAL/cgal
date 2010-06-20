@@ -49,7 +49,7 @@ ch__recursive_eddy(List& L,
   
   CGAL_ch_precondition( \
     std::find_if(a_it, b_it, \
-                 bind(left_turn, *b_it, *a_it, _1)) \
+                 boost::bind(left_turn, *b_it, *a_it, _1)) \
     != b_it );
 
 
@@ -57,11 +57,11 @@ ch__recursive_eddy(List& L,
   Less_dist less_dist = ch_traits.less_signed_distance_to_line_2_object();
   ListIterator 
       c_it = std::min_element( f_it, b_it,  // max before
-                               bind(less_dist, *a_it, *b_it, _1, _2));
+                               boost::bind(less_dist, *a_it, *b_it, _1, _2));
   Point_2 c = *c_it;
 
-  c_it = std::partition(f_it, b_it, bind(left_turn, c, *a_it, _1));
-  f_it = std::partition(c_it, b_it, bind(left_turn, *b_it, c, _1));
+  c_it = std::partition(f_it, b_it, boost::bind(left_turn, c, *a_it, _1));
+  f_it = std::partition(c_it, b_it, boost::bind(left_turn, *b_it, c, _1));
   c_it = L.insert(c_it, c);
   L.erase( f_it, b_it );
 
@@ -108,7 +108,7 @@ ch_eddy(InputIterator first, InputIterator last,
   L.erase(e);
   
   e = std::partition(L.begin(), L.end(), 
-                     bind(left_turn, ep, wp, _1) );
+                     boost::bind(left_turn, ep, wp, _1) );
   L.push_front(wp);
   e = L.insert(e, ep);
 
@@ -116,7 +116,7 @@ ch_eddy(InputIterator first, InputIterator last,
   {
       ch__recursive_eddy( L, L.begin(), e, ch_traits);
   }
-  w = std::find_if( e, L.end(), bind(left_turn, wp, ep, _1) );
+  w = std::find_if( e, L.end(), boost::bind(left_turn, wp, ep, _1) );
   if ( w == L.end() )
   {
       L.erase( ++e, L.end() );

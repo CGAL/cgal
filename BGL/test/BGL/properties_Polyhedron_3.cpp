@@ -49,7 +49,7 @@ bool test_aux ( Graph& aG )
     
     // Vertex propertiess
     vertex_iterator vb,ve ;
-    for ( tie(vb,ve) = vertices(aG) ; vb != ve ; ++ vb )
+    for ( boost::tie(vb,ve) = vertices(aG) ; vb != ve ; ++ vb )
     {
       vertex_descriptor v = *vb ;
 
@@ -78,7 +78,7 @@ bool test_aux ( Graph& aG )
 
     // Edge propertiess
     edge_iterator eb,ee ;
-    for ( tie(eb,ee) = edges(aG) ; eb != ee ; ++ eb )
+    for ( boost::tie(eb,ee) = edges(aG) ; eb != ee ; ++ eb )
     {
       edge_descriptor e    = *eb ;
       edge_descriptor oe   = opposite_edge(e,aG);

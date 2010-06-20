@@ -19,7 +19,7 @@ typedef CGAL::Polygon_2<K>            Polygon ;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes ;
 typedef CGAL::Straight_skeleton_2<K>  Ss ;
 
-typedef boost::shared_ptr<Polygon_with_holes> PolygonPtr ;
+typedef boost::shared_ptr<Polygon> PolygonPtr ;
 typedef boost::shared_ptr<Ss> SsPtr ;
 
 typedef std::vector<PolygonPtr> PolygonPtrVector ;
@@ -51,9 +51,9 @@ int main()
      
   double lOffset = 0.2 ;
      
-  PolygonPtrVector offset_polygons = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(lOffset,poly);
+  PolygonPtrVector offset_polygons = CGAL::create_interior_skeleton_and_offset_polygons_2(lOffset,poly);
   
-  print_polygons_with_holes(offset_polygons);
+  print_polygons(offset_polygons);
 
   return 0;
 }

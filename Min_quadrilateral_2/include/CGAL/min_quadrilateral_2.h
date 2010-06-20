@@ -331,10 +331,10 @@ namespace Optimisation {
     typedef boost::function2<bool,Direction_2,Direction_2>
       Less_angle_with_x_axis_2;
     Less_angle_with_x_axis_2 less_angle_with_x_axis_2_object() const {
-      using boost::bind;
-      return bind(std::equal_to<Comparison_result>(), 
-		  bind(compare_angle_with_x_axis_2_object(), _1, _2),
-		  SMALLER);
+      return boost::bind(std::equal_to<Comparison_result>(), 
+                         boost::bind(compare_angle_with_x_axis_2_object(),
+                                     _1, _2),
+                         SMALLER);
     }
 
   };
