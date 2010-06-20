@@ -259,7 +259,7 @@ class Gmpfr:
         // only avoid the binary incompatibility of a CGAL program compiled
         // with MSVC with the libmpfr-1.dll compiled with mingw.
 #ifdef _MSC_VER
-        _GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_l);
+        _GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_d);
 #else
         _GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
 #endif
