@@ -24,7 +24,7 @@
 
 Given a set of 3D points with oriented normals sampled on the boundary of a 3D solid, the Poisson Surface Reconstruction method \cite{Kazhdan06} solves for an approximate indicator function of the inferred solid, whose gradient best matches the input normals. The output scalar function, represented in an adaptive octree, is then iso-contoured using an adaptive marching cubes.
 
-\ccc{Poisson_reconstruction_function} implements a variant of this algorithm which solves for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree and uses the TAUCS sparse linear solver.
+\ccc{Poisson_reconstruction_function} implements a variant of this algorithm which solves for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree.
 
 %END-AUTO(\ccDefinition)
 
@@ -40,8 +40,7 @@ Given a set of 3D points with oriented normals sampled on the boundary of a 3D s
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccParameters)
 
-template$<$  \\
-class Gt$>$   \\
+template$<$class Gt$>$   \\
 class \ccc{Poisson_reconstruction_function};
 
 \ccCommentHeading{Parameters}  \\
@@ -132,10 +131,14 @@ Creates a Poisson implicit function from the [first, beyond) range of points.
 Returns a sphere bounding the inferred surface.
 }
 \ccGlue
-\ccMethod{bool compute_implicit_function();}
+\ccMethod{template<class SparseLinearAlgebraTraits_d> bool compute_implicit_function(SparseLinearAlgebraTraits_d solver = SparseLinearAlgebraTraits_d());}
 {
-The function \ccc{compute_implicit_function}() must be called after each insertion of oriented points. It computes the piecewise linear scalar function operator() by: applying Delaunay refinement, solving for operator() at each vertex of the triangulation with a sparse linear solver, and shifting and orienting operator() such that it is 0 at all input points and negative inside the inferred surface.  \\
-Returns false if the linear solver fails.
+The function \ccc{compute_implicit_function}() must be called after the insertion of oriented points. It computes the piecewise linear scalar function operator() by: applying Delaunay refinement, solving for operator() at each vertex of the triangulation with a sparse linear solver, and shifting and orienting operator() such that it is 0 at all input points and negative inside the inferred surface.
+\ccCommentHeading{Template parameters}  \\
+\ccc{SparseLinearAlgebraTraits_d}: Symmetric definite positive sparse linear solver. The default solver is TAUCS Multifrontal Supernodal Cholesky Factorization.
+\ccCommentHeading{Returns} false if the linear solver fails.
+\ccCommentHeading{Parameters}  \\
+\ccc{solver}: sparse linear solver.
 }
 \ccGlue
 \ccMethod{FT operator()(const Point& p) const;}

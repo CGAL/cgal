@@ -195,7 +195,7 @@ public:
   /// - solving for operator() at each vertex of the triangulation with a sparse linear solver,
   /// - and shifting and orienting operator() such that it is 0 at all input points and negative inside the inferred surface.
   ///
-  /// @heading Parameters:
+  /// @commentheading Template parameters:
   /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
   /// The default solver is TAUCS Multifrontal Supernodal Cholesky Factorization.
   ///
@@ -309,7 +309,7 @@ private:
   /// Poisson reconstruction.
   /// Returns false on error.
   ///
-  /// @heading Parameters:
+  /// @commentheading Template parameters:
   /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
   template <class SparseLinearAlgebraTraits_d>
   bool solve_poisson(
@@ -713,7 +713,7 @@ private:
 
   /// Assemble vi's row of the linear system A*X=B
   ///
-  /// @heading Parameters:
+  /// @commentheading Template parameters:
   /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
   template <class SparseLinearAlgebraTraits_d>
   void assemble_poisson_row(typename SparseLinearAlgebraTraits_d::Matrix& A,
