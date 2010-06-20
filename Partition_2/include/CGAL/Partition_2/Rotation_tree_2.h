@@ -57,7 +57,8 @@ public:
       for (ForwardIterator it = first; it != beyond; it++)
          push_back(*it);
    
-      std::sort(this->begin(), this->end(), bind(Traits().less_xy_2_object(), _2, _1));
+      std::sort(this->begin(), this->end(), 
+                boost::bind(Traits().less_xy_2_object(), _2, _1));
       std::unique(this->begin(), this->end());
    
       // front() is the point with the largest x coordinate
