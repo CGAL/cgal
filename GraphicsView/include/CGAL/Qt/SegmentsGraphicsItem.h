@@ -139,7 +139,7 @@ SegmentsGraphicsItem<P>::updateBoundingBox()
     return;
   }
   Bbox_2 bb = segments->begin()->bbox();
-  for(P::iterator it = segments->begin();
+  for(typename P::iterator it = segments->begin();
       it != segments->end();
       ++it){
     bb = bb + it->bbox();
