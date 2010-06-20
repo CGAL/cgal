@@ -6,7 +6,7 @@
 # Extract documentation from a doxygen-generated latex file
 # and insert it in a CGAL Reference Manual's latex file
 #
-# Laurent Saboret, INRIA, 2005-2008
+# Laurent Saboret, INRIA, 2005-2010
 
 ################################################################
 
@@ -249,11 +249,11 @@ sub doxygen_latex_to_latex
 
     # Use a canonic style to ease parsing
     $buf =~ s/ *, *([^\\])/, $1/g;              # Use a canonic style "item1, item2" for lists.
-    $buf =~ s/([\w\>]+) *& *([^\'])/$1& $2/g;   # Use a canonic style "type& variable" for references
+    $buf =~ s/([\w\>]+) *& *([^\'&])/$1& $2/g;  # Use a canonic style "type& variable" for references
                                                 # without modifying 'type&'.
     $buf =~ s/(\w)=/$1 =/g;                     # Use a canonic style "variable = default" for default. parameters
     $buf =~ s/=(\w)/= $1/g;                     #                    ""
-    $buf =~ s/<\s*(.*?)\s*>/<$1>/g;             # Use a canonic style "type<parameters>" for template. parameters
+    $buf =~ s/<\s*([^<]*?)\s*>/<$1>/g;          # Use a canonic style "type<parameters>" for template. parameters
     $buf =~ s/Constructor& Destructor/Constructor & Destructor/g;
     $buf =~ s/\\item\[(.*?): +\]/\\item\[$1:\]/g;
 
@@ -285,7 +285,7 @@ sub latex_mangle
     $buf =~ s/\\ccSubHeading\{/\\subsubsection\{/g;
 
     # Emphasize words surrounded by double quotes using \em, by stars using \bf [L. Saboret's extension].
-    $buf =~ s/"(.*?)"/\{\\em $1\}/g;
+    $buf =~ s/("|\'\'|``)(.*?)("|\'\'|``)/\{\\em $2\}/g;
     $buf =~ s/\*(\w*?)\*/\{\\bf $1\}/g;
 
     #
@@ -296,7 +296,8 @@ sub latex_mangle
     #
 
     # 1) Trust user: wrap words surrounded by simple quotes by \ccc{} [L. Saboret's extension].
-    # Note: we use a one-liner to not insert a \ccc{} call inside an another one.
+    # Note: we make sure to not insert a \ccc{} call inside an another one.
+    $buf =~ s/`(.*?)\'/\\ccc\{$1\}/g;
     $buf =~ s/\'(((::|\w)+(<.*?>)?)+&?\**)\'/\\ccc\{$1\}/g;
 
     # Add carriage returns around \ccc{} for the line by line substitution below.
@@ -321,7 +322,7 @@ sub latex_mangle
         {
             # Wrap C++ types, including template params, by \ccc{}.
             # Note: we use a one-liner to not insert a \ccc{} call inside an another one.
-            $line =~ s/((\w*(_|::)\w*(<.*?>)?)+)/\\ccc\{$1\}/g;
+            $line =~ s/((\w*(_|::)(template\s+)?\w*(<.*?>)?)+)/\\ccc\{$1\}/g;
 
             # Add carriage returns around \ccc{} for the line by line substitution below.
             # Note: make sure to insert only one \n before and after each \ccc{} call.
@@ -330,7 +331,7 @@ sub latex_mangle
         $buf = $buf . $line . "\n";             # concat lines back to $buf
     }
 
-    # 3) Try to be smart: concepts name by \ccc{}.
+    # 3) Try to be smart: wrap concepts name by \ccc{}.
     @lines = split(/\n/, $buf);
     $buf = "";
     foreach $line (@lines) {
@@ -534,11 +535,11 @@ sub format_comment_headings
 
     # Convert function parameters, enum values and return value descriptions to \ccCommentHeading to minimize length and indentation
     $buf =~ s/\\begin\{description\}\s*\\item\[(Returns):\]\s*(.*?)\s*\\end\{description\}/\\ccCommentHeading\{$1\} $2/smg;
-    $buf =~ s/\\begin\{description\}\s*\\item\[(Parameters|Template Parameters|Values)\n*:\]\s*(\\begin\{description\}.*?\\end\{description\})\s*\\end\{description\}/\\ccCommentHeading\{$1\}\n$2/smg;
+    $buf =~ s/\\begin\{description\}\s*\\item\[([^\]]*?)\n*:\]\s*(\\begin\{description\}.*?\\end\{description\})\s*\\end\{description\}/\\ccCommentHeading\{$1\}\n$2/smg;
 
     # Replace list items in bold (ie with square brackets around item) by italics (using \ccc macro).
-    $buf =~ s/\\item\[(.*?):\s*\]/\\item $1: /smg;         # regular list items (end by ':') => no italics
-    $buf =~ s/\\item\[(.*?)\s*\]/\\item \\ccc\{$1\}: /smg; # parameters => italics
+    $buf =~ s/\\item\[([^\]]*?):\s*\]/\\item $1: /smg;         # regular list items (end by ':') => no italics
+    $buf =~ s/\\item\[([^\]]*?)\s*\]/\\item \\ccc\{$1\}: /smg; # parameters => italics
 
     # Flatten lists to save space and workaround a cgal_manual bug which does not
     # print properly lists inside the second curly braces pair of \ccXXX expressions.
@@ -769,11 +770,11 @@ sub format_doxygen_class_doc
         my $full_template_declarations = $1;
 
         # Split template declaration(s) on several lines
-        $full_template_declarations =~ s/(template<|, |> )(class|struct|typename)/$1\n$2/g; # add \n before each param
-        $full_template_declarations =~ s/(class|struct) (\w+::)*\Q$className\E.*/$1 $className;/g;
-                                                # keep only class/struct/concept name on last line
-        $full_template_declarations =~ s/\n/  \\\\\n/smg;       # add \\ at the end of each line to force EOL
-        $full_template_declarations =~ s/^ *\\\\\n//smg;        #                ""
+        $full_template_declarations =~ s/>template/>\ntemplate/g; # add \n before nested templates
+        $full_template_declarations =~ s/(class|struct) (\w+(<.*?>)?::)*\Q$className\E.*/\n$1 $className;/g;
+                                                                  # keep only class/struct/concept name on last line
+        $full_template_declarations =~ s/\n/  \\\\\n/smg;         # add \\ at the end of each line to force EOL
+        $full_template_declarations =~ s/^ *\\\\\n//smg;          #                ""
 
         # Insert template params at the beginning of \ccParameters section
         $buf =~ s/\\ccParameters\n/\\ccParameters\n\n$full_template_declarations\n/;
