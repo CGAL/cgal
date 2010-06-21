@@ -83,6 +83,7 @@ public:
   typedef typename Dt::Finite_vertices_iterator Finite_vertices_iterator;
 
   typedef typename Dt::Locate_type Locate_type;
+  typedef typename Dt::size_type size_type;
 
   using Dt::finite_vertices_begin;
   using Dt::finite_vertices_end;
@@ -247,7 +248,7 @@ public:
 
       clear();
 
-      int n =  Dt::insert(first, last);
+      size_type n =  Dt::insert(first, last);
  
       if (dimension() == 2)
 	{   
