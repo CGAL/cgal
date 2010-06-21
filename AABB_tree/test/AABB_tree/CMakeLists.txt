@@ -7,9 +7,6 @@ project(AABB_tests)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 include_directories(../../include)
-  include_directories (BEFORE ../../../Number_types/include)
-  include_directories (BEFORE ../../../Triangulation_2/include)
-  include_directories (BEFORE ../../../Hash_map/include)
 
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
