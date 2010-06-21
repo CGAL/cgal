@@ -151,6 +151,7 @@ public:
   typedef typename Dt::Finite_edges_iterator    Finite_edges_iterator;
   typedef typename Dt::Finite_vertices_iterator Finite_vertices_iterator;
 
+  typedef typename Dt::size_type    size_type;
   typedef typename Dt::Locate_type  Locate_type;
   typedef typename Dt::Weighted_tag Weighted_tag;
 
@@ -290,11 +291,11 @@ public:
 
 
   template < class InputIterator >  
-  int make_alpha_shape(const InputIterator& first, 
-		       const InputIterator& last)
+  size_type make_alpha_shape(const InputIterator& first, 
+                             const InputIterator& last)
     {
       clear();
-      int n = Dt::insert(first, last);
+      size_type n = Dt::insert(first, last);
       if (dimension() == 3)	  initialize_alpha();
       return n;
     }
