@@ -358,10 +358,10 @@ Function VariantsPage
   ; These lines are TIGHTLY bound to the exact text in the Variants page
   ; (from variants.ini) and the section numbers of the GMP/MPFR and TAUCS components
   ;
-  ${MaybeSelectVariant} "VC8.0" "Multithread Debug"                 4 18
-  ${MaybeSelectVariant} "VC8.0" "Multithread"                       5 19
-  ${MaybeSelectVariant} "VC8.0" "Multithread, static runtime"       6 20
-  ${MaybeSelectVariant} "VC8.0" "Multithread Debug, static runtime" 7 21
+  ${MaybeSelectVariant} "VC10.0" "Multithread Debug"                 4 18
+  ${MaybeSelectVariant} "VC10.0" "Multithread"                       5 19
+  ${MaybeSelectVariant} "VC10.0" "Multithread, static runtime"       6 20
+  ${MaybeSelectVariant} "VC10.0" "Multithread Debug, static runtime" 7 21
   ${MaybeSelectVariant} "VC9.0" "Multithread Debug"                 10 24
   ${MaybeSelectVariant} "VC9.0" "Multithread"                       11 25
   ${MaybeSelectVariant} "VC9.0" "Multithread, static runtime"       12 26

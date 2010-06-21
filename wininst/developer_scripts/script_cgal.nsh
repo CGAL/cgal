@@ -33,18 +33,18 @@ Var IsTAUCSInstalled
 ; For each variant, the macro "Handler" is expanded with the variant name as argument
 !macro MultiVariantSection SecName Handler Platform Idx
   SectionGroup "${SecName}" ${Idx}
-    SectionGroup "VC8.0"
+    SectionGroup "VC10.0"
       Section /o "Multithread Debug"
-        !insertmacro "${Handler}" "${Platform}" "vc80-mt-gd"
+        !insertmacro "${Handler}" "${Platform}" "vc100-mt-gd"
       SectionEnd
       Section /o "Multithread"
-        !insertmacro "${Handler}" "${Platform}" "vc80-mt"
+        !insertmacro "${Handler}" "${Platform}" "vc100-mt"
       SectionEnd
       Section /o "Multithread, static runtime"
-        !insertmacro "${Handler}" "${Platform}" "vc80-mt-s"
+        !insertmacro "${Handler}" "${Platform}" "vc100-mt-s"
       SectionEnd
       Section /o "Multithread Debug, static runtime"
-        !insertmacro "${Handler}" "${Platform}" "vc80-mt-sgd"
+        !insertmacro "${Handler}" "${Platform}" "vc100-mt-sgd"
       SectionEnd
     SectionGroupEnd
     SectionGroup "VC9.0"
@@ -173,7 +173,7 @@ Var IsTAUCSInstalled
   Push $0
   Push $1
   
-  ${If} "${Compiler}" == "VC8.0"
+  ${If} "${Compiler}" == "VC10.0"
       !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 5" "State"
   ${Else}
       !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 6" "State"
