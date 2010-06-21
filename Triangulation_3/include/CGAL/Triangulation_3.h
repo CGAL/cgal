@@ -1396,7 +1396,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   CGAL_triangulation_assertion( i == n+1 );
   CGAL_triangulation_assertion( tr.is_infinite(TV[0]) );
 
-  std::map<Vertex_handle, int > V;
+  std::map<Vertex_handle, std::size_t > V;
 
   V[tr.infinite_vertex()] = 0;
   for (i=1; i <= n; i++) {

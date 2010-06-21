@@ -90,6 +90,7 @@ public:
 
   typedef typename Tr_Base::All_cells_iterator       All_cells_iterator;
 
+  typedef typename Tr_Base::size_type size_type;
   typedef typename Tr_Base::Locate_type Locate_type;
 
 
@@ -206,7 +207,6 @@ public:
   insert(InputIterator first, InputIterator last)
   {
     size_type n = number_of_vertices();
-
     std::vector<Point> points (first, last);
     spatial_sort (points.begin(), points.end(), geom_traits());
 

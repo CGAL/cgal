@@ -65,6 +65,7 @@ public:
   typedef typename Tr_Base::Facet               Facet;
   typedef typename Tr_Base::Edge                Edge;
 
+  typedef typename Tr_Base::size_type           size_type;
   typedef typename Tr_Base::Locate_type         Locate_type;
   typedef typename Tr_Base::Cell_iterator       Cell_iterator;
   typedef typename Tr_Base::Facet_iterator      Facet_iterator;

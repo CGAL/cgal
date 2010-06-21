@@ -316,7 +316,7 @@ public:
 			   int & m, std::map< int, Cell_handle > &C );
   // not documented
   void print_cells(std::ostream& os,
-                   const std::map<Vertex_handle, int> &V ) const;
+                   const std::map<Vertex_handle, std::size_t> &V ) const;
 
   // ACCESS FUNCTIONS
 
@@ -1864,7 +1864,7 @@ read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
 template < class Vb, class Cb>
 void
 Triangulation_data_structure_3<Vb,Cb>::
-print_cells(std::ostream& os, const std::map<Vertex_handle, int> &V ) const
+print_cells(std::ostream& os, const std::map<Vertex_handle, std::size_t> &V ) const
 {
   std::map<Cell_handle, int > C;
   int i = 0;
