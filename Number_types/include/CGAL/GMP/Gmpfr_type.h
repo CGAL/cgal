@@ -29,6 +29,16 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/ipower.h>
 
+#if MPFR_VERSION_MAJOR < 3
+        typedef mp_rnd_t mpfr_rnd_t;
+        typedef mp_prec_t mpfr_prec_t;
+        typedef mp_exp_t mpfr_exp_t;
+        #define MPFR_RNDN GMP_RNDN
+        #define MPFR_RNDZ GMP_RNDZ
+        #define MPFR_RNDU GMP_RNDU
+        #define MPFR_RNDD GMP_RNDD
+#endif
+
 namespace CGAL{
 
 class Gmpfr;
@@ -72,9 +82,13 @@ struct Gmpfr_rep{
 
 namespace internal{
         template <>
-        struct Minmax_traits<mp_rnd_t>{
-                static const mp_rnd_t min=GMP_RNDN;
-                static const mp_rnd_t max=GMP_RND_MAX;
+        struct Minmax_traits<mpfr_rnd_t>{
+                static const mpfr_rnd_t min=MPFR_RNDN;
+        #if MPFR_VERSION_MAJOR < 3
+                static const mpfr_rnd_t max=GMP_RND_MAX;
+        #else
+                static const mpfr_rnd_t max=MPFR_RNDF;
+        #endif
         };
 } // namespace internal
 
@@ -97,29 +111,29 @@ class Gmpfr:
 
         typedef Handle_for<Gmpfr_rep>   Base;
 
-        static Uncertain<mp_rnd_t> _gmp_rnd(std::float_round_style r){
+        static Uncertain<mpfr_rnd_t> _gmp_rnd(std::float_round_style r){
                 switch(r){
-                        case std::round_toward_infinity: return GMP_RNDU;
-                        case std::round_toward_neg_infinity: return GMP_RNDD;
-                        case std::round_toward_zero: return GMP_RNDZ;
-                        case std::round_to_nearest: return GMP_RNDN;
-                        default: return Uncertain<mp_rnd_t>::indeterminate();
+                        case std::round_toward_infinity: return MPFR_RNDU;
+                        case std::round_toward_neg_infinity: return MPFR_RNDD;
+                        case std::round_toward_zero: return MPFR_RNDZ;
+                        case std::round_to_nearest: return MPFR_RNDN;
+                        default: return Uncertain<mpfr_rnd_t>::indeterminate();
                 }
         };
 
-        static std::float_round_style _cgal_rnd(mp_rnd_t r){
+        static std::float_round_style _cgal_rnd(mpfr_rnd_t r){
                 switch(r){
-                        case GMP_RNDU: return std::round_toward_infinity;
-                        case GMP_RNDD: return std::round_toward_neg_infinity;
-                        case GMP_RNDZ: return std::round_toward_zero;
-                        case GMP_RNDN: return std::round_to_nearest;
+                        case MPFR_RNDU: return std::round_toward_infinity;
+                        case MPFR_RNDD: return std::round_toward_neg_infinity;
+                        case MPFR_RNDZ: return std::round_toward_zero;
+                        case MPFR_RNDN: return std::round_to_nearest;
                         default: return std::round_indeterminate;
                 }
         };
 
         public:
 
-        typedef mp_prec_t               Precision_type;
+        typedef mpfr_prec_t             Precision_type;
 
         // access
 
@@ -243,11 +257,11 @@ class Gmpfr:
                                    mpz_sizeinbase(f.man(),2)<MPFR_PREC_MIN?
                                    MPFR_PREC_MIN:
                                    mpz_sizeinbase(f.man(),2)));
-                mpfr_set_z(fr(),f.man(),GMP_RNDN);
+                mpfr_set_z(fr(),f.man(),MPFR_RNDN);
                 CGAL_assertion_msg(mpfr_cmp_z(fr(),f.man())==0,
                                    "inexact conversion of a Gmpzf mantissa");
                 CGAL_assertion_code(int inexact=)
-                mpfr_mul_2si(fr(),fr(),f.exp(),GMP_RNDN);
+                mpfr_mul_2si(fr(),fr(),f.exp(),MPFR_RNDN);
                 CGAL_assertion_msg(inexact==0,"inexact conversion from Gmpzf");
         }
 
@@ -332,7 +346,7 @@ class Gmpfr:
         Gmpfr(const _class &x){ \
                 Gmpfr::Precision_type p=(_preccode); \
                 mpfr_init2(fr(),MPFR_PREC_MIN<p?p:MPFR_PREC_MIN); \
-                _fun(fr(),x._member,GMP_RNDN); \
+                _fun(fr(),x._member,MPFR_RNDN); \
         }
 
         CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpz,
@@ -354,7 +368,7 @@ class Gmpfr:
 
         Gmpfr(const Gmpfr &a){
                 mpfr_init2(fr(),a.get_precision());
-                mpfr_set(fr(),a.fr(),GMP_RNDN);
+                mpfr_set(fr(),a.fr(),MPFR_RNDN);
         }
 #endif
 
@@ -595,7 +609,7 @@ Gmpfr Gmpfr::operator+()const{
 inline
 Gmpfr Gmpfr::operator-()const{
         Gmpfr result(0,get_precision());
-        mpfr_neg(result.fr(),fr(),GMP_RNDN);
+        mpfr_neg(result.fr(),fr(),MPFR_RNDN);
         return result;
 }
 
@@ -784,7 +798,7 @@ Gmpfr& Gmpfr::operator%=(const Gmpfr &b){
         mpfr_trunc(result.fr(),result.fr());
         result*=b;
         result-=*this;
-        mpfr_neg(result.fr(),result.fr(),GMP_RNDN);
+        mpfr_neg(result.fr(),result.fr(),MPFR_RNDN);
 #  ifdef CGAL_GMPFR_NO_REFCOUNT
         mpfr_swap(result.fr(),fr());
 #  else
@@ -937,8 +951,8 @@ double Gmpfr::to_double(std::float_round_style r)const{
 inline
 std::pair<double,double>Gmpfr::to_interval()const{
         return std::make_pair(
-                        mpfr_get_d(fr(),GMP_RNDD),
-                        mpfr_get_d(fr(),GMP_RNDU));
+                        mpfr_get_d(fr(),MPFR_RNDD),
+                        mpfr_get_d(fr(),MPFR_RNDU));
 }
 
 inline
@@ -951,8 +965,8 @@ std::pair<double,long> Gmpfr::to_double_exp(std::float_round_style r)const{
 inline
 std::pair<std::pair<double,double>,long> Gmpfr::to_interval_exp()const{
         long e1,e2;
-        double d_low=mpfr_get_d_2exp(&e1,fr(),GMP_RNDD);
-        double d_upp=mpfr_get_d_2exp(&e2,fr(),GMP_RNDU);
+        double d_low=mpfr_get_d_2exp(&e1,fr(),MPFR_RNDD);
+        double d_upp=mpfr_get_d_2exp(&e2,fr(),MPFR_RNDU);
         CGAL_assertion(e1==e2);
         return std::make_pair(std::make_pair(d_low,d_upp),e1);
 }
@@ -1075,7 +1089,7 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
         while((c=is.get())>='0'&&c<='9')
                 exp=10*exp+(c-'0');
         is.putback(c);
-        if(exp.bit_size()>8*sizeof(mp_exp_t))
+        if(exp.bit_size()>8*sizeof(mpfr_exp_t))
                 mpfr_set_erangeflag();
 
         // we have now both exponent and mantissa
@@ -1087,7 +1101,7 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
         mpfr_mul_2si(f.fr(),
                      f.fr(),
                      (neg_exp?-1:1)*mpz_get_ui(exp.mpz()),
-                     GMP_RNDN);
+                     MPFR_RNDN);
 
         // this expensive assertion checks that we didn't lose bits when
         // multiplying or dividing by 2^exp
@@ -1101,7 +1115,7 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                              neg_exp? \
                                 -mpz_get_ui(exp.mpz()): \
                                 mpz_get_ui(exp.mpz()), \
-                             GMP_RNDN);)
+                             MPFR_RNDN);)
         CGAL_expensive_assertion(g==mant);
 
         return is;
