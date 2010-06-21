@@ -22,8 +22,26 @@
 //******************************************************************************
 
 #include <QTime>
+#include <QTimer>
 #include "Optimizer_thread.h"
 #include "Scene_c3t3_item.h"
+
+
+Optimizer_thread::
+Optimizer_thread(Optimization_function_interface* f, Scene_c3t3_item* item)
+  : f_(f)
+  , item_(item)
+  , rc_()
+  , time_(0)
+  , timer_(new QTimer(this))
+  , timer_period_(1)
+{
+  connect(timer_, SIGNAL(timeout()),
+          this,   SLOT(emit_status()));
+  
+  timer_->start(timer_period_*1000);  
+}
+
 
 Optimizer_thread::~Optimizer_thread()
 {
@@ -50,6 +68,13 @@ Optimizer_thread::
 stop()
 {
   f_->stop();
+}
+
+void
+Optimizer_thread::
+emit_status()
+{
+  emit (status_report(f_->status(timer_period_)));
 }
 
 

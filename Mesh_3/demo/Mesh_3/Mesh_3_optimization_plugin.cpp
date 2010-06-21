@@ -63,6 +63,8 @@ class Mesh_3_optimization_plugin :
   Q_OBJECT
   Q_INTERFACES(Plugin_interface);
 public:
+  Mesh_3_optimization_plugin();
+  
   virtual void init(QMainWindow*, Scene_interface*, Messages_interface*);
   inline virtual QList<QAction*> actions() const;
   
@@ -73,6 +75,7 @@ public slots:
   void exude();
   
   void optimization_done(Optimizer_thread* t);
+  void status_report(QString s);
   
 private:
   Scene_c3t3_item* get_c3t3_item() const;
@@ -93,6 +96,18 @@ private:
   Scene_c3t3_item* source_item_;
 }; // end class Mesh_3_optimization_plugin
 
+
+Mesh_3_optimization_plugin::
+Mesh_3_optimization_plugin()
+  : actionOdt(NULL)
+  , actionLloyd(NULL)
+  , actionPerturb(NULL)
+  , actionExude(NULL)
+  , msg(NULL)
+  , message_box_(NULL)
+  , source_item_(NULL)
+{
+}
 
 void 
 Mesh_3_optimization_plugin::
@@ -508,7 +523,20 @@ launch_thread(Optimizer_thread* opt_thread, const QString& window_text)
   QObject::connect(opt_thread, SIGNAL(done(Optimizer_thread*)),
                    this,       SLOT(optimization_done(Optimizer_thread*)));
   
+  QObject::connect(opt_thread, SIGNAL(status_report(QString)),
+                   this,       SLOT(status_report(QString)));
+  
   opt_thread->start();
+}
+
+
+void
+Mesh_3_optimization_plugin::
+status_report(QString str)
+{
+  if ( NULL == message_box_ ) { return; }
+  
+  message_box_->setInformativeText(str);
 }
 
 

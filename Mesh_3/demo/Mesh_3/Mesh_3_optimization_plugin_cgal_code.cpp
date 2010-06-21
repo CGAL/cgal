@@ -11,8 +11,19 @@
 #include <CGAL/Bbox_3.h>
 
 #include <fstream>
+#include <cstddef>
 
 namespace cgp = CGAL::parameters;
+
+
+// -----------------------------------
+// Helper function
+// -----------------------------------
+QString translate_bool(const bool b)
+{
+  return b ? QString("done") 
+           : QString("in progress");
+}
 
 
 // -----------------------------------
@@ -156,6 +167,89 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
 
 
 // -----------------------------------
+// Global optimization
+// -----------------------------------
+struct Global_optimization_status
+{
+  bool compute_moves_done;
+  bool move_points_done;
+  bool rebuild_restricted_delaunay_done;
+  int iteration_done;
+  
+  Global_optimization_status()
+    : compute_moves_done(false)
+    , move_points_done(false)
+    , rebuild_restricted_delaunay_done(false)
+    , iteration_done(-1) {}
+};
+
+struct Global_visitor
+{
+  Global_visitor(Global_optimization_status* status) : p_status_(status) {}
+  Global_visitor(const Global_visitor& rhs) : p_status_(rhs.p_status_) {}
+  
+  void after_compute_moves() { p_status_->compute_moves_done = true; }
+  void after_move_points() { p_status_->move_points_done = true; }
+  void after_rebuild_restricted_delaunay() { p_status_->rebuild_restricted_delaunay_done = true; }
+  
+  void end_of_iteration(int iteration_number)
+  {
+    p_status_->iteration_done = iteration_number;
+    p_status_->compute_moves_done = false;
+    p_status_->move_points_done = false;
+    p_status_->rebuild_restricted_delaunay_done = false;
+  }
+  
+private:
+  Global_optimization_status* p_status_;
+};
+
+
+template <typename Domain>
+class Global_optimization_function
+  : public Optimization_function_base< Domain >
+{
+  typedef Global_visitor                       Visitor;
+  typedef Optimization_function_base< Domain > Base;  
+  
+public:
+  /// Constructor
+  Global_optimization_function(C3t3& c3t3, Domain* d)
+    : Base(c3t3,d)
+    , status_() {}
+  
+  /// Destructor
+  virtual ~Global_optimization_function() {}
+
+  // Logs
+  virtual QString status(double time_period) const
+  {
+    QString res = QString("Iteration %1<br /><br />"
+                          "Compute moves: %2<br />")
+    .arg(status_.iteration_done + 2)
+    .arg(translate_bool(status_.compute_moves_done));
+    
+    if ( status_.compute_moves_done )
+    {
+      res += QString("Move points: %1<br />")
+      .arg(translate_bool(status_.move_points_done));
+    }
+    
+    if ( status_.move_points_done )
+    {
+      res += QString("Rebuild restricted Delaunay: %1")
+      .arg(translate_bool(status_.rebuild_restricted_delaunay_done));
+    }
+    
+    return res;
+  }
+  
+protected:
+  Global_optimization_status status_;
+};
+
+
+// -----------------------------------
 // Odt
 // -----------------------------------
 struct Odt_parameters
@@ -183,7 +277,7 @@ struct Odt_parameters
  */
 template <typename Domain>
 class Optimization_function < Domain, Odt_parameters >
-  : public Optimization_function_base< Domain >
+  : public Global_optimization_function< Domain >
 {
   // Private types
   typedef C3t3::Triangulation  Tr;
@@ -191,10 +285,11 @@ class Optimization_function < Domain, Odt_parameters >
   
   typedef CGAL::Mesh_3::Mesh_sizing_field<Tr>    Sizing;
   typedef CGAL::Mesh_3::Odt_move<C3t3,Sizing>    Move;
+  typedef Global_visitor                         Visitor;
   
-  typedef typename CGAL::Mesh_3::Mesh_global_optimizer<C3t3,Domain,Move> Odt_optimizer;
+  typedef typename CGAL::Mesh_3::Mesh_global_optimizer<C3t3,Domain,Move,Visitor> Odt_optimizer;
 
-  typedef Optimization_function_base< Domain > Base;  
+  typedef Global_optimization_function< Domain > Base;  
 
 public:
   /// Constructor
@@ -233,7 +328,7 @@ protected:
                                                        : p_.max_iteration_nb;
       
     // Launch optimization
-    return (*odt_)(max_iteration_nb);
+    return (*odt_)(max_iteration_nb, Visitor(&(this->status_)));
   }
   
 private:
@@ -292,7 +387,7 @@ struct Lloyd_parameters
  */
 template <typename Domain>
 class Optimization_function < Domain, Lloyd_parameters >
-  : public Optimization_function_base< Domain >
+  : public Global_optimization_function< Domain >
 {
   // Private types
   typedef C3t3::Triangulation  Tr;
@@ -300,10 +395,11 @@ class Optimization_function < Domain, Lloyd_parameters >
   
   typedef CGAL::Mesh_3::Mesh_sizing_field<Tr>    Sizing;
   typedef CGAL::Mesh_3::Lloyd_move<C3t3,Sizing>  Move;
+  typedef Global_visitor                         Visitor;
   
-  typedef typename CGAL::Mesh_3::Mesh_global_optimizer<C3t3,Domain,Move> Lloyd_optimizer;
+  typedef typename CGAL::Mesh_3::Mesh_global_optimizer<C3t3,Domain,Move,Visitor> Lloyd_optimizer;
   
-  typedef Optimization_function_base< Domain > Base;
+  typedef Global_optimization_function< Domain > Base;
   
 public:
   /// Constructor
@@ -342,7 +438,7 @@ protected:
                                                         : p_.max_iteration_nb;
     
     // Launch optimization
-    return (*lloyd_)(max_iteration_nb);
+    return (*lloyd_)(max_iteration_nb, Visitor(&(this->status_)));
   }
   
 private:
@@ -390,6 +486,27 @@ struct Perturb_parameters
 };
 
 
+struct Perturb_status
+{
+  double bound_reached;
+  double vertices_left;
+
+  Perturb_status() : bound_reached(0), vertices_left(0) {}
+};
+
+struct Perturb_visitor
+{
+  Perturb_visitor(Perturb_status* status) : p_status_(status) {}
+  Perturb_visitor(const Perturb_visitor& rhs) : p_status_(rhs.p_status_) {}
+  
+  void bound_reached(const double bound) { p_status_->bound_reached = bound; }
+  void end_of_perturbation_iteration(std::size_t v) { p_status_->vertices_left = v;}
+  
+private:
+  Perturb_status* p_status_;
+};
+
+
 /**
  * @class Perturb_function
  * Partial specialization of class Optimization_function for perturbation
@@ -400,10 +517,11 @@ class Optimization_function < Domain, Perturb_parameters >
   : public Optimization_function_base< Domain >
 {
   // Private types
-  typedef C3t3::Triangulation::Geom_traits                    Gt;
-  typedef CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt>      Sc;
+  typedef C3t3::Triangulation::Geom_traits                        Gt;
+  typedef CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt>          Sc;
+  typedef Perturb_visitor                                         Visitor;
   
-  typedef CGAL::Mesh_3::Sliver_perturber<C3t3,Domain,Sc>      Perturber;
+  typedef CGAL::Mesh_3::Sliver_perturber<C3t3,Domain,Sc,Visitor>  Perturber;
   
   typedef Optimization_function_base< Domain > Base;
   
@@ -423,6 +541,13 @@ public:
   /// Log strings
   virtual QString name() const { return QString("Perturb"); }
   virtual QStringList parameters_log() const { return p_.log(); }
+  virtual QString status(double time_period) const
+  {
+    return QString("Dihedral angle reached: %1<br /><br />"
+                   "Vertices left in queue (to reach next bound): %2")
+    .arg(status_.bound_reached)
+    .arg(status_.vertices_left);
+  }
   
 protected:
   /// Launch sliver perturbation
@@ -450,14 +575,17 @@ protected:
     // Set max time
     perturb_->set_time_limit(p_.time_limit);
     
+    // Set sliver bound (0 means no sliver bound)
+    if ( 0 == p_.sliver_bound ) { p_.sliver_bound = Sc::max_value; }
+    
     // Launch perturber
-    if ( p_.sliver_bound != 0 ) { return (*perturb_)(p_.sliver_bound); }
-    else                       { return (*perturb_)(); }
+    return (*perturb_)(p_.sliver_bound, 1, Visitor(&status_));
   }
 
 private:
   Perturber* perturb_;
   Perturb_parameters p_;
+  Perturb_status status_;
 };
 
 
@@ -495,6 +623,26 @@ struct Exude_parameters
 };
 
 
+struct Exude_status
+{
+  double cells_left_in_queue;
+  double vertices_pumped;
+  
+  Exude_status() : cells_left_in_queue(0), vertices_pumped(0) {}
+};
+
+struct Exude_visitor
+{
+  Exude_visitor(Exude_status* status) : p_status_(status) {}
+  Exude_visitor(const Exude_visitor& rhs) : p_status_(rhs.p_status_) {}
+  
+  void after_cell_pumped(std::size_t n) { p_status_->cells_left_in_queue = n; }
+  
+private:
+  Exude_status* p_status_;
+};
+
+
 /**
  * @class Exude_function
  * Partial specialization of class Optimization_function for exudation
@@ -507,7 +655,8 @@ class Optimization_function < Domain, Exude_parameters >
   // Private types
   typedef C3t3::Triangulation::Geom_traits                  Gt;
   typedef CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt>    Sc;
-  typedef CGAL::Mesh_3::Slivers_exuder<C3t3, Sc>            Exuder;
+  typedef Exude_visitor                                     Visitor;
+  typedef CGAL::Mesh_3::Slivers_exuder<C3t3,Sc,Visitor>     Exuder;
   
   typedef Optimization_function_base< Domain > Base;
   
@@ -527,6 +676,13 @@ public:
   // Log strings
   virtual QString name() const { return QString("Exude"); }
   virtual QStringList parameters_log() const { return p_.log(); }
+  virtual QString status(double time_period) const
+  {
+    return QString("Cells left in queue: %1<br />")
+                   //"Vertices pumped: %2")
+      .arg(status_.cells_left_in_queue);
+      //.arg(status_.vertices_pumped);
+  }
   
 protected:
   /// Launch sliver exudation
@@ -544,12 +700,13 @@ protected:
     exude_->set_time_limit(p_.time_limit);
     
     // Launch exudation
-    return (*exude_)(p_.sliver_bound);
+    return (*exude_)(p_.sliver_bound, Visitor(&status_));
   }
   
 private:
   Exuder* exude_;
   Exude_parameters p_;
+  Exude_status status_;
 };
 
 

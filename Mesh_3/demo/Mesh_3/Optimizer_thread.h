@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QTimer>
 
 #include <CGAL/Mesh_optimization_return_code.h>
 
@@ -47,6 +48,7 @@ public:
   // Logs
   virtual QString name() const = 0;
   virtual QStringList parameters_log() const = 0;
+  virtual QString status(double time_period) const = 0;
 };
 
 
@@ -54,9 +56,7 @@ class Optimizer_thread : public QThread
 {
   Q_OBJECT
 public:
-  Optimizer_thread(Optimization_function_interface* f, Scene_c3t3_item* item)
-    : f_(f), item_(item), rc_(), time_(0) {}
-  
+  Optimizer_thread(Optimization_function_interface* f, Scene_c3t3_item* item);
   virtual ~Optimizer_thread();
   
   // Scene item
@@ -74,9 +74,15 @@ public slots:
   // Stop
   void stop();
   
+private slots:
+  // emit signal status report
+  void emit_status();
+  
 signals:
   // Emitted at the end of the process
   void done(Optimizer_thread*);
+  // Informs about status of the process
+  void status_report(QString);
   
 protected:
   // Overload of QThread function
@@ -87,6 +93,8 @@ private:
   Scene_c3t3_item* item_;
   CGAL::Mesh_optimization_return_code rc_;
   double time_; // in seconds
+  QTimer* timer_;
+  double timer_period_;
 };
 
 #endif // DEMO_MESH_3_OPTIMIZER_THREAD_H
