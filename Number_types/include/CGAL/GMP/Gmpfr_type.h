@@ -239,9 +239,10 @@ class Gmpfr:
 
         Gmpfr(Gmpzf f){
                 mpfr_init2(fr(),
-                           mpz_sizeinbase(f.man(),2)<MPFR_PREC_MIN?
-                           MPFR_PREC_MIN:
-                           mpz_sizeinbase(f.man(),2));
+                           static_cast<Gmpfr::Precision_type>(
+                                   mpz_sizeinbase(f.man(),2)<MPFR_PREC_MIN?
+                                   MPFR_PREC_MIN:
+                                   mpz_sizeinbase(f.man(),2)));
                 mpfr_set_z(fr(),f.man(),GMP_RNDN);
                 CGAL_assertion_msg(mpfr_cmp_z(fr(),f.man())==0,
                                    "inexact conversion of a Gmpzf mantissa");
@@ -334,8 +335,11 @@ class Gmpfr:
                 _fun(fr(),x._member,GMP_RNDN); \
         }
 
-        CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpz,mpz(),mpfr_set_z,x.bit_size());
-        CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpq,mpq(),mpfr_set_q);
+        CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT(Gmpz,
+                                           mpz(),
+                                           mpfr_set_z,
+                                           static_cast<Gmpfr::Precision_type>(
+                                                x.bit_size()));
 
 #undef CGAL_GMPFR_CONSTRUCTOR_FROM_OBJECT
 
@@ -525,7 +529,7 @@ Gmpfr::set_default_rndmode(std::float_round_style rnd_mode){
 // default precision, handled by mpfr
 inline
 Gmpfr::Precision_type Gmpfr::get_default_precision(){
-        return mpfr_get_default_prec();
+        return static_cast<Gmpfr::Precision_type>(mpfr_get_default_prec());
 }
 
 inline
@@ -1076,9 +1080,10 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
 
         // we have now both exponent and mantissa
         f=Gmpfr(mant,
-                mant.bit_size()>MPFR_PREC_MIN?
-                mant.bit_size():
-                MPFR_PREC_MIN);
+                static_cast<Gmpfr::Precision_type>(
+                        mant.bit_size()>MPFR_PREC_MIN?
+                        mant.bit_size():
+                        MPFR_PREC_MIN));
         mpfr_mul_2si(f.fr(),
                      f.fr(),
                      (neg_exp?-1:1)*mpz_get_ui(exp.mpz()),
