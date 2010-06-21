@@ -49,6 +49,7 @@ public:
 
   
   typedef Triangulation_2<Gt,Tds>                       Triangulation;
+  typedef typename Triangulation::size_type             size_type;
   typedef typename Triangulation::Locate_type           Locate_type;
   typedef typename Triangulation::Face_handle           Face_handle;
   typedef typename Triangulation::Vertex_handle         Vertex_handle;
@@ -270,10 +271,10 @@ public:
     }
 
   template < class InputIterator >
-  int
+  size_type
   insert(InputIterator first, InputIterator last)
     {
-      int n = this->number_of_vertices();
+      size_type n = this->number_of_vertices();
 
       std::vector<Point> points (first, last);
       spatial_sort (points.begin(), points.end(), geom_traits());
@@ -2268,7 +2269,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
     return v;
   }
 
-  int n_vertices = this->tds().number_of_vertices();
+  size_type n_vertices = this->tds().number_of_vertices();
 
   if((lt == Triangulation::OUTSIDE_AFFINE_HULL) && 
      (dim == 1) && (n_vertices == 3)) {
@@ -2342,19 +2343,19 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
   // fixing pointer
   Face_circulator fc = this->incident_faces(inserted), done(fc);
   std::vector<Face_handle> faces_pt;
-	faces_pt.reserve(16);
+  faces_pt.reserve(16);
   do { faces_pt.push_back(fc); } while(++fc != done);
-	int ss = faces_pt.size();
-	for(int k=0; k<ss; k++)
-	{
-		Face_handle f = faces_pt[k];
-    int i = f->index(inserted);
-    f->set_vertex(i, v);
-	}
-	
-	v->set_point(p);
-	v->set_face(inserted->face());
-	
+  std::size_t ss = faces_pt.size();
+  for(std::size_t k=0; k<ss; k++)
+    {
+      Face_handle f = faces_pt[k];
+      int i = f->index(inserted);
+      f->set_vertex(i, v);
+    }
+  
+  v->set_point(p);
+  v->set_face(inserted->face());
+  
   this->delete_vertex(inserted);
 
   return v;
@@ -2472,7 +2473,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
     return v;
   }
 
-  int n_vertices = this->tds().number_of_vertices();
+  size_type n_vertices = this->tds().number_of_vertices();
 
   if((lt == Triangulation::OUTSIDE_AFFINE_HULL) && 
      (dim == 1) && (n_vertices == 3)) {

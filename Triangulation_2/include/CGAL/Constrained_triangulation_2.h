@@ -54,6 +54,7 @@ public:
   typedef typename Triangulation::Vertex Vertex;
   typedef typename Triangulation::Vertex_handle Vertex_handle;
   typedef typename Triangulation::Face_handle Face_handle;
+  typedef typename Triangulation::size_type size_type;
   typedef typename Triangulation::Locate_type Locate_type;
   typedef typename Triangulation::All_faces_iterator All_faces_iterator;
   typedef typename Triangulation::Face_circulator Face_circulator;
@@ -254,12 +255,12 @@ public:
   // the int parameter is a work around for VC7 to compile
   template < class InputIterator >
 #if defined(_MSC_VER)
-   int insert(InputIterator first, InputIterator last, int i = 0)
+   size_type insert(InputIterator first, InputIterator last, int i = 0)
 #else
-   int insert(InputIterator first, InputIterator last) 
+   size_type insert(InputIterator first, InputIterator last) 
 #endif
     {
-      int n = number_of_vertices(); 
+      size_type n = number_of_vertices(); 
 
       std::vector<Point> points (first, last);
       CGAL::spatial_sort (points.begin(), points.end(), geom_traits());

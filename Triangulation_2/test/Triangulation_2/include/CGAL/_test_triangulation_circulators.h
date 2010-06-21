@@ -117,9 +117,9 @@ _test_circulators( const Tr &T )
   }
   
   //Check Total 
-  int mf = T.number_of_faces() + nch;
-  int mv = T.number_of_vertices() +1;
-  int me ;
+  Tr::size_type mf = T.number_of_faces() + nch;
+  Tr::size_type mv = T.number_of_vertices() +1;
+  Tr::size_type me ;
   if (T.dimension() <= 0) me=0;
   else me = T.dimension() == 1 ? mv : 3*mv-6 ;
     

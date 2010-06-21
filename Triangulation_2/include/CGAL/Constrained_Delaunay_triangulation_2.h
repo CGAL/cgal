@@ -46,6 +46,7 @@ public:
   typedef typename Ctr::Edge          Edge;
   typedef typename Ctr::Finite_faces_iterator Finite_faces_iterator;
   typedef typename Ctr::Face_circulator       Face_circulator;
+  typedef typename Ctr::size_type             size_type;
   typedef typename Ctr::Locate_type           Locate_type;
  
   typedef typename Ctr::List_edges List_edges;  
@@ -152,7 +153,7 @@ public:
 		       Face_handle loc, int li );
   Vertex_handle push_back(const Point& a);
 //   template < class InputIterator >
-//   int insert(InputIterator first, InputIterator last);
+//   size_type insert(InputIterator first, InputIterator last);
 
   void remove(Vertex_handle v);
   void remove_incident_constraints(Vertex_handle v);
@@ -190,12 +191,12 @@ public:
 public:
   template < class InputIterator >
 #if defined(_MSC_VER)
-   int insert(InputIterator first, InputIterator last, int i = 0)
+   size_type insert(InputIterator first, InputIterator last, int i = 0)
 #else
-   int insert(InputIterator first, InputIterator last) 
+   size_type insert(InputIterator first, InputIterator last) 
 #endif
     {
-      int n = number_of_vertices();
+      size_type n = number_of_vertices();
 
       std::vector<Point> points (first, last);
       spatial_sort (points.begin(), points.end(), geom_traits());

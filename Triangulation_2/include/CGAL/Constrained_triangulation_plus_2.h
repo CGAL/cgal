@@ -135,7 +135,7 @@ public:
 
   void insert_constraint(Vertex_handle va, Vertex_handle vb);
 //   template < class InputIterator >
-//   int insert(InputIterator first, InputIterator last);
+//   size_type insert(InputIterator first, InputIterator last);
   Vertex_handle push_back(const Point& a);
   void          push_back(const Constraint& c);
   
@@ -205,12 +205,12 @@ public:
 public:
   template < class InputIterator >
 #if defined(_MSC_VER)
-    int insert(InputIterator first, InputIterator last, int i = 0)
+    size_type insert(InputIterator first, InputIterator last, int i = 0)
 #else
-    int insert(InputIterator first, InputIterator last) 
+    size_type insert(InputIterator first, InputIterator last) 
 #endif
   {
-    int n = number_of_vertices();
+    size_type n = number_of_vertices();
 
     std::vector<Point> points (first, last);
 

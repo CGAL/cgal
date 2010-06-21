@@ -66,7 +66,7 @@ public:
     H_vertex_it    vertices_begin() { return enclosing->begin();}
     H_vertex_it    current() {return pos;}
     H_vertex_it    vertices_end() {return enclosing->end();}
-    int number_of_vertices() {return enclosing->size();}
+    std::size_t number_of_vertices() {return enclosing->size();}
   };                                           
   typedef std::list<H_context>                 H_context_list;
   typedef typename std::list<H_context>::iterator       H_context_iterator;
@@ -114,11 +114,11 @@ public:
   void oriented_end(T va, T vb, T& vc) const;
 
   H_context context(T va, T vb);
-  int number_of_enclosing_constraints(T va, T vb);
+  std::size_t number_of_enclosing_constraints(T va, T vb);
   H_context_iterator contexts_begin(T va, T vb);
   H_context_iterator contexts_end(T va, T vb);
-  int number_of_constraints() { return c_to_sc_map.size();}
-  int number_of_subconstraints() {return sc_to_c_map.size();}
+  std::size_t number_of_constraints() { return c_to_sc_map.size();}
+  std::size_t number_of_subconstraints() {return sc_to_c_map.size();}
   
 
   // insert/remove
@@ -338,7 +338,7 @@ context(T va, T vb)
 }
 
 template <class T, class Data>
-int 
+std::size_t 
 Constraint_hierarchy_2<T,Data>::
 number_of_enclosing_constraints(T va, T vb)
 {

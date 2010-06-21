@@ -274,7 +274,7 @@ public:
 		       Locate_type lt,
 		       Face_handle loc, int li );
 //   template < class InputIterator >
-//   int insert(InputIterator first, InputIterator last);
+//   size_type insert(InputIterator first, InputIterator last);
   Vertex_handle push_back(const Point& a);
  
   void remove_degree_3(Vertex_handle  v, Face_handle f = Face_handle());
@@ -492,9 +492,9 @@ Stream&  draw_triangulation(Stream& os) const
 }
 
 template < class InputIterator >
-int insert(InputIterator first, InputIterator last)
+size_type insert(InputIterator first, InputIterator last)
 {
-  int n = number_of_vertices();
+  size_type n = number_of_vertices();
 
   std::vector<Point> points (first, last);
   spatial_sort (points.begin(), points.end(), geom_traits());
@@ -1390,8 +1390,8 @@ make_hole ( Vertex_handle v, std::list<Edge> & hole)
     to_delete.push_back(f);
   } while(fc != done);
 
-  int size = to_delete.size();
-  for(int i=0; i<size; i++) {
+  std::size_t size = to_delete.size();
+  for(std::size_t i=0; i<size; i++) {
     f = to_delete[i];
     delete_face(f);
   }
@@ -1426,8 +1426,8 @@ make_hole(Vertex_handle v, std::list<Edge> & hole,
     to_delete.push_back(f);
   } while(fc != done);
 
-  int size = to_delete.size();
-  for(int i=0; i<size; i++) {
+  std::size_t size = to_delete.size();
+  for(std::size_t i=0; i<size; i++) {
     f = to_delete[i];
     faces_set.erase(f);
     delete_face(f);
@@ -1961,7 +1961,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
     return v;
   }
 
-	int n_vertices = tds().number_of_vertices();
+	size_type n_vertices = tds().number_of_vertices();
 
   if((lt == OUTSIDE_AFFINE_HULL) && (dim == 1) && (n_vertices == 3)) {
 	  v->set_point(p);
@@ -2029,15 +2029,15 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
   std::vector<Face_handle> faces_pt;
 	faces_pt.reserve(16);
   do { faces_pt.push_back(fc); } while(++fc != done);
-	int ss = faces_pt.size();
-	for(int k=0; k<ss; k++)
-	{
-		Face_handle f = faces_pt[k];
-    int i = f->index(inserted);
-    f->set_vertex(i, v);
-	}
-	v->set_point(p);
-	v->set_face(inserted->face());
+  std::size_t ss = faces_pt.size();
+  for(std::size_t k=0; k<ss; k++)
+    {
+      Face_handle f = faces_pt[k];
+      int i = f->index(inserted);
+      f->set_vertex(i, v);
+    }
+  v->set_point(p);
+  v->set_face(inserted->face());
   delete_vertex(inserted);
 
   return v;
@@ -2049,12 +2049,12 @@ Triangulation_2<Gt,Tds>::
 move(Vertex_handle v, const Point &p) {
   CGAL_triangulation_precondition(!is_infinite(v));
   if(v->point() == p) return v;	
-	Vertex_handle w = move_if_no_collision(v,p);
-	if(w != v) {
-		remove(v);
-		return w;
-	}
-	return v;
+  Vertex_handle w = move_if_no_collision(v,p);
+  if(w != v) {
+    remove(v);
+    return w;
+  }
+  return v;
 }
 
 template <class Gt, class Tds >
@@ -2082,16 +2082,16 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
     return v;
   }
 
-	int n_vertices = tds().number_of_vertices();
+  int n_vertices = tds().number_of_vertices();
 
   if((lt == OUTSIDE_AFFINE_HULL) && (dim == 1) && (n_vertices == 3)) {
-	  v->set_point(p);
+    v->set_point(p);
 	
-		for(All_faces_iterator afi =  tds().face_iterator_base_begin(); 
-		                       afi != tds().face_iterator_base_begin(); 
-		                       afi++) *oif++ = afi;
+    for(All_faces_iterator afi =  tds().face_iterator_base_begin(); 
+        afi != tds().face_iterator_base_begin(); 
+        afi++) *oif++ = afi;
 	
-	  return v;
+    return v;
   }
 
   if((lt != OUTSIDE_AFFINE_HULL) && (dim == 1)) {
@@ -2121,37 +2121,37 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
       v->set_face(inserted->face());
       delete_vertex(inserted);
     }
-		*oif++ = v->face();
+    *oif++ = v->face();
     if(v->face()->neighbor(0)->has_vertex(v)) 
-			*oif++ = v->face()->neighbor(0);
+      *oif++ = v->face()->neighbor(0);
     if(v->face()->neighbor(1)->has_vertex(v)) 
-			*oif++ = v->face()->neighbor(1);			
+      *oif++ = v->face()->neighbor(1);			
     return v;
   }
 
   if((lt != OUTSIDE_AFFINE_HULL) && test_dim_down(v)) {
-	  // verify if p and two static vertices are collinear in this case
-		int iinf;
-		Face_circulator finf = incident_faces(infinite_vertex()), fdone(finf);
-	  do { 
-		  if(!finf->has_vertex(v))
-		  {
-				iinf = ~(finf->index(infinite_vertex()));
-				break;
-		  }
-		} while(++finf != fdone);
-	  if(this->orientation(finf->vertex(iinf&1)->point(),
-	                       finf->vertex(iinf&2)->point(),
-	                       p) == COLLINEAR)
-	  {
-      v->set_point(p);
-      _tds.dim_down(loc, loc->index(v));
-		  return v;
-		}
+    // verify if p and two static vertices are collinear in this case
+    int iinf;
+    Face_circulator finf = incident_faces(infinite_vertex()), fdone(finf);
+    do { 
+      if(!finf->has_vertex(v))
+        {
+          iinf = ~(finf->index(infinite_vertex()));
+          break;
+        }
+    } while(++finf != fdone);
+    if(this->orientation(finf->vertex(iinf&1)->point(),
+                         finf->vertex(iinf&2)->point(),
+                         p) == COLLINEAR)
+      {
+        v->set_point(p);
+        _tds.dim_down(loc, loc->index(v));
+        return v;
+      }
 		
-		for(All_faces_iterator afi =  tds().face_iterator_base_begin(); 
-		                       afi != tds().face_iterator_base_begin(); 
-		                       afi++) *oif++ = afi;
+    for(All_faces_iterator afi =  tds().face_iterator_base_begin(); 
+        afi != tds().face_iterator_base_begin(); 
+        afi++) *oif++ = afi;
 		
   }
 
@@ -2166,21 +2166,21 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
 
   fc = this->incident_faces(inserted), done(fc);
   std::vector<Face_handle> faces_pt;
-	faces_pt.reserve(16);
+  faces_pt.reserve(16);
   do { faces_pt.push_back(fc); } while(++fc != done);
-	int ss = faces_pt.size();
-	for(int k=0; k<ss; k++)
-	{
-		Face_handle f = faces_pt[k];
-    int i = f->index(inserted);
-    f->set_vertex(i, v);
-	}
-	v->set_point(p);
-	v->set_face(inserted->face());
+  int ss = faces_pt.size();
+  for(int k=0; k<ss; k++)
+    {
+      Face_handle f = faces_pt[k];
+      int i = f->index(inserted);
+      f->set_vertex(i, v);
+    }
+  v->set_point(p);
+  v->set_face(inserted->face());
   delete_vertex(inserted);
 
   for(typename std::set<Face_handle>::iterator ib = faces_set.begin(),
-      iend = faces_set.end(); ib != iend; ib++) *oif++ = *ib;
+        iend = faces_set.end(); ib != iend; ib++) *oif++ = *ib;
 
   return v;
 }

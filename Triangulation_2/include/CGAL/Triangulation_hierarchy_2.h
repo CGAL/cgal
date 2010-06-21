@@ -100,9 +100,9 @@ public:
   Vertex_handle push_back(const Point &p);
  
   template < class InputIterator >
-  int insert(InputIterator first, InputIterator last)
+  size_type insert(InputIterator first, InputIterator last)
   {
-      int n = this->number_of_vertices();
+      size_type n = this->number_of_vertices();
 
       std::vector<Point> points (first, last);
       CGAL::spatial_sort (points.begin(), points.end(), geom_traits());

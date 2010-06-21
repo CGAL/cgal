@@ -875,7 +875,7 @@ _test_cls_triangulation_2( const Triangul & )
   T2_3.remove(v2_3_10); assert(T2_3.is_valid());
   assert( T2_3.number_of_vertices() == 0 );
 
-  int i;
+  Triangul::size_type i;
   for (i=T2_4.number_of_vertices(); i>0; i--)
     T2_4.remove(T2_4.finite_vertex());
   assert( T2_4.number_of_vertices() == 0 );

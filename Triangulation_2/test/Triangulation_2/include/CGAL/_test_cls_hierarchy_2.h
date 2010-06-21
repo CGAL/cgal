@@ -119,8 +119,8 @@ _test_cls_hierarchy_2()
   assert( ch.number_of_constraints() == h.number_of_constraints());
   assert( ch.number_of_subconstraints() == h.number_of_subconstraints());
   ch.clear();
-  int nc = h.number_of_constraints();
-  int nsc = h.number_of_subconstraints();
+  std::size_t nc = h.number_of_constraints();
+  std::size_t nsc = h.number_of_subconstraints();
   ch.swap(h);
   assert (ch.number_of_constraints() == nc);
   assert( ch.number_of_subconstraints() == nsc);

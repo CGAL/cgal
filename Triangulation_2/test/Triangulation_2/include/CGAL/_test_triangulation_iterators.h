@@ -45,7 +45,7 @@ _test_iterators( const Triangulation &T )
 }
 
 template < class Triangulation >
-int
+typename Triangulation::size_type
 _test_cls_face_iterator( const Triangulation &T )
 {
   typedef typename Triangulation::Finite_faces_iterator   
@@ -140,7 +140,7 @@ _test_cls_point_iterator( Triangulation &T )
   }
   assert( np == T.number_of_vertices() );
 
-  int n=np;
+  size_type n=np;
   for (pit = T.points_end(); 
        pit != T.points_begin(); 
        --pit)

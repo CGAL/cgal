@@ -122,7 +122,7 @@ _test_cls_delaunay_triangulation_2( const Del & )
   assert(conflicts.empty());
   conflicts.clear();
   T2.get_conflicts(Point(-1,-1,1), std::back_inserter(conflicts));
-  unsigned int ns = conflicts.size();
+  std::size_t ns = conflicts.size();
   conflicts.clear();
   T2.find_conflicts(Point(-1,-1,1), conflicts);
   assert(conflicts.size() == ns);

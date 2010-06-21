@@ -20,6 +20,15 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 #include <CGAL/basic.h>
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4661) // Explicit instantiation will not
+                                //  instatiate template member functions
+#endif
+
+
 #include <iostream>
 
 #include <CGAL/_test_types.h>
@@ -30,6 +39,7 @@
 
 #include <CGAL/_test_traits.h>
 #include <CGAL/_test_cls_delaunay_triangulation_2.h>
+
 
 // Explicit instantiation of the whole class :
 template class CGAL::Delaunay_triangulation_2<TestK>;
@@ -72,3 +82,7 @@ int main()
   std::cout << "done" << std::endl;
   return 0;
 }
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif

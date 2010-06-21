@@ -93,7 +93,7 @@ _test_cls_const_Del_triangulation(const Triangul&)
 			       std::back_inserter(hole_bd));
   assert(hole_bd.size() == conflicts.size() + 2);
   conflicts.clear();
-  unsigned int nch = hole_bd.size();
+  std::size_t nch = hole_bd.size();
   hole_bd.clear();
   T2.find_conflicts(Point(0,1,2), hole_bd);
   assert(hole_bd.size() == nch);

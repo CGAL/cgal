@@ -338,10 +338,10 @@ private:
 
 public:
   template < class InputIterator >
-  int
+  size_type
   insert(InputIterator first, InputIterator last)
   {
-      int n = number_of_vertices();
+      size_type n = number_of_vertices();
 
       std::vector<Weighted_point> points (first, last);
       spatial_sort (points.begin(), points.end(), geom_traits());
