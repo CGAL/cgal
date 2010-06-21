@@ -149,13 +149,15 @@ Scene_c3t3_item::toolTip() const {
     if( c3t3().is_in_complex(cit) )
       ++number_of_tets;
   }
-  return tr("<p><b>3D complex in a 3D triangulation</b></p>"
+  return tr("<p>3D complex in a 3D triangulation:<br />"
+            "<b>%4</b></p>"
             "<p>Number of vertices: %1<br />"
             "Number of surface facets: %2<br />"
             "Number of volume tetrahedra: %3</p>")
     .arg(c3t3().triangulation().number_of_vertices())
     .arg(c3t3().number_of_facets())
-    .arg(number_of_tets);
+    .arg(number_of_tets)
+    .arg(this->name());
 }
 
 void
