@@ -21,7 +21,7 @@
 #define CGAL_TEST_CLS_ITERATOR_C
 
 template < class Triangulation >
-int
+typename Triangulation::size_type  
 _test_vertex_iterator( const Triangulation &T )
 {
     typedef typename Triangulation::size_type       size_type;

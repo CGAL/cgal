@@ -1277,13 +1277,14 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
   // when dimension < 3 : the same with faces of maximal dimension
 {
   typedef Triangulation_data_structure_3<Vb,Cb> Tds;
+  typedef typename Tds::size_type               size_type;
   typedef typename Tds::Vertex_handle           Vertex_handle;
   typedef typename Tds::Vertex_iterator         Vertex_iterator;
 
   std::map<Vertex_handle, int> V;
 
   // outputs dimension and number of vertices
-  int n = tds.number_of_vertices();
+  size_type n = tds.number_of_vertices();
 
   if (is_ascii(os))
       os << tds.dimension() << std::endl << n << std::endl;
@@ -1297,7 +1298,7 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
     return os;
 
   // index the vertices
-  int i = 0;
+  size_type i = 0;
   for (Vertex_iterator it=tds.vertices_begin(); it != tds.vertices_end(); ++it)
     V[it] = i++;
 
@@ -1871,7 +1872,7 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, int> &V ) const
   switch ( dimension() ) {
   case 3:
     {
-      int m = number_of_cells();
+      size_type m = number_of_cells();
       if(is_ascii(os))
         os << m << std::endl;
       else
@@ -1913,7 +1914,7 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, int> &V ) const
     }
   case 2:
     {
-      int m = number_of_facets();
+      size_type m = number_of_facets();
       if(is_ascii(os))
         os << m << std::endl;
       else
@@ -1957,7 +1958,7 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, int> &V ) const
     }
   case 1:
     {
-      int m = number_of_edges();
+      size_type m = number_of_edges();
       if(is_ascii(os))
         os << m << std::endl;
       else
@@ -3266,7 +3267,7 @@ copy_tds(const Tds & tds, Vertex_handle vert )
 
   clear();
 
-  int n = tds.number_of_vertices();
+  size_type n = tds.number_of_vertices();
   set_dimension(tds.dimension());
 
   // Number of pointers to cell/vertex to copy per cell.
@@ -3288,7 +3289,7 @@ copy_tds(const Tds & tds, Vertex_handle vert )
   std::map< Vertex_handle, Vertex_handle > V;
   std::map< Cell_handle, Cell_handle > F;
 
-  for (i=0; i <= n-1; ++i)
+  for (size_type i=0; i <= n-1; ++i)
     V[ TV[i] ] = create_vertex(TV[i]);
 
   // Create the cells.

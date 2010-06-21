@@ -202,10 +202,10 @@ public:
   }
 
   template < class InputIterator >
-  int
+  size_type
   insert(InputIterator first, InputIterator last)
   {
-    int n = number_of_vertices();
+    size_type n = number_of_vertices();
 
     std::vector<Point> points (first, last);
     spatial_sort (points.begin(), points.end(), geom_traits());
@@ -357,9 +357,9 @@ public:
                                  OutputItCells fit);
 
   template < typename InputIterator >
-  int remove(InputIterator first, InputIterator beyond)
+  size_type remove(InputIterator first, InputIterator beyond)
   {
-    int n = number_of_vertices();
+    size_type n = number_of_vertices();
     while (first != beyond) {
       remove(*first);
       ++first;
@@ -1130,7 +1130,7 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
   Point ant = v->point();
   v->set_point(p);
 
-  int size;
+  std::size_t size;
 
   // are incident cells well-oriented
   std::vector<Cell_handle> cells;
@@ -1155,7 +1155,7 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
   facets.reserve(128);	
   this->incident_facets(v, std::back_inserter(facets));
   size = facets.size();
-  for(int i=0; i<size; i++)
+  for(std::size_t i=0; i<size; i++)
   {
     const Facet &f = facets[i];
     Cell_handle c = f.first;

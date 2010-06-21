@@ -874,7 +874,7 @@ _test_cls_triangulation_3(const Triangulation &)
     assert(3*nb_f_facets == f_facets.size());
     assert(3*nb_f_facets == f_cells.size());
     
-    int nb_f_vertices = T2[k]->number_of_vertices();
+    typename Cls::size_type nb_f_vertices = T2[k]->number_of_vertices();
     
     // Euler relation
     assert(nb_f_vertices - nb_f_edges + nb_f_facets == 1);
@@ -943,7 +943,7 @@ _test_cls_triangulation_3(const Triangulation &)
     assert(3*nb_f_facets == f_facets.size());
     assert(4*nb_f_cells == f_cells.size());
     
-    int nb_f_vertices = T3[k]->number_of_vertices();
+    typename Cls::size_type nb_f_vertices = T3[k]->number_of_vertices();
     
     // Euler relation
     assert(nb_f_vertices - nb_f_edges + nb_f_facets - nb_f_cells == 1);

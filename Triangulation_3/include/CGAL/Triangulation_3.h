@@ -621,9 +621,9 @@ public:
 					  Hidden_points_visitor &hider);
 
   template < class InputIterator >
-  int insert(InputIterator first, InputIterator last)
+  size_type insert(InputIterator first, InputIterator last)
     {
-      int n = number_of_vertices();
+      size_type n = number_of_vertices();
 
       std::vector<Point> points (first, last);
       spatial_sort (points.begin(), points.end(), geom_traits());
@@ -932,7 +932,7 @@ protected:
       faces_pt.push_back(fc);
       fc = fc->neighbor((fc->index(inserted) + 1)%3);
     } while(fc != done);
-    int ss = faces_pt.size();
+    std::size_t ss = faces_pt.size();
     for(int k=0; k<ss; k++)
     {
       Cell_handle f = faces_pt[k];
@@ -1364,14 +1364,15 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
   // when dimension < 3 : the same with faces of maximal dimension
 {
   typedef Triangulation_3<GT, Tds>                 Triangulation;
+  typedef typename Triangulation::size_type        size_type;
   typedef typename Triangulation::Vertex_handle    Vertex_handle;
   typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
   typedef typename Triangulation::Cell_iterator    Cell_iterator;
   typedef typename Triangulation::Edge_iterator    Edge_iterator;
   typedef typename Triangulation::Facet_iterator   Facet_iterator;
-
+  
   // outputs dimension and number of vertices
-  int n = tr.number_of_vertices();
+  size_type n = tr.number_of_vertices();
   if (is_ascii(os))
     os << tr.dimension() << std::endl << n << std::endl;
   else
@@ -3973,7 +3974,7 @@ move_if_no_collision(Vertex_handle v, const Point &p,
     return v;
   }
 
-  int n_vertices = tds().number_of_vertices();
+  size_type n_vertices = tds().number_of_vertices();
 
   if((lt == OUTSIDE_AFFINE_HULL) && (dim == 1) && (n_vertices == 3)) {
     v->set_point(p);
@@ -4058,8 +4059,8 @@ move_if_no_collision(Vertex_handle v, const Point &p,
       faces_pt.push_back(fc);
       fc = fc->neighbor((fc->index(inserted) + 1)%3);
     } while(fc != done);
-    int ss = faces_pt.size();
-    for(int k=0; k<ss; k++)
+    std::size_t ss = faces_pt.size();
+    for(std::size_t k=0; k<ss; k++)
     {
       Cell_handle f = faces_pt[k];
       int i = f->index(inserted);
@@ -4077,9 +4078,9 @@ move_if_no_collision(Vertex_handle v, const Point &p,
     // verify if p and two static vertices are collinear in this case
     std::vector<Cell_handle> ics;
     incident_cells(infinite_vertex(), std::back_inserter(ics));
-    int size = ics.size();
+    std::size_t size = ics.size();
     Cell_handle finf;
-    for (int i=0; i<size; i++) {
+    for (std::size_t i=0; i<size; i++) {
       finf = ics[i];
       if(!finf->has_vertex(v)) break;
     }
@@ -4243,8 +4244,8 @@ move_if_no_collision(Vertex_handle v, const Point &p,
   std::vector<Cell_handle> cells_pt;
   cells_pt.reserve(64);
   incident_cells(inserted, std::back_inserter(cells_pt));
-  int size = cells_pt.size();
-  for(int i=0; i<size; i++) {
+  std::size_t size = cells_pt.size();
+  for(std::size_t i=0; i<size; i++) {
     Cell_handle c = cells_pt[i];
     c->set_vertex(c->index(inserted), v);
   }

@@ -26,7 +26,7 @@ int main()
 
   Triangulation T(L.begin(), L.end());
 
-  int n = T.number_of_vertices();
+  Triangulation::size_type n = T.number_of_vertices();
 
   // insertion from a vector :
   std::vector<Point> V(3);

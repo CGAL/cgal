@@ -125,9 +125,9 @@ public:
                        int li, int lj);
 
   template < class InputIterator >
-  int insert(InputIterator first, InputIterator last)
+  size_type insert(InputIterator first, InputIterator last)
   {
-      int n = number_of_vertices();
+      size_type n = number_of_vertices();
 
       std::vector<Point> points (first, last);
       spatial_sort (points.begin(), points.end(), geom_traits());
@@ -157,9 +157,9 @@ public:
   void remove(Vertex_handle v);
 
   template < typename InputIterator >
-  int remove(InputIterator first, InputIterator beyond)
+  size_type remove(InputIterator first, InputIterator beyond)
   {
-    int n = number_of_vertices();
+    size_type n = number_of_vertices();
     while (first != beyond) {
       remove(*first);
       ++first;
@@ -539,7 +539,7 @@ move_point(Vertex_handle v, const Point & p)
   CGAL_triangulation_precondition(v != Vertex_handle());
   Vertex_handle old, ret;
 
-  for (int l = 0; l < maxlevel; ++l) {
+  for (std::size_t l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     Vertex_handle w = hierarchy[l]->move_point(v, p);
     if (l == 0) {
