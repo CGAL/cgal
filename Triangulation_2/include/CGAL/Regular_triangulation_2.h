@@ -338,10 +338,10 @@ private:
 
 public:
   template < class InputIterator >
-  size_type
+  std::ptrdiff_t
   insert(InputIterator first, InputIterator last)
   {
-      size_type n = number_of_vertices();
+    std::ptrdiff_t n = number_of_vertices();
 
       std::vector<Weighted_point> points (first, last);
       spatial_sort (points.begin(), points.end(), geom_traits());
@@ -351,8 +351,8 @@ public:
 		      end = points.end();
               p != end; ++p)
           hint = insert (*p, hint)->face();
-
-      return number_of_vertices() - n;
+      std::ptrdiff_t m =  number_of_vertices();
+      return m - n;
   }
 
   template < class Stream>

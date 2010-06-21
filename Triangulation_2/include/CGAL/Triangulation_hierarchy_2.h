@@ -100,9 +100,9 @@ public:
   Vertex_handle push_back(const Point &p);
  
   template < class InputIterator >
-  size_type insert(InputIterator first, InputIterator last)
+  std::ptrdiff_t insert(InputIterator first, InputIterator last)
   {
-      size_type n = this->number_of_vertices();
+    std::ptrdiff_t n = this->number_of_vertices();
 
       std::vector<Point> points (first, last);
       CGAL::spatial_sort (points.begin(), points.end(), geom_traits());
@@ -130,8 +130,8 @@ public:
               prev = v;
           }
       }
-
-      return this->number_of_vertices() - n;
+      std::ptrdiff_t m = this->number_of_vertices();
+      return m - n;
   }
 
   void remove_degree_3(Vertex_handle  v);
