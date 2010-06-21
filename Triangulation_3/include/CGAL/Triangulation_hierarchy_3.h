@@ -125,9 +125,9 @@ public:
                        int li, int lj);
 
   template < class InputIterator >
-  size_type insert(InputIterator first, InputIterator last)
+  std::ptrdiff_t insert(InputIterator first, InputIterator last)
   {
-      size_type n = number_of_vertices();
+    std::ptrdiff_t n = number_of_vertices();
 
       std::vector<Point> points (first, last);
       spatial_sort (points.begin(), points.end(), geom_traits());
@@ -150,8 +150,8 @@ public:
               prev = v;
           }
       }
-
-      return number_of_vertices() - n;
+      std::ptrdiff_t m = number_of_vertices();
+      return m - n;
   }
 
   void remove(Vertex_handle v);
