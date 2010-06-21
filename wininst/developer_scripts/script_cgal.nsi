@@ -29,7 +29,7 @@
 
 !include "script_cgal.nsh"
 
-!define CGAL_SRC  "CGAL-3.6"
+!define CGAL_SRC  "CGAL-3.7"
 !define FTP_SRC   "https://cgal.geometryfactory.com/CGAL/precompiled_libs/"
 
 ;--------------------------------
@@ -37,28 +37,28 @@
 ;--------------------------------
 
   ;Name and file
-  Name "CGAL-3.6"
+  Name "CGAL-3.7"
   
   !ifdef FetchLocal
-  OutFile "CGAL-3.6-Full-Setup.exe"
+  OutFile "CGAL-3.7-Full-Setup.exe"
   !else
-  OutFile "CGAL-3.6-Setup.exe"
+  OutFile "CGAL-3.7-Setup.exe"
   !endif
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\CGAL-3.6"
+  InstallDir "$PROGRAMFILES\CGAL-3.7"
 
   ;Get installation folder from registry if available
-  InstallDirRegKey HKCU "Software\CGAL-3.6" ""
+  InstallDirRegKey HKCU "Software\CGAL-3.7" ""
   
   BrandingText "The CGAL Project and GeometryFactory - Installer created with NSIS."
 
-  VIProductVersion "3.6.0.0"
+  VIProductVersion "3.7.0.0"
   VIAddVersionKey "ProductName"     "CGAL Windows Installer"
   VIAddVersionKey "CompanyName"     "The CGAL Project and GeometryFactory"
   VIAddVersionKey "LegalCopyright"  "© The CGAL Project and GeometryFactory"
   VIAddVersionKey "FileDescription" "Windows Installer for CGAL"
-  VIAddVersionKey "FileVersion"     "3.6"
+  VIAddVersionKey "FileVersion"     "3.7"
   
 ;--------------------------------
 ; Variables
@@ -90,7 +90,7 @@
 
   !define MUI_COMPONENTSPAGE_SMALLDESC
 
-  !define MUI_WELCOMEPAGE_TEXT "This downloads CGAL-3.6 to your machine."
+  !define MUI_WELCOMEPAGE_TEXT "This downloads CGAL-3.7 to your machine."
 
   !define MUI_FINISHPAGE_TITLE "Downloading finished"
 
@@ -120,7 +120,7 @@
   
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "CGAL-3.6" 
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY "CGAL-3.7" 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
@@ -220,7 +220,7 @@ ${MultiVariantSection} "LAPACK and TAUCS precompiled libs"  Install_LAPACK_TAUCS
 
 Section /o "HTML Manuals" DOC_Idx
   !ifndef FetchLocal
-    !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/3.6/Manual/" "cgal_manual.zip"  "$INSTDIR\doc_html"
+    !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/3.7/Manual/" "cgal_manual.zip"  "$INSTDIR\doc_html"
   !endif  
 SectionEnd
 
@@ -272,7 +272,7 @@ Section "Uninstall"
     StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
   startMenuDeleteLoopDone:
 
-  DeleteRegKey /ifempty HKCU "Software\CGAL-3.6"
+  DeleteRegKey /ifempty HKCU "Software\CGAL-3.7"
 
 SectionEnd
 
@@ -307,7 +307,7 @@ SectionEnd
 Function .onInit
 
   !ifdef DebugLog
-  ${LogSetFileName} "CGAL-3.6_install_log.txt"
+  ${LogSetFileName} "CGAL-3.7_install_log.txt"
   ${LogSetOn}
   !endif	
   
