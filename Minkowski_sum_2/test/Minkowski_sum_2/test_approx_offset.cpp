@@ -58,7 +58,7 @@ int main (int argc, char* argv[])
     return -1;
   }
 
-  unsigned int i = 1;
+  int i = 1;
   while (i < argc) {
     // Read the polygon from the input file.
     Polygon_2   pgn;
