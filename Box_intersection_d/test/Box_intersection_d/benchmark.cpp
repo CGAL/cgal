@@ -51,7 +51,7 @@ test_n( unsigned int n, std::ostream& outfile )
     typename Uti1::Counter_callback callback1, callback2;
     CGAL::Timer timer, timer_scan;
     double time, time_scan;
-    unsigned int problemsize = boxes1.size() + boxes2.size();
+    std::size_t problemsize = boxes1.size() + boxes2.size();
     unsigned int cutoff = 0;
     unsigned int stepsize = 500;
     double last_time = 1e30;

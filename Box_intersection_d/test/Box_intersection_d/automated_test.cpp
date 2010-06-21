@@ -95,8 +95,8 @@ operator()( const char* filename1, const char* filename2 )
     std::cout << "segment tree ...... " << std::flush;
     timer.reset();
     timer.start();
-    const unsigned int n = boxes1.size();
-    const unsigned int cutoff = n < 2000 ? 6 : n / 100;
+    const std::size_t n = boxes1.size();
+    const std::size_t cutoff = n < 2000 ? 6 : n / 100;
     CGAL::box_intersection_custom_predicates_d( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
                                                 callback3, 
