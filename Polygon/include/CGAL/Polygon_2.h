@@ -332,7 +332,7 @@ class Polygon_2 {
     //             Miscellaneous
     //--------------------------------------------------------
 
-    int size() const
+  std::size_t size() const
       { return d_container.size(); }
 
     bool is_empty() const
