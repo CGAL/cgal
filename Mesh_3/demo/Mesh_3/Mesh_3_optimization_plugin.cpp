@@ -25,7 +25,7 @@
 #include <fstream>
 
 #include <CGAL/Mesh_optimization_return_code.h>
-#include <CGAL/optimize_mesh_3.h> // to get default values
+#include <CGAL/Mesh_3/parameters_defaults.h> // to get default values
 
 
 // declare the CGAL function

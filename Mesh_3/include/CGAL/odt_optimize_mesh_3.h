@@ -30,15 +30,9 @@
 #include <CGAL/Mesh_3/Odt_move.h>
 #include <CGAL/Mesh_3/Mesh_sizing_field.h>
 #include <CGAL/Mesh_optimization_return_code.h>
+#include <CGAL/Mesh_3/parameters_defaults.h>
 
 namespace CGAL {
-
-namespace parameters { namespace default_values {
-  const double odt_freeze_ratio = 0.01;
-  const double odt_convergence_ratio = 0.02;
-} } // end namespace parameters::default_values
-
-  
   
 BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),

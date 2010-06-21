@@ -27,14 +27,9 @@
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_3/Slivers_exuder.h>
 #include <CGAL/Mesh_optimization_return_code.h>
+#include <CGAL/Mesh_3/parameters_defaults.h>
 
 namespace CGAL {
-    
-namespace parameters { namespace default_values {
-  const double exude_sliver_bound = 0.;
-} } // end namespace parameters::default_values
-
-
 
 BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),
