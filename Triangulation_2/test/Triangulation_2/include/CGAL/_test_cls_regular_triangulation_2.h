@@ -811,7 +811,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   T2_3_1.remove(V2_31_17);
   T2_3_1.is_valid(verbose);
 
-  Cls::size_type i;
+  typename Cls::size_type i;
   T2_5.clear();
   assert( T2_5.number_of_vertices() == 0 );
 
