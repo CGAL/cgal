@@ -44,7 +44,6 @@ rectangular_2_center_2(
   using std::pair;
   using std::greater;
   using std::less;
-  using boost::bind;
 
   typedef typename Traits::Iso_rectangle_2        Rectangle;
   typedef typename Traits::Point_2                Point;
@@ -78,14 +77,14 @@ rectangular_2_center_2(
   // two cases: top-left & bottom-right or top-right & bottom-left
   Min< FT > minft;
   Gamma gamma1 =
-    bind(minft, bind(dist, v(bb, 0), _1), bind(dist, v(bb, 2), _1));
+    boost::bind(minft, boost::bind(dist, v(bb, 0), _1), boost::bind(dist, v(bb, 2), _1));
   Gamma gamma2 =
-    bind(minft, bind(dist, v(bb, 1), _1), bind(dist, v(bb, 3), _1));
+    boost::bind(minft, boost::bind(dist, v(bb, 1), _1), boost::bind(dist, v(bb, 3), _1));
 
   pair< ForwardIterator, ForwardIterator > cand =
     min_max_element(f, l,
-                    bind(greater<FT>(), bind(gamma1, _1), bind(gamma1, _2)),
-                    bind(less<FT>(), bind(gamma2, _1), bind(gamma2, _2)));
+                    boost::bind(greater<FT>(), boost::bind(gamma1, _1), boost::bind(gamma1, _2)),
+                    boost::bind(less<FT>(), boost::bind(gamma2, _1), boost::bind(gamma2, _2)));
 
   // return the result
   if (gamma1(*cand.first) < gamma2(*cand.second)) {
@@ -114,7 +113,6 @@ rectangular_3_center_2_type1(
   using std::max;
   using std::less;
   using std::nth_element;
-  using boost::bind;
 
   typedef typename Traits::FT                         FT;
   typedef typename Traits::Iso_rectangle_2            Rectangle;
@@ -165,14 +163,14 @@ rectangular_3_center_2_type1(
     RandomAccessIterator e = l;
     bool b_empty = true;
     Min< FT > minft;
-    Gamma gamma = bind(minft, 
-		       bind(dist, v(r, i), _1),
-		       bind(dist, v(r, 2 + i), _1));
+    Gamma gamma = boost::bind(minft, 
+		       boost::bind(dist, v(r, i), _1),
+		       boost::bind(dist, v(r, 2 + i), _1));
     
     while (e - s > 1) {
       // step (a)
       RandomAccessIterator m = s + (e - s - 1) / 2;
-      nth_element(s, m, e, bind(less<FT>(), bind(gamma, _1), bind(gamma, _2)));
+      nth_element(s, m, e, boost::bind(less<FT>(), boost::bind(gamma, _1), boost::bind(gamma, _2)));
       
       // step (b)
       Rectangle b_prime = bounding_box_2(m + 1, e, t);
@@ -864,7 +862,6 @@ rectangular_3_center_2_type2(
   using std::sort;
   using std::partition;
   using std::pair;
-  using boost::bind;
 
   typedef typename Operations::Point                       Point;
   typedef typename Operations::Distance                 Distance;
@@ -903,7 +900,7 @@ rectangular_3_center_2_type2(
   {
     // First try whether the best radius so far can be reached at all
     RandomAccessIterator m =
-      partition(f, l, bind(greater< FT >(), rad, bind(op.delta(), _1)));
+      partition(f, l, boost::bind(greater< FT >(), rad, boost::bind(op.delta(), _1)));
     IP pos = min_max_element(m, l, op.compare_x(), op.compare_y());
     // extreme points of the two other squares
     Point q_t =
@@ -914,11 +911,11 @@ rectangular_3_center_2_type2(
       op.place_y_square(op.place_y_square(Q_r_empty, Q_r, *pos.second, r),
                         r,
                         rad);
-    boost::function1<bool,FT> le_rad = bind(greater_equal<FT>(), rad, _1);
+    boost::function1<bool,FT> le_rad = boost::bind(greater_equal<FT>(), rad, _1);
     RandomAccessIterator b1 =
-      partition(m, l, bind(le_rad, bind(op.distance(), q_t, _1)));
+      partition(m, l, boost::bind(le_rad, boost::bind(op.distance(), q_t, _1)));
     RandomAccessIterator b2 =
-      partition(b1, l, bind(le_rad, bind(op.distance(), q_r, _1)));
+      partition(b1, l, boost::bind(le_rad, boost::bind(op.distance(), q_r, _1)));
 
     if (b2 != l)
       return o;
@@ -931,7 +928,7 @@ rectangular_3_center_2_type2(
     int cutoff = (e - s) / 2;
     RandomAccessIterator m = s + cutoff - 1;
     nth_element(s, m, e, 
-		bind(less<FT>(), bind(op.delta(), _1), bind(op.delta(), _2)));
+		boost::bind(less<FT>(), boost::bind(op.delta(), _1), boost::bind(op.delta(), _2)));
     
     // step (b)
     IP pos = min_max_element(m + 1, e, op.compare_x(), op.compare_y());
@@ -945,12 +942,12 @@ rectangular_3_center_2_type2(
 
     // check for covering
     boost::function1<bool,FT>
-      le_delta_m = bind(greater_equal<FT>(), op.delta()(*m), _1);
+      le_delta_m = boost::bind(greater_equal<FT>(), op.delta()(*m), _1);
     RandomAccessIterator b1 =
       partition(m + 1, e,
-                bind(le_delta_m, bind(op.distance(), q_t, _1)));
+                boost::bind(le_delta_m, boost::bind(op.distance(), q_t, _1)));
     RandomAccessIterator b2 =
-      partition(b1, e, bind(le_delta_m, bind(op.distance(), q_r, _1)));
+      partition(b1, e, boost::bind(le_delta_m, boost::bind(op.distance(), q_r, _1)));
 
     if (b2 != e)
       s = m;
@@ -969,7 +966,7 @@ rectangular_3_center_2_type2(
     int cutoff = (e - s) / fraction;
     RandomAccessIterator m = s + cutoff - 1;
     nth_element(s, m, e, 
-		bind(less<FT>(), bind(op.delta(), _1), bind(op.delta(), _2)));
+		boost::bind(less<FT>(), boost::bind(op.delta(), _1), boost::bind(op.delta(), _2)));
     
     // step (b)
     IP pos = min_max_element(m + 1, e, op.compare_x(), op.compare_y());
@@ -988,27 +985,27 @@ rectangular_3_center_2_type2(
     if ((Q_t_empty || op.compute_x_distance(q_t, Q_t) <= op.delta()(*m)) &&
         (Q_r_empty || op.compute_y_distance(q_r, Q_r) <= op.delta()(*m))) {
       boost::function1<bool,FT> 
-        greater_delta_m = bind(less< FT >(), op.delta()(*m));
+        greater_delta_m = boost::bind(less< FT >(), op.delta()(*m));
       CGAL_optimisation_assertion_code(RandomAccessIterator iii =)
         find_if(e,
                 l,
-                bind(logical_and< bool >(),
-		     bind(greater_delta_m,
-			  bind(op.distance(), q_t, _1)),
-		     bind(greater_delta_m,
-			  bind(op.distance(), q_r, _1))));
+                boost::bind(logical_and< bool >(),
+		     boost::bind(greater_delta_m,
+			  boost::bind(op.distance(), q_t, _1)),
+		     boost::bind(greater_delta_m,
+			  boost::bind(op.distance(), q_r, _1))));
         CGAL_optimisation_assertion(iii == l);
     }
     // check whether the points in [f,s) are covered
     {
       boost::function1<bool,FT> 
-	le_delta_m = bind(greater_equal<FT>(), op.delta()(*m));
+	le_delta_m = boost::bind(greater_equal<FT>(), op.delta()(*m));
       RandomAccessIterator iii =
-        partition(f, s, bind(le_delta_m, bind(op.delta(), _1)));
+        partition(f, s, boost::bind(le_delta_m, boost::bind(op.delta(), _1)));
       iii = partition(iii, s,
-                      bind(le_delta_m, bind(op.distance(), q_t, _1)));
+                      boost::bind(le_delta_m, boost::bind(op.distance(), q_t, _1)));
       iii = partition(iii, s,
-                      bind(le_delta_m, bind(op.distance(), q_r, _1)));
+                      boost::bind(le_delta_m, boost::bind(op.distance(), q_r, _1)));
       CGAL_optimisation_assertion(iii == s);
     }
 #endif // CGAL_3COVER_CHECK
@@ -1017,14 +1014,14 @@ rectangular_3_center_2_type2(
     // [m+1, b1), [b1, b2),   [b2, b3) and [b3, e)
     //     R      G cap q_t  G cap q_r      none
     boost::function1<bool,FT> 
-      le_delta_m = bind(greater_equal<FT>(), op.delta()(*m), _1);
+      le_delta_m = boost::bind(greater_equal<FT>(), op.delta()(*m), _1);
     RandomAccessIterator b2 =
-      partition(m + 1, e, bind(le_delta_m, bind(op.distance(), q_t, _1)));
+      partition(m + 1, e, boost::bind(le_delta_m, boost::bind(op.distance(), q_t, _1)));
     RandomAccessIterator b1 =
       partition(m + 1, b2,
-                bind(le_delta_m, bind(op.distance(), q_r, _1)));
+                boost::bind(le_delta_m, boost::bind(op.distance(), q_r, _1)));
     RandomAccessIterator b3 =
-      partition(b2, e, bind(le_delta_m, bind(op.distance(), q_r, _1)));
+      partition(b2, e, boost::bind(le_delta_m, boost::bind(op.distance(), q_r, _1)));
 
 
     // step (c)
@@ -1109,9 +1106,9 @@ rectangular_3_center_2_type2(
       // step 1
       RandomAccessIterator s_m = s_b + (s_e - s_b - 1) / 2;
       nth_element(s_b, s_m, s_e,
-                  bind(less<FT>(), 
-		       bind(op.delta(), _1), 
-		       bind(op.delta(), _2)));
+                  boost::bind(less<FT>(), 
+		       boost::bind(op.delta(), _1), 
+		       boost::bind(op.delta(), _2)));
 
       // step 2 (as above)
       Point q_t_m = q_t_afap;
@@ -1147,13 +1144,13 @@ rectangular_3_center_2_type2(
     // [s_b+1, b1), [b1, b2),   [b2, b3) and [b3, e)
     //     R      G cap q_t  G cap q_r      none
     boost::function1<bool,FT>
-      le_delta_sb = bind(greater_equal<FT>(), op.delta()(*s_b), _1);
-    b2 = partition(s_b + 1, e, bind(le_delta_sb,
-				    bind(op.distance(), q_t, _1)));
-    b1 = partition(s_b + 1, b2, bind(le_delta_sb,
-				     bind(op.distance(), q_r, _1)));
+      le_delta_sb = boost::bind(greater_equal<FT>(), op.delta()(*s_b), _1);
+    b2 = partition(s_b + 1, e, boost::bind(le_delta_sb,
+				    boost::bind(op.distance(), q_t, _1)));
+    b1 = partition(s_b + 1, b2, boost::bind(le_delta_sb,
+				     boost::bind(op.distance(), q_r, _1)));
     b3 = partition(b2, e,
-                   bind(le_delta_sb, bind(op.distance(), q_r, _1)));
+                   boost::bind(le_delta_sb, boost::bind(op.distance(), q_r, _1)));
 
     if (b3 != e ||
         (!Q_t_empty && op.compute_x_distance(q_t, Q_t) > op.delta()(*s_b)) ||
@@ -1183,7 +1180,7 @@ rectangular_3_center_2_type2(
         std::vector< Point > tmppts(f, l);
         RandomAccessIterator ii =
           partition(tmppts.begin(), tmppts.end(),
-                    bind(le_delta_sb, bind(op.delta(), _1)));
+                    boost::bind(le_delta_sb, boost::bind(op.delta(), _1)));
         IP tmppos = min_max_element(ii, tmppts.end(),
                                     op.compare_x(), op.compare_y());
         )
@@ -1228,12 +1225,12 @@ rectangular_3_center_2_type2(
     // we have to take the next smaller radius
     RandomAccessIterator next =
       max_element_if(s, s_b,
-                     bind(less<FT>(), 
-			  bind(op.delta(), _1), 
-			  bind(op.delta(), _2)),
-                     bind(not_equal_to<FT>(),
+                     boost::bind(less<FT>(), 
+			  boost::bind(op.delta(), _1), 
+			  boost::bind(op.delta(), _2)),
+                     boost::bind(not_equal_to<FT>(),
 			  op.delta()(*s_b),
-			  bind(op.delta(), _1)));
+			  boost::bind(op.delta(), _1)));
     rho_max = op.delta()(*s_b);
     q_t_at_rho_max = q_t, q_r_at_rho_max = q_r;
     CGAL_optimisation_assertion(op.delta()(*next) < op.delta()(*s_b));
@@ -1244,13 +1241,13 @@ rectangular_3_center_2_type2(
 
     // again check for covering
     boost::function1<bool,FT>
-      le_delta_next = bind(greater_equal<FT>(), op.delta()(*next), _1);
+      le_delta_next = boost::bind(greater_equal<FT>(), op.delta()(*next), _1);
     b2 = partition(s_b, e,
-                   bind(le_delta_next, bind(op.distance(), q_t, _1)));
+                   boost::bind(le_delta_next, boost::bind(op.distance(), q_t, _1)));
     b1 = partition(s_b, b2,
-                   bind(le_delta_next, bind(op.distance(), q_r, _1)));
+                   boost::bind(le_delta_next, boost::bind(op.distance(), q_r, _1)));
     b3 = partition(b2, e,
-                   bind(le_delta_next, bind(op.distance(), q_r, _1)));
+                   boost::bind(le_delta_next, boost::bind(op.distance(), q_r, _1)));
 
     if (b3 != e ||
         (!Q_t_empty && op.compute_x_distance(q_t, Q_t) > op.delta()(*next)) ||
@@ -1304,7 +1301,7 @@ rectangular_3_center_2_type2(
     Point q_t_afap = op.place_x_square(Q_t_empty, Q_t, r);
     Point q_r_afap = op.place_y_square(Q_r_empty, Q_r, r);
     if (s != e) {
-      sort(s, e, bind(less<FT>(), bind(op.delta(), _1), bind(op.delta(), _2)));
+      sort(s, e, boost::bind(less<FT>(), boost::bind(op.delta(), _1), boost::bind(op.delta(), _2)));
       rho_max = op.delta()(*--t);
     } else
       rho_max = rho_min;
@@ -1348,15 +1345,15 @@ rectangular_3_center_2_type2(
 
       // check for covering
       boost::function1<bool,FT>
-        greater_rho_max = bind(less<FT>(), try_rho, _1);
+        greater_rho_max = boost::bind(less<FT>(), try_rho, _1);
       if ((!Q_t_empty && op.compute_x_distance(q_t, Q_t) > try_rho) ||
           (!Q_r_empty && op.compute_y_distance(q_r, Q_r) > try_rho) ||
           e != find_if(
             t + 1,
             e,
-            bind(logical_and<bool>(),
-		 bind(greater_rho_max, bind(op.distance(), q_t, _1)),
-		 bind(greater_rho_max, bind(op.distance(), q_r, _1)))))
+            boost::bind(logical_and<bool>(),
+		 boost::bind(greater_rho_max, boost::bind(op.distance(), q_t, _1)),
+		 boost::bind(greater_rho_max, boost::bind(op.distance(), q_r, _1)))))
         {
           rho_min = try_rho;
           q_t_q_r_cover_at_rho_min = 0;
@@ -1394,16 +1391,16 @@ rectangular_3_center_2_type2(
   FT rad_2 = q_t_q_r_cover_at_rho_min;
   if (s_at_rho_min != e_at_rho_min) {
     boost::function1<FT,Point>
-      mydist = bind(Min<FT>(),
-		    bind(op.distance(), q_t_at_rho_min, _1),
-		    bind(op.distance(), q_r_at_rho_min, _1));
+      mydist = boost::bind(Min<FT>(),
+		    boost::bind(op.distance(), q_t_at_rho_min, _1),
+		    boost::bind(op.distance(), q_r_at_rho_min, _1));
     rad_2 =
       max BOOST_PREVENT_MACRO_SUBSTITUTION (
         rad_2,
         mydist(*max_element(s_at_rho_min, e_at_rho_min,
-                            bind(less< FT >(), 
-				 bind(mydist, _1), 
-				 bind(mydist, _2)))));
+                            boost::bind(less< FT >(), 
+				 boost::bind(mydist, _1), 
+				 boost::bind(mydist, _2)))));
   }
   CGAL_optimisation_assertion(rad_2 == 0 || rad_2 > rho_min);
 
