@@ -1281,7 +1281,7 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb> &tds)
   typedef typename Tds::Vertex_handle           Vertex_handle;
   typedef typename Tds::Vertex_iterator         Vertex_iterator;
 
-  std::map<Vertex_handle, int> V;
+  std::map<Vertex_handle, size_type> V;
 
   // outputs dimension and number of vertices
   size_type n = tds.number_of_vertices();
