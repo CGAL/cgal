@@ -550,7 +550,7 @@ convex_hull_3(InputIterator first, InputIterator beyond,
 
   // If the first and last point are equal the collinearity test some lines below will always be true.
   Point_3_list points(first, beyond);
-  unsigned int size = points.size();
+  std::size_t size = points.size();
   while((size > 1) && (points.front() == points.back())){
     points.pop_back();
     --size;
