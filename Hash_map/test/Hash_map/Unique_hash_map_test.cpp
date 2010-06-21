@@ -50,7 +50,7 @@ int main() {
         CGAL_TEST( H4[k] == *k);
     }
     hash = H4.hash_function();
-
+    std::cerr << "done" << std::endl;
     CGAL_TEST_END;
 }
 
