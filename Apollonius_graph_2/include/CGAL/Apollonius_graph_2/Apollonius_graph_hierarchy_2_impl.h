@@ -197,7 +197,7 @@ insert(const Site_2 &p)
     return first;
   }
 
-  int n_hidden = 0;
+  std::size_t n_hidden = 0;
 
   // locate the nearest neighbor using hierarchy
   nearest_neighbor(p.point(), vnear);
@@ -268,7 +268,7 @@ insert(const Site_2 &p)
   n_hidden = v_hidden.size();
 
   if ( n_hidden != 0 ) {
-    int n_non_hidden = this->number_of_vertices() - n_hidden;
+    std::size_t n_non_hidden = this->number_of_vertices() - n_hidden;
     if ( n_non_hidden < 2 ) {
       for(unsigned int i = 1; i < ag_hierarchy_2__maxlevel; ++i) {
 	hierarchy[i]->clear();

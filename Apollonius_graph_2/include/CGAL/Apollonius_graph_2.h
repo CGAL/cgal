@@ -320,7 +320,7 @@ public:
   size_type number_of_hidden_sites() const {
     //    if ( !Vertex::StoreHidden ) { return 0; }
 
-    int n_hidden(0);
+    size_type n_hidden(0);
     for (Finite_vertices_iterator vit = finite_vertices_begin();
 	 vit != finite_vertices_end(); ++vit) {
       n_hidden += vit->number_of_hidden_sites();
@@ -475,7 +475,7 @@ public:
   // INSERTION
   //----------
   template< class Input_iterator >
-  unsigned int insert(Input_iterator first, Input_iterator beyond) {
+  size_type insert(Input_iterator first, Input_iterator beyond) {
     // copy to a local container
     Site_list wp_list;
     for (Input_iterator it = first; it != beyond; ++it) {
@@ -493,7 +493,7 @@ public:
     }
 
     // store how many sites where in the range
-    unsigned int num = wp_list.size();
+    size_type num = wp_list.size();
 
     // clear the local container
     wp_list.clear();

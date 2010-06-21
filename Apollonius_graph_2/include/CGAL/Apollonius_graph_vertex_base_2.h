@@ -106,7 +106,7 @@ public:
 
   Face_handle face() const { return Vb::face(); }
 
-  unsigned int number_of_hidden_sites() const {
+  std::size_t number_of_hidden_sites() const {
     return hidden_site_list.size();
   }
 

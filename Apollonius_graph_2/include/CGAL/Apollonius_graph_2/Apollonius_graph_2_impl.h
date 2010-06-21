@@ -1704,7 +1704,7 @@ remove(Vertex_handle v)
     wp_list.push_back(*wpit);
   }
 
-  int n = number_of_vertices();
+  size_type n = number_of_vertices();
   if ( n == 1 ) {
     remove_first(v);
   } else if ( n == 2 ) {
@@ -1712,7 +1712,7 @@ remove(Vertex_handle v)
   } else if ( n == 3 ) {
     remove_third(v);
   } else {
-    int deg = degree(v);
+    std::size_t deg = degree(v);
     if ( deg == 2 ) {
       remove_degree_2(v);
     } else if ( deg == 3 ) {
@@ -1736,7 +1736,7 @@ Apollonius_graph_2<Gt,Agds,LTag>::
 remove_degree_d_vertex(Vertex_handle v)
 {
   minimize_degree(v);
-  int deg = degree(v);
+  std::size_t deg = degree(v);
   if ( deg == 3 ) {
     remove_degree_3(v);
     return;
@@ -1802,8 +1802,8 @@ remove_degree_d_vertex(Vertex_handle v)
 
   Edge_circulator ec;
 
-  unsigned int num_fe = flipped_edges.size();
-  for (unsigned int i = 0; i < num_fe; i++) {
+  std::size_t num_fe = flipped_edges.size();
+  for (std::size_t i = 0; i < num_fe; i++) {
     Vh_triple *vhq = flipped_edges[num_fe - i - 1];
 
     bool found(false);

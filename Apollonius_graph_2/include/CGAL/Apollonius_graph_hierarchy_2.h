@@ -129,7 +129,7 @@ public:
   // INSERTION
   //----------
   template < class Input_iterator >
-  unsigned int insert(Input_iterator first, Input_iterator beyond)
+  size_type insert(Input_iterator first, Input_iterator beyond)
   {
     // copy the sites to a local container
     typename Apollonius_graph_base::Site_list wp_list;
@@ -151,7 +151,7 @@ public:
 
 
     // store how many sites where in the range
-    unsigned int num = wp_list.size();
+    std::size_t num = wp_list.size();
 
     // clear the local container
     wp_list.clear();
