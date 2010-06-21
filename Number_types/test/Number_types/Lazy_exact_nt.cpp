@@ -209,5 +209,6 @@ int main ()
   zwei!=1.0; 1.0!=zwei;
   zwei==1.0; 1.0==zwei;
 
+  std::cerr << "done" << std::endl;
   return 0;
 }

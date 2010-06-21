@@ -26,7 +26,7 @@
 #define CGAL_GMPZ_TYPE_H
 
 #include <CGAL/basic.h>
-#include <gmp.h>
+#include <CGAL/gmp.h>
 #include <mpfr.h>
 
 #include <boost/operators.hpp>

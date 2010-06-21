@@ -20,7 +20,7 @@
 #define CGAL_GMPFI_TYPE_H
 
 #include <CGAL/basic.h>
-#include <gmp.h>
+#include <CGAL/gmp.h>
 #include <mpfr.h>
 #include <CGAL/GMP/Gmpfr_type.h>
 #include <mpfi.h>

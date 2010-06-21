@@ -22,6 +22,10 @@ if ( CGAL_FOUND )
   include( CGAL_VersionUtils )
   find_package( MPFI )
   include_directories( BEFORE ../../include include )
+
+ ADD_DEFINITIONS(-DCGAL_NO_AUTOLINK_GMP -DCGAL_NO_AUTOLINK_MPFR)
+
+
   create_single_source_cgal_program( "bench_interval.cpp" )
   create_single_source_cgal_program( "constant.cpp" )
   create_single_source_cgal_program( "CORE_BigFloat.cpp" )

@@ -19,7 +19,7 @@
 #ifndef CGAL_GMPFR_TYPE_H
 #define CGAL_GMPFR_TYPE_H
 
-#include <gmp.h>
+#include <CGAL/gmp.h>
 #include <mpfr.h>
 #include <boost/operators.hpp>
 #include <CGAL/Handle_for.h>

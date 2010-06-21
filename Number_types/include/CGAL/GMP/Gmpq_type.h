@@ -29,7 +29,7 @@
 #include <CGAL/GMP/Gmpz_type.h>
 #include <CGAL/GMP/Gmpfr_type.h>
 
-#include <gmp.h>
+#include <CGAL/gmp.h>
 #include <mpfr.h>
 #include <utility>
 #include <string>

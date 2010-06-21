@@ -24,7 +24,7 @@
 // includes
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
-#include <gmp.h>
+#include <CGAL/gmp.h>
 #include <mpfr.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/GMP/Gmpz_type.h>
