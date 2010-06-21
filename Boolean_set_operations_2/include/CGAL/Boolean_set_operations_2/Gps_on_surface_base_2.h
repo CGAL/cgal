@@ -1142,7 +1142,7 @@ protected:
     overlay(arr1, arr2, res, func);
     _remove_redundant_edges(&res);
     //_fix_curves_direction(res); // not needed for intersection
-    CGAL_assertion(is_valid(res));
+    CGAL_assertion(_is_valid(res));
   }
   
   template <class Polygon_>
@@ -1203,7 +1203,7 @@ protected:
     overlay(arr1, arr2, res, func);
     _remove_redundant_edges(&res);
     //_fix_curves_direction(res); // not needed for join
-    CGAL_assertion(is_valid(res));
+    CGAL_assertion(_is_valid(res));
   }
   
   template <class Polygon_>
@@ -1279,7 +1279,7 @@ protected:
     overlay(arr1, arr2, res, func);
     _remove_redundant_edges(&res);
     _fix_curves_direction(res);
-    CGAL_assertion(is_valid(res));
+    CGAL_assertion(_is_valid(res));
   }
   
   template <class Polygon_>
@@ -1346,7 +1346,7 @@ protected:
     overlay(arr1, arr2, res, func);
     _remove_redundant_edges(&res);
     _fix_curves_direction(res);
-    CGAL_assertion(is_valid(res));
+    CGAL_assertion(_is_valid(res));
   }
   
   template <class Polygon_>
