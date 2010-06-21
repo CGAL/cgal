@@ -38,6 +38,7 @@
 
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_optimization_return_code.h>
+#include <CGAL/Mesh_3/Null_exuder_visitor.h>
 
 
 #ifdef CGAL_MESH_3_VERBOSE
@@ -108,10 +109,11 @@ namespace Mesh_3 {
   
   
 template <
-typename C3T3,
-typename SliverCriteria,
-typename FT = typename C3T3::Triangulation::Geom_traits::FT
->
+  typename C3T3,
+  typename SliverCriteria,
+  typename Visitor_ = Null_exuder_visitor<C3T3>,
+  typename FT = typename C3T3::Triangulation::Geom_traits::FT
+  >
 class Slivers_exuder
 {
   // Types
@@ -158,6 +160,10 @@ class Slivers_exuder
   // A priority queue ordered on Tet quality (SliverCriteria)
   typedef CGAL::Double_map<Cell_handle, double> Tet_priority_queue;
   
+  // Visitor class
+  // Should define
+  //  - after_cell_pumped(std::size_t cells_left_number)
+  typedef Visitor_ Visitor;
 
   
 public: // methods
@@ -179,9 +185,10 @@ public: // methods
    * quality below this bound will be pumped
    */
   Mesh_optimization_return_code
-  operator()(double criterion_value_limit = SliverCriteria::default_value)
+  operator()(double criterion_value_limit = SliverCriteria::default_value,
+             Visitor visitor = Visitor())
   {
-    return pump_vertices<true>(criterion_value_limit);
+    return pump_vertices<true>(criterion_value_limit, visitor);
   }
   
   /// Time accessors
@@ -197,7 +204,7 @@ private:
    */
   template <bool pump_vertices_on_surfaces>
   Mesh_optimization_return_code
-  pump_vertices(double criterion_value_limit = SliverCriteria::default_value);
+  pump_vertices(double criterion_value_limit, Visitor& v);
   
   /**
    * Pump one vertex
@@ -530,8 +537,8 @@ private:
 
   
   
-template <typename C3T3, typename SC, typename FT>
-Slivers_exuder<C3T3,SC,FT>::
+template <typename C3T3, typename SC, typename V_, typename FT> 
+Slivers_exuder<C3T3,SC,V_,FT>::
 Slivers_exuder(C3T3& c3t3, const SC& criteria, double d)
   : c3t3_(c3t3)
   , tr_(c3t3_.triangulation())
@@ -548,11 +555,12 @@ Slivers_exuder(C3T3& c3t3, const SC& criteria, double d)
 }  
   
 
-template <typename C3T3, typename SC, typename FT>  
+template <typename C3T3, typename SC, typename V_, typename FT>  
 template <bool pump_vertices_on_surfaces>
 Mesh_optimization_return_code
-Slivers_exuder<C3T3,SC,FT>:: 
-pump_vertices(double sliver_criterion_limit)
+Slivers_exuder<C3T3,SC,V_,FT>:: 
+pump_vertices(double sliver_criterion_limit,
+              Visitor& visitor)
 {
   init(sliver_criterion_limit);
   
@@ -596,7 +604,8 @@ pump_vertices(double sliver_criterion_limit)
     // if the tet could not be deleted
     if ( ! vertex_pumped )
       cells_queue_.pop_front();
-    
+
+    visitor.after_cell_pumped(cells_queue_.size());
 #ifdef CGAL_MESH_3_EXUDER_VERBOSE   
     std::cerr << boost::format("\r             \r"
                                "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
@@ -604,7 +613,7 @@ pump_vertices(double sliver_criterion_limit)
       % num_of_pumped_vertices_
       % num_of_ignored_vertices_
       % (num_of_treated_vertices_ / running_time_.time());
-#endif // CGAL_MESH_3_EXUDER_VERBOSE  
+#endif // CGAL_MESH_3_EXUDER_VERBOSE
   }
   
   running_time_.stop();
@@ -626,9 +635,9 @@ pump_vertices(double sliver_criterion_limit)
 } // end function pump_vertices
 
 
-template <typename C3T3, typename SC, typename FT>
+template <typename C3T3, typename SC, typename V_, typename FT> 
 bool
-Slivers_exuder<C3T3,SC,FT>::
+Slivers_exuder<C3T3,SC,V_,FT>::
 pump_vertex(const Vertex_handle& pumped_vertex)
 {
   // Get best_weight
@@ -649,9 +658,9 @@ pump_vertex(const Vertex_handle& pumped_vertex)
 }
   
   
-template <typename C3T3, typename SC, typename FT>
+template <typename C3T3, typename SC, typename V_, typename FT> 
 void
-Slivers_exuder<C3T3,SC,FT>::
+Slivers_exuder<C3T3,SC,V_,FT>::
 initialize_prestar_and_criterion_values(const Vertex_handle& v,
                                         Pre_star& pre_star,
                                         Sliver_values& criterion_values) const
@@ -689,9 +698,9 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
 }
   
   
-template <typename C3T3, typename SC, typename FT>
+template <typename C3T3, typename SC, typename V_, typename FT> 
 bool
-Slivers_exuder<C3T3,SC,FT>::
+Slivers_exuder<C3T3,SC,V_,FT>::
 expand_prestar(const Cell_handle& cell_to_add,
                const Vertex_handle& pumped_vertex,
                Pre_star& pre_star,
@@ -785,9 +794,9 @@ expand_prestar(const Cell_handle& cell_to_add,
 }
 
   
-template <typename C3T3, typename SC, typename FT>
+template <typename C3T3, typename SC, typename V_, typename FT> 
 double
-Slivers_exuder<C3T3,SC,FT>::
+Slivers_exuder<C3T3,SC,V_,FT>::
 get_best_weight(const Vertex_handle& v) const
 {
   // Get pre_star and criterion_values
@@ -859,9 +868,9 @@ get_best_weight(const Vertex_handle& v) const
 }
   
 
-template <typename C3T3, typename SC, typename FT>
-typename Slivers_exuder<C3T3,SC,FT>::Umbrella
-Slivers_exuder<C3T3,SC,FT>::
+template <typename C3T3, typename SC, typename V_, typename FT> 
+typename Slivers_exuder<C3T3,SC,V_,FT>::Umbrella
+Slivers_exuder<C3T3,SC,V_,FT>::
 get_umbrella(const Facet_vector& facets,
              const Vertex_handle& v) const
 {
@@ -881,9 +890,9 @@ get_umbrella(const Facet_vector& facets,
 }
 
   
-template <typename C3T3, typename SC, typename FT>
+template <typename C3T3, typename SC, typename V_, typename FT> 
 void
-Slivers_exuder<C3T3,SC,FT>::  
+Slivers_exuder<C3T3,SC,V_,FT>::  
 restore_cells_and_boundary_facets(
   const Boundary_facets_from_outside& boundary_facets_from_outside,
   const Vertex_handle& new_vertex)
@@ -933,9 +942,9 @@ restore_cells_and_boundary_facets(
   
 
   
-template <typename C3T3, typename SC, typename FT>
-typename Slivers_exuder<C3T3,SC,FT>::Ordered_edge
-Slivers_exuder<C3T3,SC,FT>::get_opposite_ordered_edge(
+template <typename C3T3, typename SC, typename V_, typename FT> 
+typename Slivers_exuder<C3T3,SC,V_,FT>::Ordered_edge
+Slivers_exuder<C3T3,SC,V_,FT>::get_opposite_ordered_edge(
   const Facet& facet,
   const Vertex_handle& vertex) const
 {
@@ -963,9 +972,9 @@ Slivers_exuder<C3T3,SC,FT>::get_opposite_ordered_edge(
 }
   
   
-template <typename C3T3, typename SC, typename FT>
+template <typename C3T3, typename SC, typename V_, typename FT> 
 void
-Slivers_exuder<C3T3,SC,FT>::  
+Slivers_exuder<C3T3,SC,V_,FT>::  
 restore_internal_facets(const Umbrella& umbrella,
                         const Vertex_handle& new_vertex)
 {
@@ -991,9 +1000,9 @@ restore_internal_facets(const Umbrella& umbrella,
 }
 
   
-template <typename C3T3, typename SC, typename FT>
+template <typename C3T3, typename SC, typename V_, typename FT> 
 void
-Slivers_exuder<C3T3,SC,FT>::  
+Slivers_exuder<C3T3,SC,V_,FT>::  
 update_mesh(const Weighted_point& new_point,
             const Vertex_handle& old_vertex)
 {
@@ -1040,10 +1049,10 @@ update_mesh(const Weighted_point& new_point,
 
   
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER  
-template <typename C3T3, typename SC, typename FT>
+template <typename C3T3, typename SC, typename V_, typename FT> 
 template <class Input_facet_it>
 bool
-Slivers_exuder<C3T3,SC,FT>::
+Slivers_exuder<C3T3,SC,V_,FT>::
 check_pre_star(const Pre_star& pre_star,
                Input_facet_it begin,
                Input_facet_it end,
@@ -1147,9 +1156,9 @@ check_pre_star(const Pre_star& pre_star,
 
   
 
-template <typename C3T3, typename SC, typename FT>
+template <typename C3T3, typename SC, typename V_, typename FT> 
 bool
-Slivers_exuder<C3T3,SC,FT>::
+Slivers_exuder<C3T3,SC,V_,FT>::
 check_pre_star(const Pre_star& pre_star,
                const Weighted_point& wp,
                const Vertex_handle& vh) const
@@ -1176,9 +1185,9 @@ check_pre_star(const Pre_star& pre_star,
 }
 
   
-template <typename C3T3, typename SC, typename FT>
+template <typename C3T3, typename SC, typename V_, typename FT> 
 bool
-Slivers_exuder<C3T3,SC,FT>::
+Slivers_exuder<C3T3,SC,V_,FT>::
 check_ratios(const Sliver_values& criterion_values,
                   const Weighted_point& wp,
                   const Vertex_handle& vh) const
