@@ -197,7 +197,7 @@ public:
   }
 
   //  points
-  inline unsigned int 
+  inline std::size_t
   size() const 
   {
     return *m_e - *m_b;
