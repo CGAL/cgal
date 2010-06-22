@@ -102,8 +102,8 @@ namespace CGAL {
     Kd_tree_rectangle(int d) 
       : dim(d), lower_(new FT[d]), upper_(new FT[d]), max_span_coord_(0)
     {
-      std::fill(lower_, lower_ + dim, 0);
-      std::fill(upper_, upper_ + dim, 0);
+      std::fill(lower_, lower_ + dim, FT(0));
+      std::fill(upper_, upper_ + dim, FT(0));
     }
 
     Kd_tree_rectangle() 
