@@ -8,6 +8,10 @@ x General
 
   - The configuration of CGAL libraries now requires CMake>=2.6.
 
+  - The Microsoft Windows Visual C++ compiler 2005 (VC8) is no longer
+    supported by the CGAL project since CGAL-3.7.
+
+
 x Triangulations and Delaunay Triangulations
 
 x.y 2D Triangulations
