@@ -84,13 +84,13 @@ public:
     }
     void write_facet_begin( std::size_t no) {
         if ( m_header.binary())
-            I_Binary_write_big_endian_integer32( out(), no);
+          I_Binary_write_big_endian_integer32( out(), static_cast<Integer32>(no));
         else
             out() << no << ' ';
     }
     void write_facet_vertex_index( std::size_t index) {
         if ( m_header.binary())
-            I_Binary_write_big_endian_integer32( out(), index);
+          I_Binary_write_big_endian_integer32( out(), static_cast<Integer32>(index));
         else
             out() << ' ' << index;
     }
