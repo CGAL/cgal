@@ -178,6 +178,9 @@ Mesh_3_optimization_plugin::odt()
   connect(ui.buttonBox, SIGNAL(rejected()),
           &dialog, SLOT(reject()));
   
+  connect(ui.noTimeLimit, SIGNAL(toggled(bool)),
+          ui.maxTime,     SLOT(setDisabled(bool)));
+  
   ui.objectName->setText(item->name());
 
   namespace cgpd = CGAL::parameters::default_values;
@@ -240,6 +243,9 @@ Mesh_3_optimization_plugin::lloyd()
           &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()),
           &dialog, SLOT(reject()));
+  
+  connect(ui.noTimeLimit, SIGNAL(toggled(bool)),
+          ui.maxTime,     SLOT(setDisabled(bool)));
   
   ui.objectName->setText(item->name());
   
@@ -304,6 +310,12 @@ Mesh_3_optimization_plugin::perturb()
   connect(ui.buttonBox, SIGNAL(rejected()),
           &dialog, SLOT(reject()));
   
+  connect(ui.noTimeLimit, SIGNAL(toggled(bool)),
+          ui.maxTime,     SLOT(setDisabled(bool)));
+  
+  connect(ui.noBound,     SIGNAL(toggled(bool)),
+          ui.sliverBound, SLOT(setDisabled(bool)));
+  
   ui.objectName->setText(item->name());
   
   int i = dialog.exec();
@@ -359,6 +371,12 @@ Mesh_3_optimization_plugin::exude()
           &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()),
           &dialog, SLOT(reject()));
+  
+  connect(ui.noTimeLimit, SIGNAL(toggled(bool)),
+          ui.maxTime,     SLOT(setDisabled(bool)));
+  
+  connect(ui.noBound,     SIGNAL(toggled(bool)),
+          ui.sliverBound, SLOT(setDisabled(bool)));
   
   ui.objectName->setText(item->name());
   ui.sliverBound->setValue(25.);

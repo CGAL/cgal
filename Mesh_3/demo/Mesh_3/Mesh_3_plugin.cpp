@@ -152,6 +152,23 @@ void Mesh_3_plugin::mesh_3()
   connect(ui.buttonBox, SIGNAL(rejected()),
           &dialog, SLOT(reject()));
 
+  // Connect checkboxes to spinboxes
+  connect(ui.noApprox, SIGNAL(toggled(bool)),
+          ui.approx,   SLOT(setEnabled(bool)));
+
+  connect(ui.noFacetSizing, SIGNAL(toggled(bool)),
+          ui.facetSizing,   SLOT(setEnabled(bool)));
+
+  connect(ui.noAngle,    SIGNAL(toggled(bool)),
+          ui.facetAngle, SLOT(setEnabled(bool)));
+
+  connect(ui.noTetSizing, SIGNAL(toggled(bool)),
+          ui.tetSizing,   SLOT(setEnabled(bool)));
+
+  connect(ui.noTetShape, SIGNAL(toggled(bool)),
+          ui.tetShape,   SLOT(setEnabled(bool)));
+
+  // Set default parameters
   Scene_interface::Bbox bbox = item->bbox();
   ui.objectName->setText(item->name());
   ui.objectNameSize->setText(tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
