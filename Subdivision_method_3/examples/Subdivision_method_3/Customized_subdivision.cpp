@@ -1,4 +1,4 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Subdivision_method_3.h>
 
 #include <cstdio>
@@ -7,7 +7,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-typedef CGAL::Cartesian<double>            Kernel;
+typedef CGAL::Simple_cartesian<double>     Kernel;
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 
 using namespace std;
@@ -50,7 +50,7 @@ public:
     Point& S = vitr->point();
 
     Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
-    int n = circulator_size(vcir);
+    std::size_t n = circulator_size(vcir);
     for (int i = 0; i < n; i++, ++vcir) {
       Point& p = vcir->opposite()->vertex()->point();
       R[0] += p[0]; 	R[1] += p[1]; 	R[2] += p[2];
