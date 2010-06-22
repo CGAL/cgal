@@ -149,7 +149,7 @@ public:
   //
   void vertex_node(Vertex_handle vertex, Point& pt) {
     Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
-    int n = circulator_size(vcir);    
+    int n = static_cast<int>(circulator_size(vcir));    
 
     FT Q[] = {0.0, 0.0, 0.0}, R[] = {0.0, 0.0, 0.0};
     Point& S = vertex->point();
