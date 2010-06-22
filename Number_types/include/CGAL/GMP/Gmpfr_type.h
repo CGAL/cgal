@@ -1098,10 +1098,10 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                         mant.bit_size()>MPFR_PREC_MIN?
                         mant.bit_size():
                         MPFR_PREC_MIN));
-        mpfr_mul_2si(f.fr(),
-                     f.fr(),
-                     (neg_exp?-1:1)*mpz_get_ui(exp.mpz()),
-                     MPFR_RNDN);
+        if(neg_exp)
+                mpfr_div_2ui(f.fr(),f.fr(),mpz_get_ui(exp.mpz()),MPFR_RNDN);
+        else
+                mpfr_mul_2ui(f.fr(),f.fr(),mpz_get_ui(exp.mpz()),MPFR_RNDN);
 
         // this expensive assertion checks that we didn't lose bits when
         // multiplying or dividing by 2^exp
@@ -1110,12 +1110,17 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                                 MPFR_PREC_MIN<mant.bit_size()? \
                                 mant.bit_size(): \
                                 MPFR_PREC_MIN)); \
-                mpfr_div_2si(g.fr(), \
-                             f.fr(), \
-                             neg_exp? \
-                                -mpz_get_ui(exp.mpz()): \
-                                mpz_get_ui(exp.mpz()), \
-                             MPFR_RNDN);)
+                if(neg_exp) \
+                        mpfr_div_2ui(g.fr(), \
+                                     f.fr(), \
+                                     mpz_get_ui(exp.mpz()), \
+                                     MPFR_RNDN); \
+                else \
+                        mpfr_mul_2ui(g.fr(), \
+                                     f.fr(), \
+                                     mpz_get_ui(exp.mpz()), \
+                                     MPFR_RNDN); \
+        )
         CGAL_expensive_assertion(g==mant);
 
         return is;
