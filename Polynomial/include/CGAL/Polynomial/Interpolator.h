@@ -104,7 +104,7 @@ public:
     yvals.push_back(point.second);
         
     Coeff num, den;
-    int k = xvals.size() - 1; 
+    int k = static_cast<int>(xvals.size()) - 1; 
     if(k == 0){
       b.push_back(yvals[0]);
     }else{
@@ -122,7 +122,7 @@ public:
     if (xvals.size() == 0) return Polynomial_d(0);
     // TODO: compute new interpolant from old interpolant ?
     if(!valid)
-      interpolant = eval_newton_poly(xvals.size()-1);
+      interpolant = eval_newton_poly(static_cast<int>(xvals.size())-1);
     return interpolant; 
   }
     

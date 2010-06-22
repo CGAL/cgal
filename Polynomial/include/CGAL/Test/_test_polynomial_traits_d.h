@@ -886,10 +886,10 @@ void test_square_free_factorize(const Polynomial_traits_d&){
     Polynomial_d p = f1*f1*f2*f3*f3*f3;
     std::vector<std::pair<Polynomial_d,int> > fac_mul_pairs;
     sqff(p, std::back_inserter(fac_mul_pairs));
-    int n = fac_mul_pairs.size();
+    std::size_t n = fac_mul_pairs.size();
     assert(n >= 3 
      || total_degree(f1) == 0 || total_degree(f2) == 0 || total_degree(f3) == 0);
-    for (int j = 0; j < n; j++){
+    for (std::size_t j = 0; j < n; j++){
       Polynomial_d factor = fac_mul_pairs[j].first;
       int multi = fac_mul_pairs[j].second;
       for (int k = 0; k < multi; k++){
@@ -1106,9 +1106,9 @@ void test_square_free_factorize_up_to_constant_factor(const Polynomial_traits_d&
     std::vector<std::pair<Polynomial_d,int> > fac_mul_pairs;
     sqff_utcf(p, std::back_inserter(fac_mul_pairs)) ;
      
-    int n = fac_mul_pairs.size();
+    std::size_t n = fac_mul_pairs.size();
    
-    for (int j = 0; j < n; j++){
+    for (std::size_t j = 0; j < n; j++){
       Polynomial_d factor = fac_mul_pairs[j].first;
       assert(factor == canonicalize(factor));
       int multi = fac_mul_pairs[j].second;

@@ -368,7 +368,7 @@ public:
     /*! The degree of the zero polynomial is 0.
      *  The degree of an undefined polynomial is -1.
      */
-    int degree() const { return this->ptr()->coeff.size()-1; } 
+  int degree() const { return static_cast<int>(this->ptr()->coeff.size())-1; } 
 
     //! const access to the coefficient of x^i
     const NT& operator[](unsigned int i) const {
