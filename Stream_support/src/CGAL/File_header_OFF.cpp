@@ -79,7 +79,7 @@ File_header_OFF::File_header_OFF(
 //{
 //    set_halfedges(h);
 //}
-File_header_OFF::File_header_OFF( int v, int h, int f,
+File_header_OFF::File_header_OFF( std::size_t v, std::size_t h, std::size_t f,
                      bool binary, bool noc, bool skel, bool verbose)
 :   File_header_extended_OFF( verbose),
     n_vertices(v),
@@ -128,7 +128,7 @@ File_header_OFF::File_header_OFF(
     m_dim(3)
 {}
 File_header_OFF::File_header_OFF(
-                     int v, int h, int f,
+                                 std::size_t v, std::size_t h, std::size_t f,
                      const File_header_extended_OFF& ext_header)
 :   File_header_extended_OFF( ext_header),
     n_vertices(v),
@@ -146,7 +146,7 @@ File_header_OFF::File_header_OFF(
     set_halfedges(h);
 }
 File_header_OFF::File_header_OFF(
-                     int v, int h, int f,
+                                 std::size_t v, std::size_t h, std::size_t f,
                      const File_header_extended_OFF& ext_header,
                      bool binary, bool noc, bool skel)
 :   File_header_extended_OFF( ext_header),
@@ -187,8 +187,8 @@ std::ostream& operator<<( std::ostream& out, const File_header_OFF& h) {
         out << "OFF";
     if ( h.binary()) {
         out << " BINARY\n";
-        I_Binary_write_big_endian_integer32( out, h.size_of_vertices());
-        I_Binary_write_big_endian_integer32( out, h.size_of_facets());
+        I_Binary_write_big_endian_integer32( out, static_cast<int>(h.size_of_vertices()));
+        I_Binary_write_big_endian_integer32( out, static_cast<int>(h.size_of_facets()));
         if ( h.off())
             I_Binary_write_big_endian_integer32( out, 0);
     } else {
@@ -327,7 +327,7 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     } else {
         int n;
         if ( h.n_dimensional()) {
-            h.set_dimension( h.size_of_vertices());
+            h.set_dimension( static_cast<int>(h.size_of_vertices()));
             in >> n;
             h.set_vertices(n);
         }
