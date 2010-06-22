@@ -798,9 +798,9 @@ public:
     }
 
     CGAL_NEF_TRACEN("current = " << current);
-    if(current == VERTEX)
+    if(current == VERTEX){
       CGAL_NEF_TRACEN(point(v));
-
+    }
     while (true) switch ( current ) {
       case VERTEX:
         { CGAL_NEF_TRACEN("vertex "<<CT.point(v));

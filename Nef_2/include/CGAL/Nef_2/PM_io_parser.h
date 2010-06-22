@@ -87,7 +87,7 @@ class PM_io_parser : public PMDEC
   std::vector<Halfedge_handle>  Halfedge_of;
   std::vector<Face_handle>      Face_of;
   // object mapping for input
-  int vn,en,fn,i;
+  std::size_t vn,en,fn,i;
   // the number of objects
 
 

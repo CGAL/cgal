@@ -324,7 +324,7 @@ template <class pNT> class Polynomial :
   /*{\Mop a random access iterator pointing beyond $a_d$.}*/
 
   int degree() const 
-  { return this->ptr()->coeff.size()-1; } 
+  { return  static_cast<int>(this->ptr()->coeff.size())-1; } 
   /*{\Mop the degree of the polynomial.}*/
 
   const NT& operator[](unsigned int i) const 
@@ -658,7 +658,7 @@ class Polynomial<int> :
   /*{\Xop a random access iterator pointing beyond $a_d$.}*/
 
   int degree() const 
-  { return this->ptr()->coeff.size()-1; } 
+  { return static_cast<int>(this->ptr()->coeff.size())-1; } 
   /*{\Xop the degree of the polynomial.}*/
 
   const int& operator[](unsigned int i) const 
@@ -959,7 +959,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   /*{\Xop a random access iterator pointing beyond $a_d$.}*/
 
   int degree() const 
-  { return this->ptr()->coeff.size()-1; } 
+  { return static_cast<int>(this->ptr()->coeff.size())-1; } 
   /*{\Xop the degree of the polynomial.}*/
 
   const double& operator[](unsigned int i) const 

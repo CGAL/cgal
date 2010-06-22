@@ -107,7 +107,7 @@ public:
        return s;
     
      s = K.orientation(s2,K.target(s1));
-     if (s==0) return ( is1 - is2 );
+     if (s==0) return static_cast<int>( is1 - is2 );
      // overlapping segments are not equal
      return s;
    }

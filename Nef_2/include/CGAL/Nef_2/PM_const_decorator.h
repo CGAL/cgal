@@ -472,10 +472,10 @@ check_integrity_and_topological_planarity(bool faces) const
     first=false;
   }
 
-  int v_num = number_of_vertices() - iso_vert_num;
-  int e_num = number_of_edges();
-  int c_num = number_of_connected_components() - iso_vert_num;
-  int f_num = number_of_face_cycles() - c_num + 1;
+  std::size_t v_num = number_of_vertices() - iso_vert_num;
+  std::size_t e_num = number_of_edges();
+  std::size_t c_num = number_of_connected_components() - iso_vert_num;
+  std::size_t f_num = number_of_face_cycles() - c_num + 1;
   CGAL_NEF_TRACEV(fc_num);CGAL_NEF_TRACEV(iv_num);CGAL_NEF_TRACEV(iso_vert_num);
   CGAL_NEF_TRACEV(v_num);CGAL_NEF_TRACEV(e_num);CGAL_NEF_TRACEV(c_num);CGAL_NEF_TRACEV(f_num);
   // CGAL_assertion(fc_num == f_num && iv_num == iso_vert_num);
@@ -492,7 +492,7 @@ typename PM_const_decorator<HDS>::Size_type
 PM_const_decorator<HDS>::
 number_of_face_cycles() const
 {
-  unsigned int fc_num=0;
+  Size_type fc_num=0;
   CGAL::Unique_hash_map<Halfedge_const_handle,bool> visited; 
     // init with bool() == false
   Halfedge_const_iterator eit =  phds->halfedges_begin();
