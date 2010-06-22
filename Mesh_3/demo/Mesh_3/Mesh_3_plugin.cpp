@@ -136,7 +136,7 @@ void Mesh_3_plugin::mesh_3()
 
   if ( NULL == item )
   {
-    QMessageBox::critical(mw,tr(""),
+    QMessageBox::warning(mw,tr(""),
                           tr("Selected object can't be meshed")); 
     return;
   }

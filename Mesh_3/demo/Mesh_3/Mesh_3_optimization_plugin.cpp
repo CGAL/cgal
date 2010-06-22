@@ -421,7 +421,7 @@ get_c3t3_item() const
   
   if ( NULL == item )
   {
-    QMessageBox::critical(mw,tr(""),
+    QMessageBox::warning(mw,tr(""),
                           tr("Selected object is not a mesh... optimization can't be performed"));
     return NULL;
   }
