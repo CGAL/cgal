@@ -88,12 +88,15 @@ public:
     return R().has_on_3_object()(*this, p);
   }
 
-  Point_3 vertex(int i) const // TODO : use Qrt
+
+  typename Qualified_result_of<typename R::Construct_vertex_3, Triangle_3 >::type
+  vertex(int i) const
   {
     return R().construct_vertex_3_object()(*this, i);
   }
 
-  Point_3 operator[](int i) const // TODO : use Qrt
+  typename Qualified_result_of<typename R::Construct_vertex_3, Triangle_3 >::type
+  operator[](int i) const
   {
     return vertex(i);
   }
