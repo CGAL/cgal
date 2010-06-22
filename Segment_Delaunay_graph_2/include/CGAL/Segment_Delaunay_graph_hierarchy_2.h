@@ -445,9 +445,9 @@ protected:
     return (std::min)(die(), (int)sdg_hierarchy_2__maxlevel)-1;
   }
 
-  size_type find_level(Vertex_handle v) const {
+  int find_level(Vertex_handle v) const {
     CGAL_precondition( v != Vertex_handle() );
-    size_type level = 0;
+    int level = 0;
     Vertex_handle vertex = v;
     while ( vertex->up() != Vertex_handle() ) {
       vertex = vertex->up();
@@ -458,11 +458,11 @@ protected:
   }
 
   Vertex_handle
-  vertex_at_level(const Vertex_handle& v, size_type k) const
+  vertex_at_level(const Vertex_handle& v, int k) const
   {
     CGAL_precondition( k <= sdg_hierarchy_2__maxlevel );
 
-    size_type level = 0;
+    int level = 0;
     Vertex_handle v_at_level = v;
     while ( level < k ) {
       v_at_level = v_at_level->up();

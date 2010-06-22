@@ -252,7 +252,7 @@ typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_point(const Storage_site_2& ss, const Point_2& p, Vertex_handle vnear)
 {
-  int n = number_of_vertices();
+  size_type n = number_of_vertices();
   if ( n == 0 ) {
     return insert_first(ss, p);
   } else if ( n == 1 ) {
@@ -2040,7 +2040,7 @@ remove_degree_d_vertex(const Vertex_handle& v)
 
 #else
   minimize_degree(v);
-  int deg = degree(v);
+  size_type deg = degree(v);
   if ( deg == 3 ) {
     remove_degree_3(v);
     return;
@@ -2144,7 +2144,7 @@ remove_base(const Vertex_handle& v)
     return remove_third(v);
   }
 
-  int deg = degree(v);
+  size_type deg = degree(v);
   if ( deg == 2 ) {
     remove_degree_2(v);
   } else if ( deg == 3 ) {
@@ -3121,8 +3121,8 @@ file_output(std::ostream& os, Point_handle_mapper& P,
     }
   }
 
-  std::map<Vertex_handle,int> V;
-  std::map<Face_handle,int> F;
+  std::map<Vertex_handle,size_type> V;
+  std::map<Face_handle,size_type> F;
 
   // first vertex (infinite vertex) 
   size_type inum = 0;
