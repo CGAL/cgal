@@ -448,7 +448,7 @@ OutputIterator random_collinear_points_2(
     typedef typename Creator::result_type   Point;
     typedef typename Creator::argument_type T;
 
-    int m = last - first;
+    std::ptrdiff_t m = last - first;
     for ( std::size_t i = 0; i < n; i++) {
         const Point& p = first[ rnd.get_int( 0, m-1)];
         const Point& q = first[ rnd.get_int( 0, m-1)];

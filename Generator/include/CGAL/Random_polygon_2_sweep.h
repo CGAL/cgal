@@ -508,7 +508,7 @@ sweep(Tree *tree)
 // ----- End of implementation of i_generator_polygon functions. -----
 
 template <class Iterator, class PolygonTraits>
-std::pair<int,int>
+std::pair<std::size_t,std::size_t>
 check_simple_polygon(Iterator points_begin, Iterator points_end,
                      const PolygonTraits& polygon_traits)
 {
@@ -520,7 +520,7 @@ check_simple_polygon(Iterator points_begin, Iterator points_end,
     Tree tree(&vertex_data);
     vertex_data.init(&tree);
     vertex_data.sweep(&tree);
-    std::pair<int,int> result;
+    std::pair<std::size_t, std::size_t> result;
     if (vertex_data.is_simple_result) {
         result.first = result.second = -1;
 	return result;
@@ -540,7 +540,7 @@ template <class Iterator, class PolygonTraits>
 void make_simple_polygon(Iterator points_begin, Iterator points_end,
                          const PolygonTraits& polygon_traits)
 {
-    std::pair<int,int> swap_interval;
+  std::pair<std::size_t,std::size_t> swap_interval;
 
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
     Iterator it;
