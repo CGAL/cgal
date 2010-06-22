@@ -258,7 +258,7 @@ farin_c1_interpolation(RandomAccessIterator first,
   typename Functor::result_type f;
   typename GradFunctor::result_type grad;
 
-  int n= beyond - first;
+  int n= static_cast<int>(beyond - first);
   if( n==1){
     f= function_value(first->first);
     CGAL_assertion(f.second);
