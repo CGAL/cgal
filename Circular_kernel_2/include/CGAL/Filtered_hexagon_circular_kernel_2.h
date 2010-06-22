@@ -63,8 +63,8 @@ template <class CK>
     typedef typename CK::Compare_x_2                 Compare_x_2;
     typedef typename CK::Compare_y_2		     Compare_y_2;
     typedef typename CK::Compare_xy_2		     Compare_xy_2;
-    typedef typename CK::Compute_Circular_x_2        Compute_Circular_x_2;
-    typedef typename CK::Compute_Circular_y_2        Compute_Circular_y_2;
+    typedef typename CK::Compute_circular_x_2        Compute_circular_x_2;
+    typedef typename CK::Compute_circular_y_2        Compute_circular_y_2;
     typedef Hexagon_functors::Construct_circular_source_vertex_2<Self> Construct_circular_source_vertex_2;
     typedef Hexagon_functors::Construct_circular_target_vertex_2<Self> Construct_circular_target_vertex_2;
     typedef Hexagon_functors::Construct_circular_min_vertex_2<Self> Construct_circular_min_vertex_2;

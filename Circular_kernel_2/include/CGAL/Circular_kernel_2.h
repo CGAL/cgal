@@ -93,7 +93,13 @@ struct Circular_kernel_2
         >,
        Circular_kernel_2<LinearKernel,AlgebraicKernel>
      >
-{};
+{
+  // for Lazy hexagons/bbox kernels
+  // Please remove this if you consider it to be sloppy
+  struct Circular_tag{};
+  typedef Circular_tag Definition_tag;
+  //  
+};
 
 } //namespace CGAL
 

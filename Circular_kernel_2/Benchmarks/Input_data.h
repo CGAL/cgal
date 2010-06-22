@@ -25,7 +25,7 @@ void _bench_input_grid(ArcContainer& ac){
   	
 	for(int i = 0; i < 20; i++){
     		for(int j = 0; j <20; j++){
-      			ac.push_back( Circle_2( Point_2(x + j*r, y + i*r), r*r));
+      			ac.push_back(typename CK::Circular_arc_2 (  Circle_2( Point_2(x + j*r, y + i*r), r*r)));
     		}
   	}
 }
@@ -42,7 +42,7 @@ void _bench_input_grid2(ArcContainer& ac){
  
   	for(int i = 0; i < 20; i++){
     		for(int j = 0; j < 20; j++){
-     			ac.push_back(Circle_2( Point_2(x + j*r, y + i*r), r*r));
+     			ac.push_back(typename CK::Circular_arc_2 ( Circle_2( Point_2(x + j*r, y + i*r), r*r) ));
     		}
   	}
 
@@ -51,7 +51,7 @@ void _bench_input_grid2(ArcContainer& ac){
   	
 	for(int i = 0; i < 20; i++){
     		for(int j = 0; j < 20; j++){
-      			ac.push_back( Circle_2( Point_2(x + j*r, y + i*r), r*r));
+      			ac.push_back(typename CK::Circular_arc_2 (  Circle_2( Point_2(x + j*r, y + i*r), r*r)));
     		}
   	}
 
@@ -77,7 +77,7 @@ void _bench_input_random(ArcContainter& arcs)
      		double y = theRandom.get_double(random_min,random_max);
      		double r = theRandom.get_double(0.1,random_max);
      		fout << x << " " << y << " " << r << " " ;
-    		arcs.push_back( Circle_2( Point_2(x,y), r*r));
+    		arcs.push_back(typename CK::Circular_arc_2 (  Circle_2( Point_2(x,y), r*r) ));
     	}
 	
 	fout.close();
@@ -94,7 +94,7 @@ void _bench_input_file(ArcContainter& arcs){
       	std::ifstream fin("random.inp");
       	for(int i = 0; i < 100 ; i++){
 		fin >> x >> y >> r ;
-         	arcs.push_back( Circle_2( Point_2(x,y), r*r));
+         	arcs.push_back(typename CK::Circular_arc_2 (  Circle_2( Point_2(x,y), r*r)));
       	}
       	
 	fin.close();
@@ -115,7 +115,7 @@ void _bench_input_rotation(ArcContainter& ac){
  		for(int i = 0; i < 5; i++){
     			for(int j = 0; j < 5; j++){
 				R = (r+k)*(r+k);
-     				ac.push_back( Circle_2( Point_2(x + i*r, y + j*r),R));
+     				ac.push_back(typename CK::Circular_arc_2 (  Circle_2( Point_2(x + i*r, y + j*r),R) ));
      			}
  		}
 	}

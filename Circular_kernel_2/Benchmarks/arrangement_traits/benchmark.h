@@ -206,7 +206,7 @@ class Bench
   typedef typename CGAL::Arrangement_2<Traits>                 Pmwx;
   typedef typename CGAL::Arr_naive_point_location<Pmwx>        Point_location;
   std::cout << "memory size before construction" << mem_sizer.virtual_size() << std::endl;
-  std::cout << "memory resident size before insert_curves()" << mem_sizer.resident_size () << std::endl;
+  std::cout << "memory resident size before insert()" << mem_sizer.resident_size () << std::endl;
   Pmwx _pm;
   Point_location _pl(_pm);
   
@@ -214,7 +214,7 @@ class Bench
   try{
     this->start();
     
-      insert_curves(_pm,ac.begin(),ac.end());
+      insert(_pm,ac.begin(),ac.end(),boost::false_type());
       
     this->stop();
   }
@@ -231,8 +231,8 @@ class Bench
    if (!fail){this->summarize(_pm.number_of_vertices(),_pm.number_of_halfedges());}
    
     
-    std::cout << "memory size after insert_curves()" << mem_sizer.virtual_size () << std::endl; 
-    std::cout << "memory resident size after insert_curves()" << mem_sizer.resident_size () << std::endl;
+    std::cout << "memory size after insert()" << mem_sizer.virtual_size () << std::endl; 
+    std::cout << "memory resident size after insert()" << mem_sizer.resident_size () << std::endl;
  }
  
 

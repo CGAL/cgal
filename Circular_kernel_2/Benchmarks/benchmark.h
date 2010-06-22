@@ -29,13 +29,13 @@ private:
   int i;
 typedef std::size_t size_type;
   CGAL::Memory_sizer mem_sizer;
-  char* Dxffile;
+  std::string Dxffile;
   bool ONLY_DXF;
   double MemBefore,MemAfter;
   
 public:
   
-  Bench(const bool only_dxf=false, char *fhtml="benchmarks.html", char* ftex="benchmarks.tex",char* Dxffilename=""):
+  Bench(const bool only_dxf=false, const char *fhtml="benchmarks.html", const char* ftex="benchmarks.tex",const char* Dxffilename=""):
      htmlout(fhtml,std::ios::app),
      texout(ftex,std::ios::app){ 
 	i=0;
@@ -161,7 +161,7 @@ private:
 
   void summarize(int vertices,int hedges){
    	int temp; 
-   	temp=CGAL::Interval_nt<>::number_of_failures();	
+//   	temp=CGAL::Interval_nt<>::number_of_failures();	
    	numof_f_fails =  temp - numof_f_fails; 
    	std::cout  << "  numbers_of_filter_fails : " << numof_f_fails << std::endl;
    	
@@ -188,7 +188,7 @@ private:
 	      << "  Time (sec): " << utime.tv_sec << std::endl
 	      << "      (usec): " << std::setw(6) << std::setfill('0')
 	     			  << utime.tv_usec << std::endl;
-  	numof_f_fails = CGAL::Interval_nt<>::number_of_failures();
+//  	numof_f_fails = CGAL::Interval_nt<>::number_of_failures();
   }
   
   void fail(void){
@@ -213,13 +213,13 @@ private:
   	typedef typename CGAL::Arr_naive_point_location<Pmwx>        Point_location;
   	
 	std::cout << "memory size before construction" << mem_sizer.virtual_size() << std::endl;
-  	std::cout << "memory resident size before insert_curves()" << mem_sizer.resident_size () << std::endl;
+  	std::cout << "memory resident size before insert()" << mem_sizer.resident_size () << std::endl;
   	MemBefore = mem_sizer.virtual_size ()/1000000;
 	Pmwx _pm;
   	Point_location _pl(_pm);
 	try{
     		this->start(); 
-      		insert_curves(_pm,ac.begin(),ac.end());
+      		insert(_pm,ac.begin(),ac.end(),boost::false_type());
     		this->stop();
   	} catch (std::exception &e) {
     		this->fail();
@@ -236,8 +236,8 @@ private:
    
     	
         MemAfter = mem_sizer.virtual_size ()/1000000;
-	std::cout << "memory size after insert_curves()" << mem_sizer.virtual_size () << std::endl; 
-    	std::cout << "memory resident size after insert_curves()" << mem_sizer.resident_size () << std::endl;
+	std::cout << "memory size after insert()" << mem_sizer.virtual_size () << std::endl; 
+    	std::cout << "memory resident size after insert()" << mem_sizer.resident_size () << std::endl;
         _pm.clear();
  }
  
@@ -282,7 +282,7 @@ template <class CK,class Traits,class ArcContainer>
  }
 
  template <class CK,class Traits,class ArcContainer>
- void dfx(char* Dfxfile){
+ void dfx(const char* Dfxfile){
 	i=4;
  
       	ArcContainer arc;
@@ -316,7 +316,7 @@ template <class CK,class Traits,class ArcContainer>
  }
 public:
  template <class CK,class Traits,class ArcContainer>
- void Compute(char* dxffile){
+ void Compute(const char* dxffile){
      	if(!ONLY_DXF){
 	this->grid<CK,Traits,ArcContainer>();
    	this->grid2<CK,Traits,ArcContainer>();
@@ -351,12 +351,12 @@ public:
  }
 
 template <class CK,class Traits,class ArcContainer>
- void Compute_dxf(char* dxffile){
+ void Compute_dxf(const char* dxffile){
    	this->dfx<CK,Traits,ArcContainer>(dxffile);
    	this->close_row(); 
  }
 
- void kernel(char* kernel){ 
+ void kernel(const char* kernel){ 
 	this->open_row();
      	this->open_cell();
      	htmlout << kernel;
@@ -365,8 +365,8 @@ template <class CK,class Traits,class ArcContainer>
  }
 
  
- void newDxfFilename(char* Dxffilename=""){
-	char* newDxf = Dxffilename;
+ void newDxfFilename(const char* Dxffilename=""){
+	const char* newDxf = Dxffilename;
 	
      	if(!ONLY_DXF){
     		htmlout<< "<tr  bgcolor=\"gray\"><td>Kernel</td><td>grid I</td><td>grid II</td><td>random double</td><td>Dxf input is: "<< newDxf <<"</td><td> rotation </td></tr>" 

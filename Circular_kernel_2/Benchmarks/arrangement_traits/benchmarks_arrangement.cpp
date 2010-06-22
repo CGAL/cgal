@@ -195,7 +195,7 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i]);
 // //     for (typename ArcContainer::const_iterator it=ac.begin();
 // // 	 it != ac.end(); ++it) {
 // //       //insert(_pm,_pl,*it);
-// //       insert_curves(_pm,*it,_pl);
+// //       insert(_pm,*it,_pl);
 // //     };
 // //     bench.stop();
 // //     bench.summarize(_pm.number_of_vertices(),_pm.number_of_halfedges());
