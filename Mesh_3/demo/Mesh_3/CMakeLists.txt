@@ -215,12 +215,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(io_c3t3_plugin Io_c3t3_plugin)
   target_link_libraries(io_c3t3_plugin scene_c3t3_item)
 
-  unset(RIBPLUGIN_EXISTS CACHE)
-  find_file(RIBPLUGIN_EXISTS 
-            NAMES "c3t3_rib_exporter_plugin.cpp"
-            PATHS ${CMAKE_CURRENT_SOURCE_DIR}
-            NO_DEFAULT_PATH)
-
+  file ( GLOB RIBPLUGIN_EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/c3t3_rib_exporter_plugin.cpp" )
   if ( RIBPLUGIN_EXISTS )
     polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin ${ribUI_FILES})
     target_link_libraries(c3t3_rib_exporter_plugin scene_c3t3_item viewer)
