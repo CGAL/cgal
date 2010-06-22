@@ -27,9 +27,6 @@ The class \ccRefName\ provides a model for the
 \ccc{StraightSkeletonBuilderTraits_2} concept which is the traits class
 required by the \ccc{Straight_skeleton_builder_2} algorithm class. The class 
 \ccRefName\ has one template argument: a 2D CGAL Kernel. This parameter must be a model for the \ccc{Kernel} concept, such as the \ccc{Exact_predicates_inexact_constructions_kernel}, which is the recommended one.\\
-It is unspecified which subset of the kernel is used into the output sequence and the returned iterator will be equal to \ccc{out}.
-
-For any given input polygon, it in this traits class (and by extension in the builder class). This is to avoid restricting the choices in the implementation.
 
 \ccInclude{CGAL/Straight_skeleton_builder_traits_2.h}
 

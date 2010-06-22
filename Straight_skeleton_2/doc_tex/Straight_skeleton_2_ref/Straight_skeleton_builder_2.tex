@@ -18,7 +18,11 @@
 \begin{ccRefClass}{Straight_skeleton_builder_2<Traits,SSkel,Visitor>}
 
 \ccDefinition
-The class \ccRefName\  encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter, \ccc{Traits}, must be a model of the \ccc{StraightSkeletonBuilderTraits_2} concept, its second template parameter, \ccc{SSkel}, must be a model of the \ccc{StraightSkeleton_2} concept, and its third template parameter, \ccc{Visitor}, must be a model of the \ccc{StraightSkeletonBuilder_2_Visitor} concept. If this last parameter is ommitted, the class \ccc{CGAL::Dummy_straight_skeleton_builder_2_visitor<SSkel>} is used.
+The class \ccRefName\  encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes.
+Its first template parameter, \ccc{Traits}, must be a model of the \ccc{StraightSkeletonBuilderTraits_2} concept,
+its second template parameter, \ccc{SSkel}, must be a model of the \ccc{StraightSkeleton_2} concept, and its third
+template parameter, \ccc{Visitor}, must be a model of the \ccc{StraightSkeletonBuilder_2_Visitor} concept. If this
+last parameter is ommitted, the class \ccc{CGAL::Dummy_straight_skeleton_builder_2_visitor<SSkel>} is used.
 
 \ccInclude{CGAL/Straight_skeleton_builder_2.h}
  
@@ -31,7 +35,7 @@ The class \ccRefName\  encapsulates the construction of the 2D straight skeleton
 \ccGlue
   \ccNestedType{K}{The kernel used, as given by the geometric traits}{}
 \ccGlue
-  \ccNestedType{FT}{The field-type as defined by the geometric traits}{}
+  \ccNestedType{FT}{The \ccc{SqrtFieldNumberType} as defined by the geometric traits}{}
 \ccGlue
   \ccNestedType{Point_2}{The 2D point type as defined by the geometric traits}{}
 
@@ -43,7 +47,10 @@ The class \ccRefName\  encapsulates the construction of the 2D straight skeleton
                                         , Visitor const& aVisitor      = Visitor() );}
 {Constructs the builder class.
 
-\ccc{aMaxTime} is the event threshold for \textit{partial} straight-skeletons. If empty, a \textit{full} straight-skeleton is constructed. Otherwise, a partial straight-skeleton is constructed whose farthest event has a time no greater than \ccc{aMaxTime}. A partial straight skeleton can be used to obtain a polygon offset at a given maximum distance \ccc{d} by pasing \ccc{d} as the \ccc{aMaxTime} parameter.}
+\ccc{aMaxTime} is the event threshold for \textit{partial} straight-skeletons. If empty, a \textit{full} straight-skeleton is constructed.
+Otherwise, a partial straight-skeleton is constructed whose farthest event has a time no greater than \ccc{aMaxTime}. 
+A partial straight skeleton can be used to obtain a polygon offset at a given maximum distance \ccc{d} by pasing \ccc{d} 
+as the \ccc{aMaxTime} parameter.}
 
 \ccHeading{Methods}
 \ccMethod{template<class InputPointIterator, class InputWeightIterator, class Converter> 
@@ -55,14 +62,18 @@ The class \ccRefName\  encapsulates the construction of the 2D straight skeleton
                                              , Converter const&    aCvt           = Cartesian_converter<K,K>()
                                              , bool                aCheckValidity = true 
                                              );}
-{Inputs one of the \textit{contours} that bounds the \textit{non-degenerate strictly-simple polygon with holes} whose \textit{weighted straight skeleton} is to be built. 
+{Inputs one of the \textit{contours} that bounds the \textit{non-degenerate strictly-simple polygon with holes} whose
+ \textit{weighted straight skeleton} is to be built. 
 
-Use this method to enter each such contour, starting with the \textit{outer contour} and following with the holes (if any). The orientatin of the outer contour must be the opposite of the orientation of the holes.
+Use this method to enter each such contour, starting with the \textit{outer contour} and following with the holes (if any). 
+The orientatin of the outer contour must be the opposite of the orientation of the holes.
 
-It is an error to enter more than one outer contour, or to enter a hole which is not inside the outer contour, or to enter a hole inside another hole. It is also an error to enter a contour
-which intersects any one another. In the presence of such errors, the construction algorithm might fail or return a topologically invalid skeleton.
+It is an error to enter more than one outer contour, or to enter a hole which is not inside the outer contour, or to enter a hole inside another hole.
+It is also an error to enter a contour which intersects any one another. In the presence of such errors, the construction algorithm might fail or return
+a topologically invalid skeleton.
 
-The sequence \ccc{[aPBegin,aPEnd)} must iterate over each 2D point that corresponds to a vertex of the contour being entered. Vertices cannot be coincident (except consecutively since the method simply skip consecutive coincident vertices). Consecutive collinear edges are allowed.
+The sequence \ccc{[aPBegin,aPEnd)} must iterate over each 2D point that corresponds to a vertex of the contour being entered. Vertices cannot be
+coincident (except consecutively since the method simply skip consecutive coincident vertices). Consecutive collinear edges are allowed.
 
 \ccc{InputPointIterator} must be an \textit{InputIterator} whose \ccc{value\_type} is a 2D point.
 
@@ -73,15 +84,18 @@ Each weight \ccc{*(aWBegin+i)} corresponds to the edge having the corresponding 
 
 A positive weight indicates that the edge moves to its left, a negative weight to its right, and a zero weight indicates that the edge does not move at all. 
 
-If a contour is counter-clockwise oriented, positive weights corresponds to the interior straight skeleton, while negative weights corresponds to the exterior straight skeleton.
+If a contour is counter-clockwise oriented, positive weights corresponds to the interior straight skeleton, while negative weights corresponds
+to the exterior straight skeleton.
 
-Each edge has its own distinct weight. If there is a mix of positive and negative weights, the result might not be well-defined (but it is well defined to mix zero weights with either positive or negative weights)
+Each edge has its own distinct weight. If there is a mix of positive and negative weights, the result might not be well-defined (but it is well
+defined to mix zero weights with either positive or negative weights)
 
 \ccc{aIsClosed} indicates whether the contour is a polygon or a polyline. If it is a polyline, this must be the only contour entered.
 
 \ccc{aCvt} is a \ccc{Cartesian_converter} that can convert the type of the input point to \ccc{Point_2}, as required by the algorithm.
 
-If \ccc{aCheckValidity} is true, consecutive coincident points are filtered out (along with the corresponding weights). The contour is then inserted if and only if the filtered contour contains at least 3 or 2 vertices left (for closed and open contours resp).
+If \ccc{aCheckValidity} is true, consecutive coincident points are filtered out (along with the corresponding weights). The contour is then
+inserted if and only if the filtered contour contains at least 3 or 2 vertices left (for closed and open contours resp).
  
 
 }
@@ -97,43 +111,78 @@ If \ccc{aCheckValidity} is true, consecutive coincident points are filtered out 
 {Same as above, but with a single uniform weight for the entire contour}
 
 \ccGlue
-\ccMethod{boost::shared_ptr<SSkel> construct_skeleton(bool aNull_if_failed = true ); }
-{Constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined by the contours entered previously by calling \ccc{enter_contour}. All the contours of the polygon with holes must be entered before calling \ccc{construct_skeleton}.
+\ccMethod{boost::shared_ptr<SSkel> construct_skeleton(bool aNull_if_invalid = true ); }
+{Constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined by the contours
+entered previously by calling \ccc{enter_contour}. All the contours of the polygon with holes must be entered before
+calling \ccc{construct_skeleton}.
 
-After \ccc{construct_skeleton} completes, you cannot enter more contours and/or call \ccc{construct_skeleton()} again. If you need another straight skeleton for another polygon you must instantiate and use another builder.
+After \ccc{construct_skeleton} completes, you cannot enter more contours and/or call \ccc{construct_skeleton()} again.
+If you need another straight skeleton for another polygon you must construct and use another instance of \ccRefName\.
 
-The result is a dynamically allocated instance of the \ccc{SSkel} class, wrapped in a \ccc{boost::shared_ptr}.
+The result is a dynamically allocated instance of the \ccc{SSkel} class, managed by a \ccc{boost::shared_ptr}.
 
-If the construction process fails for whatever reason (such as a nearly-degenerate vertex whose internal or external angle is almost zero), the return value will be {\em null}, represented by a default constructed \ccc{shared_ptr}.
-
-The algorithm automatically checks the consistency of the result, thus, if it is not {\em null}, it is guaranteed to be valid.
+The construction process can fail if the input is {\em ill-conditioned}. In that case, the resulting straight skeleton
+will most likely be invalid as determined by the \ccc{is_valid()) method. If \ccc{aNull_if_failed==true} and the result is
+not valid, the return value will be a default constructed \ccc{shared_ptr}, that is, {\em null}. Otherwise, if 
+\ccc{aNull_if_failed==false}, the result will be the skeleton as constructed (valid otr not). 
 }
 
 
 
 \ccHeading{Algorithm}
 
-The implemented algorithm is closely based on \cite{cgal:fo-ss-98} with the addition of \textit{vertex events} as described in \cite{cgal:ee-rrccpp-98}.
+The implemented algorithm is based on \cite{cgal:fo-ss-98}, with several corrections and the addition of \textit{pseudo-split events}
+(which are derived from \textit{vertex events} as described in \cite{cgal:ee-rrccpp-98}).
 
-It simulates  a grassfire propagation of moving polygon edges as they move inward at constant
-and equal speed. That is, the continuous inward offsetting of the polygon.\\
-Since edges move at equal speed their movement can be characterized in a simpler setup as the movement of vertices. Vertices move along the angular bisector of adjacent edges.\\
+Starting with \cgal\ 3.7, the algorithm incorporates the handling of open-polylines, partial skeletons and weighted edges.
+
+The extension to support weighted edges is based on the work of {\em Mathieu Brédif}, from the {\em Institut Geographique National (IGN)},
+who submitted a first working version of the code handling weights.
+
+The algorithm simulates a grassfire propagation of moving polygon edges as they move inward at constant\\
+but individual speed. That is, the continuous weighted inward offsetting of the polygon.\\
+Since edges move at constant speed their movement can be characterized in a simpler setup as the movement of vertices. Vertices move\\ 
+along the weighted angular bisector of adjacent edges.\\
 The trace of a moving vertex is described by the algorithm as a {\em bisector}. 
-Every position along a bisector corresponds to the vertex between two offset (moved) edges. Since edges move at constant speed, every position along a bisector also corresponds to the distance those two edges moved so far.\\
+Every position along a bisector corresponds to the vertex between two offset (moved) edges. Since edges move at constant speed, every position\\
+along a bisector also corresponds to the distance those two edges moved so far.\\
 From the perspective of a dynamic system of moving edges, such a distance can be regarded as an 
 {\em instant} (in time). Therefore, every distinct position along a bisector corresponds to a distinct instant in the offsetting process.\\
-As they move inward, edges can expand or contract w.r.t to the endpoints sharing a vertex. If a vertex has an internal angle $<pi$, its incident edges will contract but if its internal angle $>pi$, they will expand. The movement of the edges, along with their extent change, result in collisions between non-adjacent edges. These collisions are called {\em events}, and they occur when the colliding edges have moved a certain distance, that is, at certain \textit{instants}.\\
-If non-consecutive edges \ccc{E(j),E(k)} move while edge \ccc{E(i)} contracts, they can collide at the point when \ccc{E(i)} shrinks to nothing (that is, the three edges might meet at a certain offset). This introduces a \textit{topological change} in the polygon: Edges \ccc{E(j),E(k)} are now adjacent, edge \ccc{E(i)} disappears, and a new vertex appears. This topological change is called an {\em edge event}.\\
-Similarly, consecutive expanding edges \ccc{E(i),E(i+1)} sharing a reflex vertex (internal angle $>=pi$) might collide with any edge \ccc{E(j)} on the rest of the same connected component of the polygon boundary (even far away from the initial edge's position). This also introduces a topological change: \ccc{E(j)} gets split in two edges and the connected component having \ccc{E(i),E(i+1) and E(j)} is split in two unconnected parts: one having \ccc{E(i)} and the corresponding subsegment of \ccc{E(j)} and the other with \ccc{E(i+1)} and the rest of \ccc{E(j)}. This is called a {\em split event}.\\ If a reflex vertex hits not an edge \ccc{E(j)} but another reflex vertex \ccc{E(j),E(j+1)}, and vice-versa (the reflex vertex V(j) hits V(i)), there is no actual split and the two unconnected parts have \ccc{E(i),E(j)} and \ccc{E(i+1),E(j+1)} (or \ccc{E(i),E(j+1)} and \ccc{E(i+1),E(j)}). This topological change is called a {\em vertex event}. Although similar to a split event in the sense that two new unconnected contours emerge introducing two new contour vertices, in the case of a vertex event one of the new contour vertices might be reflex; that is, a vertex event \textit{may} result in one of the offset polygons having a \textit{reflex} contour vertex which was not in the original polygon.
+As they move inward, edges can expand or contract w.r.t to the endpoints sharing a vertex. If a vertex has an internal angle $<pi$, its incident edges will\\
+contract but if its internal angle $>pi$, they will expand. The movement of the edges, along with the change in their extension, result in collisions between non-adjacent edges.\\
+These collisions are called {\em events}, and they occur when the colliding edges have moved a certain distance, that is, at certain \textit{instants}.\\
+When non-consecutive edges \ccc{E(j),E(k)} move while edge \ccc{E(i)} contracts, they can collide at the point when \ccc{E(i)} shrinks to a point (that is, the three\\
+edges might meet at a certain offset). This introduces a \textit{topological change} in the polygon: Edges \ccc{E(j),E(k)} are now adjacent, edge \ccc{E(i)} disappears,\\
+and a new vertex shared between \ccc{E(j),E(k)} appears. This topological change is called an {\em edge event}.\\
+Similarly, consecutive expanding edges \ccc{E(i),E(i+1)} sharing a reflex vertex (internal angle $>=pi$) might collide with any other edge \ccc{E(j)}\\
+(even far away from the initial edge's position). This also introduces a topological change: \ccc{E(j)} gets split in two edges and the connected component\\
+having \ccc{E(i),E(i+1) and E(j)} is split in two unconnected parts: one having \ccc{E(i)} and the corresponding subsegment of \ccc{E(j)}\\ 
+and the other with \ccc{E(i+1)} and the rest of \ccc{E(j)}. This is called a {\em split event}.\\
+If a reflex vertex \ccc{E(i),E(i+1)} hits another reflex vertex \ccc{E(j),E(j+1)}, and vice-versa (the reflex vertex V(j) hits V(i)), there is no actual split,\\
+and the topological changed is called a {\em pseudo-split event}. In this event, two unconnected parts resulting from the topological change have \ccc{E(i),E(j)}\\ 
+and \ccc{E(i+1),E(j+1)} (or \ccc{E(i),E(j+1)} and \ccc{E(i+1),E(j)}) respectively. Although similar to a split event, after a pseudo-split event one of the new contour vertices\\
+might be reflex; that is, a pseudo-split event \textit{may} result in one of the offset polygons having a \textit{reflex} contour vertex which was not in the original polygon.
 
-Edges movement is described by vertices movement, and these by bisectors. Therefore, the collision between edges \ccc{E(j),E(i),E(k)} (all in the same connected component) occurs when the moving vertices \ccc{E(j)->E(i)} and \ccc{E(i)->E(k)} meet ; that is, when the two bisectors describing the moving vertices 
-{\em intersect} (Note: as the edges move inward and events occur, a vertex between edges A and B might exist even if A and B are not consecutive; that is, j and k are not necessarily i-1 and i+1 respectively, although initially they are).\\
-Similarly, the collision between \ccc{E(i),E(i+1)} with \ccc{E(j)} (all in the same connected component) occurs when the bisector corresponding to the moving vertex \ccc{E(i)->E(i+1)} hits the moving edge \ccc{E(j)}.\\
-Since each event changes the topology of the moving polygon, it is not possible or practical to foresee all events at once. Rather, the algorithm starts by estimating an initial set of potential events and from there it computes one next event at a time based on the previous one. The chaining of events is governed by their relative instants: events that occur first are processed first.\\
-An initial set of \textit{potential} split events is first computed independently (the computation of a potential split event is based solely on a reflex vertex and all other edges in the same connected component); and an initial set of \textit{potential} edge events between initially consecutive bisectors is first computed independently (based solely on each bisector pair under consideration).\\
-Events occur at certain instants and the algorithm must be able to order them
-accordingly. The correctness of the algorithm is uniquely and directly governed by the correct computation and ordering of the events. Any potential event might no longer be applicable after the topological change introduced by a prior event.\\
-A grassfire propagation picks the next unprocessed event (starting from the first) and if it is still applicable processes it. Processing an event involves connecting edges, adding a new skeleton vertex (which corresponds the a contour vertex of the offset polygon) and calculating one new potential future event (which can be either an edge event or a split event -because of a prior vertex event-), based on the topological change just introduced. The propagation finishes when there are no new future events.
+An initial set of \textit{potential} events is first computed and stored in a priority-queue. The ordering within the priority-queue is based on the event's instant (or time).
+Events that ocurr first are processed first. The correctness of the algorithm is uniquely and directly governed by\\
+the correct computation and ordering of the events.
+
+When an event is first discovered is said to be potential as it might no longer be applicable after the topological changes introduced by all previous events.
+
+A grassfire propagation picks the next unprocessed event (starting from the first in time) and if it is still applicable, processes it. Processing an event involves\\
+re-connecting edges according to the topological change for the event type, adding a new skeleton vertex (which corresponds to a contour vertex of the offset polygon)\\
+and calculating the set of new potential future events, which are stored in the priority-queue.
+
+The propagation finishes when there are no events left on the priority-queue.
+
+If a the algorithm is given a {\em maximum time MT}, then any event beyond this time is simply rejected and never stored\\
+in the priorioty-queue to begin with. In this case, the result is a {\em partial straight skeleton}, which can be used to obtain an offset-polygon at a distance $T<=MT$.
+
+The construction of a partial skeleton is significantly faster because there are lots of events which are not processed, and, most importantly, not stored in the priority queue.
+For a polygon with thousands of edges but an offset distance relatively small compared to the polygon's maximum depth, a partial straight skeleton can be 10 times faster\\
+than the full counterpart.
+
+
 
 \ccSeeAlso
 \ccc{StraightSkeletonBuilderTraits_2}\\
