@@ -31,7 +31,7 @@ namespace CGAL {
 
 void
 File_scanner_OFF::
-skip_to_next_vertex( int current_vertex) {
+skip_to_next_vertex( std::size_t current_vertex) {
     CGAL_assertion( current_vertex < size_of_vertices());
     if ( binary()) {
         float f;
@@ -94,7 +94,7 @@ skip_to_next_vertex( int current_vertex) {
 
 void
 File_scanner_OFF::
-skip_to_next_facet( int current_facet) {
+skip_to_next_facet( std::size_t current_facet) {
     // Take care of trailing informations like color triples.
     if ( binary()) {
         Integer32 k;

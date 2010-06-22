@@ -374,23 +374,27 @@ public:
         }
     }
 
-    void skip_to_next_vertex( int current_vertex);
+  void skip_to_next_vertex( std::size_t current_vertex);
 
-    void scan_facet( Integer32& size, int CGAL_assertion_code(current_facet)) {
+  void scan_facet( std::size_t& size, int CGAL_assertion_code(current_facet)) {
         CGAL_assertion( current_facet < size_of_facets());
-        if ( binary())
-            I_Binary_read_big_endian_integer32( m_in, size);
-        else {
+        if ( binary()){
+          Integer32 i32;
+            I_Binary_read_big_endian_integer32( m_in, i32);
+            size = i32;
+        } else {
             skip_comment();
             m_in >> size;
         }
     }
 
-    void scan_facet_vertex_index( Integer32& index,
+  void scan_facet_vertex_index( std::size_t& index,
                                   int current_facet) {
-        if ( binary())
-            I_Binary_read_big_endian_integer32( m_in, index);
-        else
+      if ( binary()){
+        Integer32 i32;
+            I_Binary_read_big_endian_integer32( m_in, i32);
+            index = i32;
+      } else
             m_in >> index;
         if( ! m_in) {
             if ( verbose()) {
@@ -419,7 +423,7 @@ public:
         }
     }
 
-    void skip_to_next_facet( int current_facet);
+  void skip_to_next_facet( std::size_t current_facet);
 };
 
 template < class Point> inline
