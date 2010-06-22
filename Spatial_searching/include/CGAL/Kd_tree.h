@@ -85,7 +85,7 @@ private:
   Node_handle 
   create_leaf_node(Point_container& c) const
   {
-    Node_handle nh = nodes.emplace(c.size(), Node::LEAF);
+    Node_handle nh = nodes.emplace(static_cast<unsigned int>(c.size()), Node::LEAF);
 
     nh->data = c.begin();
     return nh;
@@ -191,7 +191,7 @@ public:
   {
     const Point_d& p = *pts.begin();
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci;
-    int dim = std::distance(ccci(p), ccci(p,0)); 
+    int dim = static_cast<int>(std::distance(ccci(p), ccci(p,0))); 
 
     data.reserve(pts.size());
     for(unsigned int i = 0; i < pts.size(); i++){

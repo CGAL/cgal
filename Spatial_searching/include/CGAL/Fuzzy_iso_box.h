@@ -56,7 +56,7 @@ namespace CGAL {
 	  Construct_cartesian_const_iterator_d construct_it;
 	  Cartesian_const_iterator_d begin = construct_it(p),
 	    end = construct_it(p,1);
-	  dim = end - begin;
+	  dim = static_cast<unsigned int>(end - begin);
 
 	  Iso_box_d box = typename SearchTraits::Construct_iso_box_d()(p,q);
 	  Construct_min_vertex_d construct_min_vertex_d;
