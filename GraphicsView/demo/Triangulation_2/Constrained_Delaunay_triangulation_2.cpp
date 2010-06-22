@@ -579,7 +579,7 @@ MainWindow::on_actionMakeGabrielConform_triggered()
 {
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  int nv = cdt.number_of_vertices();
+  std::size_t nv = cdt.number_of_vertices();
   CGAL::make_conforming_Gabriel_2(cdt);
   nv = cdt.number_of_vertices() - nv;
   initializeID(cdt);
@@ -596,7 +596,7 @@ MainWindow::on_actionMakeDelaunayConform_triggered()
 {
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  int nv = cdt.number_of_vertices();
+  std::size_t nv = cdt.number_of_vertices();
   CGAL::make_conforming_Delaunay_2(cdt);
   initializeID(cdt);
   discoverComponents(cdt);
@@ -619,7 +619,7 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   initializeID(cdt);
   discoverComponents(cdt);
 
-  int nv = cdt.number_of_vertices();
+  std::size_t nv = cdt.number_of_vertices();
   CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, edge_length), true);
   timer.stop();
   nv = cdt.number_of_vertices() - nv;
@@ -651,7 +651,7 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
   initializeID(cdt);
   discoverComponents(cdt);
 
-  int nv = cdt.number_of_vertices();
+  std::size_t nv = cdt.number_of_vertices();
   Lipschitz_sizing_field field(points.begin(), points.end(), 0.7 ); // k-lipschitz with k=1
   Lipschitz_criteria criteria(0.125, &field);
   Lipschitz_mesher mesher(cdt);
