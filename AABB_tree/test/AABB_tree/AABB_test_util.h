@@ -748,7 +748,7 @@ private:
       FT dist_naive = CGAL::squared_distance(query, point_naive);
       FT dist_tree = CGAL::squared_distance(query, point_tree);
 
-      const FT epsilon (1e-8);
+      const FT epsilon = FT(1e-8);
       assert( (dist_naive - dist_tree) <= epsilon );
       assert( (dist_naive - dist_tree) >= (-1. * epsilon) );
     }
@@ -783,7 +783,7 @@ private:
         FT dist_naive = CGAL::squared_distance(query, point_naive.first);
         FT dist_tree = CGAL::squared_distance(query, point_tree.first);
 
-        const FT epsilon (1e-8);
+        const FT epsilon =  FT(1e-8);
         assert( (dist_naive - dist_tree) <= epsilon );
         assert( (dist_naive - dist_tree) >= (-1. * epsilon) );
       }
