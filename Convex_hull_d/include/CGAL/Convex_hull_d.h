@@ -366,10 +366,10 @@ public: // until there are template friend functions possible
   { return s->visited(); }
 
 protected:
-  int num_of_bounded_simplices; 
-  int num_of_unbounded_simplices; 
-  int num_of_visibility_tests; 
-  int num_of_vertices; 
+  std::size_t num_of_bounded_simplices; 
+  std::size_t num_of_unbounded_simplices; 
+  std::size_t num_of_visibility_tests; 
+  std::size_t num_of_vertices; 
 
   void compute_equation_of_base_facet(Simplex_handle s);
   /*{\Xop computes the equation of the base facet of $s$ and sets the
@@ -390,7 +390,7 @@ protected:
 
   void visibility_search(Simplex_handle S, const Point_d& x,
                          std::list<Simplex_handle>& visible_simplices,
-                         int& num_of_visited_simplices,
+                         std::size_t& num_of_visited_simplices,
                          int& location, Facet_handle& f) const;
   /*{\Xop adds all unmarked unbounded simplices with $x$-visible base
           facet to |visible_simplices| and marks them. In |location| the
@@ -409,8 +409,8 @@ protected:
   with $x$ lies outside the affine hull of the current point set.  }*/
 
   void visible_facets_search(Simplex_handle S, const Point_d& x,
-    std::list< Facet_handle >& VisibleFacets,
-    int& num_of_visited_facets) const;
+                             std::list< Facet_handle >& VisibleFacets,
+                             std::size_t& num_of_visited_facets) const;
 
 public:
   
@@ -591,15 +591,15 @@ public:
     num_of_visibility_tests = 0; 
   }
 
-  int number_of_vertices() const
+  std::size_t number_of_vertices() const
   /*{\Mop returns the number of vertices of |\Mvar|.}*/
   { return num_of_vertices; }
 
-  int number_of_facets() const
+  std::size_t number_of_facets() const
   /*{\Mop returns the number of facets of |\Mvar|.}*/
   { return num_of_unbounded_simplices; }
 
-  int number_of_simplices() const
+  std::size_t number_of_simplices() const
   /*{\Mop returns the number of bounded simplices of |\Mvar|.}*/
   { return num_of_bounded_simplices; }
 
@@ -722,7 +722,7 @@ public:
       }
       num_of_visibility_tests += L.size();
 
-      int num_of_visited_facets = 0;
+      std::size_t num_of_visited_facets = 0;
       std::list<Facet_handle> VisibleFacets; 
       VisibleFacets.push_back(f); 
       visible_facets_search(f, p, VisibleFacets, num_of_visited_facets); 
@@ -1126,7 +1126,7 @@ Convex_hull_d<R>::insert(const Point_d& x)
     int location = -1;
     Facet_handle f;
 
-    int num_of_visited_simplices = 0; 
+    std::size_t num_of_visited_simplices = 0; 
 
     visibility_search(origin_simplex_, x, visible_simplices,
                       num_of_visited_simplices, location, f); 
@@ -1252,7 +1252,7 @@ template <class R>
 void Convex_hull_d<R>::
 visibility_search(Simplex_handle S, const Point_d& x,
                   std::list< Simplex_handle >& visible_simplices,
-                  int& num_of_visited_simplices, int& location,
+                  std::size_t& num_of_visited_simplices, int& location,
                   Simplex_handle& f) const
 { 
   num_of_visited_simplices ++; 
@@ -1304,7 +1304,7 @@ Convex_hull_d<R>::facets_visible_from(const Point_d& x)
 { 
   std::list<Simplex_handle> visible_simplices;
   int location = -1;                       // intialization is important
-  int num_of_visited_simplices = 0;     // irrelevant
+  std::size_t num_of_visited_simplices = 0;     // irrelevant
   Facet_handle f;                          // irrelevant
 
   visibility_search(origin_simplex_, x, visible_simplices,
@@ -1319,7 +1319,7 @@ Bounded_side Convex_hull_d<R>::bounded_side(const Point_d& x)
   if ( is_dimension_jump(x) ) return ON_UNBOUNDED_SIDE;
   std::list<Simplex_handle> visible_simplices;
   int location = -1;                       // intialization is important
-  int num_of_visited_simplices = 0;     // irrelevant
+  std::size_t num_of_visited_simplices = 0;     // irrelevant
   Facet_handle f;
 
   visibility_search(origin_simplex_, x, visible_simplices,
@@ -1478,8 +1478,8 @@ bool Convex_hull_d<R>::is_valid(bool throw_exceptions) const
 template <class R>
 void Convex_hull_d<R>::
 visible_facets_search(Simplex_handle S, const Point_d& x,
-  std::list< Facet_handle >& VisibleFacets,
-  int& num_of_visited_facets) const
+                      std::list< Facet_handle >& VisibleFacets,
+                      std::size_t& num_of_visited_facets) const
 { 
   ++num_of_visited_facets; 
   S->visited() = true; // we have visited S and never come back ...

@@ -825,7 +825,7 @@ locate(const Point_d& x) const
   }
   // lift(p) is not a dimension jump
   std::list<Simplex_handle> candidates;
-  int dummy1 = 0; 
+  std::size_t dummy1 = 0; 
   int loc = -1; // intialization is important
   Simplex_handle f;
   this -> visibility_search(origin_simplex_,lp,candidates,dummy1,loc,f);
@@ -858,7 +858,7 @@ nearest_neighbor(const Point_d& x) const
     candidates = all_simplices(NEAREST);
   else {
     // lift(x) is not a dimension jump
-    int dummy1 = 0; 
+    std::size_t dummy1 = 0; 
     int location = -1;
     typename Base::Facet_handle f;
     this -> visibility_search(origin_simplex_,lp,candidates,dummy1,location,f);
