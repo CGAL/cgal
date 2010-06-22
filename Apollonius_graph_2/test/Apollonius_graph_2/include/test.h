@@ -527,8 +527,8 @@ bool test_algo_generic(InputStream& is)
   // testing access functions
   //--------------------------------------------------------------------
   Geom_traits tr = ag.geom_traits();
-  int num_vertices = ag.number_of_vertices();
-  int num_all = num_vertices + ag.number_of_hidden_sites();
+  size_type num_vertices = ag.number_of_vertices();
+  size_type num_all = num_vertices + ag.number_of_hidden_sites();
   // passing this to a dummy function to avoid warning when
   // CGAL_NO_ASSERTIONS is defined.
   dummy( static_cast<unsigned int>(num_all) == wp_list.size() );
@@ -542,40 +542,40 @@ bool test_algo_generic(InputStream& is)
 
   // finite faces, edges and vertices
   Finite_vertices_iterator fvit = ag.finite_vertices_begin();
-  int n_fvertices = 0;
+  size_type n_fvertices = 0;
   for (; fvit != ag.finite_vertices_end(); ++fvit) {
     n_fvertices++;
   }
   CGAL_assertion( n_fvertices == num_vertices );
 
   Finite_edges_iterator feit = ag.finite_edges_begin();
-  int n_fedges = 0;
+  size_type n_fedges = 0;
   for (; feit != ag.finite_edges_end(); ++feit) {
     n_fedges++;
   }
 
   Finite_faces_iterator ffit = ag.finite_faces_begin();
-  int n_ffaces = 0;
+  size_type n_ffaces = 0;
   for (; ffit != ag.finite_faces_end(); ++ffit) {
     n_ffaces++;
   }
 
   // all faces, edges and vertices
   All_vertices_iterator avit = ag.all_vertices_begin();
-  int n_avertices = 0;
+  size_type n_avertices = 0;
   for (; avit != ag.all_vertices_end(); ++avit) {
     n_avertices++;
   }
   CGAL_assertion( n_avertices == num_vertices + 1 );
 
   All_edges_iterator aeit = ag.all_edges_begin();
-  int n_aedges = 0;
+  size_type n_aedges = 0;
   for (; aeit != ag.all_edges_end(); ++aeit) {
     n_aedges++;
   }
 
   All_faces_iterator afit = ag.all_faces_begin();
-  int n_afaces = 0;
+  size_type n_afaces = 0;
   for (; afit != ag.all_faces_end(); ++afit) {
     n_afaces++;
   }
@@ -585,7 +585,7 @@ bool test_algo_generic(InputStream& is)
   CGAL_assertion( n_avertices - n_aedges + n_afaces == 2 );
 
   // site iterators
-  int n_sites(0), n_hidden_sites(0), n_visible_sites(0);
+  size_type n_sites(0), n_hidden_sites(0), n_visible_sites(0);
 
   for (Sites_iterator sit = ag.sites_begin();
        sit != ag.sites_end(); sit++) {
