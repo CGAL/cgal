@@ -2037,7 +2037,7 @@ off_file_input( std::istream& is, bool verbose)
   // create the facets
   for ( i = 0; i < scanner.size_of_facets(); i++) {
     Face_handle fh = create_face();
-    Integer32 no;
+    std::size_t no;
     scanner.scan_facet( no, i);
     if( ! is || no != 3) {
       if ( scanner.verbose()) {
@@ -2051,7 +2051,7 @@ off_file_input( std::istream& is, bool verbose)
     }
 
     for ( int j = 0; j < no; ++j) {
-      Integer32 index;
+      std::size_t index;
       scanner.scan_facet_vertex_index( index, i);
       fh->set_vertex(j, vvh[index]);
       vvh[index]->set_face(fh);
