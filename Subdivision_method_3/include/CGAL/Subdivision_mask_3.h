@@ -29,7 +29,6 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/circulator.h>
-#include <CGAL/Vector_3.h>
 
 namespace CGAL {
 
