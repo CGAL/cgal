@@ -183,7 +183,7 @@ typedef typename R::LA LA;
 template <class ForwardIterator>
 Orientation operator()(ForwardIterator first, ForwardIterator last)
 { TUPLE_DIM_CHECK(first,last,Orientation_d);
-  int d = std::distance(first,last); 
+  int d = static_cast<int>(std::distance(first,last)); 
   // range contains d points of dimension d-1
   CGAL_assertion_msg(first->dimension() == d-1,
   "Orientation_d: needs first->dimension() + 1 many points.");
@@ -210,7 +210,7 @@ Oriented_side operator()(ForwardIterator first, ForwardIterator last,
                          const Point_d& x)
 { 
   TUPLE_DIM_CHECK(first,last,Side_of_oriented_sphere_d);
-  int d = std::distance(first,last); // |A| contains |d| points
+  int d = static_cast<int>(std::distance(first,last)); // |A| contains |d| points
   CGAL_assertion_msg((d-1 == first->dimension()), 
   "Side_of_oriented_sphere_d: needs first->dimension()+1 many input points.");
   typename LA::Matrix M(d + 1); 
@@ -278,7 +278,7 @@ bool operator()(ForwardIterator first, ForwardIterator last,
                 const Point_d& p)
 {
   TUPLE_DIM_CHECK(first,last,Contained_in_simplex_d);
-  int k = std::distance(first,last); // |A| contains |k| points
+  int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| points
   int d = first->dimension(); 
   CGAL_assertion_code(
     typename R::Affinely_independent_d check_independence; )
@@ -319,7 +319,7 @@ bool operator()(ForwardIterator first, ForwardIterator last,
                 const Point_d& p) 
 {
   TUPLE_DIM_CHECK(first,last,Contained_in_affine_hull_d);
-  int k = std::distance(first,last); // |A| contains |k| points
+  int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| points
   int d = first->dimension(); 
   typename LA::Matrix M(d + 1,k); 
   typename LA::Vector b(d + 1); 
@@ -346,7 +346,7 @@ template <class ForwardIterator>
 int operator()(ForwardIterator first, ForwardIterator last) 
 {
   TUPLE_DIM_CHECK(first,last,Affine_rank_d);
-  int k = std::distance(first,last); // |A| contains |k| points
+  int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| points
   if (k == 0) return -1;
   if (k == 1) return 0; 
   int d = first->dimension();
@@ -369,7 +369,7 @@ typedef typename R::LA LA;
 template <class ForwardIterator> 
 bool operator()(ForwardIterator first, ForwardIterator last) 
 { typename R::Affine_rank_d rank;
-  int n = std::distance(first,last);
+  int n = static_cast<int>(std::distance(first,last));
   return rank(first,last) == n-1;
 }
 };
@@ -393,7 +393,7 @@ template<class ForwardIterator>
 bool operator()(
   ForwardIterator first, ForwardIterator last, const Vector_d& x) 
 { TUPLE_DIM_CHECK(first,last,Contained_in_linear_hull_d);
-  int k = std::distance(first,last); // |A| contains |k| vectors
+  int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| vectors
   int d = first->dimension();
   typename LA::Matrix M(d,k);
   typename LA::Vector b(d); 
@@ -412,7 +412,7 @@ typedef typename R::LA LA;
 template <class ForwardIterator>
 int operator()(ForwardIterator first, ForwardIterator last)
 { TUPLE_DIM_CHECK(first,last,linear_rank);
-  int k = std::distance(first,last); // k vectors
+  int k = static_cast<int>(std::distance(first,last)); // k vectors
   int d = first->dimension(); 
   typename LA::Matrix M(d,k);
   for (int i = 0; i < d  ; i++)
@@ -428,7 +428,7 @@ typedef typename R::LA LA;
 template <class ForwardIterator>
 bool operator()(ForwardIterator first, ForwardIterator last)
 { typename R::Linear_rank_d rank;
-  return rank(first,last) == std::distance(first,last);
+  return rank(first,last) == static_cast<int>(std::distance(first,last));
 }
 };
 
@@ -441,7 +441,7 @@ template <class ForwardIterator, class OutputIterator>
 OutputIterator operator()(ForwardIterator first, ForwardIterator last,
   OutputIterator result)
 { TUPLE_DIM_CHECK(first,last,linear_base);
-  int k = std::distance(first,last); // k vectors
+  int k = static_cast<int>(std::distance(first,last)); // k vectors
   int d = first->dimension();
   typename LA::Matrix M(d,k); 
   for (int j = 0; j < k; ++first, ++j)

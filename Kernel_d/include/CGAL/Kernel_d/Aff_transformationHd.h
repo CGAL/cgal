@@ -107,7 +107,7 @@ matrix $M$. \precond |M| is a square matrix of dimension $d + 1$. }*/
 
 template <typename Forward_iterator>
 Aff_transformationHd(Scaling, Forward_iterator start, Forward_iterator end) :
-  Base( Rep(std::distance(start,end)-1) )
+  Base( Rep(static_cast<int>(std::distance(start,end))-1) )
 /*{\Mcreate introduces the transformation of $d$-space specified by a
 diagonal matrix with entries |set [start,end)| on the diagonal 
 (a scaling of the space). \precond |set [start,end)| is a vector of 

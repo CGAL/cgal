@@ -77,7 +77,7 @@ Aff_transformationCd(const Matrix& M) : Base( Rep(M) )
 
 template <typename Forward_iterator>
 Aff_transformationCd(Scaling, Forward_iterator start, Forward_iterator end) :
-  Base( Rep(std::distance(start,end)-1) )
+  Base( Rep(static_cast<int>(std::distance(start,end))-1) )
 /*{\Mcreate introduces the transformation of $d$-space specified by a
 diagonal matrix with entries |set [start,end)| on the diagonal 
 (a scaling of the space). \precond |set [start,end)| is a vector of 

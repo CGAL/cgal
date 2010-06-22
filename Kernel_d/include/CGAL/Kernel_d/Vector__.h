@@ -167,7 +167,7 @@ Vector_(Forward_iterator first, Forward_iterator last)
   Forward_iterator fit = first;
   while(fit++!=last) d_++;
 #else
-  d_ = std::distance(first, last);
+  d_ = static_cast<int>(std::distance(first, last));
 #endif
   allocate_vec_space(v_,d_);
   iterator it = begin();

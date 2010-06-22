@@ -135,7 +135,7 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
   "hyperplane::construction: dimensions disagree.");
 
   int d = first->dimension();   // we are in $d$ - dimensional space
-  int m = std::distance(first,last); // |P| has $m$ points
+  int m = static_cast<int>(std::distance(first,last)); // |P| has $m$ points
   typename LA::Matrix A(m,d + 1); 
 
   for (int i = 0; i < m; i++) {  /* define $i$-th equation */

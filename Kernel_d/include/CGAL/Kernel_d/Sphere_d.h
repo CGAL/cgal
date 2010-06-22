@@ -135,7 +135,7 @@ Sphere_d(const Self& c) : Base(c) {}
 
 int dimension() const 
 /*{\Mop returns the dimension of |\Mvar|.}*/
-{ return ptr()->P.size() - 1; }
+  { return static_cast<int>(ptr()->P.size()) - 1; }
 
 Point_d point(int i) const
 /*{\Mop returns the $i$-th defining point. \precond $0 \le i \le |dim|$.}*/
@@ -309,7 +309,7 @@ operator>>(std::istream& is, CGAL::Sphere_d<R>& s)
     if (!(is >> p)) return is;
     V[d] = p; 
   }
-  s = Sphere_d<R>(V.size()-1, V.begin(), V.end() );
+  s = Sphere_d<R>(static_cast<int>(V.size())-1, V.begin(), V.end() );
   return is;
 }
 
