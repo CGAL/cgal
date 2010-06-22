@@ -1837,7 +1837,7 @@ namespace CommonKernelFunctors {
   };
 
   template <typename K>
-  class Construct_vertex_3
+  class Construct_vertex_3 : Has_qrt
   {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Segment_3        Segment_3;
@@ -2711,6 +2711,11 @@ namespace CommonKernelFunctors {
   };
 
 } // namespace CommonKernelFunctors
+
+  template <class K>
+  struct Qualified_result_of<CommonKernelFunctors::Construct_vertex_3<K>,Iso_cuboid_3<K> > :
+    qrt_or_not<typename CommonKernelFunctors::Construct_vertex_3<K>,false>
+  {};
 
 } //namespace CGAL
 
