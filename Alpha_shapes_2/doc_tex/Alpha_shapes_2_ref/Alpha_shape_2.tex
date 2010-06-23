@@ -82,6 +82,8 @@ For example \ccc{Dt::Point} is a Point class.
 
 \ccTypedef{typedef Gt::FT FT;}{the number type for computation.}
 
+\ccNestedType{size_type}{The size type.}
+
 \ccNestedType{Alpha_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 the increasing sequence of different $\alpha$-values.
 \ccPrecond Its \ccc{value_type} is \ccc{FT}}
@@ -137,7 +139,7 @@ introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
 \ccOperations
 
 \ccMethod{template < class InputIterator >
-		int make_alpha_shape(
+		std::ptrdiff_t make_alpha_shape(
 			InputIterator first,
 			InputIterator last);}
 {Initialize the family of alpha-shapes with the points in the range
@@ -162,11 +164,11 @@ before initialization.
 	get_alpha(void) const;}
 {Returns the current $\alpha$-value.}
 
-\ccMethod{const FT&  get_nth_alpha(int n) const;}
+\ccMethod{const FT&  get_nth_alpha(size_type n) const;}
 {Returns the $n$-th alpha-value, sorted in an increasing order.
  \ccPrecond \ccc{n} $<$ number of alphas.}
 
-\ccMethod{int number_of_alphas() const;}
+\ccMethod{size_type number_of_alphas() const;}
 {Returns the number of different alpha-values.}
 
 % dynamic version	
@@ -275,12 +277,12 @@ greater than \ccc{alpha}.}
 
 \ccHeading{Operations}
 
-\ccMethod{int number_of_solid_components(const FT& alpha = get_alpha()) const;}
+\ccMethod{size_type number_of_solid_components(const FT& alpha = get_alpha()) const;}
 {Returns the number of solid components of \ccVar, that is, the number of
 components of its 
 regularized version.}
 
-\ccMethod{Alpha_iterator find_optimal_alpha(int nb_components) const;}
+\ccMethod{Alpha_iterator find_optimal_alpha(size_type nb_components) const;}
 {Returns an iterator pointing to the first element with $\alpha$-value
 such that \ccVar\ satisfies the following two properties:\\
 \ccc{nb_components} equals the number of solid components and \\
