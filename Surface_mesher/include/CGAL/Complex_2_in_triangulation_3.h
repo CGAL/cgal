@@ -479,8 +479,8 @@ public:
       }
     }
     
-    i = facets.size(); 
-    j = facets.number_of_sets();
+    i = static_cast<int>(facets.size());  // we cast as it cannot be too many
+    j = static_cast<int>(facets.number_of_sets());
     v->set_c2t3_cache(i, j);
     return;
   }
