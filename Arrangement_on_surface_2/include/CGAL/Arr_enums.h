@@ -25,6 +25,7 @@
  * Definition of the enumeration types for the arrangement package.
  */
 
+#include <CGAL/basic.h>
 #include <CGAL/enum.h>
 
 namespace CGAL {
