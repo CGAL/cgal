@@ -85,7 +85,7 @@ class SM_io_parser : public Decorator_
   std::vector<SFace_handle>          SFace_of;
   SHalfloop_handle                   Loop_of[2];
   // object mapping for input
-  int vn,en,ln,fn,i;
+  std::size_t vn,en,ln,fn,i;
   // the number of objects
 
   bool check_sep(const char* sep);
@@ -157,7 +157,7 @@ SM_io_parser(std::ostream& iout, const Base& D)
   ln(this->number_of_shalfloops()),
   fn(this->number_of_sfaces())
 { verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
-             out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
+    out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
 }
 
 
