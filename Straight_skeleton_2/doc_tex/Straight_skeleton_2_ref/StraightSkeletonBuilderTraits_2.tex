@@ -28,11 +28,11 @@ The concept \ccRefName\ describes the requirements for the geometric traits clas
   \ccNestedType{Kernel}{A model of the \ccc{Kernel} concept.}{}
   \ccGlue
   \ccNestedType{FT}{A \ccc{SqrtFieldNumberType} provided by the kernel. This type is used to represent the
-   coordinates of the input points, of the skeleton nodes and as the event time stored in the skeleton nodes.}{}
+   coordinates of the input points, of the skeleton nodes and the event time stored in the skeleton nodes.}{}
   \ccGlue
-  \ccTypedef{boost::tuple<FT,FT> Vertex;}{A pair of (x,y) coordinates representing a 2D Cartesian point.}
+  \ccNestedType{Point_2}{The 2D point type provided by the kernel.}
   \ccGlue
-  \ccTypedef{boost::tuple<Vertex,Vertex> Segment_2;}{A 2D oriented straight-line segment corresponding to a polygon edge}
+  \ccNestedType{Segment_2}{A 2D oriented straight-line segment type provided by the kernel.}
   \ccGlue
   \ccTypedef{boost::tuple<Segment_2,FT,Segment_2,FT,Segment_2,FT> Trisegment_2;}{A record encapsulating 3 'oriented weighted offset segments', each of wich\\
 corresponds to an input edge plus the weight given to the edge. Each offset segment represents the segment moved a certain offset time 't' and distance 'd*w'}
@@ -48,17 +48,42 @@ corresponds to an input edge plus the weight given to the edge. Each offset segm
 \ccNestedType{Collinear_2}
 {A predicate object type being a model of the \ccc{Kernel::Collinear_2} function object concept.}
 
-\ccNestedType{Construct_ss_triedge_2}
+\ccNestedType{Construct_ss_trisegment_2}
 {A construction object type.\\
 Must provide \ccc{boost::shared_ptr<Trisegment_2> operator()( Segment_2 const& e0, FT const& w0, Segment_2 const& e1, FT const& w1, Segment_2 const& e2, FT const& w2)}, \\
-which cosntructs and returns the trisegment encapsulating the 3 given segments along their corresponding weights.}
+which constructs and returns the trisegment encapsulating the 3 given segments along with their corresponding weights.}
 
 \ccNestedType{Do_ss_event_exist_2}
 {A predicate object type.\\
-Must provide \ccc{bool operator()( boost::shared_ptr<Trisegment_2> tri, boost::optional<FT> maxtime) const}. 
+Must provide \ccc{bool operator()( boost::shared_ptr<Trisegment_2> const& tri, boost::optional<FT> maxtime) const}. 
 This predicate determines if the 3 \textit{oriented weigthed offset lines} intersect at a single point such that the intersection \textit{time} \ccc{t} is $\geq 0$ and $\lt maxtime$.
 The intersection time \ccc{t} is such that the Euclidean distance between each input segment and its offset line is $t*wi$, where $wi$ is the weight of the segment.\\
 \ccPrecond{each segment must properly define an oriented line, that is, its endpoints cannot be coincident.}}
+
+\ccNestedType{Is_edge_facing_ss_node_2}
+{A predicate object type.\\
+Must provide \ccc{bool operator()( Point_2 const& aContourNode, Segment_2 const& aEdge, FT const& aWeight) const}
+and \ccc{bool operator()( Trisegment_2_ptr const& aSkeletonNode, Segment_2 const& aEdge, FT const& aWeight) const}.
+This predicate determines if the contour node \ccc{aContourNode} or skeleton node \ccc{aSkeletonNode} is to the offset side of the given \ccc{aEdge}
+The offset side of an edge is given by the sign of the \ccc{aWeight} assigned to it. If the weight is positive, the offset side is to the left, otherwise it to the right.
+}
+
+\ccNestedType{Oriented_side_of_event_point_wrt_bisector_2}
+{A predicate object type.\\
+Must provide \ccc{Oriented_side operator()( Trisegment_2_ptr const& aEvent
+                                          , Segment_2        const& aE0
+                                          , FT               const& aW0
+                                          , Segment_2        const& aE1
+                                          , FT               const& aW1
+                                          , Trisegment_2_ptr const& aE01Event
+                                          , bool                    aE0isPrimary 
+                                          ) const}.
+This predicate determines the oriented side of the event point wrt to the weighted bisector \ccc{[aE0,aW0,aE0,aW1]}.
+The weighted bisector passes through the vertex \ccc{V}. If \ccc{[aE0,aE0]} are consecutive in the input, \ccc{V} is the target endpoint of aE0,
+otherwise is the evnt point of \ccc{aE01Event}.
+\ccc{aE0isPrimary} is used by the caller to identify the source and target bisector of the same edge, passed as aE0 first and aE1 later in a second call.
+For consistency at the caller site, when \ccc{aE0isPrimary!=true} the result must be inverted.
+}
 
 \ccNestedType{Compare_ss_event_times_2}
 {A predicate object type.\\
