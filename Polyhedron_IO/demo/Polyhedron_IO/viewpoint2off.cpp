@@ -38,7 +38,7 @@ using namespace std;
 typedef  CGAL::Cartesian<float>                 Kernel;
 typedef  Kernel::Point_3                        Point;
 typedef  vector<Point>                          Point_vector;
-typedef  vector<int>                            Facet;
+typedef  vector<std::size_t>                            Facet;
 typedef  vector<Facet>                          Facet_vector;
 
 bool  verbose      = false;
