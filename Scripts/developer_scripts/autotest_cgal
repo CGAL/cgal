@@ -525,7 +525,7 @@ cmake '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
                            -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
                            VERBOSE=1 \\
                            ../../..;
-${MAKE_CMD} VERBOSE=ON -k -fMakefile  CGAL CGAL_Core CGAL_ImageIO CGAL_Qt3 CGAL_Qt4 ;
+${MAKE_CMD} VERBOSE=ON -k -fMakefile  ;
 cd ..;
 EOF
         chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript"
@@ -854,14 +854,15 @@ fi
 
 # Detects cygwin
 if uname | grep -q "CYGWIN"; then
-  log "${ACTUAL_LOGFILE}" "Cygwin detected, using nmake"
   JOM="`which jom`"
   if [ -e "$JOM" ]; then 
-    CMAKE_GENERATOR="-GNMake Makefiles JOM'
+    CMAKE_GENERATOR='-GNMake Makefiles JOM'
     MAKE_CMD='jom'
+    log "${ACTUAL_LOGFILE}" "Cygwin detected, jom detected, using jom"
   else 
     CMAKE_GENERATOR='-GNMake Makefiles'
     MAKE_CMD='nmake'
+    log "${ACTUAL_LOGFILE}" "Cygwin detected, using nmake"
   fi
   IS_CYGWIN='y'
 else
