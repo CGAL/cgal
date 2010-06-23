@@ -4,6 +4,7 @@
 #  IPE_FOUND - system has Ipe
 #  IPE_INCLUDE_DIR - the Ipe include directory
 #  IPE_LIBRARIES - Link these to use Ipe
+#  WITH_IPE_7 - indicates if the compatibility with the version 7 of IPE must be used
 #
 
 # Is it already configured?
@@ -25,15 +26,28 @@ else()
               )
 
   if(IPE_INCLUDE_DIR AND IPE_LIBRARY)
-     set(IPE_FOUND TRUE)
+    set(IPE_FOUND TRUE)
+    if (${IPE_VERSION} STREQUAL "AUTODETECT")
+      FILE(READ "${IPE_INCLUDE_DIR}/ipebase.h" IPEBASE_H)
+      STRING(REGEX MATCH "IPELIB_VERSION[ ]*=[ ]*([67])[0-9]+;" found_ipe_version "${IPEBASE_H}")
+      if (found_ipe_version)
+        set(IPE_VERSION ${CMAKE_MATCH_1})
+      endif()
+    endif()
+    if (${IPE_VERSION} EQUAL "7")
+      set(WITH_IPE_7 ON)
+    elseif(${IPE_VERSION} EQUAL "6")
+      set(WITH_IPE_7 OFF)
+    else()
+      message("-- Error: ${IPE_VERSION} is not a supported version of IPE (only 6 and 7 are).")
+      set(IPE_FOUND FALSE)
+    endif()        
   endif()
-  
   get_filename_component(IPE_LIBRARY_DIR ${IPE_LIBRARY} PATH)
 endif()
 
- 
-
 if (IPE_FOUND AND NOT IPELET_INSTALL_DIR)
+  message("-- Using IPE version ${IPE_VERSION} compatibility.") 
   if (WITH_IPE_7)
     foreach (VER RANGE 0 30)
     string(REPLACE XX ${VER} PATHC "${IPE_LIBRARY_DIR}/ipe/7.0.XX/ipelets/" )

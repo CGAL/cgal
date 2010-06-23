@@ -49,10 +49,8 @@ variables \ccc{IPE_INCLUDE_DIR} and \ccc{IPE_LIBRARY_DIR}. If you want
 to install ipelets automatically (using \ccc{make install} for example)
 you also need to set the cmake variable \ccc{IPELET_INSTALL_DIR}, 
 if the ipelet installation path has not already been detected.
-These ipelets have been tested with the versions 6.0pre28 to 6.0pre32 of Ipe.
-Ipe version 7 (up to 7.10) is supported when setting the cmake option \ccc{WITH_IPE_7} to \ccc{ON}
-(adding \ccc{-DWITH_IPE_7=ON} while running \ccc{cmake} for example).
-Internally, it activates the Ipe 7 compatibility by defining the preprocessor macro \ccc{CGAL_USE_IPE_7}.
+These ipelets have been tested with the versions 6.0pre28 to 6.0pre32 of Ipe,
+as well as with the version 7 (at least up to version 7.10).
 These ipelets are a good starting point to design your own ipelet. For more details on how
 to compile an ipelet, please refer to the Ipe manual.
 

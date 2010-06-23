@@ -11,7 +11,7 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 find_package(CGAL QUIET COMPONENTS Core )
-option( WITH_IPE_7 "Use the version 7 of Ipe" OFF )
+set( IPE_VERSION "AUTODETECT" CACHE STRING "The version of Ipe. Only 6 and 7 are supported.")
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
