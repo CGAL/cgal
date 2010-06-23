@@ -242,7 +242,7 @@ public:
   // from first to last
 
   template < class InputIterator >  
-  int make_alpha_shape(const InputIterator& first,  
+  std::ptrdiff_t make_alpha_shape(const InputIterator& first,  
 		       const InputIterator& last) 
     {
 
@@ -369,7 +369,7 @@ public:
       return _alpha;
     }
   
-  const Coord_type&  get_nth_alpha(int n) const 
+  const Coord_type&  get_nth_alpha(size_type n) const 
     {
       // Returns the n-th alpha-value.
       // n < size()
@@ -379,7 +379,7 @@ public:
 	return UNDEFINED;
     }
   
-  int number_of_alphas() const 
+  size_type number_of_alphas() const 
     {
       // Returns the number of not necessary different alpha-values
       return _alpha_spectrum.size();
@@ -648,13 +648,13 @@ public:
       return number_of_solid_components(get_alpha());
     }
 
-  int 
+  size_type 
   number_solid_components(const Coord_type& alpha) const
     {
       return number_of_solid_components(get_alpha());
     }
 
-  int
+  size_type
   number_of_solid_components(const Coord_type& alpha) const;
 
 private:
@@ -669,7 +669,7 @@ private:
 
 public:
 
-  Alpha_iterator find_optimal_alpha(int nb_components);  	
+  Alpha_iterator find_optimal_alpha(size_type nb_components);  	
 
 private:
 
@@ -1270,14 +1270,14 @@ Alpha_shape_2<Dt>::classify(const Vertex_handle& v,
 //-------------------------------------------------------------------------
 
 template < class Dt >
-int
+typename Alpha_shape_2<Dt>::size_type
 Alpha_shape_2<Dt>::number_of_solid_components(const Coord_type& alpha) const
 {
   // Determine the number of connected solid components 
   typedef typename Marked_face_set::Data Data;
   Marked_face_set marked_face_set(false);
   Finite_faces_iterator face_it;
-  int nb_solid_components = 0;
+  size_type nb_solid_components = 0;
   
   if (number_of_vertices()==0)
     return 0;
@@ -1338,7 +1338,7 @@ Alpha_shape_2<Dt>::traverse(const Face_handle& pFace,
 
 template < class Dt >
 typename Alpha_shape_2<Dt>::Alpha_iterator
-Alpha_shape_2<Dt>::find_optimal_alpha(int nb_components) 
+Alpha_shape_2<Dt>::find_optimal_alpha(size_type nb_components) 
 {
   // find the minimum alpha that satisfies the properties
   // (1) nb_components solid components
@@ -1444,9 +1444,9 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 
   const typename Alpha_shape_2<Dt>::Interval2* pInterval2;
 
-  Unique_hash_map< Vertex_handle , int > V;
+  Unique_hash_map< Vertex_handle , size_type > V;
 
-  int number_of_vertices = 0;
+  std::size_type number_of_vertices = 0;
       
   typedef typename Alpha_shape_2<Dt>::Interval_edge_map 
     Interval_edge_map;
