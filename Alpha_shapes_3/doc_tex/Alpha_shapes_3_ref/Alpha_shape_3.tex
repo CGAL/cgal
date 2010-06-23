@@ -83,6 +83,8 @@ For example \ccc{Dt::Point} is a Point class.
 
 \ccTypedef{typedef Gt::FT FT;}{the number type of alpha values.}
 
+\ccNestedType{size_type}{the size type.}
+
 \ccNestedType{Alpha_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
 the increasing sequence of different alpha values.
 \ccPrecond Its \ccc{value_type} is \ccc{FT}}
@@ -160,7 +162,7 @@ triangulation.)}
 \ccModifiers
 
 \ccMethod{template < class InputIterator >
-		int make_alpha_shape(
+		std::ptrdiff_t make_alpha_shape(
 			InputIterator first,
 			InputIterator last);}
 {Initialize the alpha shape data structure
@@ -240,7 +242,7 @@ entails a partial re-computation of the data structure.}
 {Returns the $n$-th alpha-value, sorted in an increasing order.
  \ccPrecond \ccc{n} < number of alphas.}
 
-\ccMethod{int number_of_alphas() const;}
+\ccMethod{size_type number_of_alphas() const;}
 {Returns the number of different alpha-values.}
 
 \ccMethod{Classification_type
@@ -348,12 +350,12 @@ greater than \ccc{alpha}.}
 
 \ccHeading{Operations}
 
-\ccMethod{int number_of_solid_components(const FT& alpha = get_alpha()) const;}
+\ccMethod{size_type number_of_solid_components(const FT& alpha = get_alpha()) const;}
 {Returns the number of solid components of \ccVar, that is, the number of
 components of its 
 regularized version.}
 
-\ccMethod{Alpha_iterator find_optimal_alpha(int nb_components) const;}
+\ccMethod{Alpha_iterator find_optimal_alpha(size_type nb_components) const;}
 {Returns an iterator pointing to smallest $\alpha$ value
 such that \ccVar\ satisfies the following two properties:\\
 all data points are either on the boundary or in the interior 

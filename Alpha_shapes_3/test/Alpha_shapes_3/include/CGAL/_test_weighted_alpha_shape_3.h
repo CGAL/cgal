@@ -136,7 +136,7 @@ _test_weighted_alpha_shape_3()
   assert(is);
   file_input(is,L);
   A.set_mode(Alpha_shape_3::REGULARIZED);
-  int  n = A.make_alpha_shape(L.begin(), L.end());
+  std::size_t  n = A.make_alpha_shape(L.begin(), L.end());
   std::cout << "Alpha Shape computed :" << n  << " points" << std::endl;
   std::cout << " test number_of_components - find_optimal_alpha "
 	    <<   std::endl;

@@ -291,12 +291,14 @@ public:
 
 
   template < class InputIterator >  
-  size_type make_alpha_shape(const InputIterator& first, 
-                             const InputIterator& last)
+  std::ptrdiff_t make_alpha_shape(const InputIterator& first, 
+                                  const InputIterator& last)
     {
       clear();
       size_type n = Dt::insert(first, last);
-      if (dimension() == 3)	  initialize_alpha();
+      if (dimension() == 3){
+        initialize_alpha();
+      }
       return n;
     }
 
@@ -417,7 +419,7 @@ public:
       return alpha_spectrum[n-1];
     }
   
-  int number_of_alphas() const
+  size_type number_of_alphas() const
     // Returns the number of different alpha-values
     {
       return alpha_spectrum.size();
@@ -705,25 +707,25 @@ public:
 
 
   //--------------------- NB COMPONENTS ---------------------------------
-  int
+  size_type
   number_solid_components() const
     {
       return number_of_solid_components(get_alpha());
     }
 
-  int
+  size_type
   number_of_solid_components() const
     {
       return number_of_solid_components(get_alpha());
     }
 
-  int 
+  size_type
   number_solid_components(const NT& alpha) const
     {
       return number_of_solid_components(alpha);
     }
 
-  int
+  size_type
   number_of_solid_components(const NT& alpha) const;
   // Determine the number of connected solid components 
   // takes time O(#alpha_shape) amortized if STL_HASH_TABLES
@@ -739,7 +741,7 @@ private:
 
 public:
 
-  Alpha_iterator find_optimal_alpha(int nb_components) const;
+  Alpha_iterator find_optimal_alpha(size_type nb_components) const;
   // find the minimum alpha that satisfies the properties
   // (1) all data points are on the boundary of some 3d component
   //    or in its interior
@@ -1460,8 +1462,8 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
   typedef typename AS::Alpha_shape_facets_iterator
                                              Alpha_shape_facets_iterator;
 
-  Unique_hash_map< Vertex_handle, int > V;
-  int number_of_vertices = 0;
+  Unique_hash_map< Vertex_handle, size_type > V;
+  size_type number_of_vertices = 0;
 
   Alpha_shape_vertices_iterator vit;
   for( vit = A.alpha_shape_vertices_begin();
@@ -1687,7 +1689,7 @@ Alpha_shape_3<Dt>::classify(const Vertex_handle& v,
 //--------------------- NB COMPONENTS ---------------------------------
 
 template < class Dt >
-int
+typename Alpha_shape_3<Dt>::size_type
 Alpha_shape_3<Dt>::number_of_solid_components(const NT& alpha) const
     // Determine the number of connected solid components 
     // takes time O(#alpha_shape) amortized if STL_HASH_TABLES
@@ -1696,7 +1698,7 @@ Alpha_shape_3<Dt>::number_of_solid_components(const NT& alpha) const
   typedef typename Marked_cell_set::Data Data;
   Marked_cell_set marked_cell_set(false);
   Finite_cells_iterator cell_it, done = finite_cells_end();
-  int nb_solid_components = 0;
+  size_type nb_solid_components = 0;
 
   // only finite simplices
   for( cell_it = finite_cells_begin(); cell_it != done; ++cell_it)
@@ -1750,7 +1752,7 @@ void Alpha_shape_3<Dt>::traverse(Cell_handle pCell,
 
 template <class Dt>
 typename Alpha_shape_3<Dt>::Alpha_iterator 
-Alpha_shape_3<Dt>::find_optimal_alpha(int nb_components) const
+Alpha_shape_3<Dt>::find_optimal_alpha(size_type nb_components) const
   // find the minimum alpha that satisfies the properties
   // (1) nb_components solid components <= nb_components
   // (2) all data points on the boundary or in its interior

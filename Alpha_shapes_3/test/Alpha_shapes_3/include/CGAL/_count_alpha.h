@@ -193,7 +193,7 @@ count_faces(const AS &A, bool verbose)
 	   + count_interior_vertices == A.number_of_vertices());
   }
 
-  int ncc = A.number_of_solid_components();
+  std::size_t ncc = A.number_of_solid_components();
 
   if (count_cells >= 1 && A.get_mode()== Alpha_shape_3::REGULARIZED) {
      //this relation might not be valid for any alpha_shape
