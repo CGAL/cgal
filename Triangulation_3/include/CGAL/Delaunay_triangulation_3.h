@@ -203,7 +203,7 @@ public:
   }
 
   template < class InputIterator >
-  size_type
+  std::ptrdiff_t
   insert(InputIterator first, InputIterator last)
   {
     size_type n = number_of_vertices();

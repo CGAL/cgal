@@ -621,7 +621,7 @@ public:
 					  Hidden_points_visitor &hider);
 
   template < class InputIterator >
-  size_type insert(InputIterator first, InputIterator last)
+  std::ptrdiff_t insert(InputIterator first, InputIterator last)
     {
       size_type n = number_of_vertices();
 
