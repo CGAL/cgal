@@ -31,6 +31,9 @@
 /*! \file
  * Definitions of the adaptor classes for the arrangement traits class.
  */
+
+#include <list>
+
 #include <CGAL/config.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_enums.h>
