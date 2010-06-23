@@ -881,7 +881,7 @@ if [ ${?} != 0 ]; then
   fi
 fi
 # Make that file writable (lockfile create read-only files
-chmod u+x "$LOCK_FILE"
+chmod u+w "$LOCK_FILE"
 # Put the PID of current process in the lock file
 echo $$ > "$LOCK_FILE"
 
