@@ -339,7 +339,7 @@ to_double_exp(const MP_Float &b)
     return std::make_pair(0.0, 0);
 
   exponent_type exp = b.max_exp();
-  int steps = (std::min)(limbs_per_double, b.v.size());
+  int steps = static_cast<int>((std::min)(limbs_per_double, b.v.size()));
   double d_exp_1 = std::ldexp(1.0, - static_cast<int>(log_limb));
   double d_exp   = 1.0;
   double d = 0;
@@ -363,7 +363,7 @@ to_interval_exp(const MP_Float &b)
     return std::make_pair(pair<double, double>(0, 0), 0);
 
   exponent_type exp = b.max_exp();
-  int steps = (std::min)(limbs_per_double, b.v.size());
+  int steps = static_cast<int>((std::min)(limbs_per_double, b.v.size()));
   double d_exp_1 = std::ldexp(1.0, - (int) log_limb);
   double d_exp   = 1.0;
 
