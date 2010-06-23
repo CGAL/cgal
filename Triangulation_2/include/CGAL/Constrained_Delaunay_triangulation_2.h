@@ -153,7 +153,7 @@ public:
 		       Face_handle loc, int li );
   Vertex_handle push_back(const Point& a);
 //   template < class InputIterator >
-//   size_type insert(InputIterator first, InputIterator last);
+//   std::ptrdiff_t insert(InputIterator first, InputIterator last);
 
   void remove(Vertex_handle v);
   void remove_incident_constraints(Vertex_handle v);
@@ -191,9 +191,9 @@ public:
 public:
   template < class InputIterator >
 #if defined(_MSC_VER)
-   size_type insert(InputIterator first, InputIterator last, int i = 0)
+  std::ptrdiff_t insert(InputIterator first, InputIterator last, int i = 0)
 #else
-   size_type insert(InputIterator first, InputIterator last) 
+    std::ptrdiff_t insert(InputIterator first, InputIterator last) 
 #endif
     {
       size_type n = number_of_vertices();

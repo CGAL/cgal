@@ -144,7 +144,7 @@ public:
 		       int li );
   Vertex_handle push_back(const Point& a);
 //   template < class InputIterator >
-//   int insert(InputIterator first, InputIterator last);
+//   std::ptrdiff_t insert(InputIterator first, InputIterator last);
  
   void insert_constraint(const Point& a, const Point& b);
   void insert_constraint(Vertex_handle va, Vertex_handle  vb);
@@ -255,9 +255,9 @@ public:
   // the int parameter is a work around for VC7 to compile
   template < class InputIterator >
 #if defined(_MSC_VER)
-   size_type insert(InputIterator first, InputIterator last, int i = 0)
+  std::ptrdiff_t insert(InputIterator first, InputIterator last, int i = 0)
 #else
-   size_type insert(InputIterator first, InputIterator last) 
+    std::ptrdiff_t insert(InputIterator first, InputIterator last) 
 #endif
     {
       size_type n = number_of_vertices(); 

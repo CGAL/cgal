@@ -274,7 +274,7 @@ public:
 		       Locate_type lt,
 		       Face_handle loc, int li );
 //   template < class InputIterator >
-//   size_type insert(InputIterator first, InputIterator last);
+//   std::ptrdiff_t insert(InputIterator first, InputIterator last);
   Vertex_handle push_back(const Point& a);
  
   void remove_degree_3(Vertex_handle  v, Face_handle f = Face_handle());
@@ -492,7 +492,7 @@ Stream&  draw_triangulation(Stream& os) const
 }
 
 template < class InputIterator >
-size_type insert(InputIterator first, InputIterator last)
+std::ptrdiff_t insert(InputIterator first, InputIterator last)
 {
   size_type n = number_of_vertices();
 
