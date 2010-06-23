@@ -78,7 +78,7 @@ void jama_polynomial_compute_roots(const double *begin, const double *end,
 double lb, double ub,
 std::vector<double> &roots)
 {
-    int degree= end-begin-1;
+  std::size_t degree= end-begin-1;
     switch( degree) {
         case -1:
         case 0:
@@ -104,7 +104,7 @@ void jama_polynomial_compute_cleaned_roots(const double *begin, const double *en
 double lb, double ub,
 std::vector<double> &roots)
 {
-    int degree= end-begin-1;
+  std::size_t degree= end-begin-1;
     switch( degree) {
         case -1:
         case 0:

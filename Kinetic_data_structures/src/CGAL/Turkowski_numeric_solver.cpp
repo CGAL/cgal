@@ -362,7 +362,7 @@ static void Turkowski_polynomial_compute_roots_t(const double *begin,
     cc[i]=std::numeric_limits<double>::infinity();
   }
 
-  FindPolynomialRoots(begin, rp, cp, cc, numc-1, 10*numc, 40);
+  FindPolynomialRoots(begin, rp, cp, cc, static_cast<long>(numc)-1, 10*static_cast<long>(numc), 40);
 
   /*if (CLEAN) {
     lb-= .000005;
@@ -393,7 +393,7 @@ void Turkowski_polynomial_compute_roots(const double *begin, const double *end,
 					std::vector<double> &roots)
 {
 
-  int degree= end-begin-1;
+  std::size_t degree= end-begin-1;
   switch( degree) {
   case -1:
   case 0:
@@ -426,7 +426,7 @@ void Turkowski_polynomial_compute_cleaned_roots(const double *begin, const doubl
 						double lb, double ub,
 						std::vector<double> &roots)
 {
-  int degree= end-begin-1;
+  std::size_t degree= end-begin-1;
   switch( degree) {
   case -1:
   case 0:
