@@ -855,8 +855,14 @@ fi
 # Detects cygwin
 if uname | grep -q "CYGWIN"; then
   log "${ACTUAL_LOGFILE}" "Cygwin detected, using nmake"
-  CMAKE_GENERATOR='-GNMake Makefiles'
-  MAKE_CMD='nmake'
+  JOM="`which jom`"
+  if [ -e "$JOM" ]; then 
+    CMAKE_GENERATOR="-GNMake Makefiles JOM'
+    MAKE_CMD='jom'
+  else 
+    CMAKE_GENERATOR='-GNMake Makefiles'
+    MAKE_CMD='nmake'
+  fi
   IS_CYGWIN='y'
 else
   log "${ACTUAL_LOGFILE}" "Non-cygwin linux detected, using system make."
