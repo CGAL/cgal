@@ -95,7 +95,7 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
     // read in all facets
     for ( i = 0; i < scanner.size_of_facets(); i++) {
         B.begin_facet();
-        Integer32 no;
+        std::size_t no;
         scanner.scan_facet( no, i);
         if( ! m_in || B.error() || no < 3) {
             if ( scanner.verbose()) {
@@ -109,7 +109,7 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
             return;
         }
         for ( int j = 0; j < no; j++) {
-            Integer32 index;
+            std::size_t index;
             scanner.scan_facet_vertex_index( index, i);
             B.add_vertex_to_facet( index);
         }
