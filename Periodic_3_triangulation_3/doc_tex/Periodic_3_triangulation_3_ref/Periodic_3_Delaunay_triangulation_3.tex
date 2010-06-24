@@ -100,7 +100,7 @@ The following method allows one to insert several points. It returns the
 number of inserted points. 
 
 \ccMethod{template < class InputIterator >
-          int
+          std::ptrdiff_t
           insert(InputIterator first, InputIterator last,
           bool is_large_point_set = false);}
 {Inserts the points in the iterator range $\left[\right.$\ccc{first},
@@ -144,7 +144,7 @@ proposes a vertex removal.
   the 27-sheeted covering space it removes all 27 copies of \ccc{v}.}
 
 \ccMethod{template < class InputIterator >
-  int remove(InputIterator first, InputIterator beyond);}
+  std::ptrdiff_t remove(InputIterator first, InputIterator beyond);}
 {Removes the vertices specified by the iterator range (\ccStyle{first,
     beyond}) of value type \ccc{Vertex_handle}.
 \ccc{remove()} is called for each element of the range.
