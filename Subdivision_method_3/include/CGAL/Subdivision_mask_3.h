@@ -27,6 +27,7 @@
 #define CGAL_POLYHEDRON_SUBDIVISION_STENCILS_H_01292002
 
 #include <CGAL/basic.h>
+#include <CGAL/Origin.h>
 
 #include <CGAL/circulator.h>
 
