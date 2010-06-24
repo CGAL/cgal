@@ -1,4 +1,4 @@
-// Copyright (c) 1997  INRIA Sophia-Antipolis (France).
+// Copyright (c) 1997-2010  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -20,148 +20,20 @@
 #ifndef CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
 #define CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
 
-#include <CGAL/triangulation_assertions.h>
-
-#include <CGAL/Point_3.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Triangle_3.h>
-#include <CGAL/predicates/kernel_ftC2.h>
+#include <CGAL/internal/Triangulation_euclidean_traits_projected_3.h>
 
 namespace CGAL { 
 
-template <class R>
-class Orientation_xy_3 
-{
-public:
-  typedef typename R::Point_3     Point; 
-  typename R::FT x(const Point &p) const { return p.x(); }
-  typename R::FT y(const Point &p) const { return p.y(); }
-
-  CGAL::Orientation operator()(const Point& p,
-			       const Point& q,
-			       const Point& r)
-    {
-      return orientationC2(x(p), y(p), x(q), y(q), x(r), y(r));
-    }
-};
-
-template <class R>
-class Side_of_oriented_circle_xy_3 
-{
-public:
-  typedef typename R::Point_3     Point; 
-  typename R::FT x(const Point &p) const { return p.x(); }
-  typename R::FT y(const Point &p) const { return p.y(); }
-
-  CGAL::Oriented_side operator() (const Point &p, 
-				  const Point &q,
-				  const Point &r, 
-				  const Point &s) 
-    {
-      return side_of_oriented_circleC2(x(p), y(p),
-				       x(q), y(q),
-				       x(r), y(r),
-				       x(s), y(s));
-    }
-};
-
-template <class R>
-class Compare_distance_xy_3
-{
-public:
-  typedef typename R::Point_3   Point_3; 
-  typedef typename R::Point_2   Point_2;   
-  typedef typename R::FT        RT;
-  typename R::FT x(const Point_3 &p) const { return p.x(); }
-  typename R::FT y(const Point_3 &p) const { return p.y(); }
-
-  Point_2 project(const Point_3& p) const
-  {
-    return Point_2(x(p),y(p));
-  }
-
-  Comparison_result operator()(const Point_3& p,const Point_3& q,const Point_3& r) const
-  {
-    Point_2 p2 = project(p);
-    Point_2 q2 = project(q);
-    Point_2 r2 = project(r);
-    return compare_distance_to_point(p2,q2,r2);
-  }
-};
-
-
 template < class R >
-class Triangulation_euclidean_traits_xy_3 {
+class Triangulation_euclidean_traits_xy_3 : public internal::Triangulation_euclidean_traits_projected_3<R,2> {
 public:
-  typedef Triangulation_euclidean_traits_xy_3<R> Traits;
-  typedef R Rp;
-  typedef typename Rp::Point_3     Point_2;
-  typedef typename Rp::Segment_3   Segment_2;
-  typedef typename Rp::Triangle_3  Triangle_2;
-
-  typedef typename Rp::Less_x_3             Less_x_2;
-  typedef typename Rp::Less_y_3             Less_y_2;
-  typedef typename Rp::Compare_x_3          Compare_x_2;
-  typedef typename Rp::Compare_y_3          Compare_y_2;
-  typedef Orientation_xy_3<Rp>              Orientation_2;
-  typedef Side_of_oriented_circle_xy_3<Rp>  Side_of_oriented_circle_2;
-  typedef Compare_distance_xy_3<Rp>         Compare_distance_2;
-  typedef typename Rp::Construct_segment_3   Construct_segment_2;
-  typedef typename Rp::Construct_triangle_3  Construct_triangle_2;
-
-  // for compatibility with previous versions
-  typedef Point_2      Point;
-  typedef Segment_2    Segment;
-  typedef Triangle_2   Triangle;
-
   Triangulation_euclidean_traits_xy_3(){}
   Triangulation_euclidean_traits_xy_3(
 		   const Triangulation_euclidean_traits_xy_3&){}
   Triangulation_euclidean_traits_xy_3 &operator=(
 	    const Triangulation_euclidean_traits_xy_3&){return *this;}
-
-  typename Rp::FT x(const Point_2 &p) const { return p.x(); }
-  typename Rp::FT y(const Point_2 &p) const { return p.y(); }
-    
- 
-  Less_x_2
-  less_x_2_object() const
-    { return Less_x_2();}
-
-  Less_y_2
-  less_y_2_object() const
-    { return Less_y_2();}
-
-  Compare_x_2
-  compare_x_2_object() const
-    { return Compare_x_2();}
-
-  Compare_y_2
-  compare_y_2_object() const
-    { return Compare_y_2();}
-
-  Orientation_2
-  orientation_2_object() const
-    { return Orientation_2();}
-
-  Side_of_oriented_circle_2
-  side_of_oriented_circle_2_object() const
-    {return Side_of_oriented_circle_2();}
-
-  Construct_segment_2  construct_segment_2_object() const
-    {return Construct_segment_2();}
-
-  Construct_triangle_2  construct_triangle_2_object() const
-    {return Construct_triangle_2();}
-
-  Compare_distance_2
-  compare_distance_2_object() const
-  {
-    return Compare_distance_2();
-  }    
 };
   
-
 } //namespace CGAL 
 
 #endif // CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
