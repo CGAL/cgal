@@ -1446,7 +1446,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 
   Unique_hash_map< Vertex_handle , size_type > V;
 
-  std::size_type number_of_vertices = 0;
+  size_type number_of_vertices = 0;
       
   typedef typename Alpha_shape_2<Dt>::Interval_edge_map 
     Interval_edge_map;
