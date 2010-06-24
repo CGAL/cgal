@@ -45,11 +45,9 @@ last parameter is ommitted, the class \ccc{CGAL::Dummy_straight_skeleton_builder
 \ccConstructor{StraightSkeletonBuilder_2( boost::optional<FT> aMaxTime = boost::none
                                         , Traits const&                = Traits()
                                         , Visitor const& aVisitor      = Visitor() );}
-{Constructs the builder class.
-
-\ccc{aMaxTime} is the event threshold for \textit{partial} straight-skeletons. If empty, a \textit{full} straight-skeleton is constructed.
-Otherwise, a partial straight-skeleton is constructed whose farthest event has a time no greater than \ccc{aMaxTime}. 
-A partial straight skeleton can be used to obtain a polygon offset at a given maximum distance \ccc{d} by pasing \ccc{d} 
+{Constructs the builder class. \ccc{aMaxTime} is the event threshold for {\em partial} straight-skeletons. If empty, a {\em full} straight-skeleton is constructed.\\
+Otherwise, a partial straight-skeleton is constructed whose farthest event has a time no greater than \ccc{aMaxTime}. \\
+A partial straight skeleton can be used to obtain a polygon offset at a given maximum distance $d$ by pasing $d$\\ 
 as the \ccc{aMaxTime} parameter.}
 
 \ccHeading{Methods}
@@ -96,9 +94,8 @@ defined to mix zero weights with either positive or negative weights)
 
 If \ccc{aCheckValidity} is true, consecutive coincident points are filtered out (along with the corresponding weights). The contour is then
 inserted if and only if the filtered contour contains at least 3 or 2 vertices left (for closed and open contours resp).
- 
-
 }
+
 \ccGlue
 \ccMethod{template<class InputPointIterator, class NT, class Converter> 
  Straight_skeleton_builder_2&  enter_contour ( InputPointIterator aBegin
@@ -122,7 +119,7 @@ If you need another straight skeleton for another polygon you must construct and
 The result is a dynamically allocated instance of the \ccc{SSkel} class, managed by a \ccc{boost::shared_ptr}.
 
 The construction process can fail if the input is {\em ill-conditioned}. In that case, the resulting straight skeleton
-will most likely be invalid as determined by the \ccc{is_valid()) method. If \ccc{aNull_if_failed==true} and the result is
+will most likely be invalid as determined by the \ccc{is_valid()} method. If \ccc{aNull_if_failed==true} and the result is
 not valid, the return value will be a default constructed \ccc{shared_ptr}, that is, {\em null}. Otherwise, if 
 \ccc{aNull_if_failed==false}, the result will be the skeleton as constructed (valid otr not). 
 }
@@ -136,7 +133,7 @@ The implemented algorithm is based on \cite{cgal:fo-ss-98}, with several correct
 
 Starting with \cgal\ 3.7, the algorithm incorporates the handling of open-polylines, partial skeletons and weighted edges.
 
-The extension to support weighted edges is based on the work of {\em Mathieu Brédif}, from the {\em Institut Geographique National (IGN)},
+The extension to support weighted edges is based on the work of {\em Mathieu Bredif, from the Matis laboratory at IGN (Institut Geographique National)},
 who submitted a first working version of the code handling weights.
 
 The algorithm simulates a grassfire propagation of moving polygon edges as they move inward at constant\\

@@ -167,45 +167,6 @@ struct Are_ss_events_simultaneous_2 : Functor_base_2<K>
 };
 
 template<class K>
-struct Are_ss_edges_collinear_2 : Functor_base_2<K>
-{
-  typedef Functor_base_2<K> Base ;
-
-  typedef typename Base::Segment_2 Segment_2 ;
-
-  typedef Uncertain<bool> result_type ;
-
-  Uncertain<bool> operator() ( Segment_2 const& aA, Segment_2 const& aB ) const
-  {
-    Uncertain<bool> rResult = are_edges_collinearC2(aA,aB);
-
-    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Are_ss_edges_collinear","A=" << aA << "\nB=" << aB);
-
-    return rResult ;
-  }
-};
-
-template<class K>
-struct Are_ss_edges_parallel_2 : Functor_base_2<K>
-{
-  typedef Functor_base_2<K> Base ;
-
-  typedef typename Base::Segment_2 Segment_2 ;
-
-  typedef Uncertain<bool> result_type ;
-
-  Uncertain<bool> operator() ( Segment_2 const& aA, Segment_2 const& aB ) const
-  {
-    Uncertain<bool> rResult = are_edges_parallelC2(aA,aB);
-
-    CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Are_ss_edges_parallel","A=" << aA << "\nB=" << aB);
-
-    return rResult ;
-  }
-};
-
-
-template<class K>
 struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
@@ -314,8 +275,6 @@ struct Straight_skeleton_builder_traits_2_functors
   typedef CGAL_SS_i::Is_edge_facing_ss_node_2                   <K> Is_edge_facing_ss_node_2 ;
   typedef CGAL_SS_i::Oriented_side_of_event_point_wrt_bisector_2<K> Oriented_side_of_event_point_wrt_bisector_2 ;
   typedef CGAL_SS_i::Are_ss_events_simultaneous_2               <K> Are_ss_events_simultaneous_2 ;
-  typedef CGAL_SS_i::Are_ss_edges_parallel_2                    <K> Are_ss_edges_parallel_2 ;
-  typedef CGAL_SS_i::Are_ss_edges_collinear_2                   <K> Are_ss_edges_collinear_2 ;
   typedef CGAL_SS_i::Construct_ss_event_time_and_point_2        <K> Construct_ss_event_time_and_point_2 ;
   typedef CGAL_SS_i::Construct_ss_trisegment_2                  <K> Construct_ss_trisegment_2 ;
 } ;
@@ -363,12 +322,6 @@ public:
 
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_ss_events_simultaneous_2>
     Are_ss_events_simultaneous_2 ;
-    
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_ss_edges_parallel_2>
-    Are_ss_edges_parallel_2 ;
-    
-  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_ss_edges_collinear_2>
-    Are_ss_edges_collinear_2 ;
     
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2  Construct_ss_event_time_and_point_2 ;
   typedef typename Unfiltering::Construct_ss_trisegment_2            Construct_ss_trisegment_2 ;
@@ -432,20 +385,6 @@ public:
                             , C2F
                             >
                             Are_ss_events_simultaneous_2 ;
-
-  typedef Filtered_predicate< typename Exact    ::Are_ss_edges_parallel_2
-                            , typename Filtering::Are_ss_edges_parallel_2
-                            , C2E
-                            , C2F
-                            >
-                            Are_ss_edges_parallel_2 ;
-                            
-  typedef Filtered_predicate< typename Exact    ::Are_ss_edges_collinear_2
-                            , typename Filtering::Are_ss_edges_collinear_2
-                            , C2E
-                            , C2F
-                            >
-                            Are_ss_edges_collinear_2 ;
                             
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
                                                         , typename Exact      ::Construct_ss_event_time_and_point_2
@@ -479,8 +418,6 @@ CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_ss_event_times_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Is_edge_facing_ss_node_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Oriented_side_of_event_point_wrt_bisector_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_events_simultaneous_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_edges_parallel_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_edges_collinear_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_event_time_and_point_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_trisegment_2)
 

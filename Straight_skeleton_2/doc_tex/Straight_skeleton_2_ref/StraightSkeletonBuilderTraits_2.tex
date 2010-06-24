@@ -30,9 +30,9 @@ The concept \ccRefName\ describes the requirements for the geometric traits clas
   \ccNestedType{FT}{A \ccc{SqrtFieldNumberType} provided by the kernel. This type is used to represent the
    coordinates of the input points, of the skeleton nodes and the event time stored in the skeleton nodes.}{}
   \ccGlue
-  \ccNestedType{Point_2}{The 2D point type provided by the kernel.}
+  \ccNestedType{Point_2}{The 2D point type provided by the kernel.}{}
   \ccGlue
-  \ccNestedType{Segment_2}{A 2D oriented straight-line segment type provided by the kernel.}
+  \ccNestedType{Segment_2}{A 2D oriented straight-line segment type provided by the kernel.}{}
   \ccGlue
   \ccTypedef{boost::tuple<Segment_2,FT,Segment_2,FT,Segment_2,FT> Trisegment_2;}{A record encapsulating 3 'oriented weighted offset segments', each of wich\\
 corresponds to an input edge plus the weight given to the edge. Each offset segment represents the segment moved a certain offset time 't' and distance 'd*w'}
@@ -56,7 +56,7 @@ which constructs and returns the trisegment encapsulating the 3 given segments a
 \ccNestedType{Do_ss_event_exist_2}
 {A predicate object type.\\
 Must provide \ccc{bool operator()( boost::shared_ptr<Trisegment_2> const& tri, boost::optional<FT> maxtime) const}. 
-This predicate determines if the 3 \textit{oriented weigthed offset lines} intersect at a single point such that the intersection \textit{time} \ccc{t} is $\geq 0$ and $\lt maxtime$.
+This predicate determines if the 3 \textit{oriented weigthed offset lines} intersect at a single point such that the intersection \textit{time} \ccc{t} is $\geq 0$ and $< maxtime$.
 The intersection time \ccc{t} is such that the Euclidean distance between each input segment and its offset line is $t*wi$, where $wi$ is the weight of the segment.\\
 \ccPrecond{each segment must properly define an oriented line, that is, its endpoints cannot be coincident.}}
 
