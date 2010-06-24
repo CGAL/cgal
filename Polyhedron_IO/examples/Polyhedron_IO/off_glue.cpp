@@ -1,6 +1,6 @@
 // Glue vertices of a polyhedron together that have equal coordinate values.
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/IO/File_writer_OFF.h>
@@ -14,9 +14,9 @@
 
 using namespace std;
 
-typedef  CGAL::Cartesian<float>  Kernel;
-typedef  Kernel::Point_3         Point;
-typedef  Kernel::Vector_3        Vector;
+typedef  CGAL::Simple_cartesian<double>  Kernel;
+typedef  Kernel::Point_3                 Point;
+typedef  Kernel::Vector_3                Vector;
 struct   Vertex {
     Point   point;
     Vector  normal;
@@ -179,11 +179,11 @@ int main( int argc, char **argv) {
     // Copy facets and translate vertex indices.
     writer.write_facet_header();
     for ( i = 0; i < scanner.size_of_facets(); i++) {
-        int no;  // number of vertices of a facet.
+      std::size_t no;  // number of vertices of a facet.
         scanner.scan_facet( no, i);
         writer.write_facet_begin( no);
         for ( int j = 0; j < no; j++) {
-            int index;
+          std::size_t index;
             scanner.scan_facet_vertex_index( index, i);
             writer.write_facet_vertex_index(  vertices[index].index);
         }

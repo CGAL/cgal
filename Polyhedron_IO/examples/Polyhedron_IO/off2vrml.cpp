@@ -1,6 +1,5 @@
 // Convert from OFF format to VRML (.wrl) 1.0 or 2.0 format.
 
-#include <CGAL/basic.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/VRML_1_ostream.h>
 #include <CGAL/IO/VRML_2_ostream.h>

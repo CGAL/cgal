@@ -2,7 +2,7 @@
 // The scanner triggers on Coordinate3, IndexedFaceSet, and IndexedLineSet
 // keywords. It does not recognize transformations nor groups.
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/File_writer_OFF.h>
 #include <cstddef>
@@ -14,11 +14,11 @@
 
 using namespace std;
 
-typedef  CGAL::Cartesian<float>  Kernel;
-typedef  Kernel::Point_3         Point;
-typedef  list<Point>             Point_list;
-typedef  list<int>               Facet;
-typedef  list<Facet>             Facet_list;
+typedef  CGAL::Simple_cartesian<double>  Kernel;
+typedef  Kernel::Point_3                 Point;
+typedef  list<Point>                     Point_list;
+typedef  list<std::size_t>                       Facet;
+typedef  list<Facet>                     Facet_list;
 
 // Command line arguments
 // ======================
@@ -38,10 +38,10 @@ Facet_list  facets;
 // iv File Scanner
 // ===============
 void iv_file_scanner( istream& in) {
-    int     offset    = 0;    // offset for the Index....Set
-    char    c;                // one read character (comment, vertex, or facet)
-    char    str[2000];        // temporal storage for rest of identifier
-    int     blocks    = 0;    // Number of blocks found.
+  std::size_t offset    = 0;    // offset for the Index....Set
+    char      c;                // one read character (comment, vertex, or facet)
+    char      str[2000];        // temporal storage for rest of identifier
+    int       blocks    = 0;    // Number of blocks found.
 
     CGAL::Verbose_ostream vout( verbose);
     in >> str;
@@ -94,7 +94,7 @@ void iv_file_scanner( istream& in) {
                     vout << "\"IndexedFaceSet { coordIndex\" block found."
                          << endl;
                     // indices start here
-                    int face_offset = facets.size();
+                    std::size_t face_offset = facets.size();
                     in >> c;
                     CGAL_assertion( c == '[');
                     facets.push_back( Facet());
@@ -128,7 +128,7 @@ void iv_file_scanner( istream& in) {
                     vout << "\"IndexedLineSet { coordIndex\" block found."
                          << endl;
                     // indices start here
-                    int face_offset = facets.size();
+                    std::size_t face_offset = facets.size();
                     in >> c;
                     CGAL_assertion( c == '[');
                     facets.push_back( Facet());

@@ -1,6 +1,6 @@
 // Copies a CGAL::Polyhedron_3 from OFF format to OFF format.
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Verbose_ostream.h>
@@ -12,8 +12,8 @@
 
 using namespace std;
 
-typedef CGAL::Cartesian<double>     Kernel;
-typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
+typedef CGAL::Simple_cartesian<double>     Kernel;
+typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 
 bool  verbose   = false;
 bool  binary    = false;

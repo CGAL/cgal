@@ -1,6 +1,6 @@
 // Applies translation and scaling to an OFF object.
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/IO/File_writer_OFF.h>
@@ -12,9 +12,9 @@
 
 using namespace std;
 
-typedef  CGAL::Cartesian<float>  Kernel;
-typedef  Kernel::Point_3         Point;
-typedef  Kernel::Vector_3        Vector;
+typedef  CGAL::Simple_cartesian<double>  Kernel;
+typedef  Kernel::Point_3                 Point;
+typedef  Kernel::Vector_3                Vector;
 
 bool    verbose      = false;
 bool    binary       = false;

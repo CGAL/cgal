@@ -1,6 +1,5 @@
 // Copies a file in OFF format.
 
-#include <CGAL/basic.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/File_writer_OFF.h>
 #include <CGAL/IO/generic_copy_OFF.h>

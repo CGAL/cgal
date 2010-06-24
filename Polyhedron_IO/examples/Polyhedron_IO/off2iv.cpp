@@ -1,6 +1,5 @@
 // Convert from OFF format to OpenInventor (.iv) format.
 
-#include <CGAL/basic.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/Inventor_ostream.h>
 #include <CGAL/IO/File_writer_inventor.h>

@@ -1,6 +1,5 @@
 // computes bbox of an OFF object.
 
-#include <CGAL/basic.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/File_scanner_OFF.h>

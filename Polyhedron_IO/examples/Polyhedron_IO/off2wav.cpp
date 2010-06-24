@@ -1,6 +1,5 @@
 // Convert from OFF format to Wavefront (.obj) format.
 
-#include <CGAL/basic.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/File_writer_wavefront.h>
 #include <CGAL/IO/generic_copy_OFF.h>
