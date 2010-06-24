@@ -61,7 +61,13 @@ since CGAL-3.6:
 
   - Fix a bug in <CGAL/IO/VRML_2_ostream.h> that generated VRML 2 files with
     an invalid syntax for IndexedFaceSet nodes.
-
+    
+9. Triangulation_2
+  - Add missing Compare_distance_2 functor in trait classes Triangulation_euclidean_traits_xy_3
+    Triangulation_euclidean_traits_yz_3 and Triangulation_euclidean_traits_xz_3.
+    This was preventing calling member function nearest_vertex of Delaunay_triangulation_2
+    instantiated with one of these traits.
+    
 ----------------------------- Release 3.6 ----------------------------------
 
 CGAL 3.6 offers the following improvements and new functionality : 
