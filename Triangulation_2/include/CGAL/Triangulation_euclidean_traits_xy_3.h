@@ -65,6 +65,31 @@ public:
     }
 };
 
+template <class R>
+class Compare_distance_xy_3
+{
+public:
+  typedef typename R::Point_3   Point_3; 
+  typedef typename R::Point_2   Point_2;   
+  typedef typename R::FT        RT;
+  typename R::FT x(const Point_3 &p) const { return p.x(); }
+  typename R::FT y(const Point_3 &p) const { return p.y(); }
+
+  Point_2 project(const Point_3& p) const
+  {
+    return Point_2(x(p),y(p));
+  }
+
+  Comparison_result operator()(const Point_3& p,const Point_3& q,const Point_3& r) const
+  {
+    Point_2 p2 = project(p);
+    Point_2 q2 = project(q);
+    Point_2 r2 = project(r);
+    return compare_distance_to_point(p2,q2,r2);
+  }
+};
+
+
 template < class R >
 class Triangulation_euclidean_traits_xy_3 {
 public:
@@ -80,6 +105,7 @@ public:
   typedef typename Rp::Compare_y_3          Compare_y_2;
   typedef Orientation_xy_3<Rp>              Orientation_2;
   typedef Side_of_oriented_circle_xy_3<Rp>  Side_of_oriented_circle_2;
+  typedef Compare_distance_xy_3<Rp>         Compare_distance_2;
   typedef typename Rp::Construct_segment_3   Construct_segment_2;
   typedef typename Rp::Construct_triangle_3  Construct_triangle_2;
 
@@ -128,6 +154,11 @@ public:
   Construct_triangle_2  construct_triangle_2_object() const
     {return Construct_triangle_2();}
 
+  Compare_distance_2
+  compare_distance_2_object() const
+  {
+    return Compare_distance_2();
+  }    
 };
   
 

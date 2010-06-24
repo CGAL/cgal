@@ -99,6 +99,13 @@ which takes four points $p, q, r, s$ as arguments and returns
 the projection of point\ccc{s}
 with respect to the oriented circle through the projections of $p,q$
 and $r$.}
+\ccGlue
+\ccNestedType{Compare_distance_2} {Predicate object. Provides
+ the operator : \\
+\ccc{Comparison_result operator()(Point_2 p, Point_2 q, Point_2 r)}
+which returns \ccc{SMALLER}, \ccc{EQUAL} or \ccc{LARGER}
+according to the distance between the projection of p and the projection of q being smaller, equal or larger
+than the distance between the projection of p and the projection of r.}
 
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
@@ -134,6 +141,9 @@ The following access functions are provided
 \ccGlue
 \ccMethod{Side_of_oriented_circle_2
 side_of_oriented_circle_2_object();}{}
+\ccGlue
+\ccMethod{Compare_distance_2
+compare_distance_2_object();} {}
 
 \ccSeeAlso
 \ccc{TriangulationTraits_2} \\
