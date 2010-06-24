@@ -933,7 +933,7 @@ protected:
       fc = fc->neighbor((fc->index(inserted) + 1)%3);
     } while(fc != done);
     std::size_t ss = faces_pt.size();
-    for(int k=0; k<ss; k++)
+    for(std::size_t k=0; k<ss; k++)
     {
       Cell_handle f = faces_pt[k];
       int i = f->index(inserted);
@@ -1330,8 +1330,6 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   }
   tr._tds.set_dimension(d);
 
-  std::cout << n << "  " << d << std::endl;
-
   std::map< std::size_t, Vertex_handle > V;
   V[0] = tr.infinite_vertex();
   // the infinite vertex is numbered 0
@@ -1339,15 +1337,12 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   for (std::size_t i=1; i <= n; i++) {
     V[i] = tr._tds.create_vertex();
     is >> *V[i];
-    std::cout << *V[i] << std::endl;
   }
 
   std::map< std::size_t, Cell_handle > C;
 
   std::size_t m;
   tr._tds.read_cells(is, V, m, C);
-
-  std::cout << "after read_cells" << std::endl;
 
   for (std::size_t j=0 ; j < m; j++)
     is >> *(C[j]);
@@ -1391,7 +1386,7 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds> &tr)
     return os;
 
   std::vector<Vertex_handle> TV(n+1);
-  int i = 0;
+  size_type i = 0;
 
   // write the vertices
 

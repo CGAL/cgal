@@ -58,7 +58,6 @@ _test_cls_triangulation_3_input_output(const Triangulation & T,
     CGAL::set_binary_mode(oFileBin);
     oFileBin << T;
   }
-  std::cout << "finished writing" << std::endl;
   std::ifstream iFileBin(filename2, std::ios::in|std::ios::binary);
   CGAL::set_binary_mode(iFileBin);
   Triangulation Tfromfile_binary;

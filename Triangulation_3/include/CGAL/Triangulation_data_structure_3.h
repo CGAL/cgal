@@ -1808,7 +1808,6 @@ read_cells(std::istream& is, std::map< std::size_t, Vertex_handle > &V,
       else
         read(is, m);
 
-      std::cout << "Reading m = " << m << std::endl;
       for(std::size_t i = 0; i < m; i++) {
 	Cell_handle c = create_cell();
 	for (int k=0; k<=dimension(); ++k) {
@@ -1869,7 +1868,7 @@ Triangulation_data_structure_3<Vb,Cb>::
 print_cells(std::ostream& os, const std::map<Vertex_handle, std::size_t> &V ) const
 {
   std::map<Cell_handle, std::size_t > C;
-  int i = 0;
+  std::size_t i = 0;
 
   switch ( dimension() ) {
   case 3:
@@ -1961,7 +1960,6 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, std::size_t> &V ) co
   case 1:
     {
       size_type m = number_of_edges();
-      std::cout << "we write m = " << m << std::endl;
       if(is_ascii(os))
         os << m << std::endl;
       else
@@ -3281,7 +3279,7 @@ copy_tds(const Tds & tds, Vertex_handle vert )
 
   // Create the vertices.
   std::vector<Vertex_handle> TV(n);
-  int i = 0;
+  size_type i = 0;
 
   for (Vertex_iterator vit = tds.vertices_begin();
        vit != tds.vertices_end(); ++vit)
