@@ -75,12 +75,12 @@ public:
   typename R::FT x(const Point_3 &p) const { return p.x(); }
   typename R::FT y(const Point_3 &p) const { return p.z(); }
 
-  Point_2 project(const Point_3& p)
+  Point_2 project(const Point_3& p) const
   {
     return Point_2(x(p),y(p));
   }
 
-  Comparison_result operator()(const Point_3& p,const Point_3& q,const Point_3& r)
+  Comparison_result operator()(const Point_3& p,const Point_3& q,const Point_3& r) const
   {
     Point_2 p2 = project(p);
     Point_2 q2 = project(q);
