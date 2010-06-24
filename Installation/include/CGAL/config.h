@@ -154,7 +154,7 @@
 #ifdef __SUNPRO_CC
 #  include <iterator>
 #  ifdef _RWSTD_NO_CLASS_PARTIAL_SPEC
-#    warning "CGAL does not support SunPRO with the old Rogue Wave STL: use STLPort."
+#    error "CGAL does not support SunPRO with the old Rogue Wave STL: use STLPort."
 #  endif
 
 // Sun CC has an issue with templates that means overloading
