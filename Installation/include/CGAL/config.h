@@ -70,9 +70,16 @@
 // It only works for public releases.
 #define CGAL_VERSION_NUMBER(x,y,z) (1000001 + 10000*x + 100*y + 10*z) * 1000
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-#define CGAL_BEGIN_NAMESPACE  namespace CGAL { 
-#define CGAL_END_NAMESPACE }
+#ifdef CGAL_NO_DEPRECATED_CODE
+// The two macro are defined to something that will triggers an error from
+// the compiler (initialization of variable without defining its type)
+#  define CGAL_BEGIN_NAMESPACE \
+     static CGAL_BEGIN_NAMESPACE_must_be_replaced_by_real_namespace_CGAL = true;
+#  define CGAL_END_NAMESPACE \
+     static CGAL_END_NAMESPACE_must_be_replaced_by_a_real_namespace_end = true;
+#else
+#  define CGAL_BEGIN_NAMESPACE  namespace CGAL { 
+#  define CGAL_END_NAMESPACE }
 #endif
 
 
