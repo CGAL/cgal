@@ -19,6 +19,20 @@ x.y 2D Triangulations
   - The Delaunay and regular 2D triangulations now use a symbolic
     perturbation to choose a particular triangulation in co-circular cases.
 
+  - The return type of the template member function 
+    insert(It beg, It end), taking an iterator range of points,
+    has been changed from int to std::ptrdiff_t
+
+x.y 3D Triangulations
+   
+  - The return type of the template member function 
+    insert(It beg, It end), taking an iterator range of points,
+    has been changed from int to std::ptrdiff_t
+
+x.y 2D and 3D Alpha Shapes
+  
+  - The type int in the API has been changed to std::size_t
+    so that CGAL can deal with large data sets (64 bit addresses)
 
 x Mesh Generation
 
