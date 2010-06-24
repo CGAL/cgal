@@ -19,10 +19,6 @@
 #ifndef CGAL_SURFACE_MESH_TRIANGULATION_GENERATOR_3_H
 #define CGAL_SURFACE_MESH_TRIANGULATION_GENERATOR_3_H
 
-#ifndef CGAL_SURFACE_MESHER_TEST
-#  warning This header is not documented.
-#endif
-
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
