@@ -1137,7 +1137,7 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
   cells.reserve(64);
   this->incident_cells(v, std::back_inserter(cells));
   size = cells.size();
-  for(int i=0; i<size; i++)
+  for(std::size_t i=0; i<size; i++)
   {
     Cell_handle c = cells[i];
     if(this->is_infinite(c)) continue;

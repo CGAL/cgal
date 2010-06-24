@@ -35,7 +35,6 @@ _test_cls_triangulation_3_input_output(const Triangulation & T,
 {
   const int dim = T.dimension();
   const typename Triangulation::size_type n = T.number_of_vertices();
-
   std::cout << "    I/O" << std::endl;
   {
     std::ofstream oFile(filename, std::ios::out);
@@ -59,6 +58,7 @@ _test_cls_triangulation_3_input_output(const Triangulation & T,
     CGAL::set_binary_mode(oFileBin);
     oFileBin << T;
   }
+  std::cout << "finished writing" << std::endl;
   std::ifstream iFileBin(filename2, std::ios::in|std::ios::binary);
   CGAL::set_binary_mode(iFileBin);
   Triangulation Tfromfile_binary;

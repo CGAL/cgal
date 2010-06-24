@@ -312,8 +312,8 @@ public:
     }
 
   // not documented
-  void read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
-			   int & m, std::map< int, Cell_handle > &C );
+  void read_cells(std::istream& is, std::map< std::size_t, Vertex_handle > &V,
+                  std::size_t & m, std::map< std::size_t, Cell_handle > &C );
   // not documented
   void print_cells(std::ostream& os,
                    const std::map<Vertex_handle, std::size_t> &V ) const;
@@ -1235,7 +1235,8 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
 
   tds.clear();
 
-  int n, d;
+  std::size_t n;
+  int d;
   if(is_ascii(is))
      is >> d >> n;
   else {
@@ -1247,18 +1248,18 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb>& tds)
   if(n == 0)
     return is;
 
-  std::map< int, Vertex_handle > V;
+  std::map<std::size_t , Vertex_handle > V;
 
   // creation of the vertices
-  for (int i=0; i < n; i++) {
+  for (std::size_t i=0; i < n; i++) {
     //    is >> p;
     //    V[i] = tds.create_vertex();
     //    V[i]->set_point(p);
     V[i] = tds.create_vertex();
   }
 
-  std::map< int, Cell_handle > C;
-  int m;
+  std::map< std::size_t, Cell_handle > C;
+  std::size_t m;
 
   tds.read_cells(is, V, m, C);
   CGAL_triangulation_assertion( tds.is_valid() );
@@ -1793,8 +1794,8 @@ flip_really( Cell_handle c, int i, int j,
 template < class Vb, class Cb >
 void
 Triangulation_data_structure_3<Vb,Cb>::
-read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
-	   int & m, std::map< int, Cell_handle > &C)
+read_cells(std::istream& is, std::map< std::size_t, Vertex_handle > &V,
+	   std::size_t & m, std::map< std::size_t, Cell_handle > &C)
 {
   // creation of the cells and neighbors
   switch (dimension()) {
@@ -1807,10 +1808,11 @@ read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
       else
         read(is, m);
 
-      for(int i = 0; i < m; i++) {
+      std::cout << "Reading m = " << m << std::endl;
+      for(std::size_t i = 0; i < m; i++) {
 	Cell_handle c = create_cell();
 	for (int k=0; k<=dimension(); ++k) {
-	    int ik;
+          std::size_t ik;
             if(is_ascii(is))
                is >> ik;
             else
@@ -1820,10 +1822,10 @@ read_cells(std::istream& is, std::map< int, Vertex_handle > &V,
 	}
 	C[i] = c;
       }
-      for(int j = 0; j < m; j++) {
+      for(std::size_t j = 0; j < m; j++) {
         Cell_handle c = C[j];
 	for (int k=0; k<=dimension(); ++k) {
-	    int ik;
+          std::size_t ik;
             if(is_ascii(is))
               is >> ik;
             else
@@ -1866,13 +1868,13 @@ void
 Triangulation_data_structure_3<Vb,Cb>::
 print_cells(std::ostream& os, const std::map<Vertex_handle, std::size_t> &V ) const
 {
-  std::map<Cell_handle, int > C;
+  std::map<Cell_handle, std::size_t > C;
   int i = 0;
 
   switch ( dimension() ) {
   case 3:
     {
-      size_type m = number_of_cells();
+      std::size_t m = number_of_cells();
       if(is_ascii(os))
         os << m << std::endl;
       else
@@ -1959,6 +1961,7 @@ print_cells(std::ostream& os, const std::map<Vertex_handle, std::size_t> &V ) co
   case 1:
     {
       size_type m = number_of_edges();
+      std::cout << "we write m = " << m << std::endl;
       if(is_ascii(os))
         os << m << std::endl;
       else

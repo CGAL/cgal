@@ -40,6 +40,6 @@ int main()
   typedef CGAL::Triangulation_3<K, CGAL::Triangulation_data_structure_3<CGAL::Triangulation_vertex_base_with_info_3<int, K> > > Cls3_2;
 
   assert(Cls3() == Cls3_2());
-
+  std::cout << "done" << std::endl;
   return 0;
 }

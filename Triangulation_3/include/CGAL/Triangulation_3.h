@@ -1320,7 +1320,8 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   tr._tds.clear(); // infinite vertex deleted
   tr.infinite = tr._tds.create_vertex();
 
-  int n, d;
+  std::size_t n;
+  int d;
   if(is_ascii(is))
      is >> d >> n;
   else {
@@ -1329,21 +1330,26 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   }
   tr._tds.set_dimension(d);
 
-  std::map< int, Vertex_handle > V;
+  std::cout << n << "  " << d << std::endl;
+
+  std::map< std::size_t, Vertex_handle > V;
   V[0] = tr.infinite_vertex();
   // the infinite vertex is numbered 0
 
-  for (int i=1; i <= n; i++) {
+  for (std::size_t i=1; i <= n; i++) {
     V[i] = tr._tds.create_vertex();
     is >> *V[i];
+    std::cout << *V[i] << std::endl;
   }
 
-  std::map< int, Cell_handle > C;
+  std::map< std::size_t, Cell_handle > C;
 
-  int m;
+  std::size_t m;
   tr._tds.read_cells(is, V, m, C);
 
-  for (int j=0 ; j < m; j++)
+  std::cout << "after read_cells" << std::endl;
+
+  for (std::size_t j=0 ; j < m; j++)
     is >> *(C[j]);
 
   CGAL_triangulation_assertion( tr.is_valid(false) );
