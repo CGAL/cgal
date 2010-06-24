@@ -66,7 +66,7 @@ _test_cls_alpha_shape_3()
   Iso_cuboid domain(FT(-0.1),FT(-0.1),FT(-0.1),FT(0.2),FT(0.2),FT(0.2));
   std::cout<< "Create triangulation with domain "<<domain<<std::endl;
   Triangulation dt( domain ); 
-  int n = dt.insert(L.begin(),L.end());
+  std::size_t n = dt.insert(L.begin(),L.end());
   Alpha_shape_3 a1(dt,0, Alpha_shape_3::REGULARIZED);
   if(verbose) show_alpha_values(a1);
   std::cout << "Alpha Shape computed: "  << n << " points" << std::endl;

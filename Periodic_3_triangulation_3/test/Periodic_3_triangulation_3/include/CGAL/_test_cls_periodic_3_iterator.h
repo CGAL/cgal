@@ -21,7 +21,7 @@
 #define CGAL_TEST_CLS_ITERATOR_C
 
 template < class Triangulation >
-int
+typename Triangulation::size_type
 _test_vertex_iterator( const Triangulation &T )
 {
     typedef typename Triangulation::size_type       size_type;
@@ -80,7 +80,7 @@ _test_vertex_iterator( const Triangulation &T )
 }
 
 template < class Triangulation >
-int
+typename Triangulation::size_type
 _test_unique_vertex_iterator( const Triangulation &T )
 {
     typedef typename Triangulation::size_type       size_type;
@@ -120,9 +120,10 @@ _test_unique_vertex_iterator( const Triangulation &T )
 }
 
 template < class Triangulation >
-int
+typename Triangulation::size_type
 _test_triangulation_iterator( const Triangulation &T )
 {
+  typedef typename Triangulation::size_type       size_type;
   typedef typename Triangulation::Cell_iterator   Cell_iterator;
   typedef typename Triangulation::Facet_iterator  Facet_iterator;
   typedef typename Triangulation::Edge_iterator   Edge_iterator;
@@ -150,7 +151,7 @@ _test_triangulation_iterator( const Triangulation &T )
   typedef typename Triangulation::Periodic_segment     Periodic_segment;
   typedef typename Triangulation::Periodic_point       Periodic_point;
 
-  int n=0 , m=0 , f=0 , t=0;
+  size_type n=0 , m=0 , f=0 , t=0;
   Cell_iterator Cit;
   Facet_iterator Fit;
   Edge_iterator Eit;
