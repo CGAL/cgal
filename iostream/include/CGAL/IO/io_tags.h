@@ -25,6 +25,8 @@
 #ifndef CGAL_IO_TAGS_H
 #define CGAL_IO_TAGS_H
 
+#include <cstddef>
+
 namespace CGAL {
 
 struct io_Read_write{};
@@ -42,6 +44,13 @@ template<> struct Io_traits<short> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<int> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<long> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<long long> { typedef io_Read_write Io_tag; };
+
+template<> struct Io_traits<unsigned char>{ typedef io_Read_write Io_tag; }; 
+
+template<> struct Io_traits<unsigned short> { typedef io_Read_write Io_tag; };
+template<> struct Io_traits<unsigned int> { typedef io_Read_write Io_tag; };
+template<> struct Io_traits<unsigned long> { typedef io_Read_write Io_tag; };
+template<> struct Io_traits<unsigned long long> { typedef io_Read_write Io_tag; };
 
 template<> struct Io_traits<float> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<double> { typedef io_Read_write Io_tag; };
