@@ -109,9 +109,9 @@ public:
       int li, int lj);
 
   template < class InputIterator >
-  int insert(InputIterator first, InputIterator last, bool = false)
+  std::ptrdiff_t insert(InputIterator first, InputIterator last, bool = false)
   {
-    int n = number_of_vertices();
+    size_type n = number_of_vertices();
 
     std::vector<Point> points (first, last);
     std::random_shuffle (points.begin(), points.end());
@@ -151,8 +151,8 @@ public:
   void remove(Vertex_handle v);
 
   template < typename InputIterator >
-  int remove(InputIterator first, InputIterator beyond) {
-    int n = number_of_vertices();
+  std::ptrdiff_t remove(InputIterator first, InputIterator beyond) {
+    size_type n = number_of_vertices();
     while (first != beyond) {
       remove(*first);
       ++first;

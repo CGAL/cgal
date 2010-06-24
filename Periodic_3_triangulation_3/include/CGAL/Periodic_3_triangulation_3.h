@@ -3443,6 +3443,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
 
   typedef Periodic_3_triangulation_3<GT,TDS>       Triangulation;
   typedef typename GT::FT FT;
+  typedef typename Triangulation::size_type             size_type;
   typedef typename Triangulation::Vertex_handle         Vertex_handle;
   typedef typename Triangulation::Cell_handle           Cell_handle;
   typedef typename Triangulation::Offset                Offset;
@@ -3452,7 +3453,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
 
   Iso_cuboid domain(0,0,0,1,1,1);
   int cx=0, cy=0, cz=0;
-  unsigned int n=0;
+  size_type n=0;
 
   if (is_ascii(is)) {
     is >> domain;
@@ -3476,10 +3477,10 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
 
   if ( n==0 ) return is;
 
-  std::map< int, Vertex_handle > V;
+  std::map< std::size_t, Vertex_handle > V;
 
   if (cx==1 && cy==1 && cz==1) {
-    for (unsigned int i=0; i < n; i++) {
+    for (std::size_t i=0; i < n; i++) {
       V[i] = tr.tds().create_vertex();
       is >> *V[i];
     }
@@ -3487,7 +3488,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
     Vertex_handle v,w;
     std::vector<Vertex_handle> vv;
     Offset off;
-    for (unsigned int i=0; i < n; i++) {
+    for (std::size_t i=0; i < n; i++) {
       v = tr.tds().create_vertex();
       V[i] = v;
       is >> *V[i] >> off;
@@ -3504,13 +3505,13 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
     }
   }
   
-  std::map< int, Cell_handle > C;
-  int m;
+  std::map< std::size_t, Cell_handle > C;
+  std::size_t m;
   tr._tds.read_cells(is, V, m, C);
 
   // read offsets
   int off[4] = {0,0,0,0};
-  for (int j=0 ; j < m; j++) {
+  for (std::size_t j=0 ; j < m; j++) {
     if (is_ascii(is))
       is >> off[0] >> off[1] >> off[2] >> off[3];
     else {
@@ -3523,7 +3524,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
   }
   
   // read potential other information
-  for (int j=0 ; j < m; j++)
+  for (std::size_t j=0 ; j < m; j++)
     is >> *(C[j]);
 
   typedef typename Triangulation::Vertex_iterator VI;
@@ -3559,7 +3560,8 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
 // of vertices, plus the non combinatorial information on each cell
 // the neighbors of each cell by their index in the preceding list of cells
 {
-  typedef Periodic_3_triangulation_3<GT,TDS>      Triangulation;
+  typedef Periodic_3_triangulation_3<GT,TDS>       Triangulation;
+  typedef typename Triangulation::size_type        size_type;
   typedef typename Triangulation::Vertex_handle    Vertex_handle;
   typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
   typedef typename Triangulation::Cell_handle      Cell_handle;
@@ -3574,7 +3576,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
   // outputs dimension, domain and number of vertices
   Iso_cuboid domain = tr.domain();
   Covering_sheets cover = tr.number_of_sheets();
-  unsigned int n = tr.number_of_vertices();
+  size_type n = tr.number_of_vertices();
 
   if (is_ascii(os))
     os << domain << std::endl
@@ -3592,8 +3594,8 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
     return os;
  
   // write the vertices
-  std::map<Vertex_handle, int > V;
-  unsigned int i=0;
+  std::map<Vertex_handle, std::size_t > V;
+  std::size_t i=0;
   if (tr.is_1_cover()) {
     for (Vertex_iterator it=tr.vertices_begin(); it!=tr.vertices_end(); ++it) {
       V[it] = i++;
@@ -3616,7 +3618,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS> &tr)
           != tr.virtual_vertices_reverse.end());
       vv = tr.virtual_vertices_reverse.find(it)->second;
       CGAL_triangulation_assertion(vv.size() == 26);
-      for (unsigned int j=0; j<vv.size(); j++) {
+      for (std::size_t j=0; j<vv.size(); j++) {
         vvit = tr.virtual_vertices.find(vv[j]);
         CGAL_triangulation_assertion(vvit != tr.virtual_vertices.end());
         V[vv[j]] = i++;

@@ -183,10 +183,10 @@ public:
   }
 
   template < class InputIterator >
-  int insert(InputIterator first, InputIterator last,
+  std::ptrdiff_t insert(InputIterator first, InputIterator last,
       bool is_large_point_set = false) {
     if (first == last) return 0;
-    int n = number_of_vertices();
+    size_type n = number_of_vertices();
     // The heuristic discards the existing triangulation so it can only be
     // applied to empty triangulations.
     if (n!=0) is_large_point_set = false;
@@ -242,8 +242,8 @@ public:
   void remove(Vertex_handle v);
 
   template < typename InputIterator >
-  int remove(InputIterator first, InputIterator beyond) {
-    int n = number_of_vertices();
+  std::ptrdiff_t remove(InputIterator first, InputIterator beyond) {
+    std::size_t n = number_of_vertices();
     while (first != beyond) {
       remove(*first);
       ++first;
