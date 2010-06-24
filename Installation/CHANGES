@@ -11,6 +11,8 @@ x General
   - The Microsoft Windows Visual C++ compiler 2005 (VC8) is no longer
     supported by the CGAL project since CGAL-3.7.
 
+  - Some demos now require a version of Qt4 >= 4.3.
+
 
 x Triangulations and Delaunay Triangulations
 
