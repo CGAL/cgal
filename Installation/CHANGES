@@ -45,6 +45,12 @@ x CGAL_PDB is no longer provided with CGAL. An alternative solution for
   people interested in reading PDB files is to use ESBTL
   (http://esbtl.sourceforge.net/).
 
+x Triangulation_2
+  classes Triangulation_euclidean_traits_xy_3, Triangulation_euclidean_traits_yz_3
+  and Triangulation_euclidean_traits_xz_3 are now model of the concept 
+  ConstrainedTriangulationTraits_2. They can be used with and without intersection
+  of constraints.
+
 ----------------------------- Release 3.6.1 --------------------------------
 CGAL 3.6.1 is a bug-fixes release. The following has been changed
 since CGAL-3.6:
