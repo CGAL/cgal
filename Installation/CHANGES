@@ -11,7 +11,7 @@ since CGAL-3.6:
   - Initial support for the Microsoft Visual C++ compiler 10.0 (MSVC
     2010). For that support, CMake>=2.8.2 is required. At the time
     CGAL-3.6.1 was released, CMake-2.8.2 was not yet released, but
-    CMake-2.8.2rc3 was published by Kitware at
+    CMake-2.8.2rc4 was published by Kitware at
     http://www.cmake.org/files/v2.8/
     Note also that the compiler option "/bigobj" is necessary to compile
     some CGAL programs with MSVC 2010.
