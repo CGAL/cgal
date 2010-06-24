@@ -1455,6 +1455,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt>& A)
   // Precondition: The insert operator must be defined for `Point'
 {
   typedef Alpha_shape_3<Dt>                  AS;
+  typedef typename AS::size_type             size_type;
   typedef typename AS::Vertex_handle         Vertex_handle;
   typedef typename AS::Cell_handle           Cell_handle;
   typedef typename AS::Alpha_shape_vertices_iterator 
