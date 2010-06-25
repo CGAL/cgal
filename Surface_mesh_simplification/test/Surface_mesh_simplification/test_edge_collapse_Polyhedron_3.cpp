@@ -17,6 +17,10 @@
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@gmail.com>
 
+#if defined(_MSVC_VER)
+#  pragma warning(disable:4503) // decorated name length exceeded, name was truncated
+#endif
+
 #include "basics.h"
 #include "test_self_intersection.h" 
 
@@ -54,7 +58,7 @@ typedef boost::shared_ptr<Surface> SurfaceSP ;
 // Constructs a flat polyhedron containing just the link of an edge or vertex.
 class Link_builder : public CGAL::Modifier_base<Surface::HalfedgeDS> 
 {
-  map<int,int> mMap ;
+  map<std::size_t, std::size_t> mMap ;
   
   int mVIdx ;
   
