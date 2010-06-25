@@ -339,15 +339,15 @@ check_integrity_and_topological_planarity(bool faces) const
     }
   }
 
-  CGAL_assertion_code(int v_num = number_of_svertices() - 
+  CGAL_assertion_code(std::size_t v_num = number_of_svertices() - 
 		      iso_vert_num + 
 		      number_of_shalfloops());
-  CGAL_assertion_code(int e_num = number_of_sedges() + 
+  CGAL_assertion_code(std::size_t e_num = number_of_sedges() + 
 		      number_of_shalfloops());
-  CGAL_assertion_code(int c_num = number_of_connected_components() - 
+  CGAL_assertion_code(std::size_t c_num = number_of_connected_components() - 
 		      iso_vert_num 
 		      + number_of_sloops());
-  CGAL_assertion_code(int f_num = number_of_sface_cycles() - c_num + 1);
+  CGAL_assertion_code(std::size_t f_num = number_of_sface_cycles() - c_num + 1);
   CGAL_assertion_code(CGAL_NEF_TRACEV(fc_num));
   CGAL_assertion_code(CGAL_NEF_TRACEV(iv_num));
   CGAL_assertion_code(CGAL_NEF_TRACEV(iso_vert_num));
