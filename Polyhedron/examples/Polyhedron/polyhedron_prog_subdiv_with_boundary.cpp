@@ -30,7 +30,7 @@ void create_center_vertex( Polyhedron& P, Facet_iterator f) {
         ++ order;
     } while ( ++h != f->facet_begin());
     CGAL_assertion( order >= 3); // guaranteed by definition of polyhedron
-    Point center =  CGAL::ORIGIN + (vec / order);
+    Point center =  CGAL::ORIGIN + (vec / static_cast<double>(order));
     Halfedge_handle new_center = P.create_center_vertex( f->halfedge());
     new_center->vertex()->point() = center;
 }
@@ -53,7 +53,7 @@ struct Smooth_old_vertex {
                 return v.point();
             }
             vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN)
-                       * alpha / degree;
+              * alpha / static_cast<double>(degree);
             ++ h;
             CGAL_assertion( h != v.vertex_begin()); // even degree guaranteed
             ++ h;
