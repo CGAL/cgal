@@ -64,7 +64,7 @@ MainWindow::alphaChanged(int i)
 {
   if (scene.alpha_shape.number_of_alphas() > 0){
     if(i < 100){
-      int n = (i * scene.alpha_shape.number_of_alphas())/ 100;
+      int n = static_cast<int>((i * scene.alpha_shape.number_of_alphas())/ 100);
       if(n == 0) n++;
       scene.alpha_shape.set_alpha(scene.alpha_shape.get_nth_alpha(n));
     } else {
