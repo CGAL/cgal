@@ -685,7 +685,7 @@ public:
       Facet_it& operator=(const T& e) {
 	if(filter(e))
 	  return *this;
-	output = e;
+	*output++ = e;
 	return *this;
       }
       Facet_it& operator=(const Facet_it& f) {
