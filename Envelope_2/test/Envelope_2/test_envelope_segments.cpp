@@ -92,7 +92,7 @@ bool read_segments (const char *filename,
     }
       
     Segment_2 seg = Segment_2 (Point_2 (x1, y1), Point_2 (x2, y2));
-    segs.push_back (Curve_2(seg, segs.size()));
+    segs.push_back (Curve_2(seg, static_cast<int>(segs.size())));
   }
   ifile.close();
 

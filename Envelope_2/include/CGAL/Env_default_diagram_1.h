@@ -41,7 +41,7 @@ public:
   typedef std::list<X_monotone_curve_2>             Curve_container;
   typedef typename Curve_container::iterator        Curve_iterator;
   typedef typename Curve_container::const_iterator  Curve_const_iterator;
-  typedef unsigned int                              Size;
+  typedef std::size_t                               Size;
 
   /*!
    * Representation of a diagram vertex, which stores the point it represents
