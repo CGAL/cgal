@@ -2107,6 +2107,7 @@ Mesh_3/applications/data/Polyhedra/pinion.txt -text
 Mesh_3/applications/mesher_tester.cpp -text
 Mesh_3/demo/Mesh_3/FindGLEW.cmake -text
 Mesh_3/demo/Mesh_3/Mesh_3.qrc -text
+Mesh_3/demo/Mesh_3/cgal_test_with_cmake -text
 Mesh_3/demo/Mesh_3/resources/about.html svneol=native#text/html
 Mesh_3/demo/Mesh_3/resources/check-off.png -text svneol=unset#image/png
 Mesh_3/demo/Mesh_3/resources/check-off.svg -text
