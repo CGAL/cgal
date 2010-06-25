@@ -138,8 +138,8 @@ public:
 inline
 Lapack_svd::FT Lapack_svd::solve(Matrix& M, Vector& B)
 {
-  int m = M.number_of_rows(),
-    n = M.number_of_columns(),
+  int m = static_cast<int>(M.number_of_rows()),
+    n = static_cast<int>(M.number_of_columns()),
     nrhs = 1,
     lda = m,
     ldb = m,

@@ -27,6 +27,8 @@ if ( CGAL_FOUND )
 
     include( ${LAPACK_USE_FILE} )
 
+  include_directories (BEFORE ../../include)
+
     create_single_source_cgal_program( "blind_1pt.cpp" )
 
   else(LAPACK_FOUND)
