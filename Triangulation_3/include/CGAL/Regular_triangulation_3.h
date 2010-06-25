@@ -125,6 +125,7 @@ public:
   using Tr_Base::locate;
   using Tr_Base::side_of_segment;
   using Tr_Base::side_of_edge;
+  using Tr_Base::find_conflicts;
 
   Regular_triangulation_3(const Gt & gt = Gt())
     : Tr_Base(gt), hidden_point_visitor(this)
@@ -393,7 +394,7 @@ public:
 
   bool is_valid(bool verbose = false, int level = 0) const;
 
-private:
+protected:
   bool
   less_power_distance(const Bare_point &p,
 		      const Weighted_point &q,

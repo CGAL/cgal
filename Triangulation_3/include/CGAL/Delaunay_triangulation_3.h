@@ -125,6 +125,7 @@ public:
   using Tr_Base::locate;
   using Tr_Base::side_of_edge;
   using Tr_Base::side_of_segment;
+  using Tr_Base::find_conflicts;
 #endif
 
 protected:
@@ -447,7 +448,7 @@ public:
       return os;
     }
 
-private:
+protected:
 
   Vertex_handle
   nearest_vertex(const Point &p, Vertex_handle v, Vertex_handle w) const
