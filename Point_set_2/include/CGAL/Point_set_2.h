@@ -54,6 +54,7 @@ public:
                         
   
   typedef Triangulation_2<Gt,Tds>                           Triangulation;
+  typedef typename Triangulation::size_type                 size_type;
   typedef typename Triangulation::Locate_type               Locate_type;
   typedef typename Triangulation::Face_handle               Face_handle;
   typedef typename Triangulation::Vertex_handle             Vertex_handle;
@@ -175,9 +176,9 @@ public:
    }
    
   template<class OutputIterator>
-  OutputIterator   nearest_neighbors(Point p, int k, OutputIterator res)
+  OutputIterator   nearest_neighbors(Point p, size_type k, OutputIterator res)
   {
-   int n = number_of_vertices();
+   size_type n = number_of_vertices();
 
    if ( k <= 0 ) return res;
    if ( n <= k ) { // return all finite vertices ...
@@ -213,9 +214,9 @@ public:
   }
    
   template<class OutputIterator>  
-  OutputIterator  nearest_neighbors(Vertex_handle v, int k,OutputIterator res)
+  OutputIterator  nearest_neighbors(Vertex_handle v, size_type k,OutputIterator res)
   {  
-   int n = number_of_vertices();
+   size_type n = number_of_vertices();
 
    if ( k <= 0 ) return res;
    if ( n <= k ) { // return all (finite) vertices ...
@@ -234,10 +235,10 @@ public:
 
 
   void nearest_neighbors_list(Vertex_handle v, 
-			      int k, 
+			      size_type k, 
 			      std::list<Vertex_handle>& res) 
   {  
-     int n = number_of_vertices();
+     size_type n = number_of_vertices();
    
      if ( k <= 0 ) return;
      if ( n <= k ) { vertices(std::back_inserter(res)); return; }
@@ -290,9 +291,9 @@ public:
    
   // dfs
   // for marking nodes in search procedures
-  int cur_mark;
+  size_type cur_mark;
    
-  Unique_hash_map<Vertex_handle, int>  mark;
+  Unique_hash_map<Vertex_handle, size_type>  mark;
     
   void init_vertex_marks()
   {
@@ -303,7 +304,7 @@ public:
   void init_dfs()
   {
      cur_mark++; 
-     if (cur_mark == INT_MAX) init_vertex_marks();
+     if (cur_mark == std::numeric_limits<size_type>::max()) init_vertex_marks();
   }
   
   void mark_vertex(Vertex_handle vh)

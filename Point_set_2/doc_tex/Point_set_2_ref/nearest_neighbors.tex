@@ -11,7 +11,7 @@ other taking a vertex handle.
 \ccInclude{CGAL/nearest_neighbor_delaunay_2.h}
 
 \ccFunction{template<class Dt, class OutputIterator>
-            OutputIterator   nearest_neighbors(Dt& delau, const Dt::Point& p, int k, OutputIterator res);}
+            OutputIterator   nearest_neighbors(Dt& delau, const Dt::Point& p, Dt::size_type k, OutputIterator res);}
 {computes the $k$ nearest neighbors of $p$ in $delau$, and places the
 handles to the corresponding vertices as a sequence of objects of type
 Vertex\_handle in a container of value type of $res$
@@ -37,7 +37,7 @@ the Delaunay triangulation data type:
 \end{itemize}  
 
 \ccFunction{template<class Dt, class OutputIterator>
-            OutputIterator   nearest_neighbors(Dt& delau, Dt::Vertex_handle v, int k, OutputIterator res);}
+            OutputIterator   nearest_neighbors(Dt& delau, Dt::Vertex_handle v, Dt::size_type k, OutputIterator res);}
 {computes the $k$ nearest neighbors of $v$ (including $v$) in $delau$, and places them as a sequence of objects of type
 Vertex\_handle in a container of value type of $res$
 which points to the first object in the sequence. The function

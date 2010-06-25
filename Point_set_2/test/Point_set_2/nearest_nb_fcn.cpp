@@ -1,14 +1,12 @@
-#include <CGAL/basic.h>
 #include <list>
 #include <vector>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/nearest_neighbor_delaunay_2.h>
 
 using namespace CGAL;
 using namespace std;
 
-typedef double                                            coord_type;
-typedef CGAL::Cartesian<coord_type>                       K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef CGAL::Delaunay_triangulation_2<K>                 Delaunay;
 typedef CGAL::Delaunay_triangulation_2<K>::Edge           Edge;
 typedef CGAL::Delaunay_triangulation_2<K>::Edge_iterator  Edge_iterator;

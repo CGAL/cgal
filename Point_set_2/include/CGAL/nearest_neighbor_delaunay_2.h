@@ -99,10 +99,11 @@ template<class Dt, class OutputIterator>
 OutputIterator   nearest_neighbors(Dt& delau, const typename Dt::Point& p, int k, OutputIterator res)
 {
   typedef typename Dt::Geom_traits                    Gt;
+  typedef typename Dt::size_type                      size_type;
   typedef typename Dt::Vertex_handle                  Vertex_handle;
   typedef typename Dt::Vertex_iterator                Vertex_iterator;
 
-   int n = delau.number_of_vertices();
+   size_type n = delau.number_of_vertices();
 
    if ( k <= 0 ) return res;
    if ( n <= k ) { // return all finite vertices ...
@@ -146,10 +147,11 @@ template<class Dt, class OutputIterator>
 OutputIterator  nearest_neighbors(const Dt& delau, typename Dt::Vertex_handle v, int k, OutputIterator res)
 {  
   typedef typename Dt::Geom_traits                    Gt;
+  typedef typename Dt::size_type                      size_type;
   typedef typename Dt::Vertex_handle                  Vertex_handle;
   typedef typename Dt::Vertex_iterator                Vertex_iterator;
 
-   int n = delau.number_of_vertices();
+   size_type n = delau.number_of_vertices();
 
    if ( k <= 0 ) return res;
    if ( n <= k ) { // return all (finite) vertices ...
@@ -188,6 +190,7 @@ template<class Dt, class T2>
 void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k, std::list<T2>& res) 
 {  
   typedef typename Dt::Geom_traits                    Gt;
+  typedef typename Dt::size_type                      size_type;
   typedef typename Dt::Vertex_handle                  Vertex_handle;
   typedef typename Dt::Vertex_iterator                Vertex_iterator;
   typedef typename Dt::Vertex_circulator              Vertex_circulator;
@@ -197,7 +200,7 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k
   typedef typename Gt::Compute_squared_distance_2     Compute_squared_distance_2;   
   typedef Unique_hash_map<Vertex_handle, Numb_type>         MAP_TYPE;
 
-  int n = delau.number_of_vertices();
+  size_type n = delau.number_of_vertices();
    
   if ( k <= 0 ) return;
   if ( n <= k ) { 
