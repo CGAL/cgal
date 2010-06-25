@@ -113,7 +113,7 @@ class Min_circle_2 {
     // private data members
     Traits       tco;                           // traits class object
     std::list<Point>  points;                   // doubly linked list of points
-    int          n_support_points;              // number of support points
+  std::size_t         n_support_points;              // number of support points
     Point*       support_points;                // array of support points
     
 
@@ -132,14 +132,14 @@ class Min_circle_2 {
     // -------------------------------
     // #points and #support points
     inline
-    int
+    std::size_t
     number_of_points( ) const
     {
         return( points.size());
     }
     
     inline
-    int
+    std::size_t
     number_of_support_points( ) const
     {
         return( n_support_points);
@@ -265,7 +265,7 @@ class Min_circle_2 {
     }
 
     void
-    mc( const Point_iterator& last, int n_sp)
+    mc( const Point_iterator& last, std::size_t n_sp)
     {
         // compute circle through support points
         n_support_points = n_sp;
