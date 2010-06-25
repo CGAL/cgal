@@ -277,7 +277,7 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
                          random_points[ 4],
                          random_points[ 5]);
         bool  is_valid = me.is_valid( verbose);
-        int   num_pts  = me.number_of_points();
+        std::size_t   num_pts  = me.number_of_points();
         assert( is_valid);
         assert( num_pts == 3);
     }
@@ -289,7 +289,7 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
                          random_points[ 8],
                          random_points[ 9]);
         bool  is_valid = me.is_valid( verbose);
-        int   num_pts  = me.number_of_points();
+        std::size_t   num_pts  = me.number_of_points();
         assert( is_valid);
         assert( num_pts == 4);
     }
@@ -302,7 +302,7 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
                          random_points[ 13],
                          random_points[ 14]);
         bool  is_valid = me.is_valid( verbose);
-        int   num_pts  = me.number_of_points();
+        std::size_t   num_pts  = me.number_of_points();
         assert( is_valid);
         assert( num_pts == 5);
     }

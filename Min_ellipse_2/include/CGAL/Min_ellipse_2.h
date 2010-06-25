@@ -144,14 +144,14 @@ class Min_ellipse_2 {
     // -------------------------------
     // #points and #support points
     inline
-    int
+    std::size_t
     number_of_points( ) const
     {
         return( points.size());
     }
     
     inline
-    int
+    std::size_t
     number_of_support_points( ) const
     {
         return( n_support_points);
