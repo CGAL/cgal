@@ -208,9 +208,10 @@ namespace boost {
     typedef undirected_tag directed_category;
     typedef disallow_parallel_edge_tag edge_parallel_category; 
     typedef T2_graph_traversal_category traversal_category;
-    typedef int vertices_size_type;
-    typedef int edges_size_type;
-    typedef int degree_size_type;
+    typedef typename Triangulation::size_type size_type;
+    typedef size_type vertices_size_type;
+    typedef size_type edges_size_type;
+    typedef size_type degree_size_type;
   };
 
 
@@ -281,7 +282,7 @@ namespace boost {
     const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     typename CGAL::Triangulation_2<Gt,Tds>::Edge_circulator ec(u,u->face());
-    int out_deg = out_degree(u,g);
+    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
     typedef typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >
       ::out_edge_iterator Iter;
     
@@ -297,7 +298,7 @@ namespace boost {
     const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     typename CGAL::Triangulation_2<Gt,Tds>::Edge_circulator ec(u,u->face());
-    int out_deg = out_degree(u,g);
+    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
     typedef typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >
       ::in_edge_iterator Iter;
     return std::make_pair( Iter(ec), Iter(ec,out_deg) );
@@ -312,7 +313,7 @@ namespace boost {
     const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     typename CGAL::Triangulation_2<Gt,Tds>::Vertex_circulator vc = out_edge_iterator(u,u.face());
-    int out_deg = out_degree(u,g);
+    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
     typedef typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >
       ::adjacency_iterator Iter;
     return std::make_pair( Iter(vc), Iter(vc,out_deg) );
