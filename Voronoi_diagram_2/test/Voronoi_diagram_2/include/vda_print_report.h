@@ -32,6 +32,7 @@ void print_report(const VDA& vda, const Projector& project,
 		  const Dual_primal_projector& dp_project,
 		  Stream& os = std::cout)
 {
+  typedef typename VDA::size_type size_type;
   const typename VDA::Adaptation_policy::Edge_rejector& edge_rejector =
     vda.adaptation_policy().edge_rejector_object();
 
@@ -74,7 +75,7 @@ void print_report(const VDA& vda, const Projector& project,
     unsigned int n_faces = 0;
     unsigned int n_empty_faces = 0;
     unsigned int n_vertices = 0;
-    unsigned int sum_deg = 0;
+    size_type sum_deg = 0;
     unsigned int n_unbounded_faces = 0;
     unsigned int n_unbounded_faces2 = 0;
 

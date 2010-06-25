@@ -445,7 +445,7 @@ void test_vda(const VDA& vda)
     VDA vda6(dg2, false);
     VDA vda7(dg2, false, at);
     VDA vda8(dg2, false, at, ap);
-    int n_dg2 = dg2.number_of_vertices();
+    std::size_t n_dg2 = dg2.number_of_vertices();
     VDA vda9(dg2, true);
     if ( n_dg2 != 0 ) {
       CGAL_assertion( dg2.number_of_vertices() == 0 );
