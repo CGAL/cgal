@@ -376,7 +376,7 @@ public:
 
   void skip_to_next_vertex( std::size_t current_vertex);
 
-  void scan_facet( std::size_t& size, int CGAL_assertion_code(current_facet)) {
+  void scan_facet( std::size_t& size, std::size_t CGAL_assertion_code(current_facet)) {
         CGAL_assertion( current_facet < size_of_facets());
         if ( binary()){
           Integer32 i32;

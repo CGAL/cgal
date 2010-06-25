@@ -72,11 +72,11 @@ generic_copy_OFF( File_scanner_OFF& scanner,
     for ( i = 0; i < scanner.size_of_facets(); i++) {
         if ( ! in)
             return;
-        Integer32 no;
+        std::size_t no;
         scanner.scan_facet( no, i);
         writer.write_facet_begin( no);
         for ( int j = 0; j < no; j++) {
-            Integer32 index;
+          std::size_t index;
             scanner.scan_facet_vertex_index( index, i);
             writer.write_facet_vertex_index( index);
         }
