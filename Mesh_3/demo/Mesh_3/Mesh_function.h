@@ -200,6 +200,14 @@ QString
 Mesh_function<D_>::
 status(double time_period) const
 {
+  // If mesher_ is not yet created, it means that either launch() has not
+  // been called or that initial points have not been founded
+  if ( NULL == mesher_ )
+  {
+    return QString("Initialization in progress...");
+  }
+  
+  // Get status and return a string corresponding to it
   typename Mesher::Mesher_status s = mesher_->status();
   
   QString result = QString("Vertices: %1 \n"
