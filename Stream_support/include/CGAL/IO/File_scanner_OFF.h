@@ -390,38 +390,41 @@ public:
 
   void scan_facet_vertex_index( std::size_t& index,
                                 std::size_t current_facet) {
-      if ( binary()){
-        Integer32 i32;
-            I_Binary_read_big_endian_integer32( m_in, i32);
-            index = i32;
-      } else
-            m_in >> index;
-      if( m_in.bad()) {
-            if ( verbose()) {
-                std::cerr << " " << std::endl;
-                std::cerr << "File_scanner_OFF::" << std::endl;
-                std::cerr << "scan_facet_vertex_index(): input error:  "
-                             "cannot read OFF file beyond facet "
-                          << current_facet << "." << std::endl;
-            }
-            set_off_header( false);
-            return;
-        }
-        index -= index_offset();
-        if( index < 0 || index >= size_of_vertices()) {
-            m_in.clear( std::ios::badbit);
-            if ( verbose()) {
-                std::cerr << " " << std::endl;
-                std::cerr << "File_scanner_OFF::" << std::endl;
-                std::cerr << "scan_facet_vertex_index(): input error: "
-                             "facet " << current_facet << ": vertex index "
-                          << index + index_offset() << ": is out of range."
-                          << std::endl;
-            }
-            set_off_header( false);
-            return;
-        }
+    if ( binary()){
+      Integer32 i32;
+      I_Binary_read_big_endian_integer32( m_in, i32);
+      index = i32;
+    } else
+      m_in >> index;
+
+    if( m_in.bad()) {
+      if ( verbose()) {
+        std::cerr << " " << std::endl;
+        std::cerr << "File_scanner_OFF::" << std::endl;
+        std::cerr << "scan_facet_vertex_index(): input error:  "
+          "cannot read OFF file beyond facet "
+                  << current_facet << "." << std::endl;
+      }
+      set_off_header( false);
+      return;
     }
+    bool error  = index < index_offset();
+    index -= index_offset();
+
+    if(error || (index >= size_of_vertices())) {
+      m_in.clear( std::ios::badbit);
+      if ( verbose()) {
+        std::cerr << " " << std::endl;
+        std::cerr << "File_scanner_OFF::" << std::endl;
+        std::cerr << "scan_facet_vertex_index(): input error: "
+          "facet " << current_facet << ": vertex index "
+                  << index + index_offset() << ": is out of range."
+                  << std::endl;
+      }
+      set_off_header( false);
+      return;
+    }
+  }
 
   void skip_to_next_facet( std::size_t current_facet);
 };
