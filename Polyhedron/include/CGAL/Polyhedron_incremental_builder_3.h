@@ -753,12 +753,12 @@ test_facet_indices( std::vector< std::size_t> indices) {
                 return false;
         }
     }
-    // Test non-manifold edges
+    // Test non-manifold halfedges
     for ( std::size_t i = 0; i < n; ++i) {
-        // edge goes from vertex indices[i] to indices[i+1]
-        // we know already that the edge is only once in the sequence
+        // halfedge goes from vertex indices[i] to indices[i+1]
+        // we know already that the halfedge is only once in the sequence
         // (otherwise the end-vertices would be twice in the sequence too)
-        // check if edge is already in the HDS and is not border edge
+        // check if halfedge is already in the HDS and is not border halfedge
         Halfedge_handle v = get_vertex_to_edge_map(indices[i]);
         Vertex_handle   w = index_to_vertex_map[indices[i+1]];
         if ( v != Halfedge_handle()
@@ -775,7 +775,7 @@ test_facet_indices( std::vector< std::size_t> indices) {
     // test non-manifold vertices
     for ( std::size_t i = 0; i < n; ++i) {
         // since we don't allow duplicates in indices[..] and we 
-        // tested for non-manifold edges already, we just need to check
+        // tested for non-manifold halfedges already, we just need to check
         // if the vertex indices[i] is not a closed manifold yet.
         Halfedge_handle v = get_vertex_to_edge_map(indices[i]);
         if ( v != Halfedge_handle()) {
@@ -787,6 +787,75 @@ test_facet_indices( std::vector< std::size_t> indices) {
                 return false;
         }
     }
+    
+    //Test if all halfedges of the new face 
+    //are possibly consecutive border halfedges in the HDS.
+    //Possibly because it may be not directly encoded in the HDS
+    //(using next() function ). This situation can occur when one or
+    //more facets share only a vertex: For example, the new facet we try to add
+    //would make the vertex indices[i] a manifold but this should be forbidden
+    //if a facet only incident to that vertex has already been inserted.
+    //We check this for each vertex of the sequence.
+    for ( std::size_t i = 0; i < n; ++i) {
+      std::size_t prev_index=indices[ (i-1+n)%n];
+      std::size_t next_index=indices[ (i+1)%n];
+      Vertex_handle   previous_vertex = index_to_vertex_map[ prev_index ];
+      Vertex_handle   next_vertex     = index_to_vertex_map[ next_index ];
+      
+      Halfedge_handle v = get_vertex_to_edge_map(indices[i]);
+      
+      if ( v == Halfedge_handle() || 
+           get_vertex_to_edge_map(prev_index) == Halfedge_handle() ||
+           get_vertex_to_edge_map(next_index) == Halfedge_handle()
+         ) continue;
+      
+      Halfedge_handle start=v;
+      //halfedges pointing to/running out from vertex indices[i]
+      //and that need to be possibly consecutive
+      Halfedge_handle previous=Halfedge_handle(),next=Halfedge_handle();
+      
+      //look for a halfedge incident to vertex indices[i]
+      //and which opposite is incident to previous_vertex
+      do{
+        if (v->opposite()->vertex()==previous_vertex){
+          previous=v;
+          CGAL_precondition(previous->is_border());
+          break;
+        }
+        v = v->next()->opposite();
+      }
+      while (v!=start);
+      
+      if (previous!=Halfedge_handle()){
+        v=v->next()->opposite();
+        //previous and next are already consecutive in the HDS
+        if (v->opposite()->vertex()==next_vertex) continue;
+        
+        //look for a border halfedge which opposite is
+        //incident to next_vertex: set next halfedge
+        do
+        {
+          if (v->opposite()->vertex()==next_vertex){
+            next=v->opposite();
+            break;
+          }
+          v=v->next()->opposite();
+        }
+        while(v!=previous);
+        if (next==Halfedge_handle()) continue;
+        
+        //check if no constraint prevents
+        //previous and next to be adjacent: 
+        do{
+          v=v->next()->opposite();
+          if ( v->opposite()->is_border() ) break;
+        }
+        while (v!=previous);
+        if (v==previous) return false;
+        start=v;
+      }
+    }
+    
     return true;
 }
 
