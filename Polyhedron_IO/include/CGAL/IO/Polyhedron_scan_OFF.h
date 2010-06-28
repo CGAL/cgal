@@ -79,7 +79,7 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
     typedef typename Traits::Point_3 Point;
 
     // read in all vertices
-    int  i;
+    std::size_t  i;
     for ( i = 0; i < scanner.size_of_vertices(); i++) {
         Point p;
         file_scan_vertex( scanner, p);
@@ -108,7 +108,7 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
             m_in.clear( std::ios::badbit);
             return;
         }
-        for ( int j = 0; j < no; j++) {
+        for ( std::size_t j = 0; j < no; j++) {
             std::size_t index;
             scanner.scan_facet_vertex_index( index, i);
             B.add_vertex_to_facet( index);
