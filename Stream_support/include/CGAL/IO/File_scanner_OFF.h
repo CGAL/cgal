@@ -396,7 +396,7 @@ public:
             index = i32;
       } else
             m_in >> index;
-        if( ! m_in) {
+      if( m_in.bad()) {
             if ( verbose()) {
                 std::cerr << " " << std::endl;
                 std::cerr << "File_scanner_OFF::" << std::endl;
