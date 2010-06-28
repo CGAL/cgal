@@ -389,7 +389,7 @@ public:
     }
 
   void scan_facet_vertex_index( std::size_t& index,
-                                  int current_facet) {
+                                std::size_t current_facet) {
       if ( binary()){
         Integer32 i32;
             I_Binary_read_big_endian_integer32( m_in, i32);

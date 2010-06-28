@@ -33,7 +33,7 @@
 
 namespace CGAL {
 
-// The Facet_iterator's value type is vector<Integer32>
+// The Facet_iterator's value type is vector<std::size_t>
 // that contains the vertex indices.
 
 template <class Pt>
@@ -47,7 +47,7 @@ public:
     typedef const Pt&                reference;
 private:
     File_scanner_OFF*  m_scan;
-    std::ptrdiff_t     m_cnt;
+    std::size_t        m_cnt;
     Pt                 m_point;
 
     void next_vertex() {
@@ -64,13 +64,13 @@ public:
     typedef File_scanner_OFF                   Scanner;
     typedef I_Scanner_OFF_vertex_iterator<Pt>  Self;
 
-    I_Scanner_OFF_vertex_iterator( int cnt) : m_scan(0), m_cnt(cnt+1) {}
+  I_Scanner_OFF_vertex_iterator(std::size_t cnt) : m_scan(0), m_cnt(cnt+1) {}
     I_Scanner_OFF_vertex_iterator( Scanner& s, int cnt)
         : m_scan(&s), m_cnt(cnt)
     {
         next_vertex();
     }
-    std::ptrdiff_t  count()           const { return m_cnt; }
+    std::size_t  count()              const { return m_cnt; }
     bool   operator==( const Self& i) const { return m_cnt == i.m_cnt; }
     bool   operator!=( const Self& i) const { return m_cnt != i.m_cnt; }
     Self&  operator++() {
@@ -105,7 +105,7 @@ public:
     typedef const value_type&                               reference;
 private:
     File_scanner_OFF*  m_scan;
-    std::ptrdiff_t     m_cnt;
+    std::size_t        m_cnt;
     value_type         m_current;
     
 
@@ -129,7 +129,7 @@ public:
     {
         next();
     }
-    std::ptrdiff_t  count()           const { return m_cnt; }
+    std::size_t  count()              const { return m_cnt; }
     bool   operator==( const Self& i) const { return m_cnt == i.m_cnt; }
     bool   operator!=( const Self& i) const { return m_cnt != i.m_cnt; }
     Self&  operator++() {
@@ -152,24 +152,24 @@ class I_Scanner_OFF_facet_iterator
 {
 public:
     typedef std::input_iterator_tag  iterator_category;
-    typedef std::vector< Integer32>  value_type;
+  typedef std::vector<std::size_t>  value_type;
     typedef std::ptrdiff_t           difference_type;
     typedef value_type*              pointer;
     typedef value_type&              reference;
 private:
     File_scanner_OFF*  m_scan;
-    std::ptrdiff_t     m_cnt;
+    std::size_t        m_cnt;
     value_type         m_indices;
 
     void next_facet() {
         CGAL_assertion( m_scan != NULL);
         if ( m_cnt < m_scan->size_of_facets()) {
             m_indices.erase( m_indices.begin(), m_indices.end());
-            Integer32 no;
+            std::size_t no;
             m_scan->scan_facet( no, m_cnt);
             m_indices.reserve( no);
-            Integer32 index = -1;
-            for ( Integer32 i = 0; i < no; ++i) {
+            std::size_t index = 0; // AF: this was -1, and I don't see why
+            for (std::size_t i = 0; i < no; ++i) {
                 m_scan->scan_facet_vertex_index( index, m_cnt);
                 m_indices.push_back( index);
             }
@@ -187,13 +187,13 @@ public:
     typedef I_Scanner_OFF_facet_iterator  Self;
     typedef value_type::iterator          iterator;
 
-    I_Scanner_OFF_facet_iterator( int cnt) : m_scan(0), m_cnt(cnt+1) {}
-    I_Scanner_OFF_facet_iterator( Scanner& s, int cnt)
+  I_Scanner_OFF_facet_iterator( std::size_t cnt) : m_scan(0), m_cnt(cnt+1) {}
+  I_Scanner_OFF_facet_iterator( Scanner& s, std::size_t cnt)
         : m_scan(&s), m_cnt(cnt)
     {
         next_facet();
     }
-    std::ptrdiff_t  count()          const { return m_cnt; }
+    std::size_t  count()             const { return m_cnt; }
     bool  operator==( const Self& i) const { return m_cnt == i.m_cnt; }
     bool  operator!=( const Self& i) const { return m_cnt != i.m_cnt; }
     Self& operator++() {
@@ -265,9 +265,9 @@ public:
     Scanner_OFF( std::istream& in, const File_header_OFF& header)
         : m_scan( in, header) {}
 
-    int  size_of_vertices()   const { return m_scan.size_of_vertices(); }
-    int  size_of_halfedges()  const { return m_scan.size_of_halfedges();}
-    int  size_of_facets()     const { return m_scan.size_of_facets();   }
+    std::size_t  size_of_vertices()   const { return m_scan.size_of_vertices(); }
+    std::size_t  size_of_halfedges()  const { return m_scan.size_of_halfedges();}
+    std::size_t  size_of_facets()     const { return m_scan.size_of_facets();   }
 
     bool verbose()            const { return m_scan.verbose();          }
     bool skel()               const { return m_scan.skel();             }
