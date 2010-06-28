@@ -224,6 +224,54 @@ typename Poly::Halfedge_handle make_cube_3( Poly& P) {
 }
 
 
+template <class HDS>
+struct Test_facet_modifier : public CGAL::Modifier_base<HDS>
+{
+  typedef typename HDS::Vertex   Vertex;
+  typedef typename Vertex::Point Point;  
+  void operator()( HDS& hds) {  
+    int nb_vertices = 9;
+    
+    int f[] = {0,1,2, 0,2,3, 0,4,5, 0,6,7, 0,8,6};
+    
+    int errors[] ={0,3,1, 0,7,8};
+    int ok[]={0,3,4, 0,3,8, 0,5,1, 0,7,1, 0,7,4, 0,5,8 };
+    
+    int nb_triangles = sizeof(f) / sizeof(int) / 3;    
+    int nb_errors = sizeof(errors) / sizeof(int) / 3;    
+    int nb_ok = sizeof(ok) / sizeof(int) / 3;    
+    
+    CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
+    
+    B.begin_surface(nb_vertices, nb_triangles);
+                   
+    for (int i=0; i<nb_vertices; i++)
+       B.add_vertex(Point(0,0,0));
+
+    for (int i=0; i<nb_triangles; i++)
+    {
+       int *first = f+3*i, *beyond = first+3;
+       CGAL_precondition (B.test_facet(first, beyond));
+       B.add_facet(first, beyond);
+    }
+    
+    //these are not possible
+    for (int i=0; i<nb_errors; i++)
+    {
+       int *first = errors+3*i, *beyond = first+3;
+       CGAL_precondition (!B.test_facet(first, beyond));
+    }
+    
+    //these are allowed
+    for (int i=0; i<nb_ok; i++)
+    {
+       int *first = ok+3*i, *beyond = first+3;
+       CGAL_precondition (B.test_facet(first, beyond));
+    }
+    
+    B.end_surface();   
+  }
+};
 
 void test_Polyhedron() {
     typedef CGAL::Cartesian<double>                     Kernel;
@@ -1056,6 +1104,13 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_valid( false, 1));
         CGAL_assertion( P.is_triangle( h));
     }
+    {
+        // Check bug-fix in test_facet
+        PolyhedronV P;
+        Test_facet_modifier<PolyhedronV::HalfedgeDS> test;
+        P.delegate(test);
+    }
+    
 }
 
 void test_min_Polyhedron() {
