@@ -21,16 +21,15 @@ Compares the first coordinates of \ccc{AlgebraicKernel_d_2::Algebraic_real_2}s.
 The following operators and their symmetric counterparts are required:
 
 %\ccThree{result_type}{fo(first_argument_type,++}{}
-\ccMethod{result_type
-    operator()(const first_argument_type & a,
-	     const second_argument_type & b);}
+\ccMethod{result_type operator()(const first_argument_type & a, const second_argument_type & b);}
 {Compares the first coordinates of $a$ and $b$.}
-
 \ccMethod{result_type operator()(AlgebraicKernel_d_2::Algebraic_real_2 a, int x);}
 {Compares the first coordinate of $a$ with $x$.}
 \ccMethod{result_type operator()(AlgebraicKernel_d_2::Algebraic_real_2 a, AlgebraicKernel_d_2::Bound x);}
 {Compares the first coordinate of $a$ with $x$.}
 \ccMethod{result_type operator()(AlgebraicKernel_d_2::Algebraic_real_2 a, AlgebraicKernel_d_2::Coefficient x);}
+{Compares the first coordinate of $a$ with $x$.}
+\ccMethod{result_type operator()(AlgebraicKernel_d_2::Algebraic_real_2 a, AlgebraicKernel_d_2::Algebraic_real_1 x);}
 {Compares the first coordinate of $a$ with $x$.}
 
 
@@ -62,16 +61,14 @@ The following operators and their symmetric counterparts are required:
 
 %\ccThree{result_type}{fo(first_argument_type,++}{}
 \ccMethod{result_type operator()(const first_argument_type & a, const second_argument_type & b);}
-{Compares the second coordinates of $a$ an $b$.}
+{Compares the second coordinates of $a$ and $b$.}
 \ccMethod{result_type operator()(AlgebraicKernel_d_2::Algebraic_real_2 a, int y);}
 {Compares the second coordinate of $a$ with $y$.}
-\ccMethod{result_type operator()(
-        AlgebraicKernel_d_2::Algebraic_real_2 a, 
-        AlgebraicKernel_d_2::Bound y);}
+\ccMethod{result_type operator()(AlgebraicKernel_d_2::Algebraic_real_2 a, AlgebraicKernel_d_2::Bound y);}
 {Compares the second coordinate of $a$ with $y$.}
-\ccMethod{result_type operator()(
-        AlgebraicKernel_d_2::Algebraic_real_2 a, 
-        AlgebraicKernel_d_2::Coefficient y);}
+\ccMethod{result_type operator()(AlgebraicKernel_d_2::Algebraic_real_2 a, AlgebraicKernel_d_2::Coefficient y);}
+{Compares the second coordinate of $a$ with $y$.}
+\ccMethod{result_type operator()(AlgebraicKernel_d_2::Algebraic_real_2 a, AlgebraicKernel_d_2::Algebraic_real_1 y);}
 {Compares the second coordinate of $a$ with $y$.}
 
 \ccSeeAlso

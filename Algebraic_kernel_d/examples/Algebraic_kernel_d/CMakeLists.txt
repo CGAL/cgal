@@ -1,35 +1,40 @@
-project( AK_examples )
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
+
+
+project( Algebraic_kernel_d_test )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
+ 
 if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )
+  cmake_policy( SET CMP0003 NEW )  
 endif()
-
-find_package( CGAL QUIET )
+ 
+find_package(CGAL QUIET COMPONENTS)
 
 if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
   include( CGAL_CreateSingleSourceCGALProgram )
-  find_package( RS )
-  if( RS_FOUND )
-    include( ${RS_USE_FILE} )
-    include_directories( BEFORE ../../include )
-    create_single_source_cgal_program( "Construct_algebraic_real_1.cpp" )
-    create_single_source_cgal_program( "Solve_1.cpp" )
-    create_single_source_cgal_program( "Compare_1.cpp" )
-    create_single_source_cgal_program( "Isolate_1.cpp" )
-    create_single_source_cgal_program( "Sign_at_1.cpp" )
-  else( RS_FOUND )
-    message(STATUS "NOTICE: This program requires RS and will not be compiled.")
-  endif( RS_FOUND )
+  include( CGAL_VersionUtils )
+  find_package( MPFI )
+   if( MPFI_FOUND )
+    include( ${MPFI_USE_FILE} )
+  endif( MPFI_FOUND )
 
-else( CGAL_FOUND )
+  include_directories (BEFORE ../../include)
 
-  message(STATUS
-    "NOTICE: This program requires CGAL, and will not be compiled.")
+  create_single_source_cgal_program( "Compare_1.cpp" )
+  create_single_source_cgal_program( "Construct_algebraic_real_1.cpp" )
+  create_single_source_cgal_program( "Isolate_1.cpp" )
+  create_single_source_cgal_program( "Sign_at_1.cpp" )
+  create_single_source_cgal_program( "Solve_1.cpp" )
 
-endif( CGAL_FOUND )
+else()
+  
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+  
+endif()
+

@@ -16,16 +16,16 @@
 //
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
-#ifndef CGAL_ALGEBRAIC_KERNEL_RS_GMPQ_1
-#define CGAL_ALGEBRAIC_KERNEL_RS_GMPQ_1
+#ifndef CGAL_ALGEBRAIC_KERNEL_RS_GMPZ_1
+#define CGAL_ALGEBRAIC_KERNEL_RS_GMPZ_1
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Gmpz.h>
 #include <CGAL/RS/Algebraic_kernel_rs_1.h>
 
 namespace CGAL{
 
-typedef Algebraic_kernel_rs_1<Gmpq>     Algebraic_kernel_rs_gmpq_1;
+typedef Algebraic_kernel_rs_1<Gmpz>     Algebraic_kernel_rs_gmpz_d_1;
 
 }
 
-#endif  // CGAL_ALGEBRAIC_KERNEL_RS_GMPQ_1
+#endif  // CGAL_ALGEBRAIC_KERNEL_RS_GMPZ_1

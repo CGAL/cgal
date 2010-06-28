@@ -20,19 +20,19 @@
 
 #if defined(CGAL_USE_GMP) && defined(CGAL_USE_MPFI) && defined(CGAL_USE_RS)
 
-#include <CGAL/Algebraic_kernel_rs_gmpz_1.h>
+#include <CGAL/Algebraic_kernel_rs_gmpz_d_1.h>
 #include "include/CGAL/_test_algebraic_kernel_1.h"
 
 
 int main(){
-  typedef CGAL::Algebraic_kernel_rs_gmpz_1              AK;
+  typedef CGAL::Algebraic_kernel_rs_gmpz_d_1              AK;
   typedef AK::Polynomial_1 Polynomial_1;
   typedef AK::Coefficient Coefficient;
   typedef AK::Bound Bound;
   typedef AK::Algebraic_real_1 Algebraic_real_1;
   typedef AK::Multiplicity_type Multiplicity_type;
 
-  AK ak; // an object of Algebraic_kernel_rs_gmpz_1
+  AK ak; // an object of Algebraic_kernel_rs_gmpz_d_1
   CGAL::test_algebraic_kernel_1<AK>(ak);
 
   AK::Solve_1 solve_1 = ak.solve_1_object();

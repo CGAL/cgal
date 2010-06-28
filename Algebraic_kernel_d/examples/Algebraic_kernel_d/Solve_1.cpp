@@ -2,20 +2,19 @@
 // $Id$
 
 #include <CGAL/basic.h>
-
-#if defined(CGAL_USE_GMP) && defined(CGAL_USE_MPFI) && defined(CGAL_USE_RS)
-
-#include <CGAL/Algebraic_kernel_rs_gmpz_1.h>
+#ifdef CGAL_USE_MPFI 
+#include <CGAL/Algebraic_kernel_d_1.h>
+#include <CGAL/Gmpz.h>
 #include <vector>
 
-typedef CGAL::Algebraic_kernel_rs_gmpz_1                AK;
+typedef CGAL::Algebraic_kernel_d_1<CGAL::Gmpz>          AK;
 typedef AK::Polynomial_1                                Polynomial_1;
 typedef AK::Algebraic_real_1                            Algebraic_real_1;
 typedef AK::Bound                                       Bound;
 typedef AK::Multiplicity_type                           Multiplicity_type;
 
 int main(){
-  AK ak; // an object of Algebraic_kernel_d_1_RS_Gmpz
+  AK ak; // an object of 
   AK::Solve_1 solve_1 = ak.solve_1_object();
   Polynomial_1 x = CGAL::shift(AK::Polynomial_1(1),1); // the monomial x
 
@@ -57,6 +56,7 @@ int main(){
 }
 #else
 int main(){
-        return 0;
+  std::cout << "This example requires CGAL to be configured with library MPFI." << std::endl;
+return 0;
 }
 #endif

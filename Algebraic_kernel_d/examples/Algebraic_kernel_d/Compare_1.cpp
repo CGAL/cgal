@@ -2,13 +2,12 @@
 // $Id$
 
 #include <CGAL/basic.h>
-
-#if defined(CGAL_USE_GMP) && defined(CGAL_USE_MPFI) && defined(CGAL_USE_RS)
-
-#include <CGAL/Algebraic_kernel_rs_gmpz_1.h>
+#ifdef CGAL_USE_MPFI 
+#include <CGAL/Algebraic_kernel_d_1.h>
+#include <CGAL/Gmpz.h>
 #include <vector>
 
-typedef CGAL::Algebraic_kernel_rs_gmpz_1                AK;
+typedef CGAL::Algebraic_kernel_d_1<CGAL::Gmpz>          AK;
 typedef AK::Coefficient                                 Coefficient;
 typedef AK::Polynomial_1                                Polynomial_1;
 typedef AK::Algebraic_real_1                            Algebraic_real_1;
@@ -58,6 +57,7 @@ int main(){
   }
 #else
 int main(){
-        return 0;
+  std::cout << "This example requires CGAL to be configured with library MPFI." << std::endl;
+return 0;
 }
 #endif

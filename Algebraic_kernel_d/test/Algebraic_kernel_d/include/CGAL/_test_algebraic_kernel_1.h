@@ -1,14 +1,22 @@
-// TODO: Add licence
+// Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
+// $URL: svn+ssh://mkerber@scm.gforge.inria.fr/svn/cgal/trunk/Algebraic_kernel_d/test/Algebraic_kernel_d/include/CGAL/_test_algebraic_kernel_1.h $
+// $Id: _test_algebraic_kernel_1.h 55082 2010-03-31 12:52:26Z penarand $
 //
 // Author(s)     : Sebastian Limbach <slimbach@mpi-inf.mpg.de>
-//                 Michael Hemmer    <hemmer@mpi-inf.mpg.de>
+//                 Michael Hemmer <hemmer@mpi-inf.mpg.de>    
 //
 // ============================================================================
 
@@ -78,16 +86,20 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
   //test_explicit_interoperable_from_to<Bound      , Algebraic_real_1>();
   //test_explicit_interoperable_from_to<Coefficient, Algebraic_real_1>();
 
-#define CGAL_GET_FTOR(Name,name) \
-  typedef typename AlgebraicKernel_d_1::Name Name; \
+#define CGAL_GET_FTOR(Name,name)                        \
+  typedef typename AlgebraicKernel_d_1::Name Name;      \
   const Name name = ak_1.name##_object();
 
+
+  CGAL_GET_FTOR(Construct_algebraic_real_1,construct_algebraic_real_1);
+  CGAL_GET_FTOR(Compute_polynomial_1,compute_polynomial_1);
   CGAL_GET_FTOR(Is_square_free_1,is_square_free_1);
   CGAL_GET_FTOR(Make_square_free_1,make_square_free_1);
   CGAL_GET_FTOR(Square_free_factorize_1,square_free_factorize_1);
   CGAL_GET_FTOR(Is_coprime_1,is_coprime_1);
   CGAL_GET_FTOR(Make_coprime_1,make_coprime_1);
   CGAL_GET_FTOR(Solve_1,solve_1);
+  CGAL_GET_FTOR(Number_of_solutions_1,number_of_solutions_1);
   CGAL_GET_FTOR(Sign_at_1,sign_at_1);
   CGAL_GET_FTOR(Is_zero_at_1,is_zero_at_1);
   CGAL_GET_FTOR(Compare_1,compare_1);
@@ -113,12 +125,15 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     {BOOST_STATIC_ASSERT(( ::boost::is_same<RT,RT_>::value));}          \
   }
 
+  // TODO: missing check for Construct_algebraic_real_1
+  CGAL_CHECK_UFUNCTION(Compute_polynomial_1,Algebraic_real_1,Polynomial_1);
   CGAL_CHECK_UFUNCTION(Is_square_free_1,Polynomial_1,bool);
   CGAL_CHECK_UFUNCTION(Make_square_free_1,Polynomial_1,Polynomial_1);
   // TODO: missing check for Square_free_factorize_1
   CGAL_CHECK_BFUNCTION(Is_coprime_1,Polynomial_1,Polynomial_1,bool);
   // TODO: missing check for Make_coprime_1
   // TODO: missing check for Solve_1
+  CGAL_CHECK_UFUNCTION(Number_of_solutions_1,Polynomial_1,int);
   CGAL_CHECK_BFUNCTION(Sign_at_1,Polynomial_1,Algebraic_real_1,Sign);
   CGAL_CHECK_BFUNCTION(Is_zero_at_1,Polynomial_1,Algebraic_real_1,bool);
   CGAL_CHECK_BFUNCTION(Compare_1,Algebraic_real_1,Algebraic_real_1,Sign);
@@ -130,13 +145,12 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
 
   Polynomial_1 x = typename PT::Shift()(Polynomial_1(1),1);
   {
-  assert( is_square_free_1(ipower((x-1),1)));
-  assert(!is_square_free_1(ipower((x-1),2)));
+    assert( is_square_free_1(ipower((x-1),1)));
+    assert(!is_square_free_1(ipower((x-1),2)));
   }
   {
-  assert( make_square_free_1(ipower(5*(x-1),2))==ipower((x-1),1));
+    assert( make_square_free_1(ipower(5*(x-1),2))==ipower((x-1),1));
   }
-
   {
     std::list< std::pair<Polynomial_1,int> > factors;
     square_free_factorize_1((x-1)*(x-2)*(x-2),std::back_inserter(factors));
@@ -190,6 +204,19 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     assert(roots.size()==4);
   }
   {
+    // Compute_polynomial
+    typedef  std::vector<std::pair<Algebraic_real_1,unsigned int> > ROOTS;
+    ROOTS roots;
+    Polynomial_1 p1 = (x-1)*(x-2)*(x-2);
+    std::back_insert_iterator<ROOTS> biit =
+      solve_1(p1,std::back_inserter(roots));
+    Algebraic_real_1 ar = roots[1].first;
+    Polynomial_1 p2 = compute_polynomial_1(ar);
+    assert(!is_coprime_1(p1,p2));
+    assert(is_zero_at_1(p2,ar));
+    
+  }
+  {
     // solve_1 for OI::value_type == std::pair<Algebraic_real_1>
     typedef  std::list<Algebraic_real_1 > ROOTS;
     ROOTS roots;
@@ -207,6 +234,10 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
 
     solve_1((x-1)*(x-2),true,biit); // use iterator again
     assert(roots.size()==4);
+  }
+  {
+    // number_of_solutions
+    assert(3 == number_of_solutions_1((x-1)*(x-2)*(x-3)));
   }
   {
     assert(sign_at_1(x*0,Algebraic_real_1(0)) == ZERO);
@@ -314,6 +345,36 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
       assert((bi.second - bi.first) * ipower(Bound(2),5)
           <= (CGAL::max)(abs(bi.first),abs(bi.second)) );
     }
+  }
+
+  { 
+    
+#define CGAL_TEST_ALGEBRAIC_REAL_IO(_f)         \
+    alg1=_f;                                    \
+    ss<<CGAL::oformat(alg1);			\
+    ss>>CGAL::iformat(alg2);			\
+    assert(alg1==alg2)
+    
+    
+    const typename Algebraic_kernel_d_1::Construct_algebraic_real_1 construct_algreal_1 =
+      ak_1.construct_algebraic_real_1_object();
+
+    Algebraic_real_1 alg1,alg2;
+    std::stringstream ss;
+    CGAL::set_ascii_mode(ss);         
+    
+    // test construction from int, Coefficient and Bound
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(int(2)));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(Coefficient(2)));
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(Bound(2)));
+    
+  // construction by index
+    Polynomial_1 x = CGAL::shift(Polynomial_1(1),1); // the monom x
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(x*x-2,1));
+    
+    // construction by isolating interval
+    CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algreal_1(x*x-2,Bound(0),Bound(2)));
+#undef CGAL_TEST_ALGEBRAIC_REAL_IO
   }
 }
 

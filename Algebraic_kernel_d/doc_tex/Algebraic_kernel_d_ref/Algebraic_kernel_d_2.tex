@@ -1,0 +1,72 @@
+\begin{ccRefClass}{Algebraic_kernel_d_2<Coeff>}
+%\label{Algebraic_kernel_d_2}
+
+\ccInclude{CGAL/Algebraic_kernel_d_2.h}
+
+\ccDefinition
+
+This class is based on an algorithm computing a 
+geometric-topological analysis of a single curve~\cite{ekw-fast-07} and of a
+pair of curves~\cite{ek-exact-08}.
+The main idea behind both analyses is to compute the critical
+x-coordinates of curves and curve pairs by projection (resultants), and compute
+additional information about the critical fibers using subresultants
+and Sturm-Habicht sequences~\cite{grlr-sturm-habicht-98}. 
+With that information, the fiber at    
+critical x-coordinates is computed by a variant of the Bitstream
+Descartes method.
+See also \cite{kerber-phd-09} for a comprehensive description of
+these techniques. 
+
+A point $p$ of type \ccc{Algebraic_real_2} is represented
+by its $x$-coordinate $x_0$ (as described in the \ccc{Algebraic_kernel_d_1}
+paragraph above), an algebraic curve where $p$ lies on, and an
+integer $i$, denoting that $p$ is the $i$th point in the fiber at $x_0$,
+counted from the bottom (ignoring a possible vertical line at $x_0$).
+This determines the point uniquely, but the $y$-coordinate 
+is not stored internally in terms of an \ccc{Algebraic_real_1} object.
+Querying such a representation by calling \ccc{Compute_y_2} is a
+time-consuming step, and should be avoided for efficiency reasons if possible.
+Note that this representation is not exposed in the interface. 
+
+The template argument \ccc{Coeff} determines the coefficient type of the 
+kernel, which is also the innermost coefficient type of the supported polynomials.  
+
+Currently, the following coefficient types are supported:\\
+-- \ccc{Gmpz}, \ccc{Gmpq}, (requires configuration with external libraries GMP, MPFR and MPFI)\\
+-- \ccc{CORE::BigInt}, \ccc{CORE::BigRat}, (requires configuration with external library GMP) \\ 
+-- \ccc{leda_integer}, \ccc{leda_rational}. (requires configuration with external library LEDA)\\
+
+\begin{ccAdvanced}
+The template argument type can also be set to \ccc{Sqrt_extension<NT,ROOT>}, where \ccc{NT} 
+is one of the types listed above. \ccc{ROOT} should be one of the integer types. 
+See also the documentation of \ccc{Sqrt_extension<NT,ROOT>}. 
+\end{ccAdvanced}
+
+\ccIsModel
+\ccc{AlgebraicKernel_d_2}.
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+
+\ccNestedType{Coefficient}{Same type as the template argument \ccc{Coeff}. }
+
+\ccNestedType{Polynomial_2}{A model of \ccc{AlgebraicKernel_d_2::Polynomial_2}}. 
+
+\ccNestedType{Algebraic_real_2}{A model of \ccc{AlgebraicKernel_d_2::AlgebraicReal_2}}
+
+\ccNestedType{Bound}{The choice of \ccc{Coeff} also determines the provided bound, type. 
+In case of \ccc{Coeff} is 
+- \ccc{Gmpz} or \ccc{Gmpq} this is \ccc{Gmpq}  \\
+- \ccc{CORE::BigInt} or \ccc{CORE::BigInt} this is \ccc{CORE::BigRat}  \\
+- \ccc{leda_integer} or \ccc{leda_integer} this is \ccc{leda_rational} \\
+}
+
+\ccNestedType{Multiplicity_type}{The multiplicity type is \ccc{int}.}
+
+\ccSeeAlso
+\ccRefConceptPage{AlgebraicKernel_d_1}\\
+\ccRefConceptPage{AlgebraicKernel_d_2}\\
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefIdfierPage{CGAL::Algebraic_kernel_d_2<Coeff>}
+
+\end{ccRefClass}

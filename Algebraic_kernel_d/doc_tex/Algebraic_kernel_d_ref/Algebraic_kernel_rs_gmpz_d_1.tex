@@ -1,21 +1,20 @@
-\begin{ccRefClass}{Algebraic_kernel_rs_gmpq_1}
-\label{Algebraic_kernel_rs_gmpq_1}
+\begin{ccRefClass}{Algebraic_kernel_rs_gmpz_d_1}
+\label{Algebraic_kernel_rs_gmpz_d_1}
+
+\ccInclude{CGAL/Algebraic_kernel_rs_gmpz_d_1.h}
 
 \ccDefinition
 
 This univariate algebraic kernel uses the \rs~library to perform
-rational univariate polynomial root isolation. It is a model of the
-\ccc{AlgebraicKernel_d_1} concept. Due to the fact that \rs~can only
-isolate integer polynomials, the operations of this kernel have the
-overhead of converting the polynomials to integer.
+integer univariate polynomial root isolation. It is a model of the
+\ccc{AlgebraicKernel_d_1} concept.
 
-\ccInclude{CGAL/Algebraic_kernel_rs_gmpq_1.h}
 
 \ccTypes \ccThree{}{+++++++++++++}{++++++++}
 
-\ccNestedType{Coefficient}{It is a typedef to \ccc{CGAL::Gmpq}.}
+\ccNestedType{Coefficient}{It is a typedef to \ccc{CGAL::Gmpz}.}
 
-\ccNestedType{Polynomial_1}{It is defined as \ccc{CGAL::Polynomial<CGAL::Gmpq>}.}
+\ccNestedType{Polynomial_1}{It is defined as \ccc{CGAL::Polynomial<CGAL::Gmpz>}.}
 
 \ccNestedType{Algebraic_real_1}{Type that represents the real roots of
 integer univariate polynomials, containing a pointer to the polynomial of
@@ -28,9 +27,9 @@ isolating interval.}
 \ccNestedType{Multiplicity_type}{The multiplicity is an \ccc{int}.}
 
 \ccIsModel
-\ccc{AlgebraicKernel_d_1}
+\ccc{AlgebraicKernel_d_1}.
 
 \ccSeeAlso
-\ccc{Algebraic_kernel_rs_gmpz_1}
+\ccc{Algebraic_kernel_rs_gmpz_d_1}
 
 \end{ccRefClass}

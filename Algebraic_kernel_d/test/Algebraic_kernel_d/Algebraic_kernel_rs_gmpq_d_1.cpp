@@ -20,12 +20,12 @@
 
 #if defined(CGAL_USE_GMP) && defined(CGAL_USE_MPFI) && defined(CGAL_USE_RS)
 
-#include <CGAL/Algebraic_kernel_rs_gmpq_1.h>
+#include <CGAL/Algebraic_kernel_rs_gmpq_d_1.h>
 #include "include/CGAL/_test_algebraic_kernel_1.h"
 
 int main(){
 
-  typedef CGAL::Algebraic_kernel_rs_gmpq_1              AK;
+  typedef CGAL::Algebraic_kernel_rs_gmpq_d_1              AK;
   typedef AK::Polynomial_1 Polynomial_1;
   typedef AK::Coefficient Coefficient;
   typedef AK::Bound Bound;

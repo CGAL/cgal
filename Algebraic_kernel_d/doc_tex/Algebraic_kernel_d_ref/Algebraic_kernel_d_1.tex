@@ -1,0 +1,57 @@
+\begin{ccRefClass}{Algebraic_kernel_d_1<Coeff>}
+%\label{Algebraic_kernel_d_1}
+
+\ccInclude{CGAL/Algebraic_kernel_d_1.h}
+
+\ccDefinition
+
+The class represents an algebraic real root by a square free polynomial and an
+isolating interval that uniquely defines the root.
+The template argument \ccc{Coeff} determines the coefficient type of the 
+kernel, which is also the coefficient type of the supported polynomials.  
+
+Currently, the following coefficient types are supported:\\
+-- \ccc{Gmpz}, \ccc{Gmpq}, (requires configuration with external libraries GMP, MPFR and MPFI)\\
+-- \ccc{CORE::BigInt}, \ccc{CORE::BigRat}, (requires configuration with external library GMP) \\ 
+-- \ccc{leda_integer}, \ccc{leda_rational}. (requires configuration with external library LEDA)\\
+
+\begin{ccAdvanced}
+The template argument type can also be set to \ccc{Sqrt_extension<NT,ROOT>}, where \ccc{NT} is 
+one of the types listed above. \ccc{ROOT} should be one of the integer types. 
+See also the documentation of \ccc{Sqrt_extension<NT,ROOT>}. 
+\end{ccAdvanced}
+
+ The current method 
+to isolate roots is the bitstream Descartes method presented in~\cite{eigenwillig-phd-08}.
+The used method to refine the approximation of an algebraic real root is a slightly modified 
+(filtered) version of the one presented in~\cite{abbott-qir-06}. 
+The method has quadratic convergence.
+
+\ccIsModel
+\ccc{AlgebraicKernel_d_1}.
+
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+
+\ccNestedType{Coefficient}{Same type as the template argument \ccc{Coeff}.}
+
+\ccNestedType{Polynomial_1}{A model of \ccc{AlgebraicKernel_d_1::Polynomial_1}.}
+
+\ccNestedType{Algebraic_real_1}{A model of \ccc{AlgebraicKernel_d_1::AlgebraicReal_1}.}
+
+\ccNestedType{Bound}{The choice of \ccc{Coeff} also determines the provided bound, type. 
+In case of \ccc{Coeff} is:\\
+-- \ccc{Gmpz} or \ccc{Gmpq} this is \ccc{Gmpq},\\
+-- \ccc{CORE::BigInt} or \ccc{CORE::BigInt} this is \ccc{CORE::BigRat},\\
+-- \ccc{leda_integer} or \ccc{leda_integer} this is \ccc{leda_rational}.}
+
+\ccNestedType{Multiplicity_type}{The multiplicity type is \ccc{int}.}
+
+
+
+\ccSeeAlso
+\ccRefConceptPage{AlgebraicKernel_d_1}\\
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefIdfierPage{CGAL::Algebraic_kernel_d_2<Coeff>}
+
+\end{ccRefClass}

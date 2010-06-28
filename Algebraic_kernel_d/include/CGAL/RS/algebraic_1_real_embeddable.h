@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de>
+// Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de> 
 //
 // ============================================================================
 
