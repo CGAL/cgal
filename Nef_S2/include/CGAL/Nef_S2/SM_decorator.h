@@ -826,8 +826,8 @@ bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
     
   bool valid = true;
 
-  int count = 0;
-  int max = 2 * number_of_svertices() 
+  std::size_t count = 0;
+  std::size_t max = 2 * number_of_svertices() 
     + 2 * number_of_shalfedges()
     + number_of_sfaces()
     + 2;
