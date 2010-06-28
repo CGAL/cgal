@@ -168,7 +168,9 @@ private:
             std::size_t no;
             m_scan->scan_facet( no, m_cnt);
             m_indices.reserve( no);
-            std::size_t index = 0; // AF: this was -1, and I don't see why
+            std::size_t index = -1; 
+            // -1 is a huge unsigned which helps to detect a potential
+            //  error in the function scan_facet_vertex_index
             for (std::size_t i = 0; i < no; ++i) {
                 m_scan->scan_facet_vertex_index( index, m_cnt);
                 m_indices.push_back( index);
