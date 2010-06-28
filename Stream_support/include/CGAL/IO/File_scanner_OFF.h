@@ -412,7 +412,7 @@ public:
     index -= index_offset();
 
     if(error || (index >= size_of_vertices())) {
-      m_in.clear( std::ios::badbit);
+      m_in.clear( std::ios::failbit);
       if ( verbose()) {
         std::cerr << " " << std::endl;
         std::cerr << "File_scanner_OFF::" << std::endl;
