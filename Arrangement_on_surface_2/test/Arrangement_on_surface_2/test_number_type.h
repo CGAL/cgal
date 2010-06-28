@@ -55,6 +55,15 @@
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/gmpxx.h>
 
+#elif TEST_NT == LEDA_INT_NT
+#include <CGAL/leda_integer.h>
+
+#elif TEST_NT == CGAL_GMPZ_NT
+#include <CGAL/Gmpz.h>
+
+#elif TEST_NT == CORE_INT_NT
+#include <CGAL/CORE_BigInt.h>
+
 #else
 #error No Number Type (NT) specified! 
 #endif
@@ -148,6 +157,25 @@ typedef ::mpz_class                                     Basic_number_type;
 typedef CGAL::Lazy_exact_nt<NT>                         Number_type;
 typedef ::mpz_class                                     Ring_type;
 #define NUMBER_TYPE "Lazy Gmpz"
+
+#elif TEST_NT == LEDA_INT_NT
+typedef leda_integer                                    Basic_number_type;
+typedef Basic_number_type                               Number_type;
+typedef Basic_number_type                               Ring_type;
+#define NUMBER_TYPE "Leda Int"
+
+#elif TEST_NT == CGAL_GMPZ_NT
+typedef CGAL::Gmpz                                      Basic_number_type;
+typedef Basic_number_type                               Number_type;
+typedef Basic_number_type                               Ring_type;
+#define NUMBER_TYPE "Cgal Gmpz"
+
+#elif TEST_NT == CORE_INT_NT
+typedef CORE::BigInt                                    Basic_number_type;
+typedef Basic_number_type                               Number_type;
+typedef Basic_number_type                               Ring_type;
+#define NUMBER_TYPE "CORE BigInt"
+
 
 #else
 #error No Number Type (NT) Specified

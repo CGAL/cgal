@@ -57,6 +57,9 @@
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_rational_arc_traits_2.h>
 
+#elif TEST_TRAITS == ALGEBRAIC_TRAITS
+#include <CGAL/Arr_algebraic_segment_traits_2.h>
+
 #else
 #error No traits (TRAITS) specified!
 #endif
@@ -166,6 +169,15 @@ typedef CGAL::Arr_rational_arc_traits_2<Kernel,Nt_traits>  Traits;
 typedef Traits::Rat_vector                                 Rat_vector;
 typedef Traits::Point_2                                    Point_2;
 #define TRAITS_TYPE "Rational Arc"
+
+#elif TEST_TRAITS == ALGEBRAIC_TRAITS
+typedef CGAL::Arr_algebraic_segment_traits_2<Number_type>  Traits;
+typedef Traits::Point_2                                    Point_2;
+typedef Traits::Curve_2                                    Curve_2;
+typedef Traits::X_monotone_curve_2                         X_monotone_curve_2;
+
+#define TRAITS_TYPE "Algebraic"
+
 
 #else
 #error No traits (TRAITS) specified!

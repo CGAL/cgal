@@ -478,7 +478,7 @@ template <class T_Traits>
 bool Traits_base_test<T_Traits>::read_input(std::ifstream & is,
                                        Read_object_type obj_t)
 {
-  char one_line[128];
+  char one_line[1024];
   skip_comments(is, one_line);
   std::istringstream str_stream(one_line, std::istringstream::in);
   try {
@@ -533,15 +533,15 @@ bool Traits_base_test<T_Traits>::perform(std::ifstream & is)
             << m_filename_xcurves << " " << m_filename_curves << " "
             << m_filename_commands << std::endl;
   m_eol_printed = true;
-  char one_line[128];
-  char buff[128];
+  char one_line[1024];
+  char buff[1024];
   bool abort = false;
   int counter = 0;
   while (!(is.eof() || abort)) {
     skip_comments(is, one_line);
     std::istringstream str_stream(one_line, std::istringstream::in);
     buff[0] = '\0';
-    str_stream.getline(buff, 128, ' ');
+    str_stream.getline(buff, 1024, ' ');
     std::string str_command(buff);
     std::size_t location = 0;
     m_violation_occurred = m_violation_tested = NON;
@@ -627,7 +627,7 @@ void Traits_base_test<T_Traits>::skip_comments(std::ifstream & is,
                                                char * one_line)
 {
   while (!is.eof()) {
-    is.getline(one_line, 128);
+    is.getline(one_line, 1024);
     if (one_line[0] != '#') break;
   }
 }
@@ -733,8 +733,8 @@ bool
 Traits_base_test<T_Traits>::
 get_expected_boolean(std::istringstream & str_stream)
 {
-  char buff[128];
-  str_stream.getline( buff, 128, '.');
+  char buff[1024];
+  str_stream.getline( buff, 1024, '.');
   buff[str_stream.gcount()] = '\0';
   std::string str_expres = remove_blanks(buff);
   return translate_boolean(str_expres);
@@ -746,8 +746,8 @@ template <class T_Traits>
 unsigned int
 Traits_base_test<T_Traits>::get_expected_enum(std::istringstream & str_stream)
 {
-  char buff[128];
-  str_stream.getline(buff, 128, '.');
+  char buff[1024];
+  str_stream.getline(buff, 1024, '.');
   buff[str_stream.gcount()] = '\0';
   std::string str_expres = remove_blanks(buff);
   return translate_enumerator(str_expres);
@@ -759,9 +759,9 @@ template <class T_Traits>
 std::pair<typename Traits_base_test<T_Traits>::Enum_type, unsigned int>
 Traits_base_test<T_Traits>::get_next_input(std::istringstream & str_stream)
 {
-  char buff[128];
+  char buff[1024];
   do {
-    str_stream.getline(buff, 128, ' ');
+    str_stream.getline(buff, 1024, ' ');
   } while (str_stream.gcount() == 1);
   buff[str_stream.gcount()] = '\0';
   std::string str_expres = remove_blanks(buff);
@@ -1835,6 +1835,161 @@ bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 }
 
 #endif
+
+#endif
+
+#if TEST_TRAITS == ALGEBRAIC_TRAITS
+
+#include <CGAL/IO/io.h>
+
+template <>
+template <class stream>
+bool
+Traits_base_test<Traits>::read_point(stream & is, Point_2 & p) {
+  Traits traits;
+  Traits::Construct_point_2 construct_point_2
+    = traits.construct_point_2_object();
+  char type;
+  is >> type;
+  switch(type) {
+  case 'i': {
+    int x=0,y=0;
+    is >> x >> y;
+    p=construct_point_2(x,y);
+    break;
+  }
+  case 'b': {
+    Traits::Bound x,y;
+    is >> x >> y;
+    p=construct_point_2(x,y);
+    break;
+  }
+  case 'c': {
+    Traits::Coefficient x,y;
+    is >> x >> y;
+    p=construct_point_2(x,y);
+    break;
+  }
+  case 'a': {
+    Traits::Algebraic_real_1 x,y;
+    is >> x >> y;
+    p=construct_point_2(x,y);
+    break;
+  }
+  case 's': {
+    Traits::Algebraic_real_1 x;
+    is >> x;
+    Traits::X_monotone_curve_2 xcv;
+    CGAL::swallow(is,'(');
+    CGAL_assertion_code(bool check=)
+      read_xcurve(is,xcv);
+    CGAL_assertion(check);
+    
+    CGAL::swallow(is,')');
+    p=construct_point_2(x,xcv);
+    break;
+  }
+  case 'g': {
+    Traits::Algebraic_real_1 x;
+    is >> x;
+    Traits::Curve_2 c;
+    CGAL_assertion_code(bool check = )
+      read_curve(is,c);
+    CGAL_assertion(check);
+    int arcno=0;
+    is >> arcno;
+    p=construct_point_2(x,c,arcno);
+    break;
+  }
+  default: {
+    std::cout << "Expected i,b,c,a,s, or g , but got \"" << type << "\""
+	      << std::endl;
+    return false;
+  }
+  }
+  return true;
+}
+
+template <>
+template <class stream>
+bool
+Traits_base_test<Traits>::read_xcurve(stream & is, 
+				      Traits::X_monotone_curve_2 & xcv) {
+  Traits traits;
+  Traits::Construct_x_monotone_segment_2 construct_segment_2
+    = traits.construct_x_monotone_segment_2_object();
+  char type;
+  is >> type;
+  switch(type) {
+  case '1': {
+    Curve_2 cv;
+    Point_2 end_left,end_right;
+    CGAL_assertion_code(bool check=)
+    read_curve(is,cv);
+    CGAL_assertion(check);
+    CGAL::swallow(is,'(');
+    CGAL_assertion_code(check=)
+    read_point(is,end_left);
+    CGAL_assertion(check);
+    CGAL::swallow(is,')');
+    CGAL::swallow(is,'(');
+    CGAL_assertion_code(check=)
+    read_point(is,end_right);
+    CGAL_assertion(check);
+    CGAL::swallow(is,')');
+    std::vector<Traits::X_monotone_curve_2> xcvs;
+    construct_segment_2(cv,end_left,end_right,std::back_inserter(xcvs));
+    CGAL_assertion(xcvs.size()==1);
+    xcv=xcvs[0];
+    break;
+  }
+  case '2': {
+    Curve_2 cv;
+    Point_2 p;
+    CGAL_assertion_code(bool check=)
+       read_curve(is,cv);
+    CGAL_assertion(check);
+    CGAL::swallow(is,'(');
+    CGAL_assertion_code(check=)
+    read_point(is,p);
+    CGAL_assertion(check);
+    CGAL::swallow(is,')');
+    std::string site_of_p_string;
+    Traits::Site_of_point site_of_p;
+    is >> site_of_p_string;
+    if(site_of_p_string=="MIN_ENDPOINT") {
+      site_of_p=Traits::MIN_ENDPOINT;
+    } else if(site_of_p_string=="MAX_ENDPOINT") {
+      site_of_p=Traits::MAX_ENDPOINT;
+    } else {
+      CGAL_assertion(site_of_p_string=="POINT_IN_INTERIOR");
+      site_of_p=Traits::POINT_IN_INTERIOR;
+    }
+    std::vector<Traits::X_monotone_curve_2> xcvs;
+    construct_segment_2(cv,p,site_of_p,std::back_inserter(xcvs));
+    CGAL_assertion(xcvs.size()==1);
+    xcv=xcvs[0];
+    break;
+  }
+  default: {
+    std::cout << "Expected 1 or 2, but got \"" << type << "\"" << std::endl;
+    return false;
+  }
+  }
+  return true;
+}
+
+template <>
+template <class stream>
+bool Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv) {
+  Traits traits;
+  Traits::Polynomial_2 p;
+  Traits::Construct_curve_2 construct_curve_2 
+    = traits.construct_curve_2_object();
+  is >> p;
+  cv = construct_curve_2(p);
+  return true;
+}
 
 #endif
 

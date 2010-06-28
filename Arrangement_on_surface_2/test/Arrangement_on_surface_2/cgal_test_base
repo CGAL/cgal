@@ -45,6 +45,7 @@ CIRCLE_SEGMENT_TRAITS=9
 BEZIER_TRAITS=10
 SPHERICAL_ARC_TRAITS=11
 RATIONAL_ARC_TRAITS=12
+ALGEBRAIC_TRAITS=13
 
 DOUBLE_NT=0
 MP_FLOAT_NT=1
@@ -59,6 +60,9 @@ LAZY_QUOTIENT_MP_FLOAT_NT=9
 LEDA_REAL_NT=10
 CORE_EXPR_NT=11
 LAZY_GMPZ_NT=12
+LEDA_INT_NT=13
+CGAL_GMPZ_NT=14
+CORE_INT_NT=15
 
 COMPARE=3
 VERTEX=4
@@ -993,6 +997,67 @@ test_rational_arc_traits()
 }
 
 #---------------------------------------------------------------------#
+# algebraic traits with GMP/MPFI
+#---------------------------------------------------------------------#
+test_algebraic_traits_gmp()
+{
+#TODO: Adapt
+
+# function     executable  number type   kernel            traits
+    compile_test test_traits $CGAL_GMPZ_NT $CARTESIAN_KERNEL $ALGEBRAIC_TRAITS algebraic_traits_gmp
+    if [ ${res} -eq 0 ] ; then
+	echo   "   ERROR:    not executed   test_traits algebraic_traits_gmp" >> $ERRORFILE
+    else
+	execute_commands_new_structure algebraic algebraic_traits_gmp \
+	    COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
+	    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT \
+	    PARAMETER_SPACE_X PARAMETER_SPACE_Y
+    fi
+    clean_tests
+}
+
+#---------------------------------------------------------------------#
+# algebraic traits with LEDA
+#---------------------------------------------------------------------#
+test_algebraic_traits_leda()
+{
+#TODO: Adapt
+
+# function     executable  number type   kernel            traits
+    compile_test test_traits $LEDA_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_TRAITS algebraic_traits_leda
+    if [ ${res} -eq 0 ] ; then
+	echo   "   ERROR:    not executed   test_traits algebraic_traits_leda" >> $ERRORFILE
+    else
+	execute_commands_new_structure algebraic algebraic_traits_leda \
+	    COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
+	    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT \
+	    PARAMETER_SPACE_X PARAMETER_SPACE_Y
+    fi
+    clean_tests
+}
+
+
+#---------------------------------------------------------------------#
+# algebraic traits with CORE
+#---------------------------------------------------------------------#
+test_algebraic_traits_core()
+{
+#TODO: Adapt
+
+# function     executable  number type   kernel            traits
+    compile_test test_traits $CORE_INT_NT $CARTESIAN_KERNEL $ALGEBRAIC_TRAITS algebraic_traits_core
+    if [ ${res} -eq 0 ] ; then
+	echo   "   ERROR:    not executed   test_traits algebraic_traits_core" >> $ERRORFILE
+    else
+	execute_commands_new_structure algebraic algebraic_traits_core \
+	    COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT \
+	    MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT \
+	    PARAMETER_SPACE_X PARAMETER_SPACE_Y
+    fi
+    clean_tests
+}
+
+#---------------------------------------------------------------------#
 #                    remove the previous error file
 #---------------------------------------------------------------------#
 
@@ -1042,6 +1107,11 @@ test_bezier_traits
 test_spherical_arc_traits
 
 test_rational_arc_traits
+
+test_algebraic_traits_core
+test_algebraic_traits_gmp
+test_algebraic_traits_leda
+
 
 compile_and_run test_insertion
 compile_and_run test_unbounded_rational_insertion

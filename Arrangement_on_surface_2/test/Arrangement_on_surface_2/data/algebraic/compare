@@ -1,0 +1,7 @@
+compare_xy 0 1 SMALLER
+compare_xy 0 0 EQUAL
+compare_xy 0 2 EQUAL
+compare_xy 3 2 LARGER
+compare_xy 4 5 LARGER
+compare_xy 5 4 SMALLER
+compare_xy 4 14 EQUAL

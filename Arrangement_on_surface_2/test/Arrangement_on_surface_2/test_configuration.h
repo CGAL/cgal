@@ -21,6 +21,9 @@
 #define LEDA_REAL_NT                    10
 #define CORE_EXPR_NT                    11
 #define LAZY_GMPZ_NT                    12
+#define LEDA_INT_NT                     13
+#define CGAL_GMPZ_NT                    14
+#define CORE_INT_NT                     15
 
 #define CARTESIAN_KERNEL                0
 #define SIMPLE_CARTESIAN_KERNEL         1
@@ -38,6 +41,7 @@
 #define BEZIER_TRAITS                   10
 #define SPHERICAL_ARC_TRAITS            11
 #define RATIONAL_ARC_TRAITS             12
+#define ALGEBRAIC_TRAITS                13
 
 // Default value based on dependencies:
 #if TEST_TRAITS == CORE_CONIC_TRAITS
