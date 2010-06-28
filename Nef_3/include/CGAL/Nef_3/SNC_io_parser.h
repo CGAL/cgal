@@ -919,7 +919,7 @@ public:
   std::vector<SHalfedge_iterator> SEdge_of;
   std::vector<SHalfloop_iterator> SLoop_of;
   std::vector<SFace_iterator>     SFace_of;
-  long i,vn,en,fn,cn,sen,sln,sfn;
+  std::size_t i,vn,en,fn,cn,sen,sln,sfn;
 
 public:
   SNC_io_parser(std::istream& is, SNC_structure& W);

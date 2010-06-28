@@ -138,7 +138,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
    // input: description of polyhedron in object file format (OFF)
    // with cartesian double coordinates
    Scan_OFF scan (i_st);
-   int NOV = scan.size_of_vertices();
+   std::size_t NOV = scan.size_of_vertices();
 
    // read and store vertices
    Scan_point_set V_scan;

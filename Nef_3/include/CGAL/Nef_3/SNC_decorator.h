@@ -634,14 +634,14 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     verr << "begin CGAL::SNC_decorator<...>::is_valid( verb=true, "
       "level = " << level << "):" << std::endl;
     
-    int max = number_of_vertices() 
+    std::size_t max = number_of_vertices() 
       + number_of_halfedges() 
       + number_of_halffacets() 
       + number_of_volumes()
       + 2 * sncp()->number_of_shalfedges()
       + sncp()->number_of_shalfloops()
       + sncp()->number_of_sfaces();
-    int count = 0;
+    std::size_t count = 0;
 
     bool valid = true;
     Vertex_iterator vi;
