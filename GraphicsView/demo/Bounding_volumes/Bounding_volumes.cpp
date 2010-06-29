@@ -294,6 +294,7 @@ MainWindow::processInput(CGAL::Object o)
     mc.insert(p);
     me.insert(p);
     points.push_back(p);
+    /*
     convex_hull.push_back(p);
     Polygon_2 tmp;
     CGAL::convex_hull_2(convex_hull.vertices_begin(), convex_hull.vertices_end(), std::back_inserter(tmp));
@@ -320,6 +321,7 @@ MainWindow::processInput(CGAL::Object o)
     for(; i < P;i++){
       p_center[i]->hide();
     }
+    */
   }
   emit(changed());
 }
