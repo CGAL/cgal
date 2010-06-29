@@ -25,14 +25,9 @@
 namespace CGAL {
 
 template < class R >
-class Triangulation_euclidean_traits_xz_3 : public internal::Triangulation_euclidean_traits_projected_3<R,1> {
-public:
-  Triangulation_euclidean_traits_xz_3(){}
-  Triangulation_euclidean_traits_xz_3(
-		   const Triangulation_euclidean_traits_xz_3&){}
-  Triangulation_euclidean_traits_xz_3 &operator=(
-	    const Triangulation_euclidean_traits_xz_3&){return *this;}
-};
+class Triangulation_euclidean_traits_xz_3
+  : public internal::Triangulation_euclidean_traits_projected_3<R,1>
+{};
 
 } //namespace CGAL
 
