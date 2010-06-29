@@ -63,7 +63,7 @@ public:
     return &(fct(*nt));
   }
 
-  bool operator==( Nullptr_t p) const {
+  bool operator==( Nullptr_t CGAL_assertion_code(p) ) const {
     CGAL_assertion( p == 0);
     return ( nt == 0);
   }
