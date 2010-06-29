@@ -461,8 +461,9 @@ public:
     CGAL_forall_sedges(ei,*this) {
       Sphere_segment se = segment(ei);
       CGAL_NEF_TRACEN("ray_shoot " << s_init);
-      if(s_init)
+      if(s_init) {
 	CGAL_NEF_TRACEN("  " << s.source() << "->" << s.target() << " | " << s.sphere_circle() << " is long " << s.is_long());
+      }
       CGAL_NEF_TRACEN("  " << se.source() << "->" << se.target() << " | " << se.sphere_circle() << " is long " << se.is_long());
 
       // TODO: start-end point of s on se or c

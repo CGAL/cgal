@@ -597,9 +597,10 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     From[Segments.begin()] = *eit;
     epred=eit;
     ++eit;
-    if(eit != SHalfedges.end()) 
+    if(eit != SHalfedges.end()) {
       CGAL_NEF_TRACEN("test " << std::endl << "  " << debug(*epred) 
 	     << std::endl << "  " << debug(*eit));
+    }
     if(eit != SHalfedges.end() && 
        (*epred)->source()->source() ==(*eit)->next()->source()->source() &&  
        (*eit)->source()->source() == (*epred)->next()->source()->source())

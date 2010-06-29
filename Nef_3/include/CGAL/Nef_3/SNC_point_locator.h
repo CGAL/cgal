@@ -628,7 +628,7 @@ public:
           if( is.does_intersect_internally( ray, f, q, true) ) {
             _CGAL_NEF_TRACEN("ray intersects facet on "<<q);
             _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
-            if( hit) _CGAL_NEF_TRACEN("prev. intersection on "<<eor);
+            if( hit) { _CGAL_NEF_TRACEN("prev. intersection on "<<eor); }
             if( hit && !has_smaller_distance_to_point( ray.source(), q, eor))
 	      continue;
             _CGAL_NEF_TRACEN("is the intersection point on the current cell? "<<

@@ -39,7 +39,7 @@ public:
 // OPERATIONS Forward Category
 // ---------------------------
 
-    bool operator==( Nullptr_t p ) const {
+    bool operator==( Nullptr_t CGAL_assertion_code(p) ) const {
       CGAL_assertion( p == NULL );
       return Iter::operator==( Iter(NULL) );
     }

@@ -817,7 +817,7 @@ public:
       if( !CGAL::assign(sfc, o) || ShellSf[sfc] != i) {
 	CGAL_NEF_TRACEN("the shell encloses a volume");
 	CGAL_NEF_TRACEN("sface hit? "<<CGAL::assign(sfc,o));
-	if( CGAL::assign(sfc, o)) CGAL_NEF_TRACEN("sface on another shell? "<<ShellSf[sfc]);
+	if( CGAL::assign(sfc, o)) { CGAL_NEF_TRACEN("sface on another shell? "<<ShellSf[sfc]); }
 	SFace_handle f = MinimalSFace[i];
 	CGAL_assertion( ShellSf[f] == i );
 	if( Closed[i] ) {

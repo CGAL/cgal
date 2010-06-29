@@ -403,7 +403,7 @@ class Gaussian_map :
                             << "->" << set->twin()->source()->point());
 	  } 
 	  last = hc->twin()->source();
-	} else CGAL_NEF_TRACEN( "omit " );
+	} else { CGAL_NEF_TRACEN( "omit " ); }
 
 	++hc;
 	etwin = hc->source();
