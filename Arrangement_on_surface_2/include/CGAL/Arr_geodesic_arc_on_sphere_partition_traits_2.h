@@ -12,7 +12,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$ 
-// $Id: 
+// $Id$ 
 // 
 //
 // Author(s)     : Ophir Setter         <ophir.setter@cs.au.ac.il>
@@ -326,7 +326,7 @@ public:
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$ 
-// $Id: 
+// $Id$ 
 // 
 //
 // Author(s)     : Ophir Setter         <ophir.setter@cs.au.ac.il>
