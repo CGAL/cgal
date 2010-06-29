@@ -1,4 +1,4 @@
-# This is the CMake script for compiling the CGAL Mesh_3 demo.
+# This is the CMake script for compiling the CGAL Mesh_3 demo implicit functions.
 
 project( Mesh_3_implicit_functions )
 
@@ -11,7 +11,7 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 # Include directory of demo includes
-include_directories( BEFORE ../include )
+include_directories( BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include )
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)

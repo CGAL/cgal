@@ -1,8 +1,5 @@
 # This is the CMake script for compiling the CGAL Mesh_3 demo.
 
-# Add directory containing implicit function plugin source files
-add_subdirectory("implicit_functions")
-
 project( Mesh_3_demo )
 
 cmake_minimum_required(VERSION 2.4.5)
@@ -16,25 +13,11 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-# Use packages improved since CGAL 3.4
-#foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_kernel Profiling_tools Mesh_3 Triangulation_3 )
-#  foreach(CGAL_SVN_TRUNK ../../../ ../../trunk ..)
-#    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
-#      include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${CGAL_SVN_TRUNK}/${DEP_PKG}/include")
-#      break()
-#    endif()
-#  endforeach()
-#endforeach()
-
-#include_directories(../../../Polyhedron/demo/Polyhedron)
-#link_directories(../../../Polyhedron/demo/Polyhedron)
-
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
 
-#include_directories(BEFORE ../../../../candidate-packages/Mesh_3/include/)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR} )
+# Add specific Find.cmake modules
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4 ImageIO)
@@ -46,6 +29,9 @@ set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 find_package(Qt4)
+
+# Add directory containing implicit function plugin source files
+add_subdirectory("implicit_functions")
 
 # Find OpenGL
 find_package(OpenGL)
@@ -279,5 +265,6 @@ else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
 
 endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+
 
 
