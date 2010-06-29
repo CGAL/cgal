@@ -229,6 +229,7 @@ MainWindow::update()
     CGAL::Qt::Converter<K> convert;  
 
     cgi->setRect(convert(c.bbox()));
+    cgi->show();
   }
 
   if (me.is_degenerate()){
@@ -248,6 +249,7 @@ MainWindow::update()
       double x = e.center().x();
       double y = e.center().y();
       egi->setTransform(QTransform().translate(x, y).rotate(angle).translate(-x, -y));
+      egi->show();
     } 
   }
 }
@@ -274,8 +276,8 @@ MainWindow::update_from_points()
     CGAL::Qt::Converter<K> convert;  
     for(i=0; i < center.size(); i++){
       p_center[i]->setRect(convert(Iso_rectangle_2(center[i]-rvec, center[i]+rvec)));
-      p_center[i]->hide();
       p_center[i]->show();
+      p_center[i]->update();
     }
     for(; i < P;i++){
       p_center[i]->hide();
@@ -312,8 +314,8 @@ MainWindow::processInput(CGAL::Object o)
     CGAL::Qt::Converter<K> convert;  
     for(i=0; i < center.size(); i++){
       p_center[i]->setRect(convert(Iso_rectangle_2(center[i]-rvec, center[i]+rvec)));
-      p_center[i]->hide();
       p_center[i]->show();
+      p_center[i]->update();
     }
     for(; i < P;i++){
       p_center[i]->hide();
