@@ -88,7 +88,7 @@ public:
 
     typedef typename Arithmetic_kernel::Integer Integer;
 
-    typedef typename Arithmetic_kernel::Rational Bound;
+    typedef typename Algebraic_kernel_d_1::Bound Bound;
   
     typedef typename Arithmetic_kernel::Bigfloat_interval Bigfloat_interval;
   
