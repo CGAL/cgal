@@ -96,7 +96,7 @@ if [ $# -ne 0 ] ; then
   done
 else
   echo "Run all tests."
-if  ${MAKE_CMD} -f Makefile help | grep "Mesh_3" > /dev/null; then
+if  ${MAKE_CMD} -f Makefile help | grep "Mesh_3$" > /dev/null; then
   compile_and_run Mesh_3
   NEED_CLEAN=y
 fi
