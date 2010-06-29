@@ -408,7 +408,8 @@ public:
                 num*=CGAL::ipower(Integer(2),p);
                 denom=1;
             }
-            Bound b(num,denom);
+            Bound b(num);
+	    b /= Bound(denom);
             CGAL::simplify(b);
             return b;
 	} 
