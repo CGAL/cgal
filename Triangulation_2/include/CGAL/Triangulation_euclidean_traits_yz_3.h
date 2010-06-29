@@ -29,7 +29,9 @@ class Triangulation_euclidean_traits_yz_3 : public internal::Triangulation_eucli
 public:
   Triangulation_euclidean_traits_yz_3(){}
   Triangulation_euclidean_traits_yz_3(
-		   const Triangulation_euclidean_traits_yz_3&){}
+		   const Triangulation_euclidean_traits_yz_3& other)
+    : internal::Triangulation_euclidean_traits_projected_3<R,0>(other)
+  {}
   Triangulation_euclidean_traits_yz_3 &operator=(
 	    const Triangulation_euclidean_traits_yz_3&){return *this;}
 };
