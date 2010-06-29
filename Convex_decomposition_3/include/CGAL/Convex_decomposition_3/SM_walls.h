@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: 
-// $Id: 
+// $URL$ 
+// $Id$
 // 
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
@@ -457,14 +457,16 @@ class SM_walls : SM_decorator<SMap> {
 
     if(is_isolated(sv1)) {
       split_sface = false;
-      if(!is_sm_boundary_object(sv1))
+      if(!is_sm_boundary_object(sv1)) {
 	CGAL_NEF_TRACEN( "error " << sv1->point() << "at " << sv1->source()->point() );
+      }
       unlink_as_isolated_vertex(sv1);
     }
     if(is_isolated(sv2)) {
       split_sface = false;
-      if(!is_sm_boundary_object(sv2))
+      if(!is_sm_boundary_object(sv2)) {
 	CGAL_NEF_TRACEN( "error " << sv2->point() << "at " << sv2->source()->point() );
+      }
       unlink_as_isolated_vertex(sv2);
     }
 
