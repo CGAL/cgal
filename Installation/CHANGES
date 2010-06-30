@@ -69,10 +69,7 @@ since CGAL-3.6:
   - Fix compilation errors with recent Boost versions (since 1.40).
 
   - Initial support for the Microsoft Visual C++ compiler 10.0 (MSVC
-    2010). For that support, CMake>=2.8.2 is required. At the time
-    CGAL-3.6.1 was released, CMake-2.8.2 was not yet released, but
-    CMake-2.8.2rc4 was published by Kitware at
-    http://www.cmake.org/files/v2.8/
+    2010). For that support, CMake>=2.8.2 is required.
     Note also that the compiler option "/bigobj" is necessary to compile
     some CGAL programs with MSVC 2010.
 
@@ -90,6 +87,9 @@ since CGAL-3.6:
      - missing texture.cpp, if TAUCS is used,
   - Fix the location of built plugins of demo/Polyhedron/, when CGAL is
     configured with WITH_demos=ON
+  - Fix a bug in test_facet function of the incremental builder:    
+    the function did not test if while a new facet makes a vertex manifold,
+    no other facet incident to that vertex breaks the manifold property.
 
 
 4. 3D Periodic Triangulations
