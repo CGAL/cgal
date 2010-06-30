@@ -650,21 +650,6 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
-  class Compare_squared_distance_2
-  {
-    typedef typename K::Point_2            Point_2;
-    typedef typename K::FT                 FT;
-  public:
-    typedef typename K::Comparison_result  result_type;
-
-    result_type
-    operator()(const Point_2& p, const Point_2& q, const FT& d2) const
-    {
-      return CGAL_NTS compare(squared_distance(p, q), d2);
-    }
-  };
-
-  template <typename K>
   class Compare_distance_3
   {
     typedef typename K::Point_3            Point_3;
@@ -699,27 +684,6 @@ namespace HomogeneousKernelFunctors {
 			      );
 
       return CGAL_NTS sign(dosd);
-    }
-  };
-
-  template <typename K>
-  class Compare_squared_distance_3
-  {
-    typedef typename K::Point_3            Point_3;
-    typedef typename K::FT                 FT;
-  public:
-    typedef typename K::Comparison_result  result_type;
-
-    result_type
-    operator()(const Point_3& p, const Point_3& q, const FT& d2) const
-    {
-      return CGAL_NTS compare(squared_distance(p, q), d2);
-    }
-
-    result_type
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s) const
-    {
-      return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
     }
   };
 
