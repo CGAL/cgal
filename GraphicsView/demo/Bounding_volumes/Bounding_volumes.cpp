@@ -240,7 +240,7 @@ MainWindow::update()
       Ellipse_2<K> e(me);
       double half_width = sqrt(e.va() * e.va());
       double half_height = sqrt(e.vb() * e.vb());
-      double angle = std::atan( e.va().y() / e.va().x() ) * 180.0/CGAL_PI;
+      double angle = std::atan2( e.va().y(), e.va().x() ) * 180.0/CGAL_PI;
       Vector_2 wh(half_width, half_height);
       CGAL::Qt::Converter<K> convert;
       Iso_rectangle_2 isor(e.center()+ wh, e.center()-wh);
