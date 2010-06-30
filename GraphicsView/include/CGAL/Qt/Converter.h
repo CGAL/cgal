@@ -105,7 +105,7 @@ public:
 
   QRectF operator()(const CGAL_Iso_rectangle_2& r) const
   {
-    return QRectF(operator()(r[3]), operator()(r[1]));  // top left, bottom right
+    return QRectF(operator()(r[3]), operator()(r[1])).normalized();  // top left, bottom right
   }
 
 
