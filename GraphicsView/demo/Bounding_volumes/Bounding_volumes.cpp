@@ -70,7 +70,7 @@ private:
 
   const int P;
   QGraphicsRectItem *p_center[3];
-
+  Iso_rectangle_2 p_center_iso_rectangle[3];
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
 
 public:
@@ -116,18 +116,18 @@ MainWindow::MainWindow()
 
   // Add a GraphicItem for the Min_circle
   cgi = new QGraphicsEllipseItem;
-  cgi->setPen(QPen(Qt::red, 1, Qt::SolidLine));
+  cgi->setPen(QPen(Qt::red, 0, Qt::SolidLine));
   cgi->hide();
   scene.addItem(cgi);
   
   egi = new QGraphicsEllipseItem;
-  egi->setPen(QPen(Qt::cyan, 1, Qt::SolidLine));
+  egi->setPen(QPen(Qt::magenta, 0, Qt::SolidLine));
   egi->hide();
   scene.addItem(egi);
   
   for(int i =0; i < P; i++){
     p_center[i] = new QGraphicsRectItem;
-    p_center[i]->setPen(QPen(Qt::magenta, 1, Qt::SolidLine));
+    p_center[i]->setPen(QPen(Qt::cyan, 0, Qt::SolidLine));
     p_center[i]->hide(); 
     scene.addItem(p_center[i]);
   }
@@ -146,7 +146,7 @@ MainWindow::MainWindow()
 
   QObject::connect(this, SIGNAL(changed()),
 		   convex_hull_gi, SLOT(modelChanged()));
-  convex_hull_gi->setEdgesPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  convex_hull_gi->setEdgesPen(QPen(Qt::black, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(convex_hull_gi);
 
 
@@ -155,7 +155,7 @@ MainWindow::MainWindow()
 
   QObject::connect(this, SIGNAL(changed()),
 		   min_rectangle_gi, SLOT(modelChanged()));
-  min_rectangle_gi->setEdgesPen(QPen(Qt::green, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  min_rectangle_gi->setEdgesPen(QPen(Qt::green, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(min_rectangle_gi);
 
 
@@ -164,8 +164,8 @@ MainWindow::MainWindow()
 
   QObject::connect(this, SIGNAL(changed()),
 		   min_parallelogram_gi, SLOT(modelChanged()));
-  min_parallelogram_gi->setEdgesPen(QPen(Qt::blue, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  scene.addItem(min_parallelogram_gi);
+  min_parallelogram_gi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  //scene.addItem(min_parallelogram_gi);
 
 
   // Setup input handlers. They get events before the scene gets them
@@ -217,6 +217,11 @@ MainWindow::MainWindow()
 void
 MainWindow::update()
 {
+    CGAL::Qt::Converter<K> convert;  
+    for(std::size_t i=0; i< P; i++){
+    p_center[i]->setRect(convert(p_center_iso_rectangle[i]));
+    p_center[i]->show();
+  }
   if (mc.is_degenerate()){
     cgi->hide();
   } else {
@@ -226,7 +231,6 @@ MainWindow::update()
     else
       c = K::Circle_2(mc.support_point(0), mc.support_point(1), mc.support_point(2));
     
-    CGAL::Qt::Converter<K> convert;  
 
     cgi->setRect(convert(c.bbox()));
     cgi->show();
@@ -242,7 +246,7 @@ MainWindow::update()
       double half_height = sqrt(e.vb() * e.vb());
       double angle = std::atan2( e.va().y(), e.va().x() ) * 180.0/CGAL_PI;
       Vector_2 wh(half_width, half_height);
-      CGAL::Qt::Converter<K> convert;
+
       Iso_rectangle_2 isor(e.center()+ wh, e.center()-wh);
       egi->setRect(convert(isor));
       // Rotate an item 45 degrees around (x, y).
@@ -272,15 +276,10 @@ MainWindow::update_from_points()
 
     CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, P);
     Vector_2 rvec(radius, radius);
-    int i;
+
     CGAL::Qt::Converter<K> convert;  
-    for(i=0; i < center.size(); i++){
-      p_center[i]->setRect(convert(Iso_rectangle_2(center[i]-rvec, center[i]+rvec)));
-      p_center[i]->show();
-      p_center[i]->update();
-    }
-    for(; i < P;i++){
-      p_center[i]->hide();
+    for(std::size_t i = 0; i < center.size(); i++){
+      p_center_iso_rectangle[i] = Iso_rectangle_2(center[i]-rvec, center[i]+rvec);
     }
 }
 
@@ -291,6 +290,7 @@ MainWindow::processInput(CGAL::Object o)
   std::list<Point_2> input;
   if(CGAL::assign(input, o)){
     Point_2 p = input.front();
+    
     mc.insert(p);
     me.insert(p);
     points.push_back(p);
@@ -305,23 +305,16 @@ MainWindow::processInput(CGAL::Object o)
  
     min_parallelogram.clear();
     CGAL::min_parallelogram_2(convex_hull.vertices_begin(), convex_hull.vertices_end(), std::back_inserter(min_parallelogram));
-
+    
     std::vector<Point_2> center;
     double radius;
 
     CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, P);
     Vector_2 rvec(radius, radius);
-    int i;
-    CGAL::Qt::Converter<K> convert;  
-    for(i=0; i < center.size(); i++){
-      p_center[i]->setRect(convert(Iso_rectangle_2(center[i]-rvec, center[i]+rvec)));
-      p_center[i]->show();
-      p_center[i]->update();
-    }
-    for(; i < P;i++){
-      p_center[i]->hide();
-    }
 
+    for(std::size_t i=0; i < center.size(); i++){
+      p_center_iso_rectangle[i] = Iso_rectangle_2(center[i]-rvec, center[i]+rvec);
+    }
   }
   emit(changed());
 }
