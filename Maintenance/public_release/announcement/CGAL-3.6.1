@@ -13,9 +13,22 @@ been added in 3.6.1.  The following corrections have been made:
   - Fix compilation errors with recent Boost versions (since 1.40).
 
   - Initial support for the Microsoft Visual C++ compiler 10.0 (MSVC
-    2010). For that support, CMake>=2.8.2 is required.
-    Note also that the compiler option "/bigobj" is necessary to compile
-    some CGAL programs with MSVC 2010.
+    2010).
+    For that support, CMake>=2.8.2 is required.  Note also that the
+    compiler option "/bigobj" is necessary to compile some CGAL programs
+    with MSVC 2010.  The Windows installer CGAL-3.6.1-Setup.exe does not
+    support VC++10. The source tarball must be downloaded instead and unpacked
+    manually. Precompiled binaries of GMP and MPFR must be downloaded from
+    GForge:
+        https://gforge.inria.fr/frs/?group_id=52
+    Download either gmp-5.0.1_and_mpfr-3.0.0_precompiled_i686.zip (for 
+    32 bits compilers) or gmp-5.0.1_and_mpfr-3.0.0_precompiled_x64.zip (for
+    64 bits compilers) and unpack that zip file directly into the
+    sub-directory auxiliary/gmp/ of the unpacked sources directory
+    CGAL-3.6.1/. So that the files are put in
+    CGAL-3.6.1/auxilary/gmp/include/ and CGAL-3.6.1/auxilary/gmp/lib/. Then
+    continue with the CMake configuration and the compilation, as
+    instructed in the installation manual.
 
 
 2. Polynomial
