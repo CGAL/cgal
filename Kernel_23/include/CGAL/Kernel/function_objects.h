@@ -297,34 +297,42 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Compare_squared_distance_2
   {
-    typedef typename K::Point_2            Point_2;
     typedef typename K::FT                 FT;
   public:
     typedef typename K::Comparison_result  result_type;
 
+    template <class T1, class T2>
     result_type
-    operator()(const Point_2& p, const Point_2& q, const FT& d2) const
+    operator()(const T1& p, const T2& q, const FT& d2) const
     {
       return CGAL_NTS compare(squared_distance(p, q), d2);
+    }
+
+    template <class T1, class T2, class T3, class T4>
+    result_type
+    operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
+    {
+      return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
     }
   };
 
   template <typename K>
   class Compare_squared_distance_3
   {
-    typedef typename K::Point_3            Point_3;
     typedef typename K::FT                 FT;
   public:
     typedef typename K::Comparison_result  result_type;
 
+    template <class T1, class T2>
     result_type
-    operator()(const Point_3& p, const Point_3& q, const FT& d2) const
+    operator()(const T1& p, const T2& q, const FT& d2) const
     {
       return CGAL_NTS compare(squared_distance(p, q), d2);
     }
 
+    template <class T1, class T2, class T3, class T4>
     result_type
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s) const
+    operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
       return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
     }
