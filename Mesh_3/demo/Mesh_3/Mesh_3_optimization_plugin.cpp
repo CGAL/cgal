@@ -193,7 +193,7 @@ Mesh_3_optimization_plugin::odt()
     
   // 0 means parameter is not considered
   const double max_time = ui.noTimeLimit->isChecked() ? 0 : ui.maxTime->value();
-  const int max_iteration_nb = ui.maxIterationNb->value();
+  const int max_iteration_nb = static_cast<int>(ui.maxIterationNb->value());
   const double convergence = ui.convergenceRatio->value();
   const double freeze = ui.freezeRatio->value();
   const bool create_new_item = ui.createNewItem->isChecked();
@@ -259,7 +259,7 @@ Mesh_3_optimization_plugin::lloyd()
   
   // 0 means parameter is not considered
   const double max_time = ui.noTimeLimit->isChecked() ? 0 : ui.maxTime->value();
-  const int max_iteration_nb = ui.maxIterationNb->value();
+  const int max_iteration_nb = static_cast<int>(ui.maxIterationNb->value());
   const double convergence = ui.convergenceRatio->value();
   const double freeze = ui.freezeRatio->value();
   const bool create_new_item = ui.createNewItem->isChecked();

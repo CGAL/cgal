@@ -39,7 +39,7 @@ Optimizer_thread(Optimization_function_interface* f, Scene_c3t3_item* item)
   connect(timer_, SIGNAL(timeout()),
           this,   SLOT(emit_status()));
   
-  timer_->start(timer_period_*1000);  
+  timer_->start(static_cast<int>(timer_period_*1000));  
 }
 
 

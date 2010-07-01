@@ -506,7 +506,7 @@ protected:
              C3T3& c3t3,
              const MeshDomain& domain,
              const SliverCriterion& criterion,
-             const FT& sliver_bound,
+             const FT&,
              std::vector<Vertex_handle>& modified_vertices) const
   {
     CGAL_precondition(!slivers.empty());
@@ -662,7 +662,7 @@ protected:
              C3T3& c3t3,
              const MeshDomain& domain,
              const SliverCriterion& criterion,
-             const FT& sliver_bound,
+             const FT&,
              std::vector<Vertex_handle>& modified_vertices) const
   {
     CGAL_precondition(!slivers.empty());
@@ -801,7 +801,7 @@ protected:
              C3T3& c3t3,
              const MeshDomain& domain,
              const SliverCriterion& criterion,
-             const FT& sliver_bound,
+             const FT&,
              std::vector<Vertex_handle>& modified_vertices) const
   {
     CGAL_precondition(!slivers.empty());

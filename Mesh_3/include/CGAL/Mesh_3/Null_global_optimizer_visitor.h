@@ -37,7 +37,7 @@ public:
   void after_compute_moves() {}
   void after_move_points() {}
   void after_rebuild_restricted_delaunay() {}
-  void end_of_iteration(int iteration_number) {}
+  void end_of_iteration(int) {}
 };
 
 } // end namespace Mesh_3

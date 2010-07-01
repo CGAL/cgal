@@ -115,8 +115,8 @@ void Viewer::draw_mask()
   
   int width = this->width();
   int height = this->height();
-  
-  double ratio = ratio_; // r=(w/h)
+  double widthF = static_cast<double>(width);
+  double heightF = static_cast<double>(height);
   
   ::glDisable(GL_LIGHTING);
   ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA); 
@@ -126,9 +126,9 @@ void Viewer::draw_mask()
   // Draws the background quad
   ::glBegin(GL_QUADS);
   
-  if ( width > (ratio*height) )
+  if ( widthF > (ratio_*heightF) )
   {
-    int w1 = (width-(height*ratio)) / 2;
+    int w1 = static_cast<int>( (widthF-(heightF*ratio_)) / 2 );
     int w2 = width - w1;
     
     ::glVertex2i( 0, 0);
@@ -143,7 +143,7 @@ void Viewer::draw_mask()
   }
   else
   {
-    int h1 = (height-(width/ratio)) / 2;
+    int h1 = static_cast<int>( (heightF-(widthF/ratio_)) / 2 );
     int h2 = height - h1;
     
     ::glVertex2i( 0, 0);

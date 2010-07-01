@@ -244,7 +244,7 @@ void MainWindow::addAction(QAction* action)
   }
 }
 
-void MainWindow::message(QString message, QString colorName, QString font) {
+void MainWindow::message(QString message, QString colorName, QString /*font*/) {
   if (message.endsWith('\n')) {
     message.remove(message.length()-1, 1);
   }

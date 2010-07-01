@@ -77,7 +77,6 @@ private:
    * Returns true if \c v is well_oriented on each cell of \c cell_tos
    */
   bool well_oriented(const Tr& tr,
-                     const Vertex_handle& v,
                      const Cell_vector& cell_tos) const;
 };
   
@@ -111,7 +110,7 @@ no_topological_change(const Tr& tr,
   
   Cell_vector cells_tos;
   tr.incident_cells(v0, std::back_inserter(cells_tos));
-  if(!well_oriented(tr, v0, cells_tos)) 
+  if(!well_oriented(tr, cells_tos)) 
   {
     // Reset (restore) v0
     v0->set_point(fp);
@@ -171,7 +170,6 @@ template<typename Tr>
 bool
 Triangulation_helpers<Tr>::
 well_oriented(const Tr& tr,
-              const Vertex_handle& v,
               const Cell_vector& cells_tos) const
 {
   typename Cell_vector::const_iterator it = cells_tos.begin();

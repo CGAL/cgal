@@ -36,8 +36,8 @@ class Null_perturber_visitor
   typedef typename Tr::Geom_traits::FT    FT;
   
 public:
-  void bound_reached(const FT& bound) {}
-  void end_of_perturbation_iteration(std::size_t vertices_left) {}
+  void bound_reached(const FT&) {}
+  void end_of_perturbation_iteration(std::size_t) {}
 };
 
 } // end namespace Mesh_3

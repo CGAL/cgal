@@ -222,7 +222,7 @@ public:
   virtual ~Global_optimization_function() {}
 
   // Logs
-  virtual QString status(double time_period) const
+  virtual QString status(double) const
   {
     QString res = QString("Iteration %1<br /><br />"
                           "Compute moves: %2<br />")
@@ -541,7 +541,7 @@ public:
   /// Log strings
   virtual QString name() const { return QString("Perturb"); }
   virtual QStringList parameters_log() const { return p_.log(); }
-  virtual QString status(double time_period) const
+  virtual QString status(double) const
   {
     return QString("Dihedral angle reached: %1<br /><br />"
                    "Vertices left in queue (to reach next bound): %2")
@@ -676,7 +676,7 @@ public:
   // Log strings
   virtual QString name() const { return QString("Exude"); }
   virtual QStringList parameters_log() const { return p_.log(); }
-  virtual QString status(double time_period) const
+  virtual QString status(double) const
   {
     return QString("Cells left in queue: %1<br />")
                    //"Vertices pumped: %2")

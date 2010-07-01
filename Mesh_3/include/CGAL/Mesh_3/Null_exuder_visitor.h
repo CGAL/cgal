@@ -36,7 +36,7 @@ class Null_exuder_visitor
   typedef typename Tr::Geom_traits::FT    FT;
   
 public:
-  void after_cell_pumped(std::size_t cells_left_number) {}
+  void after_cell_pumped(std::size_t) {}
 };
 
 } // end namespace Mesh_3

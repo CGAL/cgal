@@ -337,8 +337,8 @@ Scene_c3t3_item::build_histogram()
   for ( std::vector<int>::iterator it = histo_data.begin(), end = histo_data.end() ;
        it != end ; ++it, i+=cell_width )
   {
-    int line_height = std::ceil(static_cast<double>(drawing_height) *
-      static_cast<double>(*it)/static_cast<double>(max_size));
+    int line_height = static_cast<int>( std::ceil(static_cast<double>(drawing_height) *
+      static_cast<double>(*it)/static_cast<double>(max_size)) + .5);
     
     painter.fillRect(i,
                      drawing_height+top_margin-line_height,
@@ -356,8 +356,9 @@ Scene_c3t3_item::build_histogram()
 
   
   // draw min value and max value
-  const int min_tr_width = 2*(std::floor(min_value)*cell_width + left_margin);
-  const int max_tr_width = 2*((histo_data.size()-std::floor(max_value))*cell_width + left_margin);
+  const int min_tr_width = static_cast<int>( 2*(std::floor(min_value)*cell_width + left_margin) );
+  const int max_tr_width = static_cast<int>( 
+    2*((histo_data.size()-std::floor(max_value))*cell_width + left_margin) );
   const int tr_y = drawing_height + top_margin + text_margin;
   
   painter.setPen(get_histogram_color(min_value));
@@ -394,32 +395,32 @@ create_histogram(const C3t3& c3t3, double& min_value, double& max_value)
 		const Point_3& p3 = cit->vertex(3)->point();
 		
 		double a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0,p1,p2,p3)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
     
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0, p2, p1, p3)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
     
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0, p3, p1, p2)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
     
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p1, p2, p0, p3)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
     
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p1, p3, p0, p2)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
     
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p2, p3, p0, p1)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
     

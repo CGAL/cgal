@@ -158,7 +158,7 @@ operator()(const Point_3& p, const Cell_handle& c) const
 template <typename Tr, bool B>
 typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
-operator()(const Point_3& p, const std::pair<Cell_handle,bool>& c) const
+operator()(const Point_3&, const std::pair<Cell_handle,bool>& c) const
 {
   // Assumes that p is the centroid of c
   const Cell_handle& cell = c.first;
