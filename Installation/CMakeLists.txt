@@ -49,6 +49,29 @@ message( STATUS "CGAL_MAJOR_VERSION=${CGAL_MAJOR_VERSION}" )
 message( STATUS "CGAL_MINOR_VERSION=${CGAL_MINOR_VERSION}" )
 message( STATUS "CGAL_BUILD_VERSION=${CGAL_BUILD_VERSION}" )
 
+# SONAME, SOVERSION
+#
+# The rule is that each new release or bug fix release should increse the soversion.
+#
+# SOVERSION is $(SONAME_VERSION).$(SOVERSION_MINOR).$(SOVERSION_RELEASE)
+#
+# - If the binary interface of libraries do not change from previous release
+#   (example: most bug fix releases), increase SOVERSION_RELEASE (this third number).
+# - If the binary interface is changed, but remains compatible with
+#   previous release (example: only addition of new functions), then increase
+#   SOVERSION_MINOR (second number) and set SOVERSION_RELEASE to 0.
+# - If the binary interface is changed in an incompatible way to previous
+#   release, then increase the SONAME_VERSION, and set the two other
+#   numbers to 0.
+# 
+# SOVERSION history: 
+#   CGAL<=3.5  : (unversionned)
+#   CGAL-3.5   : 4.0.0
+#   CGAL-3.5.1 : 4.0.1
+#   CGAL-3.5   : 5.0.0
+#   CGAL-3.6.1 : 5.0.0 (should have been 5.0.1)
+#   CGAL-3.7   : 6.0.0 (probably)
+
 set( CGAL_SONAME_VERSION "6"     CACHE STRING "soname-version" )
 set( CGAL_SOVERSION      "6.0.0" CACHE STRING "soversion" )
 
@@ -57,6 +80,9 @@ mark_as_advanced(CGAL_SOVERSION)
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
+
+
+
 
 set( CGAL_BUILDING_LIBS TRUE )
 
