@@ -567,10 +567,10 @@ protected:
     if ( NULL == perturb_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
     // Add perturbations
-    perturb_->add_perturbation(new Sq_radius(40,0.02));
-    perturb_->add_perturbation(new Volume(40,0.02));
-    perturb_->add_perturbation(new Dihedral_angle(40,0.02));
-    perturb_->add_perturbation(new Li_random(100,0.05));
+    perturb_->add_perturbation(new Sq_radius(40,0.05));
+    perturb_->add_perturbation(new Volume(40,0.05));
+    perturb_->add_perturbation(new Dihedral_angle(40,0.05));
+    perturb_->add_perturbation(new Li_random(100,0.15));
     
     // Set max time
     perturb_->set_time_limit(p_.time_limit);

@@ -70,10 +70,10 @@ perturb_mesh_3_impl(C3T3& c3t3,
   // Build perturber
   Perturber perturber(c3t3,domain);
   
-  perturber.add_perturbation(new Sq_radius(40,0.02));
-  perturber.add_perturbation(new Volume(40,0.02));
-  perturber.add_perturbation(new Dihedral_angle(40,0.02));
-  perturber.add_perturbation(new Li_random(100,0.05,true));
+  perturb_->add_perturbation(new Sq_radius(40,0.05));
+  perturb_->add_perturbation(new Volume(40,0.05));
+  perturb_->add_perturbation(new Dihedral_angle(40,0.05));
+  perturb_->add_perturbation(new Li_random(100,0.15));
 
   // Set max time
   perturber.set_time_limit(time_limit);

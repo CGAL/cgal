@@ -300,12 +300,13 @@ protected:
   /**
    * @brief an helper function which returns the amplitude of perturbation
    */
-  FT compute_perturbation_amplitude(const Vertex_handle& v,
-                                    const C3T3& c3t3,
-                                    const FT& factor) const
+  FT compute_perturbation_sq_amplitude(const Vertex_handle& v,
+                                       const C3T3& c3t3,
+                                       const FT& sq_factor) const
   {
     // We don't care if the shortest edge is inside or outside c3t3
-    return details::min_incident_edge_sq_length(v,c3t3.triangulation())*factor;
+    return   details::min_incident_edge_sq_length(v,c3t3.triangulation())
+           * sq_factor;
   }
   
 private:
@@ -365,7 +366,7 @@ public:
   Gradient_based_perturbation(unsigned int max_step_nb,
                               double step_size)
     : max_step_nb_(max_step_nb) 
-    , step_size_(step_size) { }
+    , sq_step_size_(step_size*step_size) { }
   
   /**
    * @brief destructor
@@ -417,7 +418,7 @@ protected:
     modified_vertices.clear();
     
     // norm depends on the local size of the mesh
-    FT sq_norm = this->compute_perturbation_amplitude(v, c3t3, step_size_);
+    FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, sq_step_size_);
     FT step_length = CGAL::sqrt(sq_norm/sq_length(gradient_vector));
     Point_3 new_loc = v->point() + step_length * gradient_vector;
     
@@ -452,7 +453,7 @@ protected:
   
 private:
   unsigned int max_step_nb_;
-  double step_size_;
+  double sq_step_size_;
 };
   
 
@@ -980,6 +981,7 @@ public:
                             const FT& sphere_radius)
     : max_try_nb_(max_try_nb) 
     , sphere_radius_(sphere_radius)
+    , sphere_sq_radius_(sphere_radius*sphere_radius)
     , generator_(boost::uint32_t(std::time(0)))
     , uni_dist_(0,1)
     , random_(generator_, uni_dist_) {}
@@ -1010,6 +1012,7 @@ protected:
   /// Access functions
   unsigned int max_try_nb() const { return max_try_nb_; }
   FT sphere_radius() const { return sphere_radius_; }
+  FT sphere_sq_radius() const { return sphere_sq_radius_; }
   
   /**
    * @brief returns a FT between \c min and \c max
@@ -1063,6 +1066,7 @@ private:
   unsigned int max_try_nb_;
   // The radius of the sphere which will contain random points
   FT sphere_radius_;
+  FT sphere_sq_radius_;
   
   // boost random generator
   typedef boost::lagged_fibonacci607 base_generator_type;
@@ -1161,7 +1165,7 @@ private:
     C3T3_helpers helper(c3t3, domain);
     
     // norm depends on the local size of the mesh
-    FT sq_norm = this->compute_perturbation_amplitude(v, c3t3, Base::sphere_radius());
+    FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, this->sphere_sq_radius());
     const Point_3 initial_location = v->point();
     
     // Initialize loop variables
