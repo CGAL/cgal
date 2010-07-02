@@ -1085,10 +1085,7 @@ project_on_surface_aux(const Point_3& p,
   
   typename Gt::Construct_scaled_vector_3 scale =
     Gt().construct_scaled_vector_3_object();
-  
-  typename Gt::Construct_translated_point_3 translate =
-    Gt().construct_translated_point_3_object();
-  
+    
   typename Gt::Is_degenerate_3 is_degenerate =
     Gt().is_degenerate_3_object();
   

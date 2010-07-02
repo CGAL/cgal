@@ -560,9 +560,6 @@ typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::FT
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 min_circumradius_sq_length(const Vertex_handle& v) const
 {
-  typename Gt::Compute_squared_distance_3 sq_distance =
-    Gt().compute_squared_distance_3_object();
-  
   Cell_vector incident_cells;
   incident_cells.reserve(64);
   tr_.incident_cells(v, std::back_inserter(incident_cells));

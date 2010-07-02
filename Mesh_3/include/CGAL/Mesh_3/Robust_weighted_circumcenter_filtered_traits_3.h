@@ -61,9 +61,6 @@ public:
   {
     CGAL_precondition(Rt().orientation_3_object()(p,q,r,s) == CGAL::POSITIVE);
     
-    typename Rt::Construct_weighted_circumcenter_3 weighted_circumcenter =
-      Rt().construct_weighted_circumcenter_3_object();
-    
     // We use Side_of_oriented_sphere_3: it is static filtered and
     // we know that p,q,r,s are positive oriented
     typename Rt::Side_of_oriented_sphere_3 side_of_oriented_sphere =
@@ -104,10 +101,7 @@ public:
                           const Weighted_point_3 & r ) const
   {
     CGAL_precondition(! Rt().collinear_3_object()(p,q,r) );
-    
-    typename Rt::Construct_weighted_circumcenter_3 weighted_circumcenter =
-      Rt().construct_weighted_circumcenter_3_object();
-    
+        
     typename Rt::Side_of_bounded_sphere_3 side_of_bounded_sphere =
       Rt().side_of_bounded_sphere_3_object();
     

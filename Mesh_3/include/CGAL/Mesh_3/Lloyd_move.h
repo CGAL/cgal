@@ -192,9 +192,6 @@ private:
   {
     CGAL_precondition(c3t3.in_dimension(v) == 2);
     
-    typename Gt::Construct_vector_3 vector =
-      Gt().construct_vector_3_object();
-    
     // get all surface delaunay ball point
     std::vector<Point_3> points = extract_lloyd_boundary_points(v,c3t3);
     
