@@ -305,7 +305,7 @@ protected:
                                     const FT& factor) const
   {
     // We don't care if the shortest edge is inside or outside c3t3
-    return details::min_incident_edge_sq_length(v,c3t3.triangulation());
+    return details::min_incident_edge_sq_length(v,c3t3.triangulation())*factor;
   }
   
 private:

@@ -73,7 +73,7 @@ perturb_mesh_3_impl(C3T3& c3t3,
   perturber.add_perturbation(new Sq_radius(40,0.02));
   perturber.add_perturbation(new Volume(40,0.02));
   perturber.add_perturbation(new Dihedral_angle(40,0.02));
-  perturber.add_perturbation(new Li_random(100,0.05));
+  perturber.add_perturbation(new Li_random(100,0.05,true));
 
   // Set max time
   perturber.set_time_limit(time_limit);
