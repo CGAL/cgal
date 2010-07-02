@@ -17,11 +17,14 @@ class Scene_interface;
 class SCENE_ITEM_EXPORT Plugin_helper
   : public Plugin_interface
 {
+  typedef Plugin_interface Base;
+  
 public:
   // get action object from its name
   static QAction* getActionFromMainWindow(QMainWindow*, QString action_name);
   
   // Init plugin
+  using Base::init;
   virtual void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
   
   // Get list of actions supported by this plugin

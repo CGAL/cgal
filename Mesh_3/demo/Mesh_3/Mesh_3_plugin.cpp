@@ -64,9 +64,12 @@ class Mesh_3_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Plugin_interface);
+  
+  typedef Plugin_helper Base;
 public:
   Mesh_3_plugin();
   
+  using Base::init;
   virtual void init(QMainWindow* mainWindow, 
                     Scene_interface* scene_interface,
                     Messages_interface* msg_interface)

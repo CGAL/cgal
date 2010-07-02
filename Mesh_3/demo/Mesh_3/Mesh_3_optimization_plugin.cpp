@@ -62,9 +62,12 @@ class Mesh_3_optimization_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Plugin_interface);
+  
+  typedef Plugin_helper Base;
 public:
   Mesh_3_optimization_plugin();
   
+  using Base::init;
   virtual void init(QMainWindow*, Scene_interface*, Messages_interface*);
   inline virtual QList<QAction*> actions() const;
   
