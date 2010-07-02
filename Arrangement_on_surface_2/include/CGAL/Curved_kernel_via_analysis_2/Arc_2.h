@@ -3227,8 +3227,17 @@ private:
     
     // type of CurveSweepTraits model
     typedef CGAL::Sweep_curves_adapter_2< Curved_kernel_via_analysis_2 > SCA_2;
+
     // befriend segment for Self::_intersection_points
-    friend class SCA_2::Segment_2;
+
+    // Old code:
+    // friend class SCA_2::Segment_2; 
+
+    // VC++ workaround for this error: do not use the typedef name SCA_2
+    // but the real type. The error was "error C2242: typedef name cannot
+    // follow class/struct/union". See:
+    //   http://msdn.microsoft.com/en-us/library/te5w3zxd%28VS.90%29.aspx
+    friend class CGAL::Sweep_curves_adapter_2< Curved_kernel_via_analysis_2 >::Segment_2;
     
     /*
     // befriend all functors
