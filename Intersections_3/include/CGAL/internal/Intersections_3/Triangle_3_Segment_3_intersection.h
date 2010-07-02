@@ -199,13 +199,6 @@ intersection_coplanar(const typename K::Triangle_3 &t,
   typename K::Collinear_are_ordered_along_line_3 collinear_ordered =
     k.collinear_are_ordered_along_line_3_object();
 
-  typename K::Construct_line_3 line =
-    k.construct_line_3_object();
-
-  typename K::Construct_segment_3 segment =
-  k.construct_segment_3_object();
-
-
   const Point_3 & p = point_on(s,0);
   const Point_3 & q = point_on(s,1);
 

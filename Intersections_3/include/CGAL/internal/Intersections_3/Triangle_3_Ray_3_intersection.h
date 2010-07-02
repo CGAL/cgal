@@ -183,9 +183,6 @@ intersection_coplanar(const typename K::Triangle_3 &t,
   typename K::Coplanar_orientation_3 coplanar_orientation =
     k.coplanar_orientation_3_object();
 
-  typename K::Construct_line_3 line =
-    k.construct_line_3_object();
-
   typename K::Construct_segment_3 segment =
     k.construct_segment_3_object();
 

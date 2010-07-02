@@ -94,12 +94,6 @@ t3l3_intersection_coplanar_aux(const typename K::Point_3& a,
 
   typedef typename K::Point_3 Point_3;
 
-  typename K::Intersect_3 intersection =
-    k.intersect_3_object();
-
-  typename K::Construct_line_3 line =
-    k.construct_line_3_object();
-
   typename K::Construct_segment_3 segment =
     k.construct_segment_3_object();
 
@@ -133,9 +127,6 @@ intersection_coplanar(const typename K::Triangle_3 &t,
 
   typename K::Coplanar_orientation_3 coplanar_orientation =
     k.coplanar_orientation_3_object();
-
-  typename K::Construct_line_3 line =
-    k.construct_line_3_object();
 
   typename K::Construct_segment_3 segment =
     k.construct_segment_3_object();
@@ -356,12 +347,6 @@ intersection(const typename K::Triangle_3 &t,
 
   typename K::Orientation_3 orientation =
     k.orientation_3_object();
-
-  typename K::Coplanar_orientation_3 coplanar_orientation =
-    k.coplanar_orientation_3_object();
-
-  typename K::Intersect_3 intersection =
-    k.intersect_3_object();
 
   const Point_3 & a = vertex_on(t,0);
   const Point_3 & b = vertex_on(t,1);
