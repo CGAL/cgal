@@ -45,21 +45,22 @@ struct Tester
   void verify(C3t3& c3t3,
               const Domain& domain,
               const Criteria& criteria,
-              const unsigned int min_vertices_expected = 0,
-              const unsigned int max_vertices_expected = (unsigned int)(-1),
-              const unsigned int min_facets_expected = 0,
-              const unsigned int max_facets_expected = (unsigned int)(-1),
-              const unsigned int min_cells_expected = 0,
-              const unsigned int max_cells_expected = (unsigned int)(-1) ) const
+              const std::size_t min_vertices_expected = 0,
+              const std::size_t max_vertices_expected = -1,
+              const std::size_t min_facets_expected = 0,
+              const std::size_t max_facets_expected = -1,
+              const std::size_t min_cells_expected = 0,
+              const std::size_t max_cells_expected = -1 ) const
   {
+    typedef typename C3t3::size_type size_type;
     typedef typename C3t3::Triangulation::Geom_traits Gt;
     typedef typename CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt> Sliver_criterion;
     typedef typename CGAL::Mesh_3::Slivers_exuder<C3t3, Sliver_criterion> Exuder;
 
     // Store mesh properties
-    unsigned int v = static_cast<unsigned int>(c3t3.triangulation().number_of_vertices());
-    unsigned int f = static_cast<unsigned int>(c3t3.number_of_facets());
-    unsigned int c = static_cast<unsigned int>(c3t3.number_of_cells());
+    size_type v = c3t3.triangulation().number_of_vertices();
+    size_type f = c3t3.number_of_facets();
+    size_type c = c3t3.number_of_cells();
 
     // Verify
     verify_c3t3(c3t3,
@@ -89,9 +90,9 @@ struct Tester
                     CGAL::parameters::no_exude(),
                     CGAL::parameters::no_perturb());
       
-      v = static_cast<unsigned int>(c3t3.triangulation().number_of_vertices());
-      f = static_cast<unsigned int>(c3t3.number_of_facets());
-      c = static_cast<unsigned int>(c3t3.number_of_cells());      
+      v = c3t3.triangulation().number_of_vertices();
+      f = c3t3.number_of_facets();
+      c = c3t3.number_of_cells();      
     }
     assert ( n < 11 );
 #endif
@@ -136,12 +137,12 @@ struct Tester
 
   template<typename C3t3>
   void verify_c3t3(const C3t3& c3t3,
-                   const unsigned int min_vertices_expected = 0,
-                   const unsigned int max_vertices_expected = (unsigned int)(-1),
-                   const unsigned int min_facets_expected = 0,
-                   const unsigned int max_facets_expected = (unsigned int)(-1),
-                   const unsigned int min_cells_expected = 0,
-                   const unsigned int max_cells_expected = (unsigned int)(-1)) const
+                   const std::size_t min_vertices_expected = 0,
+                   const std::size_t max_vertices_expected = -1,
+                   const std::size_t min_facets_expected = 0,
+                   const std::size_t max_facets_expected = -1,
+                   const std::size_t min_cells_expected = 0,
+                   const std::size_t max_cells_expected = -1 ) const
   {
     //-------------------------------------------------------
     // Verifications
