@@ -8,7 +8,7 @@ class Io_c3t3_plugin :
   public Io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Io_plugin_interface);
+  Q_INTERFACES(Io_plugin_interface)
 
 public:
   virtual QStringList nameFilters() const;
@@ -52,5 +52,5 @@ Io_c3t3_plugin::save(const Scene_item* item, QFileInfo fileInfo)
 
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Io_c3t3_plugin, Io_c3t3_plugin);
+Q_EXPORT_PLUGIN2(Io_c3t3_plugin, Io_c3t3_plugin)
 #include "Io_c3t3_plugin.moc"

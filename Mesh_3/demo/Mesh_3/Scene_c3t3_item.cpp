@@ -279,7 +279,7 @@ Scene_c3t3_item::direct_draw(int mode) const {
     ::glEnable(GL_LIGHTING);
   else
     ::glDisable(GL_LIGHTING);
-};
+}
 
 
 QPixmap

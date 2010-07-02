@@ -26,7 +26,7 @@ class C3t3_rib_exporter_plugin :
   protected Plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Plugin_interface);
+  Q_INTERFACES(Plugin_interface)
 
 public:
   C3t3_rib_exporter_plugin();
@@ -956,5 +956,5 @@ write_background(const QColor& color, std::ofstream& out)
 
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(C3t3_rib_exporter_plugin, C3t3_rib_exporter_plugin);
+Q_EXPORT_PLUGIN2(C3t3_rib_exporter_plugin, C3t3_rib_exporter_plugin)
 #include "C3t3_rib_exporter_plugin.moc"

@@ -63,7 +63,7 @@ class Mesh_3_plugin :
   protected Plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Plugin_interface);
+  Q_INTERFACES(Plugin_interface)
   
   typedef Plugin_helper Base;
 public:
@@ -400,6 +400,6 @@ get_approximate(double d, int precision, int& decimals)
 }
 
 
-Q_EXPORT_PLUGIN2(Mesh_3_plugin, Mesh_3_plugin);
+Q_EXPORT_PLUGIN2(Mesh_3_plugin, Mesh_3_plugin)
 
 #include "Mesh_3_plugin.moc"

@@ -42,7 +42,7 @@ class Io_implicit_function_plugin :
   protected Plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Plugin_interface);
+  Q_INTERFACES(Plugin_interface)
   
 public:
   Io_implicit_function_plugin();
@@ -188,5 +188,5 @@ load_function_plugins()
 
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Io_implicit_function_plugin, Io_implicit_function_plugin);
+Q_EXPORT_PLUGIN2(Io_implicit_function_plugin, Io_implicit_function_plugin)
 #include "Io_implicit_function_plugin.moc"

@@ -10,7 +10,7 @@ class Io_off_plugin :
   public Io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Io_plugin_interface);
+  Q_INTERFACES(Io_plugin_interface)
 
 public:
   QStringList nameFilters() const;
@@ -87,5 +87,5 @@ bool Io_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
 }
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Io_off_plugin, Io_off_plugin);
+Q_EXPORT_PLUGIN2(Io_off_plugin, Io_off_plugin)
 #include "Io_off_plugin.moc"

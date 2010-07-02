@@ -61,7 +61,7 @@ class Mesh_3_optimization_plugin :
   protected Plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Plugin_interface);
+  Q_INTERFACES(Plugin_interface)
   
   typedef Plugin_helper Base;
 public:
@@ -578,7 +578,7 @@ translate(CGAL::Mesh_optimization_return_code rc)
 }
 
 
-Q_EXPORT_PLUGIN2(Mesh_3_optimization_plugin, Mesh_3_optimization_plugin);
+Q_EXPORT_PLUGIN2(Mesh_3_optimization_plugin, Mesh_3_optimization_plugin)
 
 #include "Mesh_3_optimization_plugin.moc"
 

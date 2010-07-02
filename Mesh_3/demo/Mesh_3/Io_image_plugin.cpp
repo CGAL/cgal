@@ -12,7 +12,7 @@ class Io_image_plugin :
   public Io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Io_plugin_interface);
+  Q_INTERFACES(Io_plugin_interface)
 
 public:
   Io_image_plugin() {
@@ -61,5 +61,5 @@ bool Io_image_plugin::canSave(const Scene_item* item)
 }
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Io_image_plugin, Io_image_plugin);
+Q_EXPORT_PLUGIN2(Io_image_plugin, Io_image_plugin)
 #include "Io_image_plugin.moc"
