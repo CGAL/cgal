@@ -351,7 +351,7 @@ Scene_c3t3_item::build_histogram()
   painter.setPen(Qt::blue);
   
   painter.drawLine(QPoint(left_margin, drawing_height + top_margin),
-                   QPoint(left_margin + histo_data.size()*cell_width, 
+                   QPoint(left_margin + static_cast<int>(histo_data.size())*cell_width, 
                           drawing_height + top_margin));
 
   

@@ -802,7 +802,9 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   // Facets
   //-------------------------------------------------------
-  int number_of_triangles = c3t3.number_of_facets();
+  unsigned int number_of_triangles = 
+    static_cast<unsigned int>(c3t3.number_of_facets());
+  
   if ( print_each_facet_twice )
     number_of_triangles += number_of_triangles;
   

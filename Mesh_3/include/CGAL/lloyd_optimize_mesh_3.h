@@ -82,7 +82,7 @@ lloyd_optimize_mesh_3_impl(C3T3& c3t3,
     max_iteration_number = 1000;
   
   // Launch optimization
-  return opt(max_iteration_number);
+  return opt(static_cast<int>(max_iteration_number));
 }
   
   

@@ -688,7 +688,7 @@ update_pvertex(PVertex& pv, const FT& sliver_bound) const
   Cell_vector slivers =
     helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound);
   
-  pv.set_sliver_nb(slivers.size());
+  pv.set_sliver_nb(static_cast<unsigned int>(slivers.size()));
   pv.set_min_value(helper_.min_sliver_value(slivers, sliver_criterion_));
 }
   
