@@ -1,4 +1,23 @@
-cgal (3.6-1~lenny1) stable; urgency=low
+cgal (3.6.1-1~lenny1) stable; urgency=low
+
+  * Backport for lenny.
+
+ -- Joachim Reichel <reichel@debian.org>  Sat, 03 Jul 2010 20:44:22 +0200
+
+cgal (3.6.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * Set SOVERSION explicitly to 5.0.1 as told by upstream.
+  * Remove architecture exceptions from Suggests: for libcgal-demo which is no
+    longer allowed by dpkg-gencontrol (see #560071).
+  * Fix debian/watch file.
+  * Change license of packaging to LGPL 2.1 or later because referencing the
+    BSD license in /usr/share/common-licenses is deprecated.
+  * Update Standards-Version to 3.9.0 (no changes needed).
+
+ -- Joachim Reichel <reichel@debian.org>  Thu, 01 Jul 2010 23:37:41 +0200
+
+cgal (3.6-1) unstable; urgency=low
 
   * New upstream release.
   * Rename binary package libcgal4 to libcgal5 to reflect SONAME change.

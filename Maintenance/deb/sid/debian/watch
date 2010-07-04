@@ -7,4 +7,4 @@
 version=3
 opts=uversionmangle=s/(\d+).([\d\.]+)/$2/ \
   https://gforge.inria.fr/frs/?group_id=52 \
-  /frs/download.php/(\d+)/CGAL-([\d\.]+).tar.gz
+  https://gforge.inria.fr/frs/download.php/(\d+)/CGAL-([\d\.]+).tar.gz

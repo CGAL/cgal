@@ -23,12 +23,14 @@ configure-stamp: patch-stamp
 	cd static && QTDIR= cmake .. \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_SKIP_RPATH=TRUE -DCGAL_CXX_FLAGS=-D_REENTRANT \
-	  -DBUILD_SHARED_LIBS=FALSE -DWITH_demos=OFF -DWITH_examples=OFF
+	  -DBUILD_SHARED_LIBS=FALSE -DWITH_demos=OFF -DWITH_examples=OFF \
+	  -DCGAL_SOVERSION:STRING=5.0.1
 	mkdir -p shared
 	cd shared && QTDIR= cmake .. \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_SKIP_RPATH=TRUE -DCGAL_CXX_FLAGS=-D_REENTRANT \
-	  -DBUILD_SHARED_LIBS=TRUE -DWITH_demos=OFF -DWITH_examples=OFF
+	  -DBUILD_SHARED_LIBS=TRUE -DWITH_demos=OFF -DWITH_examples=OFF \
+	  -DCGAL_SOVERSION:STRING=5.0.1
 	touch configure-stamp
 
 build: build-stamp
@@ -42,7 +44,8 @@ build-stamp: configure-stamp
 	cd shared/demo/CGAL_ipelets && QTDIR= cmake ../../../demo/CGAL_ipelets \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_SKIP_RPATH=TRUE -DCGAL_CXX_FLAGS=-D_REENTRANT \
-	  -DBUILD_SHARED_LIBS=TRUE -DWITH_IPE_7=TRUE -DCGAL_DIR=$(CURDIR)/shared
+	  -DBUILD_SHARED_LIBS=TRUE -DWITH_IPE_7=TRUE -DCGAL_DIR=$(CURDIR)/shared \
+	  -DCGAL_SOVERSION:STRING=5.0.1
 	$(MAKE) -C shared/demo/CGAL_ipelets
 
 ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))

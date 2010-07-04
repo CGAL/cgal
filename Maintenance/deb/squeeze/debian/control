@@ -49,9 +49,8 @@ Section: non-free/devel
 Architecture: all
 Depends: libcgal-dev (>= ${binary:Version}), libcgal5 (>= ${binary:Version}),
   ${misc:Depends}
-Suggests: liblapack-dev [!alpha !arm !armeb !armel !hurd-i386 !m68k !powerpc],
- libatlas-base-dev [!alpha !arm !armeb !armel !hurd-i386 !m68k !powerpc] | libatlas.so.3gf [!alpha !arm !armeb !armel !hurd-i386 !m68k !powerpc],
- gfortran, geomview, libqglviewer-qt4-dev, libipe1-dev, libglew1.5-dev | libglew-dev,
+Suggests: liblapack-dev, libatlas-base-dev | libatlas.so.3gf, gfortran,
+ geomview, libqglviewer-qt4-dev, libipe1-dev, libglew1.5-dev | libglew-dev,
  libmagick++-dev | libmagick++9-dev
 Description: C++ library for computational geometry (demos)
  CGAL (Computational Geometry Algorithms Library) makes the most important
