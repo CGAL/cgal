@@ -18,9 +18,9 @@ typedef Kernel::Point_3 Point_3;
 
 struct Polygon_soup {
   typedef std::vector<Point_3> Points;
-  typedef std::vector<CGAL::Integer32> Polygon_3;
-  typedef std::map<std::pair<int, int>, std::set<int> > Edges_map;
-  typedef boost::array<CGAL::Integer32, 2> Edge;
+  typedef std::vector<std::size_t> Polygon_3;
+  typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
+  typedef boost::array<std::size_t, 2> Edge;
   typedef std::vector<Polygon_3> Polygons;
   typedef std::vector<Edge> Edges;
   typedef Polygons::size_type size_type;
@@ -54,8 +54,8 @@ struct Polygon_soup {
     {
       const size_type size = polygons[i].size();
       for(size_type j = 0; j < size; ++j) {
-        const int& i0 = polygons[i][j];
-        const int& i1 = polygons[i][ j+1 < size ? j+1: 0];
+        const std::size_t& i0 = polygons[i][j];
+        const std::size_t& i1 = polygons[i][ j+1 < size ? j+1: 0];
         edges[std::make_pair(i0, i1)].insert(i);
 //         qDebug() << tr("edges[std::make_pair(%1, %2)].insert(%3). Size=%4")
 //           .arg(i0).arg(i1).arg(i).arg(edges[std::make_pair(i0, i1)].size());
@@ -68,8 +68,8 @@ struct Polygon_soup {
     {
       const size_type size = polygons[i].size();
       for(size_type j = 0; j < size; ++j) {
-        const int& i0 = polygons[i][j];
-        const int& i1 = polygons[i][ j+1 < size ? j+1: 0];
+        const std::size_t& i0 = polygons[i][j];
+        const std::size_t& i1 = polygons[i][ j+1 < size ? j+1: 0];
         if( (i0 < i1) && 
             (edges[std::make_pair(i0, i1)].size() +
              edges[std::make_pair(i1, i0)].size() > 2) )
@@ -83,7 +83,7 @@ struct Polygon_soup {
     }
   }
 
-  void inverse_orientation(const int index) {
+  void inverse_orientation(const std::size_t index) {
     std::reverse(polygons[index].begin(), polygons[index].end());
   }
 };
@@ -117,7 +117,7 @@ Scene_polygon_soup::load(std::istream& in)
   soup->clear();
   soup->points.resize(scanner.size_of_vertices());
   soup->polygons.resize(scanner.size_of_facets());
-  for (int i = 0; i < scanner.size_of_vertices(); ++i) {
+  for (std::size_t i = 0; i < scanner.size_of_vertices(); ++i) {
     double x, y, z, w;
     scanner.scan_vertex( x, y, z, w);
     soup->points[i] = Point_3(x, y, z, w);
@@ -126,12 +126,12 @@ Scene_polygon_soup::load(std::istream& in)
   if(!in)
     return false;
 
-  for (int i = 0; i < scanner.size_of_facets(); ++i) {
-    CGAL::Integer32 no;
+  for (std::size_t i = 0; i < scanner.size_of_facets(); ++i) {
+    std::size_t no;
     scanner.scan_facet( no, i);
     soup->polygons[i].resize(no);
-    for(int j = 0; j < no; ++j) {
-      CGAL::Integer32 id;
+    for(std::size_t j = 0; j < no; ++j) {
+      std::size_t id;
       scanner.scan_facet_vertex_index(id, i);
       if(id>=0 && 
          id < scanner.size_of_vertices())
@@ -194,7 +194,7 @@ Scene_polygon_soup::orient()
   Polygon_soup::Edges_map& edges = soup->edges;
 
   std::vector<bool> oriented;
-  std::stack<int> stack;
+  std::stack<std::size_t> stack;
   using std::make_pair;
 
   // no polygon is oriented
@@ -222,8 +222,8 @@ Scene_polygon_soup::orient()
       for(size_type ih = 0 ; ih < size ; ++ih) {
         size_type ihp1 = ih+1;
         if(ihp1>=size) ihp1 = 0;
-        const int& i1 = polygons[to_be_oriented_index][ih];
-        const int& i2 = polygons[to_be_oriented_index][ihp1];
+        const std::size_t& i1 = polygons[to_be_oriented_index][ih];
+        const std::size_t& i2 = polygons[to_be_oriented_index][ihp1];
 
 //         qDebug() << tr("edge %3-%4 (%1,%2)").arg(i1).arg(i2).arg(ih).arg(ihp1);
         // edge (i1,i2)
@@ -253,16 +253,16 @@ Scene_polygon_soup::orient()
             // reverse the orientation
             const size_type size = polygons[index].size();
             for(size_type j = 0; j < size; ++j) {
-              const int& i0 = polygons[index][j];
-              const int& i1 = polygons[index][ j+1 < size ? j+1: 0];
+              const std::size_t& i0 = polygons[index][j];
+              const std::size_t& i1 = polygons[index][ j+1 < size ? j+1: 0];
               CGAL_assertion_code(const bool r = )
                 edges[std::make_pair(i0, i1)].erase(index);
               CGAL_assertion(r);
             }
             soup->inverse_orientation(index);
             for(size_type j = 0; j < size; ++j) {
-              const int& i0 = polygons[index][j];
-              const int& i1 = polygons[index][ j+1 < size ? j+1: 0];
+              const std::size_t& i0 = polygons[index][j];
+              const std::size_t& i1 = polygons[index][ j+1 < size ? j+1: 0];
               edges[std::make_pair(i0, i1)].insert(index);
             }
 //             qDebug() << tr("inverse the orientation of polygon #%1\n").arg(index);
