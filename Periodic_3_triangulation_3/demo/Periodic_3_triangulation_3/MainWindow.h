@@ -31,10 +31,6 @@ public:
     // File menu:
     connect(ui->actionLoad_Points, SIGNAL(triggered()),
 	    s, SLOT(load_points()));
-    connect(ui->actionExport_pov, SIGNAL(triggered()),
-            s, SLOT(export_pov()));
-    connect(ui->actionExport_pov_2, SIGNAL(triggered()),
-            s, SLOT(export_pov()));
 
     // Init menu:
     connect(ui->actionEmpty_scene, SIGNAL(triggered()),
@@ -112,11 +108,12 @@ public:
 
 public slots:
   void help() {
-    QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath);
+    QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath)
+      + QDir::separator();
 #if !defined(Q_OS_MAC)
     app += QString("assistant");
 #else
-    app += QString("/Assistant.app/Contents/MacOS/Assistant");
+    app += QString("Assistant.app/Contents/MacOS/Assistant");
 #endif
 
     QStringList args;
@@ -128,10 +125,9 @@ public slots:
       return;
     }
 
-    QTextStream str(process);
-    QString help_file;
-    help_file = QString("setSource gthelp://org.CGAL.demos.Periodic_3_triangulation_3/doc/index.html") + '\0';
-    str << help_file;
+    QString help_url = QString("qthelp://org.CGAL.demos.Periodic_3_triangulation_3/doc/index.html");
+    help_url = QString("setSource ") + help_url + '\0';
+    process->write(help_url.toLocal8Bit());
   }
 
   void about() {
