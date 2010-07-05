@@ -26,6 +26,25 @@
             <file>introduction.html</file>
             <file>menu.html</file>
             <file>images/mainwindow.png</file>
+	    <file>../icons/fileOpen.png</file>
+	    <file>../icons/init0.png</file>
+	    <file>../icons/init1.png</file>
+	    <file>../icons/initRand.png</file>
+	    <file>../icons/initRandPlanar.png</file>
+	    <file>../icons/initGrid.png</file>
+	    <file>../icons/ball.png</file>
+	    <file>../icons/pause.png</file>
+	    <file>../icons/inputPointBall.png</file>
+	    <file>../icons/inputPointRandom.png</file>
+	    <file>../icons/camera.png</file>
+	    <file>../icons/locate.png</file>
+	    <file>../icons/conflict.png</file>
+	    <file>../icons/wireframe.png</file>
+	    <file>../icons/planar.png</file>
+	    <file>../icons/cover1.png</file>
+	    <file>../icons/multiple.png</file>
+	    <file>../icons/clipping.png</file>
+	    <file>../icons/twoColorClipping.png</file>
             </files>
         </filterSection>
     </QtHelpProject>
