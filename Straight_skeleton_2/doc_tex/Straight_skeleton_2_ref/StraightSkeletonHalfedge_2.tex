@@ -54,13 +54,13 @@ It is the links to other halfedges what determines if this is a contour edge, a 
 \ccMethod{bool is_inner_bisector() const;}{Returns \ccc{true} iff this is a bisector and is inner (i.e. is not incident upon a contour vertex).}
 \ccGlue
 \ccMethod{Sign slope() const;}{Returns a sign indicating the {\em time direction} of the bisector. The time direction is the sign of the 
-difference of times between the target and source vertices.} 
+difference of times between the target and source vertices of the bisector halfedge.} 
 \ccGlue
-\ccMethod{bool has_positive_slope() const;}{Returns \ccc{slope() == POSITIVE$}.}
+\ccMethod{bool has_positive_slope() const;}{Returns \ccc{slope() == POSITIVE}.}
 \ccGlue
-\ccMethod{bool has_negative_slope() const;}{Returns \ccc{slope() == NEGATIVE$}.}
+\ccMethod{bool has_negative_slope() const;}{Returns \ccc{slope() == NEGATIVE}.}
 \ccGlue
-\ccMethod{bool has_zero_slope    () const;}{Returns \ccc{slope() == ZERO$}.}
+\ccMethod{bool has_zero_slope    () const;}{Returns \ccc{slope() == ZERO}.}
  
 %% has_infinite_time and has_null_segment is left undocumented since that is conceptually not very sound. It should be "is_unbounded" and it should give the same answer
 %% for any of the halfedges in the opposing pair.

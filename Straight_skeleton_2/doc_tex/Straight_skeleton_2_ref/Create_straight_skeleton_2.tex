@@ -1,0 +1,160 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefFunction}{create_straight_skeleton_2}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The function \ccRefName\ creates a straight skeleton in the interior of a 2D polygon with holes.
+
+\ccInclude{CGAL/create_straight_skeleton_2.h}
+
+\ccFunction
+{template<class PointIterator, class WeightIterator, class HoleIterator, class WeightSequenceIterator, class NT, class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+create_straight_skeleton_2 ( PointIterator              outer_contour_vertices_begin
+                           , PointIterator              outer_contour_vertices_end
+                           , WeightIterator             outer_contour_weights_begin
+                           , WeightIterator             outer_contour_weights_end
+                           , HoleIterator               holes_begin
+                           , HoleIterator               holes_end
+                           , WeightSequenceIterator     holes_weights_begin
+                           , WeightSequenceIterator     holes_weights_end
+                           , boost::optional<NT> const& max_time = boost::optional<NT>()  
+                           , K const&                   k        = Exact_predicates_inexact_constructions_kernel          
+                          ) ;
+}
+{returns a new \ccc{Straight_skeleton_2<K>} for the 2D polygon with holes whose outer boundary is given by the point sequence \ccc{[outer_contour_vertices_begin,outer_contour_vertices_end]}
+and its holes given by \ccc{[holes_begin,holes_end]}. The weights for the outer boundary is given by the sequence \ccc{[outer_contour_weights_begin,outer_contour_weights_end]},
+and the weights for the holes are given by the sequence \ccc{holes_weights_begin,holes_weights_end}. \ccc{max_time} indicates the maximum time for the farthest straight skeleton node.
+}
+
+\ccFunction
+{template<class PointIterator, class HoleIterator, class NT, class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+create_straight_skeleton_2 ( PointIterator              outer_contour_vertices_begin
+                           , PointIterator              outer_contour_vertices_end
+                           , HoleIterator               holes_begin
+                           , HoleIterator               holes_end
+                           , NT                         weight
+                           , boost::optional<NT> const& max_time = boost::optional<NT>()  
+                           , K const&                   k        = Exact_predicates_inexact_constructions_kernel          
+                          ) ;
+}
+{returns a new \ccc{Straight_skeleton_2<K>} for the 2D polygon with holes whose outer boundary is given by the point sequence \ccc{[outer_contour_vertices_begin,outer_contour_vertices_end]}
+and its holes given by \ccc{[holes_begin,holes_end]}. The weight for all edges is given by \ccc{weight}. \ccc{max_time} indicates the maximum time for the farthest straight skeleton node.
+}
+
+\ccFunction
+{template<class PointIterator, class WeightIterator, class NT, class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+create_straight_skeleton_2 ( PointIterator              outer_contour_vertices_begin
+                           , PointIterator              outer_contour_vertices_end
+                           , WeightIterator             outer_contour_weights_begin
+                           , WeightIterator             outer_contour_weights_end
+                           , boost::optional<NT> const& max_time = boost::optional<NT>()  
+                           , K const&                   k        = Exact_predicates_inexact_constructions_kernel          
+                          ) ;
+}
+{returns a new \ccc{Straight_skeleton_2<K>} for the 2D polygon whose outer boundary is given by the point sequence \ccc{[outer_contour_vertices_begin,outer_contour_vertices_end]}.
+The weights for the outer boundary is given by the sequence \ccc{[outer_contour_weights_begin,outer_contour_weights_end]}.
+\ccc{max_time} indicates the maximum time for the farthest straight skeleton node.
+}
+
+\ccFunction
+{template<class PointIterator, class NT, class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+create_straight_skeleton_2 ( PointIterator              outer_contour_vertices_begin
+                           , PointIterator              outer_contour_vertices_end
+                           , NT                         weight
+                           , boost::optional<NT> const& max_time = boost::optional<NT>()  
+                           , K const&                   k        = Exact_predicates_inexact_constructions_kernel          
+                          ) ;
+}
+{returns a new \ccc{Straight_skeleton_2<K>} for the 2D polygon whose outer boundary is given by the point sequence \ccc{[outer_contour_vertices_begin,outer_contour_vertices_end]}.
+The weight for all edges is given by \ccc{weight}. \ccc{max_time} indicates the maximum time for the farthest straight skeleton node.
+}
+
+\ccFunction
+{template<class PointIterator, class HoleIterator, class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin
+                                    , PointIterator outer_contour_vertices_end
+                                    , HoleIterator  holes_begin
+                                    , HoleIterator  holes_end
+                                    , K const&      k = Exact_predicates_inexact_constructions_kernel
+                                    ) ;
+}
+{returns a new \ccc{Straight_skeleton_2<K>} in the interior of the 2D polygon with holes whose outer boundary is given by the point sequence \ccc{[outer_contour_vertices_begin,outer_contour_vertices_end]}
+and its holes given by \ccc{[holes_begin,holes_end]}.
+}
+
+\ccFunction
+{template<class PointIterator, class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin
+                                    , PointIterator outer_contour_vertices_end
+                                    , K const&      k = Exact_predicates_inexact_constructions_kernel
+                                    ) ;
+}
+{returns a new \ccc{Straight_skeleton_2<K>} in the interior of the 2D polygon whose outer boundary is given by the point sequence \ccc{[outer_contour_vertices_begin,outer_contour_vertices_end]}.
+}
+
+\ccFunction
+{template<class Polygon, class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+create_interior_straight_skeleton_2 ( Polygon const& outer_contour
+                                    , K const&       k = Exact_predicates_inexact_constructions_kernel
+                                    ) ;
+}
+{returns a new \ccc{Straight_skeleton_2<K>} in the interior of the 2D polygon \ccc{outer_contour}.}
+
+
+\begin{enumerate}  
+   \item    \ccc{K} is any CGAL kernel.
+   \item    \ccc{PointIterator::value_type} is equivalent to \ccc{K::Point_2}.
+   \item    \ccc{HoleIterator::value_type} and \ccc{Polygon} are \ccc{Polygon_2<K>}
+            or a standard container of \ccc{K::Point_2} elements 
+\end{enumerate}
+
+\ccInclude{CGAL/create_straight_skeleton_from_polygon_with_holes_2.h}
+
+\ccFunction
+{template<class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+create_interior_straight_skeleton_2 ( Polygon_with_holes<K> poly_with_holes
+                                    , K const&  k = Exact_predicates_inexact_constructions_kernel
+                                    ) ;
+}
+{returns a new \ccc{Straight_skeleton_2<K>} in the interior of the 2D polygon with holes \ccc{poly_with_holes}.}
+
+
+\ccSeeAlso
+\ccc{create_exterior_straight_skeleton_2}\\
+\ccc{Straight_skeleton_builder_2<Gt,Ss>} \\
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
