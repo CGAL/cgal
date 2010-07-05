@@ -117,7 +117,7 @@ Scene_polygon_soup::load(std::istream& in)
   soup->clear();
   soup->points.resize(scanner.size_of_vertices());
   soup->polygons.resize(scanner.size_of_facets());
-  for (int i = 0; i < scanner.size_of_vertices(); ++i) {
+  for (std::size_t i = 0; i < scanner.size_of_vertices(); ++i) {
     double x, y, z, w;
     scanner.scan_vertex( x, y, z, w);
     soup->points[i] = Point_3(x, y, z, w);
@@ -126,11 +126,11 @@ Scene_polygon_soup::load(std::istream& in)
   if(!in)
     return false;
 
-  for (int i = 0; i < scanner.size_of_facets(); ++i) {
+  for (std::size_t i = 0; i < scanner.size_of_facets(); ++i) {
     std::size_t no;
     scanner.scan_facet( no, i);
     soup->polygons[i].resize(no);
-    for(int j = 0; j < no; ++j) {
+    for(std::size_t j = 0; j < no; ++j) {
       std::size_t id;
       scanner.scan_facet_vertex_index(id, i);
       if(id>=0 && 
