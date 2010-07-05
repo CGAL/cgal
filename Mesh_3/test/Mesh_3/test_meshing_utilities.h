@@ -37,6 +37,9 @@
 #include <fstream>
 #include <iostream>
 
+#include <climits>
+#define STD_SIZE_T_MAX UINT_MAX
+
 
 template <typename K>
 struct Tester
@@ -46,11 +49,11 @@ struct Tester
               const Domain& domain,
               const Criteria& criteria,
               const std::size_t min_vertices_expected = 0,
-              const std::size_t max_vertices_expected = -1,
+              const std::size_t max_vertices_expected = STD_SIZE_T_MAX,
               const std::size_t min_facets_expected = 0,
-              const std::size_t max_facets_expected = -1,
+              const std::size_t max_facets_expected = STD_SIZE_T_MAX,
               const std::size_t min_cells_expected = 0,
-              const std::size_t max_cells_expected = -1 ) const
+              const std::size_t max_cells_expected = STD_SIZE_T_MAX ) const
   {
     typedef typename C3t3::size_type size_type;
     typedef typename C3t3::Triangulation::Geom_traits Gt;
@@ -138,11 +141,11 @@ struct Tester
   template<typename C3t3>
   void verify_c3t3(const C3t3& c3t3,
                    const std::size_t min_vertices_expected = 0,
-                   const std::size_t max_vertices_expected = -1,
+                   const std::size_t max_vertices_expected = STD_SIZE_T_MAX,
                    const std::size_t min_facets_expected = 0,
-                   const std::size_t max_facets_expected = -1,
+                   const std::size_t max_facets_expected = STD_SIZE_T_MAX,
                    const std::size_t min_cells_expected = 0,
-                   const std::size_t max_cells_expected = -1 ) const
+                   const std::size_t max_cells_expected = STD_SIZE_T_MAX ) const
   {
     //-------------------------------------------------------
     // Verifications
