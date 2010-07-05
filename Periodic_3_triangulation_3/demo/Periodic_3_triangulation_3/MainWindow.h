@@ -4,7 +4,8 @@
 #include <QTimer>
 #include "Scene.h"
 
-#include <QtAssistant/QAssistantClient>
+#include <QProcess>
+#include <QTextStream>
 
 class MainWindow : public QMainWindow
 {
@@ -17,13 +18,7 @@ public:
     ui->setupUi(this);
     s = new Scene(ui);
 
-    QString loc = QLibraryInfo::location(QLibraryInfo::BinariesPath);
-    assistantClient = new QAssistantClient(loc, this);
-    QStringList arguments;
-    arguments << "-profile"
-	      << QCoreApplication::applicationDirPath() + QDir::separator()
-      + QString("documentation/Periodic_3_triangulation_3.adp");
-    assistantClient->setArguments(arguments);
+    process = new QProcess(this);
 
     // QGLViewer drawing signals
     connect(ui->viewer, SIGNAL(viewerInitialized()), s, SLOT(init()));
@@ -36,6 +31,10 @@ public:
     // File menu:
     connect(ui->actionLoad_Points, SIGNAL(triggered()),
 	    s, SLOT(load_points()));
+    connect(ui->actionExport_pov, SIGNAL(triggered()),
+            s, SLOT(export_pov()));
+    connect(ui->actionExport_pov_2, SIGNAL(triggered()),
+            s, SLOT(export_pov()));
 
     // Init menu:
     connect(ui->actionEmpty_scene, SIGNAL(triggered()),
@@ -102,22 +101,39 @@ public:
             this, SLOT(about_CGAL()));
     connect(ui->actionAbout, SIGNAL(triggered()),
             this, SLOT(about()));
-
   }
 
   ~MainWindow() {
     delete(ui);
     delete(s);
-    delete(assistantClient);
+    process->close();
+    delete(process);
   }
 
 public slots:
   void help() {
-    QString loc = QCoreApplication::applicationDirPath() + QDir::separator()
-      + QString("documentation/index.html");
-    assistantClient->showPage(loc);
+    QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath);
+#if !defined(Q_OS_MAC)
+    app += QString("assistant");
+#else
+    app += QString("/Assistant.app/Contents/MacOS/Assistant");
+#endif
+
+    QStringList args;
+    args << QString("-enableRemoteControl");
+    process->start(app, args);
+    if (!process->waitForStarted()) {
+      QMessageBox::critical(this, tr("Remote Control"),
+	  tr("Could not start Qt Assistant from %1.").arg(app));
+      return;
+    }
+
+    QTextStream str(process);
+    QString help_file;
+    help_file = QString("setSource gthelp://org.CGAL.demos.Periodic_3_triangulation_3/doc/index.html") + '\0';
+    str << help_file;
   }
-  
+
   void about() {
     showFileBox("About the demo...","resources/about.html");
   }
@@ -144,6 +160,6 @@ public:
   QTimer* timer;
 
 private:
-  QAssistantClient *assistantClient;
+  QProcess* process;
 };
 

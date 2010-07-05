@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+    <namespace>org.CGAL.demos.Periodic_3_triangulation_3</namespace>
+    <virtualFolder>doc</virtualFolder>
+    <filterSection>
+        <toc>
+	  <section title="CGAL Periodic Delaunay Triangulation Demo"
+		   ref="./index.html">
+	    <section title="Introduction" ref="./introduction.html"></section>
+	    <section title="Menu" ref="./menu.html">
+	      <section title = "File Menu"
+		       ref="./menu.html#File"></section>
+	      <section title = "Initialization Menu"
+		       ref="./menu.html#Initialization"></section>
+	      <section title = "Actions Menu"
+		       ref="./menu.html#Actions"></section>
+	      <section title = "Features Menu"
+		       ref="./menu.html#Features"></section>
+	      <section title = "Options Menu"
+		       ref="./menu.html#Options"></section>
+	    </section>
+	  </section>
+	</toc>
+        <files>
+            <file>index.html</file>
+            <file>introduction.html</file>
+            <file>menu.html</file>
+            <file>images/mainwindow.png</file>
+            </files>
+        </filterSection>
+    </QtHelpProject>
