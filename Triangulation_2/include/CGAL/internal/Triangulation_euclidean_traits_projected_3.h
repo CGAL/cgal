@@ -43,6 +43,9 @@ struct Projector<R,0>
   typedef typename R::Less_z_3                Less_y_2;
   typedef typename R::Compare_y_3             Compare_x_2;
   typedef typename R::Compare_z_3             Compare_y_2;
+  typedef typename R::Equal_y_3               Equal_x_2;
+  typedef typename R::Equal_z_3               Equal_y_2;  
+  
   static typename R::FT x(const typename R::Point_3& p) {return p.y();}
   static typename R::FT y(const typename R::Point_3& p) {return p.z();}
   static const int x_index=1;
@@ -56,6 +59,8 @@ struct Projector<R,1>
   typedef typename R::Less_z_3                Less_y_2;
   typedef typename R::Compare_x_3             Compare_x_2;
   typedef typename R::Compare_z_3             Compare_y_2;  
+  typedef typename R::Equal_x_3               Equal_x_2;
+  typedef typename R::Equal_z_3               Equal_y_2;    
   static typename R::FT x(const typename R::Point_3& p) {return p.x();}
   static typename R::FT y(const typename R::Point_3& p) {return p.z();}
   static const int x_index=0;
@@ -69,6 +74,8 @@ struct Projector<R,2>
   typedef typename R::Less_y_3                Less_y_2;
   typedef typename R::Compare_x_3             Compare_x_2;
   typedef typename R::Compare_y_3             Compare_y_2;  
+  typedef typename R::Equal_x_3               Equal_x_2;
+  typedef typename R::Equal_y_3               Equal_y_2;    
   static typename R::FT x(const typename R::Point_3& p) {return p.x();}
   static typename R::FT y(const typename R::Point_3& p) {return p.y();}
   static const int x_index=0;
@@ -219,6 +226,63 @@ public:
   }
 };
 
+template <class R, int dim>
+class Circumcenter_center_projected
+{
+  typedef typename R::Point_3   Point_3; 
+  typedef typename R::Point_2   Point_2;
+
+  typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+  
+  Point_2 project(const Point_3& p) const
+  {
+    return Point_2(x(p),y(p));
+  }
+  
+  Point_3 embed (const Point_2& p) const 
+  {
+    typename R::FT coords[3];
+    coords[Projector<R,dim>::x_index]=p.x();
+    coords[Projector<R,dim>::y_index]=p.y();
+    coords[dim]=typename R::FT(0);
+    return Point_3(coords[0],coords[1],coords[2]);
+  }
+  
+public:
+  Point_3 operator() (const Point_3& p1,const Point_3& p2) const
+  {
+    return embed( circumcenter(project(p1),project(p2)) );
+  }
+
+  Point_3 operator() (const Point_3& p1,const Point_3& p2,const Point_3& p3) const
+  {
+    return embed( circumcenter(project(p1),project(p2),project(p3)) );
+  }
+};
+
+template <class R, int dim>
+class Compute_area_projected
+{
+  typedef typename R::Point_3   Point_3; 
+  typedef typename R::Point_2   Point_2;
+
+  typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+  
+  Point_2 project(const Point_3& p) const
+  {
+    return Point_2(x(p),y(p));
+  }
+
+  
+public:
+  typename R::FT operator() (const Point_3& p1,const Point_3& p2,const Point_3& p3) const
+  {
+    return R().compute_area_2_object() ( project(p1),project(p2),project(p3) );
+  }
+};
+
 template < class R, int dim >
 class Triangulation_euclidean_traits_projected_3 {
 public:
@@ -242,6 +306,14 @@ public:
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
+
+  //for natural_neighbor_coordinates_2
+  typedef typename Projector<R,dim>::Equal_x_2                Equal_x_2;
+  typedef Circumcenter_center_projected<Rp,dim>               Construct_circumcenter_2;
+  typedef Compute_area_projected<Rp,dim>                      Compute_area_2;
+  Construct_circumcenter_2 construct_circumcenter_2_object () const {return Construct_circumcenter_2();}
+  Compute_area_2 compute_area_2_object () const {return Compute_area_2();}  
+  
 
   // for compatibility with previous versions
   typedef Point_2      Point;

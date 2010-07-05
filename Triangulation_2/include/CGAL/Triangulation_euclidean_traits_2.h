@@ -58,6 +58,12 @@ public:
   typedef typename R::Construct_direction_2      Construct_direction_2;
   typedef typename R::Construct_ray_2            Construct_ray_2;
   
+  //for natural_neighbor_coordinates_2
+  typedef typename R::FT                         FT;
+  typedef typename R::Equal_x_2                  Equal_x_2;
+  typedef typename R::Compute_area_2             Compute_area_2;
+  Compute_area_2 compute_area_2_object () const {return Compute_area_2();}
+  
   // for compatibility with previous versions
   typedef Point_2      Point;
   typedef Segment_2    Segment;
