@@ -153,7 +153,7 @@ public:
     void bench_distances_vs_nbt();
     void bench_intersections_vs_nbt();
     void benchmark_intersections(const double duration);
-    unsigned int nb_digits(const unsigned int value);
+    std::size_t nb_digits(const std::size_t value);
 
     template <class Query>
     void bench_intersection(Facet_tree& tree,const int function,const double duration,

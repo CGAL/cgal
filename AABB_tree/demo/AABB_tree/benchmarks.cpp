@@ -86,9 +86,9 @@ void Scene::benchmark_distances(const double duration)
     bench_closest_point_and_primitive(tree,duration);
 }
 
-unsigned int Scene::nb_digits(unsigned int value)
+std::size_t Scene::nb_digits(std::size_t value)
 {
-    unsigned int nb_digits = 0;
+    std::size_t nb_digits = 0;
     while(value > 0)
     {
         nb_digits++;
@@ -114,17 +114,18 @@ void Scene::bench_memory()
     {
         // refines mesh at increasing speed
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
-        unsigned int digits = nb_digits(m_pPolyhedron->size_of_facets());
-        unsigned int nb_splits = (unsigned int)(0.2 * std::pow(10.0,(double)digits - 1.0));
+        std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
+        std::size_t nb_splits = (std::size_t)(0.2 * std::pow(10.0,(double)digits - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree and measure memory before then after
-        long before = CGAL::Memory_sizer().virtual_size();
+        typedef CGAL::Memory_sizer::size_type size_type;
+        size_type before = CGAL::Memory_sizer().virtual_size();
         Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
         // tree.accelerate_distance_queries(); // 150 vs 61 bytes per primitive!
 
-        long after = CGAL::Memory_sizer().virtual_size();
-        long bytes = after - before; // in Bytes
+        size_type after = CGAL::Memory_sizer().virtual_size();
+        size_type bytes = after - before; // in Bytes
         double mbytes = (double)bytes / (double)1048576; //  in MBytes
         double bpp = (double)bytes / (double)m_pPolyhedron->size_of_facets();
         std::cout << m_pPolyhedron->size_of_facets() << ", "
@@ -149,8 +150,8 @@ void Scene::bench_construction()
     {
         // refines mesh at increasing speed
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
-        unsigned int digits = nb_digits(m_pPolyhedron->size_of_facets());
-        unsigned int nb_splits = (unsigned int)(0.2 * std::pow(10.0,(double)digits - 1.0));
+        std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
+        std::size_t nb_splits = (std::size_t)(0.2 * std::pow(10.0,(double)digits - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree
@@ -194,8 +195,8 @@ void Scene::bench_intersections_vs_nbt()
     {
         // refines mesh at increasing speed
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
-        unsigned int digits = nb_digits(m_pPolyhedron->size_of_facets());
-        unsigned int nb_splits = (unsigned int)(0.2 * std::pow(10.0,(double)digits - 1.0));
+        std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
+        std::size_t nb_splits = (std::size_t)(0.2 * std::pow(10.0,(double)digits - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree (out of timing)
@@ -237,8 +238,8 @@ void Scene::bench_distances_vs_nbt()
     {
         // refines mesh at increasing speed
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
-        unsigned int digits = nb_digits(m_pPolyhedron->size_of_facets());
-        unsigned int nb_splits = (unsigned int)(0.2 * std::pow(10.0,(double)digits - 1.0));
+        std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
+        std::size_t nb_splits = (std::size_t)(0.2 * std::pow(10.0,(double)digits - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree (out of timing)

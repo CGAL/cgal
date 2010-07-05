@@ -726,6 +726,7 @@ void Scene::compute_distance_function(const Tree& tree)
 template <typename Tree>
 void Scene::sign_distance_function(const Tree& tree)
 {
+    typedef typename Tree::size_type size_type;
     Vector random_vec = random_vector();
     
     for(int i=0 ; i<m_grid_size ; ++i)
@@ -737,7 +738,7 @@ void Scene::sign_distance_function(const Tree& tree)
             
             // get sign through ray casting (random vector)
             Ray ray(p, random_vec);
-            unsigned int nbi = tree.number_of_intersected_primitives(ray);
+            size_type nbi = tree.number_of_intersected_primitives(ray);
             
             FT sign ( (nbi&1) == 0 ? 1 : -1);
             m_distance_function[i][j].second = sign * unsigned_distance;
