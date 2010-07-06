@@ -36,6 +36,7 @@
 #include <QApplication>
 #include <QMenu>
 #include <QList>
+#include <QLibrary>
 
 class Io_implicit_function_plugin :
   public QObject,
