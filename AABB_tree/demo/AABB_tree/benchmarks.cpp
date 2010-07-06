@@ -115,7 +115,8 @@ void Scene::bench_memory()
         // refines mesh at increasing speed
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
         std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
-        std::size_t nb_splits = (std::size_t)(0.2 * std::pow(10.0,(double)digits - 1.0));
+        unsigned int nb_splits =
+          static_cast<unsigned int>(0.2 * std::pow(10.0,(double)digits - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree and measure memory before then after
@@ -151,7 +152,8 @@ void Scene::bench_construction()
         // refines mesh at increasing speed
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
         std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
-        std::size_t nb_splits = (std::size_t)(0.2 * std::pow(10.0,(double)digits - 1.0));
+        unsigned int nb_splits =
+          static_cast<unsigned int>(0.2 * std::pow(10.0,(double)digits - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree
@@ -196,7 +198,8 @@ void Scene::bench_intersections_vs_nbt()
         // refines mesh at increasing speed
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
         std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
-        std::size_t nb_splits = (std::size_t)(0.2 * std::pow(10.0,(double)digits - 1.0));
+        unsigned int nb_splits =
+          static_cast<unsigned int>(0.2 * std::pow(10.0,(double)digits - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree (out of timing)
@@ -239,7 +242,8 @@ void Scene::bench_distances_vs_nbt()
         // refines mesh at increasing speed
         Refiner<Kernel,Polyhedron> refiner(m_pPolyhedron);
         std::size_t digits = nb_digits(m_pPolyhedron->size_of_facets());
-        std::size_t nb_splits = (std::size_t)(0.2 * std::pow(10.0,(double)digits - 1.0));
+        unsigned int nb_splits =
+          static_cast<unsigned int>(0.2 * std::pow(10.0,(double)digits - 1.0));
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree (out of timing)
