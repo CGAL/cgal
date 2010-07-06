@@ -133,8 +133,7 @@ Scene_polygon_soup::load(std::istream& in)
     for(std::size_t j = 0; j < no; ++j) {
       std::size_t id;
       scanner.scan_facet_vertex_index(id, i);
-      if(id>=0 && 
-         id < scanner.size_of_vertices())
+      if(id < scanner.size_of_vertices())
       {
         soup->polygons[i][j] = id;
       }

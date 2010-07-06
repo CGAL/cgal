@@ -14,7 +14,7 @@ public:
   virtual QStringList nameFilters() const;
   
   virtual bool canLoad() const { return false; }
-  virtual Scene_item* load(QFileInfo fileinfo) { return NULL; }
+  virtual Scene_item* load(QFileInfo) { return NULL; }
 
   virtual bool canSave(const Scene_item*);
   virtual bool save(const Scene_item*, QFileInfo fileinfo);
@@ -29,7 +29,7 @@ Io_c3t3_plugin::nameFilters() const
 
 
 bool
-Io_c3t3_plugin::canSave(const Scene_item* item)
+Io_c3t3_plugin::canSave(const Scene_item*)
 {
   return true;
 }

@@ -23,7 +23,7 @@ public:
 
 QStringList Io_off_plugin::nameFilters() const {
   return QStringList() << "OFF files (*.off)";
-};
+}
 
 bool Io_off_plugin::canLoad() const {
   return true;

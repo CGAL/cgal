@@ -32,7 +32,7 @@ class Tanglecube_implicit_function :
   public Implicit_function_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Implicit_function_interface);
+  Q_INTERFACES(Implicit_function_interface)
   
 public:
   virtual QString name() const { return "Tanglecube function"; }
@@ -54,5 +54,5 @@ public:
 
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Tanglecube_implicit_function, Tanglecube_implicit_function);
+Q_EXPORT_PLUGIN2(Tanglecube_implicit_function, Tanglecube_implicit_function)
 #include "Tanglecube_implicit_function.moc"

@@ -32,7 +32,7 @@ class Sphere_implicit_function :
   public Implicit_function_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Implicit_function_interface);
+  Q_INTERFACES(Implicit_function_interface)
   
 public:
   virtual QString name() const { return "Sphere function"; }
@@ -52,5 +52,5 @@ public:
 
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Sphere_implicit_function, Sphere_implicit_function);
+Q_EXPORT_PLUGIN2(Sphere_implicit_function, Sphere_implicit_function)
 #include "Sphere_implicit_function.moc"

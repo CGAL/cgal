@@ -49,6 +49,7 @@ public:
   Io_implicit_function_plugin();
   virtual ~Io_implicit_function_plugin() {}
   
+  using Plugin_helper::init;
   virtual void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
   
   QList<QAction*> actions() const

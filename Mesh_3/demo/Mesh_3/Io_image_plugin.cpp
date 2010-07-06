@@ -26,14 +26,14 @@ public:
   Scene_item* load(QFileInfo fileinfo);
 
   bool canSave(const Scene_item*);
-  bool save(const Scene_item*, QFileInfo fileinfo) { return false; }
+  bool save(const Scene_item*, QFileInfo) { return false; }
 };
 
 QStringList Io_image_plugin::nameFilters() const {
   return QStringList() << "Inrimage files (*.inr *.inr.gz)"
                        << "Analyze files (*.hdr *.img *img.gz)"
                        << "All files (*.*)";
-};
+}
 
 bool Io_image_plugin::canLoad() const {
   return true;
@@ -55,7 +55,7 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   return image_item;
 }
 
-bool Io_image_plugin::canSave(const Scene_item* item)
+bool Io_image_plugin::canSave(const Scene_item*)
 {
   return false;
 }

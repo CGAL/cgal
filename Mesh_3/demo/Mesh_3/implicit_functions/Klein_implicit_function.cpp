@@ -29,7 +29,7 @@ class Klein_implicit_function :
   public Implicit_function_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Implicit_function_interface);
+  Q_INTERFACES(Implicit_function_interface)
   
 public:
   virtual QString name() const { return "Klein function"; }
@@ -50,5 +50,5 @@ public:
 };
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Klein_implicit_function, Klein_implicit_function);
+Q_EXPORT_PLUGIN2(Klein_implicit_function, Klein_implicit_function)
 #include "Klein_implicit_function.moc"
