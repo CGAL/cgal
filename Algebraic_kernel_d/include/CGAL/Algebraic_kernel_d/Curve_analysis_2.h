@@ -141,7 +141,7 @@ template<typename Comparable> struct Compare_for_vert_line_map
 // \brief Representation class for algebraic curves.
 template< typename AlgebraicKernelWithAnalysis_2>
 class Curve_analysis_2_rep {
-    
+
 public:
     //! this instance's template parameter
     typedef AlgebraicKernelWithAnalysis_2 Algebraic_kernel_with_analysis_2;

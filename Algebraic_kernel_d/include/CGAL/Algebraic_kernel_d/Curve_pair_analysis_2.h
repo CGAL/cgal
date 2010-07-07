@@ -115,7 +115,8 @@ struct Event_indices {
 
 // Representation class for curve pairs
 template < class AlgebraicKernelWithAnalysis_2 >
-struct Curve_pair_analysis_2_rep {
+class Curve_pair_analysis_2_rep {
+public:
 
     //! \name public typedefs
     //! @{
