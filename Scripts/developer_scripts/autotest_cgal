@@ -528,6 +528,12 @@ cmake '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
 ${MAKE_CMD} VERBOSE=ON -k -fMakefile  ;
 cd ..;
 EOF
+        if [ -z "${KEEP_TESTS}" ]; then
+          cat >> "${CGAL_BINARY_DIR}/localbuildscript" <<EOF
+echo 'REMOVING COMPILATION TREE';
+rm -rf '${CGAL_BINARY_DIR}/src'
+EOF
+        fi
         chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript"
         if [ -n "${SHOW_PROGRESS}" ]; then
           remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" | tee "${ACTUAL_LOGFILE}.build.${PLATFORM}" 2>&1
