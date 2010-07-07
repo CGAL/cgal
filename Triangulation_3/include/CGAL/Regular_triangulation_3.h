@@ -802,7 +802,7 @@ dual(Cell_handle c, int i) const
     in = i;
   }
   // n now denotes a finite cell, either c or c->neighbor(i)
-  unsigned char ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
+  int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
   if ( (in&1) == 1 )
       std::swap(ind[0], ind[1]);
   const Weighted_point& p = n->vertex(ind[0])->point();
