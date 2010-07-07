@@ -28,8 +28,9 @@
 namespace CGAL{
 
 template <>
-struct Algebraic_structure_traits<Gmpfi>:
+class Algebraic_structure_traits<Gmpfi>:
 public Algebraic_structure_traits_base<Gmpfi,Field_with_kth_root_tag>{
+public:
 
         typedef Tag_false       Is_exact;
         typedef Tag_true        Is_numerical_sensitive;
