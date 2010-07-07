@@ -94,7 +94,7 @@ public:
     typedef typename CKvA_2::Arr_top_side_category Arr_top_side_category;
     typedef typename CKvA_2::Arr_right_side_category Arr_right_side_category;
 
-    typedef typename CKvA_2::Multiplicity Multiplicty;
+    typedef typename CKvA_2::Multiplicity Multiplicity;
 
     typedef typename CKvA_2::Compare_x_2 Compare_x_2;
     Compare_x_2 compare_x_2_object() const {
