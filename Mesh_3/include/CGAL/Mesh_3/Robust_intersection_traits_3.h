@@ -53,9 +53,6 @@ public:
   template<class T1, class T2>
   Object operator() (const T1& t, const T2& s) const
   {
-    typename K_::Intersect_3 intersection =
-    K_().intersect_3_object();
-    
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
