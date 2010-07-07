@@ -74,7 +74,7 @@
 
 ## Set global-ignores to a set of whitespace-delimited globs
 ## which Subversion will ignore in its 'status' output.
-global-ignores = *.bak *.bk? *.old .DS_Store *.a *.o *.lib *.dll *.exe *.so *.so.* debug release Debug Release x64 *.blg *.cgallog *.aux *.maf *.hax *.hlg *.ilg *.pdflg *.log  *.toc *.cgallog.tmp* *.inc *.dvi *.mtc* *.idx ProgramOutput* ErrorOutput* CompilerOutput* error.txt *.ncb *.suo contents.obv .xvpics semantic.cache doc_ps doc_html doc_pdf *.moc .*~ *~ .#* *.user *.aps doc_doxygen CMakeCache.txt CMakeFiles cmake_install.cmake Doxyfile *.dir ALL_BUILD.vcproj ZERO_CHECK.vcproj gmon.* .qglviewer.xml *.moc_parameters *.cpp_parameters *_moc.cpp ui_*.h qrc_*.cxx *.sbr .dir-locals.el
+global-ignores = *.bak *.bk? *.old .DS_Store *.a *.o *.lib *.dll *.exe *.so *.so.* debug release Debug Release x64 *.blg *.cgallog *.aux *.maf *.hax *.hlg *.ilg *.pdflg *.log  *.toc *.cgallog.tmp* *.inc *.dvi *.mtc* *.idx ProgramOutput* ErrorOutput* CompilerOutput* error.txt *.ncb *.suo contents.obv .xvpics semantic.cache doc_ps doc_html doc_pdf *.moc .*~ *~ .#* *.user *.aps doc_doxygen CMakeCache.txt CMakeFiles cmake_install.cmake Doxyfile *.dir ALL_BUILD.vcproj ZERO_CHECK.vcproj gmon.* .qglviewer.xml *.moc_parameters *.cpp_parameters *_moc.cpp ui_*.h qrc_*.cxx *.sbr .dir-locals.el *.tmp
 
 ### Set log-encoding to the default encoding for log messages
 # log-encoding = latin1
