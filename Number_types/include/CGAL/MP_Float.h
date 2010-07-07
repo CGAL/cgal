@@ -206,18 +206,6 @@ public:
 
   MP_Float(long double d);
 
-#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
-  MP_Float(MP_Float && m)
-    : v(std::move(m.v)), exp(m.exp) {}
-
-  MP_Float& operator=(MP_Float && m)
-  {
-    clear();
-    swap(m);
-    return *this;
-  }
-#endif
-
   MP_Float operator+() const {
     return *this;
   }
