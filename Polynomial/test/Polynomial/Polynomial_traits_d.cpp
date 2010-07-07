@@ -15,13 +15,13 @@
 
 
 
-template < typename AT> 
-void test_AT_1(){
+template < typename AK> 
+void test_AK_1(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 
-  typedef typename AT::Integer Integer;
-  typedef typename AT::Rational Rational; 
+  typedef typename AK::Integer Integer;
+  typedef typename AK::Rational Rational; 
 
 
   typedef CGAL::Polynomial<Integer> Poly;
@@ -34,13 +34,13 @@ void test_AT_1(){
 }
 
 
-template < typename AT> 
-void test_AT_2(){
+template < typename AK> 
+void test_AK_2(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 
-  typedef typename AT::Integer Integer;
-  typedef typename AT::Rational Rational; 
+  typedef typename AK::Integer Integer;
+  typedef typename AK::Rational Rational; 
   
 
   typedef CGAL::Polynomial<Rational> Poly;
@@ -53,13 +53,13 @@ void test_AT_2(){
 }
 
 
-template < typename AT> 
-void test_AT_3(){
+template < typename AK> 
+void test_AK_3(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 
-  typedef typename AT::Integer Integer;
-  typedef typename AT::Rational Rational; 
+  typedef typename AK::Integer Integer;
+  typedef typename AK::Rational Rational; 
   
 
   typedef CGAL::Polynomial< CGAL::Sqrt_extension< Integer, Integer > > Poly;
@@ -76,13 +76,13 @@ void test_AT_3(){
 }
 
 
-template < typename AT> 
-void test_AT_4(){
+template < typename AK> 
+void test_AK_4(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 
-  typedef typename AT::Integer Integer;
-  typedef typename AT::Rational Rational; 
+  typedef typename AK::Integer Integer;
+  typedef typename AK::Rational Rational; 
   
 
   typedef CGAL::Polynomial< CGAL::Sqrt_extension< Rational, Integer > > Poly;
@@ -97,13 +97,13 @@ void test_AT_4(){
 }
 
 
-template < typename AT> 
-void test_AT_5(){
+template < typename AK> 
+void test_AK_5(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 
-  typedef typename AT::Integer Integer;
-  typedef typename AT::Rational Rational; 
+  typedef typename AK::Integer Integer;
+  typedef typename AK::Rational Rational; 
   
 
 
@@ -120,13 +120,13 @@ void test_AT_5(){
 }
 
 
-template < typename AT> 
-void test_AT_6(){
+template < typename AK> 
+void test_AK_6(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 
-  typedef typename AT::Integer Integer;
-  typedef typename AT::Rational Rational; 
+  typedef typename AK::Integer Integer;
+  typedef typename AK::Rational Rational; 
  
 
   //  Enforce IEEE double precision and to nearest before 
@@ -147,33 +147,18 @@ void test_AT_6(){
 
 
 int main(){
-
     // Set wrong rounding mode to test modular arithmetic 
     CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
 
-#ifdef CGAL_USE_LEDA
-  {        
-    typedef CGAL::LEDA_arithmetic_kernel AT;
-    test_AT_1<AT>();
-    test_AT_2<AT>();
-    test_AT_3<AT>();
-    test_AT_4<AT>();
-    test_AT_5<AT>();
-    test_AT_6<AT>();
-  }
-#endif
-
-#ifdef CGAL_USE_CORE
-  {    
-    typedef CGAL::CORE_arithmetic_kernel AT;
-    test_AT_1<AT>();
-    test_AT_2<AT>();
-    test_AT_3<AT>();
-    test_AT_4<AT>();
-    test_AT_5<AT>();
-    test_AT_6<AT>();
-  }
-#endif
+#ifdef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
+    typedef CGAL::Arithmetic_kernel AK; 
+    test_AK_1<AK>();
+    test_AK_2<AK>();
+    test_AK_3<AK>();
+    test_AK_4<AK>();
+    test_AK_5<AK>();
+    test_AK_6<AK>();
+#endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
   return 0;
 }
