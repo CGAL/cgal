@@ -436,10 +436,10 @@ public:
 public:
     //! \brief default constructor 
     Algebraic_curve_kernel_2() 
-      : _m_curve_cache_2(new Curve_cache_2(this)), 
-        _m_curve_pair_cache_2(new Curve_pair_cache_2(this)),
-        _m_gcd_cache_2(new Gcd_cache_2())
+      : _m_gcd_cache_2(new Gcd_cache_2())
     {  
+      _m_curve_cache_2 = boost::shared_ptr<Curve_cache_2>(new Curve_cache_2(this)); 
+      _m_curve_pair_cache_2 =  boost::shared_ptr<Curve_pair_cache_2> (new Curve_pair_cache_2(this)); 
       // std::cout << "CONSTRUCTION  Algebraic_curve_kernel_2 " << std::endl; 
     }
     
