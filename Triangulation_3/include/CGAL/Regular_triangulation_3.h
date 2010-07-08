@@ -126,6 +126,7 @@ public:
   using Tr_Base::side_of_segment;
   using Tr_Base::side_of_edge;
   using Tr_Base::find_conflicts;
+  using Tr_Base::is_valid;
 
   Regular_triangulation_3(const Gt & gt = Gt())
     : Tr_Base(gt), hidden_point_visitor(this)
