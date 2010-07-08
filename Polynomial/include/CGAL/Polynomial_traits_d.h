@@ -1067,7 +1067,8 @@ struct Construct_innermost_coefficient_const_iterator_range
     bool operator()( const Polynomial_d& p ) const {
       if( !internal::may_have_multiple_factor( p ) )
         return true;
-            
+      
+      Gcd_up_to_constant_factor gcd_utcf;
       Univariate_content_up_to_constant_factor ucontent_utcf;
       Integral_division_up_to_constant_factor  idiv_utcf;
       Differentiate diff;
@@ -1091,6 +1092,7 @@ struct Construct_innermost_coefficient_const_iterator_range
     Polynomial_d
     operator()(const Polynomial_d& p) const {
       if (CGAL::is_zero(p)) return p;
+      Gcd_up_to_constant_factor gcd_utcf;
       Univariate_content_up_to_constant_factor ucontent_utcf;
       Integral_division_up_to_constant_factor  idiv_utcf;
       Differentiate diff;
