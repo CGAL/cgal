@@ -130,9 +130,6 @@ class Quotient
      : num(std::forward<T1>(n)), den(std::forward<T2>(d))
   { CGAL_postcondition( den != 0 ); }
 
-  Quotient(Quotient && q)
-    : num(std::move(q.num)), den(std::move(q.den)) {}
-
   Quotient(NT && n)
     : num(std::move(n)), den(1) {}
 
@@ -140,13 +137,6 @@ class Quotient
   {
     num = std::move(n);
     den = 1;
-    return *this;
-  }
-
-  Quotient& operator=(Quotient && q)
-  {
-    num = std::move(q.num);
-    den = std::move(q.den);
     return *this;
   }
 #endif
