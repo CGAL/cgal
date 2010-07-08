@@ -111,7 +111,7 @@ public:
 } // namespace internal
 
 template <typename NT>
-struct Real_embeddable_traits<Polynomial<NT> > 
+class Real_embeddable_traits<Polynomial<NT> > 
   :public internal::Real_embeddable_traits_poly_base<
   Polynomial<NT>,
   typename Real_embeddable_traits<typename internal::Innermost_coefficient_type<NT>::Type>::Is_real_embeddable>
