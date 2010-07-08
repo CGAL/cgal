@@ -825,6 +825,33 @@ void test_differentiate (const Polynomial_traits_d&){
   std::cerr << " ok "<< std::endl;
 }
 
+// //       Is_square_free;
+template <class Polynomial_traits_d>
+void test_is_square_free(const Polynomial_traits_d&){
+  std::cerr << "start test_is_square_free "; std::cerr.flush();
+  CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
+  typedef typename PT::Construct_polynomial Constructor;
+  typedef typename PT::Is_square_free Is_square_free;
+  typedef typename PT::Make_square_free Make_square_free;
+    
+    
+  const Is_square_free is_square_free = Is_square_free();  
+  const Make_square_free make_square_free = Make_square_free();  
+
+  assert(true == is_square_free(Constructor()(0)));
+  assert(true == is_square_free(Constructor()(1)));
+  assert(true == is_square_free(Constructor()(2)));
+    
+  //typename PT::Canonicalize canonicalize; 
+  for(int i = 0 ; i < 5 ; i++){
+    Polynomial_d p;
+    p = generate_sparse_random_polynomial<Polynomial_d>(3); 
+    assert(is_square_free(make_square_free(p)));
+    assert(!is_square_free(p*p));
+  }
+  std::cerr << " ok "<< std::endl;
+}
+
 // //       Make_square_free;
 template <class Polynomial_traits_d>
 void test_make_square_free(const Polynomial_traits_d&){
@@ -861,7 +888,6 @@ void test_make_square_free(const Polynomial_traits_d&){
   std::cerr << " ok "<< std::endl;
 }
 
-
 // //       Square_free_factorize;
 template <class Polynomial_traits_d>
 void test_square_free_factorize(const Polynomial_traits_d&){
@@ -879,24 +905,24 @@ void test_square_free_factorize(const Polynomial_traits_d&){
   (void) canonicalize;
 
   for(int i = 0; i < 5; i++){
-    Polynomial_d f1 = generate_sparse_random_polynomial<Polynomial_d>(2);
-    Polynomial_d f2 = generate_sparse_random_polynomial<Polynomial_d>(2);  
-    Polynomial_d f3 = generate_sparse_random_polynomial<Polynomial_d>(2);    
-    f3 = Constructor()(lcoeff(f3));
-    Polynomial_d p = f1*f1*f2*f3*f3*f3;
-    std::vector<std::pair<Polynomial_d,int> > fac_mul_pairs;
-    sqff(p, std::back_inserter(fac_mul_pairs));
-    std::size_t n = fac_mul_pairs.size();
-    assert(n >= 3 
-     || total_degree(f1) == 0 || total_degree(f2) == 0 || total_degree(f3) == 0);
-    for (std::size_t j = 0; j < n; j++){
-      Polynomial_d factor = fac_mul_pairs[j].first;
-      int multi = fac_mul_pairs[j].second;
-      for (int k = 0; k < multi; k++){
-        p = idiv(p,factor);
+    Polynomial_d f1 = generate_sparse_random_polynomial<Polynomial_d>(3);
+    Polynomial_d f2 = generate_sparse_random_polynomial<Polynomial_d>(3);    
+    f2 = Constructor()(lcoeff(f2));
+    Polynomial_d p = f1*f1*f2*f2*f2;
+    if( !CGAL::is_zero(p)){
+      std::vector<std::pair<Polynomial_d,int> > fac_mul_pairs;
+      sqff(p, std::back_inserter(fac_mul_pairs));
+      std::size_t n = fac_mul_pairs.size();
+      for (std::size_t j = 0; j < n; j++){
+        Polynomial_d factor = fac_mul_pairs[j].first;
+        assert(CGAL::total_degree(factor) > 0);
+        int multi = fac_mul_pairs[j].second;
+        for (int k = 0; k < multi; k++){
+          p = idiv(p,factor);
+        }
       }
+      assert(CGAL::is_one(canonicalize(p)));
     }
-    assert(CGAL::is_one(canonicalize(p)));
   }
   
   typename PT::Innermost_leading_coefficient ileading_coeff;
@@ -1638,6 +1664,7 @@ void test_fundamental_functors(const PT& traits){
 
   test_differentiate(traits);
   test_make_square_free(traits);
+  test_is_square_free(traits);
   test_canonicalize(traits);
        
   // evaluates (sign depends on real embeddable)
