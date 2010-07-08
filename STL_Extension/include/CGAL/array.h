@@ -83,7 +83,7 @@ inline
 cpp0x::array< T, 1 + sizeof...(Args) >
 make_array(const T & t, const Args & ... args)
 {
-  cpp0x::array< T, 1 + sizeof...(Args) > a = { { t, args... } };
+  cpp0x::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
   return a;
 }
 
