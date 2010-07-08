@@ -28,6 +28,8 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/AABB_intersections.h>
 
+#include <boost/optional.hpp>
+
 namespace CGAL {
 
 /**

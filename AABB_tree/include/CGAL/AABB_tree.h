@@ -22,6 +22,7 @@
 
 #include <vector>
 #include <iterator>
+#include <boost/optional.hpp>
 #include <CGAL/AABB_node.h>
 #include <CGAL/AABB_search_tree.h>
 
