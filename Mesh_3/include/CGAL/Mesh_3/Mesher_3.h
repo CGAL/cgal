@@ -262,7 +262,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
     ++nbsteps;
   }
   std::cerr << std::endl;
-  timer.stop();
+
   std::cerr << "Total refining volume time: " << timer.time() << "s" << std::endl;
   std::cerr << "Total refining time: " << timer.time()+elapsed_time << "s" << std::endl;
   std::cerr << std::endl;
