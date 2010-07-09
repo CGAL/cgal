@@ -915,7 +915,7 @@ void test_square_free_factorize(const Polynomial_traits_d&){
       std::size_t n = fac_mul_pairs.size();
       for (std::size_t j = 0; j < n; j++){
         Polynomial_d factor = fac_mul_pairs[j].first;
-        assert(CGAL::total_degree(factor) > 0);
+        assert( total_degree(factor) > 0);
         int multi = fac_mul_pairs[j].second;
         for (int k = 0; k < multi; k++){
           p = idiv(p,factor);
