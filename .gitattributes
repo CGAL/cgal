@@ -1403,7 +1403,7 @@ Envelope_3/test/Envelope_3/spheres_test.cmd eol=lf
 Envelope_3/test/Envelope_3/triangles_test.cmd eol=lf
 Filtered_kernel/developer_scripts/profile_cleanup -text
 Filtered_kernel/include/CGAL/internal/Static_filters/Compare_squared_radius_3.h -text
-Generator/demo/Generator/help/index.html svneol=native#text/html
+Generator/demo/Generator/qt3/help/index.html svneol=native#text/html
 Generator/doc_tex/Generator/Segment_generator_prog1.png -text svneol=unset#image/png
 Generator/doc_tex/Generator/Segment_generator_prog2.png -text svneol=unset#image/png
 Generator/doc_tex/Generator/dice.png -text
