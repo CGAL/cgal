@@ -1209,6 +1209,23 @@ bool operator==(const Gmpfr &a,double b){
         return !mpfr_cmp_d(a.fr(),b);
 }
 
+// See the comment about mpfr_set_ld and MSVC++, above.
+#ifdef _MSC_VER
+inline
+bool operator<(const Gmpfr &a,long double b){
+        return(mpfr_cmp_d(a.fr(),b)<0);
+}
+
+inline
+bool operator>(const Gmpfr &a,long double b){
+        return(mpfr_cmp_d(a.fr(),b)>0);
+}
+
+inline
+bool operator==(const Gmpfr &a,long double b){
+        return !mpfr_cmp_d(a.fr(),b);
+}
+#else
 inline
 bool operator<(const Gmpfr &a,long double b){
         return(mpfr_cmp_ld(a.fr(),b)<0);
@@ -1223,6 +1240,7 @@ inline
 bool operator==(const Gmpfr &a,long double b){
         return !mpfr_cmp_ld(a.fr(),b);
 }
+#endif
 
 inline
 bool operator<(const Gmpfr &a,const Gmpz &b){
