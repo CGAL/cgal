@@ -6,13 +6,7 @@ MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
   setupUi(this);
   this->viewer->setScene(&scene);
 
-  QString loc = QLibraryInfo::location(QLibraryInfo::BinariesPath);
-  assistantClient = new QAssistantClient(loc, this);
-  QStringList arguments;
-  arguments << "-profile"
-	    << QCoreApplication::applicationDirPath() + QDir::separator()
-    + QString("documentation/Periodic_Lloyd_3.adp");
-  assistantClient->setArguments(arguments);
+  process = new QProcess(this);
 
   connectActions();
   this->addAboutDemo(":/cgal/help/about_Periodic_Lloyd_3.html");
@@ -207,9 +201,24 @@ MainWindow::newPoints(int n)
 }
 
 void MainWindow::help() {
-  QString loc = QCoreApplication::applicationDirPath() + QDir::separator()
-    + QString("documentation/index.html");
-  assistantClient->showPage(loc);
+  QString app = QLibraryInfo::location(QLibraryInfo::BinariesPath)
+    + QDir::separator();
+#if !defined(Q_OS_MAC)
+  app += QString("assistant");
+#else
+  app += QString("Assistant.app/Contents/MacOS/Assistant");
+#endif
+
+  QStringList args;
+  QString help_path = QCoreApplication::applicationDirPath() 
+    + QDir::separator()
+    + QString("./Periodic_Lloyd_3.qhc");
+  args << QString("-collectionFile") << help_path;
+  process->start(app, args);
+  if (!process->waitForStarted()) {
+    QMessageBox::critical(this, tr("Remote Control"),
+      tr("Could not start Qt Assistant from %1.").arg(app));
+  }
 }
 
 #include "MainWindow.moc"

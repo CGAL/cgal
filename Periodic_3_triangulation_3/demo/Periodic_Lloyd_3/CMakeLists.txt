@@ -43,6 +43,12 @@ if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   qt4_automoc( MainWindow.cpp Viewer.cpp)
 
+  # generate QtAssistant collection file
+  add_custom_target ( doc ALL
+      DEPENDS Periodic_Lloyd_3.qhp Periodic_Lloyd_3.qhcp
+      COMMAND qcollectiongenerator Periodic_Lloyd_3.qhcp
+  )
+
   add_executable  ( Periodic_Lloyd_3 Periodic_Lloyd_3.cpp MainWindow.cpp Viewer.cpp ${uis}  ${RESOURCE_FILES} )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_Lloyd_3 )

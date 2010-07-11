@@ -9,7 +9,7 @@
 #include <QTimer>
 
 #include <QtGui>
-#include <QtAssistant/QAssistantClient>
+#include <QProcess>
 
 class QWidget;
 
@@ -19,7 +19,7 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
 
 public:
   MainWindow(QWidget* = 0);
-  ~MainWindow() { delete(assistantClient); }
+  ~MainWindow() { process->close(); delete(process); }
 
   void connectActions();
 
@@ -27,7 +27,7 @@ public:
   QTimer * qtimer;
 
 private:
-  QAssistantClient *assistantClient;
+  QProcess* process;
 
 public slots:
   void newPoints(int i);

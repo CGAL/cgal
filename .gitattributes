@@ -2608,10 +2608,11 @@ Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/icons/wireframeOff.pn
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/resources/about.html -text
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/resources/about_CGAL.html -text
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/MainWindow.ui -text
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/Periodic_Lloyd_3.qhcp -text
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/Periodic_Lloyd_3.qhp -text
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/Periodic_Lloyd_3.qrc -text
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/about_CGAL.html svneol=native#text/html
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/about_Periodic_Lloyd_3.html svneol=native#text/html
-Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/documentation/Periodic_Lloyd_3.adp -text
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/documentation/images/mainwindow.png -text svneol=unset#image/png
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/documentation/index.html svneol=native#text/html
 Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/documentation/introduction.html svneol=native#text/html
