@@ -462,7 +462,7 @@ private slots:
     CGAL::Timer timer;
     vvd->clear();
 
-    std::ifstream f(fileName);
+    std::ifstream f(fileName.ascii());
     assert( f );
 
     int counter = 0;
