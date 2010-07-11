@@ -117,17 +117,16 @@ public slots:
 #endif
 
     QStringList args;
-    args << QString("-enableRemoteControl");
+    QString help_path = QCoreApplication::applicationDirPath()
+      + QDir::separator()
+      + QString("./Periodic_3_triangulation_3.qhc");
+    args << QString("-collectionFile") << help_path;
     process->start(app, args);
     if (!process->waitForStarted()) {
       QMessageBox::critical(this, tr("Remote Control"),
 	  tr("Could not start Qt Assistant from %1.").arg(app));
       return;
     }
-
-    QString help_url = QString("qthelp://org.CGAL.demos.Periodic_3_triangulation_3/doc/index.html");
-    help_url = QString("setSource ") + help_url + '\0';
-    process->write(help_url.toLocal8Bit());
   }
 
   void about() {

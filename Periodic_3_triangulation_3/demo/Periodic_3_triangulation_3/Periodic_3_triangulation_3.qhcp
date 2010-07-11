@@ -3,7 +3,6 @@
     <assistant>
         <title>CGAL Periodic Delaunay Triangulation Demo</title>
         <cacheDirectory>CGAL/Periodic_3_triangulation_3</cacheDirectory>
-        <startPage>qthelp://org.CGAL.demos.Periodic_3_triangulation_3/doc/index.html</startPage>
      <enableDocumentationManager>false</enableDocumentationManager>
      <enableAddressBar>false</enableAddressBar>
      <enableFilterFunctionality>false</enableFilterFunctionality>

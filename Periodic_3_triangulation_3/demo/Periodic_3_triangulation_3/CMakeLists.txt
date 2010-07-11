@@ -45,6 +45,12 @@ if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND)
   qt4_generate_moc ( Scene.h moc_Scene.cpp )
   qt4_generate_moc ( MainWindow.h moc_MainWindow.cpp )
 
+  # generate QtAssistant collection file
+  add_custom_target ( doc ALL
+      DEPENDS Periodic_3_triangulation_3.qhp Periodic_3_triangulation_3.qhcp
+      COMMAND qcollectiongenerator Periodic_3_triangulation_3.qhcp
+  )
+
   # Make sure the compiler can find generated .moc files
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
   include_directories( ${QT_INCLUDE_DIR} )
