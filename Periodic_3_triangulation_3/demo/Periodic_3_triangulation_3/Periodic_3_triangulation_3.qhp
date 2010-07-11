@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+    <namespace>org.cgal.demos.periodic_3_triangulation_3</namespace>
+    <virtualFolder>doc</virtualFolder>
+    <filterSection>
+        <toc>
+	  <section title="CGAL Periodic Delaunay Triangulation Demo"
+		   ref="./documentation/index.html">
+	    <section title="Introduction" ref="./documentation/introduction.html"></section>
+	    <section title="Menu" ref="./documentation/menu.html">
+	      <section title = "File Menu"
+		       ref="./documentation/menu.html#File"></section>
+	      <section title = "Initialization Menu"
+		       ref="./documentation/menu.html#Initialization"></section>
+	      <section title = "Actions Menu"
+		       ref="./documentation/menu.html#Actions"></section>
+	      <section title = "Features Menu"
+		       ref="./documentation/menu.html#Features"></section>
+	      <section title = "Options Menu"
+		       ref="./documentation/menu.html#Options"></section>
+	    </section>
+	  </section>
+	</toc>
+        <files>
+            <file>documentation/index.html</file>
+            <file>documentation/introduction.html</file>
+            <file>documentation/menu.html</file>
+            <file>documentation/images/mainwindow.png</file>
+	    <file>icons/fileOpen.png</file>
+	    <file>icons/init0.png</file>
+	    <file>icons/init1.png</file>
+	    <file>icons/initRand.png</file>
+	    <file>icons/initRandPlanar.png</file>
+	    <file>icons/initGrid.png</file>
+	    <file>icons/ball.png</file>
+	    <file>icons/pause.png</file>
+	    <file>icons/inputPointBall.png</file>
+	    <file>icons/inputPointRandom.png</file>
+	    <file>icons/camera.png</file>
+	    <file>icons/locate.png</file>
+	    <file>icons/conflict.png</file>
+	    <file>icons/wireframe.png</file>
+	    <file>icons/planar.png</file>
+	    <file>icons/cover1.png</file>
+	    <file>icons/multiple.png</file>
+	    <file>icons/clipping.png</file>
+	    <file>icons/twoColorClipping.png</file>
+            </files>
+        </filterSection>
+    </QtHelpProject>
