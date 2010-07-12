@@ -238,7 +238,7 @@ public slots:
     if ( s.isEmpty() )
         return;
     seg_list.clear();
-    std::ifstream in(s);
+    std::ifstream in(s.ascii());
     CGAL::set_ascii_mode(in);
     int number_of_segments = 0,i;
     CGAL::Segment_data<Rep> seg;
@@ -286,7 +286,7 @@ public slots:
                                   "Cgal files (*.cgal)", this );
     if ( !fileName.isNull() ) {
       // got a file name
-      std::ofstream out(fileName);
+      std::ofstream out(fileName.ascii());
       CGAL::set_ascii_mode(out);
       out << seg_list.size() << std::endl << prec << std::endl;
       std::list<Segment_2>::const_iterator it = seg_list.begin();

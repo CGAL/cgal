@@ -134,7 +134,7 @@ class Placement : public QObject
     void load( const QString & s )
     {
       runge_kutta_integrator = new Runge_kutta_integrator(integrating_);
-      std::ifstream infile(s, std::ios::in);
+      std::ifstream infile(s.ascii(), std::ios::in);
       double iXSize, iYSize;
       iXSize = iYSize = 512;
       unsigned int x_samples, y_samples;
@@ -352,14 +352,14 @@ class MyWidget : public QGLWidget
     QString savedepsfile(){
       QString s = QFileDialog::getSaveFileName( ".",
           "Encapsulated PostScript files (*.eps)", this, "save file dialog", "Save file to" );
-      std::ofstream fw(s,std::ios::out);
+      std::ofstream fw(s.ascii(),std::ios::out);
       p.Stream_lines->print_stream_lines_eps(fw);
       return s;
     }
     QString savedstlfile(){
       QString s = QFileDialog::getSaveFileName( ".",
           "STreamLine files (*.stl)", this, "save file dialog", "Save file to" );
-      std::ofstream fw(s,std::ios::out);
+      std::ofstream fw(s.ascii(),std::ios::out);
       p.Stream_lines->print_stream_lines(fw);
       return s;
     }

@@ -512,7 +512,7 @@ void MyWindow::open_dxf_file()
     return;
   file_name=s;
 
-  std::ifstream in_file(s);
+  std::ifstream in_file(s.ascii());
   if (!in_file.is_open())
     {
       QMessageBox::warning( widget,"Open","Can't open file");
@@ -606,7 +606,7 @@ void MyWindow::open_linear_polygon_file()
     return;
   file_name=s;
 
-  std::ifstream in_file(s);
+  std::ifstream in_file(s.ascii());
   if (!in_file.is_open())
     {
       QMessageBox::warning( widget,"Open","Can't open file");

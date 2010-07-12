@@ -27,6 +27,7 @@
  *  the differences is in the traits classes.
  */
 
+#include <stddef.h>
 #include <math.h>
 #include <limits>
 

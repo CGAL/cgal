@@ -307,7 +307,7 @@ public slots:
 		    "CGAL files (*.cgal)", this ) );
     if ( s.isEmpty() )
       return;
-    std::ifstream in(s);
+    std::ifstream in(s.ascii());
     CGAL::set_ascii_mode(in);
     Nef_polyhedron N_temp(Nef_polyhedron::EMPTY);
     Nef_visible2 = N_temp;
@@ -327,7 +327,7 @@ public slots:
                        "Cgal files (*.cgal)", this );
     if ( !fileName.isNull() ) {
       // got a file name
-      std::ofstream out(fileName);
+      std::ofstream out(fileName.ascii());
       CGAL::set_ascii_mode(out);
       out << Nef_visible << std::endl;
     }
@@ -338,7 +338,7 @@ public slots:
 		    "CGAL files (*.cgal)", this ) );
     if ( s.isEmpty() )
       return;
-    std::ifstream in(s);
+    std::ifstream in(s.ascii());
     CGAL::set_ascii_mode(in);
 
     Polygon_2_double poly;

@@ -192,7 +192,7 @@ void MyWindow::fileOpenPm()
     statusBar()->message( "File Open abandoned", 2000 );
 	return;
   }
-  std::ifstream inputFile(filename);
+  std::ifstream inputFile(filename.ascii());
   // Creates an ifstream object named inputFile
   if (! inputFile.is_open()) // Always test file open
   {
@@ -253,7 +253,7 @@ void MyWindow::fileOpenPm()
  */
 void MyWindow::load( const QString& filename , bool clear_flag )
 {
-  std::ifstream inputFile(filename);
+  std::ifstream inputFile(filename.ascii());
   // Creates an ofstream object named inputFile
   if (! inputFile.is_open()) // Always test file open
   {
@@ -603,7 +603,7 @@ void MyWindow::fileSave()
     return;
   }
 
-  std::ofstream outFile(m_filename);
+  std::ofstream outFile(m_filename.ascii());
   // Creates an ofstream object named outFile
   if (! outFile.is_open()) // Always test file open
   {

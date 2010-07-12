@@ -403,7 +403,7 @@ private slots:
       QFileDialog::getSaveFileName( "triangulation.cgal",
 				    "Cgal files (*.cgal)", this );
     if ( !fileName.isNull() ) {                 // got a file name
-      std::ofstream out(fileName);
+      std::ofstream out(fileName.ascii());
       CGAL::set_ascii_mode(out);
       out << tr1 << std::endl;
     }
@@ -418,7 +418,7 @@ private slots:
     tr1.clear();
     A.clear();
     L.clear();
-    std::ifstream in(s);
+    std::ifstream in(s.ascii());
     CGAL::set_ascii_mode(in);
     in >> tr1;
     Vertex_iterator it = tr1.vertices_begin();
