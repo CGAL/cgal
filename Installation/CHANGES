@@ -8,8 +8,21 @@ x General
 
   - The configuration of CGAL libraries now requires CMake>=2.6.
 
-  - The Microsoft Windows Visual C++ compiler 2005 (VC8) is no longer
-    supported by the CGAL project since CGAL-3.7.
+  - Changes in the set of supported platforms:
+
+    - GNU g++ 4.5 supported (with or without the compilation option
+      -std=c++0x).
+
+    - Initial support for the option -strict-ansi of the Intel Compiler 11.
+      The CGAL libraries compile with that option, and most CGAL headers
+      have been fixed. The packages "3D Boolean Operations on Nef
+      Polyhedra" (Nef_3), "Convex Decomposition of Polyhedra"
+      (Convex_decomposition_3), and "3D Minkowski Sum of Polyhedra"
+      (Minkowski_sum_3) are known to still fail to compile with that
+      compiler flag.
+
+    - The Microsoft Windows Visual C++ compiler 2005 (VC8) is no longer
+      supported by the CGAL project since CGAL-3.7.
 
   - Some demos now require a version of Qt4 >= 4.3.
 
