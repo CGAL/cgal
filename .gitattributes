@@ -1784,6 +1784,7 @@ Maintenance/release_building/BUGFIX_NUMBER -text
 Maintenance/release_building/MAJOR_NUMBER -text
 Maintenance/release_building/MINOR_NUMBER -text
 Maintenance/release_building/global_dont_submit -text
+Maintenance/release_building/public_release_name -text
 Maintenance/rpm/SOURCES/CGAL-README.Fedora svneol=native#text/plain
 Maintenance/rpm/SOURCES/CGAL-build-library.dpatch svneol=native#text/x-diff
 Maintenance/rpm/SOURCES/CGAL-install_cgal-SUPPORT_REQUIRED.patch svneol=native#text/x-diff
