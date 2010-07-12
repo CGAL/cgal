@@ -154,6 +154,8 @@ t3s3_intersection_collinear_aux(const typename K::Point_3& a,
   typename K::Collinear_are_ordered_along_line_3 collinear_ordered =
     k.collinear_are_ordered_along_line_3_object();
 
+  typename K::Equal_3 equals = k.equal_3_object();
+ 
   // possible orders: [p,a,b,q], [p,a,q,b], [a,p,b,q], [a,p,q,b]
   if ( collinear_ordered(p,a,q) )
   {
@@ -161,13 +163,17 @@ t3s3_intersection_collinear_aux(const typename K::Point_3& a,
     if ( collinear_ordered(p,b,q) )
       return make_object(segment(a,b));
     else
-      return make_object(segment(a,q));
+      return equals(a,q)?
+             make_object(a):
+             make_object(segment(a,q));
   }
   else
   {
     // p is after a
     if ( collinear_ordered(p,b,q) )
-      return make_object(segment(p,b));
+      return equals(p,b)?
+             make_object(p):
+             make_object(segment(p,b));
     else
       return make_object(segment(p,q));
   }
