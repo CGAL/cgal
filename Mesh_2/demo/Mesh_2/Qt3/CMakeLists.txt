@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( mesh_2_demo )
+project( mesh_2_qt3_demo )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -23,7 +23,7 @@ find_package(Qt3-patched )
 if ( CGAL_FOUND AND QT3_FOUND AND CGAL_Qt3_FOUND)
 
   include( Qt3Macros-patched )
-  QT3_AUTOMOC(  conform.cpp icons.cpp mesh.cpp mesh_2_demo.cpp Qt_widget_styled_layer.cpp Qt_widget_style_editor.cpp Show_points.cpp Show_segments_base.cpp )
+  QT3_AUTOMOC(  icons.cpp mesh_2_demo.cpp Qt_widget_styled_layer.cpp Qt_widget_style_editor.cpp Show_points.cpp Show_segments_base.cpp )
 
   # Make sure the compiler can find generated .moc files
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
