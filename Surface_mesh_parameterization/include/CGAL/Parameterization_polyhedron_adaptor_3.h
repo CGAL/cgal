@@ -126,7 +126,7 @@ public:
     class Halfedge_info
     {
     public:
-        typedef typename Polyhedron_3_::Traits::Point_2
+        typedef typename Polyhedron_3_::Traits::Kernel::Point_2
                                             Point_2;
 
     private:
@@ -210,20 +210,20 @@ public:
     //@{
 
     /// Number type to represent coordinates.
-    typedef typename Polyhedron::Traits::FT NT;
+    typedef typename Polyhedron::Traits::Kernel::FT NT;
 
     /// 2D point that represents (u,v) coordinates computed
     /// by parameterization methods. Must provide X() and Y() methods.
-    typedef typename Polyhedron::Traits::Point_2
+    typedef typename Polyhedron::Traits::Kernel::Point_2
                                             Point_2;
     /// 3D point that represents vertices coordinates. Must provide X() and Y() methods.
-    typedef typename Polyhedron::Traits::Point_3
+    typedef typename Polyhedron::Traits::Kernel::Point_3
                                             Point_3;
     /// 2D vector. Must provide X() and Y() methods.
-    typedef typename Polyhedron::Traits::Vector_2
+    typedef typename Polyhedron::Traits::Kernel::Vector_2
                                             Vector_2;
     /// 3D vector. Must provide X() and Y() methods.
-    typedef typename Polyhedron::Traits::Vector_3
+    typedef typename Polyhedron::Traits::Kernel::Vector_3
                                             Vector_3;
 
     /// Opaque type representing a facet of the 3D mesh. No methods are expected.
