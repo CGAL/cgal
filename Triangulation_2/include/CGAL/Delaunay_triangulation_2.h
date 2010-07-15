@@ -218,7 +218,7 @@ private:
 			      int           ,int           ,int  );
   void remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i);
-  bool incircle(int x, int j, int k, int l, std::vector<Face_handle> &f,
+  bool incircle(int x, int j, int, int l, std::vector<Face_handle> &f,
 		std::vector<Vertex_handle> &w, std::vector<int> &i){
     // k is supposed to be j+1 modulo degree, x is supposed to be finite
     //test if w[x] inside circle w[j]w[k]w[l] (f[j] has vertices w[j]w[k])
@@ -916,9 +916,9 @@ remove_degree_triangulate(Vertex_handle v,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
-                std::vector<Vertex_handle> &w, 
-                std::vector<int> &i,int d)
+remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
+                std::vector<Vertex_handle> &, 
+                std::vector<int> &,int)
 {
   // removing a degree d vertex, (dim is not going down)
   // this is the old removal procedure that is used now only if d > 7
@@ -932,8 +932,8 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
-	       std::vector<Vertex_handle> &w, std::vector<int> &i)
+remove_degree3(Vertex_handle, std::vector<Face_handle> &f,
+	       std::vector<Vertex_handle> &, std::vector<int> &i)
 {
   // removing a degree 3 vertex
   // only w[0] can be infinite
@@ -955,7 +955,7 @@ remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree4(Vertex_handle v, std::vector<Face_handle> &f,
+remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
 	       std::vector<Vertex_handle> &w, std::vector<int> &i )
 {
   // removing a degree 4 vertex
@@ -1049,11 +1049,11 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::remove_degree5_star
 (
- Vertex_handle &v,
+ Vertex_handle &,
  Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
  Face_handle &  f3, Face_handle &  f4,
- Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
- Vertex_handle &v3, Vertex_handle &v4,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
+ Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4 )
 { // removing a degree 5 vertex, staring from v0
   Face_handle nn;
@@ -1202,11 +1202,11 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::remove_degree6_star
 (
- Vertex_handle &v,
+ Vertex_handle &,
  Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
- Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
- Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
+ Vertex_handle &, Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, staring from v0
   Face_handle nn;
@@ -1226,11 +1226,11 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::remove_degree6_N
 (
- Vertex_handle &v,
+ Vertex_handle &,
  Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
- Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
- Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
+ Vertex_handle &v3, Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, N configuration with diagonal v0v3
   Face_handle nn;
@@ -1251,11 +1251,11 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::remove_degree6_antiN
 (
- Vertex_handle &v,
+ Vertex_handle &,
  Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
- Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
- Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
+ Vertex_handle &v3, Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, antiN configuration with diagonal v0v3
   Face_handle nn;
@@ -1276,11 +1276,11 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::remove_degree6_diamond
 (
- Vertex_handle &v,
+ Vertex_handle &,
  Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
- Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
- Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &v2,
+ Vertex_handle &, Vertex_handle &v4, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, with chords v0v2 v2v4 v4v0
   Face_handle nn;
@@ -1725,7 +1725,7 @@ rotate7(int j,  std::vector<Vertex_handle> &w,
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_star   (Vertex_handle &v, int j,
+remove_degree7_star   (Vertex_handle &, int j,
 std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, staring from w[j]
 
@@ -1748,7 +1748,7 @@ std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<int> &i)
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_zigzag (Vertex_handle &v, int j,
+remove_degree7_zigzag (Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, zigzag, w[j] = middle point
 
@@ -1780,7 +1780,7 @@ remove_degree7_zigzag (Vertex_handle &v, int j,
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_leftdelta(Vertex_handle &v, int j,
+remove_degree7_leftdelta(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, left delta from w[j]
  rotate7(j,w,f,i);
@@ -1808,7 +1808,7 @@ remove_degree7_leftdelta(Vertex_handle &v, int j,
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_rightdelta(Vertex_handle &v, int j,
+remove_degree7_rightdelta(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, right delta from w[j]
   rotate7(j,w,f,i);
@@ -1836,7 +1836,7 @@ remove_degree7_rightdelta(Vertex_handle &v, int j,
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_leftfan(Vertex_handle &v, int j,
+remove_degree7_leftfan(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, left fan from w[j]
   rotate7(j,w,f,i);
@@ -1861,7 +1861,7 @@ remove_degree7_leftfan(Vertex_handle &v, int j,
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_rightfan(Vertex_handle &v, int j,
+remove_degree7_rightfan(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, right fan from w[j]
 
