@@ -765,10 +765,14 @@ void  QP_solver<Q, ET, Tags>::
 test_implicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k, 
                                 int& i_min, ET& d_min, ET& q_min)
 {
-    if ((q_k > et0) && (x_k * q_min < d_min * q_k)) {
+    if (q_k > et0) {
+      // the following implements the BLAND rule (in case the optimal
+      // values are the same, only update if the new index is smaller).
+      if ((x_k * q_min < d_min * q_k) || ((x_k * q_min == d_min * q_k) && (k < i_min))) {
         i_min = k;
         d_min = x_k;
         q_min = q_k;
+      } 
     }
 }
 
@@ -779,10 +783,14 @@ void  QP_solver<Q, ET, Tags>::
 test_implicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k, 
                                 int& i_min, ET& d_min, ET& q_min)
 {
-    if ((q_k < et0) && (x_k * q_min < -(d_min * q_k))) {
+    if (q_k < et0) {
+      // the following implements the BLAND rule (in case the optimal
+      // values are the same, only update if the new index is smaller).
+      if ((x_k * q_min < -(d_min * q_k)) || ((x_k * q_min == -(d_min * q_k)) && (k < i_min)) ) {
         i_min = k;
         d_min = x_k;
         q_min = -q_k;
+      }
     }
 }
 
@@ -797,8 +805,10 @@ test_explicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
 {
     if (q_k > et0) {                                // check for lower bound
         if (*(qp_fl+k)) {
-            ET  diff = x_k - (d * ET(*(qp_l+k))); 
-            if (diff * q_min < d_min * q_k) {
+            ET  diff = x_k - (d * ET(*(qp_l+k)));
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < d_min * q_k) || ((diff * q_min == d_min * q_k) && (k < i_min))) {
                 i_min = k;
                 d_min = diff;
                 q_min = q_k;
@@ -808,7 +818,9 @@ test_explicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
     } else {                                        // check for upper bound
         if ((q_k < et0) && (*(qp_fu+k))) {
             ET  diff = (d * ET(*(qp_u+k))) - x_k;
-            if (diff * q_min < -(d_min * q_k)) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < -(d_min * q_k)) || ((diff * q_min == -(d_min * q_k)) && (k < i_min))) {
                 i_min = k;
                 d_min = diff;
                 q_min = -q_k;
@@ -829,8 +841,10 @@ test_explicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
 {
     if (q_k < et0) {                                // check for lower bound
         if (*(qp_fl+k)) {
-            ET  diff = x_k - (d * ET(*(qp_l+k))); 
-            if (diff * q_min < -(d_min * q_k)) {
+            ET  diff = x_k - (d * ET(*(qp_l+k)));
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < -(d_min * q_k)) || ((diff * q_min == -(d_min * q_k)) && (k < i_min))) {
                 i_min = k;
                 d_min = diff;
                 q_min = -q_k;
@@ -840,7 +854,9 @@ test_explicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
     } else {                                        // check for upper bound
         if ((q_k > et0) && (*(qp_fu+k))) {
             ET  diff = (d * ET(*(qp_u+k))) - x_k;
-            if (diff * q_min < d_min * q_k) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < d_min * q_k) || ((diff * q_min == d_min * q_k) && (k < i_min))) {
                 i_min = k;
                 d_min = diff;
                 q_min = q_k;
@@ -863,7 +879,9 @@ test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
         if (k < qp_n) {                             // original variable
             if (*(qp_fl+k)) {
                 ET  diff = x_k - (d * ET(*(qp_l+k)));
-                if (diff * q_min < d_min * q_k) {
+                // the following implements the BLAND rule (in case the optimal
+                // values are the same, only update if the new index is smaller).
+                if ((diff * q_min < d_min * q_k) || ((diff * q_min == d_min * q_k) && (k < i_min))) {
                     i_min = k;
                     d_min = diff;
                     q_min = q_k;
@@ -871,7 +889,9 @@ test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
                 }
             }
         } else {                                    // artificial variable
-            if (x_k * q_min < d_min * q_k) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((x_k * q_min < d_min * q_k) || ((x_k * q_min == d_min * q_k) && (k < i_min))) {
                 i_min = k;
                 d_min = x_k;
                 q_min = q_k;
@@ -880,7 +900,9 @@ test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
     } else {                                        // check for upper bound
         if ((q_k < et0) && (k < qp_n) && *(qp_fu+k)) {
             ET  diff = (d * ET(*(qp_u+k))) - x_k;
-            if (diff * q_min < -(d_min * q_k)) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < -(d_min * q_k)) || ((diff * q_min == -(d_min * q_k)) && (k < i_min))) {
                 i_min = k;
                 d_min = diff;
                 q_min = -q_k;
@@ -903,7 +925,9 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
         if (k < qp_n) {                             // original variable
             if (*(qp_fl+k)) {
                 ET  diff = x_k - (d * ET(*(qp_l+k)));
-                if (diff * q_min < -(d_min * q_k)) {
+                // the following implements the BLAND rule (in case the optimal
+                // values are the same, only update if the new index is smaller).
+                if ((diff * q_min < -(d_min * q_k)) || ((diff * q_min == -(d_min * q_k)) && (k < i_min))) {
                     i_min = k;
                     d_min = diff;
                     q_min = -q_k;
@@ -911,7 +935,9 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
                 }
             }
         } else {                                    // artificial variable
-            if (x_k * q_min < -(d_min * q_k)) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((x_k * q_min < -(d_min * q_k)) || ((x_k * q_min == -(d_min * q_k)) && (k < i_min))) {
                 i_min = k;
                 d_min = x_k;
                 q_min = -q_k;
@@ -920,7 +946,9 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
     } else {                                        // check for upper bound
         if ((q_k > et0) && (k < qp_n) && *(qp_fu+k)) {
             ET  diff = (d * ET(*(qp_u+k))) - x_k;
-            if (diff * q_min < d_min * q_k) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < d_min * q_k) || ((diff * q_min == d_min * q_k) && (k < i_min))) {
                 i_min = k;
                 d_min = diff;
                 q_min = q_k;
@@ -1036,16 +1064,28 @@ ratio_test_2( Tag_false)
     Value_iterator  q_it = q_x_O.begin();
     Index_iterator  i_it;
     for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++x_it, ++q_it) {
-	if ( ( *q_it < et0) && ( ( *x_it * q_i) < ( x_i * *q_it))) {
-	    i = *i_it; x_i = *x_it; q_i = *q_it;
-	}
+      // the following implements the BLAND rule (in case the optimal
+      // values are the same, only update if the new index is smaller).
+      if ( (*q_it < et0) && (
+              (( *x_it * q_i) < ( x_i * *q_it)) ||
+              ((( *x_it * q_i) == ( x_i * *q_it)) && (*i_it < i))
+            )
+          ) {
+        i = *i_it; x_i = *x_it; q_i = *q_it;
+      }
     }
     x_it = x_B_S.begin();
     q_it = q_x_S.begin();
     for ( i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++x_it, ++q_it) {
-	if ( ( *q_it < et0) && ( ( *x_it * q_i) < ( x_i * *q_it))) {
-	    i = *i_it; x_i = *x_it; q_i = *q_it;
-	}
+      // the following implements the BLAND rule (in case the optimal
+      // values are the same, only update if the new index is smaller).
+      if ( ( *q_it < et0) && (
+             (( *x_it * q_i) < ( x_i * *q_it)) ||
+             (( *x_it * q_i) == ( x_i * *q_it) && (*i_it < i))
+            )
+          ){
+          i = *i_it; x_i = *x_it; q_i = *q_it;
+      }
     }
 
     CGAL_qpe_debug {
