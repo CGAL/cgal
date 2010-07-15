@@ -218,7 +218,7 @@ private:
 			      int           ,int           ,int  );
   void remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i);
-  bool incircle(int x, int j, int k, int l, std::vector<Face_handle> &f,
+  bool incircle(int x, int j, int, int l, std::vector<Face_handle> &f,
 		std::vector<Vertex_handle> &w, std::vector<int> &i){
     // k is supposed to be j+1 modulo degree, x is supposed to be finite
     //test if w[x] inside circle w[j]w[k]w[l] (f[j] has vertices w[j]w[k])
@@ -916,367 +916,24 @@ remove_degree_triangulate(Vertex_handle v,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
-                std::vector<Vertex_handle> &w, 
-                std::vector<int> &i,int d)
+remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
+                std::vector<Vertex_handle> &, 
+                std::vector<int> &,int)
 {
-  // removing a degree d vertex, d>4 needed, used if d is big
-  // only w[0] can be infinite
-  enum type_of_edge{ boundary, locally_delaunay, unknown};
-  std::map<Face_handle, int> type[3];
-  std::list<Edge> to_be_checked;
-  int j=1;
-  Face_handle nn;
+  // removing a degree d vertex, (dim is not going down)
+  // this is the old removal procedure that is used now only if d > 7
 
-  // process pentagon by pentagon
-  // next pentagon is w[0] w[j] w[j+1] w[j+2] w[j+3]
-  Face_handle last=f[0]->neighbor(i[0]);
-  int ilast = last->index(f[0]);
-  int typelast = boundary;
-  type[ ilast][last]= typelast;
-
-  while(j<=d-4){
-    if( incircle(j+2,j,j+1,0,f,w,i) ) {
-      if( incircle(j,j+2,j+3,0,f,w,i) ) {
-	if( incircle(j+3,j,j+1,j+2,f,w,i) ) { // star from j+3/////////////////
-	  f[j  ]->set_vertex(    i[j  ], w[j+3]) ;
-	  f[j+1]->set_vertex(    i[j+1], w[j+3]) ;
-	  f[j+2]->set_vertex(    i[j+2], w[0  ]) ;
-	  f[j+2]->set_vertex(ccw(i[j+2]), w[j  ]) ;
-	  
-	  // edge w[0] w[j]
-	  this->tds().set_adjacency(last,  ilast , f[j+2], cw(i[j+2]));
-	  type[ cw(i[j+2])][f[j+2]] = typelast;
-	  if (typelast != boundary) 
-	    to_be_checked.push_back(Edge( f[j+2], cw(i[j+2])));
-
-	  // edge w[j] w[j+1]
-	  type[i[j]][f[j]] = boundary;
-	  // edge w[j+1] w[j+2]
-	  type[i[j+1]][f[j+1]] = boundary;
-
-	  // edge w[j+2] w[j+3]
-	  nn = f[j+2]->neighbor( i[j+2] );
-	  this->tds().set_adjacency(f[j+1], ccw(i[j+1]) , 
-				   nn, cw(nn->index(w[j+3])) );
-	  type[ccw(i[j+1])][f[j+1]] = boundary;
-
-	  // edge w[j+3] w[0]
-	  last = f[j+2];
-	  ilast = ccw(i[j+2]);
-	  type[ilast][last]=typelast=unknown;
-
-	  // edge w[j] w[j+3]
-	  this->tds().set_adjacency(f[j+2], i[j+2] , f[j], cw(i[j  ]));
-	  type[    i[j+2] ][f[j+2]] = locally_delaunay;
-	  type[ cw(i[j  ])][f[j  ]] = locally_delaunay;
-	  // edge w[j+1] w[j+3]
-	  type[ cw(i[j+1])][f[j+1]] = locally_delaunay;
-	  type[ccw(i[j  ])][f[j  ]] = locally_delaunay;
-	}else{                                    //star from j/////////////////
-	  f[j  ]->set_vertex(    i[j  ] , w[0  ]) ;
-	  f[j  ]->set_vertex( cw(i[j  ]), w[j+3]) ;
-	  f[j+1]->set_vertex(    i[j+1] , w[j  ]) ;
-	  f[j+2]->set_vertex(    i[j+2] , w[j  ]) ;
-	  
-	  // edge w[0] w[j]
-	  this->tds().set_adjacency(last, ilast , f[j], cw(i[j]) );
-	  type[ cw(i[j])][f[j]] = typelast;
-	  if (typelast != boundary) 
-	    to_be_checked.push_back(Edge( f[j], cw(i[j])));
-
-	  // edge w[j] w[j+1]
-	  nn = f[j]->neighbor( i[j] );
-	  this->tds().set_adjacency(f[j+1], cw(i[j+1]), 
-				   nn, cw(nn->index(w[j+1])) );
-	  type[cw(i[j+1])][f[j+1]] = boundary;
-	  // edge w[j+1] w[j+2]
-	  type[i[j+1]][f[j+1]] = boundary;
-
-	  // edge w[j+2] w[j+3]
-	  type[i[j+2]][f[j+2]] = boundary;
-
-	  // edge w[j+3] w[0]
-	  last = f[j];
-	  ilast = ccw(i[j]);
-	  type[ilast][last]=typelast=unknown;
-
-	  // edge w[j] w[j+3]
-	  this->tds().set_adjacency(f[j+2], ccw(i[j+2]), f[j], i[j]);
-	  type[    i[j  ] ][f[j  ]] = locally_delaunay;
-	  type[ccw(i[j+2])][f[j+2]] = locally_delaunay;
-	  // edge w[j] w[j+2]
-	  type[ccw(i[j+1])][f[j+1]] = locally_delaunay;
-	  type[ cw(i[j+2])][f[j+2]] = locally_delaunay;
-	}}else{                             // star from j+2///////////////////
-	f[j  ]->set_vertex(    i[j  ] , w[j+2]) ;
-	f[j+1]->set_vertex(    i[j+1] , w[0  ]) ;
-	f[j+1]->set_vertex(ccw(i[j+1]), w[j  ]) ;
-	f[j+2]->set_vertex(    i[j+2] , w[0  ]) ;
-	
-	  // edge w[0] w[j]
-	this->tds().set_adjacency(last, ilast, f[j+1], cw(i[j+1]));
-	  type[cw(i[j+1])][f[j+1]] = typelast;
-	  if (typelast != boundary) 
-	    to_be_checked.push_back(Edge( f[j+1], cw(i[j+1])));
-
-	  // edge w[j] w[j+1]
-	  type[i[j]][f[j]] = boundary;
-	  // edge w[j+1] w[j+2]
-	  nn = f[j+1]->neighbor( i[j+1] );
-	  this->tds().set_adjacency(f[j], ccw(i[j]), nn, cw(nn->index(w[j+2])));
-	  type[ccw(i[j])][f[j]] = boundary;
-
-	  // edge w[j+2] w[j+3]
-	  type[i[j+2]][f[j+2]] = boundary;
-
-	  // edge w[j+3] w[0]
-	  last = f[j+2];
-	  ilast = ccw(i[j+2]);
-	  type[ilast][last]=typelast=unknown;
-
-	  // edge w[0] w[j+2]
-	  this->tds().set_adjacency(f[j+2], cw(i[j+2]), f[j+1], ccw(i[j+1]));
-	  type[ccw(i[j+1])][f[j+1]] = locally_delaunay;
-	  type[ cw(i[j+2])][f[j+2]] = locally_delaunay;
-	  // edge w[j] w[j+2]
-	  this->tds().set_adjacency(f[j], cw(i[j]), f[j+1], i[j+1]);
-	  type[ cw(i[j  ])][f[j  ]] = locally_delaunay;
-	  type[    i[j+1] ][f[j+1]] = locally_delaunay;
-      }}else{
-      if( incircle(j+3,j+1,j+2,0,f,w,i) ) {
-	if( incircle(j+3,j,j+1,0,f,w,i) ) { // star from j+3///////////////////
-	  f[j  ]->set_vertex(    i[j  ], w[j+3]) ;
-	  f[j+1]->set_vertex(    i[j+1], w[j+3]) ;
-	  f[j+2]->set_vertex(    i[j+2], w[0  ]) ;
-	  f[j+2]->set_vertex(ccw(i[j+2]), w[j  ]) ;
-	  
-	  // edge w[0] w[j]
-	  this->tds().set_adjacency(last, ilast, f[j+2], cw(i[j+2]) );
-	  type[ cw(i[j+2])][f[j+2]] = typelast;
-	  if (typelast != boundary) 
-	    to_be_checked.push_back(Edge( f[j+2], cw(i[j+2])));
-
-	  // edge w[j] w[j+1]
-	  type[i[j]][f[j]] = boundary;
-	  // edge w[j+1] w[j+2]
-	  type[i[j+1]][f[j+1]] = boundary;
-
-	  // edge w[j+2] w[j+3]
-	  nn = f[j+2]->neighbor( i[j+2] );
-	  this->tds().set_adjacency(f[j+1], ccw(i[j+1]), 
-				   nn, cw(nn->index(w[j+3])) );
-	  type[ccw(i[j+1])][f[j+1]] = boundary;
-
-	  // edge w[j+3] w[0]
-	  last = f[j+2];
-	  ilast = ccw(i[j+2]);
-	  type[ilast][last]=typelast=unknown;
-
-	  // edge w[j] w[j+3]
-	  this->tds().set_adjacency(f[j+2], i[j+2] , f[j], cw(i[j]) );
-	  type[    i[j+2] ][f[j+2]] = locally_delaunay;
-	  type[ cw(i[j  ])][f[j  ]] = locally_delaunay;
-	  // edge w[j+1] w[j+3]
-	  type[ cw(i[j+1])][f[j+1]] = locally_delaunay;
-	  type[ccw(i[j  ])][f[j  ]] = locally_delaunay;
-	}else{                              // star from j+1///////////////////
-	  f[j  ]->set_vertex(    i[j  ], w[0  ]) ;
-	  f[j+1]->set_vertex(    i[j+1], w[0  ]) ;
-	  f[j+1]->set_vertex( cw(i[j+1]),w[j+3]) ;
-	  f[j+2]->set_vertex(    i[j+2], w[j+1]) ;
-	  
-	  // edge w[0] w[j]
-	  this->tds().set_adjacency(last, ilast , f[j], cw(i[j]) );
-	  type[ cw(i[j])][f[j]] = typelast;
-	  if (typelast != boundary) 
-	    to_be_checked.push_back(Edge( f[j], cw(i[j])));
-
-	  // edge w[j] w[j+1]
-	  type[i[j]][f[j]] = boundary;
-	  // edge w[j+1] w[j+2]
-	  nn = f[j+1]->neighbor( i[j+1] );
-	  this->tds().set_adjacency(f[j+2], cw(i[j+2]), 
-				   nn , cw(nn->index(w[j+2])) );
-	  type[ cw(i[j+2])][f[j+2]] = boundary;
-	  // edge w[j+2] w[j+3]
-	  type[i[j+2]][f[j+2]] = boundary;
-
-	  // edge w[j+3] w[0]
-	  last = f[j+1];
-	  ilast = ccw(i[j+1]);
-	  type[ilast][last]=typelast=unknown;
-
-	  // edge w[j+1] w[0]
-	  type[ccw(i[j  ])][f[j  ]] = locally_delaunay;
-	  type[ cw(i[j+1])][f[j+1]] = locally_delaunay;
-	  // edge w[j+1] w[j+3]
-	  this->tds().set_adjacency(f[j+2], ccw(i[j+2]), f[j+1], i[j+1] );
-	  type[    i[j+1] ][f[j+1]] = locally_delaunay;
-	  type[ccw(i[j+2])][f[j+2]] = locally_delaunay;
-	}}else{                             // star from 0///////////////////
-	f[j  ]->set_vertex(    i[j  ], w[0  ]) ;
-	f[j+1]->set_vertex(    i[j+1], w[0  ]) ;
-	f[j+2]->set_vertex(    i[j+2], w[0  ]) ;
-	  
-	  // edge w[0] w[j]
-	this->tds().set_adjacency(last, ilast, f[j], cw(i[j]) );
-	  type[ cw(i[j])][f[j]] = typelast;
-	  if (typelast != boundary) 
-	    to_be_checked.push_back(Edge( f[j], cw(i[j])));
-
-	  // edge w[j] w[j+1]
-	  type[i[j]][f[j]] = boundary;
-	  // edge w[j+1] w[j+2]
-	  type[i[j+1]][f[j+1]] = boundary;
-	  // edge w[j+2] w[j+3]
-	  type[i[j+2]][f[j+2]] = boundary;
-
-	  // edge w[j+3] w[0]
-	  last = f[j+2];
-	  ilast = ccw(i[j+2]);
-	  type[ilast][last]=typelast=unknown;
-
-	  // edge w[0] w[j+1]
-	  type[ cw(i[j+1])][f[j+1]] = locally_delaunay;
-	  type[ccw(i[j  ])][f[j  ]] = locally_delaunay;
-	  // edge w[0] w[j+2]
-	  type[ccw(i[j+1])][f[j+1]] = locally_delaunay;
-	  type[ cw(i[j+2])][f[j+2]] = locally_delaunay;
-      }}
-    j+=3;
-  }
-
-  if(j  ==d-1){ 
-    type[ilast][last]=typelast=boundary;
-    nn= f[d-1]->neighbor( i[d-1] );
-    this->tds().set_adjacency(last, ilast, nn, cw(nn->index(w[0])) );
-  }
-  if(j ==d-2){
-    f[d-2]->set_vertex( i[d-2], w[0]);
-    nn= f[d-1]->neighbor( i[d-1] );
-    this->tds().set_adjacency(f[d-2], ccw(i[d-2]), nn, cw(nn->index(w[0])) );
-    type[ccw(i[d-2])][f[d-2]]=boundary;
-    this->tds().set_adjacency(last, ilast, f[d-2] , cw(i[d-2]) );
-    type[ cw(i[d-2])][f[d-2]]=unknown;
-    if (typelast != boundary) 
-      to_be_checked.push_back(Edge( f[d-2], cw(i[d-2])));
-  }
-  if(j ==d-3){
-    if ( incircle(d-3,d-2,d-1,0,f,w,i) ) {
-      f[d-3]->set_vertex( i[d-3], w[d-1]);
-      f[d-2]->set_vertex( i[d-2], w[0]);
-      f[d-2]->set_vertex(ccw(i[d-2]), w[d-3]);
-      
-      // edge w[0] w[d-3]
-      this->tds().set_adjacency(last, ilast, f[d-2], cw(i[d-2]) );
-      type[ cw(i[d-2])][f[d-2]] = typelast;
-      if (typelast != boundary) 
-	to_be_checked.push_back(Edge( f[d-2], cw(i[d-2])));
-      
-      // edge w[d-3] w[d-2]
-      type[i[d-3]][f[d-3]] = boundary;
-      // edge w[d-2] w[d-1]
-      nn= f[d-2]->neighbor( i[d-2] );
-      this->tds().set_adjacency(f[d-3], ccw(i[d-3]), nn, cw(nn->index(w[d-1])) );
-      type[ccw(i[d-3])][f[d-3]] = boundary;
-      // edge w[d-1] w[0]
-      nn= f[d-1]->neighbor( i[d-1] );
-      this->tds().set_adjacency(f[d-2], ccw(i[d-2]), nn, cw(nn->index(w[0])) );
-      type[ccw(i[d-2])][f[d-2]] = boundary;
-      
-      // edge w[d-3] w[d-1]
-      this->tds().set_adjacency(f[d-3], cw(i[d-3]), f[d-2], i[d-2] );
-      type[ cw(i[d-3])][f[d-3]] = locally_delaunay;
-      type[    i[d-2] ][f[d-2]] = locally_delaunay;
-    }else{
-      f[d-3]->set_vertex( i[d-3], w[0]);
-      f[d-2]->set_vertex( i[d-2], w[0]);
-      
-      // edge w[0] w[d-3]
-      this->tds().set_adjacency(last, ilast, f[d-3], cw(i[d-3]) );
-      type[ cw(i[d-3])][f[d-3]] = typelast;
-      if (typelast != boundary) 
-	to_be_checked.push_back(Edge( f[d-3], cw(i[d-3])));
-      
-      // edge w[d-3] w[d-2]
-      type[i[d-3]][f[d-3]] = boundary;
-      // edge w[d-2] w[d-1]
-      type[i[d-2]][f[d-2]] = boundary;
-      // edge w[d-1] w[0]
-      nn= f[d-1]->neighbor( i[d-1] );
-      this->tds().set_adjacency(f[d-2], ccw(i[d-2]), nn, cw(nn->index(w[0])) );
-      type[ccw(i[d-2])][f[d-2]] = boundary;
-      
-      // edge w[0] w[d-2]
-      type[ccw(i[d-3])][f[d-3]] = locally_delaunay;
-      type[ cw(i[d-2])][f[d-2]] = locally_delaunay;
-    }
-  }
-
-  // clean container
-  this->tds().delete_face(f[0]);
-  this->tds().delete_face(f[d-1]);
-
-  // flip marked edges to restore Delaunay property
-  while( ! to_be_checked.empty() ) {
-    Edge e= *to_be_checked.begin(); to_be_checked.pop_front();
-    int k = e.second;
-    Face_handle ff = e.first;
-    // check edge k of face ff
-    if( type[k][ff] == unknown ) {
-      Face_handle   fopp = ff->neighbor(k);
-      int kk=fopp->index( ff );
-      Vertex_handle vopp = fopp->vertex( kk ) ;
-      Vertex_handle vff  = ff->vertex( k ) ;
-      //   std::cout<<"try "<<vff->point()<<";"<<vopp->point()<<std::endl;
-      if ( (this->is_infinite(vff))  
-	   ? (test_conflict( vopp->point(), ff) )
-	   : (test_conflict( vff->point(), fopp) )
-	   )  {
-	// make the flip
-	// do not use flip( ff, k) since faces can be neighbor twice
-	// through the boundary
-	ff->set_vertex  (  cw(k) , vopp);
-	fopp->set_vertex  (  cw(kk), vff );
-	
-	nn= ff->neighbor( ccw(k)) ;
-	this->tds().set_adjacency(fopp, kk , nn, cw(nn->index(vff)) );
-	if (type[ccw(k)][ff]!=boundary) {
-	  type[kk][fopp] = unknown;
-	  to_be_checked.push_back(Edge(fopp,kk));
-	} else type[kk][fopp] = boundary;
-
-	nn = fopp->neighbor( ccw(kk)) ;
-	this->tds().set_adjacency(ff, k, nn, cw(nn->index(vopp)) );
-	if (type[ccw(kk)][fopp]!=boundary) {
-	  type[k][ff] = unknown;
-	  to_be_checked.push_back(Edge(ff,k));
-	} else type[k][ff] = boundary;
-
-	this->tds().set_adjacency(fopp, ccw(kk), ff, ccw(k) );
-	type[ccw(k )][ff] = locally_delaunay;
-	type[ccw(kk)][fopp] = locally_delaunay;
-
-	if ( type[cw(k )][ff] != boundary  ) {
-	  type[cw(k )][ff] =  unknown;
-	  to_be_checked.push_back(Edge ( ff  , cw(k )));
-	}
-	if ( type[cw(kk)][fopp] != boundary) {
-	  type[cw(kk)][fopp] = unknown ;
-	  to_be_checked.push_back(Edge ( fopp, cw(kk)));
-	}
-      }else{ type[k][ff] = type[kk][fopp] = locally_delaunay; }
-    }
-  }
-  return;
+    std::list<Edge> hole;
+    make_hole(v, hole);
+    fill_hole_delaunay(hole);
+    return;
 }
 
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
-	       std::vector<Vertex_handle> &w, std::vector<int> &i)
+remove_degree3(Vertex_handle, std::vector<Face_handle> &f,
+	       std::vector<Vertex_handle> &, std::vector<int> &i)
 {
   // removing a degree 3 vertex
   // only w[0] can be infinite
@@ -1298,7 +955,7 @@ remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree4(Vertex_handle v, std::vector<Face_handle> &f,
+remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
 	       std::vector<Vertex_handle> &w, std::vector<int> &i )
 {
   // removing a degree 4 vertex
@@ -1392,11 +1049,11 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::remove_degree5_star
 (
- Vertex_handle &v,
+ Vertex_handle &,
  Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
  Face_handle &  f3, Face_handle &  f4,
- Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
- Vertex_handle &v3, Vertex_handle &v4,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
+ Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4 )
 { // removing a degree 5 vertex, staring from v0
   Face_handle nn;
@@ -1545,11 +1202,11 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::remove_degree6_star
 (
- Vertex_handle &v,
+ Vertex_handle &,
  Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
- Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
- Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
+ Vertex_handle &, Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, staring from v0
   Face_handle nn;
@@ -1569,11 +1226,11 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::remove_degree6_N
 (
- Vertex_handle &v,
+ Vertex_handle &,
  Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
- Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
- Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
+ Vertex_handle &v3, Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, N configuration with diagonal v0v3
   Face_handle nn;
@@ -1594,11 +1251,11 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::remove_degree6_antiN
 (
- Vertex_handle &v,
+ Vertex_handle &,
  Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
- Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
- Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
+ Vertex_handle &v3, Vertex_handle &, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, antiN configuration with diagonal v0v3
   Face_handle nn;
@@ -1619,11 +1276,11 @@ template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::remove_degree6_diamond
 (
- Vertex_handle &v,
+ Vertex_handle &,
  Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
- Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
- Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &v2,
+ Vertex_handle &, Vertex_handle &v4, Vertex_handle &,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, with chords v0v2 v2v4 v4v0
   Face_handle nn;
@@ -2068,7 +1725,7 @@ rotate7(int j,  std::vector<Vertex_handle> &w,
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_star   (Vertex_handle &v, int j,
+remove_degree7_star   (Vertex_handle &, int j,
 std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, staring from w[j]
 
@@ -2091,7 +1748,7 @@ std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<int> &i)
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_zigzag (Vertex_handle &v, int j,
+remove_degree7_zigzag (Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, zigzag, w[j] = middle point
 
@@ -2123,7 +1780,7 @@ remove_degree7_zigzag (Vertex_handle &v, int j,
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_leftdelta(Vertex_handle &v, int j,
+remove_degree7_leftdelta(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, left delta from w[j]
  rotate7(j,w,f,i);
@@ -2151,7 +1808,7 @@ remove_degree7_leftdelta(Vertex_handle &v, int j,
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_rightdelta(Vertex_handle &v, int j,
+remove_degree7_rightdelta(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, right delta from w[j]
   rotate7(j,w,f,i);
@@ -2179,7 +1836,7 @@ remove_degree7_rightdelta(Vertex_handle &v, int j,
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_leftfan(Vertex_handle &v, int j,
+remove_degree7_leftfan(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, left fan from w[j]
   rotate7(j,w,f,i);
@@ -2204,7 +1861,7 @@ remove_degree7_leftfan(Vertex_handle &v, int j,
 template < class Gt, class Tds >
 inline void
 Delaunay_triangulation_2<Gt,Tds>::
-remove_degree7_rightfan(Vertex_handle &v, int j,
+remove_degree7_rightfan(Vertex_handle &, int j,
  std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, right fan from w[j]
 
