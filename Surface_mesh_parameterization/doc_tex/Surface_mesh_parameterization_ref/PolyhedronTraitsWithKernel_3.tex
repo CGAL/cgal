@@ -1,0 +1,41 @@
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{PolyhedronTraitsWithKernel_3}
+\label{pagePolyTraitsRef}  
+
+Required types for the \ccRefName\ concept. This
+geometric traits concept is used in the polyhedral surface data
+structure \ccc{CGAL::Polyhedron_3<Traits>}. This concept provides
+additional requirements to the \ccc{PolyhedronTraits_3} concept
+required by \ccc{CGAL::Polyhedron_3<Traits>} used within the class
+\ccc{Parameterization_polyhedron_adaptor_3<Polyhedron_3_>}.
+
+
+\ccRefines
+
+\ccc{PolyhedronTraits_3}.
+
+\ccTypes
+
+\ccNestedType{Kernel}{a kernel type providing: a field type \ccc{FT}; 2D and 3D point types \ccc{Point_2}
+and \ccc{Point_3}; 2D and 3D vector types \ccc{Vector_2} and \ccc{Vector_3}.}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Polyhedron_traits_3<Kernel>}\\
+\ccRefIdfierPage{CGAL::Polyhedron_traits_with_normals_3<Kernel>}\\
+All models of the \ccc{CGAL::Kernel} concept, e.g., 
+\ccc{Simple_cartesian<FieldNumberType>}.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
+
+\end{ccRefConcept}
+
+
+\ccRefPageEnd
