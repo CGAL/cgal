@@ -99,7 +99,7 @@ private:
     if (s == QString::null) return false;
     curr_dir = s;
 
-    std::ifstream in_file(s);
+    std::ifstream in_file(s.ascii());
     if (!in_file.is_open()) {
       QMessageBox::warning(widget, "Open", "Can't open file");
       return false;
