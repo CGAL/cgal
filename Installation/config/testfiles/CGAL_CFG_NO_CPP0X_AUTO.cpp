@@ -20,17 +20,19 @@
 //| If a compiler does not support C++0x auto
 //| CGAL_CFG_NO_CPP0X_AUTO is set. 
 
-void use(int) {}
+struct A {};
 
-int f()
+void use(A) {}
+
+A f()
 {
-  return 0;
+  return A();
 }
 
 int main()
 {
   auto i = f();
-  int j = i + 1;
+  A j = i;
   use(j);
   return 0;
 }
