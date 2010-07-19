@@ -11,7 +11,7 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include <CGAL/graph_traits_Dual_Arrangement_2.h>
-#include <CGAL/Arr_face_map.h>
+#include <CGAL/Arr_face_index_map.h>
 
 #include "arr_print.h"
 
