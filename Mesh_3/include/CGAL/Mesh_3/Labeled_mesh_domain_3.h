@@ -34,6 +34,7 @@
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
 #include <CGAL/tuple.h>
+#include <CGAL/Origin.h>
 
 namespace CGAL {
 
