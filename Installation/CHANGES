@@ -68,15 +68,13 @@ x.y 2D Mesh Generation
 x.y 3D Mesh Generation
 
   - The efficiency of the 3D mesh generator has been improved (the number of calls
-  to the oracle per inserted vertex has globally decrease). However, one can note a
-  slightly change in the mesh generator behavior in few cases. Before CGAL 3.7, the 
-  3D mesh generator called the oracle for each new triangle created during the 
-  refinement of the volume. Now it trusts the surface which as been discovered by 
-  the refinement of the surface. It means that some small connected components which
-  could have been discovered after the first refinement of the surface by the old 
-  version of the 3D mesh generator will now be ignored. Please note that defining the
-  macro CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE switches back to the
-  old behavior.
+  to the oracle per inserted vertex has globally decrease).
+  This is achieved through a slight change of the mesh generator strategy which 
+  implies that a surface component that is not detected at the surface mesher level
+  will never be discovered by chance, owing to the refinement of some terahedra,
+  as it could happen before.
+  Please note that defining the macro CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
+  switches back to the old behavior.
 
   - A demo program is now available.
 
