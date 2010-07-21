@@ -97,40 +97,50 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # executable files
   set(LIBRARY_OUTPUT_PATH ${RUNTIME_OUTPUT_PATH})
 
-  # AUXILIARY LIBRARIES
-  add_library(viewer SHARED
-    ${DEMO_SRC_DIR}/Viewer.cpp Viewer_moc.cpp)
-  target_link_libraries(viewer ${QGLVIEWER_LIBRARIES})
+  # prefix for Mesh_3 libs to avoid conflicts with Polyhedron demo
+  set(MESH_3_LIB_PREFIX "mesh_3_demo_")
 
-  add_library(scene_item SHARED
+  # AUXILIARY LIBRARIES
+  set(VIEWER_LIB "${MESH_3_LIB_PREFIX}viewer")
+  add_library(${VIEWER_LIB} SHARED
+    ${DEMO_SRC_DIR}/Viewer.cpp Viewer_moc.cpp)
+  target_link_libraries(${VIEWER_LIB} ${QGLVIEWER_LIBRARIES})
+
+  set(SCENE_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_item")
+  add_library(${SCENE_ITEM_LIB} SHARED
     ${DEMO_SRC_DIR}/Scene_item.cpp
     Scene_item_moc.cpp
     ${DEMO_SRC_DIR}/Scene_item_with_display_list.cpp
     ${DEMO_SRC_DIR}/Plugin_helper.cpp)
 
-  add_library(scene_segmented_image_item SHARED
+  set(SCENE_SEGMENTED_IMAGE_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_segmented_image_item")
+  add_library(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} SHARED
     Scene_segmented_image_item.cpp Scene_segmented_image_item.moc)
-  target_link_libraries(scene_segmented_image_item scene_item)
+  target_link_libraries(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${SCENE_ITEM_LIB})
 
   if(GLEW_FOUND)
-    target_link_libraries(scene_segmented_image_item ${GLEW_LIBRARIES})
+    target_link_libraries(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${GLEW_LIBRARIES})
   endif()
 
-  add_library(scene_polyhedron_item SHARED
+  set(SCENE_POLYHEDRON_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_polyhedron_item")
+  add_library(${SCENE_POLYHEDRON_ITEM_LIB} SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
-  target_link_libraries(scene_polyhedron_item scene_item)
+  target_link_libraries(${SCENE_POLYHEDRON_ITEM_LIB} ${SCENE_ITEM_LIB})
 
-  add_library(polygon_soup SHARED
+  set(POLYGON_SOUP_LIB "${MESH_3_LIB_PREFIX}polygon_soup")
+  add_library(${POLYGON_SOUP_LIB} SHARED
     Scene_polygon_soup.cpp Scene_polygon_soup.moc)
-  target_link_libraries(polygon_soup scene_item)
+  target_link_libraries(${POLYGON_SOUP_LIB} ${SCENE_ITEM_LIB})
 
-  add_library(scene_c3t3_item SHARED
+  set(SCENE_C3T3_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_c3t3_item")
+  add_library(${SCENE_C3T3_ITEM_LIB} SHARED
     Scene_c3t3_item.cpp Scene_c3t3_item.moc)
-  target_link_libraries(scene_c3t3_item scene_item ${QGLVIEWER_LIBRARIES} )
+  target_link_libraries(${SCENE_C3T3_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} )
 
-  add_library(scene_implicit_function_item SHARED
+  set(SCENE_IMPLICIT_FUNCTION_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_implicit_function_item")
+  add_library(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} SHARED
     Scene_implicit_function_item.cpp Scene_implicit_function_item.moc Color_ramp.cpp)
-  target_link_libraries(scene_implicit_function_item scene_item ${QGLVIEWER_LIBRARIES} )
+  target_link_libraries(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} )
 
 
   add_definitions(-DUSE_FORWARD_DECL)
@@ -155,7 +165,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #  # Link with the scene_item library.
 #  target_link_libraries( Mesh_3 scene_item )
 
-  target_link_libraries( Mesh_3 viewer )
+  target_link_libraries( Mesh_3 ${VIEWER_LIB} )
 
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Mesh_3 )
@@ -183,33 +193,39 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
     # Link with scene_item
-    target_link_libraries( ${plugin_name} scene_item)
+    target_link_libraries( ${plugin_name} ${SCENE_ITEM_LIB})
     # Link with CGAL
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   endmacro(polyhedron_demo_plugin)
 
-  polyhedron_demo_plugin(io_image_plugin Io_image_plugin)
-  target_link_libraries(io_image_plugin scene_segmented_image_item)
+  set(IO_IMAGE_PLUGIN_LIB "${MESH_3_LIB_PREFIX}io_image_plugin")
+  polyhedron_demo_plugin(${IO_IMAGE_PLUGIN_LIB} Io_image_plugin)
+  target_link_libraries(${IO_IMAGE_PLUGIN_LIB} ${SCENE_SEGMENTED_IMAGE_ITEM_LIB})
 
   if(GLEW_FOUND)
-    target_link_libraries(io_image_plugin ${GLEW_LIBRARIES})
+    target_link_libraries(${IO_IMAGE_PLUGIN_LIB} ${GLEW_LIBRARIES})
   endif()
 
-  polyhedron_demo_plugin(io_off_plugin Io_off_plugin)
-  target_link_libraries(io_off_plugin scene_polyhedron_item polygon_soup)
+  set(IO_OFF_PLUGIN_LIB "${MESH_3_LIB_PREFIX}io_off_plugin")
+  polyhedron_demo_plugin(${IO_OFF_PLUGIN_LIB} Io_off_plugin)
+  target_link_libraries(${IO_OFF_PLUGIN_LIB} ${SCENE_POLYHEDRON_ITEM_LIB} ${POLYGON_SOUP_LIB})
 
-  polyhedron_demo_plugin(io_c3t3_plugin Io_c3t3_plugin)
-  target_link_libraries(io_c3t3_plugin scene_c3t3_item)
+  set(IO_C3T3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}io_c3t3_plugin")
+  polyhedron_demo_plugin(${IO_C3T3_PLUGIN_LIB} Io_c3t3_plugin)
+  target_link_libraries(${IO_C3T3_PLUGIN_LIB} ${SCENE_C3T3_ITEM_LIB})
 
   if ( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/c3t3_rib_exporter_plugin.cpp" )
-    polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin ${ribUI_FILES})
-    target_link_libraries(c3t3_rib_exporter_plugin scene_c3t3_item viewer)
+    set(C3T3_RIB_EXPORTER_PLUGIN_LIB "${MESH_3_LIB_PREFIX}c3t3_rib_exporter_plugin")
+    polyhedron_demo_plugin(${C3T3_RIB_EXPORTER_PLUGIN_LIB} C3t3_rib_exporter_plugin ${ribUI_FILES})
+    target_link_libraries(${C3T3_RIB_EXPORTER_PLUGIN_LIB} ${SCENE_C3T3_ITEM_LIB} ${VIEWER_LIB})
   endif()
 
-  polyhedron_demo_plugin(io_implicit_function_plugin Io_implicit_function_plugin ${funcUI_FILES})
-  target_link_libraries(io_implicit_function_plugin scene_implicit_function_item)
+  set(IO_IMPLICIT_FUNCTION_PLUGIN_LIB "${MESH_3_LIB_PREFIX}io_implicit_function_plugin")
+  polyhedron_demo_plugin(${IO_IMPLICIT_FUNCTION_PLUGIN_LIB} Io_implicit_function_plugin ${funcUI_FILES})
+  target_link_libraries(${IO_IMPLICIT_FUNCTION_PLUGIN_LIB} ${SCENE_IMPLICIT_FUNCTION_ITEM_LIB})
 
-  polyhedron_demo_plugin(mesh_3_plugin Mesh_3_plugin 
+  set(MESH_3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_plugin") 
+  polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin 
                          Mesh_3_plugin_polyhedron_cgal_code.cpp
                          Mesh_3_plugin_image_cgal_code.cpp
                          Mesh_3_plugin_implicit_function_cgal_code.cpp
@@ -217,26 +233,27 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
                          Scene_c3t3_item.moc
                          ${meshingUI_FILES})
 
-  target_link_libraries(mesh_3_plugin
-                        scene_c3t3_item
-                        scene_polyhedron_item
-                        scene_segmented_image_item
-                        scene_implicit_function_item
+  target_link_libraries(${MESH_3_PLUGIN_LIB}
+                        ${SCENE_C3T3_ITEM_LIB}
+                        ${SCENE_POLYHEDRON_ITEM_LIB}
+                        ${SCENE_SEGMENTED_IMAGE_ITEM_LIB}
+                        ${SCENE_IMPLICIT_FUNCTION_ITEM_LIB}
                         ${QGLVIEWER_LIBRARIES}
                         ${OPENGL_gl_LIBRARY}
                         ${OPENGL_glu_LIBRARY})
 
-  polyhedron_demo_plugin(mesh_3_optimization_plugin Mesh_3_optimization_plugin 
+  set(MESH_3_OPTIMIZATION_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_optimization_plugin") 
+  polyhedron_demo_plugin(${MESH_3_OPTIMIZATION_PLUGIN_LIB} Mesh_3_optimization_plugin 
                          Mesh_3_optimization_plugin_cgal_code.cpp
                          Optimizer_thread.cpp
                          Scene_c3t3_item.moc
                          ${optimUI_FILES})
 
-  target_link_libraries(mesh_3_optimization_plugin
-                        scene_c3t3_item
-                        scene_polyhedron_item
-                        scene_segmented_image_item
-                        scene_implicit_function_item
+  target_link_libraries(${MESH_3_OPTIMIZATION_PLUGIN_LIB}
+                        ${SCENE_C3T3_ITEM_LIB}
+                        ${SCENE_POLYHEDRON_ITEM_LIB}
+                        ${SCENE_SEGMENTED_IMAGE_ITEM_LIB}
+                        ${SCENE_IMPLICIT_FUNCTION_ITEM_LIB}
                         ${QGLVIEWER_LIBRARIES}
                         ${OPENGL_gl_LIBRARY}
                         ${OPENGL_glu_LIBRARY})
