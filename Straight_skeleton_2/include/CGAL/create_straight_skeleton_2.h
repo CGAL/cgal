@@ -199,7 +199,7 @@ create_straight_skeleton_2 ( PointIterator              aOuterContour_VerticesBe
   
   SsBuilder ssb(aMaxTime) ;
   
-  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aOuterContour_WeightsBegin, aOuterContour_WeightsEnd, false, Point_converter ) ;
+  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aOuterContour_WeightsBegin, aOuterContour_WeightsEnd, true, Point_converter ) ;
   
   return ssb.construct_skeleton();
 }
@@ -245,7 +245,7 @@ create_straight_skeleton_2 ( PointIterator              aVerticesBegin
   
   SsBuilder ssb(aMaxTime) ;
   
-  ssb.enter_contour( aVerticesBegin, aVerticesEnd, aWeight, false, Point_converter ) ;
+  ssb.enter_contour( aVerticesBegin, aVerticesEnd, aWeight, true, Point_converter ) ;
   
   return ssb.construct_skeleton();
 }
