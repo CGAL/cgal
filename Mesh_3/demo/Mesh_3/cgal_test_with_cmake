@@ -100,28 +100,28 @@ if  ${MAKE_CMD} -f Makefile help | grep "Mesh_3$" > /dev/null; then
   compile_and_run Mesh_3
   NEED_CLEAN=y
 fi
-if  ${MAKE_CMD} -f Makefile help | grep "mesh_3_optimization_plugin" > /dev/null; then
-  compile_and_run mesh_3_optimization_plugin
+if  ${MAKE_CMD} -f Makefile help | grep "mesh_3_demo_mesh_3_optimization_plugin" > /dev/null; then
+  compile_and_run mesh_3_demo_mesh_3_optimization_plugin
   NEED_CLEAN=y
 fi
-if  ${MAKE_CMD} -f Makefile help | grep "mesh_3_plugin" > /dev/null; then
-  compile_and_run mesh_3_plugin
+if  ${MAKE_CMD} -f Makefile help | grep "mesh_3_demo_mesh_3_plugin" > /dev/null; then
+  compile_and_run mesh_3_demo_mesh_3_plugin
   NEED_CLEAN=y
 fi
-if  ${MAKE_CMD} -f Makefile help | grep "io_c3t3_plugin" > /dev/null; then
-  compile_and_run io_c3t3_plugin
+if  ${MAKE_CMD} -f Makefile help | grep "mesh_3_demo_io_c3t3_plugin" > /dev/null; then
+  compile_and_run mesh_3_demo_io_c3t3_plugin
   NEED_CLEAN=y
 fi
-if  ${MAKE_CMD} -f Makefile help | grep "io_image_plugin" > /dev/null; then
-  compile_and_run io_image_plugin
+if  ${MAKE_CMD} -f Makefile help | grep "mesh_3_demo_io_image_plugin" > /dev/null; then
+  compile_and_run mesh_3_demo_io_image_plugin
   NEED_CLEAN=y
 fi
-if  ${MAKE_CMD} -f Makefile help | grep "io_implicit_function_plugin" > /dev/null; then
-  compile_and_run io_implicit_function_plugin
+if  ${MAKE_CMD} -f Makefile help | grep "mesh_3_demo_io_implicit_function_plugin" > /dev/null; then
+  compile_and_run mesh_3_demo_io_implicit_function_plugin
   NEED_CLEAN=y
 fi
-if  ${MAKE_CMD} -f Makefile help | grep "io_off_plugin" > /dev/null; then
-  compile_and_run io_off_plugin
+if  ${MAKE_CMD} -f Makefile help | grep "mesh_3_demo_io_off_plugin" > /dev/null; then
+  compile_and_run mesh_3_demo_io_off_plugin
   NEED_CLEAN=y
 fi
 if  ${MAKE_CMD} -f Makefile help | grep "klein_function_plugin" > /dev/null; then
