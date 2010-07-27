@@ -147,6 +147,56 @@ private:
   Handle mE[3];
 } ;
 
+//
+// The following functions are only for drawing of unbounded bisectors
+//
+
+template<class Vector_2>
+inline double vector_angle_wrt_X_axis_2( Vector_2 const& v ) { return std::atan2( CGAL::to_double(v.y()), CGAL::to_double(v.x())); }
+
+template<class Vector_2>
+inline double ccw_angle_between_vectors_2( Vector_2 const& u, Vector_2 const& v )
+{
+  double au = vector_angle_wrt_X_axis_2(u);
+  double av = vector_angle_wrt_X_axis_2(v);
+
+  double phi = av - au ;
+
+  if ( phi < 0)
+    phi = 2.0 * CGAL_PI + phi;
+
+  return phi ;
+}
+
+template<class Vector_2>
+inline Vector_2 create_vector_rotated_2( Vector_2 const& u, double phi )
+{
+  double cos = std::cos(phi);
+  double sin = std::sin(phi);
+
+  return Vector_2( u.x() * cos - u.y() * sin 
+                 , u.x() * sin + u.y() * cos 
+                 ) ;
+}
+
+template<class Point_2>
+typename CGAL::Kernel_traits<Point_2>::Kernel::Vector_2
+ccw_angular_bisector_2( Point_2 const& p0, Point_2 const& p1, Point_2 const& p2 )
+{
+  typedef typename CGAL::Kernel_traits<Point>::Kernel K ;
+
+  typedef typename K::Segment_2 Segment_2 ;
+  typedef typename K::Vector_2  Vector_2 ;
+
+  Vector_2 u = p2 - p1 ;
+  Vector_2 v = p0 - p1 ; 
+
+  double sweep = ccw_angle_between_vectors_2(u ,v);
+  double phi   = sweep * 0.5;
+
+  return create_vector_rotated_2(u, phi);
+}
+
 } // namespace CGAL_SS_i
 
 enum Trisegment_collinearity

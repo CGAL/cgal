@@ -29,13 +29,13 @@ int main()
   
   SsPtr ss0 = CGAL::create_straight_skeleton_2(poly, -1.5);
 
-  dump_to_eps(poly,*ss0,"uniform_weights_skeleton.eps");
+  dump_ss_to_eps(poly,ss0,"uniform_weights_skeleton.eps");
 
   double weights[] = { -1.0, -1.0, -1.5, -1.0, -0.5, 1.0, 1.5, -1.0 } ;
   
   SsPtr ss1 = CGAL::create_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end(), weights, weights+8);
 
-  dump_to_eps(poly,*ss1,"mixed_weights_skeleton.eps");
+  dump_ss_to_eps(poly,ss1,"mixed_weights_skeleton.eps");
 
   return 0;
 }

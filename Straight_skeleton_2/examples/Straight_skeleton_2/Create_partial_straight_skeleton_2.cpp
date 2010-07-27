@@ -27,7 +27,7 @@ int main()
   
   SsPtr ss = CGAL::create_interior_straight_skeleton_2(input,lMaxTime);
 
-  dump_to_eps(input,*ss,"partial_skeleton.eps");
+  dump_ss_to_eps(input,ss,"partial_skeleton.eps");
   
   
   return 0;

@@ -57,7 +57,7 @@ int main( int argc, char* argv[] )
       if ( eps )  
       {
         std::cerr << "Result: " << eps_name << std::endl ;
-        dump_to_eps(input,offset_polygons,eps);
+        dump_offset_to_eps(input,offset_polygons,eps);
       }
       else
       {

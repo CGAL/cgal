@@ -33,8 +33,7 @@ int main()
   // Or you can pass the polygon directly, as below.
   SsPtr oss = CGAL::create_exterior_straight_skeleton_2(poly);
 
-  dump_to_eps(poly,*iss,"interior_skeleton.eps");
-  dump_to_eps(poly,*oss,"exterior_skeleton.eps");
+  dump_ss_to_eps(poly,iss,oss,"straight_skeleton.eps");
   
   return 0;
 }

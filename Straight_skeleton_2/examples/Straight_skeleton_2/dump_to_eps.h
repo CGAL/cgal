@@ -25,8 +25,9 @@ Bbox_2 bbox_2 ( Polygon_with_holes_2<K> const& aPolyWH )
 
 }
 
+
 template<class InputIterator>
-void dump_to_eps( InputIterator aBegin, InputIterator aEnd, char const* aType, double aScale, std::ostream& rOut )
+void dump_poly_to_eps( InputIterator aBegin, InputIterator aEnd, char const* aType, double aScale, std::ostream& rOut )
 {
   InputIterator lLast = aEnd - 1 ;
   
@@ -46,60 +47,84 @@ void dump_to_eps( InputIterator aBegin, InputIterator aEnd, char const* aType, d
   }
 }
 
-template<class Poly>
-void dump_to_eps( Poly const& aPoly, char const* aType, double aScale, std::ostream& rOut )
+template<class K>
+void dump_poly_to_eps( CGAL::Polygon_2<K> const& aPoly, char const* aType, double aScale, std::ostream& rOut )
 {
-  dump_to_eps(aPoly.begin(), aPoly.end(), aType, aScale, rOut);
+  dump_poly_to_eps(aPoly.vertices_begin(), aPoly.vertices_end(), aType, aScale, rOut);
 }
 
 template<class K>
-void dump_to_eps( CGAL::Polygon_2<K> const& aPoly, char const* aType, double aScale, std::ostream& rOut )
+void dump_poly_to_eps( CGAL::Polygon_with_holes_2<K> const& aPWH, char const* aType, double aScale, std::ostream& rOut )
 {
-  dump_to_eps(aPoly.vertices_begin(), aPoly.vertices_end(), aType, aScale, rOut);
-}
-
-template<class K>
-void dump_to_eps( CGAL::Polygon_with_holes_2<K> const& aPWH, char const* aType, double aScale, std::ostream& rOut )
-{
-  dump_to_eps(aPWH.outer_boundary(), aType, aScale, rOut ) ;
+  dump_poly_to_eps(aPWH.outer_boundary(), aType, aScale, rOut ) ;
       
   for ( typename CGAL::Polygon_with_holes_2<K>::Hole_const_iterator hit = aPWH.holes_begin()
       ; hit != aPWH.holes_end()
       ; ++ hit
       )
-    dump_to_eps(*hit, aType, aScale, rOut ) ;
+    dump_poly_to_eps(*hit, aType, aScale, rOut ) ;
 }
 
 template<class K>
-void dump_to_eps( CGAL::Straight_skeleton_2<K> const& aSkeleton, char const* aType, double aScale, std::ostream& rOut )
+void dump_ss_to_eps( CGAL::Straight_skeleton_2<K> const& aSkeleton, char const* aType, double aScale, std::ostream& rOut )
 {
   typedef typename CGAL::Straight_skeleton_2<K>::Halfedge_const_iterator Halfedge_const_iterator ;
   typedef typename CGAL::Straight_skeleton_2<K>::Halfedge_const_handle   Halfedge_const_handle ;
+  typedef typename CGAL::Straight_skeleton_2<K>::Traits                  Traits ;
+
+  typedef typename Traits::Point_2   Point_2 ;
+  typedef typename Traits::Vector_2  Vector_2 ;
+  typedef typename Traits::Segment_2 Segment_2 ;
   
   for(Halfedge_const_iterator hit = aSkeleton.halfedges_begin(); hit != aSkeleton.halfedges_end(); ++hit)
   {
     Halfedge_const_handle h = hit ;
 
-    if( h->is_bisector() && ((h->id()%2)==0) && !h->has_infinite_time() && !h->opposite()->has_infinite_time() )
+    if( h->is_bisector() && ((h->id()%2)==0) )
     { 
-      rOut << aType << std::endl 
-           << aScale * h->vertex()->point().x() 
+      Point_2 s,t;
+
+      if ( !h->has_infinite_time() && !h->opposite()->has_infinite_time() )
+      {
+        s = h->vertex()->point() ;
+        t = h->opposite()->vertex()->point();
+      }
+      else
+      {
+        Halfedge_const_handle outh = h->has_infinite_time() ? h : h->opposite();
+
+        Halfedge_const_handle contour_edge_0 = outh            ->defining_contour_edge();
+        Halfedge_const_handle contour_edge_1 = outh->opposite()->defining_contour_edge();
+
+        Point_2 const& p0 = contour_edge_0->opposite()->vertex()->point();  
+        Point_2 const& p1 = contour_edge_0            ->vertex()->point();  
+        Point_2 const& p2 = contour_edge_1            ->vertex()->point();
+
+        Vector_2 bisect = CGAL::CGAL_SS_i::ccw_angular_bisector_2(p0, p1, p2);
+
+        s = p1 ;
+        t = p1 - ( h->weight() > 0 ? bisect : - bisect ) ;
+      }
+
+      rOut << aType 
+           << std::endl 
+           << aScale * CGAL::to_double(s.x()) 
            << " " 
-           << aScale * h->vertex()->point().y()
-           << " "
-           << aScale * h->opposite()->vertex()->point().x()
-           << " "
-           << aScale * h->opposite()->vertex()->point().y() 
+           << aScale * CGAL::to_double(s.y()) 
+           << " " 
+           << aScale * CGAL::to_double(t.x()) 
+           << " " 
+           << aScale * CGAL::to_double(t.y()) 
            << " E\n";
     }
   }
 }
 
 template<class Poly>
-void dump_to_eps ( Poly const&                                   aInput
-                 , std::vector< boost::shared_ptr<Poly> > const& aOutput
-                 , std::ostream&                                 rOut
-                 ) 
+void dump_offset_to_eps( Poly const&                                   aInput
+                       , std::vector< boost::shared_ptr<Poly> > const& aOutput
+                       , std::ostream&                                 rOut
+                       ) 
 {
   typedef std::vector< boost::shared_ptr<Poly> > Poly_vector ;
     
@@ -108,19 +133,32 @@ void dump_to_eps ( Poly const&                                   aInput
   for( typename Poly_vector::const_iterator it = aOutput.begin() ; it != aOutput.end(); ++ it )
     lBbox = lBbox + CGAL::bbox_2(**it);
     
-  double lScale = 1000 / (lBbox.xmax() - lBbox.xmin()) ;
+  double lWidth  = (lBbox.xmax() - lBbox.xmin()) ;
+  double lHeight = (lBbox.ymax() - lBbox.ymin()) ;
+
+  double lSize = (std::max)(lWidth, lHeight);
+
+  double lScale = 1000 / lSize  ;
+
+  double lMargin = lSize * 0.05 ;
 
   if ( lScale < 1 )
     lScale = 1 ;
     
+  CGAL::Bbox_2 lViewport(std::floor(lScale * (lBbox.xmin() - lMargin) )
+                        ,std::floor(lScale * (lBbox.ymin() - lMargin) )
+                        ,std::ceil (lScale * (lBbox.xmax() + lMargin) )
+                        ,std::ceil (lScale * (lBbox.ymax() + lMargin) )
+                        );
+
   rOut << "%!PS-Adobe-2.0 EPSF-2.0\n%%BoundingBox:" 
-       << static_cast<int>(std::floor(lScale* lBbox.xmin()-1)) 
+       << static_cast<int>(lViewport.xmin()) 
        << " " 
-       << static_cast<int>(std::floor(lScale* lBbox.ymin()-1)) 
+       << static_cast<int>(lViewport.ymin()) 
        << " "
-       << static_cast<int>(std::ceil(lScale*lBbox.xmax()+1)) 
+       << static_cast<int>(lViewport.xmax()) 
        << " " 
-       << static_cast<int>(std::ceil(lScale*lBbox.ymax()+1))
+       << static_cast<int>(lViewport.ymax())
        << std::endl;
 
   rOut << "%%EndComments\n"
@@ -133,36 +171,50 @@ void dump_to_eps ( Poly const&                                   aInput
           "% stroke - x1 y1 x2 y2 E\n"
           "/E {newpath moveto lineto stroke} bind def\n\n"  ;
        
-  dump_to_eps(aInput,"input",lScale,rOut);
+  dump_poly_to_eps(aInput,"input",lScale,rOut);
    
   for( typename Poly_vector::const_iterator it = aOutput.begin() ; it != aOutput.end(); ++ it )
-    dump_to_eps(**it,"output",lScale,rOut);
+    dump_poly_to_eps(**it,"output",lScale,rOut);
    
   rOut << "grestore\nshowpage" << std::endl;
   
 }
 
 template<class Input, class K>
-void dump_to_eps ( Input                         const& aInput
-                 , CGAL::Straight_skeleton_2<K>  const& aSkeleton
-                 , std::ostream&                        rOut
-                 ) 
+void dump_ss_to_eps ( Input                                             const& aInput
+                    , boost::shared_ptr< CGAL::Straight_skeleton_2<K> > const& aInSkeleton
+                    , boost::shared_ptr< CGAL::Straight_skeleton_2<K> > const& aOutSkeleton
+                    , std::ostream&                                             rOut
+                    ) 
 {
   CGAL::Bbox_2 lBbox = CGAL::bbox_2(aInput);
     
-  double lScale = 1000 / (lBbox.xmax() - lBbox.xmin()) ;
+  double lWidth  = (lBbox.xmax() - lBbox.xmin()) ;
+  double lHeight = (lBbox.ymax() - lBbox.ymin()) ;
+
+  double lSize = (std::max)(lWidth, lHeight);
+
+  double lScale = 1000 / lSize  ;
+
+  double lMargin = lSize * 0.25 ;
 
   if ( lScale < 1 )
     lScale = 1 ;
     
+  CGAL::Bbox_2 lViewport(std::floor(lScale * (lBbox.xmin() - lMargin) )
+                        ,std::floor(lScale * (lBbox.ymin() - lMargin) )
+                        ,std::ceil (lScale * (lBbox.xmax() + lMargin) )
+                        ,std::ceil (lScale * (lBbox.ymax() + lMargin) )
+                        );
+    
   rOut << "%!PS-Adobe-2.0 EPSF-2.0\n%%BoundingBox:" 
-       << static_cast<int>(std::floor(lScale* lBbox.xmin()-1)) 
+       << static_cast<int>(lViewport.xmin()) 
        << " " 
-       << static_cast<int>(std::floor(lScale* lBbox.ymin()-1)) 
+       << static_cast<int>(lViewport.ymin()) 
        << " "
-       << static_cast<int>(std::ceil(lScale*lBbox.xmax()+1)) 
+       << static_cast<int>(lViewport.xmax()) 
        << " " 
-       << static_cast<int>(std::ceil(lScale*lBbox.ymax()+1))
+       << static_cast<int>(lViewport.ymax())
        << std::endl;
 
   rOut << "%%EndComments\n"
@@ -170,30 +222,37 @@ void dump_to_eps ( Input                         const& aInput
           "1.0 setlinewidth\n"
           "/input { 1 0 0 setrgbcolor } bind def\n"
           "/input_w { 0.1 setlinewidth } bind def\n"
-          "/skeleton { 0 1 0 setrgbcolor } bind def\n"
-          "/skeleton_w { 0.1 setlinewidth } bind def\n"
+          "/in_skeleton { 0 1 0 setrgbcolor } bind def\n"
+          "/in_skeleton_w { 0.1 setlinewidth } bind def\n"
+          "/out_skeleton { 0 1 0 setrgbcolor } bind def\n"
+          "/out_skeleton_w { 0.1 setlinewidth } bind def\n"
           "% stroke - x1 y1 x2 y2 E\n"
           "/E {newpath moveto lineto stroke} bind def\n\n"  ;
        
-  dump_to_eps(aInput,"input",lScale,rOut);
+  dump_poly_to_eps(aInput,"input",lScale,rOut);
    
-  dump_to_eps(aSkeleton,"skeleton",lScale,rOut);
+  if ( aInSkeleton )
+    dump_ss_to_eps(*aInSkeleton,"in_skeleton",lScale,rOut);
+
+  if ( aOutSkeleton )
+    dump_ss_to_eps(*aOutSkeleton,"out_skeleton",lScale,rOut);
    
   rOut << "grestore\nshowpage" << std::endl;
   
 }
 
 template<class Input, class K>
-void dump_to_eps ( Input                         const& aInput
-                 , CGAL::Straight_skeleton_2<K>  const& aSkeleton
-                 , std::string                          aFilename
-                 ) 
+void dump_ss_to_eps ( Input                                              const& aInput
+                     , boost::shared_ptr< CGAL::Straight_skeleton_2<K> > const& aInSkeleton
+                     , boost::shared_ptr< CGAL::Straight_skeleton_2<K> > const& aOutSkeleton
+                    , std::string                                               aFilename
+                    ) 
 {
   std::ofstream eps(aFilename.c_str()) ;
   if ( eps )  
   {
     std::cerr << "Result: " << aFilename << std::endl ;
-    dump_to_eps(aInput,aSkeleton,eps);
+    dump_ss_to_eps(aInput,aInSkeleton,aOutSkeleton,eps);
   }
   else
   {
@@ -201,17 +260,26 @@ void dump_to_eps ( Input                         const& aInput
   }  
 }
 
+template<class Input, class K>
+void dump_ss_to_eps ( Input                                             const& aInput
+                    , boost::shared_ptr< CGAL::Straight_skeleton_2<K> > const& aSkeleton
+                    , std::string                                              aFilename
+                    ) 
+{
+  dump_ss_to_eps(aInput, aSkeleton, boost::shared_ptr< CGAL::Straight_skeleton_2<K> >() , aFilename);
+}
+
 template<class Input, class Output>
-void dump_to_eps ( Input  const& aInput
-                 , Output const& aOutput
-                 , std::string   aFilename
-                 ) 
+void dump_offset_to_eps ( Input  const& aInput
+                        , Output const& aOutput
+                        , std::string   aFilename
+                        ) 
 {
   std::ofstream eps(aFilename.c_str()) ;
   if ( eps )  
   {
     std::cerr << "Result: " << aFilename << std::endl ;
-    dump_to_eps(aInput,aOutput,eps);
+    dump_offset_to_eps(aInput,aOutput,eps);
   }
   else
   {

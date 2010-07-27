@@ -39,8 +39,9 @@ int main( int argc, char* argv[] )
     {
       read_polygon_with_holes(is, input) ;
 
-      Straight_skeleton_ptr ss = CGAL::create_interior_straight_skeleton_2(input);
-      if ( ss )
+      Straight_skeleton_ptr inss  = CGAL::create_interior_straight_skeleton_2(input);
+      Straight_skeleton_ptr outss = CGAL::create_exterior_straight_skeleton_2(input);
+      if ( inss && outss )
       {
         std::string eps_name ;
         if ( argc > 2  )
@@ -51,7 +52,7 @@ int main( int argc, char* argv[] )
         if ( eps )  
         {
           std::cerr << "Result: " << eps_name << std::endl ;
-          dump_to_eps(input,*ss,eps);
+          dump_ss_to_eps(input,inss,outss,eps);
         }
         else
         {
