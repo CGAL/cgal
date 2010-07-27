@@ -1058,9 +1058,6 @@ nearest_vertex_in_cell(const Point& p, Cell_handle c) const
 {
     CGAL_triangulation_precondition(dimension() >= 0);
 
-    if (dimension() == 0)
-	    return finite_vertices_begin();
-
     Vertex_handle nearest = nearest_vertex(p, c->vertex(0), c->vertex(1));
     if (dimension() >= 2) {
 	nearest = nearest_vertex(p, nearest, c->vertex(2));
