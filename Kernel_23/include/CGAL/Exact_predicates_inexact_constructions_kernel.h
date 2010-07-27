@@ -29,8 +29,20 @@
 
 namespace CGAL {
 
-typedef Filtered_kernel< Simple_cartesian<double> >
-        Exact_predicates_inexact_constructions_kernel;
+// The following is equivalent to Filtered_kernel< Simple_cartesian<double> >,
+// but it's shorter in terms of template name length (for error messages, mangling...).
+
+class Epick
+  : public Filtered_kernel_adaptor<
+               Type_equality_wrapper< Simple_cartesian<double>::Base<Epick>::Type, Epick >,
+#ifdef CGAL_NO_STATIC_FILTERS
+               false >
+#else
+               true >
+#endif
+{};
+
+typedef Epick Exact_predicates_inexact_constructions_kernel;
 
 } //namespace CGAL
 

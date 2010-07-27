@@ -41,27 +41,60 @@
 
 namespace CGAL {
 
+// The following are redefined kernels instead of simple typedefs in order to shorten
+// template name length (for error messages, mangling...).
+
 #ifdef CGAL_DONT_USE_LAZY_KERNEL
 
 #ifdef CGAL_USE_GMP
-typedef Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Gmpq > > >
-        Exact_predicates_exact_constructions_kernel;
+// Equivalent to Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Gmpq> > >
+class Epeck
+  : public Filtered_kernel_adaptor<
+               Type_equality_wrapper< Simple_cartesian<Lazy_exact_nt<Gmpq> >::Base<Epeck>::Type, Epeck >,
+#ifdef CGAL_NO_STATIC_FILTERS
+               false >
 #else
-typedef Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Quotient<MP_Float> > > >
-        Exact_predicates_exact_constructions_kernel;
+               true >
 #endif
+{};
 
 #else
+// Equivalent to Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Quotient<MP_Float> > > >
+class Epeck
+  : public Filtered_kernel_adaptor<
+               Type_equality_wrapper< Simple_cartesian<Lazy_exact_nt<Quotient<MP_Float> > >::Base<Epeck>::Type, Epeck >,
+#ifdef CGAL_NO_STATIC_FILTERS
+               false >
+#else
+               true >
+#endif
+{};
+#endif
+
+#else // CGAL_DONT_USE_LAZY_KERNEL
 
 #ifdef CGAL_USE_GMP
-typedef Lazy_kernel<Simple_cartesian<Gmpq> >
-        Exact_predicates_exact_constructions_kernel;
+// Equivalent to Lazy_kernel<Simple_cartesian<Gmpq> >
+class Epeck
+  : public Type_equality_wrapper<
+             Lazy_kernel_base< Simple_cartesian<Gmpq>, Simple_cartesian<Interval_nt_advanced>,
+	                       Cartesian_converter< Simple_cartesian<Gmpq>, Simple_cartesian<Interval_nt_advanced> >, Epeck>,
+             Epeck >
+{};
+
 #else
-typedef Lazy_kernel<Simple_cartesian<Quotient<MP_Float> > >
-        Exact_predicates_exact_constructions_kernel;
+// Equivalent to Lazy_kernel<Simple_cartesian<Quotient<MP_Float> > >
+class Epeck
+  : public Type_equality_wrapper<
+             Lazy_kernel_base< Simple_cartesian<Quotient<MP_Float> >, Simple_cartesian<Interval_nt_advanced>,
+	                       Cartesian_converter< Simple_cartesian<Quotient<MP_Float> >, Simple_cartesian<Interval_nt_advanced> >, Epeck>,
+             Epeck >
+{};
 #endif
 
-#endif
+#endif // CGAL_DONT_USE_LAZY_KERNEL
+
+typedef Epeck Exact_predicates_exact_constructions_kernel;
 
 } //namespace CGAL
 
