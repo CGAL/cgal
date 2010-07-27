@@ -1056,7 +1056,10 @@ Delaunay_triangulation_3<Gt,Tds>::
 nearest_vertex_in_cell(const Point& p, Cell_handle c) const
 // Returns the finite vertex of the cell c which is the closest to p.
 {
-    CGAL_triangulation_precondition(dimension() >= 1);
+    CGAL_triangulation_precondition(dimension() >= 0);
+
+    if (dimension() == 0)
+	    return finite_vertices_begin();
 
     Vertex_handle nearest = nearest_vertex(p, c->vertex(0), c->vertex(1));
     if (dimension() >= 2) {
