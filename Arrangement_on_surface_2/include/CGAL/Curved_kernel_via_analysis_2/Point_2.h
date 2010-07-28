@@ -384,6 +384,10 @@ public:
         return *(this->ptr()->_m_xy);
     }
 
+    inline const Coordinate_1& y() const {
+      return this->xy().y();
+    }
+
     /*!\brief
      * supporting curve of point
      *
