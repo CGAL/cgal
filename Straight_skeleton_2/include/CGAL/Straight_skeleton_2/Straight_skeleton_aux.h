@@ -183,7 +183,7 @@ template<class Point_2>
 typename CGAL::Kernel_traits<Point_2>::Kernel::Vector_2
 ccw_angular_bisector_2( Point_2 const& p0, Point_2 const& p1, Point_2 const& p2 )
 {
-  typedef typename CGAL::Kernel_traits<Point>::Kernel K ;
+  typedef typename CGAL::Kernel_traits<Point_2>::Kernel K ;
 
   typedef typename K::Segment_2 Segment_2 ;
   typedef typename K::Vector_2  Vector_2 ;
