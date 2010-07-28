@@ -99,10 +99,9 @@ int main() {
                                  std::back_inserter(segs));
 
     // Construct a vertical segment
-    Curve_2 cv4 = construct_curve(x);
-    Point_2 v1 = construct_point(Algebraic_real_1(0),cv2,0);
+    Point_2 v1 = construct_point(0,0);
     Point_2 v2 = construct_point(Algebraic_real_1(0),cv1,1);
-    construct_x_monotone_segment(cv4,v1,v2,std::back_inserter(segs));
+    construct_x_monotone_segment(v1,v2,std::back_inserter(segs));
 
     CGAL::insert(arr,segs.begin(),segs.end());
 
