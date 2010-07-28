@@ -308,9 +308,8 @@ Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::Construct\_x\_monotone\_seg
 	 same $x$-coordinate, the constructed vertical segment consists of
 	 only one \ccc{X_monotone_curve_2} object and can be computed
 	 efficiently. In the non-vertical case, 
-	 if \ccc{p} and \ccc{q} have non-rational coordinates, 
-	 the construction 
-	 of the segment can become very expensive in practice.
+	 the construction is only possible if \ccc{p} and \ccc{q} 
+         have both rational x- and y-coordinates.
          \ccPrecond(\ccc{p} must not be equal to \ccc{q}.)
 	}
 
