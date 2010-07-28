@@ -478,6 +478,60 @@ public:
                      out);
             }
         }
+
+        template<typename OutputIterator> OutputIterator
+	  operator() (Point_2 p, Point_2 q, OutputIterator out) {
+	  bool same_x=(this->_ckva()->compare_x_2_object()(p,q)==CGAL::EQUAL);
+	  if(same_x) {
+            Algebraic_real_1 x = p.x();
+            Polynomial_2 f = Polynomial_2(x.polynomial());
+            Curve_2 cv 
+	      = this->_ckva()->kernel().construct_curve_2_object() (f);
+            *out++=typename CKvA_2::Arc_2(p,q,cv);
+	    return out;
+	  }
+	  Algebraic_real_1 px
+	    =this->_ckva()->kernel().compute_x_2_object()(p.xy()),
+	    py=this->_ckva()->kernel().compute_y_2_object()(p.xy()), 
+	    qx=this->_ckva()->kernel().compute_x_2_object()(q.xy()), 
+	    qy=this->_ckva()->kernel().compute_y_2_object()(q.xy());
+	  bool p_rat=px.is_rational() && py.is_rational();
+	  bool q_rat=qx.is_rational() && qy.is_rational();
+	  if(p_rat && q_rat) {
+	    typedef typename Algebraic_real_1::Rational Rational;
+	    Rational pxr=px.rational(), pyr=py.rational(),
+	      qxr=qx.rational(), qyr=qy.rational();
+	    typedef CGAL::Fraction_traits<Rational> FT;
+	    typename FT::Decompose decompose;
+	    typedef typename FT::Numerator_type Numerator;
+	    typedef typename FT::Denominator_type Denominator;
+	    Rational term_at_y=qxr-pxr, term_at_x=-qyr+pyr,
+	      term_at_1=pxr*qyr-pyr*qxr;
+	    Denominator denom_curr;
+	    Numerator term_at_y_int, term_at_x_int, term_at_1_int;
+	    decompose(term_at_y, term_at_y_int, denom_curr);
+	    term_at_x=term_at_x*denom_curr;
+	    term_at_1=term_at_1*denom_curr;
+	    decompose(term_at_x,term_at_x_int,denom_curr);
+	    term_at_y_int=term_at_y_int*denom_curr;
+	    term_at_1=term_at_1*denom_curr;
+	    decompose(term_at_1,term_at_1_int,denom_curr);
+	    term_at_y_int=term_at_y_int*denom_curr;
+	    term_at_x_int=term_at_x_int*denom_curr;
+	    typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
+	      ::Coefficient_type Polynomial_1;
+	    Polynomial_2 pol(Polynomial_1(term_at_1_int,term_at_x_int),
+			     Polynomial_1(term_at_y_int));
+	    Curve_2 curve=this->_ckva()->kernel().construct_curve_2_object()
+	      (pol);
+	    std::cout << curve << std::endl;
+	    CGAL_assertion(this->_ckva()->is_on_2_object()(p,curve));
+	    CGAL_assertion(this->_ckva()->is_on_2_object()(q,curve));
+	    return this->operator()(curve,p,q,out);
+	  }
+	  CGAL_precondition(same_x || (p_rat && q_rat));
+	  return out;
+	}
     };
     
     Construct_x_monotone_segment_2 construct_x_monotone_segment_2_object() 
