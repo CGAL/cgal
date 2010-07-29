@@ -1426,6 +1426,8 @@ GraphicsView/demo/Generator/Generator_2.ui -text
 GraphicsView/demo/Generator/about_Generator_2.html svneol=native#text/html
 GraphicsView/demo/Polygon/Polygon_2.qrc -text
 GraphicsView/demo/Polygon/Polygon_2.ui -text
+GraphicsView/demo/Polygon/unweighted_polygon.poly -text
+GraphicsView/demo/Polygon/weighted_polygon.wsl -text
 GraphicsView/demo/Segment_Delaunay_graph_2/Segment_voronoi_2.qrc -text
 GraphicsView/demo/Segment_Delaunay_graph_2/Segment_voronoi_2.ui -text
 GraphicsView/demo/Segment_Delaunay_graph_2/icons/circumcenter.pdf -text

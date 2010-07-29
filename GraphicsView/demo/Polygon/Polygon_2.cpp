@@ -34,6 +34,8 @@ typedef CGAL::Polygon_2<K,std::list<Point_2> > Polygon; // it must be a list for
 
 typedef CGAL::Straight_skeleton_2<K> Ss ;
 
+typedef std::vector<double> Double_vector ;
+
 typedef boost::shared_ptr<Ss> SsPtr ;
 
 typedef boost::shared_ptr<Polygon> PolygonPtr ;
@@ -53,6 +55,7 @@ private:
 
   CGAL::Qt::Converter<K> convert;
   Polygon poly; 
+  Double_vector weights ;
   QGraphicsScene scene;  
 
   CGAL::Qt::PolygonGraphicsItem<Polygon> * pgi;
@@ -172,6 +175,7 @@ MainWindow::processInput(CGAL::Object o)
     
     } else {
       poly.clear();
+      weights.clear();
       if(points.front() == points.back()){
 	points.pop_back();
       }
@@ -193,6 +197,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   poly.clear();
+  weights.clear();
   clear();
   this->actionCreateInputPolygon->setChecked(true);
   emit(changed());
@@ -217,7 +222,28 @@ MainWindow::open(const QString& fileName)
   this->actionCreateInputPolygon->setChecked(false);
   std::ifstream ifs(qPrintable(fileName));
   poly.clear();
-  ifs >> poly;
+  weights.clear();
+
+  if ( fileName.endsWith(".wsl") )
+  {
+    int v_count = 0 ;
+    ifs >> v_count ;
+    for ( int j = 0 ; j < v_count && ifs ; ++ j )
+    {
+      double x = 0.0, y = 0.0, w = 1.0 ;
+
+      ifs >> x >> y >> w ;
+
+      poly   .push_back( Point_2(x,y) ) ;
+      weights.push_back(w);
+    }
+  }
+  else
+  {
+    ifs >> poly;
+  }
+
+
   clear();
 
   this->addToRecentFiles(fileName);
@@ -243,6 +269,7 @@ void
 MainWindow::on_actionCreateInputPolygon_toggled(bool checked)
 {
   poly.clear();
+  weights.clear();
   clear();
   if(checked){
     scene.installEventFilter(pi);
@@ -270,7 +297,12 @@ MainWindow::on_actionInnerSkeleton_triggered()
     if(! poly.is_counterclockwise_oriented()){
       poly.reverse_orientation();
     }
-    SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end());
+
+    SsPtr iss ;
+
+    if ( weights.size() > 0 )
+         iss = CGAL::create_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end(), weights.begin(), weights.end() );
+    else iss = CGAL::create_interior_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end());
 
     CGAL::Straight_skeleton_2<K> const& ss = *iss;
 
@@ -282,14 +314,15 @@ MainWindow::on_actionInnerSkeleton_triggered()
     Vertex_const_handle   null_vertex ;
 
     for ( Halfedge_const_iterator i = ss.halfedges_begin(); i != ss.halfedges_end(); ++i )
+    {
+	    if ( i->is_bisector() )
       {
-	if ( i->is_bisector() ){
-	  Segment_2 s(i->opposite()->vertex()->point(), i->vertex()->point());
-	  skeletonGraphicsItems.push_back(new QGraphicsLineItem(convert(s)));
-	  scene.addItem(skeletonGraphicsItems.back());
-	  skeletonGraphicsItems.back()->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-	}
-      }
+	      Segment_2 s(i->opposite()->vertex()->point(), i->vertex()->point());
+	      skeletonGraphicsItems.push_back(new QGraphicsLineItem(convert(s)));
+	      scene.addItem(skeletonGraphicsItems.back());
+	      skeletonGraphicsItems.back()->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    	}
+    }
       
   }
 
@@ -322,28 +355,30 @@ MainWindow::on_actionOuterOffset_triggered()
                                               );  
     if ( ok )
     {
-      PolygonPtr_vector lContours = create_exterior_skeleton_and_offset_polygons_2(off,poly) ;
-      
-      PolygonPtr_vector::const_iterator frame ;
-      
-      double max_area = 0.0 ;
-      
-      for( PolygonPtr_vector::const_iterator cit = lContours.begin(); cit != lContours.end(); ++ cit )
+      SsPtr ss ;
+
+      if ( weights.size() > 0 )
       {
-        double area = (*cit)->area();
-        if ( area > max_area )
-        {
-          max_area = area ;
-          frame = cit ;
-        }
+        Double_vector neg_weights ;
+        for( Double_vector::const_iterator it = weights.begin() ; it != weights.end() ; ++ it )
+          neg_weights.push_back( - *it ) ;
+
+        ss = CGAL::create_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end(), neg_weights.begin(), neg_weights.end() );
       }
-      
-      for( PolygonPtr_vector::const_iterator cit = lContours.begin(); cit != lContours.end(); ++ cit )
+      else 
       {
-        if ( cit != frame )
+        ss = CGAL::create_exterior_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end());
+      }
+
+      if ( ss )
+      {
+        PolygonPtr_vector lContours = CGAL::create_offset_polygons_2<Polygon>(off,*ss) ;
+
+        PolygonPtr_vector::const_iterator frame = lContours.end() ;
+
+        for( PolygonPtr_vector::const_iterator cit = lContours.begin(); cit != lContours.end(); ++ cit )
         {
           Polygon const& lContour = **cit ;
-          lContour.area();
           for ( Polygon::Edge_const_iterator eit = lContour.edges_begin(); eit != lContour.edges_end(); ++ eit )
           {
             Segment_2 s(eit->source(), eit->target());
@@ -353,6 +388,7 @@ MainWindow::on_actionOuterOffset_triggered()
           } 
         }
       }
+      
     }
   }  
 }
