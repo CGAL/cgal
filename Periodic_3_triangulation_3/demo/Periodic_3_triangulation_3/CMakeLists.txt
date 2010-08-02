@@ -45,10 +45,17 @@ if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND)
   qt4_generate_moc ( Scene.h moc_Scene.cpp )
   qt4_generate_moc ( MainWindow.h moc_MainWindow.cpp )
 
+  if(DEFINED QT_QCOLLECTIONGENERATOR_EXECUTABLE)
+  else()
+    set(QT_QCOLLECTIONGENERATOR_EXECUTABLE qcollectiongenerator)
+  endif()
+
   # generate QtAssistant collection file
-  add_custom_target ( doc ALL
+  add_custom_command ( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Periodic_3_triangulation_3.qhc
       DEPENDS Periodic_3_triangulation_3.qhp Periodic_3_triangulation_3.qhcp
-      COMMAND qcollectiongenerator Periodic_3_triangulation_3.qhcp
+      COMMAND ${QT_QCOLLECTIONGENERATOR_EXECUTABLE}
+                 ${CMAKE_CURRENT_SOURCE_DIR}/Periodic_3_triangulation_3.qhcp
+                 -o ${CMAKE_CURRENT_BINARY_DIR}/Periodic_3_triangulation_3.qhc
   )
 
   # Make sure the compiler can find generated .moc files
@@ -61,7 +68,7 @@ if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND)
   		    Scene.cpp moc_Scene.cpp
   		    periodic_3_triangulation_3_demo.cpp
   		    MainWindow.ui moc_MainWindow.cpp 
-		    ${UI_FILES} ${RESOURCE_FILES})
+		    ${UI_FILES} ${RESOURCE_FILES} Periodic_3_triangulation_3.qhc)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS periodic_3_triangulation_3_demo)
 

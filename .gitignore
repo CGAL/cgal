@@ -459,9 +459,11 @@ Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/*.exe
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/*.sln
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/*.vcproj
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/Makefile
+Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/Periodic_3_triangulation_3.qch
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/demo_delaunay_qt
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/moc_*.cpp
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/ui_*.h
+Periodic_3_triangulation_3/demo/Periodic_Lloyd_3/Periodic_Lloyd_3.qch
 Point_set_processing_3/doc_doxygen
 Point_set_processing_3/doc_html
 Point_set_processing_3/doc_pdf
