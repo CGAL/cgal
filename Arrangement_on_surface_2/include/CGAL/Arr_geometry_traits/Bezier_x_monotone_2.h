@@ -712,9 +712,14 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
     (const Point_2& p,
      Bezier_cache& cache) const
 {
+
+  if (p.identical(_ps)) {
+    return EQUAL;
+  }
+  
   // First check whether p has the same x-coordinate as one of the endpoints.
   const Comparison_result  res1 = p.compare_x (_ps, cache);
-  
+
   if (res1 == EQUAL)
   {
     // In this case both points must be exact.
@@ -733,6 +738,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
     return (CGAL::compare (p.y(), _ps.y()));
   }
   
+  if (p.identical(_pt)) {
+    return EQUAL;
+  }
+
   const Comparison_result  res2 = p.compare_x (_pt, cache);
   
   if (res2 == EQUAL)
