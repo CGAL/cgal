@@ -647,6 +647,13 @@ namespace HomogeneousKernelFunctors {
 
       return CGAL_NTS sign(dosd);
     }
+
+    template <class T1, class T2, class T3, class T4>
+    result_type
+    operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
+    {
+      return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
+    }
   };
 
   template <typename K>
@@ -684,6 +691,13 @@ namespace HomogeneousKernelFunctors {
 			      );
 
       return CGAL_NTS sign(dosd);
+    }
+
+    template <class T1, class T2, class T3, class T4>
+    result_type
+    operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
+    {
+      return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
     }
   };
 

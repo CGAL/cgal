@@ -3,6 +3,7 @@
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
 // and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2010 GeometryFactory Sarl (France)
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -30,6 +31,10 @@
 // These functions are not documented for now, but could be as some point.
 
 #include <CGAL/basic.h>
+#include <boost/utility/enable_if.hpp>
+#include "boost/mpl/equal_to.hpp"
+#include <boost/mpl/int.hpp>
+#include <boost/mpl/integral_c.hpp>
 
 namespace CGAL {
 
@@ -251,6 +256,22 @@ compare_angle_with_x_axis(const typename K::Direction_2& d1,
                           const K& k)
 {
   return k.compare_angle_with_x_axis_2_object()(d1, d2);
+}
+
+template <class K, class T1, class T2, class T3, class T4>
+inline
+typename boost::enable_if<
+  boost::mpl::equal_to<boost::mpl::integral_c<int, 
+                                              Ambient_dimension<T1>::type::value>,
+                       boost::mpl::integral_c<int, 2> >,
+  typename K::Comparison_result>
+::type
+compare_distance(const T1 &o1,
+                 const T2 &o2,
+                 const T3 &o3,
+                 const T4 &o4, const K& k)
+{
+  return k.compare_distance_2_object()(o1, o2, o3, o4);
 }
 
 template <class K >
