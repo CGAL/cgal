@@ -409,6 +409,13 @@ namespace CartesianKernelFunctors {
     {
       return cmp_dist_to_pointC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
     }
+
+    template <class T1, class T2, class T3, class T4>
+    result_type
+    operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
+    {
+      return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
+    }
   };
 
   template <typename K>
@@ -424,6 +431,13 @@ namespace CartesianKernelFunctors {
       return cmp_dist_to_pointC3(p.x(), p.y(), p.z(),
 				 q.x(), q.y(), q.z(),
 				 r.x(), r.y(), r.z());
+    }
+
+    template <class T1, class T2, class T3, class T4>
+    result_type
+    operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
+    {
+      return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
     }
   };
 

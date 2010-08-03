@@ -572,13 +572,16 @@ test_new_3(const R& rep)
 
   typename R::Compare_squared_distance_3 compare_sq_dist
         = rep.compare_squared_distance_3_object();
-                    tmp34ab = compare_sq_dist(p2,p3,FT(1));
-                    tmp34ab = compare_sq_dist(p2,p3,p2,p3);
-                    tmp34ab = compare_sq_dist(p1, l2, FT(1));
-                    tmp34ab = compare_sq_dist(p2, p1, FT(1));
-                    tmp34ab = compare_sq_dist(l2, l3, FT(1));
-                    tmp34ab = compare_sq_dist(p1, s2, FT(1));
-                    tmp34ab = compare_sq_dist(p1, p2, p3, p4);
+  tmp34ab = compare_sq_dist(p2,p3,FT(1));
+  tmp34ab = compare_sq_dist(p2,p3,p2,p3);
+  tmp34ab = compare_sq_dist(p1, l2, FT(1));
+  tmp34ab = compare_sq_dist(p2, p1, FT(1));
+  tmp34ab = compare_sq_dist(l2, l3, FT(1));
+  tmp34ab = compare_sq_dist(p1, s2, FT(1));
+  tmp34ab = compare_sq_dist(p1, p2, p3, p4);
+
+  tmp34ab = CGAL::compare_distance(p2,p3,p2,p3);
+  tmp34ab = CGAL::compare_distance(p1, p2, p3, p4);  
 
   typename R::Compare_squared_radius_3 compare_sq_radius
         = rep.compare_squared_radius_3_object();

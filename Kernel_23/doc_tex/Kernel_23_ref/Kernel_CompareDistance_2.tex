@@ -8,6 +8,22 @@ A model for this must provide:
                                                const Kernel::Point_2&r);}
       {compares the distances of points \ccc{q} and \ccc{r} to point \ccc{p}}
 
+\ccMemberFunction{Comparison_result operator()(const Type1& obj1,
+                                               const Type2& obj2, 
+                                               const Type3& obj3,
+                                               const Type4& obj4);}
+      {compares the squared distance between \ccc{obj1} and \ccc{obj2} to
+        the squared distance between \ccc{obj3} and \ccc{obj4}}
+for all tuples of types \ccStyle{Type1}, \ccStyle{Type2}, \ccStyle{Type3}
+and \ccStyle{Type4} in the following set of types:
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Kernel::Point_2}
+\item \ccStyle{Kernel::Line_2}
+\item \ccStyle{Kernel::Ray_2}
+\item \ccStyle{Kernel::Segment_2}
+\item \ccStyle{Kernel::Triangle_2}
+\end{itemize}
+
 \ccRefines
 \ccc{AdaptableFunctor} (with three arguments)
 
