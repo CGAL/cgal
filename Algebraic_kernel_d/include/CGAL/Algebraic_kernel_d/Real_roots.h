@@ -133,7 +133,7 @@ public:
  * ascending order and returns the number of real roots.
  */   
 template <class AlgebraicRealOutputIterator>
-int operator()(Polynomial                  poly , 
+int operator()(const Polynomial&        poly , 
                AlgebraicRealOutputIterator it){        
     
     CGAL_precondition_msg( typename CGAL::Polynomial_traits_d< Polynomial >::Is_square_free()(poly), "P not square free.");
