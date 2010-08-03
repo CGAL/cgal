@@ -75,7 +75,7 @@ CGAL packages, some are only needed for demos.
 
      - Geomview
        http://www.geomview.org/
-       Not suported with Visual C++
+       Not supported with Visual C++
 
    * Numerical Libraries
  
@@ -105,6 +105,11 @@ CGAL packages, some are only needed for demos.
        o Surface Mesh Generator can read compressed images directly
        http://www.zlib.net/
 
+     - ESBTL
+       Optional to read PDB files:
+       o Import data from a PDB file as CGAL points or weighted points.
+         An example is given in package Skin_surface (see example skin_surface_pdb_reader.cpp)
+       http://esbtl.sourceforge.net/
 
 CONFIGURATION
 =============
