@@ -14,6 +14,7 @@ else()
             NAMES ESBTL/default.h
             PATHS /usr/include
                   /usr/local/include
+                  ENV ESBTL_INC_DIR
            )
 
   if(ESBTL_INCLUDE_DIR)
