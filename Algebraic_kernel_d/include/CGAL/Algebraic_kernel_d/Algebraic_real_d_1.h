@@ -83,7 +83,7 @@ class Algebraic_real_d_1 :
           typename Get_arithmetic_kernel<Coefficient_>::Arithmetic_kernel::Rational>::value));
     
 
-  
+
 public :
   typedef ::CGAL::Handle_with_policy<AlgebraicRealRep_d_1,HandlePolicy>                   Base;
   typedef Algebraic_real_d_1<Coefficient_,Rational_, HandlePolicy, AlgebraicRealRep_d_1>  Self;
@@ -101,13 +101,19 @@ public :
 private:
   typedef CGAL::Fraction_traits<Rational> FT_rational;
   typedef typename FT_rational::Numerator_type Integer;
+  
+private: 
+  static inline Self& get_default_instance(){
+    static Self x = Self(0); 
+    return x; 
+  }
 public:
-                                                                
+  
   //! copy constructor: copy existing Algebraic_real_d_1 (shares rep)
-  Algebraic_real_d_1(const Self& p) : Base(static_cast<const Base&>(p)) {}
+  Algebraic_real_d_1(const Self& p = get_default_instance()) : Base(static_cast<const Base&>(p)) {}
   
   //! creates the algebraic real from \a i.
-  Algebraic_real_d_1(int i = 0 ) : Base(Algebraic_real_rep_d_1(i)) { }
+  Algebraic_real_d_1(int i ) : Base(Algebraic_real_rep_d_1(i)) { }
 
   //! creates the algebraic real from \a x.
   explicit Algebraic_real_d_1(const Rational& x) : Base(Algebraic_real_rep_d_1(x)) { }

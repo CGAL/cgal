@@ -216,7 +216,10 @@ public:
   typedef typename Rep::iterator  iterator;
   //! container's const iterator (random access)
   typedef typename Rep::const_iterator const_iterator;
+  //! the Self type
+  typedef Polynomial<NT> Self; 
   //@}
+  
 
 protected:
   //! \name Protected methods
@@ -256,18 +259,15 @@ protected:
 //
 // Constructors of Polynomial<NT>
 //
-
+private:
+    static Self& get_default_instance(){
+      static Self x = Self(0); 
+      return x; 
+    }
 public:
     //! \name Constructors
-    //! default constructor: a new polynomial of undefined value.
-    Polynomial() 
-      : Base( Rep(internal::Creation_tag(), 1) ) { 
-      coeff(0) = NT(0); 
-    }
-      
-     
     //! copy constructor: copy existing polynomial (shares rep)
-    Polynomial(const Polynomial<NT>& p) : Base(static_cast<const Base&>(p)) {}
+    Polynomial(const Self& p = get_default_instance()) : Base(static_cast<const Base&>(p)) {}
         
     //! construct the constant polynomial a0 from any type convertible to NT
     template <class T>
