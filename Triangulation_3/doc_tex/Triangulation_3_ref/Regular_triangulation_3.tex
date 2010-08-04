@@ -87,7 +87,7 @@ traits class argument and calling \ccc{insert(first,last)}.}
 \ccHeading{Insertion}
 \ccThree{Vertex_handle}{dt.insertxx}{}
 
-The following methods, which already exist in triangulations, are
+The following methods, which already exist in \ccc{Triangulation_3}, are
 overloaded to ensure the property that all power spheres are regular.
 
 \ccMethod{Vertex_handle insert(const Weighted_point & p,
@@ -129,6 +129,36 @@ It returns the difference of the number of vertices between after and
 before the insertions (it may be negative due to hidden points).
 \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
 \ccc{Point}.}}
+
+The following methods, which already exist in \ccc{Triangulation_3}, are
+overloaded to ensure that hidden points are well created and maintained.
+
+\ccMethod{template <class CellIt>
+     Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end,
+	                          Cell_handle begin, int i);}
+{Creates a new vertex by starring a hole.  It takes an iterator range
+[\ccc{cell_begin}; \ccc{cell_end}[ of \ccc{Cell_handle}s which specifies
+a hole: a set of connected cells (resp. facets in dimension 2) which is
+star-shaped wrt \ccc{p}.
+(\ccc{begin}, \ccc{i}) is a facet (resp. an edge) on the boundary of the hole,
+that is, \ccc{begin} belongs to the set of cells (resp.  facets) previously
+described, and \ccc{begin->neighbor(i)} does not.  Then this function deletes
+all the cells (resp. facets) describing the hole, creates a new vertex
+\ccc{v}, and for each facet (resp. edge) on the boundary of the hole, creates
+a new cell (resp. facet) with \ccc{v} as vertex.  Then \ccc{v->set_point(p)}
+is called and \ccc{v} is returned.\\
+If the hole contains interior vertices, each of them is hidden by the insertion
+of \ccc{p} and is stored in the new cell which contains it.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, the set of cells (resp. facets in
+dimension 2) is connected, not empty, its boundary is connected, and \ccc{p}
+lies inside the hole, which is star-shaped wrt \ccc{p}}.}
+
+\ccMethod{template <class CellIt>
+     Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end,
+	                          Cell_handle begin, int i, Vertex_handle newv);}
+{ Same as above, except that \ccc{newv} will be used as the new vertex, which
+  must have been allocated previously with e.g. \ccc{create_vertex}.}
+
 
 \ccHeading{Removal}
 

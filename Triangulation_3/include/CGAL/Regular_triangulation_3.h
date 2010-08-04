@@ -182,6 +182,16 @@ public:
 
   Vertex_handle insert(const Weighted_point & p, Locate_type lt,
 	               Cell_handle c, int li, int);
+  
+  template <class CellIt>
+  Vertex_handle
+  insert_in_hole(const Weighted_point & p, CellIt cell_begin, CellIt cell_end,
+                 Cell_handle begin, int i);
+  
+  template <class CellIt>
+  Vertex_handle
+  insert_in_hole(const Weighted_point & p, CellIt cell_begin, CellIt cell_end,
+                 Cell_handle begin, int i, Vertex_handle newv);
 
   template <class OutputIteratorBoundaryFacets,
             class OutputIteratorCells,
@@ -1214,6 +1224,48 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int lj)
 
   Conflict_tester_0 tester (p, this);
   return insert_in_conflict(p, lt,c,li,lj, tester, hidden_point_visitor);
+}
+
+
+template < class Gt, class Tds >
+template <class CellIt>
+typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
+Regular_triangulation_3<Gt,Tds>::
+insert_in_hole(const Weighted_point & p, CellIt cell_begin, CellIt cell_end,
+               Cell_handle begin, int i)
+{
+  CGAL_triangulation_precondition(cell_begin != cell_end);
+  
+  hidden_point_visitor.process_cells_in_conflict(cell_begin,cell_end);
+  
+  Vertex_handle v = 
+    Tr_Base::insert_in_hole(p, cell_begin, cell_end, begin, i);
+  
+  // Store the hidden points in their new cells and hide vertices that
+  // have to be hidden
+  hidden_point_visitor.reinsert_vertices(v);
+  return v;
+}
+
+
+template < class Gt, class Tds >
+template <class CellIt>
+typename Regular_triangulation_3<Gt,Tds>::Vertex_handle
+Regular_triangulation_3<Gt,Tds>::
+insert_in_hole(const Weighted_point & p, CellIt cell_begin, CellIt cell_end,
+               Cell_handle begin, int i, Vertex_handle newv)
+{
+  CGAL_triangulation_precondition(cell_begin != cell_end);
+
+  hidden_point_visitor.process_cells_in_conflict(cell_begin,cell_end);
+
+  Vertex_handle v =
+    Tr_Base::insert_in_hole(p, cell_begin, cell_end, begin, i, newv);
+
+  // Store the hidden points in their new cells and hide vertices that
+  // have to be hidden
+  hidden_point_visitor.reinsert_vertices(v);
+  return v;
 }
 
 template <class Gt, class Tds >
