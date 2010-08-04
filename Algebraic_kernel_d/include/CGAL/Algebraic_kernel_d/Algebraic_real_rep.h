@@ -388,7 +388,7 @@ public:
             // we have ]low(), high()[ == ]y.low(),y.high()[ == ]L,R[
             // and let both numbers decide for the gcd or its complement
             Poly F1,F2,G;
-            G = gcd_utcf(polynomial(),y.polynomial()); 
+            G = CGAL::gcd_up_to_constant_factor(polynomial(),y.polynomial()); 
             F1 = integral_division_up_to_constant_factor(polynomial(),G);
             CGAL_postcondition(CGAL::degree(F1)==
                                CGAL::degree(polynomial())-CGAL::degree(G));
@@ -495,7 +495,7 @@ public:
         if (is_rational()  ) return CGAL::ZERO == Q.sign_at(rational());
         
         if ( may_have_common_factor(polynomial(), Q) ) {
-            Poly G = gcd_utcf(polynomial(),Q);
+          Poly G = CGAL::gcd_up_to_constant_factor(polynomial(),Q);
             if(CGAL::degree(G)!=0){
                 Poly F1 = integral_division_up_to_constant_factor(
                         polynomial(),G

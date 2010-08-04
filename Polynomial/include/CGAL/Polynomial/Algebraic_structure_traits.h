@@ -222,6 +222,8 @@ class Polynomial_algebraic_structure_traits_base< POLY, Unique_factorization_dom
     }
   public:
     POLY operator()( const POLY& x, const POLY& y ) const {
+      if(x==y) return x; 
+      
       typedef Algebraic_structure_traits<POLY> AST;
       typename AST::Integral_division idiv;
       typename AST::Unit_part upart; 

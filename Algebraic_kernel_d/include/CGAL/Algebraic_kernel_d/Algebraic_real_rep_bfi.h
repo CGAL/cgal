@@ -234,7 +234,7 @@ public:
             // we have ]low(), high()[ == ]y.low(),y.high()[ == ]L,R[
             // and let both numbers decide for the gcd or its complement
             Poly F1,F2,G;
-            G = gcd_utcf(polynomial(),y.polynomial()); 
+            G = CGAL::gcd_up_to_constant_factor(polynomial(),y.polynomial()); 
             F1 = CGAL::integral_division_up_to_constant_factor(polynomial(),G);
             CGAL_postcondition(CGAL::degree(F1)==
                                CGAL::degree(polynomial())-CGAL::degree(G));
