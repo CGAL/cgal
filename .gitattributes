@@ -1513,6 +1513,10 @@ HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
 Installation/INSTALL -text
 Installation/LICENSE.FREE_USE -text
 Installation/auxiliary/cgal_create_cmake_script.1 -text
+Installation/cmake/modules/2.6.2-to-2.8.1/FindQt4.cmake -text
+Installation/cmake/modules/2.6.2-to-2.8.1/Qt4ConfigDependentSettings.cmake -text
+Installation/cmake/modules/2.6.2-to-2.8.1/Qt4Macros.cmake -text
+Installation/cmake/modules/2.6.2-to-2.8.1/UseQt4.cmake -text
 Installation/cmake/modules/CGALConfig_binary.cmake.in -text
 Installation/cmake/modules/CGALConfig_install.cmake.fhs.in -text
 Installation/cmake/modules/CGALConfig_install.cmake.source.in -text
@@ -1556,15 +1560,11 @@ Installation/cmake/modules/FindOpenGL.cmake -text
 Installation/cmake/modules/FindPackageMessage.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
 Installation/cmake/modules/FindQt3-patched.cmake -text
-Installation/cmake/modules/FindQt4.cmake -text
 Installation/cmake/modules/FindRS.cmake -text
 Installation/cmake/modules/FindTAUCS.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
-Installation/cmake/modules/Qt4ConfigDependentSettings.cmake -text
-Installation/cmake/modules/Qt4Macros.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text
 Installation/cmake/modules/UseESBTL.cmake -text
-Installation/cmake/modules/UseQt4.cmake -text
 Installation/cmake/modules/test_MPFI.cpp -text
 Installation/config/support/print_BOOST_version.cpp -text
 Installation/config/support/print_GMP_version.cpp -text
