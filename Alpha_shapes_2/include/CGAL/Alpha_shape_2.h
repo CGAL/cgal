@@ -586,8 +586,8 @@ public:
     {
       // Classifies the face `f' of the underlying Delaunay
       // triangulation with respect to `A'.
-      // we consider open circles :
-      // f->radius == alpha => f exterior
+      // we consider close circles :
+      // f->radius < alpha <=> f exterior
       // problem the operator [] is non-const
 
       if (is_infinite(f)) return EXTERIOR;
@@ -595,7 +595,7 @@ public:
       // the version that computes the squared radius seems to be 
       // much faster
     
-      return (find_interval(f) < alpha) ? 
+      return (find_interval(f) <= alpha) ? 
 	INTERIOR :
 	EXTERIOR;
 
@@ -1219,21 +1219,21 @@ Alpha_shape_2<Dt>::classify(const Face_handle& f, int i,
   Interval3 interval = find_interval(const_Edge(f, i));
   //  (*(_edge_interval_map.find(const_Edge(f, i)))).second;
  
-  if (alpha <= interval.second) 
+  if (alpha < interval.second) 
     {
       if (get_mode() == REGULARIZED ||
 	  interval.first == UNDEFINED ||
-	  alpha <= interval.first)
+	  alpha < interval.first)
 	return EXTERIOR;
-      else // alpha > interval.first
+      else // alpha >= interval.first
 	return SINGULAR;
     }
   else 
-    {   // alpha > interval.second
+    {   // alpha >= interval.second
       if (interval.third == Infinity ||
-	  alpha <= interval.third)
+	  alpha < interval.third)
 	return REGULAR;
-      else // alpha > interval.third
+      else // alpha >= interval.third
 	return INTERIOR;
     }
    
@@ -1250,7 +1250,7 @@ Alpha_shape_2<Dt>::classify(const Vertex_handle& v,
   // triangulation with respect to `A'.
   Interval2 interval = v->get_range();
  
-  if (alpha <= interval.first) 
+  if (alpha < interval.first) 
     {
       if (get_mode() == REGULARIZED) 
 	return EXTERIOR;
@@ -1258,11 +1258,11 @@ Alpha_shape_2<Dt>::classify(const Vertex_handle& v,
 	return SINGULAR;
     }
   else 
-    {   // alpha > interval.first
+    {   // alpha >= interval.first
       if (interval.second == Infinity ||
-	  alpha <= interval.second)
+	  alpha < interval.second)
 	return REGULAR;
-      else // alpha > interval.second
+      else // alpha >= interval.second
 	return INTERIOR;
     }
 }
