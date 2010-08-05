@@ -421,6 +421,60 @@ CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_events_simultaneous_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_event_time_and_point_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_trisegment_2)
 
+// The following *helper* function is intended to be used only for draw unbounded
+// bisectors which have no geometric embedding.
+template<class Point_2, class FT>
+typename CGAL::Kernel_traits<Point_2>::Kernel::Vector_2
+ccw_angular_bisector_2( Point_2 const& p0, Point_2 const& p1, Point_2 const& p2, FT w01, FT w12 )
+{
+  typedef typename CGAL::Kernel_traits<Point_2>::Kernel K ;
+
+  typedef typename CGAL::Straight_skeleton_builder_traits_2<K> Traits;
+
+  typedef typename Traits::Trisegment_2_ptr Trisegment_2_ptr ;
+  typedef typename Traits::Segment_2        Segment_2 ;
+  typedef typename Traits::Vector_2         Vector_2 ;
+
+  typedef boost::tuple<FT,Point_2> TP ;
+
+  Traits traits ;
+
+  Point_2 q0, q1, q2 ;
+  double  u01, u12 ;
+
+  bool is_reflex = CGAL::right_turn(p0, p1, p2);
+
+  if ( ! is_reflex )
+  {
+    q0  = p0 ;
+    q1  = p1 ;
+    q2  = p2 ;
+    u01 = w01 ;
+    u12 = w12 ;
+  }
+  else
+  {
+    q0  = p2 ;
+    q1  = p1 ;
+    q2  = p0 ;
+    u01 = w12 ;
+    u12 = w01 ;
+  }
+
+  Trisegment_2_ptr tri = CGAL::Construct_ss_trisegment_2(traits)( Segment_2(q0, q1), u01, Segment_2(q1, q2), u12, Segment_2(q2, q0), FT(1.0) );
+
+  boost::optional<TP> tp = CGAL::Construct_ss_event_time_and_point_2(traits)(tri);
+
+  CGAL_assertion(tp);
+
+  Point_2 i = tp->get<1>();
+
+  Vector_2 bisect = is_reflex ? p1 - i : i - p1 ;
+
+  return bisect ;
+}
+
+
 } //namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H //

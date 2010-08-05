@@ -90,7 +90,7 @@ void SkeletonIpelet::draw_straight_skeleton(const Skeleton& skeleton,double max_
         Point_2 const& p1 = contour_edge_0            ->vertex()->point();  
         Point_2 const& p2 = contour_edge_1            ->vertex()->point();
 
-        Kernel::Vector_2 bisect = CGAL::CGAL_SS_i::ccw_angular_bisector_2(p0, p1, p2, contour_edge_0->weight(), contour_edge_1->weight());
+        Kernel::Vector_2 bisect = CGAL::ccw_angular_bisector_2(p0, p1, p2, contour_edge_0->weight(), contour_edge_1->weight());
 
         Point_2 s=outh->opposite()->vertex()->point();
         out++=Segment_2(s , (s - bisect/CGAL::sqrt(bisect*bisect)*max_edge) );

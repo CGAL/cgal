@@ -100,7 +100,7 @@ void dump_ss_to_eps( CGAL::Straight_skeleton_2<K> const& aSkeleton, char const* 
         Point_2 const& p1 = contour_edge_0            ->vertex()->point();  
         Point_2 const& p2 = contour_edge_1            ->vertex()->point();
 
-        Vector_2 bisect = CGAL::CGAL_SS_i::ccw_angular_bisector_2(p0, p1, p2, contour_edge_0->weight(), contour_edge_1->weight() );
+        Vector_2 bisect = CGAL::ccw_angular_bisector_2(p0, p1, p2, contour_edge_0->weight(), contour_edge_1->weight() );
 
         s = outh->opposite()->vertex()->point() ;
 
