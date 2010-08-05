@@ -1,6 +1,5 @@
 #define CGAL_POLYGON_DEBUG 1
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #ifdef CGAL_USE_GMP

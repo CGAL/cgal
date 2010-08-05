@@ -313,19 +313,19 @@ class Polygon_2 {
     //             Random access methods
     //--------------------------------------------------------
 
-    const Point_2& vertex(int i) const
+  const Point_2& vertex(std::size_t i) const
       { return *(d_container.begin() + i); }
 
-//    Point_2& vertex(int i)
+//    Point_2& vertex(std::size_t i)
 //      { return *(d_container.begin() + i); }
 
-    const Point_2& operator[](int i) const
+  const Point_2& operator[](std::size_t i) const
       { return vertex(i); }
 
-//    Point_2& operator[](int i)
+//    Point_2& operator[](std::size_t i)
 //      { return vertex(i); }
 
-    Segment_2 edge(int i) const
+  Segment_2 edge(std::size_t i) const
       { return *(edges_begin() + i); }
 
     //--------------------------------------------------------
