@@ -419,7 +419,9 @@ test_point_conflict_from_superior_impl(const Point& point,
        facet_it != zone.internal_facets.end();
        ++facet_it)
   {
-    if( is_facet_encroached(*facet_it, point) )
+    // surface facets which are internal facets of the conflict zone are
+    // encroached
+    if( is_facet_on_surface(*facet_it) )
     {
       // Insert already existing surface facet into refinement queue
       insert_encroached_facet(*facet_it);
@@ -755,7 +757,7 @@ Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
 is_facet_encroached(const Facet& facet,
                     const Point& point) const
 {
-  if ( r_tr_.is_infinite(facet.first) || ! is_facet_on_surface(facet) )
+  if ( r_tr_.is_infinite(facet) || ! is_facet_on_surface(facet) )
   {
     return false;
   }
