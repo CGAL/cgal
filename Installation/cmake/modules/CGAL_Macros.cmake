@@ -159,15 +159,33 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     
   endmacro()
 
-  macro( create_CGALconfig_files )
-    # FindCGAL and UseCGAL are platform specific so they are generated and stored in the binary folder.
-    configure_file(${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in  ${CMAKE_BINARY_DIR}/CGALConfig.cmake       @ONLY IMMEDIATE)
-    
-    if ( SOURCE_INSTALL )
-      configure_file(${CGAL_MODULES_DIR}/CGALConfig_install.cmake.source.in ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake @ONLY IMMEDIATE)
-    else()
-      configure_file(${CGAL_MODULES_DIR}/CGALConfig_install.cmake.fhs.in    ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake @ONLY IMMEDIATE)
+  macro( cgal_setup_module_path )
+    #If this macro is turned to be a function, then PARENT_SCOPE must be used in set().
+
+    # Avoid to modify the modules path twice
+    if(NOT CGAL_MODULE_PATH_IS_SET)
+      # Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+      set(CGAL_CMAKE_MODULE_PATH ${CGAL_MODULES_DIR} )
+      
+      # Use FindQt4 from CMake-2.8.1 if 2.6.2 <= CMake <= 2.8.1
+      if(${CMAKE_VERSION} VERSION_GREATER "2.6.1" AND ${CMAKE_VERSION} VERSION_LESS "2.8.2")
+        set(CGAL_CMAKE_MODULE_PATH ${CGAL_CMAKE_MODULE_PATH} ${CGAL_MODULES_DIR}/2.6.2-to-2.8.1 )
+      endif()
+      
+      set(ORIGINAL_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} )
+      
+      set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH} )
+
+      set(CGAL_MODULE_PATH_IS_SET TRUE)
     endif()
+  endmacro()
+
+  macro( create_CGALconfig_files )
+    # CGALConfig.cmake is platform specific so it is generated and stored in the binary folder.
+    configure_file(${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in  ${CMAKE_BINARY_DIR}/CGALConfig.cmake        @ONLY)
+    
+    # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
+    configure_file(${CGAL_MODULES_DIR}/CGALConfig_install.cmake.in ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake @ONLY)
   endmacro()
   
   macro ( fetch_env_var VAR )
