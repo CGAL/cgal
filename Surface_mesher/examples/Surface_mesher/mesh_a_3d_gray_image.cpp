@@ -22,7 +22,7 @@ int main() {
   C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
   // the 'function' is a 3D gray level image
-  Gray_level_image image("data/skull_2.9.inr", 2.9);
+  Gray_level_image image("data/skull_2.9.inr", 2.9f);
 
   // Carefully choosen bounding sphere: the center must be inside the
   // surface defined by 'image' and the radius must be high enough so that
