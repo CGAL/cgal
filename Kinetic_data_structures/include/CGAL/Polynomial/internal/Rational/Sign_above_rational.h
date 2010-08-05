@@ -39,7 +39,6 @@ template <class Kernel>
 class Sign_above_rational
 {
 public:
-  Sign_above_rational(){}
   Sign_above_rational( Kernel k= Kernel()):k_(k){}
   typedef typename Kernel::FT second_argument_type;
   typedef typename Kernel::Function first_argument_type;

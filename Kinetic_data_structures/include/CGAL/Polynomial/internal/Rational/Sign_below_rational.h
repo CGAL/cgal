@@ -56,7 +56,6 @@ template <class Kernel>
 class Sign_below_rational
 {
 public:
-  Sign_below_rational(){}
   Sign_below_rational(Kernel k= Kernel()):k_(k){}
   typedef typename Kernel::Function first_argument_type;
   typedef typename Kernel::NT second_argument_type;
