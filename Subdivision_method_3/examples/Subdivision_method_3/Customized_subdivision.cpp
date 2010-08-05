@@ -51,7 +51,7 @@ public:
 
     Halfedge_around_vertex_circulator vcir = vitr->vertex_begin();
     std::size_t n = circulator_size(vcir);
-    for (int i = 0; i < n; i++, ++vcir) {
+    for (std::size_t i = 0; i < n; i++, ++vcir) {
       Point& p = vcir->opposite()->vertex()->point();
       R[0] += p[0]; 	R[1] += p[1]; 	R[2] += p[2];
     }
