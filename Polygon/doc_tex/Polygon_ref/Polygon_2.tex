@@ -235,18 +235,18 @@ For convenience we provide the following Boolean functions:
 \ccHeading{Random access methods}
 These methods are only available for random access containers.
 
-  \ccMethod{const Point_2& vertex(int i) const;}
+  \ccMethod{const Point_2& vertex(std::size_t i) const;}
     { Returns a (const) reference to the $i$-th vertex. }
 
-  \ccMethod{const Point_2& operator[](int i) const;}
+  \ccMethod{const Point_2& operator[](std::size_t i) const;}
     { Returns a (const) reference to the $i$-th vertex. }
 
-  \ccMethod{Segment_2 edge(int i) const;}
+  \ccMethod{Segment_2 edge(std::size_t i) const;}
     { Returns a const reference to the $i$-th edge. }
 
 \ccHeading{Miscellaneous}
 
-  \ccMethod{int size() const;}
+  \ccMethod{std::size_t size() const;}
     { Returns the number of vertices of the polygon \ccVar.}
 
   \ccMethod{bool is_empty() const;}
