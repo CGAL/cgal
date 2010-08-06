@@ -237,7 +237,7 @@ struct Coercion_traits< leda_bigfloat_interval , ::leda::integer >{
     struct Cast{
         typedef Type result_type;
         Type operator()(const leda_bigfloat_interval& x)  const { return x;}
-        Type operator()(const ::leda::integer x) const {
+        Type operator()(const ::leda::integer& x) const {
             leda::bigfloat tmp(x);
             leda_bigfloat_interval result(
                     round(tmp,leda::bigfloat::get_precision(),leda::TO_N_INF),
