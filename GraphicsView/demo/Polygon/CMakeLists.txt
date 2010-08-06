@@ -24,7 +24,11 @@ find_package(Qt4)
 
 include_directories (BEFORE ../../include)
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND CGAL_Core_FOUND AND QT4_FOUND )
+if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
+
+  if( CGAL_Core_FOUND)
+    add_definitions(-DCGAL_USE_CORE)
+  endif()
 
   include(${QT_USE_FILE})
   #--------------------------------
@@ -37,7 +41,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND CGAL_Core_FOUND AND QT4_FOUND )
   qt4_add_resources ( DT_RESOURCE_FILES ./Polygon_2.qrc )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
-  qt4_generate_moc( Polygon_2.cpp Polygon_2.moc )
+  qt4_generate_moc( Polygon_2.cpp ${CMAKE_BINARY_DIR}/Polygon_2.moc )
 
   # The executable itself.
   add_executable  ( Polygon_2 Polygon_2.cpp Polygon_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
