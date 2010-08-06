@@ -35,7 +35,7 @@ class Sign_at
 public:
   Sign_at(K k=K()): k_(k) {
   }
-  Sign_at(){}
+
   typedef typename K::Root argument_type;
   typedef CGAL::Sign result_type;
 
