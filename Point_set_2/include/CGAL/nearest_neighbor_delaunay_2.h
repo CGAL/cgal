@@ -96,7 +96,7 @@ typename Dt::Vertex_handle lookup(const Dt& delau, const typename Dt::Point& p)
    
    
 template<class Dt, class OutputIterator>
-OutputIterator   nearest_neighbors(Dt& delau, const typename Dt::Point& p, int k, OutputIterator res)
+OutputIterator   nearest_neighbors(Dt& delau, const typename Dt::Point& p, std::size_t k, OutputIterator res)
 {
   typedef typename Dt::Geom_traits                    Gt;
   typedef typename Dt::size_type                      size_type;
@@ -144,7 +144,7 @@ OutputIterator   nearest_neighbors(Dt& delau, const typename Dt::Point& p, int k
 
    
 template<class Dt, class OutputIterator>  
-OutputIterator  nearest_neighbors(const Dt& delau, typename Dt::Vertex_handle v, int k, OutputIterator res)
+OutputIterator  nearest_neighbors(const Dt& delau, typename Dt::Vertex_handle v, std::size_t k, OutputIterator res)
 {  
   typedef typename Dt::Geom_traits                    Gt;
   typedef typename Dt::size_type                      size_type;
@@ -187,7 +187,7 @@ OutputIterator get_vertices(const Dt& delau, OutputIterator res)
 // second template argument for VC ...
 
 template<class Dt, class T2>
-void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, int k, std::list<T2>& res) 
+void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, std::size_t k, std::list<T2>& res) 
 {  
   typedef typename Dt::Geom_traits                    Gt;
   typedef typename Dt::size_type                      size_type;
