@@ -140,6 +140,7 @@ MainWindow::MainWindow()
   scene.setItemIndexMethod(QGraphicsScene::NoIndex);
   scene.setSceneRect(-100, -100, 100, 100);
   this->graphicsView->setScene(&scene);
+  this->graphicsView->setMouseTracking(true);
 
   // Uncomment the following line to get antialiasing by default.
 //   actionUse_Antialiasing->setChecked(true);
