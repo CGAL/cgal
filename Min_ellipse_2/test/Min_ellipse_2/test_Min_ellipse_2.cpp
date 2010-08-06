@@ -234,7 +234,7 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
     const int     n = 20;
     CGAL::Random  random_x, random_y;
     Point         random_points[ n];
-    int           i;
+    std::size_t   i;
     verr << endl <<  n  << " random points from [0,128)^2:" << endl;
     for ( i = 0; i < n; ++i) {
         random_points[ i] = Point( RT( random_x( 128)),
