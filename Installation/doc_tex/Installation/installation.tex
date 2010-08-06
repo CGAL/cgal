@@ -1045,6 +1045,26 @@ related to the latter library may also need to be defined.
 \end{tabular}
 }
 
+
+\index{cgal!general-config-cmake-vars-dep-esbtl}\index{cgal configuration cmake variables - dependencies - esbtl}
+\subsubsection{ESBTL library}
+
+One skin surface example requires the ESBTL library in order to read PDB files.
+
+If ESBTL is not automatically found, setting the \texttt{ESBTL\_INC\_DIR} 
+environment variable is sufficient.
+
+{\ccTexHtml{\small}{}
+\renewcommand{\arraystretch}{1.3}
+\gdef\lcTabularBorder{2}
+\begin{tabular}{|l|l|l|} \hline
+  \textbf{Variable}                    & \textbf{Description}                                         & \textbf{Type}\\\hline\hline
+  \texttt{ESBTL\_INC\_DIR}     & Directory containing the \texttt{ESBTL/default.h} file & Environment\\\hline
+  \texttt{ESBTL\_INCLUDE\_DIR}     & Directory containing the \texttt{ESBTL/default.h} file & CMake\\\hline
+\end{tabular}
+}
+
+
 \section{Example} 
 
 Below is an example output on a Windows machine with VC8 installed, using \cmake\ 2.6,
