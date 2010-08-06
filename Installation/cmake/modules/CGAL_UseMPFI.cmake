@@ -12,7 +12,7 @@ if( NOT CGAL_MPFI_SETUP )
     try_run( MPFI_TEST_RESULT
              COMPILED_MPFI_TEST
              "${CMAKE_BINARY_DIR}"
-             "${CGAL_CMAKE_MODULE_PATH}/test_MPFI.cpp"
+             "${CGAL_MODULES_DIR}/test_MPFI.cpp"
              CMAKE_FLAGS
                "-DINCLUDE_DIRECTORIES:
                  STRING=${MPFI_INCLUDE_DIR};${CGAL_3RD_PARTY_INCLUDE_DIRS}"
