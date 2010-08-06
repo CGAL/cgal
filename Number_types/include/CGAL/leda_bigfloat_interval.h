@@ -259,7 +259,7 @@ struct Coercion_traits< leda_bigfloat_interval , ::leda::rational >{
     struct Cast{
         typedef Type result_type;
         Type operator()(const leda_bigfloat_interval& x)  const { return x;}
-        Type operator()(const ::leda::rational x) const {
+        Type operator()(const ::leda::rational& x) const {
             long prec = ::leda::bigfloat::get_precision();
             leda_bigfloat_interval result (
                     leda_bigfloat::from_rational(x,prec,leda::TO_N_INF),
@@ -281,7 +281,7 @@ struct Coercion_traits< leda_bigfloat_interval , ::leda::real >{
     struct Cast{
         typedef Type result_type;
         Type operator()(const leda_bigfloat_interval& x)  const { return x;}
-        Type operator()(const ::leda::real x) const {
+        Type operator()(const ::leda::real& x) const {
             long current_prec = ::leda::bigfloat::get_precision();
             x.guarantee_relative_error(current_prec);
             leda_bigfloat_interval 
