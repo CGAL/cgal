@@ -192,7 +192,7 @@ class Min_circle_2 {
     // random access for support points
     inline
     const Point&
-    support_point( int i) const
+    support_point( std::size_t i) const
     {
         CGAL_optimisation_precondition( (i >= 0) &&
                                         (i <  number_of_support_points()));
