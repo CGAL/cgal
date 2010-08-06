@@ -12,7 +12,8 @@ else()
 
   find_path(ESBTL_INCLUDE_DIR 
             NAMES ESBTL/default.h
-            PATHS /usr/include
+            PATHS ENV ESBTL_INC_DIR
+                  /usr/include
                   /usr/local/include
            )
 
