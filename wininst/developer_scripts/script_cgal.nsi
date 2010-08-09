@@ -206,7 +206,11 @@ SectionEnd
 
 ; Download and install GMP and MPFR binaries.
 ; Depend only on the platform (one variant per platform)
-!insertmacro Install_GMP_MPFR_bin "$Platform"
+Section /o "GMP and MPFR precompiled libs"  GMP_LIB_Idx
+  !ifndef FetchLocal
+    !insertmacro Install_GMP_MPFR_bin "$Platform"
+  !endif
+SectionEnd
 
 ;--------------------------------
 
