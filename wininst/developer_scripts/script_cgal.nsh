@@ -117,21 +117,6 @@ Var IsTAUCSInstalled
   ${EndIf}  
 !macroend
 
-!macro Install_GMP_MPFR_libs PLATFORM VARIANT
-  !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp-${VARIANT}.lib.zip"  "$INSTDIR\auxiliary\gmp\lib"
-  !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr-${VARIANT}.lib.zip" "$INSTDIR\auxiliary\gmp\lib"
-!macroend
-
-!macro Install_GMP_MPFR_dlls PLATFORM VARIANT
-  !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp-${VARIANT}.dll.zip"  "$INSTDIR\auxiliary\gmp\lib"
-  !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr-${VARIANT}.dll.zip" "$INSTDIR\auxiliary\gmp\lib"
-!macroend
-
-!macro Install_GMP_MPFR_pdbs PLATFORM VARIANT
-  !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp-${VARIANT}.pdb.zip"  "$INSTDIR\auxiliary\gmp\lib"
-  !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr-${VARIANT}.pdb.zip" "$INSTDIR\auxiliary\gmp\lib"
-!macroend
-
 !macro Install_LAPACK_TAUCS_libs PLATFORM VARIANT
   ; Headers are not VARIANT dependent so we include this only once, but here since
   ; we want to download headers only if at least one lib variant was selected.
@@ -154,18 +139,8 @@ Var IsTAUCSInstalled
 !macroend
 
 !macro Install_GMP_MPFR_bin PLATFORM VARIANT
-
-  ; Headers are not VARIANT dependent so we include this only once, but here since
-  ; we want to download headers only if at least one lib variant was selected.
-  ${If} $IsGmpInstalled = 0
-    StrCpy $IsGmpInstalled 1 
-    !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/4.2.4/"  "gmp.h.zip"  "$INSTDIR\auxiliary\gmp\include"
-    !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/2.3.2/" "mpfr.h.zip" "$INSTDIR\auxiliary\gmp\include"
-  ${Endif}
-  
-  !insertmacro Install_GMP_MPFR_libs                                "${PLATFORM}" "${VARIANT}"
-  !insertmacro Install_PDB_if_debug_variant Install_GMP_MPFR_pdbs   "${PLATFORM}" "${VARIANT}"
-  !insertmacro Install_DLL_if_dynamic_variant Install_GMP_MPFR_dlls "${PLATFORM}" "${VARIANT}"
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/5.0.1/"  "gmp-all.zip"  "$INSTDIR\auxiliary\gmp"
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/3.0.0/" "mpfr-all.zip" "$INSTDIR\auxiliary\gmp"
 !macroend
 
 !macro _MaybeSelectVariant Compiler Variant Sec1 Sec2
