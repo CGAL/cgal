@@ -20,8 +20,9 @@
 
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
-
-#include <CGAL/Uncertain.h>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/or.hpp>
 
 #include <CGAL/Straight_skeleton_2/assertions.h>
 #include <CGAL/Straight_skeleton_2/debug.h>
@@ -30,11 +31,22 @@
 //
 // The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
 //
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i
 {
 
+template<class K> struct Has_inexact_constructions
+{ 
+  typedef typename K::FT FT ;
+  
+  typedef typename boost::mpl::if_< boost::mpl::or_< boost::is_same<FT,double>
+                                                   , boost::is_same<FT,Interval_nt_advanced>
+                                                   > 
+                                  , Tag_true
+                                  , Tag_false
+                                  >::type type ; 
+} ;
 
 //
 // This record encapsulates the defining contour halfedges for a node (both contour and skeleton)
@@ -147,6 +159,7 @@ private:
   Handle mE[3];
 } ;
 
+
 } // namespace CGAL_SS_i
 
 enum Trisegment_collinearity
@@ -171,7 +184,7 @@ static char const* trisegment_collinearity_to_string( Trisegment_collinearity c 
   
   return "!!UNKNOWN COLLINEARITY!!" ;
 }
-namespace internal
+namespace internal 
 {
 
 template <>
@@ -201,7 +214,7 @@ public:
       }
 };
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 namespace boost
 {
@@ -213,3 +226,4 @@ inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Releas
 
 #endif // CGAL_STRAIGHT_SKELETON_AUX_H //
 // EOF //
+

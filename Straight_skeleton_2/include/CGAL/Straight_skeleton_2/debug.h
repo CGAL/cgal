@@ -26,8 +26,7 @@
     || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE) \
     || defined(CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE) \
     || defined(CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE) \
-    || defined(CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING) \
-    || defined(CGAL_STRAIGHT_SKELETON_PROFILING_ENABLED)
+    || defined(CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING)
 #
 #  define CGAL_STSKEL_TRACE_ON
 #
@@ -35,10 +34,6 @@
 #  include<iostream>
 #  include<sstream>
 #  include<iomanip>
-#  include<boost/optional.hpp>
-#  include<boost/intrusive_ptr.hpp>
-#  include<CGAL/MP_Float.h>
-
 #  define CGAL_STSKEL_TRACE(m) \
      { \
        std::ostringstream ss ; \
@@ -78,7 +73,7 @@ inline std::string n2str( N const& n )
 }
 
 
-#if CGAL_USE_CORE
+#if 0 //CGAL_USE_CORE
 
 inline CORE::BigFloat to_big_float( CGAL::MP_Float const& n )
 {
@@ -130,11 +125,11 @@ inline std::string n2str( CGAL::Quotient< CGAL::MP_Float > const& n )
 }
 #endif
 
-template<class XYZ>
-inline std::string xyz2str( XYZ const& xyz )
+template<class XY>
+inline std::string xy2str( XY const& xy )
 {
   std::ostringstream ss ; 
-  ss << "(" << n2str(xyz.x()) << "," << n2str(xyz.y()) << "," << n2str(xyz.z()) << ")" ;
+  ss << "(" << n2str(xy.x()) << "," << n2str(xy.y()) << ")" ;
   return ss.str();
 }
 template<class D>
@@ -163,14 +158,6 @@ inline std::string v2str( V const& v )
   ss << "V" << v.id() << " " << p2str(v.point()) << " [" << v.time() << "]" ;
   return ss.str();
 }
-
-template<class H>
-inline int hid( H const& h )
-{
-  H null ;
-  return h != null ? h->id() : -1 ;
-}
-
 template<class VH>
 inline std::string vh2str( VH const& vh )
 {
@@ -196,14 +183,14 @@ inline std::string e2str( E const& e )
   if ( e.is_bisector() )
   {
     ss << "B" << e.id()
-       << "[E" << hid(e.defining_contour_edge()) 
-       << ",E" << hid(e.opposite()->defining_contour_edge()) << "]"
+       << "[E" << e.defining_contour_edge()->id() 
+       << ",E" << e.opposite()->defining_contour_edge()->id() << "]"
        << " (/" << ( e.slope() == CGAL::ZERO ? "·" : ( e.slope() == CGAL::NEGATIVE ? "-" : "+" ) )
        << " " << e.opposite()->vertex()->time() << "->" << e.vertex()->time() << ")" ; 
   }
   else
   {
-    ss << "E" << e.id() << " (" << e.weight() << ")" ;
+    ss << "E" << e.id() ;
   }
   ss << " " << s2str(e.opposite()->vertex()->point(),e.vertex()->point()) ;
   return ss.str();
@@ -213,7 +200,7 @@ template<class EH>
 inline std::string eh2str( EH const& eh )
 {
   EH null ;
-  return eh != null ? e2str(*eh) : "#E#" ;
+  return eh != null ? e2str(*eh) : "NULL_HALFEDGE_HANDLE" ;
 }
 
 template<class BH>
@@ -223,14 +210,14 @@ inline std::string newb2str( char const* name, BH const& b )
   
   ss << "New Bisector " 
      << name 
-     << " is B" << hid(b)
-     << " [E" << hid(b->defining_contour_edge()) 
-     << ",E" << hid(b->opposite()->defining_contour_edge())
-     << "] {B" << hid(b->prev()) 
-     << "->N"  << hid(b->prev()->vertex()) 
-     << "->B" << hid(b) 
-     << "->N" << hid(b->vertex()) 
-     << "->B" << hid(b->next())
+     << " is B" << b->id()
+     << " [E" << b->defining_contour_edge()->id() 
+     << ",E" << b->opposite()->defining_contour_edge()->id()
+     << "] {B" << b->prev()->id() 
+     << "->N"  << b->prev()->vertex()->id() 
+     << "->B" << b->id() 
+     << "->N" << b->vertex()->id() 
+     << "->B" << b->next()->id()
      << "}" ;
      
   return ss.str();
@@ -241,12 +228,12 @@ inline std::string newn2str( char const* name, VH const& v, Triedge const& aTrie
 {
   std::ostringstream ss ; 
 
-  ss << "New Node " << name <<" is N" << hid(v) << " at " << v->point()
-     << " [E" << hid(aTriedge.e0())
-     << ",E" << hid(aTriedge.e1())
-     << ",E" << hid(aTriedge.e2())
-     << "] incident halfedge: B" << hid(v->halfedge())
-     << "  primary bisector: B" << hid(v->primary_bisector()) ;
+  ss << "New Node " << name <<" is N" << v->id() << " at " << v->point()
+     << " [E" << aTriedge.e0()->id()
+     << ",E" << aTriedge.e1()->id()
+     << ",E" << aTriedge.e2()->id()
+     << "] incident halfedge: B" << v->halfedge()->id()
+     << "  primary bisector: B" << v->primary_bisector()->id() ;
      
   return ss.str();
 }
@@ -306,7 +293,7 @@ bool sEnableTraitsTrace = false ;
 #  include<iostream>
 #  include<sstream>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_STRAIGHT_SKELETON_i_profiling
 {
@@ -320,7 +307,7 @@ template<> char const* kernel_type<CORE::Expr>          () { return "Expr" ;    
 
 } // CGAL_STRAIGHT_SKELETON_i_profiling
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 #define CGAL_STSKEL_ASSERT_PREDICATE_RESULT(expr,K,pred,error) \
         { \

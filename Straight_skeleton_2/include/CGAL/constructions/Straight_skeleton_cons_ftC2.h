@@ -18,7 +18,7 @@
 #ifndef CGAL_STRAIGHT_SKELETON_CONS_FTC2_H
 #define CGAL_STRAIGHT_SKELETON_CONS_FTC2_H 1
 
-namespace CGAL { 
+CGAL_BEGIN_NAMESPACE 
 
 namespace CGAL_SS_i
 {
@@ -114,14 +114,12 @@ inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
 
 // Given an oriented 2D straight line segment 'e', computes the normalized coefficients (a,b,c) of the
 // supporting line.
-// POSTCONDITION: [a,b] is the leftward normal _unit_ (a^2+b^2=1) vector.
+// POSTCONDITION: [a,b] is the leftward normal _unit_ (a�+b�=1) vector.
 // POSTCONDITION: In case of overflow, an empty optional<> is returned.
-template<class Segment_2>
-optional< typename Kernel_traits<Segment_2>::Kernel::Line_2 > compute_normalized_line_ceoffC2( Segment_2 const& e )
+template<class K>
+optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
 {
   bool finite = true ;
-  
-  typedef typename Kernel_traits<Segment_2>::Kernel K;
   
   typedef typename K::FT FT ;
   
@@ -226,215 +224,114 @@ Rational<FT> squared_distance_from_point_to_lineC2( FT const& px, FT const& py, 
 //
 // NOTE: If the collinearity cannot be determined reliably, a null trisegment is returned.
 //
-template<class Trisegment_2,class Segment_2, class FT>
-typename Trisegment_2::Self_ptr construct_trisegment ( Segment_2 const& e0
-                                                     , FT        const& w0
-                                                     , Segment_2 const& e1
-                                                     , FT        const& w1
-                                                     , Segment_2 const& e2
-                                                     , FT        const& w2
-                                                     )
+template<class K>
+intrusive_ptr< Trisegment_2<K> > construct_trisegment ( Segment_2<K> const& e0
+                                                      , Segment_2<K> const& e1
+                                                      , Segment_2<K> const& e2
+                                                      )
 {
+  typedef Trisegment_2<K>                 Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
   
-  Uncertain<Trisegment_collinearity> lCollinearity = certified_trisegment_collinearity(e0,w0,e1,w1,e2,w2);
+  Uncertain<Trisegment_collinearity> lCollinearity = certified_trisegment_collinearity(e0,e1,e2);
   
   if (is_certain(lCollinearity) ) 
-       return Trisegment_2_ptr( new Trisegment_2(e0, w0, e1, w1, e2, w2, lCollinearity) ) ;
+       return Trisegment_2_ptr( new Trisegment_2(e0, e1, e2, lCollinearity) ) ;
   else return Trisegment_2_ptr();
 }
 
-// Given 3 oriented moving straight line equations: e0, e1, e2
-// en : an*x(t) + bn*y(t) + cn - wn*t = 0
-// returns the "time" (n/d) at which the weighted offsetted lines
-// intersect at a single point, IFF such intersection exist.
-// If the lines intersect on the common offsetting side, the returned distance is positive, otherwise it is negative.
-// The offsetting side of a line is given by the sign of its assigned weight: positive weight is to the left, negative to the right.
-//
-// NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
-// (a predicate for instance should return indeterminate in this case)
-//
-// If the lines do not intersect, for example, for collinear edges, or parallel edges but with the same orientation,
-// returns den=0
-//
-// PRECONDITION: None of e0, e1 and e2 are collinear (but two of them can be parallel)
-//
-// POSTCONDITION: In case of overflow an empty optional is returned.
-//
-
-template<class FT >
-optional< Rational< FT > > linsolve_timeC2( FT const & a0, FT const & b0, FT const & c0, FT const & w0
-                                          , FT const & a1, FT const & b1, FT const & c1, FT const & w1
-                                          , FT const & a2, FT const & b2, FT const & c2, FT const & w2
-                                          )
-{ 
-  // DETAILS:
-  //
-  // A weighted offset line is given by:
-  //
-  //   a*x(t) + b*y(t) + c - w*t = 0
-  //
-  // were 'w*t > 0' being to the left of the line.
-  // If 3 such offset lines intersect at the same offset distance, the intersection 't',
-  // or 'time', can be computed solving for 't' in the linear system formed by 3 such equations.
-  // The result is :
-  //
-  //      (b2*a1 - a2*b1)*c0 + (a2*b0- b2*a0)*c1 + (b1*a0 - b0*a1)*c2
-  //  t = ------------------------------------------------------------
-  //      (b2*a1 - a2*b1)*w0 + (a2*b0- b2*a0)*w1 + (b1*a0 - b0*a1)*w2 
- 
-  FT num = ( b2 * a1 - a2 * b1 ) * c0
-          +( a2 * b0 - b2 * a0 ) * c1
-          +( b1 * a0 - b0 * a1 ) * c2;
-  
-  FT den = ( b2 * a1 - a2 * b1 ) * w0
-          +( a2 * b0 - b2 * a0 ) * w1
-          +( b1 * a0 - b0 * a1 ) * w2;
-
-  bool ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
-
-  return cgal_make_optional(ok,Rational<FT>(num,den)) ;
-}
-
-
-// Given 3 oriented moving straight line equations: e0, e1, e2
-// en : an*x(t) + bn*y(t) + cn - wn*t = 0
-// returns the "point" pair(x,y) at which the weighted offsetted lines
-// intersect, IFF such intersection exist.
-// If the lines intersect on the common offsetting side, the returned distance is positive, otherwise it is negative.
-// The offsetting side of a line is given by the sign of its assigned weight: positive weight is to the left, negative to the right.
-//
-// If the lines do not intersect, for example, for collinear edges, or parallel edges but with the same orientation,
-// returns den=0
-//
-// PRECONDITION: None of e0, e1 and e2 are collinear (but two of them can be parallel)
-//
-// POSTCONDITION: In case of overflow an empty optional is returned.
-//
-
-template<class FT >
-optional< std::pair< FT, FT > >
-  linsolve_pointC2( FT const & a0, FT const & b0, FT const & c0, FT const & w0
-                  , FT const & a1, FT const & b1, FT const & c1, FT const & w1
-                  , FT const & a2, FT const & b2, FT const & c2, FT const & w2
-                  )
-{
-  bool ok = false;
-  FT x(0.0), y(0.0);
-
-  FT den = ( b2 * a1 - a2 * b1 ) * w0
-          +( a2 * b0 - b2 * a0 ) * w1
-          +( b1 * a0 - b0 * a1 ) * w2 ;  
-  
-  CGAL_STSKEL_TRAITS_TRACE("den=" << n2str(den) )
-  
-  if ( ! CGAL_NTS certified_is_zero(den) ) 
-  {
-    FT numX = ( b2 * w1 - b1 * w2 ) * c0
-             +( b0 * w2 - b2 * w0 ) * c1
-             +( b1 * w0 - b0 * w1 ) * c2 ;
-    
-    FT numY = ( w1 * a2 - w2 * a1 ) * c0
-             +( w2 * a0 - w0 * a2 ) * c1
-             +( w0 * a1 - w1 * a0 ) * c2 ;
-
-    if ( CGAL_NTS is_finite(den) && CGAL_NTS is_finite(numX) && CGAL_NTS is_finite(numY)  )
-    {
-      ok = true ;
-        
-      x =  numX / den ;
-      y = -numY / den ;
-        
-      CGAL_STSKEL_TRAITS_TRACE("numX=" << n2str(numX) << "\nnumY=" << n2str(numY)
-                               << "\nx=" << n2str(x) << "\ny=" << n2str(y)
-                               )
-    }
-  }   
-
-  return cgal_make_optional(ok,std::make_pair(x,y)) ;
-}
-
-
 // Given 3 oriented straight line segments: e0, e1, e2 
-// returns the "time" (n/d) at which the weighted offsetted lines
+// returns the OFFSET DISTANCE (n/d) at which the offsetted lines
 // intersect at a single point, IFF such intersection exist.
-// If the lines intersect on the common offsetting side, the returned distance is positive, otherwise it is negative.
-// The offsetting side of a line is given by the sign of its assigned weight: positive weight is to the left, negative to the right.
+// If the lines intersect to the left, the returned distance is positive.
+// If the lines intersect to the right, the returned distance is negative.
+// If the lines do not intersect, for example, for collinear edges, or parallel edges but with the same orientation,
+// returns 0 (the actual distance is undefined in this case, but 0 is a usefull return)
 //
 // NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
-//
-// If the lines do not intersect, for example, for collinear edges, or parallel edges but with the same orientation,
-// returns den=0
 //
 // PRECONDITION: None of e0, e1 and e2 are collinear (but two of them can be parallel)
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
-
-template<class Trisegment_2 >
-optional< Rational< typename Kernel_traits<Trisegment_2>::Kernel::FT > > compute_normal_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2 > const& tri )
+// NOTE: The segments (e0,e1,e2) are stored in the argument as the trisegment st.event()
+//
+template<class K>
+optional< Rational< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
-  typedef typename Kernel_traits<Trisegment_2>::Kernel K ;
-  
   typedef typename K::FT  FT ;
   
-  typedef typename K::Line_2 Line_2 ;
+  typedef Line_2<K> Line_2 ;
   
   typedef optional<Line_2> Optional_line_2 ;
   
   CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec time for: " << tri ) ;
-   
+  
+  FT num(0.0), den(0.0) ;
+  
   // DETAILS:
   //
-  // A weighted offset line is given by:
+  // An offset line is given by:
   //
-  //   a*x(t) + b*y(t) + c - w*t = 0
+  //   a*x(t) + b*y(t) + c - t = 0
   //
-  // were 'w*t > 0' being to the left of the line.
+  // were 't > 0' being to the left of the line.
   // If 3 such offset lines intersect at the same offset distance, the intersection 't',
   // or 'time', can be computed solving for 't' in the linear system formed by 3 such equations.
- 
-  optional< Rational<FT> > result;
+  // The result is :
+  //
+  //  t = a2*b0*c1 - a2*b1*c0 - b2*a0*c1 + b2*a1*c0 + b1*a0*c2 - b0*a1*c2
+  //      ---------------------------------------------------------------
+  //             -a2*b1 + a2*b0 + b2*a1 - b2*a0 + b1*a0 - b0*a1 ;
 
+  bool ok = false ;
+  
   Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->e0()) ;
   Optional_line_2 l1 = compute_normalized_line_ceoffC2(tri->e1()) ;
   Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->e2()) ;
 
-  if ( l0 && l1 && l2 ) 
+  if ( l0 && l1 && l2 )
   {
-    result = linsolve_timeC2( l0->a(), l0->b(), l0->c(), tri->w0()
-                            , l1->a(), l1->b(), l1->c(), tri->w1()
-                            , l2->a(), l2->b(), l2->c(), tri->w2()
-                            );
+    num = (l2->a()*l0->b()*l1->c())
+         -(l2->a()*l1->b()*l0->c())
+         -(l2->b()*l0->a()*l1->c())
+         +(l2->b()*l1->a()*l0->c())
+         +(l1->b()*l0->a()*l2->c())
+         -(l0->b()*l1->a()*l2->c());
+      
+    den = (-l2->a()*l1->b())
+         +( l2->a()*l0->b())
+         +( l2->b()*l1->a())
+         -( l2->b()*l0->a())
+         +( l1->b()*l0->a())
+         -( l0->b()*l1->a());
+         
+    ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
   }
+  
+  CGAL_STSKEL_TRAITS_TRACE("Event time (normal): n=" << num << " d=" << den << " n/d=" << Rational<FT>(num,den)  )
 
-  CGAL_STSKEL_TRAITS_TRACE("Event time (normal): " << 
-    ( result ? ("n=" << result->n() << " d=" << result->d() << " n/d=" << *result) : "none" ) );
-
-  return result ;
+  return cgal_make_optional(ok,Rational<FT>(num,den)) ;
 }
 
-// Given two oriented straight line segments e0 and e1, which are known to be along the same line,
-// but which can be oriented as e0->e1 or e1->e0, return the the midpoint of the segment between 
-// the two.
+// Given two oriented straight line segments e0 and e1 such that e-next follows e-prev, returns
+// the coordinates of the midpoint of the segment between e-prev and e-next.
+// NOTE: the edges can be oriented e0->e1 or e1->e0
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
-template<class Segment_2>
-optional< typename Kernel_traits<Segment_2>::Kernel::Point_2 > compute_oriented_midpoint ( Segment_2 const& e0, Segment_2 const& e1 )
+template<class K>
+optional< Point_2<K> > compute_oriented_midpoint ( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
   bool ok = false ;
   
-  typedef typename Kernel_traits<Segment_2>::Kernel K ;
-  
-  typedef typename K::FT      FT ;
-  typedef typename K::Point_2 Point_2 ;
+  typedef typename K::FT FT ;
   
   FT delta01 = CGAL::squared_distance(e0.target(),e1.source());
   FT delta10 = CGAL::squared_distance(e1.target(),e0.source());
   
-  Point_2 mp ;
+  Point_2<K> mp ;
    
   if ( CGAL_NTS is_finite(delta01) &&  CGAL_NTS is_finite(delta10) )
   {
@@ -457,7 +354,7 @@ optional< typename Kernel_traits<Segment_2>::Kernel::Point_2 > compute_oriented_
 
 //
 // Given 3 oriented straight line segments: e0, e1, e2 and the corresponding offseted segments: e0*, e1* and e2*,
-// returns the point of the left or right seed (offset vertex). That is: (e0*,e1*) or (e1*,e2*) 
+// returns the point of the left or right seed (offset vertex) (e0*,e1*) or (e1*,e2*) 
 // 
 // If the current event (defined by e0,e1,e2) is a propagated event, that is, it follows from a previous event,
 // the seeds are skeleten nodes and are given by non-null trisegments.
@@ -482,33 +379,25 @@ optional< typename Kernel_traits<Segment_2>::Kernel::Point_2 > compute_oriented_
 // so the degenerate seed is neither the left or the right seed. In this case, the SEED ID for the degenerate pseudo seed is UNKOWN.
 // If you request the point of such degenerate pseudo seed the oriented midpoint bettwen e0 and e2 is returned.
 //
-// NOTE 2: Terminal vertices are given a redundant trisegment: [eA,eA,eB] for a left terminal, [eA,eB,eB] for a right terminal
-// ands require the special handling seend below.
-template<class Trisegment_2>
-optional< typename Kernel_traits<Trisegment_2>::Kernel::Point_2 > compute_seed_pointC2 ( intrusive_ptr< Trisegment_2 > const& tri, typename Trisegment_2::SEED_ID sid )
+template<class K>
+optional< Point_2<K> > compute_seed_pointC2 ( intrusive_ptr< Trisegment_2<K> > const& tri, typename Trisegment_2<K>::SEED_ID sid )
 {
-  typedef typename Kernel_traits<Trisegment_2>::Kernel K ;
-  
-  typedef typename K::Point_2 Point_2 ;
-  
-  optional< Point_2 > p ;
+  optional< Point_2<K> > p ;
 
+  typedef Trisegment_2<K> Trisegment_2 ;
+    
   switch ( sid )
   {
     case Trisegment_2::LEFT :
          
        p = tri->child_l() ? construct_offset_lines_isecC2(tri->child_l())  // this can recurse
-                          : ( are_edges_coincident(tri->e0(),tri->e1()) ? tri->e0().source() // left-terminal (degree-1) vertex 
-                                                                        : compute_oriented_midpoint(tri->e0(),tri->e1()) // degree-2 colinear vertex
-                            ) ;
+                          : compute_oriented_midpoint(tri->e0(),tri->e1()) ;
        break ;                     
              
     case Trisegment_2::RIGHT : 
     
       p = tri->child_r() ? construct_offset_lines_isecC2(tri->child_r()) // this can recurse
-                         : ( are_edges_coincident(tri->e1(),tri->e2()) ? tri->e1().target() // right-terminal (degree-1) vertex 
-                                                                       : compute_oriented_midpoint(tri->e1(),tri->e2())  // degree-2 colinear vertex
-                           ) ;
+                         : compute_oriented_midpoint(tri->e1(),tri->e2()) ;
       break ;        
              
     case Trisegment_2::UNKNOWN : 
@@ -522,98 +411,81 @@ optional< typename Kernel_traits<Trisegment_2>::Kernel::Point_2 > compute_seed_p
 }
 
 //
-// Given the trisegment tree for an event which is known to have a normal collinearity, returns the seed point
+// Given the trisegment tree for an event which is known to have a normal collinearity returns the seed point
 // of the degenerate seed.
-// A normal collinearity occurs when e0,e1 or e1,e2 are collinear
-// (but not e0,e2 which ocurrs when edges *become* collinear after an event)
-template<class Trisegment_2>
-optional< typename Kernel_traits<Trisegment_2>::Kernel::Point_2 > compute_degenerate_seed_pointC2 ( intrusive_ptr< Trisegment_2 > const& tri )
+// A normal collinearity occurs when e0,e1 or e1,e2 are collinear.
+template<class K>
+optional< Point_2<K> > compute_degenerate_seed_pointC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   return compute_seed_pointC2( tri, tri->degenerate_seed_id() ) ;
 }
 
 // Given 3 oriented straight line segments: e0, e1, e2 
 // such that two and only two of these edges are collinear, not neccesarily consecutive but with the same orientaton;
-// returns the "time" (n/d) at which a line perpendicular to the collinear edge passing through
-// the degenerate seed point intersects the weighted bisector between the lines supporting the collinear and none collinear edges.
+// returns the OFFSET DISTANCE (n/d) at which a line perpendicular to the collinear edge passing through
+// the degenerate seed point intersects the offset line of the non collinear edge
 //
 // NOTE: The result is a explicit rational number returned as a tuple (num,den); the caller must check that den!=0 manually
 // (a predicate for instance should return indeterminate in this case)
 //
-// PRECONDITION: The collinear edges have the same weight.
-//
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
-template<class Trisegment_2>
-optional< Rational< typename Kernel_traits<Trisegment_2>::Kernel::FT > > compute_degenerate_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2 > const& tri )
+template<class K>
+optional< Rational< typename K::FT> > compute_degenerate_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
-  typedef typename Kernel_traits<Trisegment_2>::Kernel K ;
+  typedef typename K::FT FT ;
   
-  typedef typename K::FT      FT ;
-  typedef typename K::Point_2 Point_2 ;
-  typedef typename K::Line_2  Line_2 ;
+  typedef Point_2<K> Point_2 ;
+  typedef Line_2 <K> Line_2 ;
   
   typedef optional<Point_2> Optional_point_2 ;
   typedef optional<Line_2>  Optional_line_2 ;
   
   CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec time for: " << tri ) ;
-
+  
   // DETAILS:
   //
   // For simplicity, assume e0,e1 are the collinear edges.
   //
   //   (1)
   //   The bisecting line of e0 and e1 is a line perpendicular to e0 (and e1)
-  //   which passes through the degenerate offset vertex q=(e0*,e1*)
+  //   which passes through 'q': the degenerate offset vertex (e0*,e1*)
   //   This "degenerate" bisecting line is given by:
   //
-  //     B0(t) = p + w0*t*[l0.a,l0.b]
+  //     B0(t) = p + t*[l0.a,l0.b]
   //
   //   where p is the projection of q along l0 and l0.a,l0.b are the _normalized_ line coefficients for e0 (or e1 which is the same)
   //   Since [a,b] is a _unit_ vector pointing perpendicularly to the left of e0 (and e1);
-  //   any point B0(t) is at a scaled distance u from the line supporting e0 and e1 (scaled by w0).
+  //   any point B0(k) is at a distance k from the line supporting e0 and e1.
   //
   //   (2)
   //   The bisecting line of e0 and e2 is given by the following SEL
   //
-  //    l0.a*x(t) + l0.b*y(t) + l0.c - w0*t = 0
-  //    l2.a*x(t) + l2.b*y(t) + l2.c - w2*t = 0
+  //    l0.a*x(t) + l0.b*y(t) + l0.c + t = 0
+  //    l2.a*x(t) + l2.b*y(t) + l2.c + t = 0
   //
   //   where (l0.a,l0.b,l0.c) and (l2.a,l2.b,l0.c) are the normalized line coefficientes of e0 and e2 resp.
   //
   //     B1(t)=[x(t),y(t)]
   //
   //   (3)
-  //   These two bisecting lines B0(t) and B1(t) intersect (if they do) in a single point 'x' whose distance
+  //   These two bisecting lines B0(t) and B1(t) intersect (if they do) in a single point 'p' whose distance
   //   to the lines supporting the 3 edges is exactly 't' (since those expressions are precisely parametrized in a distance)
   //   Solving the following vectorial equation:
   //
-  //     [x(t),y(t)] = p + w0*t*[l0.a,l0.b]
+  //     [x(y),y(t)] = q + t*[l0.a,l0.b]
   //
   //   for t gives the result we want.
   //
-  //   (4)
-  //   To solve this system we can reformulate it as the intersection of three non colinear lines.
-  //   The two equations from the non colinear edges:
   //
-  //    l0.a*x(t) + l0.b*y(t) + l0.c - w0*t = 0
-  //    l2.a*x(t) + l2.b*y(t) + l2.c - w2*t = 0
-  //
-  //   and if l0 is not vertical, we add:
-  //
-  //     x(t) = px + w0*l0.a* t   ==>   (1.0)*x(t) +  (0.0)*y(t) + (-px) - (l0.a*w0)*t = 0
-  //
-  //   else, because l0 is not horizontal:
-  //
-  //     y(t) = py + w0*l0.b* t   ==>   (0.0)*x(t) +  (1.0)*y(t) + (-py) - (l0.b*w0)*t = 0
-  //
-  
-  optional< Rational<FT> > result;
+  bool ok = false ;
 
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->collinear_edge_A   ()) ;
+  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->collinear_edge    ()) ;
   Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->non_collinear_edge()) ;
 
   Optional_point_2 q = compute_degenerate_seed_pointC2(tri);
+  
+  FT num(0.0), den(0.0) ;
 
   if ( l0 && l2 && q )
   {
@@ -622,30 +494,33 @@ optional< Rational< typename Kernel_traits<Trisegment_2>::Kernel::FT > > compute
     
     CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ".\nProjected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
     
-    FT abs_a  = CGAL_NTS abs (l0->a()) ;
-    FT abs_b  = CGAL_NTS abs (l0->b()) ;
+    if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
+    {
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * px + l0->b() * l2->c() - l2->b() * l0->c() ;
+      den = (l0->a() * l0->a() - 1) * l2->b() + ( 1 - l2->a() * l0->a() ) * l0->b() ;
+      
+      CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, non-vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
+    }
+    else
+    {
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * py - l0->a() * l2->c() + l2->a() * l0->c() ;
+      den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
+      
+      CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
+    }
     
-    result = ( abs_a < abs_b ) ? linsolve_timeC2( l0->a()         , l0->b(), l0->c(),         tri->w0() // Not vertical
-                                                , FT(1.0), FT(0.0),     -px, l0->a() * tri->w0()
-                                                , l2->a()         , l2->b(), l2->c(),         tri->w2()
-                                                )
-                               : linsolve_timeC2( l0->a(), l0->b()         , l0->c(),         tri->w0() // Not horizontal
-                                                , FT(0.0), FT(1.0),     -py, l0->b() * tri->w0()
-                                                , l2->a(), l2->b()         , l2->c(),         tri->w2()
-                                                );
+    ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
   }
+  
 
-  CGAL_STSKEL_TRAITS_TRACE("Event time (normal): " << 
-    ( result ? ("n=" << result->n() << " d=" << result->d() << " n/d=" << *result) : "none" ) );
- 
-  return result ;
+  return cgal_make_optional(ok,Rational<FT>(num,den)) ;
 }
 
 //
 // Calls the appropiate function depending on the collinearity of the edges.
 //
-template<class Trisegment_2>
-optional< Rational< typename Kernel_traits<Trisegment_2>::Kernel::FT > > compute_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2 > const& tri )
+template<class K>
+optional< Rational< typename K::FT > > compute_offset_lines_isec_timeC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   CGAL_precondition ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
  
@@ -655,108 +530,138 @@ optional< Rational< typename Kernel_traits<Trisegment_2>::Kernel::FT > > compute
 
 
 // Given 3 oriented line segments e0, e1 and e2 
-// such that their offsets at a certian time intersect in a single point, 
+// such that their offsets at a certian distance intersect in a single point, 
 // returns the coordinates (x,y) of such a point.
 //
 // PRECONDITIONS:
 // None of e0, e1 and e2 are collinear (but two of them can be parallel)
-// The line coefficients must be normalized: a^2+b^2==1 and (a,b) being the leftward normal vector
-// The offsets at a certain time do intersect in a single point.
+// The line coefficients must be normalized: a�+b�==1 and (a,b) being the leftward normal vector
+// The offsets at a certain distance do intersect in a single point.
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
-template<class Trisegment_2>
-optional< typename Kernel_traits<Trisegment_2>::Kernel::Point_2 > construct_normal_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2 > const& tri )
+template<class K>
+optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
-  typedef typename Kernel_traits<Trisegment_2>::Kernel K ;
+  typedef typename K::FT  FT ;
   
-  typedef typename K::FT      FT ;
-  typedef typename K::Point_2 Point_2 ;
-  typedef typename K::Line_2  Line_2 ;
+  typedef Point_2<K> Point_2 ;
+  typedef Line_2<K>  Line_2 ;
   
   typedef optional<Line_2>  Optional_line_2 ;
   
   CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec point for: " << tri ) ;
-   
+  
+  FT x(0.0),y(0.0) ;
+  
   Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->e0()) ;
   Optional_line_2 l1 = compute_normalized_line_ceoffC2(tri->e1()) ;
   Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->e2()) ;
- 
-  optional< std::pair<FT,FT> > ip;
 
+  bool ok = false ;
+  
   if ( l0 && l1 && l2 )
   {
-    ip = linsolve_pointC2( l0->a(), l0->b(), l0->c(), tri->w0()
-                         , l1->a(), l1->b(), l1->c(), tri->w1()
-                         , l2->a(), l2->b(), l2->c(), tri->w2()
-                         );
-                         
-                         
+    FT den = l0->a()*l2->b() - l0->a()*l1->b() - l1->a()*l2->b() + l2->a()*l1->b() + l0->b()*l1->a() - l0->b()*l2->a();
+  
+    CGAL_STSKEL_TRAITS_TRACE("den=" << n2str(den) )
+  
+    if ( ! CGAL_NTS certified_is_zero(den) ) 
+    {
+      FT numX = l0->b()*l2->c() - l0->b()*l1->c() - l1->b()*l2->c() + l2->b()*l1->c() + l1->b()*l0->c() - l2->b()*l0->c();
+      FT numY = l0->a()*l2->c() - l0->a()*l1->c() - l1->a()*l2->c() + l2->a()*l1->c() + l1->a()*l0->c() - l2->a()*l0->c();
+    
+      if ( CGAL_NTS is_finite(den) && CGAL_NTS is_finite(numX) && CGAL_NTS is_finite(numY)  )
+      {
+        ok = true ;
+        
+        x =  numX / den ;
+        y = -numY / den ;
+        
+       CGAL_STSKEL_TRAITS_TRACE("numX=" << n2str(numX) << "\nnumY=" << n2str(numY)
+                               << "\nx=" << n2str(x) << "\ny=" << n2str(y)
+                               )
+      }
+    }
   }
- 
-  return cgal_make_optional(ip,K().construct_point_2_object()(ip->first,ip->second)) ;
+    
+    
+  return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }
 
 // Given 3 oriented line segments e0, e1 and e2
-// such that their offsets at a certian time intersect in a single point, 
-// and two and only two of the edges are collinear, not neccesarily consecutive but with the same orientaton,
+// such that their offsets at a certian distance intersect in a single point, 
 // returns the coordinates (x,y) of such a point.
+// two and only two of the edges are collinear, not neccesarily consecutive but with the same orientaton
 //
 // PRECONDITIONS:
-// The line coefficients must be normalized: a^2+b^2==1 and (a,b) being the leftward normal vector
-// The offsets at a certain time do intersect in a single point.
+// The line coefficients must be normalized: a�+b�==1 and (a,b) being the leftward normal vector
+// The offsets at a certain distance do intersect in a single point.
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
-template<class Trisegment_2>
-optional< typename Kernel_traits<Trisegment_2>::Kernel::Point_2 > construct_degenerate_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2 > const& tri )
+template<class K>
+optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
-  typedef typename Kernel_traits<Trisegment_2>::Kernel K ;
+  typedef typename K::FT FT ;
   
-  typedef typename K::FT      FT ;
-  typedef typename K::Point_2 Point_2 ;
-  typedef typename K::Line_2  Line_2 ;
+  typedef Point_2<K> Point_2 ;
+  typedef Line_2<K>  Line_2 ;
   
-  typedef optional<Point_2>  Optional_point_2 ;
-  typedef optional<Line_2>   Optional_line_2 ;
+  typedef optional<Point_2> Optional_point_2 ;
+  typedef optional<Line_2>  Optional_line_2 ;
   
   CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec point for: " << tri )  ;
   
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->collinear_edge_A   ()) ;
-  Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->non_collinear_edge()) ;
+  FT x(0.0),y(0.0) ;
 
+  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->collinear_edge    ()) ;
+  Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->non_collinear_edge()) ;
+  
   Optional_point_2 q = compute_degenerate_seed_pointC2(tri);
 
-  optional< std::pair<FT,FT> > ip;
-
+  bool ok = false ;
+  
   if ( l0 && l2 && q )
   {
+    FT num, den ;
+    
     FT px, py ;
     line_project_pointC2(l0->a(),l0->b(),l0->c(),q->x(),q->y(),px,py); 
     
-    CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ".\nProjected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
+    CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ". Projected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
     
-    FT abs_a  = CGAL_NTS abs (l0->a()) ;
-    FT abs_b  = CGAL_NTS abs (l0->b()) ;
-    
-    ip = ( abs_a < abs_b ) ? linsolve_pointC2( l0->a()         , l0->b(), l0->c(),         tri->w0() // Not vertical
-                                             , FT(1.0), FT(0.0),     -px, l0->a() * tri->w0()
-                                             , l2->a()         , l2->b(), l2->c(),         tri->w2()
-                                             )
-                           : linsolve_pointC2( l0->a(), l0->b()         , l0->c(),         tri->w0() // Not horizontal
-                                             , FT(0.0), FT(1.0),     -py, l0->b() * tri->w0()
-                                             , l2->a(), l2->b()         , l2->c(),         tri->w2()
-                                             );
-                                             
+    if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
+    {
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * px + l0->b() * l2->c() - l2->b() * l0->c() ;
+      den = (l0->a() * l0->a() - 1) * l2->b() + ( 1 - l2->a() * l0->a() ) * l0->b() ;
+    }
+    else
+    {
+      num = (l2->a() * l0->b() - l0->a() * l2->b() ) * py - l0->a() * l2->c() + l2->a() * l0->c() ;
+      den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
+    }
+  
+    if ( ! CGAL_NTS certified_is_zero(den) && CGAL_NTS is_finite(den) && CGAL_NTS is_finite(num) )
+    {
+      x = px + l0->a() * num / den  ;
+      y = py + l0->b() * num / den  ;
+      
+      ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
+    }
   }
-  return cgal_make_optional(!!ip,K().construct_point_2_object()(ip->first,ip->second)) ;
+  
+
+  CGAL_STSKEL_TRAITS_TRACE("\nDegenerate " << (CGAL_NTS is_zero(l0->b()) ? "(vertical)" : "") << " event point:  x=" << n2str(x) << " y=" << n2str(y) )
+
+  return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }
 
 //
 // Calls the appropiate function depending on the collinearity of the edges.
 //
-template<class Trisegment_2>
-optional< typename Kernel_traits<Trisegment_2>::Kernel::Point_2 > construct_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2 > const& tri )
+template<class K>
+optional< Point_2<K> > construct_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   CGAL_precondition ( tri->collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
   
@@ -766,7 +671,8 @@ optional< typename Kernel_traits<Trisegment_2>::Kernel::Point_2 > construct_offs
 
 } // namnepsace CGAIL_SS_i
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_CONS_FTC2_H //
 // EOF //
+

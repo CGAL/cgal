@@ -3252,7 +3252,6 @@ Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Create_exterior_straight_ske
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Create_interior_skeleton_and_offset_polygons_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Create_interior_straight_skeleton_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Create_offset_polygons_2.tex -text
-Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Create_straight_skeleton_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Dummy_straight_skeleton_builder_2_visitor.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/StraightSkeletonBuilder_2_Visitor.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/StraightSkeletonFace_2.tex -text
@@ -3261,18 +3260,17 @@ Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Straight_skeleton_converter_
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Straight_skeleton_face_base_2.tex -text
 Straight_skeleton_2/doc_tex/Straight_skeleton_2_ref/Straight_skeleton_items_converter_2.tex -text
 Straight_skeleton_2/examples/Straight_skeleton_2/Create_offset_polygons_2.cpp -text
-Straight_skeleton_2/examples/Straight_skeleton_2/Create_partial_straight_skeleton_2.cpp -text
 Straight_skeleton_2/examples/Straight_skeleton_2/Create_skeleton_and_offset_polygons_2.cpp -text
 Straight_skeleton_2/examples/Straight_skeleton_2/Create_skeleton_and_offset_polygons_with_holes_2.cpp -text
 Straight_skeleton_2/examples/Straight_skeleton_2/Create_straight_skeleton_2.cpp -text
 Straight_skeleton_2/examples/Straight_skeleton_2/Create_straight_skeleton_from_polygon_with_holes_2.cpp -text
-Straight_skeleton_2/examples/Straight_skeleton_2/Create_weighted_straight_skeleton_2.cpp -text
 Straight_skeleton_2/examples/Straight_skeleton_2/print.h -text
 Straight_skeleton_2/examples/Straight_skeleton_2/sample_1.dat -text
 Straight_skeleton_2/examples/Straight_skeleton_2/sample_2.dat -text
 Straight_skeleton_2/examples/Straight_skeleton_2/sample_3.dat -text
 Straight_skeleton_2/examples/Straight_skeleton_2/sample_4.dat -text
 Straight_skeleton_2/test/Straight_skeleton_2/all.rsp -text
+Straight_skeleton_2/test/Straight_skeleton_2/cgal_test_with_cmake eol=lf
 Straight_skeleton_2/test/Straight_skeleton_2/data/1_Example.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/1_Example_Working.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/2_Example.poly -text
@@ -3375,6 +3373,7 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/multinode0.poly -text svneol=u
 Straight_skeleton_2/test/Straight_skeleton_2/data/multinode1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/near_degenerate_0.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/near_degenerate_1.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/nearly_collinear.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/parallels0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/parallels0_b.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/parallels_1.poly -text
@@ -3444,7 +3443,6 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/wheel_16_spokes.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/wheel_16_spokes_b.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/wiggly_03_cgal.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_types.h -text
-Straight_skeleton_2/test/Straight_skeleton_2/test_api.cpp -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cmd -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cpp -text
 Stream_lines_2/doc_tex/Stream_lines_2/1.gif -text svneol=unset#image/gif

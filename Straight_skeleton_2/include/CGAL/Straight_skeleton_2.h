@@ -22,7 +22,7 @@
 #include <CGAL/Straight_skeleton_items_2.h>
 #include <CGAL/HalfedgeDS_default.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template<  class Traits_
          , class Items_ = Straight_skeleton_items_2
@@ -133,7 +133,7 @@ public :
       size_type nb = 0;
       for( ; valid && (begin != end); begin++)
       {
-          CGAL_STSKEL_VALIDITY_TRACE("he["<< id(begin) << "]" << ( begin->has_no_incident_face() ?  " [no-face]" : "" ) );
+          CGAL_STSKEL_VALIDITY_TRACE("he["<< id(begin) << "]" << ( begin->is_border() ?  " [border]" : "" ) );
              
           // Pointer integrity.
           valid = valid && ( begin->next() != Halfedge_const_handle());
@@ -193,7 +193,7 @@ public :
             }
           }
           // face integrity.
-          valid = valid && ( begin->has_no_incident_face() || begin->face() != Face_const_handle() );
+          valid = valid && ( begin->is_border() || begin->face() != Face_const_handle() );
           if ( ! valid) 
           {
             CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->face() == NULL.");
@@ -208,7 +208,7 @@ public :
             break;
           }
           ++n;
-          if ( begin->has_no_incident_face())
+          if ( begin->is_border())
               ++nb;
       }
       CGAL_STSKEL_VALIDITY_TRACE("summe border halfedges (2*nb) = " << 2 * nb );
@@ -303,7 +303,7 @@ public :
       for( ; valid && (fbegin != fend); ++fbegin) 
       {
       
-          valid = valid && ( begin->has_no_incident_face() || fbegin->halfedge() != Halfedge_const_handle()  );
+          valid = valid && ( begin->is_border() || fbegin->halfedge() != Halfedge_const_handle()  );
           if ( ! valid)
           {
             CGAL_STSKEL_VALIDITY_TRACE("ERROR: f["<<id(fbegin)<<"]->halfedge() == NULL." );
@@ -362,8 +362,9 @@ public :
 };
 
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 
 #endif // CGAL_STRAIGHT_SKELETON_2_H //
 // EOF //
+

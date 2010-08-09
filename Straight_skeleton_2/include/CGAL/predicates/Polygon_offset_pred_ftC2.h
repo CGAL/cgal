@@ -20,7 +20,7 @@
 
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i
 {
@@ -29,9 +29,11 @@ namespace CGAL_SS_i
 // there exists a distance 'et' for which the offsets lines at 'et' (e0',e1',e2') intersect in a single point;
 // returns the relative order of 't' w.r.t 'et'.
 // PRECONDITION: There exist a positive distance et for which the offset triple intersect at a single point.
-template<class FT, class Trisegment_2>
-Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( FT const& t, intrusive_ptr< Trisegment_2 > const& tri )
+template<class K>
+Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( typename K::FT const& t, intrusive_ptr< Trisegment_2<K> > const& tri )
 {
+  typedef typename K::FT FT ;
+  
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;
   
@@ -55,7 +57,8 @@ Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( FT const& t, i
 
 } // namespace CGAL_SS_i
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_POLYGON_OFFSET_PRED_FTC2_H //
 // EOF //
+

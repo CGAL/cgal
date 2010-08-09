@@ -22,8 +22,8 @@
 #include<string>
 #include<iostream>
 #include<sstream>
-#include<fstream>  
-#include<iomanip>  
+#include<fstream>
+#include<iomanip>
 #include<list>
 #include<map>
 
@@ -36,7 +36,7 @@
 #include <qmessagebox.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
-#include <qtoolbutton.h>  
+#include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qfiledialog.h>
 #include <qtimer.h>
@@ -78,12 +78,11 @@ const QString my_title_string("Straight_skeleton_2 Demo");
 
 int current_state;
 
-SSkelPtr    sskel;
-bool        sskel_valid ;
-Regions     input_regions ;
-WeightsList input_weights ;
-Regions     output_regions ;
-Doubles     offsets ;   
+SSkelPtr sskel;
+bool     sskel_valid ;
+Regions  input ;
+Regions  output ;
+Doubles  offsets ;
 
 class MyWindow : public QMainWindow
 {
@@ -136,7 +135,7 @@ public:
     newtoolbar = new Tools_toolbar(widget, this);
 
     //the new scenes toolbar
-    vtoolbar = new Layers_toolbar(widget, this, input_regions, sskel, output_regions);
+    vtoolbar = new Layers_toolbar(widget, this, input, sskel, output);
 
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
@@ -180,9 +179,9 @@ public slots:
     widget->lock();
     widget->clear();
     sskel = SSkelPtr() ;
-    input_regions.clear();
+    input.clear();
     offsets.clear();
-    output_regions.clear();
+    output.clear();
     // set the Visible Area to the Interval
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
     widget->unlock();
@@ -200,20 +199,20 @@ private slots:
       double w = lBbox.xmax() - lBbox.xmin();
       double h = lBbox.ymax() - lBbox.ymin();
       double s = std::sqrt(w*w+h*h);
-      double m = s * 0.005 ;
+      double m = s * 0.01 ;
       offsets.clear();
-      for ( int c = 1 ; c < 3 ; ++ c )
+      for ( int c = 1 ; c < 30 ; ++ c )
         offsets.insert(c*m);
 
       RegionPtr lRegion;
 
-      if ( input_regions.size() == 0 )
+      if ( input.size() == 0 )
       {
         lRegion = RegionPtr( new Region() ) ;
-        input_regions.push_back(lRegion);
+        input.push_back(lRegion);
       }
       else
-        lRegion = input_regions.front();
+        lRegion = input.front();
 
       CGAL::Orientation lExpected = ( lRegion->size() == 0 ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE ) ;
       if ( lCgalPoly.is_simple() && lCgalPoly.orientation() != lExpected )
@@ -221,25 +220,24 @@ private slots:
 
       lRegion->push_back( PolygonPtr( new Polygon(lCgalPoly.vertices_begin(),lCgalPoly.vertices_end()) ) ) ;
 
-      input_regions.push_back(lRegion);
+      input.push_back(lRegion);
     }
     widget->redraw();
   };
 
 
-  void create_skeleton( boost::optional<double> maxtime, double weight )
+  void create_inner_skeleton()
   {
-    if ( input_regions.size() > 0 )
+    if ( input.size() > 0 )
     {
       vtoolbar->get_progress_layer().clear();
 
-      Region const& lRegion = *input_regions.front();
+      Region const& lRegion = *input.front();
 
-      SSkelBuilder builder(maxtime) ;
-      
+      SSkelBuilder builder ;
       for( Region::const_iterator bit = lRegion.begin(), ebit = lRegion.end() ; bit != ebit ; ++ bit )
       {
-        builder.enter_contour((*bit)->begin(),(*bit)->end(), weight);
+        builder.enter_contour((*bit)->begin(),(*bit)->end());
       }
       sskel = builder.construct_skeleton() ;
       sskel_valid = sskel ;
@@ -250,53 +248,71 @@ private slots:
     }
   }
 
-  void create_inner_skeleton() { create_skeleton(boost::none, 1.0);  }
+  void create_outer_skeleton()
+  {
+    if ( input.size() > 0 )
+    {
+      Region const& lRegion = *input.front();
+      if ( lRegion.size() > 0 )
+      {
+        Polygon const& lOuter = *lRegion.front() ;
 
-  void create_outer_skeleton() { create_skeleton(boost::none, -1.0); }
-  
+        Doubles::iterator last = offsets.end() ;
+        FT lMaxOffset = offsets.size() > 0 ? *--last : 10.0 ;
+
+        boost::optional<FT> lOptMargin = CGAL::compute_outer_frame_margin(lOuter.rbegin(),lOuter.rend(),lMaxOffset);
+        if ( lOptMargin )
+        {
+          double lMargin = CGAL::to_double(*lOptMargin);
+          
+          CGAL::Bbox_2 lBbox = CGAL::bbox_2(lOuter.begin(),lOuter.end());
+
+          double flx = lBbox.xmin() - lMargin ;
+          double fhx = lBbox.xmax() + lMargin ;
+          double fly = lBbox.ymin() - lMargin ;
+          double fhy = lBbox.ymax() + lMargin ;
+
+          Point lFrame[4]= { Point(flx,fly)
+                           , Point(fhx,fly)
+                           , Point(fhx,fhy)
+                           , Point(flx,fhy)
+                           } ;
+
+          vtoolbar->get_progress_layer().clear();
+          SSkelBuilder builder ;
+          builder.enter_contour(lFrame,lFrame+4);
+          builder.enter_contour(lOuter.rbegin(),lOuter.rend());
+          sskel = builder.construct_skeleton() ;
+          sskel_valid = sskel ;
+          if ( !sskel_valid )
+            QMessageBox::critical( this, my_title_string,"Straight Skeleton construction failed." );
+
+          widget->redraw();
+          something_changed();
+        }
+        else
+          QMessageBox::critical( this, my_title_string,"This polygon has a very sharp vertex. Unable to create outer straight skeleton." );
+
+      }
+    }
+  }
   void create_offset()
   {
-    output_regions.clear();
-
-    if ( offsets.size() == 0 )
-      offsets.insert(1);
-    
-    if ( !sskel_valid )
-    {
-      double min = 0 ; 
-      double max = 0 ; 
-      for ( Doubles::const_iterator i = offsets.begin() ; i != offsets.end() ; ++ i )
-      {
-        double offset = *i ;
-        if ( offset > max )
-          max = offset ;
-        if ( offset < min )
-          min = offset ;
-      }
-      
-      double amin = std::abs(min);
-      double amax = std::abs(max);
-      
-      if ( amax > amin )
-           create_skeleton(amax,  1.0 ) ;
-      else create_skeleton(amin, -1.0 ) ;
-    }
-    
     if ( sskel_valid )
     {
-      output_regions.clear();
+      output.clear();
 
       if ( offsets.size() == 0 )
         offsets.insert(1);
 
       for ( Doubles::const_iterator i = offsets.begin() ; i != offsets.end() ; ++ i )
       {
-        double offset = std::abs(*i) ;
+        double offset = *i ;
         RegionPtr lRegion( new Region ) ;
         OffsetBuilder lOffsetBuilder(*sskel);
         lOffsetBuilder.construct_offset_contours(offset, std::back_inserter(*lRegion) );
         if ( lRegion->size() > 0 )
-          output_regions.push_back(lRegion);
+          output.push_back(lRegion);
       }
       widget->redraw();
       something_changed();
@@ -373,9 +389,9 @@ private slots:
 
   void save_polygon()
   {
-    if ( input_regions.size() > 0 )
+    if ( input.size() > 0 )
     {
-      Region const& lRegion = *input_regions.front();
+      Region const& lRegion = *input.front();
 
       if ( lRegion.size() > 0 )
       {
@@ -383,7 +399,7 @@ private slots:
 
         if ( !fileName.isNull() )
         {
-          std::ofstream out(fileName.ascii());
+          std::ofstream out(fileName);
 
           CGAL::set_ascii_mode(out);
 
@@ -410,8 +426,7 @@ private slots:
     bool auto_create_offsets = true ;
     offsets.clear() ;
 
-    QString soft = s + QString(".oft");
-    std::ifstream offsets_file(soft.ascii());
+    std::ifstream offsets_file(s + QString(".oft") );
     if ( offsets_file )
     {
       CGAL::set_ascii_mode(offsets_file);
@@ -425,77 +440,29 @@ private slots:
       auto_create_offsets = false ;
     }
 
-    std::ifstream in(s.ascii());
+    std::ifstream in(s);
     if ( in )
     {
       CGAL::set_ascii_mode(in);
 
-      input_regions.clear();
-      input_weights.clear();
+      input.clear();
 
-      RegionPtr   lRegion( new Region() ) ;
-      WeightsList lWeightsList;
-      
+      RegionPtr lRegion( new Region() ) ;
 
       int ccb_count ;
       in >> ccb_count ;
 
       for ( int i = 0 ; i < ccb_count ; ++ i )
       {
-        PolygonPtr lPoly   ( new Polygon() );
-        WeightsPtr lWeights( new Weights() ) ;
-        
-        int v_count = 0 ;
+        PolygonPtr lPoly( new Polygon() );
+        int v_count ;
         in >> v_count ;
-        
-        std::string lInputFormatOrFirstNumber ;
-        
-        in >> lInputFormatOrFirstNumber ;
-        
-        bool lIsClosed = true ;
-        bool lIncludeWeights = false ;
-        bool lRecoverFirstNumber = true ;
-        
-        if( lInputFormatOrFirstNumber == "o" )
+        for ( int j = 0 ; j < v_count ; ++ j )
         {
-          lIsClosed = false ;
-          in >> lInputFormatOrFirstNumber ;
+          double x,y ;
+          in >> x >> y ;
+          lPoly->push_back( Point(x,y) ) ;
         }
-        
-        if( lInputFormatOrFirstNumber == "w" )
-        { 
-          lIncludeWeights = true ;
-          lRecoverFirstNumber = false;
-        }
-        
-        for ( int j = 0 ; j < v_count && in ; ++ j )
-        {
-          double x = 0.0, y = 0.0, w = 1.0  ;
-          
-          if ( lRecoverFirstNumber )
-          {
-            lRecoverFirstNumber = false ;
-            x = std::atof( lInputFormatOrFirstNumber.c_str() ) ;
-          }
-          else 
-          { 
-            in >> x ;
-          }
-          
-          in >> y ;
-          
-          if ( lIncludeWeights )
-          {
-            in >> w ;
-          }
-          
-          if ( in )
-          {
-            lPoly->push_back( Point(x,y) ) ;
-            lWeights->push_back( w ) ;
-          }  
-        }
-        
         if ( lPoly->size() >= 3 )
         {
           if ( i == 0 )
@@ -508,7 +475,7 @@ private slots:
             widget->set_window(lBbox.xmin()-m, lBbox.xmax()+m, lBbox.ymin()-m, lBbox.ymax()+m);
             if ( auto_create_offsets )
             {
-              for ( int c = 1 ; c < 3 ; ++ c )
+              for ( int c = 1 ; c < 30 ; ++ c )
                 offsets.insert(c*m);
             }
           }
@@ -520,28 +487,19 @@ private slots:
           CGAL::Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
 
           if ( orientation == expected )
-          {
-            lRegion    ->push_back(lPoly);
-            lWeightsList.push_back(lWeights);
-          }
-          else 
-          {
-            lRegion     ->push_back( PolygonPtr( new Polygon(lPoly   ->rbegin(), lPoly   ->rend()) ) ) ;
-            lWeightsList. push_back( WeightsPtr( new Weights(lWeights->rbegin(), lWeights->rend()) ) );
-          }
+               lRegion->push_back(lPoly);
+          else lRegion->push_back( PolygonPtr( new Polygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
         }
       }
 
-      input_regions.push_back(lRegion);
-      input_weights.swap(lWeightsList);
-      
+      input.push_back(lRegion);
     }
 
     sskel = SSkelPtr() ;
 
     vtoolbar->get_progress_layer().clear();
 
-    output_regions.clear();
+    output.clear();
     widget->redraw();
     something_changed();
   }

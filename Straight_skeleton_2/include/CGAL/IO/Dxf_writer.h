@@ -30,7 +30,7 @@
 #include <string>
 #include <list>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 class Dxf_writer
 {
@@ -54,31 +54,31 @@ public:
     dump();
   } 
 
-  template<class XYZ>
-  void add_segment ( XYZ const&  aSrc
-                   , XYZ const&  aTgt
-                   , std::string aLayer = ""
-                   , int         aColor = 255
-                   )
+  template<class XY>
+  void add_segment_2 ( XY const&   aSrc
+                     , XY const&   aTgt
+                     , std::string aLayer = ""
+                     , int         aColor = 255
+                     )
   {
     add_entity ( "LINE" ,  aLayer ) ;
     add_code ( 62 , to_str ( aColor ) ) ;
     add_code ( 10 , to_str ( to_double(aSrc.x()) ) ) ;
     add_code ( 20 , to_str ( to_double(aSrc.y()) ) ) ;
-    add_code ( 30 , to_str ( 0.0                 ) ) ;
+    add_code ( 30 , to_str ( to_double(0.0     ) ) ) ;
     add_code ( 11 , to_str ( to_double(aTgt.x()) ) ) ;
     add_code ( 21 , to_str ( to_double(aTgt.y()) ) ) ;
-    add_code ( 31 , to_str ( 0.0                 ) ) ;
+    add_code ( 31 , to_str ( to_double(0.0     ) ) ) ;
   }
   
   
-  template<class XYZ_Iterator>
-  void add_polyline ( XYZ_Iterator aVerticesBegin
-                    , XYZ_Iterator aVerticesEnd
-                    , bool         aIsClosed
-                    , std::string  aLayer = ""
-                    , int          aColor = 255
-                    )
+  template<class XY_Iterator>
+  void add_polyline_2 ( XY_Iterator aVerticesBegin
+                      , XY_Iterator aVerticesEnd
+                      , bool        aIsClosed
+                      , std::string aLayer = ""
+                      , int         aColor = 255
+                      )
   {
     if ( aVerticesBegin < aVerticesEnd )
     {
@@ -95,7 +95,7 @@ public:
         add_entity ( "VERTEX" , aLayer) ;
         add_code ( 10 , to_str ( to_double( aVerticesBegin->x() ) ) ) ;
         add_code ( 20 , to_str ( to_double( aVerticesBegin->y() ) ) ) ;
-        add_code ( 30 , to_str ( 0.0                              ) ) ;
+        add_code ( 30 , to_str ( to_double( 0.0                 ) ) ) ;
         ++ aVerticesBegin ;
       }
       
@@ -103,34 +103,34 @@ public:
     }
   }
   
-  template<class XYZ_Iterator>
-  void add_segments ( XYZ_Iterator aVerticesBegin
-                    , XYZ_Iterator aVerticesEnd
-                    , bool         aIsClosed
-                    , std::string  aLayer = ""
-                    , int          aColor = 255
-                    )
+  template<class XY_Iterator>
+  void add_segments_2 ( XY_Iterator aVerticesBegin
+                      , XY_Iterator aVerticesEnd
+                      , bool        aIsClosed
+                      , std::string aLayer = ""
+                      , int         aColor = 255
+                      )
   {
     if ( aVerticesBegin < aVerticesEnd )
     {
-      XYZ_Iterator lFirstVertex = aVerticesBegin ;
-      XYZ_Iterator lLastVertex  = aVerticesEnd ; -- lLastVertex ;
+      XY_Iterator lFirstVertex = aVerticesBegin ;
+      XY_Iterator lLastVertex  = aVerticesEnd ; -- lLastVertex ;
       
       if ( lFirstVertex != lLastVertex )
       {
-        XYZ_Iterator lCurrVertex  = aVerticesBegin ;
+        XY_Iterator lCurrVertex  = aVerticesBegin ;
         
-        while ( lCurrVertex != lLastVertex )
+        while ( lCurrVertex != aVerticesEnd )
         {
-          XYZ_Iterator lNextVertex = CGAL::successor(lCurrVertex);
+          XY_Iterator lNextVertex = ( lCurrVertex == lLastVertex ? lFirstVertex : CGAL::successor(lCurrVertex) ) ;
           
-          add_segment ( *lCurrVertex, *lNextVertex, aLayer, aColor ) ;
+          add_segment_2 ( *lCurrVertex, *lNextVertex, aLayer, aColor ) ;
           
           ++ lCurrVertex ;
         }
         
         if ( aIsClosed  )
-          add_segment ( *lLastVertex, *lFirstVertex, aLayer, aColor ) ;
+          add_segment_2 ( *lLastVertex, *lFirstVertex, aLayer, aColor ) ;
       }
     }
     
@@ -278,6 +278,6 @@ private:
 
 } ;
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_IO_DXF_WRITER_H

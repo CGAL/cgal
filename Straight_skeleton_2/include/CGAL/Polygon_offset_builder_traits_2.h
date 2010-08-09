@@ -24,25 +24,9 @@
 #include <CGAL/constructions/Polygon_offset_cons_ftC2.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include "boost/type_traits/is_same.hpp"
-#include "boost/mpl/if.hpp"
-#include "boost/mpl/or.hpp"
-
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i {
-
-template<class K> struct Has_inexact_constructions
-{ 
-  typedef typename K::FT FT ;
-  
-  typedef typename boost::mpl::if_< boost::mpl::or_< boost::is_same<FT,double>
-                                                   , boost::is_same<FT,Interval_nt_advanced>
-                                                   > 
-                                  , Tag_true
-                                  , Tag_false
-                                  >::type type ; 
-} ;
 
 template<class K>
 struct Compare_offset_against_event_time_2 : Functor_base_2<K>
@@ -61,111 +45,6 @@ struct Compare_offset_against_event_time_2 : Functor_base_2<K>
   }
 };
 
-template<class Point_2, class Segment_2, class FT>
-bool is_point_calculation_clearly_wrong( FT aT, Point_2 const& p, Segment_2 const& aE0, FT const& aW0, Segment_2 const& aE1, FT const& aW1 ) 
-{ 
-  bool rR = false ;
-  
-  if ( is_possibly_inexact_time_clearly_not_zero(aT*aW0) && is_possibly_inexact_time_clearly_not_zero(aT*aW1) )
-  {
-    Point_2 const& e0s = aE0.source();
-    Point_2 const& e0t = aE0.target();
-    
-    Point_2 const& e1s = aE1.source();
-    Point_2 const& e1t = aE1.target();
-  
-    FT const very_short(0.1);
-    FT const very_short_squared = CGAL_NTS square(very_short);
-    
-    FT l0 = squared_distance(e0s,e0t) ;
-    FT l1 = squared_distance(e1s,e1t) ;
-    
-    bool e0_is_not_very_short = l0 > very_short_squared ;
-    bool e1_is_not_very_short = l1 > very_short_squared ;
-    
-    FT d0 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e0s.x(),e0s.y(),e0t.x(),e0t.y()).to_nt();
-    FT d1 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e1s.x(),e1s.y(),e1t.x(),e1t.y()).to_nt();
-  
-    FT tt0 = CGAL_NTS square(aT*aW0) ;
-    FT tt1 = CGAL_NTS square(aT*aW1) ;
-    
-    bool e0_is_clearly_wrong = e0_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d0,tt0) ;
-    bool e1_is_clearly_wrong = e1_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d1,tt1) ;
-            
-    bool rR = e0_is_clearly_wrong || e1_is_clearly_wrong ;        
-    
-    CGAL_stskel_intrinsic_test_trace_if(rR
-                                      , "\nOffset point calculation is clearly wrong:"
-                                        << "\nt0=" << aT0 << " t1=" << aT1 << " p=" << p2str(p) << " e0=" << s2str(aE0) << " e1=" << s2str(aE1)
-                                        << "\nl0=" << inexact_sqrt(l0) << " l1=" << inexact_sqrt(l1)
-                                        << "\nd0=" << d0 << " d1=" << d1 << " tt0=" << tt0 << " tt1=" << tt1
-                                      ) ;
-  }
-  
-  return rR ;
-}
-
-template<class K>
-struct Construct_terminal_offset_point_2 : Functor_base_2<K>
-{
-  typedef Functor_base_2<K> Base ;
-
-  typedef typename Base::FT               FT ;
-  typedef typename Base::Point_2          Point_2 ;
-  typedef typename Base::Segment_2        Segment_2 ;
-  typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
-
-  typedef boost::optional<Point_2> result_type ;
-  
-  result_type operator() ( FT               const& aT
-                         , bool                    aAtSource
-                         , Segment_2        const& aE 
-                         , FT               const& aW
-                         , Trisegment_2_ptr const& aNode
-                         ) const
-  {
-//    typename Has_inexact_constructions<K>::type has_inexact_constructions CGAL_SUNPRO_INITIALIZE( = typename Has_inexact_constructions<K>::type()) ;
-    Tag_false has_inexact_constructions ;
-    
-    return calc(aT, aAtSource, aE, aW, aNode, has_inexact_constructions);
-  }
-  
-  
-  result_type calc ( FT               const& aT
-                   , bool                    aAtSource
-                   , Segment_2        const& aE
-                   , FT               const& aW
-                   , Trisegment_2_ptr const& aNode
-                   , Tag_false        // kernel already has exact constructions
-                   ) const
-  {
-    result_type p = construct_offset_pointC2(aT,aAtSource,aE,aW,aNode);
-    
-    return p ;
-  }
-  
-  result_type calc ( FT               const& aT
-                   , bool                    aAtSource
-                   , Segment_2        const& aE
-                   , FT               const& aW
-                   , Trisegment_2_ptr const& aNode
-                   , Tag_true         // kernel does not provides exact constructions
-                   ) const
-  {
-    typedef Exact_predicates_exact_constructions_kernel EK ;
-    
-    typedef Cartesian_converter<K,EK> BaseC2E;
-    typedef Cartesian_converter<EK,K> BaseE2C;
-    
-    SS_converter<BaseC2E> C2E ;  
-    SS_converter<BaseE2C> E2C ;  
-    
-    result_type p = E2C(construct_offset_pointC2(C2E(aT),aAtSource,C2E(aE),C2E(aW),C2E(aNode)));
-    
-    return p ;
-  }
-  
-};
 
 template<class K>
 struct Construct_offset_point_2 : Functor_base_2<K>
@@ -177,46 +56,38 @@ struct Construct_offset_point_2 : Functor_base_2<K>
   typedef typename Base::Segment_2        Segment_2 ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
-  typedef boost::tuple<Point_2,Point_2> Point_2_twotuple ;
+  typedef boost::optional<Point_2> result_type ;
   
-  typedef boost::optional<Point_2_twotuple> result_type ;
-  
+
   result_type operator() ( FT               const& aT
                          , Segment_2        const& aE0
-                         , FT               const& aW0
                          , Segment_2        const& aE1 
-                         , FT               const& aW1
                          , Trisegment_2_ptr const& aNode
                          ) const
   {
-//    typename Has_inexact_constructions<K>::type has_inexact_constructions  CGAL_SUNPRO_INITIALIZE( = typename Has_inexact_constructions<K>::type()) ;
-    Tag_false has_inexact_constructions ;
+    typename Has_inexact_constructions<K>::type has_inexact_constructions
+    CGAL_SUNPRO_INITIALIZE( = typename Has_inexact_constructions<K>::type()) ;
     
-    return calc(aT,aE0, aW0, aE1, aW1, aNode, has_inexact_constructions);
+    return calc(aT, aE0, aE1, aNode, has_inexact_constructions);
   }
   
   result_type calc ( FT               const& aT
                    , Segment_2        const& aE0
-                   , FT               const& aW0
                    , Segment_2        const& aE1 
-                   , FT               const& aW1
                    , Trisegment_2_ptr const& aNode
                    , Tag_false        // kernel already has exact constructions
                    ) const
   {
-    result_type res = construct_offset_pointC2(aT,aE0,aW0,aE1,aW1,aNode);
+    result_type p = construct_offset_pointC2(aT,aE0,aE1,aNode);
     
-    CGAL_stskel_intrinsic_test_assertion(!res.first  || (res.first  && !is_point_calculation_clearly_wrong(*res.first ,aT,aE0,aW0,aE1,aW1)));
-    CGAL_stskel_intrinsic_test_assertion(!res.second || (res.second && !is_point_calculation_clearly_wrong(*res.second,aT,aE0,aW0,aE1,aW1)));
+    CGAL_stskel_intrinsic_test_assertion(!p || (p && !is_point_calculation_clearly_wrong(aT,*p,aE0,aE1)));
     
-    return res ;
+    return p ;
   }
   
   result_type calc ( FT               const& aT
                    , Segment_2        const& aE0
-                   , FT               const& aW0
                    , Segment_2        const& aE1 
-                   , FT               const& aW1
                    , Trisegment_2_ptr const& aNode
                    , Tag_true         // kernel does not provides exact constructions
                    ) const
@@ -229,14 +100,54 @@ struct Construct_offset_point_2 : Functor_base_2<K>
     SS_converter<BaseC2E> C2E ;  
     SS_converter<BaseE2C> E2C ;  
     
-    result_type res = E2C(construct_offset_pointC2(C2E(aT),C2E(aE0),C2E(aW0),C2E(aE1),C2E(aW1),C2E(aNode)));
+    result_type p = E2C(construct_offset_pointC2(C2E(aT),C2E(aE0),C2E(aE1),C2E(aNode)));
     
-    CGAL_stskel_intrinsic_test_assertion(!res.first  || (res.first  && !is_point_calculation_clearly_wrong(*res.first ,aT,aE0,aW0,aE1,aW1)));
-    CGAL_stskel_intrinsic_test_assertion(!res.second || (res.second && !is_point_calculation_clearly_wrong(*res.second,aT,aE0,aW0,aE1,aW1)));
+    CGAL_stskel_intrinsic_test_assertion(!p || (p && !is_point_calculation_clearly_wrong(aT,*p,aE0,aE1)));
     
-    return res ;
+    return p ;
   }
   
+  bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p, Segment_2 const& aE0, Segment_2 const& aE1 ) const
+  { 
+    bool rR = false ;
+    
+    if ( is_possibly_inexact_time_clearly_not_zero(t) )
+    {
+      Point_2 const& e0s = aE0.source();
+      Point_2 const& e0t = aE0.target();
+      
+      Point_2 const& e1s = aE1.source();
+      Point_2 const& e1t = aE1.target();
+    
+      FT const very_short(0.1);
+      FT const very_short_squared = CGAL_NTS square(very_short);
+      
+      FT l0 = squared_distance(e0s,e0t) ;
+      FT l1 = squared_distance(e1s,e1t) ;
+      
+      bool e0_is_not_very_short = l0 > very_short_squared ;
+      bool e1_is_not_very_short = l1 > very_short_squared ;
+      
+      FT d0 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e0s.x(),e0s.y(),e0t.x(),e0t.y()).to_nt();
+      FT d1 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e1s.x(),e1s.y(),e1t.x(),e1t.y()).to_nt();
+    
+      FT tt = CGAL_NTS square(t) ;
+      
+      bool e0_is_clearly_wrong = e0_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d0,tt) ;
+      bool e1_is_clearly_wrong = e1_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d1,tt) ;
+              
+      bool rR = e0_is_clearly_wrong || e1_is_clearly_wrong ;        
+      
+      CGAL_stskel_intrinsic_test_trace_if(rR
+                                        , "\nOffset point calculation is clearly wrong:"
+                                          << "\ntime=" << t << " p=" << p2str(p) << " e0=" << s2str(aE0) << " e1=" << s2str(aE1)
+                                          << "\nl0=" << inexact_sqrt(l0) << " l1=" << inexact_sqrt(l1)
+                                          << "\nd0=" << d0 << " d1=" << d1 << " tt=" << tt 
+                                        ) ;
+    }
+    
+    return rR ;
+  }
 };
 
 
@@ -248,7 +159,6 @@ struct Polygon_offset_builder_traits_2_functors
   typedef CGAL_SS_i::Compare_offset_against_event_time_2<K> Compare_offset_against_event_time_2 ;
   typedef CGAL_SS_i::Compare_ss_event_times_2           <K> Compare_ss_event_times_2 ;
   typedef CGAL_SS_i::Construct_offset_point_2           <K> Construct_offset_point_2 ;
- typedef CGAL_SS_i:: Construct_terminal_offset_point_2  <K> Construct_terminal_offset_point_2 ;
   typedef CGAL_SS_i::Construct_ss_trisegment_2          <K> Construct_ss_trisegment_2 ;
   typedef CGAL_SS_i::Construct_ss_event_time_and_point_2<K> Construct_ss_event_time_and_point_2 ;
 } ;
@@ -285,7 +195,6 @@ public:
     Compare_ss_event_times_2 ;
     
   typedef typename Unfiltering::Construct_offset_point_2            Construct_offset_point_2 ;
-  typedef typename Unfiltering::Construct_terminal_offset_point_2   Construct_terminal_offset_point_2 ;
   typedef typename Unfiltering::Construct_ss_trisegment_2           Construct_ss_trisegment_2 ;
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
 
@@ -339,16 +248,6 @@ public:
                                                         >
                                                         Construct_offset_point_2 ;
                                              
-  typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_terminal_offset_point_2
-                                                        , typename Exact      ::Construct_terminal_offset_point_2
-                                                        , typename Unfiltering::Construct_terminal_offset_point_2
-                                                        , C2E
-                                                        , C2C
-                                                        , E2C
-                                                        , C2C
-                                                        >
-                                                        Construct_terminal_offset_point_2 ;
-                                                        
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_trisegment_2
                                                         , typename Exact      ::Construct_ss_trisegment_2
                                                         , typename Unfiltering::Construct_ss_trisegment_2
@@ -376,11 +275,10 @@ class Polygon_offset_builder_traits_2
 {
 } ;
 
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_offset_against_event_time_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_terminal_offset_point_2)
-CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_offset_point_2)
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Compare_offset_against_event_time_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_offset_point_2);
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 
 #endif // CGAL_POLYGON_OFFSET_BUILDER_TRAITS_2_H //

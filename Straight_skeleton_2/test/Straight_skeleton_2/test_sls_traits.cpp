@@ -101,9 +101,9 @@ struct triple
 
   Trisegment_ptr trisegment() const
   {
-    return CGAL::Construct_ss_trisegment_2(sTraits)( Segment( Point(mP[0].x(),mP[0].y()),  Point(mP[1].x(),mP[1].y())), 1.0
-                                                   , Segment( Point(mP[2].x(),mP[2].y()),  Point(mP[3].x(),mP[3].y())), 1.0
-                                                   , Segment( Point(mP[4].x(),mP[4].y()),  Point(mP[5].x(),mP[5].y())), 1.0
+    return CGAL::Construct_ss_trisegment_2(sTraits)( Segment( Point(mP[0].x(),mP[0].y()),  Point(mP[1].x(),mP[1].y()))
+                                                   , Segment( Point(mP[2].x(),mP[2].y()),  Point(mP[3].x(),mP[3].y()))
+                                                   , Segment( Point(mP[4].x(),mP[4].y()),  Point(mP[5].x(),mP[5].y()))
                                                    );
   }
 

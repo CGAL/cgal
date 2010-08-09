@@ -60,6 +60,7 @@ multinode1.poly
 multinode0.poly
 poly6.poly
 near_degenerate_0.poly
+nearly_collinear.poly
 double_edge_2.poly
 pseudo_split_5.poly
 parallels_1.poly

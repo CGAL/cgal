@@ -39,8 +39,9 @@ typedef CGAL::Aff_transformation_2<K> Transformation;
 typedef std::vector<Point>            Polygon_2;
 typedef boost::shared_ptr<Polygon_2>  PolygonPtr;
 typedef CGAL::Segment_2<K>            Segment;
-typedef std::vector<PolygonPtr>       Boundaries ;
-typedef boost::shared_ptr<Boundaries> BoundariesPtr ;
+typedef std::vector<PolygonPtr>       Region ;
+typedef boost::shared_ptr<Region>     RegionPtr ;
+typedef std::vector<RegionPtr>        Regions ;
 typedef std::vector<double>           Doubles ;
 
 typedef CGAL::Straight_skeleton_2<K>                            Sls;
