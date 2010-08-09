@@ -203,6 +203,15 @@ Section "CGAL Examples and Demos" SAMPLES_Idx
   File /r "${CGAL_SRC}\demo\*.*"
 !endif
 SectionEnd
+
+; Download and install GMP and MPFR binaries.
+; Depend only on the platform (one variant per platform)
+Section /o "GMP and MPFR precompiled libs"  GMP_LIB_Idx
+  !ifndef FetchLocal
+    !insertmacro Install_GMP_MPFR_bin "$Platform"
+  !endif
+SectionEnd
+
 ;--------------------------------
 
 ;--------------------------------
@@ -211,7 +220,6 @@ SectionEnd
 ; NOTE: The variant selection code uses the trailing "libs" in the group name to identify components.
 ;       DO NOT change the trailing "libs" in the section name.
 ;
-${MultiVariantSection} "GMP and MPFR precompiled libs"  Install_GMP_MPFR_bin "$Platform" GMP_LIB_Idx
 
 ;--------------------------------
 
