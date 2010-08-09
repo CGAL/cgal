@@ -19,7 +19,6 @@
 !define ViaFTP
 
 Var Platform
-Var IsGmpInstalled
 Var IsTAUCSInstalled
 
 ;--------------------------------
@@ -138,7 +137,7 @@ Var IsTAUCSInstalled
   !insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.6/"  "libs-${VARIANT}.zip"  "$INSTDIR\auxiliary\taucs\lib"
 !macroend
 
-!macro Install_GMP_MPFR_bin PLATFORM VARIANT
+!macro Install_GMP_MPFR_bin PLATFORM
   !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/5.0.1/"  "gmp-all.zip"  "$INSTDIR\auxiliary\gmp"
   !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/3.0.0/" "mpfr-all.zip" "$INSTDIR\auxiliary\gmp"
 !macroend
