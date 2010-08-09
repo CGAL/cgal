@@ -8,19 +8,13 @@ if ( NOT CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED )
     set(CGAL_AUTO_LINK_ENABLED TRUE)
 
     if(NOT CGAL_CONFIG_LOADED)
-      if(MSVC10)
-        set(CGAL_AUTO_LINK_GMP FALSE
-          CACHE BOOL "Enable/Disable auto-linking for the external library GMP")
+      set(CGAL_AUTO_LINK_GMP FALSE
+        CACHE BOOL "Enable/Disable auto-linking for the external library GMP")
 
-        set(CGAL_AUTO_LINK_MPFR FALSE
-          CACHE BOOL "Enable/Disable auto-linking for the external library MPFR")
-      else(MSVC10)
-        set(CGAL_AUTO_LINK_GMP TRUE
-          CACHE BOOL "Enable/Disable auto-linking for the external library GMP")
+      set(CGAL_AUTO_LINK_MPFR FALSE
+        CACHE BOOL "Enable/Disable auto-linking for the external library MPFR")
 
-        set(CGAL_AUTO_LINK_MPFR TRUE
-          CACHE BOOL "Enable/Disable auto-linking for the external library MPFR")
-      endif(MSVC10)
+      mark_as_advanced(CGAL_AUTO_LINK_MPFR CGAL_AUTO_LINK_GMP)
     endif()
   endif()
 
