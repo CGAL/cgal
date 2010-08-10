@@ -107,11 +107,11 @@
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "${CGAL_SRC}\LICENSE"
      
-  ; A page where the user can specify a default variant configuration (taken from the boost installer)
-  Page custom VariantsPage   
-  
   !insertmacro MUI_PAGE_COMPONENTS
  
+  ; A page where the user can specify a default variant configuration (taken from the boost installer)
+  Page custom VariantsPage
+
   !insertmacro MUI_PAGE_DIRECTORY
   
   ; A page where the user can check/uncheck the environment variables
@@ -206,24 +206,23 @@ SectionEnd
 
 ; Download and install GMP and MPFR binaries.
 ; Depend only on the platform (one variant per platform)
-Section /o "GMP and MPFR precompiled libs"  GMP_LIB_Idx
+Section "GMP and MPFR precompiled libs"  GMP_LIB_Idx
   !ifndef FetchLocal
     !insertmacro Install_GMP_MPFR_bin "$Platform"
   !endif
 SectionEnd
 
-;--------------------------------
+
+; Download and install LAPACK and TAUCSbinaries.
+; Depend only on the platform (one variant per platform)
+Section /o "LAPACK and TAUCS precompiled libs"  TAUCS_LIB_Idx
+  !ifndef FetchLocal
+    !insertmacro Install_LAPACK_TAUCS_libs "$Platform"
+  !endif
+SectionEnd
+
 
 ;--------------------------------
-; Multi Variant Sections
-; Each of the sections below is a group enclosing all the variants for a given set of precomp libraries
-; NOTE: The variant selection code uses the trailing "libs" in the group name to identify components.
-;       DO NOT change the trailing "libs" in the section name.
-;
-
-;--------------------------------
-
-${MultiVariantSection} "LAPACK and TAUCS precompiled libs"  Install_LAPACK_TAUCS_libs "$Platform" TAUCS_LIB_Idx
 
 
 Section /o "HTML Manuals" DOC_Idx
@@ -346,35 +345,17 @@ FunctionEnd
 
 Function VariantsPage
 
-    !insertmacro MUI_HEADER_TEXT "Select Default Variants" "Choose the default variants to autoselect in the next page."
+    !insertmacro MUI_HEADER_TEXT "Select platform" "Choose the platform for precompiled libraries."
     !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "variants.ini"
     !insertmacro MUI_INSTALLOPTIONS_SHOW
 
-    !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 5" "State"
-    ${If} $0 = 0
-        !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 6" "State"
-    ${EndIf}
-
-  !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 11" "State"
+  !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 1" "State"
   ${If} $0 = 1
     StrCpy $Platform "win32"
   ${Else}
     StrCpy $Platform "x64"
   ${Endif}
 
-  ;
-  ; These lines are TIGHTLY bound to the exact text in the Variants page
-  ; (from variants.ini) and the section numbers of the GMP/MPFR and TAUCS components
-  ;
-  ${MaybeSelectVariant} "VC10.0" "Multithread Debug"                 4 18
-  ${MaybeSelectVariant} "VC10.0" "Multithread"                       5 19
-  ${MaybeSelectVariant} "VC10.0" "Multithread, static runtime"       6 20
-  ${MaybeSelectVariant} "VC10.0" "Multithread Debug, static runtime" 7 21
-  ${MaybeSelectVariant} "VC9.0" "Multithread Debug"                 10 24
-  ${MaybeSelectVariant} "VC9.0" "Multithread"                       11 25
-  ${MaybeSelectVariant} "VC9.0" "Multithread, static runtime"       12 26
-  ${MaybeSelectVariant} "VC9.0" "Multithread Debug, static runtime" 13 27
-  
 FunctionEnd
 
 # Disables the env var checkbox # FN and textbox # FN+1
