@@ -1232,6 +1232,8 @@ namespace CircularFunctors {
   class Construct_center_2
 	#ifndef CGAL_CFG_MATCHING_BUG_6
 	    : public CK::Linear_kernel::Construct_center_2
+         #else
+  : public  Has_qrt
 	#endif
   {
     typedef typename CK::Circular_arc_2  Circular_arc_2;
