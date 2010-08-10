@@ -540,10 +540,10 @@ facet_ridge_type(const Facet_const_handle f, Halfedge_const_handle& he1, Halfedg
       he1 = h2; 
       he2 = h3;
     }
-  //check there is no other case (just on edge crossed)
+  //check there is no other case (just one edge crossed)
   CGAL_postcondition ( !( (h1_is_crossed && !h2_is_crossed && !h3_is_crossed)
 			  || (!h1_is_crossed && h2_is_crossed && !h3_is_crossed)
-			  || (!h1_is_crossed && h2_is_crossed && !h3_is_crossed)) );
+			  || (!h1_is_crossed && !h2_is_crossed && h3_is_crossed)) );
 
   //There is a ridge segment in the triangle, determine its type elliptic/hyperbolic
   bool is_elliptic;  
