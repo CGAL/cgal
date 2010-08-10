@@ -287,11 +287,11 @@ template <typename ET>
 struct Lazy_exact_Min : public Lazy_exact_binary<ET>
 {
   Lazy_exact_Min (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
-    : Lazy_exact_binary<ET>((min)(a.approx(), b.approx()), a, b) {}
+    : Lazy_exact_binary<ET>((CGAL::min)(a.approx(), b.approx()), a, b) {}
 
   void update_exact() const
   {
-    this->et = new ET((min)(this->op1.exact(), this->op2.exact()));
+    this->et = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
     if (!this->approx().is_point()) 
       this->at = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
@@ -303,11 +303,11 @@ template <typename ET>
 struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 {
   Lazy_exact_Max (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
-    : Lazy_exact_binary<ET>((max)(a.approx(), b.approx()), a, b) {}
+    : Lazy_exact_binary<ET>((CGAL::max)(a.approx(), b.approx()), a, b) {}
 
   void update_exact() const
   {
-    this->et = new ET((max)(this->op1.exact(), this->op2.exact()));
+    this->et = new ET((CGAL::max)(this->op1.exact(), this->op2.exact()));
     if (!this->approx().is_point()) 
       this->at = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
