@@ -709,21 +709,20 @@ void test_algebraic_extension_traits(){
 
 template<class AT>
 void test_get_arithmetic_kernel(){
-  typedef CGAL::Arithmetic_kernel AK;
-  typedef AK::Integer Integer;
-  typedef AK::Rational Rational; 
+  typedef typename AT::Integer Integer;
+  typedef typename AT::Rational Rational; 
   {
     typedef CGAL::Sqrt_extension<Integer,Integer> EXT;
-    typedef CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AK_;
-    BOOST_STATIC_ASSERT((boost::is_same<AK,AK_>::value));
+    typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
+    BOOST_STATIC_ASSERT((boost::is_same<AT,AT_>::value));
   } {
     typedef CGAL::Sqrt_extension<Rational,Integer> EXT;
-    typedef CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AK_;
-    BOOST_STATIC_ASSERT((boost::is_same<AK,AK_>::value));
+    typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
+    BOOST_STATIC_ASSERT((boost::is_same<AT,AT_>::value));
   } {
     typedef CGAL::Sqrt_extension<Rational,Rational> EXT;
-    typedef CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AK_;
-    BOOST_STATIC_ASSERT((boost::is_same<AK,AK_>::value));
+    typedef typename CGAL::Get_arithmetic_kernel<EXT>::Arithmetic_kernel AT_;
+    BOOST_STATIC_ASSERT((boost::is_same<AT,AT_>::value));
   }
 }
 
@@ -750,13 +749,13 @@ void sqrt_extension_test(){
 }
 
 int main(){ 
-#ifdef CGAL_USE_LEDA
+#ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL
     sqrt_extension_test<CGAL::LEDA_arithmetic_kernel>();
-#endif // CGAL_USE_LEDA
+#endif // CGAL_HAS_LEDA_ARITHMETIC_KERNEL
 
-#ifdef CGAL_USE_CORE
+#ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL
     sqrt_extension_test<CGAL::CORE_arithmetic_kernel>();
-#endif // CGAL_USE_CORE
+#endif // CGAL_HAS_CORE_ARITHMETIC_KERNEL
     return 0;
 }
 
