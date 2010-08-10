@@ -37,8 +37,8 @@ public:
     Cell_quality() : Base() {};
     Cell_quality(double _aspect, double _sq_size) : Base(_aspect, _sq_size) {};
 
-    const double& sq_size() const { return second; }
-    const double& aspect() const { return first; }
+    double sq_size() const { return second; }
+    double aspect() const { return first; }
 
     // q1<q2 means q1 is prioritised over q2
     // ( q1 == *this, q2 == q )
