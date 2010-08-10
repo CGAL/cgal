@@ -27,7 +27,35 @@ above, when the points are passed as an iterator range to a constructor or the
 \ccc{insert} method.
 
 
-% file currently missing
-%\ccIncludeExampleCode{Spatial_sorting/sort_for_delaunay_2.cpp}
+\section{Examples}
+
+In the following three examples you will see how to apply
+spatial sort to \cgal\ points, or on the indices into
+a container with points, or on a user defined point class.
+
+\subsection{Sorting Points}
+
+When you construct a triangulation from an iterator range of
+points, the points get spatially sorted internally. 
+
+If you have a need for inserting the points one by one
+you might sort them yourself.
+
+\ccIncludeExampleCode{Spatial_sorting/example_for_delaunay_2.cpp}
 
 
+\subsection{Sorting Indices}
+
+If you do not want to reorder your input, you can 
+sort indices in your input instead.
+
+\ccIncludeExampleCode{Spatial_sorting/sort_indices.cpp}
+
+
+\subsection{Sorting User Defined Points}
+
+If you want to sort points of your own point type,
+you only have to provide functors that compare
+the \ccc{x} and \ccc{y} coordinates of your points.
+
+\ccIncludeExampleCode{Spatial_sorting/my_point.cpp}
