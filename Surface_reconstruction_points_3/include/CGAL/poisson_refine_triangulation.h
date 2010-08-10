@@ -97,8 +97,9 @@ public:
 
   void scan_triangulation_impl()
   {
-    for(typename Tr::Finite_cells_iterator cit = triangulation_ref_impl().finite_cells_begin();
-        cit != triangulation_ref_impl().finite_cells_end();
+    for(typename Tr::Finite_cells_iterator cit = triangulation_ref_impl().finite_cells_begin(),
+        eit = triangulation_ref_impl().finite_cells_end();
+        cit != eit;
         ++cit)
       test_if_cell_is_bad(cit);
   }
@@ -118,7 +119,7 @@ public:
     typedef std::vector<Cell_handle> Cells;
     typedef typename Cells::iterator Cell_iterator;
     Cells incident_cells;
-
+    incident_cells.reserve(32);
     triangulation_ref_impl().incident_cells(v, std::back_inserter(incident_cells));
 
     for(Cell_iterator cit = incident_cells.begin();

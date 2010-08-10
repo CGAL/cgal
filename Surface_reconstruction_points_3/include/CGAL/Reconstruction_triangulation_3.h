@@ -223,6 +223,7 @@ public:
   typedef typename Base::Finite_facets_iterator   Finite_facets_iterator;
   typedef typename Base::Finite_edges_iterator    Finite_edges_iterator;
   typedef typename Base::All_cells_iterator       All_cells_iterator;
+  typedef typename Base::All_vertices_iterator       All_vertices_iterator;
   typedef typename Base::Locate_type Locate_type;
   /// @endcond
 
@@ -264,6 +265,9 @@ public:
   Base::number_of_vertices;
   Base::finite_vertices_begin;
   Base::finite_vertices_end;
+  Base::all_vertices_begin;
+  Base::all_vertices_end;
+
   Base::geom_traits;
   /// @endcond
 
@@ -299,7 +303,9 @@ public:
 
     // Represents *all* points by a set of spheres with 0 radius
     std::vector<Traits_sphere> spheres;
-    for (Point_iterator it=points_begin(); it!=points_end(); it++)
+    spheres.reserve(number_of_vertices());
+    for (Point_iterator it=points_begin(); Point_iterator eit=points_end();
+         it != eit; ++it)
       spheres.push_back(Traits_sphere(*it,0));
 
     // Computes min sphere
@@ -320,7 +326,9 @@ public:
 
     // Represents *input* points by a set of spheres with 0 radius
     std::vector<Traits_sphere> spheres;
-    for (Input_point_iterator it=input_points_begin(); it!=input_points_end(); it++)
+    for (Input_point_iterator it=input_points_begin(), eit=input_points_end();
+         it != eit;
+         ++it)
       spheres.push_back(Traits_sphere(*it,0));
 
     // Computes min sphere
@@ -370,7 +378,7 @@ public:
 
     // Convert input points to Point_with_normal_3
     std::vector<Point_with_normal> points;
-    for (InputIterator it = first; it != beyond; it++)
+    for (InputIterator it = first; it != beyond; ++it)
     {
         Point_with_normal pwn(get(point_pmap,it), get(normal_pmap,it));
         points.push_back(pwn);
@@ -428,9 +436,10 @@ public:
   unsigned int index_unconstrained_vertices()
   {
     unsigned int index = 0;
-    for (Finite_vertices_iterator v = finite_vertices_begin();
-         v != finite_vertices_end();
-         v++)
+    for (Finite_vertices_iterator v = finite_vertices_begin(),
+         e = finite_vertices_end();
+         v!= e;
+         ++v)
     {
       if(!v->constrained())
         v->index() = index++;

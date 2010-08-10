@@ -342,10 +342,11 @@ private:
     typename SparseLinearAlgebraTraits_d::Matrix A(nb_variables); // matrix is symmetric definite positive
     typename SparseLinearAlgebraTraits_d::Vector X(nb_variables), B(nb_variables);
 
-    Finite_vertices_iterator v;
-    for(v = m_tr->finite_vertices_begin();
-        v != m_tr->finite_vertices_end();
-        v++)
+    Finite_vertices_iterator v, e;
+    for(v = m_tr->finite_vertices_begin(),
+        e = m_tr->finite_vertices_end();
+        v != e;
+        ++v)
     {
       if(!v->constrained())
       {
@@ -385,7 +386,7 @@ private:
 
     // copy function's values to vertices
     unsigned int index = 0;
-    for (v = m_tr->finite_vertices_begin(); v != m_tr->finite_vertices_end(); v++)
+    for (v = m_tr->finite_vertices_begin(), e = m_tr->finite_vertices_end(); v!= e; ++v)
       if(!v->constrained())
         v->f() = X[index++];
 
@@ -420,9 +421,10 @@ private:
   FT median_value_at_input_vertices() const
   {
     std::deque<FT> values;
-    Finite_vertices_iterator v;
-    for(v = m_tr->finite_vertices_begin();
-        v != m_tr->finite_vertices_end();
+    Finite_vertices_iterator v, e;
+    for(v = m_tr->finite_vertices_begin(),
+        e= m_tr->finite_vertices_end();
+        v != e; 
         v++)
       if(v->type() == Triangulation::INPUT)
         values.push_back(v->f());
@@ -463,9 +465,10 @@ private:
   {
     m_sink = CGAL::ORIGIN;
     FT min_f = 1e38;
-    Finite_vertices_iterator v;
-    for(v = m_tr->finite_vertices_begin();
-        v != m_tr->finite_vertices_end();
+    Finite_vertices_iterator v, e;
+    for(v = m_tr->finite_vertices_begin(),
+        e= m_tr->finite_vertices_end();
+        v != e;
         v++)
     {
       if(v->f() < min_f)
@@ -479,18 +482,20 @@ private:
 
   void shift_f(const FT shift)
   {
-    Finite_vertices_iterator v;
-    for(v = m_tr->finite_vertices_begin();
-        v != m_tr->finite_vertices_end();
+    Finite_vertices_iterator v, e;
+    for(v = m_tr->finite_vertices_begin(),
+        e = m_tr->finite_vertices_end();
+        v!= e;
         v++)
       v->f() += shift;
   }
 
   void flip_f()
   {
-    Finite_vertices_iterator v;
-    for(v = m_tr->finite_vertices_begin();
-        v != m_tr->finite_vertices_end();
+    Finite_vertices_iterator v, e;
+    for(v = m_tr->finite_vertices_begin(),
+          e = m_tr->finite_vertices_end();
+        v != e;
         v++)
       v->f() = -v->f();
   }
@@ -499,6 +504,7 @@ private:
   {
     // TODO: return NULL if none and assert
     std::vector<Vertex_handle> vertices;
+    vertices.reserve(32);
     m_tr->incident_vertices(m_tr->infinite_vertex(),std::back_inserter(vertices));
     typename std::vector<Vertex_handle>::iterator it = vertices.begin();
     return *it;
@@ -515,6 +521,7 @@ private:
   FT div_normalized(Vertex_handle v)
   {
     std::vector<Cell_handle> cells;
+    cells.reserve(32);
     m_tr->incident_cells(v,std::back_inserter(cells));
     if(cells.size() == 0)
       return 0.0;
