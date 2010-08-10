@@ -3,7 +3,7 @@
     <assistant>
         <title>CGAL Periodic Lloyd Demo</title>
         <cacheDirectory>CGAL/Periodic_3_triangulation_3</cacheDirectory>
-	<startPage>qthelp://org.cgal.demos.periodic_lloyd_3/doc/index.html</startPage>
+	<startPage>qthelp://org.cgal.demos.periodic_lloyd_3/doc/documentation/index.html</startPage>
      <enableDocumentationManager>false</enableDocumentationManager>
      <enableAddressBar>false</enableAddressBar>
      <enableFilterFunctionality>false</enableFilterFunctionality>

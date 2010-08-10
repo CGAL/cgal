@@ -130,11 +130,11 @@ public slots:
   }
 
   void about() {
-    showFileBox("About the demo...","resources/about.html");
+    showFileBox("About the demo...",":/cgal/help/resources/about.html");
   }
 
   void about_CGAL() {
-    showFileBox("About CGAL...","resources/about_CGAL.html");
+    showFileBox("About CGAL...",":/cgal/help/resources/about_CGAL.html");
   }
 
 private:
