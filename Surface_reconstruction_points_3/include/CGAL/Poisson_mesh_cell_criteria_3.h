@@ -34,7 +34,7 @@ public:
   {
     typedef std::pair<double, double> Base;
 
-    Cell_quality() : Base() {};
+    Cell_quality() : Base() {}
     Cell_quality(double _aspect, double _sq_size) : Base(_aspect, _sq_size) {};
 
     double sq_size() const { return second; }
@@ -60,7 +60,7 @@ public:
   double squared_radius_bound() const 
   {
     return squared_radius_bound_; 
-  };
+  }
 
   typedef typename Tr::Cell_handle Cell_handle;
 
@@ -68,26 +68,25 @@ public:
 		  const double radius_bound = 0) //< cell radius bound (ignored if zero)
     : squared_radius_bound_(radius_bound*radius_bound),
       radius_edge_bound_(radius_edge_bound)
-  {
-  };
+  {}
 
   inline 
   void set_squared_radius_bound(const double squared_radius_bound) 
   { 
     squared_radius_bound_ = squared_radius_bound;
-  };
+  }
 
   inline
   double radius_edge_bound() const 
   {
     return radius_edge_bound_; 
-  };
+  }
 
   inline 
   void set_radius_edge_bound(const double radius_edge_bound) 
   { 
     radius_edge_bound_ = radius_edge_bound;
-  };
+  }
 
   class Is_bad
   {
@@ -100,7 +99,7 @@ public:
     Is_bad(const double radius_edge_bound, 
 	   const double squared_radius_bound)
       : radius_edge_bound_(radius_edge_bound),
-	squared_radius_bound_(squared_radius_bound) {};
+	squared_radius_bound_(squared_radius_bound) {}
       
     bool operator()(const Cell_handle& c,
                     Cell_quality& qual) const
