@@ -32,14 +32,11 @@ template <class List, class Traits>
   Iter end1 = list1.end();
 
   Iter begin2 = list2.begin();
-  Iter end2 = list2.end();
-  unsigned int count1 = std::distance(begin1, end1);
-  unsigned int count2 = std::distance(begin2, end2);
-
-  if(count1 != count2)
+ 
+  if(list1.size() != list2.size())
   {
     std::cout << "The lists are not of the same lengths ("
-              << count1 << "," << count2 << ")\n";
+              << list1.size() << "," << list2.size() << ")\n";
     return false;
   }
 
