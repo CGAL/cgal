@@ -120,7 +120,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
-  this->addAboutDemo(":/cgal/Polyhedron_3/about.html");
+  this->addAboutDemo(":/cgal/Mesh_3/about.html");
 
   // Connect the button "addButton" with actionLoad
   ui->addButton->setDefaultAction(ui->actionLoad);
