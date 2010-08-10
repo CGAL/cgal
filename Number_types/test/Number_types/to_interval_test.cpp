@@ -70,7 +70,7 @@ int main()
 
 #ifdef CGAL_USE_GMP
   std::cout << "Testing Gmpz :" << std::endl;
-  test(CGAL::Gmpz());
+  ::test(CGAL::Gmpz());
 #endif
 
 #if 0
