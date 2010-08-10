@@ -21,49 +21,6 @@
 Var Platform
 Var IsTAUCSInstalled
 
-;--------------------------------
-; Macros
-;--------------------------------
-
-
-!define MultiVariantSection "!insertmacro MultiVariantSection"
-
-; Expands to a Section Group named "SecName" which contains all library variants.
-; For each variant, the macro "Handler" is expanded with the variant name as argument
-!macro MultiVariantSection SecName Handler Platform Idx
-  SectionGroup "${SecName}" ${Idx}
-    SectionGroup "VC10.0"
-      Section /o "Multithread Debug"
-        !insertmacro "${Handler}" "${Platform}" "vc100-mt-gd"
-      SectionEnd
-      Section /o "Multithread"
-        !insertmacro "${Handler}" "${Platform}" "vc100-mt"
-      SectionEnd
-      Section /o "Multithread, static runtime"
-        !insertmacro "${Handler}" "${Platform}" "vc100-mt-s"
-      SectionEnd
-      Section /o "Multithread Debug, static runtime"
-        !insertmacro "${Handler}" "${Platform}" "vc100-mt-sgd"
-      SectionEnd
-    SectionGroupEnd
-    SectionGroup "VC9.0"
-      Section /o "Multithread Debug"
-        !insertmacro "${Handler}" "${Platform}" "vc90-mt-gd"
-      SectionEnd
-      Section /o "Multithread"
-        !insertmacro "${Handler}" "${Platform}" "vc90-mt"
-      SectionEnd
-      Section /o "Multithread, static runtime"
-        !insertmacro "${Handler}" "${Platform}" "vc90-mt-s"
-      SectionEnd
-      Section /o "Multithread Debug, static runtime"
-        !insertmacro "${Handler}" "${Platform}" "vc90-mt-sgd"
-      SectionEnd
-    SectionGroupEnd
-    
-  SectionGroupEnd
-!macroend
-
 !ifdef ViaFTP
   !define DownloadOK      "OK"
   !define DownloadAborted "cancel"
@@ -102,39 +59,25 @@ Var IsTAUCSInstalled
   !insertmacro DownloadFileFrom ${FTP_SRC} ${SRC_FOLDER} ${FILE} ${TGT}
 !macroend
 
-!macro Install_PDB_if_debug_variant HANDLER PLATFORM VARIANT
-  ${StrStr} $R0 ${VARIANT} "gd"
-  ${If} "$R0" != ""
-    !insertmacro "${HANDLER}" "${PLATFORM}" "${VARIANT}"
-  ${EndIf}  
-!macroend
-
-!macro Install_DLL_if_dynamic_variant HANDLER PLATFORM VARIANT
-  ${StrStr} $R0 ${VARIANT} "s"
-  ${If} "$R0" == ""
-    !insertmacro "${HANDLER}" "${PLATFORM}" "${VARIANT}"
-  ${EndIf}  
-!macroend
-
-!macro Install_LAPACK_TAUCS_libs PLATFORM VARIANT
-  ; Headers are not VARIANT dependent so we include this only once, but here since
+!macro Install_LAPACK_TAUCS_libs PLATFORM 
+  ; Headers are not platform dependent so we include this only once, but here since
   ; we want to download headers only if at least one lib variant was selected.
   ${If} $IsTAUCSInstalled = 0
     StrCpy $IsTAUCSInstalled 1 
     
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.6/"  "taucs.h.zip"               "$INSTDIR\auxiliary\taucs\include"
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.6/"  "taucs_private.h.zip"       "$INSTDIR\auxiliary\taucs\include"
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.6/"  "taucs_config_tests.h.zip"  "$INSTDIR\auxiliary\taucs\include"
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.6/"  "taucs_config_build.h.zip"  "$INSTDIR\auxiliary\taucs\include"
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.6/"  "blaswrap.h.zip"            "$INSTDIR\auxiliary\taucs\include"
+    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.7/"  "taucs.h.zip"               "$INSTDIR\auxiliary\taucs\include"
+    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.7/"  "taucs_private.h.zip"       "$INSTDIR\auxiliary\taucs\include"
+    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.7/"  "taucs_config_tests.h.zip"  "$INSTDIR\auxiliary\taucs\include"
+    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.7/"  "taucs_config_build.h.zip"  "$INSTDIR\auxiliary\taucs\include"
+    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.7/"  "blaswrap.h.zip"            "$INSTDIR\auxiliary\taucs\include"
 
     ${If} "$Platform" == "win32"
-      !insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.6/" "common.zip" "$INSTDIR\auxiliary\taucs\lib"
+      !insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.7/" "taucs-common.zip" "$INSTDIR\auxiliary\taucs\lib"
     ${Endif}
     
   ${Endif}
   
-  !insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.6/"  "libs-${VARIANT}.zip"  "$INSTDIR\auxiliary\taucs\lib"
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.7/"  "taucs-libs.zip"  "$INSTDIR\auxiliary\taucs\lib"
 !macroend
 
 !macro Install_GMP_MPFR_bin PLATFORM
@@ -142,54 +85,3 @@ Var IsTAUCSInstalled
   !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/3.0.0/" "mpfr-all.zip" "$INSTDIR\auxiliary\gmp"
 !macroend
 
-!macro _MaybeSelectVariant Compiler Variant Sec1 Sec2
-
-  Push $0
-  Push $1
-  
-  ${If} "${Compiler}" == "VC10.0"
-      !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 5" "State"
-  ${Else}
-      !insertmacro MUI_INSTALLOPTIONS_READ $0 "variants.ini" "Field 6" "State"
-  ${EndIf}
-
-  ; If the corresponding compiler+variant is not found in the variant page
-  ; the section is unselected
-  StrCpy $1 0
-
-  ${If} $0 <> 0 ; Is the compiler selected?
-  
-    ; variants are the fields 7 to 10
-    ${For} $0 7 10
-    
-      !insertmacro MUI_INSTALLOPTIONS_READ $1 "variants.ini" "Field $0" "Text"
-      
-      ${If} "$1" == "${Variant}" ; Is this variant field the one we are looking for?
-      
-        ; Found the variant field. Read the state and exit the loop
-        !insertmacro MUI_INSTALLOPTIONS_READ $1 "variants.ini" "Field $0" "State"
-        
-        goto break_${Sec1} ; 
-        
-      ${EndIf}
-      
-    ${Next}
-    
-    break_${Sec1}:
-    
-  ${EndIf}
-
-  ${If} $1 = 0
-    !insertmacro UnselectSection ${Sec1}
-    !insertmacro UnselectSection ${Sec2}
-  ${Else}
-    !insertmacro SelectSection ${Sec1}
-    !insertmacro SelectSection ${Sec2}
-  ${EndIf}
-
-  Pop $1
-  Pop $0
-    
-!macroend
-
-!define MaybeSelectVariant "!insertmacro _MaybeSelectVariant"
