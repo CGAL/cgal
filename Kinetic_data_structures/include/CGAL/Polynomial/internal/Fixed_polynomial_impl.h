@@ -160,7 +160,7 @@ public:
 
   bool is_zero() const
   {
-    CGAL_Polynomial_assertion( coefs_.empty() == (coefs_.size()==0) );
+    CGAL_assertion( coefs_.empty() == (coefs_.size()==0) );
     return degree()==-1;
   }
 
