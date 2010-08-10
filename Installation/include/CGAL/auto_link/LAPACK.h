@@ -54,6 +54,7 @@
 #include <CGAL/auto_link/auto_link.h>
 
 #define CGAL_LIB_NAME vcf2c
+#define CGAL_AUTO_LINK_NOMANGLE
 #include <CGAL/auto_link/auto_link.h>
 
 // ATLAS provides BLAS and LAPACK standard Fortran interface
@@ -75,12 +76,15 @@
 //        - Tested with VC++ 8.0 and 9.0.
 
 #define CGAL_LIB_NAME clapack
+#define CGAL_AUTO_LINK_NOMANGLE
 #include <CGAL/auto_link/auto_link.h>
 
 #define CGAL_LIB_NAME blas
+#define CGAL_AUTO_LINK_NOMANGLE
 #include <CGAL/auto_link/auto_link.h>
 
 #define CGAL_LIB_NAME vcf2c
+#define CGAL_AUTO_LINK_NOMANGLE
 #include <CGAL/auto_link/auto_link.h>
 
 // CLAPACK provides LAPACK standard Fortran interface.

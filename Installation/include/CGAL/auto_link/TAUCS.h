@@ -60,9 +60,11 @@
 //        - Tested with VC++ 8.0 and 9.0.
 
 #define CGAL_LIB_NAME libtaucs
+#define CGAL_AUTO_LINK_NOMANGLE
 #include <CGAL/auto_link/auto_link.h>
 
 #define CGAL_LIB_NAME libmetis
+#define CGAL_AUTO_LINK_NOMANGLE
 #include <CGAL/auto_link/auto_link.h>
 
 // Link with LAPACK, BLAS and F2C
