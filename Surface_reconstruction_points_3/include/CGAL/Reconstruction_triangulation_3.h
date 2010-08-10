@@ -89,41 +89,20 @@ private:
 public:
 
   Reconstruction_vertex_base_3()
-    : Vb()
-  {
-    m_f = (FT)0.0;
-    m_type = 0;
-    m_constrained = false;
-    m_index = 0;
-  }
+    : Vb(), m_f(FT(0.0)), m_constrained(false), m_type(0), m_index(0)
+  {}
 
   Reconstruction_vertex_base_3(const Point_with_normal& p)
-    : Vb(p)
-  {
-    m_f = 0.0f;
-    m_type = 0;
-    m_constrained = false;
-    m_index = 0;
-
-  }
+    : Vb(p), m_f(FT(0.0)), m_constrained(false), m_type(0), m_index(0)
+  {}
 
   Reconstruction_vertex_base_3(const Point_with_normal& p, Cell_handle c)
-    : Vb(p,c)
-  {
-    m_f = (FT)0.0;
-    m_type = 0;
-    m_constrained = false;
-    m_index = 0;
-  }
+    : Vb(p,c), m_f(FT(0.0)), m_constrained(false), m_type(0), m_index(0)
+  {}
 
   Reconstruction_vertex_base_3(Cell_handle c)
-    : Vb(c)
-  {
-    m_f = (FT)0.0;
-    m_type = 0;
-    m_constrained = false;
-    m_index = 0;
-  }
+    : Vb(c), m_f(FT(0.0)), m_constrained(false), m_type(0), m_index(0)
+  {}
 
   /// Is vertex constrained, i.e.
   /// does it contribute to the right or left member of the linear system?
