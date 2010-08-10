@@ -91,14 +91,8 @@ set( CGAL_VERSION_DIR     CGAL-${CGAL_VERSION} )
 set( CGAL_MODULES_REL_DIR cmake/modules )
 set( CGAL_MODULES_DIR     ${CMAKE_SOURCE_DIR}/${CGAL_MODULES_REL_DIR} )
 
-# Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
-set(CGAL_CMAKE_MODULE_PATH ${CGAL_MODULES_DIR} )
-
-
-set(ORIGINAL_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} )
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH} )
-
+include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+cgal_setup_module_path()
 
 message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
 
@@ -319,14 +313,6 @@ endif()
 set ( CGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
 set ( CGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
 
-if ( NOT DEFINED CGAL_SOURCE_INSTALL )
-  if ( WIN32 AND NOT UNIX AND NOT CYGWIN AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN )
-    set ( CGAL_SOURCE_INSTALL TRUE )
-  else()
-    set ( CGAL_SOURCE_INSTALL FALSE )
-  endif()  
-endif()
-
 if ( CGAL_WIN32_CMAKE_ON_CYGWIN )
   exec_program(cygpath ARGS -w ${CMAKE_INSTALL_PREFIX} OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2 )
   file ( TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX )
@@ -334,39 +320,22 @@ endif()
 
 message( STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}" )
 
-if ( CGAL_SOURCE_INSTALL )
 
-  set ( CGAL_INSTALL_BIN_DIR "script"  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" )
-  
-  set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_MODULES_REL_DIR}"  
-        CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
-      )
-      
-  set ( CGAL_INSTALL_ROOT_DIR "."  
-        CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
-      )
-      
-  set ( CGAL_INSTALL_DOC_DIR "${CGAL_INSTALL_ROOT_DIR}" ) 
-  
-else()
+set ( CGAL_INSTALL_BIN_DIR    "bin"                     
+  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+  )
 
-  set ( CGAL_INSTALL_BIN_DIR    "bin"                     
-        CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
-      )
-      
-  set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/CGAL"
-        CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
-      )
-      
-  set ( CGAL_INSTALL_DOC_DIR "share/doc/${CGAL_VERSION_DIR}"  
-        CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
-      )
+set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/CGAL"
+  CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
+  )
 
-  set ( CGAL_INSTALL_MAN_DIR "share/man/man1"  
-        CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
-      )
+set ( CGAL_INSTALL_DOC_DIR "share/doc/${CGAL_VERSION_DIR}"  
+  CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
+  )
 
-endif()
+set ( CGAL_INSTALL_MAN_DIR "share/man/man1"  
+  CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+  )
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -473,16 +442,11 @@ if ( ZLIB_IN_AUXILIARY )
 endif()
 
 
-if ( CGAL_SOURCE_INSTALL )
-  install(FILES ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-  install(FILES     CMakeLists.txt                          DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-  install(DIRECTORY auxiliary                               DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-  install(DIRECTORY src                                     DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-else()
-  install(FILES ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+install(FILES ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+
+if ( WIN32 AND NOT UNIX AND NOT CYGWIN AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN )
   install(FILES auxiliary/cgal_create_cmake_script.1 DESTINATION ${CGAL_INSTALL_MAN_DIR} )
 endif()
-
 
 #--------------------------------------------------------------------------------------------------
 #

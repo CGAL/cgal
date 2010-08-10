@@ -1,5 +1,7 @@
 if( NOT CGAL_MACROS_FILE_INCLUDED )
   set(CGAL_MACROS_FILE_INCLUDED 1 )
+
+  include(${CGAL_MODULES_DIR}/CGAL_VersionUtils.cmake)
   
   macro(assert _arg )
     if ( NOT ${_arg} )
@@ -159,15 +161,44 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     
   endmacro()
 
-  macro( create_CGALconfig_files )
-    # FindCGAL and UseCGAL are platform specific so they are generated and stored in the binary folder.
-    configure_file(${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in  ${CMAKE_BINARY_DIR}/CGALConfig.cmake       @ONLY IMMEDIATE)
-    
-    if ( SOURCE_INSTALL )
-      configure_file(${CGAL_MODULES_DIR}/CGALConfig_install.cmake.source.in ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake @ONLY IMMEDIATE)
-    else()
-      configure_file(${CGAL_MODULES_DIR}/CGALConfig_install.cmake.fhs.in    ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake @ONLY IMMEDIATE)
+  function( cgal_setup_module_path )
+    # Avoid to modify the modules path twice
+    if(NOT CGAL_MODULE_PATH_IS_SET)
+      # Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+      set(CGAL_CMAKE_MODULE_PATH ${CGAL_MODULES_DIR})
+
+      # Use FindQt4 from CMake-2.8.1 if 2.6.2 <= CMake <= 2.8.1
+      if(CMAKE_VERSION)
+        is_version_less("2.6.1" "${CMAKE_VERSION}" CMAKE_VERSION_BETWEEN_2_6_2_AND_2_8_1)
+      else()
+        # It seems CMake <= 2.6.1 does not has that CMAKE_VERSION
+        set(CMAKE_VERSION_BETWEEN_2_6_2_AND_2_8_1 FALSE)
+      endif()
+      if(CMAKE_VERSION_BETWEEN_2_6_2_AND_2_8_1)
+        is_version_less(${CMAKE_VERSION} "2.8.2" CMAKE_VERSION_BETWEEN_2_6_2_AND_2_8_1)
+        if(CMAKE_VERSION_BETWEEN_2_6_2_AND_2_8_1)
+          set(CGAL_CMAKE_MODULE_PATH ${CGAL_CMAKE_MODULE_PATH} ${CGAL_MODULES_DIR}/2.6.2-to-2.8.1)
+        endif()
+      endif()
+
+      set(ORIGINAL_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} PARENT_SCOPE)
+      
+      set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH})
+
+      # Export those variables to the parent scope (the scope that calls the function)
+      set(CGAL_MODULE_PATH_IS_SET TRUE PARENT_SCOPE)
+      set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" PARENT_SCOPE)
+      set(CGAL_CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" PARENT_SCOPE)
+      set(ORIGINAL_CMAKE_MODULE_PATH "${ORIGINAL_CMAKE_MODULE_PATH}" PARENT_SCOPE)
     endif()
+  endfunction()
+
+  macro( create_CGALconfig_files )
+    # CGALConfig.cmake is platform specific so it is generated and stored in the binary folder.
+    configure_file(${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in  ${CMAKE_BINARY_DIR}/CGALConfig.cmake        @ONLY)
+    
+    # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
+    configure_file(${CGAL_MODULES_DIR}/CGALConfig_install.cmake.in ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake @ONLY)
   endmacro()
   
   macro ( fetch_env_var VAR )

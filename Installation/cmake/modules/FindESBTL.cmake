@@ -15,6 +15,7 @@ else()
             PATHS ENV ESBTL_INC_DIR
                   /usr/include
                   /usr/local/include
+                  ENV ESBTL_INC_DIR
            )
 
   if(ESBTL_INCLUDE_DIR)

@@ -65,6 +65,19 @@ x.y 2D Mesh Generation
   - The execution of the 2D mesh generator is now deterministic (same at
     each run).
 
+x.y 3D Mesh Generation
+
+  - The efficiency of the 3D mesh generator has been improved (the number of calls
+  to the oracle per inserted vertex has globally decrease).
+  This is achieved through a slight change of the mesh generator strategy which 
+  implies that a surface component that is not detected at the surface mesher level
+  will never be discovered by chance, owing to the refinement of some terahedra,
+  as it could happen before.
+  Please note that defining the macro CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
+  switches back to the old behavior.
+
+  - A demo program is now available.
+
 x Spatial Searching and Sorting
  	
 x.y 2D Range and Neighbor Search
