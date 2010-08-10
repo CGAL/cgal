@@ -1520,6 +1520,7 @@ Installation/cmake/modules/2.6.2-to-2.8.1/Qt4ConfigDependentSettings.cmake -text
 Installation/cmake/modules/2.6.2-to-2.8.1/Qt4Macros.cmake -text
 Installation/cmake/modules/2.6.2-to-2.8.1/UseQt4.cmake -text
 Installation/cmake/modules/CGALConfig_binary.cmake.in -text
+Installation/cmake/modules/CGALConfig_install.cmake.in -text
 Installation/cmake/modules/CGAL_CheckCXXFileRuns.cmake -text
 Installation/cmake/modules/CGAL_Common.cmake -text
 Installation/cmake/modules/CGAL_CreateSingleSourceCGALProgram.cmake -text
