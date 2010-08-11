@@ -33,7 +33,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
   qt4_add_resources ( DT_RESOURCE_FILES ./Circular_kernel_2.qrc )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
-  qt4_generate_moc( Circular_kernel_2.cpp Circular_kernel_2.moc )
+  qt4_generate_moc( "Circular_kernel_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Circular_kernel_2.moc" )
 
   # The executable itself.
   add_executable  ( Circular_kernel_2 Circular_kernel_2.cpp Circular_kernel_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )

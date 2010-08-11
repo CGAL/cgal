@@ -85,17 +85,17 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include(AddFileDependencies)
 
-  qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" MainWindow_moc.cpp )
+  qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
   add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
 
-  qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" Viewer_moc.cpp )
+  qt4_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
-  qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" Scene_moc.cpp )
+  qt4_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
   add_file_dependencies( Scene_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" )
 
   
-  qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/Polyhedron_demo_remeshing_plugin_cgal_code.cpp" Polyhedron_demo_remeshing_plugin_cgal_code.moc )
+  qt4_generate_moc( "Polyhedron_demo_remeshing_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Polyhedron_demo_remeshing_plugin_cgal_code.moc" )
 
   qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
 
@@ -219,7 +219,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(remeshing_plugin scene_polyhedron_item polygon_soup scene_c2t3_item)
 
   if ( Boost_VERSION GREATER 103400 )
-    qt4_generate_moc("${CMAKE_CURRENT_SOURCE_DIR}/Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" Scene_c3t3_item.moc )
+    qt4_generate_moc( "Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Scene_c3t3_item.moc" )
 
     polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
       Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Scene_c3t3_item.moc)

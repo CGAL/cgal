@@ -42,8 +42,8 @@ if (CGAL_FOUND AND OPENGL_FOUND AND QT4_FOUND AND QGLVIEWER_FOUND)
   qt4_add_resources( RESOURCE_FILES ./Periodic_3_triangulation_3.qrc )
 
   # use the Qt MOC preprocessor on classes that derive from QObject
-  qt4_generate_moc ( Scene.h moc_Scene.cpp )
-  qt4_generate_moc ( MainWindow.h moc_MainWindow.cpp )
+  qt4_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_Scene.cpp" )
+  qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_MainWindow.cpp" )
 
   if(DEFINED QT_QCOLLECTIONGENERATOR_EXECUTABLE)
   else()

@@ -41,7 +41,7 @@ qt4_wrap_ui( DT_UI_FILES Bounding_volumes.ui )
 qt4_add_resources ( DT_RESOURCE_FILES ./Bounding_volumes.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
-qt4_generate_moc( Bounding_volumes.cpp Bounding_volumes.moc )
+qt4_generate_moc( "Bounding_volumes.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Bounding_volumes.moc" )
 
 # The executable itself.
 add_executable  ( Bounding_volumes Bounding_volumes.cpp Bounding_volumes.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )

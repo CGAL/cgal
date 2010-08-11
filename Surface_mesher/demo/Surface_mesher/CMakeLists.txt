@@ -80,7 +80,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
     
     qt4_automoc( ${sources} )
 
-    qt4_generate_moc(surface.h moc_surface.cpp)
+    qt4_generate_moc( "surface.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_surface.cpp" )
 
     set( sources ${sources} moc_surface.cpp)
     

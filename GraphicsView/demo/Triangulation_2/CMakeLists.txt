@@ -40,7 +40,7 @@ qt4_wrap_ui( CDT_UI_FILES Constrained_Delaunay_triangulation_2.ui )
 qt4_add_resources ( CDT_RESOURCE_FILES ./Constrained_Delaunay_triangulation_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
-qt4_generate_moc( Constrained_Delaunay_triangulation_2.cpp Constrained_Delaunay_triangulation_2.moc )
+qt4_generate_moc( "Constrained_Delaunay_triangulation_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Constrained_Delaunay_triangulation_2.moc" )
 
 # The executable itself.
 add_executable  ( Constrained_Delaunay_triangulation_2 Constrained_Delaunay_triangulation_2.cpp Constrained_Delaunay_triangulation_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
@@ -62,7 +62,7 @@ qt4_wrap_ui( DT_UI_FILES Delaunay_triangulation_2.ui )
 qt4_add_resources ( DT_RESOURCE_FILES ./Delaunay_triangulation_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
-qt4_generate_moc( Delaunay_triangulation_2.cpp Delaunay_triangulation_2.moc )
+qt4_generate_moc( "Delaunay_triangulation_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Delaunay_triangulation_2.moc" )
 
 # The executable itself.
 add_executable  ( Delaunay_triangulation_2 Delaunay_triangulation_2.cpp Delaunay_triangulation_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
@@ -84,7 +84,7 @@ qt4_wrap_ui( DT_UI_FILES Regular_triangulation_2.ui )
 qt4_add_resources ( DT_RESOURCE_FILES ./Regular_triangulation_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
-qt4_generate_moc( Regular_triangulation_2.cpp Regular_triangulation_2.moc )
+qt4_generate_moc( "Regular_triangulation_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Regular_triangulation_2.moc" )
 
 # The executable itself.
 add_executable  ( Regular_triangulation_2 Regular_triangulation_2.cpp Regular_triangulation_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )

@@ -34,7 +34,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND CGAL_Core_FOUND )
   qt4_add_resources ( CDT_RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/boolean_operations_2.qrc )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
-  qt4_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/boolean_operations_2.cpp boolean_operations_2.moc )
+  qt4_generate_moc( "boolean_operations_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/boolean_operations_2.moc" )
 
   # The executable itself.
   add_executable  ( boolean_operations_2 ${CMAKE_CURRENT_SOURCE_DIR}/boolean_operations_2.cpp boolean_operations_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
