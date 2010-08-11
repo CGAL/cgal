@@ -1,4 +1,4 @@
-// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2010  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -12,10 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Geomview/src/CGAL/Geomview_stream.cpp $
-// $Id: Geomview_stream.cpp 40822 2007-11-07 16:51:18Z ameyer $
-//  
-// Author(s)     : Sylvain Pion
+// $URL$
+// $Id$
+// 
+// Author(s)     : Sebastien Loriot
 
 #include "CoreAux.cpp"
 #include "extLong.cpp"

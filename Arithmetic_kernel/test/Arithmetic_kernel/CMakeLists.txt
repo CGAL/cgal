@@ -27,9 +27,6 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  create_single_source_cgal_program( "CORE_arithmetic_kernel.cpp" )
-  create_single_source_cgal_program( "LEDA_arithmetic_kernel.cpp" )
-
   if( MPFI_FOUND )
     # for the testsuite, the version of MPFI shipped with RS is used; this
     # version needs GMP>=4.2, so we require this dependency only here and

@@ -17,6 +17,11 @@ include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
 add_library(CGAL_Core "all_files.cpp")
 
+find_package(GMPXX QUIET)
+if(NOT GMPXX_FOUND)
+  add_library(CGAL_Core "all_files_gmpxx.cpp")
+endif()
+
 add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} )
 
 add_dependencies( CGAL_Core CGAL )
