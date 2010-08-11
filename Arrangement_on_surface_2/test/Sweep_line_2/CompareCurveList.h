@@ -33,7 +33,7 @@ template <class List, class Traits>
 
   Iter begin2 = list2.begin();
  
-  if(list1.size() != list2.size())
+  if(! (list1.size() == list2.size()))
   {
     std::cout << "The lists are not of the same lengths ("
               << list1.size() << "," << list2.size() << ")\n";
