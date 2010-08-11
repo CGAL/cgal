@@ -122,7 +122,7 @@ public:
 
   std::pair<double, double> pair() const
   {
-    return std::pair<double, double>(_inf, _sup);
+    return std::pair<double, double>(inf(), sup());
   }
 
   static IA largest()
