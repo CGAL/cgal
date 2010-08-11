@@ -12,8 +12,6 @@ if ( NOT CGAL_GMP_SETUP )
       message( STATUS "GMP libraries:   ${GMP_LIBRARIES}" )
       message( STATUS "GMP definitions: ${GMP_DEFINITIONS}" )
       get_dependency_version(GMP)
-      set(CGAL_GMP_VERSION "${GMP_VERSION}")
-      hide_variable(CGAL_GMP_VERSION)
 
       message( STATUS "MPFR include:      ${MPFR_INCLUDE_DIR}" )
       message( STATUS "MPFR libraries:    ${MPFR_LIBRARIES}" )
