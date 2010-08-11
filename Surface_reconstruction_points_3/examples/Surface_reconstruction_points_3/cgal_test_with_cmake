@@ -26,7 +26,10 @@
         MAKE_CLEAN_CMD="devenv.com *.sln /Clean Release"
         ;;
     -GNMake* ) # if nmake
-        MAKE_CMD="nmake -fMakefile"
+        if [ -z "$MAKE_CMD" ]; then 
+            MAKE_CMD="nmake"
+        fi
+        MAKE_CMD="${MAKE_CMD} -fMakefile"
         MAKE_CLEAN_CMD="${MAKE_CMD} clean"
         ;;
     * ) # if make
