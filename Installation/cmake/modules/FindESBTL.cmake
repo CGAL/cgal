@@ -15,7 +15,7 @@ else()
             PATHS ENV ESBTL_INC_DIR
                   /usr/include
                   /usr/local/include
-                  ENV ESBTL_INC_DIR
+            DOC "The directory containing the ESBTL header files WITHOUT the ESBTL prefix"      
            )
 
   if(ESBTL_INCLUDE_DIR)
