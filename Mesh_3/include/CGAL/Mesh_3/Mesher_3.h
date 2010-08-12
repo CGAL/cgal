@@ -126,6 +126,9 @@ public:
 #endif
   
 private:
+  void remove_cells_from_c3t3();
+  
+private:
   /// Meshers
   Null_mesher_level null_mesher_;
   Facets_level facets_mesher_;
@@ -184,6 +187,10 @@ Mesher_3<C3T3,MC,MD>::refine_mesh()
   CGAL::Timer timer;
   timer.start();
   double elapsed_time = 0.;
+  
+  // First surface mesh could modify c3t3 without notifying cells_mesher
+  // So we have to ensure that no old cell will be left in c3t3
+  remove_cells_from_c3t3();
   
 #ifndef CGAL_MESH_3_VERBOSE
   // Scan surface and refine it
@@ -336,7 +343,21 @@ status() const
                        cells_mesher_.queue_size());
 }  
 #endif
-  
+
+
+template<class C3T3, class MC, class MD>
+void
+Mesher_3<C3T3,MC,MD>::
+remove_cells_from_c3t3()
+{
+  for ( typename C3T3::Triangulation::Finite_cells_iterator 
+    cit = r_c3t3_.triangulation().finite_cells_begin(),
+    end = r_c3t3_.triangulation().finite_cells_end() ; cit != end ; ++cit )
+  {
+    r_c3t3_.remove_from_complex(cit);
+  }
+}
+
 }  // end namespace Mesh_3
   
 }  // end namespace CGAL
