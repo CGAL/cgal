@@ -875,13 +875,15 @@ The variables specifying definitions and flags can be left undefined if they are
 \begin{tabular}{|l|l|l|} \hline
   \textbf{Variable}               & \textbf{Description}                                       & \textbf{Type}\\\hline\hline
   \texttt{WITH\_LEDA}             & Indicates whether to search and use LEDA or not            & CMake\\\hline
-  \texttt{LEDA\_INCLUDE\_DIR}     & Directory containing the file \texttt{LEDA/system/basic.h} & Either CMake or Environment\\\hline
-  \texttt{LEDA\_LIBRARY\_DIRS}    & Directory containing the compiled LEDA libraries           & Either CMake or Environment\\\hline
-  \texttt{LEDA\_LIBRARY\_RELEASE} & Full pathname to a release build of the LEDA library       & Either CMake or Environment\\\hline
-  \texttt{LEDA\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the LEDA library         & Either CMake or Environment\\\hline
-  \texttt{LEDA\_DEFINITIONS}      & Preprocessor definitions                                   & Either CMake or Environment\\\hline
-  \texttt{LEDA\_CXX\_FLAGS}       & Compiler flags                                             & Either CMake or Environment\\\hline
-  \texttt{LEDA\_LINKER\_FLAGS}    & Linker flags                                               & Either CMake or Environment\\\hline
+  \texttt{LEDA\_INCLUDE\_DIR}     & Directory containing the file \texttt{LEDA/system/basic.h} & CMake\\\hline
+  \texttt{LEDA\_LIBRARIES}        & Directory containing the compiled LEDA libraries           & CMake\\\hline
+  \texttt{LEDA\_INC\_DIR}         & Directory containing the file \texttt{LEDA/system/basic.h} & Environment\\\hline
+  \texttt{LEDA\_LIB\_DIR}         & Directory containing the compiled LEDA libraries           & Environment\\\hline
+  \texttt{LEDA\_LIBRARY\_RELEASE} & Full pathname to a release build of the LEDA library       & Either CMake\\\hline
+  \texttt{LEDA\_LIBRARY\_DEBUG}   & Full pathname to a debug build of the LEDA library         & Either CMake\\\hline
+  \texttt{LEDA\_DEFINITIONS}      & Preprocessor definitions                                   & Either CMake\\\hline
+  \texttt{LEDA\_CXX\_FLAGS}       & Compiler flags                                             & Either CMake\\\hline
+  \texttt{LEDA\_LINKER\_FLAGS}    & Linker flags                                               & Either CMake\\\hline
 \end{tabular}
 }
 
