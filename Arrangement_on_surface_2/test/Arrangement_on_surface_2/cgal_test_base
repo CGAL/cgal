@@ -105,7 +105,7 @@ configure()
                                      -DCMAKE_BUILD_TYPE=NOTFOUND \
                                      .' ; then
         
-	echo "   succesful configuration" >> $ERRORFILE
+	echo "   successful configuration" >> $ERRORFILE
     else
 	echo "   ERROR:    configuration" >> $ERRORFILE
     fi
@@ -212,7 +212,7 @@ compile_and_run()
 	SUCCES="y"
 	
 	if eval '${MAKE_CMD} VERBOSE=1 -fMakefile $1' ; then
-	    echo "   succesful compilation of $1" >> $ERRORFILE
+	    echo "   successful compilation of $1" >> $ERRORFILE
 	else
 	    echo "   ERROR:    compilation of $1" >> $ERRORFILE
 	    SUCCES=""
@@ -233,7 +233,7 @@ compile_and_run()
 		echo
 		ulimit -t 3600 2> /dev/null
 		if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-		    echo "   succesful execution   of $1" >> $ERRORFILE
+		    echo "   successful execution   of $1" >> $ERRORFILE
 		else
 		    echo "   ERROR:    execution   of $1" >> $ERRORFILE
 		fi

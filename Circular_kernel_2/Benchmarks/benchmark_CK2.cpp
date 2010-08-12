@@ -26,8 +26,10 @@
 #include <boost/type_traits.hpp>
 
 // CIRCULAR KERNEL TYPEDEFS
-typedef CGAL::MP_Float RT;
-typedef CGAL::Quotient<RT> NT1;
+//typedef CGAL::MP_Float RT;
+//typedef CGAL::Quotient<RT> NT1;
+typedef CGAL::Gmpz RT;
+typedef CGAL::Gmpq NT1;
 typedef CGAL::Cartesian<NT1> Linear_k1;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1> Algebraic_k1;
 typedef CGAL::Circular_kernel_2<Linear_k1, Algebraic_k1> CircularKernel;

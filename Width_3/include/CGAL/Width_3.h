@@ -1515,14 +1515,14 @@ class Width_3 {
 	e=go_on.back();
 	//Check if e is a proper edge or not. If so determine fnext
 	if (preparation_check(dao,e,fnext,go_on,impassable)) {
-	  DEBUGMSG(WIDTH_3_CONVEX,"Preparation Check succesful");
+	  DEBUGMSG(WIDTH_3_CONVEX,"Preparation Check successful");
 	  //f is the facet of which we know the antipodal vertices
 	  f=e->facet();
 	  Visited.clear();
 	  dao.get_antipodal_vertices(f,N);
 	  CGAL_assertion (!N.empty());
 	  DEBUGMSG(ASSERTION_OUTPUT,"f has some antipodal vertices. Assertion "
-		   <<"succesful.");
+		   <<"successful.");
 	  while(!check_about_VF_pairs(dao,fnext,N)) {
 	    DEBUGMSG(WIDTH_3_CONVEX,"No new VF-pair. Continue (Begin) "
 		     <<"rotation of the planes.");

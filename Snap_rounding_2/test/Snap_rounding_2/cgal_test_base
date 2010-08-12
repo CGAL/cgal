@@ -29,7 +29,7 @@ configure()
                                      -DCGAL_DIR="$CGAL_DIR" \
                                      .' ; then
         
-    echo "   succesful configuration" >> $ERRORFILE
+    echo "   successful configuration" >> $ERRORFILE
   else
     echo "   ERROR:    configuration" >> $ERRORFILE
   fi

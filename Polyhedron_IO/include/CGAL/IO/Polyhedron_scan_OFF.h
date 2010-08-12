@@ -127,7 +127,7 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
                 std::cerr << " " << std::endl;
                 std::cerr << "Polyhedron_scan_OFF<Traits>::" << std::endl;
                 std::cerr << "operator()(): input error: cannot "
-                             "succesfully remove isolated vertices."
+                             "successfully remove isolated vertices."
                           << std::endl;
             }
             B.rollback();

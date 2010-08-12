@@ -34,7 +34,7 @@ typedef void (__stdcall *ProgressCallback) ( int aCurr, int aTotal ) ;
        * @param xf is a reference parameter. After the call it holds the x-ccordinates of the face vertices in an array of length sum(numFaces_i).
        * @param yf is a reference parameter. After the call it holds the y-ccordinates of the face vertices in an array of length sum(numFaces_i).
        * @param dumpEPS is a flag. When != 0 the skeleton is written to the file "dump.eps".
-       * @return 0 if the straight skeleton COULD NOT be computed succesfully.
+       * @return 0 if the straight skeleton COULD NOT be computed successfully.
        */	
 
 extern "C" 

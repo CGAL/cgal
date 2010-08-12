@@ -342,7 +342,7 @@ public:
     }
     bool remove_unconnected_vertices() {
         // returns `true' if all unconnected vertices could be removed
-        // succesfully.
+        // successfully.
         return remove_unconnected_vertices( Supports_removal());
     }
 

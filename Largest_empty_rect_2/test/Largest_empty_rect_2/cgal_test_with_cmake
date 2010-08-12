@@ -31,7 +31,7 @@ configure()
                                      -DCMAKE_BUILD_TYPE=NOTFOUND \
                                      .' ; then
                                      
-    echo "   succesful configuration" >> $ERRORFILE
+    echo "   successful configuration" >> $ERRORFILE
   else
     echo "   ERROR:    configuration" >> $ERRORFILE
   fi
@@ -80,7 +80,7 @@ compile_and_run()
   SUCCES="y"
   
   if eval '${MAKE_CMD} VERBOSE=1 -fMakefile $1' ; then
-    echo "   succesful compilation of $1" >> $ERRORFILE
+    echo "   successful compilation of $1" >> $ERRORFILE
   else
     echo "   ERROR:    compilation of $1" >> $ERRORFILE
     SUCCES=""

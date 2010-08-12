@@ -39,7 +39,7 @@ configure()
                                      -DCMAKE_BUILD_TYPE=NOTFOUND \
                                      .' ; then
         
-	echo "   succesful configuration" >> $ERRORFILE
+	echo "   successful configuration" >> $ERRORFILE
     else
 	echo "   ERROR:    configuration" >> $ERRORFILE
     fi

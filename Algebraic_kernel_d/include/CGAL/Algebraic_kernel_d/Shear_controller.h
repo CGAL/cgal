@@ -102,7 +102,7 @@ namespace CGAL {
 
         int pos_next_factor;
 	
-	// Unsuccesfull shear factors
+	// Unsuccessfull shear factors
 	std::set<Int> bad_shears;
 	
     };

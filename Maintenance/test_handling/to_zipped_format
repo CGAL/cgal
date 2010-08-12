@@ -211,7 +211,7 @@ sub all_archives() {
 	if (one_archive($archive)) {
             my $date=`date`;
             chop $date;
-	    print_log("$final_version : $archive succesfully reformatted. [ $date ]\n");
+	    print_log("$final_version : $archive successfully reformatted. [ $date ]\n");
 	} else {
 	    print_log_err("$final_version : Could not reformat $archive\n");
 	}

@@ -2739,7 +2739,7 @@ in long running programs.
 If you create a file named Sender.config in the same directory where
 Sender.pm resides, this file will be "require"d as soon as you "use
 Mail::Sender" in your script. Of course the Sender.config MUST "return a
-true value", that is it has to be succesfully compiled and the last
+true value", that is it has to be successfully compiled and the last
 statement must return a true value. You may use this to forbide the use
 of Mail::Sender to some users.
 
