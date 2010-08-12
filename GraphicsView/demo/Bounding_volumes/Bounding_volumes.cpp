@@ -88,6 +88,14 @@ public slots:
 
   void on_actionShowMinEllipse_toggled(bool checked);
 
+  void on_actionShowMinRectangle_toggled(bool checked);
+
+  void on_actionShowMinParallelogram_toggled(bool checked);
+
+  void on_actionShowConvexHull_toggled(bool checked);
+
+  void on_actionShowPCenter_toggled(bool checked);
+
   void on_actionInsertPoint_toggled(bool checked);
   
   void on_actionInsertRandomPoints_triggered();
@@ -165,13 +173,15 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   min_parallelogram_gi, SLOT(modelChanged()));
   min_parallelogram_gi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  //scene.addItem(min_parallelogram_gi);
+  scene.addItem(min_parallelogram_gi);
 
 
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 1);
+
+  scene.installEventFilter(pi);
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
@@ -183,11 +193,6 @@ MainWindow::MainWindow()
 
   QObject::connect(this->actionQuit, SIGNAL(triggered()), 
 		   this, SLOT(close()));
-
-  // Check two actions 
-  this->actionInsertPoint->setChecked(true);
-  this->actionShowMinCircle->setChecked(true);
-  this->actionShowMinEllipse->setChecked(true);
 
   //
   // Setup the scene and the view
@@ -217,12 +222,35 @@ MainWindow::MainWindow()
 void
 MainWindow::update()
 {
-    CGAL::Qt::Converter<K> convert;  
-    for(std::size_t i=0; i< P; i++){
-    p_center[i]->setRect(convert(p_center_iso_rectangle[i]));
-    p_center[i]->show();
+  if(this->actionShowConvexHull->isChecked()){
+    convex_hull_gi->show();
+  }else {
+    convex_hull_gi->hide();
   }
-  if (mc.is_degenerate()){
+
+  if(this->actionShowMinRectangle->isChecked()){
+    min_rectangle_gi->show();
+  }else {
+    min_rectangle_gi->hide();
+  }
+
+
+  if(this->actionShowMinParallelogram->isChecked()){
+    min_parallelogram_gi->show();
+  }else {
+    min_parallelogram_gi->hide();
+  }
+
+  CGAL::Qt::Converter<K> convert;  
+
+  if(this->actionShowPCenter->isChecked()){
+    for(std::size_t i=0; i< P; i++){
+      p_center[i]->setRect(convert(p_center_iso_rectangle[i]));
+      p_center[i]->show();
+    }
+  }
+
+  if (mc.is_degenerate() || (! this->actionShowMinCircle->isChecked())){
     cgi->hide();
   } else {
     K::Circle_2 c;
@@ -236,7 +264,7 @@ MainWindow::update()
     cgi->show();
   }
 
-  if (me.is_degenerate()){
+  if (me.is_degenerate()  || (! this->actionShowMinEllipse->isChecked()) ){
     egi->hide();
   } else {
     if (me.number_of_support_points() == 2) {
@@ -342,14 +370,46 @@ void
 MainWindow::on_actionShowMinCircle_toggled(bool checked)
 {
   cgi->setVisible(checked);
+  emit (changed());
 }
 
 void
 MainWindow::on_actionShowMinEllipse_toggled(bool checked)
 {
   egi->setVisible(checked);
+  emit (changed());
 }
 
+
+void
+MainWindow::on_actionShowMinRectangle_toggled(bool checked)
+{
+  min_rectangle_gi->setVisible(checked);
+  emit (changed());
+}
+
+void
+MainWindow::on_actionShowMinParallelogram_toggled(bool checked)
+{
+  min_parallelogram_gi->setVisible(checked);
+  emit (changed());
+}
+
+void
+MainWindow::on_actionShowConvexHull_toggled(bool checked)
+{
+  convex_hull_gi->setVisible(checked);
+  emit (changed());
+}
+
+void
+MainWindow::on_actionShowPCenter_toggled(bool checked)
+{
+  for(int i =0; i < P; i++){
+    p_center[i]->setVisible(checked);
+  }
+  emit (changed());
+}
 
 void
 MainWindow::on_actionClear_triggered()
@@ -475,7 +535,7 @@ int main(int argc, char **argv)
   QApplication app(argc, argv);
 
   app.setOrganizationDomain("geometryfactory.com");
-  app.setOrganizationName("ETH Zurich");
+  app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Bounding_volumes demo");
 
   // Import resources from libCGALQt4.

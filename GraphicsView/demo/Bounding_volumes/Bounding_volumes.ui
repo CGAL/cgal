@@ -15,9 +15,8 @@
    <string>CGAL Bounding Volumes</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff/>
-   </iconset>
+   <iconset resource="../resources/CGAL.qrc">
+    <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout">
@@ -62,6 +61,7 @@
    <addaction name="actionClear"/>
    <addaction name="actionLoadPoints"/>
    <addaction name="actionSavePoints"/>
+   <addaction name="actionRecenter"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
@@ -76,11 +76,14 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionInsertPoint"/>
    <addaction name="separator"/>
+   <addaction name="actionShowConvexHull"/>
    <addaction name="actionShowMinCircle"/>
    <addaction name="separator"/>
-   <addaction name="actionRecenter"/>
+   <addaction name="actionShowMinEllipse"/>
+   <addaction name="actionShowMinRectangle"/>
+   <addaction name="actionShowMinParallelogram"/>
+   <addaction name="actionShowPCenter"/>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -102,11 +105,14 @@
      <string>&amp;Tools</string>
     </property>
     <addaction name="actionInsertPoint"/>
+    <addaction name="actionShowConvexHull"/>
     <addaction name="actionShowMinCircle"/>
-    <addaction name="actionConvexHull"/>
+    <addaction name="actionShowMinEllipse"/>
+    <addaction name="actionShowMinRectangle"/>
+    <addaction name="actionShowMinParallelogram"/>
+    <addaction name="actionShowPCenter"/>
     <addaction name="separator"/>
     <addaction name="actionRecenter"/>
-    <addaction name="actionShowMinEllipse"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -154,7 +160,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../icons/Input.qrc">
@@ -167,7 +173,7 @@
     <string>Insert Point</string>
    </property>
    <property name="statusTip">
-    <string>Left: Insert vtx</string>
+    <string>Left: Insert point</string>
    </property>
   </action>
   <action name="actionClear">
@@ -186,18 +192,21 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>icons/min_circle.png</normaloff>icons/min_circle.png</iconset>
    </property>
    <property name="text">
-    <string>Show Minimum Enclosing &amp;Circle</string>
+    <string>Minimum Enclosing &amp;Circle</string>
    </property>
    <property name="iconText">
-    <string>Show Minimum Enclosing Circle</string>
+    <string>Minimum Enclosing Circle</string>
    </property>
    <property name="toolTip">
-    <string>Show Minimum Enclosing Circle</string>
+    <string>Minimum Enclosing Circle</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
@@ -229,9 +238,8 @@
   </action>
   <action name="actionRecenter">
    <property name="icon">
-    <iconset>
-     <normaloff/>
-    </iconset>
+    <iconset resource="../icons/Input.qrc">
+     <normaloff>:/cgal/Input/zoom-best-fit</normaloff>:/cgal/Input/zoom-best-fit</iconset>
    </property>
    <property name="text">
     <string>Re&amp;center the viewport</string>
@@ -240,7 +248,17 @@
     <string>Ctrl+R</string>
    </property>
   </action>
-  <action name="actionConvexHull">
+  <action name="actionShowConvexHull">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Bounding_volumes.qrc">
+     <normaloff>:/cgal/Actions/icons/convex_hull.png</normaloff>:/cgal/Actions/icons/convex_hull.png</iconset>
+   </property>
    <property name="text">
     <string>Convex Hull</string>
    </property>
@@ -249,8 +267,63 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Bounding_volumes.qrc">
+     <normaloff>:/cgal/Actions/icons/min_ellipse.png</normaloff>:/cgal/Actions/icons/min_ellipse.png</iconset>
+   </property>
    <property name="text">
-    <string>Show Minimum Enclosing Ellipse</string>
+    <string>Minimum Enclosing Ellipse</string>
+   </property>
+  </action>
+  <action name="actionShowPCenter">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Bounding_volumes.qrc">
+     <normaloff>:/cgal/Actions/icons/p_center.png</normaloff>:/cgal/Actions/icons/p_center.png</iconset>
+   </property>
+   <property name="text">
+    <string>Minimum 3 Center</string>
+   </property>
+   <property name="toolTip">
+    <string>Minimum 3 Center</string>
+   </property>
+  </action>
+  <action name="actionShowMinRectangle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Bounding_volumes.qrc">
+     <normaloff>:/cgal/Actions/icons/min_quadrilateral.png</normaloff>:/cgal/Actions/icons/min_quadrilateral.png</iconset>
+   </property>
+   <property name="text">
+    <string>Minimum Enclosing Rectangle</string>
+   </property>
+  </action>
+  <action name="actionShowMinParallelogram">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Bounding_volumes.qrc">
+     <normaloff>:/cgal/Actions/icons/min_parallelogram.png</normaloff>:/cgal/Actions/icons/min_parallelogram.png</iconset>
+   </property>
+   <property name="text">
+    <string>Minimum Enclosing Parallelogram</string>
    </property>
   </action>
  </widget>
@@ -258,8 +331,6 @@
   <include location="Bounding_volumes.qrc"/>
   <include location="../icons/File.qrc"/>
   <include location="../resources/CGAL.qrc"/>
-  <include location="../icons/Input.qrc"/>
-  <include location="../icons/File.qrc"/>
   <include location="../icons/Input.qrc"/>
  </resources>
  <connections/>
