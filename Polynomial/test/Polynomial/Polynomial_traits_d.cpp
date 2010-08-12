@@ -158,6 +158,8 @@ int main(){
     test_AK_4<AK>();
     test_AK_5<AK>();
     test_AK_6<AK>();
+#else
+  std::cout << "No default arithmetic kernel has been found.\nNothing was tested" << std::endl;
 #endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
   return 0;
