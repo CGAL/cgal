@@ -54,22 +54,22 @@ void check_result_type(AdaptableFunctor, ResultType){
 template <typename ResultType>
 void check_result_type(CGAL::Null_functor, ResultType){}
 
-#define CGAL_SNAP_AST_FUNCTORS(Traits)                         \
-  typedef typename AST::Simplify Simplify ;                    \
-  typedef typename AST::Unit_part Unit_part;                   \
-  typedef typename AST::Integral_division Integral_division;   \
-  typedef typename AST::Divides Divides;                       \
-  typedef typename AST::Is_square Is_square;                   \
-  typedef typename AST::Gcd Gcd;                               \
-  typedef typename AST::Div_mod Div_mod;                       \
-  typedef typename AST::Div Div;                               \
-  typedef typename AST::Mod Mod;                               \
-  typedef typename AST::Square Square;                         \
-  typedef typename AST::Is_zero Is_zero;                       \
-  typedef typename AST::Is_one Is_one;                         \
-  typedef typename AST::Sqrt Sqrt;                             \
-  typedef typename AST::Kth_root Kth_root;                     \
-  typedef typename AST::Root_of Root_of;
+#define CGAL_SNAP_AST_FUNCTORS(Traits)                            \
+  typedef typename Traits::Simplify Simplify ;                    \
+  typedef typename Traits::Unit_part Unit_part;                   \
+  typedef typename Traits::Integral_division Integral_division;   \
+  typedef typename Traits::Divides Divides;                       \
+  typedef typename Traits::Is_square Is_square;                   \
+  typedef typename Traits::Gcd Gcd;                               \
+  typedef typename Traits::Div_mod Div_mod;                       \
+  typedef typename Traits::Div Div;                               \
+  typedef typename Traits::Mod Mod;                               \
+  typedef typename Traits::Square Square;                         \
+  typedef typename Traits::Is_zero Is_zero;                       \
+  typedef typename Traits::Is_one Is_one;                         \
+  typedef typename Traits::Sqrt Sqrt;                             \
+  typedef typename Traits::Kth_root Kth_root;                     \
+  typedef typename Traits::Root_of Root_of;
 
 namespace CGAL {
 	
