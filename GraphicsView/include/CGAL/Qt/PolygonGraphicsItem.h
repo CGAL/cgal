@@ -114,9 +114,6 @@ PolygonGraphicsItem<P>::PolygonGraphicsItem(P * p_)
      draw_edges(true), draw_vertices(true)   
 {
   setVerticesPen(QPen(::Qt::red, 3.));
-  if(poly->size() == 0){
-    this->hide();
-  }
   updateBoundingBox();
   setZValue(3);
 }
@@ -181,11 +178,6 @@ template <typename P>
 void 
 PolygonGraphicsItem<P>::modelChanged()
 {
-  if((poly->size() == 0) ){
-    this->hide();
-  } else if((poly->size() > 0) && (! this->isVisible())){
-    this->show();
-  }
   updateBoundingBox();
   update();
 }

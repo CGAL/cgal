@@ -1416,8 +1416,13 @@ GraphicsView/TODO -text
 GraphicsView/demo/Bounding_volumes/Bounding_volumes.qrc -text
 GraphicsView/demo/Bounding_volumes/Bounding_volumes.ui -text
 GraphicsView/demo/Bounding_volumes/about_Bounding_volumes.html svneol=native#text/html
+GraphicsView/demo/Bounding_volumes/icons/convex_hull.png -text svneol=unset#image/png
 GraphicsView/demo/Bounding_volumes/icons/min_circle.pdf -text svneol=unset#application/pdf
 GraphicsView/demo/Bounding_volumes/icons/min_circle.png -text svneol=unset#image/png
+GraphicsView/demo/Bounding_volumes/icons/min_ellipse.png -text svneol=unset#image/png
+GraphicsView/demo/Bounding_volumes/icons/min_parallelogram.png -text svneol=unset#image/png
+GraphicsView/demo/Bounding_volumes/icons/min_quadrilateral.png -text svneol=unset#image/png
+GraphicsView/demo/Bounding_volumes/icons/p_center.png -text svneol=unset#image/png
 GraphicsView/demo/Circular_kernel_2/Circular_kernel_2.qrc -text
 GraphicsView/demo/Circular_kernel_2/Circular_kernel_2.ui -text
 GraphicsView/demo/Circular_kernel_2/arcs.arc -text
