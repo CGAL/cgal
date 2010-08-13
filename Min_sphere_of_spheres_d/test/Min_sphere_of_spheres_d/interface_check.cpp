@@ -207,44 +207,44 @@ int main () {
   const float tf = 5.0e-7f;  // tolerance for float computation
 
   cout << "test exact LP-algorithm with sqrts:" << endl;
-  test<2,FieldType,CGAL::Tag_true,CGAL::LP_algorithm>(N,T);
-  test<3,FieldType,CGAL::Tag_true,CGAL::LP_algorithm>(N,T);
-  test<5,FieldType,CGAL::Tag_true,CGAL::LP_algorithm>(N,T);
+  ::test<2,FieldType,CGAL::Tag_true,CGAL::LP_algorithm>(N,T);
+  ::test<3,FieldType,CGAL::Tag_true,CGAL::LP_algorithm>(N,T);
+  ::test<5,FieldType,CGAL::Tag_true,CGAL::LP_algorithm>(N,T);
 
   cout << "test exact LP-algorithm without sqrts:" << endl;
-  test<2,FieldType,CGAL::Tag_false,CGAL::LP_algorithm>(N,T);
-  test<3,FieldType,CGAL::Tag_false,CGAL::LP_algorithm>(N,T);
-  test<5,FieldType,CGAL::Tag_false,CGAL::LP_algorithm>(N,T);
+  ::test<2,FieldType,CGAL::Tag_false,CGAL::LP_algorithm>(N,T);
+  ::test<3,FieldType,CGAL::Tag_false,CGAL::LP_algorithm>(N,T);
+  ::test<5,FieldType,CGAL::Tag_false,CGAL::LP_algorithm>(N,T);
 
   cout << "test exact farthest-first heuristic with sqrts:" << endl;
-  test<2,FieldType,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,T);
-  test<3,FieldType,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,T);
-  test<5,FieldType,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,T);
+  ::test<2,FieldType,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,T);
+  ::test<3,FieldType,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,T);
+  ::test<5,FieldType,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,T);
 
   cout << "test exact farthest-first heuristic without sqrts:" << endl;
-  test<2,FieldType,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,T);
-  test<3,FieldType,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,T);
-  test<5,FieldType,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,T);
+  ::test<2,FieldType,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,T);
+  ::test<3,FieldType,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,T);
+  ::test<5,FieldType,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,T);
 
   cout << "test double farthest-first heuristic with sqrts:" << endl;
-  test<2,double,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,t);
-  test<3,double,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,t);
-  test<5,double,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,t);
+  ::test<2,double,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,t);
+  ::test<3,double,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,t);
+  ::test<5,double,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,t);
 
   cout << "test double farthest-first heuristic without sqrts:" << endl;
-  test<2,double,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,t);
-  test<3,double,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,t);
-  test<5,double,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,t);
+  ::test<2,double,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,t);
+  ::test<3,double,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,t);
+  ::test<5,double,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,t);
     
   cout << "test float farthest-first heuristic with sqrts:" << endl;
-  test<2,float,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,tf);
-  test<3,float,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,tf);
-  test<5,float,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,tf);
+  ::test<2,float,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,tf);
+  ::test<3,float,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,tf);
+  ::test<5,float,CGAL::Tag_true,CGAL::Farthest_first_heuristic>(N,tf);
 
   cout << "test float farthest-first heuristic without sqrts:" << endl;
-  test<2,float,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,tf);
-  test<3,float,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,tf);
-  test<5,float,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,tf);
+  ::test<2,float,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,tf);
+  ::test<3,float,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,tf);
+  ::test<5,float,CGAL::Tag_false,CGAL::Farthest_first_heuristic>(N,tf);
 
   cout << endl
        << "Notice: Because the LP-algorithm is not good when used with" << endl
