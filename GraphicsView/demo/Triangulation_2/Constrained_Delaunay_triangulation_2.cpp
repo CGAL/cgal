@@ -267,6 +267,7 @@ MainWindow::MainWindow()
   setupUi(this);
 
   setAcceptDrops(true);
+  this->graphicsView->setAcceptDrops(false);
 
   // Add a GraphicItem for the CDT triangulation
   dgi = new CGAL::Qt::DelaunayMeshTriangulationGraphicsItem<CDT>(&cdt);
