@@ -97,7 +97,7 @@ public slots:
   void clearOffset();
   void clear();
 
-  void open(const QString&);
+  virtual void open(QString);
 signals:
   void changed();
 };
@@ -107,6 +107,8 @@ MainWindow::MainWindow()
   : DemosMainWindow()
 {
   setupUi(this);
+
+  this->graphicsView->setAcceptDrops(false);
 
   // Add a GraphicItem for the Polygon_2
   pgi = new CGAL::Qt::PolygonGraphicsItem<Polygon>(&poly);
@@ -218,7 +220,7 @@ MainWindow::on_actionLoadPolygon_triggered()
 }
 
 void
-MainWindow::open(const QString& fileName)
+MainWindow::open(QString fileName)
 {
   this->actionCreateInputPolygon->setChecked(false);
   std::ifstream ifs(qPrintable(fileName));
