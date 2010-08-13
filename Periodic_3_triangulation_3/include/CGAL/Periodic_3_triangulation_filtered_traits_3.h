@@ -474,20 +474,15 @@ private:
   typedef typename C2E::Target_kernel::Iso_cuboid_3 Exact_iso_cuboid_3;
   typedef typename C2F::Target_kernel::Iso_cuboid_3 Approximate_iso_cuboid_3;
  
-protected:
-#ifndef CGAL_CFG_MATCHING_BUG_6
-  using Base::_domain;
-#endif
-
 public:
   typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
 
   void set_domain(const Iso_cuboid_3& domain) {
     C2E c2e;
     C2F c2f;
-    _domain = domain;
-    _domain_e = c2e(_domain);
-    _domain_f = c2f(_domain);
+    this->_domain = domain;
+    this->_domain_e = c2e(this->_domain);
+    this->_domain_f = c2f(this->_domain);
   }
 
   typedef Filtered_periodic_predicate<
