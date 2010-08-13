@@ -113,6 +113,9 @@ GraphicsView/src/CGALQt4/*.so
 GraphicsView/src/CGALQt4/Makefile
 GraphicsView/src/CGALQt4/moc_*.cxx
 GraphicsView/src/CGALQt4/qrc_*.cxx
+Installation/auxiliary/gdb/python/CGAL/__init__.pyc
+Installation/auxiliary/gdb/python/CGAL/printers.pyc
+Installation/auxiliary/gdb/test
 Installation/cmake/modules/*.tmp
 Jet_fitting_3/examples/Jet_fitting_3/*.exe
 Jet_fitting_3/examples/Jet_fitting_3/*.sln
