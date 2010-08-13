@@ -30,9 +30,6 @@ set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 find_package(Qt4)
 
-# Add directory containing implicit function plugin source files
-add_subdirectory("implicit_functions")
-
 # Find OpenGL
 find_package(OpenGL)
 
@@ -48,6 +45,9 @@ endif(QT4_FOUND)
 
 
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+
+  # Add directory containing implicit function plugin source files
+  add_subdirectory("implicit_functions")
 
   if(GLEW_FOUND)
     include_directories ( ${GLEW_INCLUDE_DIR} )
