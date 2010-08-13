@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/cgal/help" lang="en" >
+    <file alias="about_CGAL.html" >../resources/about_CGAL.html</file>
+    <file>about_Alpha_shapes_2.html</file>
+  </qresource>
+</RCC>

@@ -1413,6 +1413,9 @@ Geomview/demo/Geomview/CMakeLists.txt -text
 Geomview/doc_tex/Geomview/geomview.gif -text
 GraphicsView/GraphicsView.odp -text
 GraphicsView/TODO -text
+GraphicsView/demo/Alpha_shapes_2/Alpha_shapes_2.qrc -text
+GraphicsView/demo/Alpha_shapes_2/Alpha_shapes_2.ui -text
+GraphicsView/demo/Alpha_shapes_2/about_Alpha_shapes_2.html svneol=native#text/html
 GraphicsView/demo/Bounding_volumes/Bounding_volumes.qrc -text
 GraphicsView/demo/Bounding_volumes/Bounding_volumes.ui -text
 GraphicsView/demo/Bounding_volumes/about_Bounding_volumes.html svneol=native#text/html
