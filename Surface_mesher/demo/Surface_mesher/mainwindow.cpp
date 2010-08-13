@@ -62,7 +62,7 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 
 void MainWindow::dropEvent(QDropEvent *event)
 {
-  QString filename = event->mimeData()->urls().at(0).path();
+  QString filename = event->mimeData()->urls().at(0).toLocalFile();
   surface_open(filename);
   event->acceptProposedAction();
 }
