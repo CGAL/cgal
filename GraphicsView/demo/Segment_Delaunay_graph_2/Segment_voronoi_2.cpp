@@ -121,8 +121,6 @@ MainWindow::MainWindow()
 {
   setupUi(this);
 
-  setAcceptDrops(true);
-
   // Add a GraphicItem for the SVD triangulation
   sdggi = new CGAL::Qt::SegmentDelaunayGraphGraphicsItem<SVD>(&svd);
   QColor segmentColor(::Qt::blue);
@@ -188,21 +186,6 @@ MainWindow::MainWindow()
 	  this, SLOT(open(QString)));
 }
 
-
-void 
-MainWindow::dragEnterEvent(QDragEnterEvent *event)
-{
-  if (event->mimeData()->hasFormat("text/uri-list"))
-    event->acceptProposedAction();
-}
-
-void 
-MainWindow::dropEvent(QDropEvent *event)
-{
-  QString filename = event->mimeData()->urls().at(0).path();
-  open(filename);
-  event->acceptProposedAction();
-}
 
 void
 MainWindow::processInput(CGAL::Object o)
