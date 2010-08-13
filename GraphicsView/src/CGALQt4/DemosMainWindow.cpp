@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QLabel>
 #include <QFile>
+#include <QFileInfo>
 #include <QMenu>
 #include <QMenuBar>
 #include <QAction>
@@ -31,7 +32,7 @@
 #include <QGLWidget>
 #include <QTextStream>
 #include <QSettings>
-#include <QFileInfo>
+#include <QUrl>
 
 #include <CGAL/config.h> // needed to get CGAL_VERSION_STR
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -72,6 +73,24 @@ DemosMainWindow::DemosMainWindow(QWidget * parent, ::Qt::WindowFlags flags)
   actionAbout = new QAction(this);
   actionAbout->setObjectName("actionAbout");
   actionAbout->setText(tr("&About..."));
+
+  setAcceptDrops(true);
+}
+
+
+void 
+DemosMainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+  if (event->mimeData()->hasFormat("text/uri-list"))
+    event->acceptProposedAction();
+}
+
+void 
+DemosMainWindow::dropEvent(QDropEvent *event)
+{
+  QString filename = event->mimeData()->urls().at(0).toLocalFile();
+  this->open(filename);
+  event->acceptProposedAction();
 }
 
 void

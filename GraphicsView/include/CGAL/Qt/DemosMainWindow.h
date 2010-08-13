@@ -20,9 +20,11 @@
 
 #ifndef CGAL_QT_DEMOS_MAIN_WINDOW_H
 #define CGAL_QT_DEMOS_MAIN_WINDOW_H
-
+#include <iostream>
 #include <QVector>
 #include <QMainWindow>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 #include <CGAL/auto_link/Qt4.h>
 
 // forward declaration
@@ -48,6 +50,14 @@ public:
 		State    = 0x4};
 
   Q_DECLARE_FLAGS(Options, Option)
+
+  virtual void dragEnterEvent(QDragEnterEvent *event);
+  virtual void dropEvent(QDropEvent *event);
+
+  virtual void open(QString)
+  {
+    std::cerr << "You should implement open(const QString&)const;" << std::endl; 
+  }
 
 public:
   unsigned int maxNumberOfRecentFiles() const ;
