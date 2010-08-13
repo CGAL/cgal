@@ -24,6 +24,9 @@ set( QT_USE_QTOPENGL  TRUE )
 find_package(Qt4)
 include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
+  include_directories (BEFORE ../../../Number_types/include)
+
+  include_directories (BEFORE ../../../Triangulation_2/include)
 
 
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
