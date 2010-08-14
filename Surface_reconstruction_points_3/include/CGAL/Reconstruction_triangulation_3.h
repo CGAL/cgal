@@ -304,7 +304,8 @@ public:
     // Represents *all* points by a set of spheres with 0 radius
     std::vector<Traits_sphere> spheres;
     spheres.reserve(number_of_vertices());
-    for (Point_iterator it=points_begin(); Point_iterator eit=points_end();
+
+    for (Point_iterator it=points_begin(), eit=points_end();
          it != eit; ++it)
       spheres.push_back(Traits_sphere(*it,0));
 
