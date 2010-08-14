@@ -56,9 +56,6 @@ private:
 public:
   MainWindow();
 
-protected:
-  void dragEnterEvent(QDragEnterEvent *event);
-  void dropEvent(QDropEvent *event);
 private:
   template <typename Iterator> 
   void insert_polyline(Iterator b, Iterator e)
