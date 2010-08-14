@@ -13,6 +13,8 @@ namespace CGAL {
   template < typename FT_ >
   struct Simple_cartesian;
 
+  class Epick;
+
   class Polyhedron_items_3;
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -36,7 +38,7 @@ namespace CGAL {
 
 // kernel
 
-typedef CGAL::Filtered_kernel< CGAL::Simple_cartesian<double>, true > Kernel;
+typedef CGAL::Epick Kernel;
 
 // surface mesh
 typedef CGAL::Polyhedron_3<Kernel,
