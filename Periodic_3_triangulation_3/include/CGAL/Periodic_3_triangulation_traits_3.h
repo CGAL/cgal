@@ -29,7 +29,7 @@
 namespace CGAL { 
 
 template < class K, class Predicate_ >
-  class Traits_with_offsets_adaptor {
+class Traits_with_offsets_adaptor : public Predicate_ {
   typedef K Kernel;
   typedef Predicate_ Predicate;
   
