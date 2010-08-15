@@ -29,12 +29,14 @@ namespace CGAL {
              class Alloc
              >
   class Polyhedron_3;
+
+  class Epick;
   
 } // end namespace CGAL
 
 // kernel
 
-typedef CGAL::Filtered_kernel< CGAL::Simple_cartesian<double>, true > Kernel;
+typedef CGAL::Epick Kernel;
 
 // surface mesh
 typedef CGAL::Polyhedron_3<Kernel,
