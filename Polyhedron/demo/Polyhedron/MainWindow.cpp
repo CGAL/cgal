@@ -4,10 +4,7 @@
 #include "Scene_item.h"
 #include <CGAL/Qt/debug.h>
 
-#include <QDragEnterEvent>
-#include <QDropEvent>
 #include <QtDebug>
-#include <QUrl>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QSettings>
@@ -47,9 +44,6 @@ MainWindow::MainWindow(QWidget* parent)
 
   // do not save the state of the viewer (anoying)
   viewer->setStateFileName(QString::null);
-
-  // accept drop events
-  setAcceptDrops(true);
 
   // setup scene
   scene = new Scene(this);
@@ -267,24 +261,6 @@ void MainWindow::warning(QString text) {
 
 void MainWindow::error(QString text) {
   this->message("ERROR: " + text, "red");
-}
-
-void MainWindow::dragEnterEvent(QDragEnterEvent *event)
-{
-  if (event->mimeData()->hasFormat("text/uri-list"))
-    event->acceptProposedAction();
-}
-
-void MainWindow::dropEvent(QDropEvent *event)
-{
-  Q_FOREACH(QUrl url, event->mimeData()->urls()) {
-    QString filename = url.toLocalFile();
-    if(!filename.isEmpty()) {
-      qDebug() << QString("dropEvent(\"%1\")\n").arg(filename);
-      open(filename);
-    }
-  }
-  event->acceptProposedAction();
 }
 
 void MainWindow::updateViewerBBox()
