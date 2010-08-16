@@ -1,11 +1,11 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
 
 #include <iostream>
 #include <iterator>
 
-typedef CGAL::Cartesian< double >   K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                  Point_2;
 typedef CGAL::Random_points_in_square_2<
      Point_2,

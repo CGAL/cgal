@@ -1,4 +1,4 @@
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <cassert>
 #include <vector>
 #include <algorithm>
@@ -11,10 +11,10 @@
 
 using namespace CGAL;
 
-typedef Simple_cartesian<double>         R;
-typedef R::Point_2                       Point;
+typedef Exact_predicates_inexact_constructions_kernel K;
+typedef K::Point_2                       Point;
 typedef Creator_uniform_2<double,Point>  Pt_creator;
-typedef R::Segment_2                     Segment;
+typedef K::Segment_2                     Segment;
 typedef std::vector<Segment>             Vector;
 
 

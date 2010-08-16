@@ -1,4 +1,4 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_polygon_2.h>
@@ -19,7 +19,7 @@ typedef double RT;
 #include <fstream>
 #include <list>
 
-typedef CGAL::Cartesian<RT>                               K;
+typedef CGAL::Simple_cartesian<RT>                        K;
 typedef K::Point_2                                        Point_2;
 typedef std::list<Point_2>                                Container;
 typedef CGAL::Polygon_2<K, Container>                     Polygon_2;

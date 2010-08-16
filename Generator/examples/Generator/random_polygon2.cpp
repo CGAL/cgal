@@ -1,9 +1,9 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_polygon_2.h>
 #include <CGAL/Polygon_2.h>
 
-typedef CGAL::Cartesian< double >                  K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                 Point_2;
 typedef std::list<Point_2>                         Container;
 typedef CGAL::Polygon_2<K, Container>              Polygon_2;

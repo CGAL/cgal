@@ -1,7 +1,7 @@
 // CGAL example program for the generic segment generator
 // using precomputed point locations.
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <algorithm>
 #include <vector>
 #include <CGAL/point_generators_2.h>
@@ -11,9 +11,9 @@
 
 using namespace CGAL;
 
-typedef Simple_cartesian<double>                  R;
-typedef R::Point_2                                Point;
-typedef R::Segment_2                              Segment;
+typedef Exact_predicates_inexact_constructions_kernel K;
+typedef K::Point_2                                Point;
+typedef K::Segment_2                              Segment;
 typedef Points_on_segment_2<Point>                PG;
 typedef Creator_uniform_2< Point, Segment>        Creator;
 typedef Join_input_iterator_2< PG, PG, Creator>   Segm_iterator;

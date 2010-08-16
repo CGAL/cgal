@@ -7,8 +7,8 @@
 
 using namespace CGAL;
 
-typedef Simple_cartesian<int>         R;
-typedef R::Point_2                    Point;
+typedef Simple_cartesian<int>         K;
+typedef K::Point_2                    Point;
 typedef Creator_uniform_2<int,Point>  Creator;
 
 int main() {
