@@ -663,7 +663,7 @@ private:
 		Marked_face_set& marked_face_set, 
 		const Coord_type alpha) const;
 
-  class Line_face_circulator;
+//  class Line_face_circulator;
 
   //----------------------------------------------------------------------
 
