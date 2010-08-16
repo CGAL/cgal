@@ -7,8 +7,6 @@
 
 #include <QVector>
 
-class QDragEnterEvent;
-class QDropEvent;
 class Scene;
 class Viewer;
 class QTreeView;
@@ -83,8 +81,6 @@ protected:
   bool initPlugin(QObject*);
   bool initIOPlugin(QObject*);
 
-  void dragEnterEvent(QDragEnterEvent *event);
-  void dropEvent(QDropEvent *event);
   void closeEvent(QCloseEvent *event);
 
   int getSelectedSceneItemIndex() const;
