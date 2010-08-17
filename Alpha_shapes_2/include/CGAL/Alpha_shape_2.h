@@ -1060,12 +1060,12 @@ Alpha_shape_2<Dt>::update_alpha_shape_vertex_list()const {
 
 	for (vertex_alpha_it = _interval_vertex_map.begin(); 
 		vertex_alpha_it != _interval_vertex_map.end() &&
-		(*vertex_alpha_it).first.first < get_alpha();
+		(*vertex_alpha_it).first.first <= get_alpha();
 		++vertex_alpha_it) 
 		{
 		pInterval2 = &(*vertex_alpha_it).first;
 
-		if((pInterval2->second >= get_alpha()
+		if((pInterval2->second > get_alpha()
 		|| pInterval2->second == Infinity)) 
 		{
 		// alpha must be larger than the min boundary
@@ -1118,7 +1118,7 @@ Alpha_shape_2<Dt>::update_alpha_shape_edges_list() const
       // and alpha is smaller than the upper boundary
       for (edge_alpha_it = _interval_edge_map.begin(); 
 	   edge_alpha_it != _interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < get_alpha();
+	     (*edge_alpha_it).first.first <= get_alpha();
 	   ++edge_alpha_it) 
 	{
 	  pInterval = &(*edge_alpha_it).first;
@@ -1127,8 +1127,8 @@ Alpha_shape_2<Dt>::update_alpha_shape_edges_list() const
 	  // since this happens only for convex hull of dimension 2
 	  // thus singular
 
-	  if(pInterval->second < get_alpha() &&
-	     (pInterval->third >= get_alpha()
+	  if(pInterval->second <= get_alpha() &&
+	     (pInterval->third > get_alpha()
 	      || pInterval->third == Infinity)) 
 	    {
 	      // alpha must be larger than the mid boundary
@@ -1148,7 +1148,7 @@ Alpha_shape_2<Dt>::update_alpha_shape_edges_list() const
       // draw the edges
       for (edge_alpha_it = _interval_edge_map.begin(); 
 	   edge_alpha_it != _interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < get_alpha();
+	     (*edge_alpha_it).first.first <= get_alpha();
 	   ++edge_alpha_it) 
 	{
 	  pInterval = &(*edge_alpha_it).first;
@@ -1159,8 +1159,8 @@ Alpha_shape_2<Dt>::update_alpha_shape_edges_list() const
 	      // since this happens only for convex hull of dimension 2
 	      // thus singular
 	
-	      if(pInterval->second < get_alpha() &&
-		 (pInterval->third >= get_alpha()
+	      if(pInterval->second <= get_alpha() &&
+		 (pInterval->third > get_alpha()
 		  || pInterval->third == Infinity)) 
 		{
 		  // alpha must be larger than the mid boundary
@@ -1177,7 +1177,7 @@ Alpha_shape_2<Dt>::update_alpha_shape_edges_list() const
 	  else 
 	    {
 	
-	      if(pInterval->third >= get_alpha()
+	      if(pInterval->third > get_alpha()
 		 || pInterval->third == Infinity) 
 		{
 		  // if alpha is smaller than the upper boundary
@@ -1460,7 +1460,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
       typename Alpha_shape_2<Dt>::Vertex_handle v;
       for (vertex_alpha_it = _interval_vertex_map.begin(); 
 	   vertex_alpha_it != _interval_vertex_map.end() &&
-	     (*vertex_alpha_it).first.first < get_alpha();
+	     (*vertex_alpha_it).first.first <= get_alpha();
 	   ++vertex_alpha_it) 
 	{
 
@@ -1475,7 +1475,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 	    pInterval2->second;
 #endif // CGAL_DEBUG_ALPHA_SHAPE_2
 
-	  if((pInterval2->second >= get_alpha()
+	  if((pInterval2->second > get_alpha()
 	      || pInterval2->second == Infinity)) 
 	    {
 	      // alpha must be larger than the min boundary
@@ -1501,7 +1501,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 
       for (edge_alpha_it = _interval_edge_map.begin(); 
 	   edge_alpha_it != _interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < get_alpha();
+	     (*edge_alpha_it).first.first <= get_alpha();
 	   ++edge_alpha_it) 
 	{
 
@@ -1511,8 +1511,8 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 	  // since this happens only for convex hull of dimension 1
 	  // thus singular
 
-	  if(pInterval->second < get_alpha() &&
-	     (pInterval->third >= get_alpha()
+	  if(pInterval->second <= get_alpha() &&
+	     (pInterval->third > get_alpha()
 	      || pInterval->third == Infinity)) 
 	    {
 	      // alpha must be larger than the mid boundary
@@ -1555,13 +1555,13 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 
       for (vertex_alpha_it = _interval_vertex_map.begin(); 
 	   vertex_alpha_it != _interval_vertex_map.end() &&
-	     (*vertex_alpha_it).first.first < get_alpha();
+	     (*vertex_alpha_it).first.first <= get_alpha();
 	   ++vertex_alpha_it) 
 	{
 
 	  pInterval2 = &(*vertex_alpha_it).first;
 
-	  if((pInterval2->second >= get_alpha()
+	  if((pInterval2->second > get_alpha()
 	      || pInterval2->second == Infinity)) 
 	    {
 	      // alpha must be larger than the min boundary
@@ -1598,7 +1598,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 
       for (edge_alpha_it = _interval_edge_map.begin(); 
 	   edge_alpha_it != _interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < get_alpha();
+	     (*edge_alpha_it).first.first <= get_alpha();
 	   ++edge_alpha_it) 
 	{
 
@@ -1615,7 +1615,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 	    pInterval->third;
 #endif // CGAL_DEBUG_ALPHA_SHAPE_2
 	  
-	  if(pInterval->third >= get_alpha()
+	  if(pInterval->third > get_alpha()
 	     || pInterval->third == Infinity) 
 	    {
 	      // if alpha is smaller than the upper boundary
@@ -1628,7 +1628,7 @@ Alpha_shape_2<Dt>::op_ostream(std::ostream& os) const
 
 	      // write the regular edges
 	      if (pInterval->second != Infinity &&
-		  pInterval->second < get_alpha()) 
+		  pInterval->second <= get_alpha()) 
 		{
 
  CGAL_triangulation_assertion((classify(f, i) == 
@@ -1707,7 +1707,7 @@ Alpha_shape_2<Dt>::Output ()
       // and alpha is smaller than the upper boundary
       for (edge_alpha_it = _interval_edge_map.begin(); 
 	   edge_alpha_it != _interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < get_alpha();
+	     (*edge_alpha_it).first.first <= get_alpha();
 	   ++edge_alpha_it) 
 	{
       
@@ -1718,8 +1718,8 @@ Alpha_shape_2<Dt>::Output ()
 	      // since this happens only for convex hull of dimension 1
 	      // thus singular
 	
-	      if(pInterval->second < get_alpha() &&
-		 (pInterval->third >= get_alpha()
+	      if(pInterval->second <= get_alpha() &&
+		 (pInterval->third > get_alpha()
 		  || pInterval->third == Infinity)) 
 		{
 		  // alpha must be larger than the mid boundary
@@ -1749,7 +1749,7 @@ Alpha_shape_2<Dt>::Output ()
       // draw the edges
       for (edge_alpha_it = _interval_edge_map.begin(); 
 	   edge_alpha_it != _interval_edge_map.end() &&
-	     (*edge_alpha_it).first.first < get_alpha();
+	     (*edge_alpha_it).first.first <= get_alpha();
 	   ++edge_alpha_it) 
 	{
 
@@ -1762,8 +1762,8 @@ Alpha_shape_2<Dt>::Output ()
 	      // since this happens only for convex hull of dimension 1
 	      // thus singular
 
-	      if(pInterval->second < get_alpha() &&
-		 (pInterval->third >= get_alpha()
+	      if(pInterval->second <= get_alpha() &&
+		 (pInterval->third > get_alpha()
 		  || pInterval->third == Infinity)) 
 		{
 		  // alpha must be larger than the mid boundary
@@ -1785,7 +1785,7 @@ Alpha_shape_2<Dt>::Output ()
 	  else 
 	    {
 
-	      if(pInterval->third >= get_alpha()
+	      if(pInterval->third > get_alpha()
 		 || pInterval->third == Infinity) 
 		{
 		  // if alpha is smaller than the upper boundary
