@@ -1,0 +1,62 @@
+\begin{ccRefConcept}{Range}
+
+\ccDefinition
+
+\cgal\ and the STL heavily use the concepts of iterators and iterator ranges
+to describe linear sequences of elements, and algorithms operating on these.
+
+The \ccRefName\ concept aims at encapsulating an iterator range, by providing
+access to the first and past-the-end iterators of a range.  The advantage is
+that the syntax for passing ranges is much more concise than passing two
+arguments separately.
+
+
+Ranges come in different categories depending on the category of their iterator :
+mutable or constant (modifiability of the elements pointed to), and forward,
+bidirectional or random-access.  The category can be queried using
+\ccc{std::iterator_traits} and the corresponding iterator type.
+
+Boost also offers the Boost.Range
+library\footnote{\url{http://www.boost.org/doc/libs/1_43_0/libs/range/doc/html/index.html}}
+which provides good support for ranges.
+
+Finally, let us note that ranges, in general (especially in template context)
+need to be passed and returned by (const) reference for efficiency.  This is a
+difference with iterators which are typically passed by value.
+
+\ccRefines
+
+Boost's Range concept
+
+%\ccCreation
+\ccCreationVariable{r}  %% choose variable name
+
+\ccTypes
+
+\ccNestedType{const_iterator} {The constant iterator type.}
+\ccGlue
+\ccNestedType{iterator} {The iterator type.  It must be convertible to \ccc{const_iterator}.}
+
+\ccHeading{Member functions}
+
+\def\ccTagRmTrailingConst{\ccFalse}
+
+\ccMethod{const_iterator begin() const;}{returns the const iterator pointing to the first element.}
+\ccGlue
+\ccMethod{const_iterator end() const;}{returns the past-the-end const iterator.}
+
+\ccMethod{iterator begin();}{returns the iterator pointing to the first element.}
+\ccGlue
+\ccMethod{iterator end();}{returns the past-the-end iterator.}
+
+\ccMethod{difference_type size() const;}{returns the size of the range.}
+\ccGlue
+\ccMethod{bool empty() const;}{returns whether the range is empty.}
+
+\def\ccTagRmTrailingConst{\ccTrue}
+
+\ccHasModels
+STL containers\\
+\ccc{boost::iterator_range}
+
+\end{ccRefConcept}

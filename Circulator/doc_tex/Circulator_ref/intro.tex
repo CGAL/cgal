@@ -6,17 +6,19 @@
 % | 14.05.1998   Lutz Kettner
 % +------------------------------------------------------------------------+
 
-\ccRefChapter{Handles and Circulators}
-\ccChapterAuthor{Olivier Devillers \and Lutz Kettner \and Michael Seel
+\ccRefChapter{Handles, Ranges and Circulators}
+\ccChapterAuthor{Olivier Devillers \and Lutz Kettner \and Sylvain Pion \and Michael Seel
   \and Mariette Yvinec}
 
+The concept of iterators in the \stl\ is tailored for linear sequences.
 
+\cgal\ extends this in several directions.  First, it supports the notion
+of \ccc{Handle} (also sometimes refered to as the trivial iterator) which is
+used to document that no traversal operation is needed, only reference to an
+element.  It also uses the \ccc{Range} concept which encapsulates the access to
+both the first and the past-the-end iterators of an iterator range.
 
-
-\input{Circulator_ref/handle_intro}
-
-The concept of iterators in \stl\ is tailored for linear sequences.
-In contrast, circular sequences occur naturally in many combinatorial
+Besides linear sequences, circular sequences also occur naturally in many combinatorial
 and geometric structures. Examples are polyhedral surfaces and planar
 maps, where the edges emanating from a vertex or the edges around a
 facet form a circular sequence. 
@@ -32,6 +34,7 @@ circulators as well as with iterators.
 \subsection*{Concepts}
 
 \ccRefConceptPage{Handle}\\
+\ccRefConceptPage{Range}\\
 \ccRefConceptPage{Circulator}\\
 \ccc{Forward_circulator}\\
 \ccc{Bidirectional_circulator}\\
