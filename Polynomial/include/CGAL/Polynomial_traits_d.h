@@ -1150,7 +1150,7 @@ struct Construct_innermost_coefficient_const_iterator_range
     :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
     Polynomial_d
     operator()(const Polynomial_d& p, const Polynomial_d& q) const {
-      if(p==q) return p; 
+      if(p==q) return CGAL::canonicalize(p); 
       if (CGAL::is_zero(p) && CGAL::is_zero(q)){
         return Polynomial_d(0);
       }

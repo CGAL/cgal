@@ -1037,10 +1037,10 @@ void test_gcd_up_to_constant_factor(const Polynomial_traits_d&){
       Constructor()(1) == gcd_utcf(Constructor()(0),Constructor()(1)));
   assert(
       Constructor()(1) == gcd_utcf(Constructor()(1),Constructor()(1)));
-//  assert(
-//      Constructor()(1) == gcd_utcf(Constructor()(-1),Constructor()(-1)));
-//  assert(
-//      Constructor()(1) == gcd_utcf(Constructor()(2),Constructor()(2)));
+  assert(
+      Constructor()(1) == gcd_utcf(Constructor()(-1),Constructor()(-1)));
+  assert(
+      Constructor()(1) == gcd_utcf(Constructor()(2),Constructor()(2)));
     
   std::cerr << " ok "<< std::endl;
 }
