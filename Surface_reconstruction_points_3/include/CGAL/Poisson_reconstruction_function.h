@@ -625,7 +625,7 @@ private:
     // sum up areas
     FT area = 0.0;
     const Point& a = voronoi_points[0];
-    unsigned int nb_triangles = voronoi_points.size() - 2;
+    unsigned int nb_triangles = voronoi_points.size() - 1;
     for(unsigned int i=1;i<nb_triangles;i++)
     {
       const Point& b = voronoi_points[i];
