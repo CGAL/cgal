@@ -90,9 +90,6 @@ public:
     , sliver_value_(FT(0.))
     , sliver_cache_validity_(false) {}
   
-  // Destructor
-  virtual ~Mesh_cell_base_3() {}
-  
   // Default copy constructor and assignment operator are ok
   
   // Returns the index of the cell of the input complex that contains the cell

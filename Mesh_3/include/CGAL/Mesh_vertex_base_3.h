@@ -61,9 +61,6 @@ public:
                        , dimension_(-1)
                        , meshing_info_(0) {}
 
-  // Destructor
-  virtual ~Mesh_vertex_base_3() {}
-
   // Default copy constructor and assignment operator are ok
 
   // Returns the dimension of the lowest dimensional face of the input 3D
