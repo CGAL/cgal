@@ -289,14 +289,7 @@ add_config_flag( CGAL_USE_MPFR )
 add_config_flag( CGAL_USE_GMPXX )
 add_config_flag( CGAL_USE_LEDA )
 
-# Disable CORE if the architecture is 64 bits.
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  message(STATUS "Detected 64bit architecture, disable CGAL_Core")
-  set(CGAL_USE_CORE 0)
-  set(CGAL_NO_CORE ON)
-else()
-  set(CGAL_USE_CORE ${CGAL_USE_GMP})
-endif()
+set(CGAL_USE_CORE ${CGAL_USE_GMP})
 
 add_config_flag( CGAL_USE_CORE )
 
