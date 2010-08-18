@@ -191,7 +191,7 @@ public:
                 long shift = ::CORE::bitLength(err.m()) - digits_long + 1 ; 
                 //std::cout << "shift " << shift<< std::endl;
                 long new_err = ((err.m()+err.err()) >> shift).longValue()+1; 
-                err = CORE::BigFloat(0,new_err,0) * CORE::BigFloat::exp2(err.exp()*14+shift);
+                err = CORE::BigFloat(0,new_err,0) * CORE::BigFloat::exp2(err.exp()*CORE::CHUNK_BIT+shift);
             }else{           
                 err = CORE::BigFloat(0,err.m().longValue()+err.err(),err.exp());
             }
@@ -203,8 +203,8 @@ public:
             if(mid.exp() > err.exp()) {
                 long mid_err = mid.err();
                 CORE::BigInt mid_m = mid.m();
-                mid_err = mid_err << (mid.exp()-err.exp())*14;
-                mid_m = mid_m << (mid.exp()-err.exp())*14;
+                mid_err = mid_err << (mid.exp()-err.exp())*CORE::CHUNK_BIT;
+                mid_m = mid_m << (mid.exp()-err.exp())*CORE::CHUNK_BIT;
                 mid = CORE::BigFloat(mid_m,mid_err,err.exp());
                 //print_bf(mid,"corr_mid");
             }
@@ -273,7 +273,7 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
     long         exp = x.exp(); 
    
 
-//    std::cout <<"(" << m << "+-" <<err << ")*2^"<<(14*exp) << std::endl; 
+//    std::cout <<"(" << m << "+-" <<err << ")*2^"<<(CORE::CHUNK_BIT*exp) << std::endl; 
 //    if (err != 0) 
 //      std::cout <<"current prec: " <<  CGAL::relative_precision(x) << std::endl;
 //    else 
@@ -291,12 +291,12 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
     if( shift > 0 ){    
       m   >>= shift ; 
       err >>= shift; 
-      xr = BF(m,err+1,0)*BF::exp2(exp*14+shift);     
+      xr = BF(m,err+1,0)*BF::exp2(exp*CORE::CHUNK_BIT+shift);     
     }else{    // noting to do
         xr = x; 
     }
 
-//    std::cout <<"(" <<m << "+-" <<err+1 << ")*2^"<<(14*exp) << std::endl; 
+//    std::cout <<"(" <<m << "+-" <<err+1 << ")*2^"<<(CORE::CHUNK_BIT*exp) << std::endl; 
 //    if (xr.err() != 0) 
 //      std::cout <<"current prec: " <<  CGAL::relative_precision(xr) << std::endl;
 //    else 
@@ -335,7 +335,7 @@ public:
           NT w = Width()(x);
           w /= ::CORE::BigFloat(x.m()-x.err(),0,x.exp());    
           w = w.abs();
-          return -(CORE::ceilLg(w.m()+w.err())+w.exp()*14);
+          return -(CORE::ceilLg(w.m()+w.err())+w.exp()*CORE::CHUNK_BIT);
         }
     };
        

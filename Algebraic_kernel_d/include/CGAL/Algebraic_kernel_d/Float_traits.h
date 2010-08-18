@@ -106,7 +106,7 @@ public:
   struct Get_exponent
     : public std::unary_function< CORE::BigFloat, long > {
     long operator()( const CORE::BigFloat& x ) const {
-      return 14*x.exp(); // The basis is 8092                 
+      return CORE::CHUNK_BIT*x.exp(); // The basis is 2^CORE::CHUNK_BIT
     }
   };
 
