@@ -505,7 +505,7 @@ private:
     // TODO: return NULL if none and assert
     std::vector<Vertex_handle> vertices;
     vertices.reserve(32);
-    m_tr->incident_vertices(m_tr->infinite_vertex(),std::back_inserter(vertices));
+    m_tr->adjacent_vertices(m_tr->infinite_vertex(),std::back_inserter(vertices));
     typename std::vector<Vertex_handle>::iterator it = vertices.begin();
     return *it;
   }
