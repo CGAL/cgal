@@ -48,6 +48,7 @@ hachenb = Peter Hachenberger <hachenberger@mpi-inf.mpg.de>
 hanst = Hans Tangelder <hanst@cs.uu.nl>
 haranidi = Idit Haran <haranidi@post.tau.ac.il>
 helano = Vicente Batista <vicente.helano@gmail.com>
+helch = Christian Helbling <helch@vis.ethz.ch>
 hemmer = Michael Hemmer <hemmer@mpi-inf.mpg.de>
 herrmann = Thomas Herrmann <herrmann@ifor.math.ethz.ch>
 hert = Susan Hert <hert@mpi-sb.mpg.de>
