@@ -419,6 +419,13 @@ namespace CGAL {
       {
 	return *(*Ptr_implementation);
       }
+      
+      // -> operator
+      const Point_with_transformed_distance*
+      operator-> () const 
+      {
+	return &*(*Ptr_implementation);
+      }
 
       // prefix operator
       iterator& 
