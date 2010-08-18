@@ -50,7 +50,14 @@ namespace CGAL {
     typedef std::vector<Node_with_distance*> Node_with_distance_vector;
     typedef std::vector<Point_with_transformed_distance*> Point_with_transformed_distance_vector;
 
-
+    template<class T>
+    struct Object_wrapper
+    {   
+      T object;
+      Object_wrapper(const T& t):object(t){}
+      const T& operator* () const { return object; }
+      const T* operator-> () const { return &object; }
+    };
 
     class Iterator_implementation {
 
@@ -172,10 +179,10 @@ namespace CGAL {
       }
 
       // postfix operator
-      Point_with_transformed_distance 
+      Object_wrapper<Point_with_transformed_distance>
       operator++(int) 
       {
-        Point_with_transformed_distance result = *(Item_PriorityQueue.top());
+        Object_wrapper<Point_with_transformed_distance> result( *(Item_PriorityQueue.top()) );
         ++*this;
         return result;
       }
@@ -200,12 +207,12 @@ namespace CGAL {
       //destructor
       ~Iterator_implementation() 
       {
-	while (PriorityQueue.size()>0) {
+	while (!PriorityQueue.empty()) {
 	  Node_with_distance* The_top=PriorityQueue.top();
 	  PriorityQueue.pop();
 	  delete The_top;
 	}
-	while (Item_PriorityQueue.size()>0) {
+	while (!Item_PriorityQueue.empty()) {
 	  Point_with_transformed_distance* The_top=Item_PriorityQueue.top();
 	  Item_PriorityQueue.pop();
 	  delete The_top;
@@ -436,12 +443,10 @@ namespace CGAL {
       }
 
       // postfix operator
-      iterator 
+      Object_wrapper<Point_with_transformed_distance>
       operator++(int) 
       {
-	iterator tmp(*this);
-	++(*this);
-	return tmp;
+	return (*Ptr_implementation)++;
       }
 
 

@@ -127,6 +127,15 @@ namespace CGAL {
     }
 
 
+    template<class T>
+    struct Object_wrapper
+    {
+      T object;
+      Object_wrapper(const T& t):object(t){}
+      const T& operator* () const { return object; }
+      const T* operator-> () const { return &object; }
+    };    
+
 
     class iterator {
 
@@ -185,11 +194,10 @@ namespace CGAL {
       }
 
       // postfix operator
-      iterator operator++(int) 
+      Object_wrapper<Point_with_transformed_distance>
+      operator++(int) 
       {
-	iterator tmp(*this);
-	++(*this);
-	return tmp;  
+	return (*ptr)++;
       }
 
       bool 
@@ -349,7 +357,15 @@ namespace CGAL {
 	  Compute_the_next_nearest_neighbour();
 	  return *this;
 	}
-	
+
+        // postfix operator
+        Object_wrapper<Point_with_transformed_distance>
+        operator++(int) 
+        {
+          Object_wrapper<Point_with_transformed_distance> result( *(Item_PriorityQueue.top()) );
+          ++*this;
+          return result;
+        }	
 
 	// Print statistics of the general priority search process.
 	std::ostream& 
