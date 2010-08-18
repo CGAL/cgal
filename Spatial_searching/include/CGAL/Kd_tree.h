@@ -221,7 +221,13 @@ public:
       built_ = false;
     }
   }
-
+  
+  void clear()
+  {
+    invalidate_built();
+    pts.clear();
+  }
+  
   void
   insert(const Point_d& p)
   {
