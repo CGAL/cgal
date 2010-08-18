@@ -1,5 +1,10 @@
 Release notes of CGAL.
 
+----------------------------- Release 3.8 ----------------------------------
+
+x.y Surface Reconstruction from Point Sets
+  - Improved performance and minor bug fix
+
 ----------------------------- Release 3.7 ----------------------------------
 
 CGAL 3.7 offers the following improvements and new functionality : 
