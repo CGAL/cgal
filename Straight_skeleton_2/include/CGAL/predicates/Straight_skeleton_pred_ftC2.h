@@ -22,7 +22,7 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/certified_quotient_predicates.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i
 {
@@ -30,11 +30,11 @@ namespace CGAL_SS_i
 // Just like the uncertified collinear() returns true IFF r lies in the line p->q
 // NOTE: r might be in the ray from p or q containing q or p, that is, there is no ordering implied, just that
 // the three points are along the same line, in any order.
-template<class Point_2>
+template<class K>
 inline
-Uncertain<bool> certified_collinearC2( Point_2 const& p
-                                     , Point_2 const& q
-                                     , Point_2 const& r 
+Uncertain<bool> certified_collinearC2( Point_2<K> const& p
+                                     , Point_2<K> const& q
+                                     , Point_2<K> const& r 
                                      )
 {
   return CGAL_NTS certified_is_equal( ( q.x() - p.x() ) * ( r.y() - p.y() )
@@ -45,11 +45,11 @@ Uncertain<bool> certified_collinearC2( Point_2 const& p
 
 // Just like the uncertified collinear_are_ordered_along_lineC2() returns true IFF, given p,q,r along the same line,
 // q is in the closed segment [p,r].
-template<class Point_2>
+template<class K>
 inline
-Uncertain<bool> certified_collinear_are_ordered_along_lineC2( Point_2 const& p
-                                                            , Point_2 const& q
-                                                            , Point_2 const& r 
+Uncertain<bool> certified_collinear_are_ordered_along_lineC2( Point_2<K> const& p
+                                                            , Point_2<K> const& q
+                                                            , Point_2<K> const& r 
                                                             )
 {
   if ( CGAL_NTS certainly(p.x() < q.x()) ) return !(r.x() < q.x());
@@ -63,17 +63,17 @@ Uncertain<bool> certified_collinear_are_ordered_along_lineC2( Point_2 const& p
 }
 
 // Returns true IFF segments e0,e1 share the same supporting line
-template<class Segment_2>
-Uncertain<bool> are_edges_collinearC2( Segment_2 const& e0, Segment_2 const& e1 )
+template<class K>
+Uncertain<bool> are_edges_collinearC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
   return   certified_collinearC2(e0.source(),e0.target(),e1.source())
          & certified_collinearC2(e0.source(),e0.target(),e1.target()) ;
 }
 
 // Returns true IFF the supporting lines for segments e0,e1 are parallel (or the same)
-template<class Segment_2>
+template<class K>
 inline
-Uncertain<bool> are_edges_parallelC2( Segment_2 const& e0, Segment_2 const& e1 )
+Uncertain<bool> are_edges_parallelC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
   Uncertain<Sign> s = certified_sign_of_determinant2x2(e0.target().x() - e0.source().x()
                                                       ,e0.target().y() - e0.source().y()
@@ -88,9 +88,9 @@ Uncertain<bool> are_edges_parallelC2( Segment_2 const& e0, Segment_2 const& e1 )
 // Returns true IFF the parallel segments are equally oriented.
 // Precondition: the segments must be parallel.
 // the three points are along the same line, in any order.
-template<class Segment_2>
+template<class K>
 inline
-Uncertain<bool> are_parallel_edges_equally_orientedC2( Segment_2 const& e0, Segment_2 const& e1 )
+Uncertain<bool> are_parallel_edges_equally_orientedC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
   return CGAL_NTS certified_sign( (e0.target() - e0.source()) * (e1.target() - e1.source()) ) == POSITIVE;
 }
@@ -98,18 +98,10 @@ Uncertain<bool> are_parallel_edges_equally_orientedC2( Segment_2 const& e0, Segm
 
 // Returns true IFF segments e0,e1 share the same supporting line but do not overlap except at the vetices, and have the same orientation.
 // NOTE: If e1 goes back over e0 (a degenerate antenna or alley) this returns false.
-template<class Segment_2>
-Uncertain<bool> are_edges_orderly_collinearC2( Segment_2 const& e0, Segment_2 const& e1 )
+template<class K>
+Uncertain<bool> are_edges_orderly_collinearC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
 {
   return are_edges_collinearC2(e0,e1) & are_parallel_edges_equally_orientedC2(e0,e1);
-}
-
-template<class Segment_2>
-Uncertain<bool> are_edges_coincident( Segment_2 const& e0, Segment_2 const& e1 )
-{
-  return make_uncertain(  compare_xy(e0.source(),e1.source()) == EQUAL
-                       && compare_xy(e0.target(),e1.target()) == EQUAL
-                       ) ;  
 }
 
 template <class FT>
@@ -129,31 +121,28 @@ Uncertain<Sign> certified_side_of_oriented_lineC2(const FT &a, const FT &b, cons
 // resulting sorted trisegment is itself indeterminate 
 // (encoded as a collinear count of -1)
 //
-template<class Segment_2, class FT>
-Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2 const& e0
-                                                                     , FT        const& w0
-                                                                     , Segment_2 const& e1
-                                                                     , FT        const& w1
-                                                                     , Segment_2 const& e2
-                                                                     , FT        const& w2
+template<class K>
+Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2<K> const& e0
+                                                                     , Segment_2<K> const& e1
+                                                                     , Segment_2<K> const& e2
                                                                      )
 {
-  Uncertain<bool> is_01 = ( are_edges_coincident(e0,e1) | are_edges_orderly_collinearC2(e0,e1) ) & ( w0 == w1 );
+  Uncertain<bool> is_01 = are_edges_orderly_collinearC2(e0,e1);
   if ( is_certain(is_01) )
   {
-    Uncertain<bool> is_02 = are_edges_orderly_collinearC2(e0,e2) & ( w0 == w2 );
+    Uncertain<bool> is_02 = are_edges_orderly_collinearC2(e0,e2);
     if ( is_certain(is_02) )
     {
-      Uncertain<bool> is_12 = ( are_edges_coincident(e1,e2) | are_edges_orderly_collinearC2(e1,e2) ) & ( w1 == w2 );
+      Uncertain<bool> is_12 = are_edges_orderly_collinearC2(e1,e2);
       if ( is_certain(is_12) )
       {
-        if ( is_01 & (!is_02) & (!is_12) )
+        if ( CGAL_NTS logical_and(is_01 , !is_02 , !is_12 ) )
           return TRISEGMENT_COLLINEARITY_01;
-        else if ( is_02 & (!is_01) & (!is_12) )
+        else if ( CGAL_NTS logical_and(is_02 , !is_01 , !is_12 ) )
           return TRISEGMENT_COLLINEARITY_02;
-        else if ( is_12 & (!is_01) & (!is_02) )
+        else if ( CGAL_NTS logical_and(is_12 , !is_01 , !is_02 ) )
           return TRISEGMENT_COLLINEARITY_12;
-        else if ( (!is_01) & (!is_02) & (!is_12) )
+        else if ( CGAL_NTS logical_and(!is_01 , !is_02, !is_12  ) )
           return TRISEGMENT_COLLINEARITY_NONE;
         else 
           return TRISEGMENT_COLLINEARITY_ALL;
@@ -180,8 +169,8 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
 // Those seeds are used to determine the actual position of the degenerate vertex in case of collinear edges (since that point is
 // not given by the collinear edges alone)
 //
-template<class Trisegment_2, class FT>
-Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2 > const& tri, optional<FT> const& aMaxTime )
+template<class K, class FT>
+Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > const& tri, optional<FT> const& aMaxTime )
 {
   
   typedef Rational<FT>       Rational ;
@@ -237,16 +226,14 @@ Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2 > const& 
 // (m0',m1',m2') and (n0',n1',n2') intersect each in a single point; returns the relative order of mt w.r.t nt.
 // That is, indicates which offset triple intersects first (closer to the source lines)
 // PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single point.
-template<class Trisegment_2_>
-Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< Trisegment_2_ > const& m
-                                                               , intrusive_ptr< Trisegment_2_ > const& n 
+template<class K>
+Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< Trisegment_2<K> > const& m
+                                                               , intrusive_ptr< Trisegment_2<K> > const& n 
                                                                )
 {
-  typedef Trisegment_2_ Trisegment_2 ;
-  
-  typedef typename Kernel_traits<Trisegment_2>::Kernel K ;
-  
   typedef typename K::FT FT ;
+  
+  typedef Trisegment_2<K> Trisegment_2 ;
   
   typedef Rational<FT>       Rational ;
   typedef Quotient<FT>       Quotient ;
@@ -262,7 +249,8 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
     Quotient mt = mt_->to_quotient();
     Quotient nt = nt_->to_quotient();
    
-    rResult = CGAL_NTS certified_compare(mt,nt);
+    if ( CGAL_NTS certified_is_positive(mt) && CGAL_NTS certified_is_positive(nt) ) 
+      rResult = CGAL_NTS certified_compare(mt,nt);
   }
   
   return rResult ;
@@ -272,11 +260,9 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
 
 // Returns true if the point aP is on the positive side of the line supporting the edge
 //
-template<class Point_2, class Segment_2, class P_FT >
-Uncertain<bool> is_edge_facing_pointC2 ( optional< Point_2 > const& aP, Segment_2 const& aEdge, P_FT const& aWeight )
+template<class K>
+Uncertain<bool> is_edge_facing_pointC2 ( optional< Point_2<K> > const& aP, Segment_2<K> const& aEdge )
 {
-  typedef typename Kernel_traits<Point_2>::Kernel K ;
-  
   typedef typename K::FT FT ;
   
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
@@ -284,7 +270,7 @@ Uncertain<bool> is_edge_facing_pointC2 ( optional< Point_2 > const& aP, Segment_
   {
     FT a,b,c ;
     line_from_pointsC2(aEdge.source().x(),aEdge.source().y(),aEdge.target().x(),aEdge.target().y(),a,b,c); 
-    rResult = certified_side_of_oriented_lineC2(a,b,c,aP->x(),aP->y()) == make_uncertain( CGAL_NTS sign(aWeight) ) ;
+    rResult = certified_side_of_oriented_lineC2(a,b,c,aP->x(),aP->y()) == make_uncertain(POSITIVE) ;
   }
   return rResult ;
 }
@@ -292,10 +278,10 @@ Uncertain<bool> is_edge_facing_pointC2 ( optional< Point_2 > const& aP, Segment_
 // Given a triple of oriented straight line segments: (e0,e1,e2) such that their offsets
 // at some distance intersects in a point (x,y), returns true if (x,y) is on the positive side of the line supporting aEdge
 //
-template<class Trisegment_2, class Segment_2, class FT>
-inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2 > const& tri, Segment_2 const& aEdge, FT const& aWeight )
+template<class K>
+inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( intrusive_ptr< Trisegment_2<K> > const& tri, Segment_2<K> const& aEdge )
 {
-  return is_edge_facing_pointC2(construct_offset_lines_isecC2(tri), aEdge, aWeight);
+  return is_edge_facing_pointC2(construct_offset_lines_isecC2(tri),aEdge);
 }
 
 // Given an event trisegment and two oriented straight line segments e0 and e1, returns the oriented side of the event point 
@@ -338,51 +324,41 @@ inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( intrusive_ptr< Trise
 // If the opposite edge is 'e' and its previous/next edges are "preve"/"nexte" then the split point is inside the offset
 // egde if it is NOT to the positive side of [preve,e] *and* NOT to the negative side o [e,nexte].
 // (so this predicate answer half the question, at one and other side independenty).
-// If the split point is exacty over any of this bisectors then the split point ocurres exactly at one (or both) endpoints
-// of the opposite edge (so it is a pseudo-split event since the opposite edge is not itself split in two halves)
+// If the split point is exacty over any of this bisectors then the split point ocurres exactly and one (or both) endpoints
+// of the opposite edge (so it is a pseudo-split event since the opposite edge is not itself split in two halfeves)
 // When this predicate is called to test (prev,e), e is the primary edge but since it is  pass as e1, primary_is_0=false. 
-// This is to make sure that in the case of parallel but not collinear edges, the result is positive when the split point
-// is before the source point of e* (a positive result means invalid split).
+// This causes the case of parallel but not collinear edges to return positive when the split point is before the source point of e*
+// (a positive result means invalid split).
 // Likewise, primary_is_0 must be true when testing (e,nexte) to return negative if the split point is past the target endpoint of e*.
-// (in the other cases there is no need to discrminate which is 'e' in the call since the edges do not overlap).
+// (in the other cases there is no need to discrminate which is 'e' in the call since the edjes do not overlap).
 //
 // An edge event is a coallision of three *consecutive* edges, say, e1,e2 and e3.
 // The coallision causes e2 (the edge in the middle) to collapse and e1,e3 to become consecutive and form a new vertex.
 // In all cases there is an edge before e1, say e0, and after e3, say e4.
 // Testing for the validity of an edge event amounts to determine that (e1,e3) (the new vertex) is not before (e0,e1) nor
 // past (e3,e4). 
-// Thus, and edge event is valid if the new vertex IS NOT to the positive side of [e0,e1] *and* NOT to the negative side of [e3,e4].
+// Thus, and edge event is valid if the new vertex NOT to the positive side of [e0,e1] *and* NOT to the negative side o [e3,e4].
 //
-// NOTE 1: For consistency, if primary_is_0 is true, that is, we are testing against [e3,e4] the result is inverted so we can always
-// test that the vertex IS NOT to the positive side of the bisector.
-//
-// NOTE 2: The above logic considers positive weights.
-// For consistency, if primary_is_0 is true, that is, we are testing against [e3,e4] the result is inverted so we can always
-// test that the vertex IS NOT to the positive side of the bisector.
-
 // PRECONDITIONS:
 //   There exist a single point 'p' corresponding to the event as given by the trisegment
 //   e0 and e1 are known to be consectuve at the time of the event (even if they are not consecutive in the input polygon)
 //   If e0 and e1 are not consecutive in the input, v01_event is the event that defined they very first offset vertex.
 //   If e0 and e1 are consecutive, v01_event is null.
 //
-template<class Trisegment_2, class Segment_2, class P_FT>
+template<class K>
 Uncertain<Oriented_side>
-oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2 > const& event
-                                            , Segment_2                     const& e0
-                                            , P_FT                          const& w0
-                                            , Segment_2                     const& e1
-                                            , P_FT                          const& w1 
-                                            , intrusive_ptr< Trisegment_2 > const& v01_event // can be null
-                                            , bool                                 primary_is_0
+oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > const& event
+                                            , Segment_2<K>                     const& e0
+                                            , Segment_2<K>                     const& e1
+                                            , intrusive_ptr< Trisegment_2<K> > const& v01_event // can be null
+                                            , bool                                    primary_is_0
                                             )
 {
-  typedef typename Kernel_traits<Segment_2>::Kernel K ;
-  
   typedef typename K::FT FT ;
   
-  typedef typename K::Point_2 Point_2 ;
-  typedef typename K::Line_2  Line_2 ;
+  typedef Point_2     <K> Point_2 ;
+  typedef Line_2      <K> Line_2 ;
+  typedef Trisegment_2<K> Trisegment_2 ;
   
   Uncertain<Oriented_side> rResult = Uncertain<Oriented_side>::indeterminate();
   
@@ -401,9 +377,6 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2 > cons
                             << "]"
                             ) ; 
       
-    Sign w0_sign = CGAL_NTS sign(w0);
-    Sign w1_sign = CGAL_NTS sign(w1);
-    
     // Degenerate bisector?   
     if ( certainly( are_edges_parallelC2(e0,e1) ) )
     { 
@@ -430,22 +403,15 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2 > cons
                                    , a, b, c
                                    );
       
-      rResult = certified_side_of_oriented_lineC2(a,b,c,p.x(),p.y()) ;
-      
-      // If considering the right bisector, invert the result for consistency
-      if ( primary_is_0 )
-        rResult = make_uncertain<Oriented_side>( - rResult ) ;
+      rResult = certified_side_of_oriented_lineC2(a,b,c,p.x(),p.y());
       
       CGAL_STSKEL_TRAITS_TRACE("Point is at " << rResult << " side of degenerate bisector through v01 " << p2str(v01)) ;
     }
     else // Valid (non-degenerate) angular bisector
     {
-      FT aw0 = CGAL_NTS abs(w0);
-      FT aw1 = CGAL_NTS abs(w1);
-
       // Scale distance from to the lines.
-      FT sd_p_l0 = w0_sign != ZERO ? validate((l0.a() * p.x() + l0.b() * p.y() + l0.c()) / aw0 ) : FT(0) ;
-      FT sd_p_l1 = w1_sign != ZERO ? validate((l1.a() * p.x() + l1.b() * p.y() + l1.c()) / aw1 ) : FT(0) ;
+      FT sd_p_l0 = validate(l0.a() * p.x() + l0.b() * p.y() + l0.c()) ;
+      FT sd_p_l1 = validate(l1.a() * p.x() + l1.b() * p.y() + l1.c()) ;
       
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l1=" << n2str(sd_p_l1) ) ;
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l0=" << n2str(sd_p_l0) ) ;
@@ -464,10 +430,6 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2 > cons
           Uncertain<bool> smaller = CGAL_NTS certified_is_smaller( validate(l0.a()*l1.b()), validate(l1.a()*l0.b()) ) ;
           if ( is_certain(smaller) )
           {
-            // The reflexion orientation is reversed IFF both signs are negative.
-            if ( w0_sign == NEGATIVE && w1_sign == NEGATIVE )
-              smaller = ! smaller ;
-               
             // Reflex bisector?
             if ( smaller )
             {
@@ -483,15 +445,6 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2 > cons
                               
               CGAL_STSKEL_TRAITS_TRACE("\nEvent point is at " << rResult << " side of convex bisector" ) ;
             }
-            
-            // If considering the right bisector, invert the result for consistency
-            if ( primary_is_0 )
-              rResult = make_uncertain<Oriented_side>( - rResult ) ;
-              
-            // If the non-primary bisector   
-            if ( primary_is_0 )
-                 rResult = make_uncertain<Oriented_side>( w1_sign * rResult ) ;               
-            else rResult = make_uncertain<Oriented_side>( w0_sign * rResult ) ;                 
           }
         }
       }
@@ -518,15 +471,15 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2 > cons
 // PRECONDITIONS:
 //   There exist single points at which the offset lines for 'l' and 'r' at 'tl', 'tr' intersect.
 //
-template<class Trisegment_2>
-Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2 > const& l, intrusive_ptr< Trisegment_2 > const& r )
+template<class K>
+Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > const& l, intrusive_ptr< Trisegment_2<K> > const& r )
 {
-  typedef typename Kernel_traits<Trisegment_2>::Kernel K ;
-  
   typedef typename K::FT FT ;
   
-  typedef typename K::Point_2 Point_2 ;
-  typedef typename K::Line_2  Line_2 ;
+  typedef Point_2<K> Point_2 ;
+  typedef Line_2<K>  Line_2 ;
+  
+  typedef Trisegment_2<K> Trisegment_2 ;
   
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;
@@ -544,21 +497,24 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2 > const&
     Quotient lt = lt_->to_quotient();
     Quotient rt = rt_->to_quotient();
 
-    Uncertain<bool> equal_times = CGAL_NTS certified_is_equal(lt,rt);
-    
-    if ( is_certain(equal_times) )
+    if ( CGAL_NTS certified_is_positive(lt) && CGAL_NTS certified_is_positive(rt) ) 
     {
-      if ( equal_times )
+      Uncertain<bool> equal_times = CGAL_NTS certified_is_equal(lt,rt);
+      
+      if ( is_certain(equal_times) )
       {
-        Optional_point_2 li = construct_offset_lines_isecC2(l);
-        Optional_point_2 ri = construct_offset_lines_isecC2(r);
-
-        if ( li && ri )
-          rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li->x(),ri->x())
-                                        , CGAL_NTS certified_is_equal(li->y(),ri->y())
-                                        ) ;
+        if ( equal_times )
+        {
+          Optional_point_2 li = construct_offset_lines_isecC2(l);
+          Optional_point_2 ri = construct_offset_lines_isecC2(r);
+  
+          if ( li && ri )
+            rResult = CGAL_NTS logical_and( CGAL_NTS certified_is_equal(li->x(),ri->x())
+                                          , CGAL_NTS certified_is_equal(li->y(),ri->y())
+                                          ) ;
+        }
+        else rResult = false;
       }
-      else rResult = false;
     }
 
   }
@@ -567,6 +523,6 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2 > const&
 
 } // namespace CGAL_SS_i
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H //

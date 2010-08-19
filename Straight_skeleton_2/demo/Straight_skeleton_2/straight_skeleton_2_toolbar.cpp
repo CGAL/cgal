@@ -65,7 +65,7 @@ Tools_toolbar::Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw) :
   connect(but[1], SIGNAL(stateChanged(int)),
         &getpolybut, SLOT(stateChanged(int)));
   nr_of_buttons = 2;
-  }
+  };
 
 #include "straight_skeleton_2_toolbar.moc"
 

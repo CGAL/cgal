@@ -22,6 +22,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
@@ -30,15 +31,18 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
+//typedef CGAL::Simple_cartesian<double> K ;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+//typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K;
 
 typedef K::Point_2                    Point;
 typedef CGAL::Aff_transformation_2<K> Transformation;
 typedef std::vector<Point>            Polygon_2;
 typedef boost::shared_ptr<Polygon_2>  PolygonPtr;
 typedef CGAL::Segment_2<K>            Segment;
-typedef std::vector<PolygonPtr>       Boundaries ;
-typedef boost::shared_ptr<Boundaries> BoundariesPtr ;
+typedef std::vector<PolygonPtr>       Region ;
+typedef boost::shared_ptr<Region>     RegionPtr ;
+typedef std::vector<RegionPtr>        Regions ;
 typedef std::vector<double>           Doubles ;
 
 typedef CGAL::Straight_skeleton_2<K>                            Sls;

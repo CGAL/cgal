@@ -22,13 +22,13 @@
 
 #include <CGAL/Straight_skeleton_2.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template<class Source_skeleton_
         ,class Target_skeleton_
         ,class NT_converter = typename internal::Default_converter<typename Source_skeleton_::Traits
-                                                                  ,typename Target_skeleton_::Traits
-                                                                  >::Type 
+                                                               ,typename Target_skeleton_::Traits
+                                                               >::Type 
         >
 struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source_skeleton_::Traits
                                                                , typename Target_skeleton_::Traits
@@ -293,8 +293,9 @@ convert_straight_skeleton_2 ( Source_skeleton const& aSrc )
     
 }
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 
 #endif // CGAL_STRAIGHT_SKELETON_2_CONVERTER_H //
 // EOF //
+

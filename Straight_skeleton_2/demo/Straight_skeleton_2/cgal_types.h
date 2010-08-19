@@ -23,6 +23,7 @@
 #include <CGAL/Polygon_2.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <boost/shared_ptr.hpp>
 #include <vector>
@@ -36,6 +37,7 @@
 namespace demo
 {
 
+//typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Polygon_2<K>            CGAL_Polygon ;
@@ -44,9 +46,6 @@ typedef K::FT                         FT ;
 typedef K::Point_2                    Point;
 typedef std::vector<Point>            Polygon;
 typedef boost::shared_ptr<Polygon>    PolygonPtr;
-typedef std::vector<double>           Weights;
-typedef boost::shared_ptr<Weights>    WeightsPtr;
-typedef std::vector<WeightsPtr>       WeightsList;
 typedef CGAL::Segment_2<K>            Segment;
 typedef std::vector<PolygonPtr>       Region ;
 typedef boost::shared_ptr<Region>     RegionPtr ;

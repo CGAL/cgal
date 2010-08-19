@@ -64,7 +64,7 @@ public:
         if ( he == null_halfedge )
           break ;
 
-        if ( he->is_bisector() && ( ( he->id() & 1 ) == 0 ) )
+        if ( he->is_bisector() )
         {
           bool lVertexOK      = he->vertex() != null_vertex ;
           bool lOppositeOK    = he->opposite() != null_halfedge ;
@@ -74,14 +74,8 @@ public:
 
           if ( lVertexOK && lOppVertexOK && lVertexHeOK && lOppVertexHeOK )
           {
-            if ( he->vertex()->has_infinite_time() || he->opposite()->vertex()->has_infinite_time() )
-            {
-            }
-            else
-            {
-              *widget << ( he->is_inner_bisector()? CGAL::BLUE : CGAL::GREEN  ) ;
-              *widget << construct_segment(he->opposite()->vertex()->point(),he->vertex()->point()) ;
-            }  
+            *widget << ( he->is_inner_bisector()? CGAL::BLUE : CGAL::GREEN ) ;
+            *widget << construct_segment(he->opposite()->vertex()->point(),he->vertex()->point()) ;
           }
         }
         he = he->next();

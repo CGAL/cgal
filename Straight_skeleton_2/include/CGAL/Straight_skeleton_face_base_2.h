@@ -19,7 +19,7 @@
 #define CGAL_STRAIGHT_SKELETON_FACE_BASE_2_H 1
 
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template <class Refs>
 class Straight_skeleton_face_base_base_2
@@ -83,7 +83,8 @@ private:
 
 } ;
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_FACE_BASE_2_H //
 // EOF //
+

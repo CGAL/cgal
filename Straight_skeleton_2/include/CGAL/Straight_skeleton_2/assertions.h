@@ -32,7 +32,7 @@
 #endif 
 
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 namespace {
 
@@ -44,7 +44,7 @@ template<class Handle> inline bool handle_assigned ( Handle const& aH )
 
 }
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_ASSERTIONS_H //
 // EOF //

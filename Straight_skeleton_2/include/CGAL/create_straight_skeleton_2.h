@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -14,15 +14,16 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando Cacciola <fernando.cacciola@gmail.com>
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_CREATE_STRAIGHT_SKELETON_2_H
 #define CGAL_CREATE_STRAIGHT_SKELETON_2_H
 
 #include <CGAL/Straight_skeleton_builder_2.h>
+#include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/Polygon_2.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i
 {
@@ -48,29 +49,16 @@ inline typename Poly::const_iterator vertices_begin ( boost::shared_ptr<Poly> co
 template<class Poly>
 inline typename Poly::const_iterator vertices_end ( boost::shared_ptr<Poly> const& aPoly ) { return aPoly->end() ; }
 
-template<class K, class C>
-inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_begin ( boost::shared_ptr< Polygon_2<K,C> > const& aPoly ) 
-{ return aPoly->vertices_begin() ; }
-
-template<class K, class C>
-inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_end( boost::shared_ptr< Polygon_2<K,C> > const& aPoly ) 
-{ return aPoly->vertices_end() ; }
-
 }
 
-template<class PointIterator, class HoleIterator, class WeightIterator, class WeightSequenceIterator, class NT, class K >
+template<class PointIterator, class HoleIterator, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
-create_straight_skeleton_2 ( PointIterator              aOuterContour_VerticesBegin
-                           , PointIterator              aOuterContour_VerticesEnd
-                           , WeightIterator             aOuterContour_WeightsBegin
-                           , WeightIterator             aOuterContour_WeightsEnd
-                           , HoleIterator               aHolesBegin
-                           , HoleIterator               aHolesEnd
-                           , WeightSequenceIterator     aHolesWeightBegin
-                           , WeightSequenceIterator     aHolesWeightEnd
-                           , boost::optional<NT> const& aMaxTime  
-                           , K const&                             
-                          )
+create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
+                                    , PointIterator aOuterContour_VerticesEnd
+                                    , HoleIterator  aHolesBegin
+                                    , HoleIterator  aHolesEnd
+                                    , K const&      
+                                    )
 {
   typedef Straight_skeleton_2<K> Ss ;
   typedef boost::shared_ptr<Ss>  SsPtr ;
@@ -84,358 +72,173 @@ create_straight_skeleton_2 ( PointIterator              aOuterContour_VerticesBe
   
   Cartesian_converter<InputKernel, K> Point_converter ;
   
-  SsBuilder ssb(aMaxTime) ;
+  SsBuilder ssb ;
   
-  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aOuterContour_WeightsBegin, aOuterContour_WeightsEnd, true, Point_converter ) ;
-  
-  WeightSequenceIterator whi = aHolesWeightBegin   ;
-  for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi, ++ whi )
-    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), (*whi)->begin(), (*whi)->end(), true, Point_converter ) ;
-  
-  return ssb.construct_skeleton();
-}
-
-template<class PointIterator, class HoleIterator, class WeightIterator, class WeightSequenceIterator>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
-create_straight_skeleton_2 ( PointIterator                  aOuterContour_VerticesBegin
-                           , PointIterator                  aOuterContour_VerticesEnd
-                           , WeightIterator                 aOuterContour_WeightsBegin
-                           , WeightIterator                 aOuterContour_WeightsEnd
-                           , HoleIterator                   aHolesBegin
-                           , HoleIterator                   aHolesEnd
-                           , WeightSequenceIterator         aHolesWeightBegin
-                           , WeightSequenceIterator         aHolesWeightEnd
-                           , boost::optional<double> const& aMaxTime = boost::optional<double>()
-                           )
-{
-  return create_straight_skeleton_2(aOuterContour_VerticesBegin
-                                   ,aOuterContour_VerticesEnd
-                                   ,aOuterContour_WeightsBegin
-                                   ,aOuterContour_WeightsEnd
-                                   ,aHolesBegin
-                                   ,aHolesEnd
-                                   ,aHolesWeightBegin
-                                   ,aHolesWeightEnd
-                                   ,aMaxTime
-                                   ,Exact_predicates_inexact_constructions_kernel()
-                                   );
-}
-
-
-template<class PointIterator, class HoleIterator, class NT, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_straight_skeleton_2 ( PointIterator              aOuterContour_VerticesBegin
-                           , PointIterator              aOuterContour_VerticesEnd
-                           , HoleIterator               aHolesBegin
-                           , HoleIterator               aHolesEnd
-                           , NT                         aWeight   
-                           , boost::optional<NT> const& aMaxTime  
-                           , K const&                             
-                           )
-{
-  typedef Straight_skeleton_2<K> Ss ;
-  typedef boost::shared_ptr<Ss>  SsPtr ;
-
-  typedef Straight_skeleton_builder_traits_2<K> SsBuilderTraits;
-  
-  typedef Straight_skeleton_builder_2<SsBuilderTraits,Ss> SsBuilder;
-  
-  typedef typename std::iterator_traits<PointIterator>::value_type InputPoint ;
-  typedef typename Kernel_traits<InputPoint>::Kernel InputKernel ;
-  
-  Cartesian_converter<InputKernel, K> Point_converter ;
-  
-  SsBuilder ssb(aMaxTime) ;
-  
-  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aWeight, true, Point_converter ) ;
+  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, Point_converter ) ;
   
   for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi )
-    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), aWeight, true, Point_converter ) ;
+    ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), Point_converter ) ;
   
   return ssb.construct_skeleton();
 }
 
 template<class PointIterator, class HoleIterator>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
-create_straight_skeleton_2 ( PointIterator                  aOuterContour_VerticesBegin
-                           , PointIterator                  aOuterContour_VerticesEnd
-                           , HoleIterator                   aHolesBegin
-                           , HoleIterator                   aHolesEnd
-                           , double                         aWeight  
-                           , boost::optional<double> const& aMaxTime = boost::optional<double>()
-                           )
-{
-  return create_straight_skeleton_2(aOuterContour_VerticesBegin
-                                   ,aOuterContour_VerticesEnd
-                                   ,aHolesBegin
-                                   ,aHolesEnd
-                                   ,aWeight
-                                   ,aMaxTime
-                                   ,Exact_predicates_inexact_constructions_kernel()
-                                   );
-}
-
-template<class PointIterator, class WeightIterator, class NT, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_straight_skeleton_2 ( PointIterator              aOuterContour_VerticesBegin
-                           , PointIterator              aOuterContour_VerticesEnd
-                           , WeightIterator             aOuterContour_WeightsBegin
-                           , WeightIterator             aOuterContour_WeightsEnd
-                           , boost::optional<NT> const& aMaxTime  
-                           , K const&                             
-                           )
-{
-  typedef Straight_skeleton_2<K> Ss ;
-  typedef boost::shared_ptr<Ss>  SsPtr ;
-
-  typedef Straight_skeleton_builder_traits_2<K> SsBuilderTraits;
-  
-  typedef Straight_skeleton_builder_2<SsBuilderTraits,Ss> SsBuilder;
-  
-  typedef typename std::iterator_traits<PointIterator>::value_type InputPoint ;
-  typedef typename Kernel_traits<InputPoint>::Kernel InputKernel ;
-  
-  Cartesian_converter<InputKernel, K> Point_converter ;
-  
-  SsBuilder ssb(aMaxTime) ;
-  
-  ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aOuterContour_WeightsBegin, aOuterContour_WeightsEnd, true, Point_converter ) ;
-  
-  return ssb.construct_skeleton();
-}
-
-template<class PointIterator, class WeightIterator>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
-create_straight_skeleton_2 ( PointIterator                  aOuterContour_VerticesBegin
-                           , PointIterator                  aOuterContour_VerticesEnd
-                           , WeightIterator                 aOuterContour_WeightsBegin
-                           , WeightIterator                 aOuterContour_WeightsEnd
-                           , boost::optional<double> const& aMaxTime  = boost::optional<double>()
-                           )
-{
-  return create_straight_skeleton_2(aOuterContour_VerticesBegin
-                                   ,aOuterContour_VerticesEnd
-                                   ,aOuterContour_WeightsBegin
-                                   ,aOuterContour_WeightsEnd
-                                   ,aMaxTime
-                                   ,Exact_predicates_inexact_constructions_kernel()
-                                   );
-}
-
-template<class PointIterator, class NT, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_straight_skeleton_2 ( PointIterator              aVerticesBegin
-                           , PointIterator              aVerticesEnd
-                           , NT                         aWeight   
-                           , boost::optional<NT> const& aMaxTime  
-                           , K const&                            
-                           )
-{
-  typedef Straight_skeleton_2<K> Ss ;
-  typedef boost::shared_ptr<Ss>  SsPtr ;
-
-  typedef Straight_skeleton_builder_traits_2<K> SsBuilderTraits;
-  
-  typedef Straight_skeleton_builder_2<SsBuilderTraits,Ss> SsBuilder;
-  
-  typedef typename std::iterator_traits<PointIterator>::value_type InputPoint ;
-  typedef typename Kernel_traits<InputPoint>::Kernel InputKernel ;
-  
-  Cartesian_converter<InputKernel, K> Point_converter ;
-  
-  SsBuilder ssb(aMaxTime) ;
-  
-  ssb.enter_contour( aVerticesBegin, aVerticesEnd, aWeight, true, Point_converter ) ;
-  
-  return ssb.construct_skeleton();
-}
-
-template<class PointIterator>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
-create_straight_skeleton_2 ( PointIterator                  aVerticesBegin
-                           , PointIterator                  aVerticesEnd
-                           , double                         aWeight   = 1.0
-                           , boost::optional<double> const& aMaxTime  = boost::optional<double>()
-                           )
-{
-  return create_straight_skeleton_2( aVerticesBegin
-                                   , aVerticesEnd
-                                   , aWeight
-                                   , aMaxTime
-                                   , Exact_predicates_inexact_constructions_kernel()
-                                   );
-}
-
-template<class Polygon, class NT, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_straight_skeleton_2 ( Polygon const&             aContour
-                           , NT                         aWeight 
-                           , boost::optional<NT> const& aMaxTime
-                           , K const&                   aK 
-                           )
-{
-  return create_straight_skeleton_2(CGAL_SS_i::vertices_begin(aContour)
-                                   ,CGAL_SS_i::vertices_end  (aContour)
-                                   ,aWeight
-                                   ,aMaxTime
-                                   ,aK
-                                   );
-}
-
-template<class Polygon>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
-create_straight_skeleton_2 ( Polygon const&                 aContour
-                           , double                         aWeight   = 1.0
-                           , boost::optional<double> const& aMaxTime  = boost::optional<double>()
-                           )
-{
-  return create_straight_skeleton_2(aContour
-                                   ,aWeight
-                                   ,aMaxTime
-                                   ,Exact_predicates_inexact_constructions_kernel()
-                                   );
-}
-
-
-//
-//
-//
-
-
-template<class PointIterator, class HoleIterator, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
-                                    , PointIterator aOuterContour_VerticesEnd
-                                    , HoleIterator  aHolesBegin
-                                    , HoleIterator  aHolesEnd
-                                    , K const&      aK                       
-                                    )
-{
-  typedef typename K::FT FT ;
-  return create_straight_skeleton_2(aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aHolesBegin, aHolesEnd, FT(1.0), boost::optional<FT>(), aK ) ;
-}
-
-
-template<class PointIterator, class HoleIterator>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+boost::shared_ptr< Straight_skeleton_2< Exact_predicates_inexact_constructions_kernel > >
+inline 
 create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                     , PointIterator aOuterContour_VerticesEnd
                                     , HoleIterator  aHolesBegin
                                     , HoleIterator  aHolesEnd
                                     )
 {
-  return create_interior_straight_skeleton_2(aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aHolesBegin, aHolesEnd, Exact_predicates_inexact_constructions_kernel() ) ;
+  return create_interior_straight_skeleton_2(aOuterContour_VerticesBegin
+                                            ,aOuterContour_VerticesEnd
+                                            ,aHolesBegin
+                                            ,aHolesEnd
+                                            ,Exact_predicates_inexact_constructions_kernel()
+                                            );
 }
 
 template<class PointIterator, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
+inline
 create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
-                                    , PointIterator aOuterContour_VerticesEnd
-                                    , K const&      aK                       
+                                    , PointIterator aOuterContour_VerticesEnd 
+                                    , K const&      k
                                     )
 {
-  typedef typename K::FT FT ;
-  return create_straight_skeleton_2(aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, FT(1.0), boost::optional<FT>(), aK ) ;
+  std::vector< Polygon_2<K> > no_holes ;
+  return create_interior_straight_skeleton_2(aOuterContour_VerticesBegin
+                                            ,aOuterContour_VerticesEnd
+                                            ,no_holes.begin()
+                                            ,no_holes.end()
+                                            ,k 
+                                            );
 }
 
 template<class PointIterator>
 boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
-create_interior_straight_skeleton_2 ( PointIterator aVerticesBegin
-                                    , PointIterator aVerticesEnd 
+create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
+                                    , PointIterator aOuterContour_VerticesEnd 
                                     )
-{ 
-  return create_interior_straight_skeleton_2(aVerticesBegin, aVerticesEnd, Exact_predicates_inexact_constructions_kernel()  ) ;
+{
+  return create_interior_straight_skeleton_2(aOuterContour_VerticesBegin
+                                            ,aOuterContour_VerticesEnd
+                                            ,Exact_predicates_inexact_constructions_kernel() 
+                                            );
 }
 
 template<class Polygon, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
 inline
-create_interior_straight_skeleton_2 ( Polygon const& aContour, K const& aK )
+create_interior_straight_skeleton_2 ( Polygon const& aOutContour, K const& k )
 {
-  typedef typename K::FT FT ;
-  return create_straight_skeleton_2(aContour, FT(1.0), boost::optional<FT>(), aK );
+  return create_interior_straight_skeleton_2(CGAL_SS_i::vertices_begin(aOutContour)
+                                            ,CGAL_SS_i::vertices_end(aOutContour)
+                                            ,k 
+                                            );
 }
 
 template<class Polygon>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+boost::shared_ptr< Straight_skeleton_2< Exact_predicates_inexact_constructions_kernel > >
 inline
-create_interior_straight_skeleton_2 ( Polygon const& aContour )
+create_interior_straight_skeleton_2 ( Polygon const& aOutContour )
 {
-  return create_interior_straight_skeleton_2(aContour, Exact_predicates_inexact_constructions_kernel() );
+  return create_interior_straight_skeleton_2(aOutContour, Exact_predicates_inexact_constructions_kernel() );
 }
 
-
-
-//
-//
-//
-
-
-template<class PointIterator, class HoleIterator, class K>
+template<class FT, class PointIterator, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
-create_exterior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
-                                    , PointIterator aOuterContour_VerticesEnd
-                                    , HoleIterator  aHolesBegin
-                                    , HoleIterator  aHolesEnd
-                                    , K const&      aK                       
+create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
+                                    , PointIterator  aVerticesBegin
+                                    , PointIterator  aVerticesEnd
+                                    , K const&       k
                                     )
 {
-  typedef typename K::FT FT ;
-  return create_straight_skeleton_2(aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aHolesBegin, aHolesEnd, FT(-1.0), boost::optional<FT>(), aK ) ;
+  typedef typename std::iterator_traits<PointIterator>::value_type Point_2 ;
+    
+  typedef Straight_skeleton_2<K> Ss ;
+  typedef boost::shared_ptr<Ss>  SsPtr ;
+  
+  SsPtr rSkeleton ;
+  
+  boost::optional<FT> margin = compute_outer_frame_margin( aVerticesBegin
+                                                         , aVerticesEnd
+                                                         , aMaxOffset 
+                                                         );
+
+  if ( margin )
+  {
+    
+    Bbox_2 bbox = bbox_2(aVerticesBegin, aVerticesEnd);
+
+    FT fxmin = bbox.xmin() - *margin ;
+    FT fxmax = bbox.xmax() + *margin ;
+    FT fymin = bbox.ymin() - *margin ;
+    FT fymax = bbox.ymax() + *margin ;
+
+    Point_2 frame[4] ;
+    
+    frame[0] = Point_2(fxmin,fymin) ;
+    frame[1] = Point_2(fxmax,fymin) ;
+    frame[2] = Point_2(fxmax,fymax) ;
+    frame[3] = Point_2(fxmin,fymax) ;
+
+    typedef std::vector<Point_2> Hole ;
+    
+    Hole lPoly(aVerticesBegin, aVerticesEnd);
+    std::reverse(lPoly.begin(), lPoly.end());
+    
+    std::vector<Hole> holes ;
+    holes.push_back(lPoly) ;
+        
+    rSkeleton = create_interior_straight_skeleton_2(frame, frame+4, holes.begin(), holes.end(), k ) ;  
+  }
+  
+  return rSkeleton ;
 }
 
-
-template<class PointIterator, class HoleIterator>
+template<class FT, class PointIterator>
 boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
-create_exterior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
-                                    , PointIterator aOuterContour_VerticesEnd
-                                    , HoleIterator  aHolesBegin
-                                    , HoleIterator  aHolesEnd
+inline
+create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
+                                    , PointIterator  aVerticesBegin
+                                    , PointIterator  aVerticesEnd
                                     )
 {
-  return create_exterior_straight_skeleton_2(aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, aHolesBegin, aHolesEnd, Exact_predicates_inexact_constructions_kernel() ) ;
+  return create_exterior_straight_skeleton_2(aMaxOffset
+                                            ,aVerticesBegin
+                                            ,aVerticesEnd
+                                            ,Exact_predicates_inexact_constructions_kernel()
+                                            );
 }
 
-template<class PointIterator, class K>
+
+template<class FT, class Polygon, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
-create_exterior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
-                                    , PointIterator aOuterContour_VerticesEnd
-                                    , K const&      aK                       
-                                    )
+inline
+create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly, K const& k )
 {
-  typedef typename K::FT FT ;
-  return create_straight_skeleton_2(aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, FT(-1.0), boost::optional<FT>(), aK ) ;
+  return create_exterior_straight_skeleton_2(aMaxOffset
+                                            ,CGAL_SS_i::vertices_begin(aPoly)
+                                            ,CGAL_SS_i::vertices_end  (aPoly)
+                                            ,k
+                                            );
 }
 
-template<class PointIterator>
+template<class FT, class Polygon>
 boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
-create_exterior_straight_skeleton_2 ( PointIterator aVerticesBegin
-                                    , PointIterator aVerticesEnd 
-                                    )
-{ 
-  return create_exterior_straight_skeleton_2(aVerticesBegin, aVerticesEnd, Exact_predicates_inexact_constructions_kernel()  ) ;
-}
-
-template<class Polygon, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-inline
-create_exterior_straight_skeleton_2 ( Polygon const& aContour, K const& aK )
+create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly )
 {
-  typedef typename K::FT FT ;
-  return create_straight_skeleton_2(aContour, FT(-1.0), boost::optional<FT>(), aK );
+  return create_exterior_straight_skeleton_2(aMaxOffset
+                                            ,aPoly
+                                            ,Exact_predicates_inexact_constructions_kernel()
+                                            );
 }
 
-template<class Polygon>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
-inline
-create_exterior_straight_skeleton_2 ( Polygon const& aContour )
-{
-  return create_exterior_straight_skeleton_2(aContour, Exact_predicates_inexact_constructions_kernel() );
-}
-
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //

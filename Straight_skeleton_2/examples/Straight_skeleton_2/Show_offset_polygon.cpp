@@ -12,7 +12,6 @@
 #include<CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 
 #include "dump_to_eps.h"
-#include "read_polygon.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
@@ -37,7 +36,7 @@ int main( int argc, char* argv[] )
     std::ifstream is(name.c_str()) ;
     if ( is )
     {
-      read_polygon_with_holes(is, input) ;
+      is >> input ;
       
       double lOffset = 0.25 ;
       
@@ -57,7 +56,7 @@ int main( int argc, char* argv[] )
       if ( eps )  
       {
         std::cerr << "Result: " << eps_name << std::endl ;
-        dump_offset_to_eps(input,offset_polygons,eps);
+        dump_to_eps(input,offset_polygons,eps);
       }
       else
       {

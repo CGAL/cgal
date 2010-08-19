@@ -20,8 +20,9 @@
 
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
-
-#include <CGAL/Uncertain.h>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/or.hpp>
 
 #include <CGAL/Straight_skeleton_2/assertions.h>
 #include <CGAL/Straight_skeleton_2/debug.h>
@@ -30,11 +31,22 @@
 //
 // The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
 //
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 namespace CGAL_SS_i
 {
 
+template<class K> struct Has_inexact_constructions
+{ 
+  typedef typename K::FT FT ;
+  
+  typedef typename boost::mpl::if_< boost::mpl::or_< boost::is_same<FT,double>
+                                                   , boost::is_same<FT,Interval_nt_advanced>
+                                                   > 
+                                  , Tag_true
+                                  , Tag_false
+                                  >::type type ; 
+} ;
 
 //
 // This record encapsulates the defining contour halfedges for a node (both contour and skeleton)
@@ -147,37 +159,6 @@ private:
   Handle mE[3];
 } ;
 
-//
-// The following functions are only for drawing of unbounded bisectors
-//
-
-template<class Vector_2>
-inline double vector_angle_wrt_X_axis_2( Vector_2 const& v ) { return std::atan2( CGAL::to_double(v.y()), CGAL::to_double(v.x())); }
-
-template<class Vector_2>
-inline double ccw_angle_between_vectors_2( Vector_2 const& u, Vector_2 const& v )
-{
-  double au = vector_angle_wrt_X_axis_2(u);
-  double av = vector_angle_wrt_X_axis_2(v);
-
-  double phi = av - au ;
-
-  if ( phi < 0)
-    phi = 2.0 * CGAL_PI + phi;
-
-  return phi ;
-}
-
-template<class Vector_2>
-inline Vector_2 create_vector_rotated_2( Vector_2 const& u, double phi )
-{
-  double cos = std::cos(phi);
-  double sin = std::sin(phi);
-
-  return Vector_2( u.x() * cos - u.y() * sin 
-                 , u.x() * sin + u.y() * cos 
-                 ) ;
-}
 
 } // namespace CGAL_SS_i
 
@@ -203,7 +184,7 @@ static char const* trisegment_collinearity_to_string( Trisegment_collinearity c 
   
   return "!!UNKNOWN COLLINEARITY!!" ;
 }
-namespace internal
+namespace internal 
 {
 
 template <>
@@ -233,7 +214,7 @@ public:
       }
 };
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 namespace boost
 {
@@ -245,3 +226,4 @@ inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Releas
 
 #endif // CGAL_STRAIGHT_SKELETON_AUX_H //
 // EOF //
+

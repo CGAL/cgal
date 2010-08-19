@@ -40,8 +40,6 @@ with support for storage of the incident halfedge. The \ccRefName\ concept requi
   \ccNestedType{Defining_contour_halfedge_const_circulator}{}{}
 \ccGlue
   \ccNestedType{Defining_contour_halfedge_circulator}{The circulator type used to visit all the defining contour halfedges of a vertex}
-\ccGlue
-  \ccTypedef{boost::tuple<Halfedge_handle,Halfedge_handle,Halfedge_handle> Triedge;}{A record encapsulating 3 halfedges}
 
 \ccCreation
 \ccCreationVariable{v}  %% choose variable name
@@ -50,8 +48,8 @@ with support for storage of the incident halfedge. The \ccRefName\ concept requi
 \ccGlue
 \ccConstructor{StraightSkeletonVertex_2(int id, Point_2 const& p);}{Constructs a contour vertex with ID number \ccc{id}, at the point \ccc{p}}
 \ccGlue
-\ccConstructor{StraightSkeletonVertex_2(int id, Point_2 const& p, FT time, bool is_split, bool has_infinite_time );}
-{Constructs a skeleton vertex with ID number \ccc{id}, at point \ccc{p}, time \ccc{time} and the flags \ccc{is_split} and \ccc{has_infinite_time} set as given.}
+\ccConstructor{StraightSkeletonVertex_2(int id, Point_2 const& p, FT time );}
+{Constructs a skeleton vertex with ID number \ccc{id}, at point \ccc{p} and time \ccc{time}.}
 
 \ccAccessFunctions
   \ccMethod{int id() const;}{The ID of the vertex.}
@@ -80,31 +78,12 @@ Each halfedge pointed to by this circulator is the one which is oriented towards
 {Returns a bi-directional circulator pointing to one of the defining contour halfedges of the vertex (which one is unspecified).\\
 There will always be as many incident defining contour halfedges as the degree of the vertex.\\
 Each halfedge pointed to by this circulator is the one having its left side facing inwards (which happens to be the contour halfedge for which \ccc{is\_border()} is \ccc{false}).}
-  \ccGlue
-  \ccMethod{Triedge const& event_triedge();}
-{Returns a triedge corresponding to the event that created the vertex, that is, the 3 halfedges corresponding to the contour edges that collided.}
-  \ccGlue
-  \ccMethod{void set_event_triedge(Triedge const& tri );}
-{Defines the triedge corresponding to the event that created the vertex..}
 
 
 \ccHeading{Queries}
 \ccMethod{bool is_contour() const;}{Returns \ccc{true} iff this is a contour vertex.}
 \ccGlue
 \ccMethod{bool is_skeleton() const;}{Returns \ccc{true} iff this is a skeleton vertex.}
-\ccGlue
-\ccMethod{bool has_infinite_time() const;}{Returns \ccc{true} iff this is an infinite skeleton vertex. 
-Initially, all faces are topologically closed with a face-specific infinite vertex. This vertex does not correspond to an event and connects
-the two unbounded halfedge bisectors incident upon the source and target endpoints of the face's contour halfedge. An infinite vertex has no geometric embeeding 
-and no predicate can be applied to it. In a full straight skeleton, all the initial infinite vertices are replaced by normal skeleton vertices,
-so an infinite vertex will only be found on a partial straight skeleton.}
-\ccGlue
-\ccMethod{bool has_null_point() const;}{Returns \ccc{true} iff this is an infinite vertex (which does not have any geometric embeeding).}
-\ccGlue
-\ccMethod{bool is_split() const;}{Returns \ccc{true} iff this is a skeleton vertex corresponding to a split event. If this is \ccc{false} then it corresponds to an edge event.}
-\ccGlue
-\ccMethod{std::size_t degree() const;}{Returns the number of edges incident in this vertex. For a skeleton vertex, 
-this is the number of bisectors, which is always at least 3, unless the vertex is infinite, in which case is exactly 2.}
 
 \ccHasModels
 

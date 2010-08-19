@@ -22,7 +22,7 @@
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
 #include <CGAL/Straight_skeleton_face_base_2.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 class Straight_skeleton_items_2
 {
@@ -39,8 +39,8 @@ public:
   template<class Refs, class Traits> 
   struct Halfedge_wrapper
   {
-    typedef typename Traits::FT FT ;
-    typedef Straight_skeleton_halfedge_base_2 < Refs, FT> Halfedge; 
+    typedef typename Traits::Segment_2 Segment ;
+    typedef Straight_skeleton_halfedge_base_2 < Refs, Segment > Halfedge; 
   };
   
   template<class Refs, class Traits> 
@@ -50,7 +50,7 @@ public:
   } ;
 };
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_ITEMS_2_H //
 // EOF //

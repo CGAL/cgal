@@ -54,33 +54,87 @@ int main()
                   , Point_2(-12,0)
                   } ;
 
-  std::vector<Point_2> star   (pts,pts+8);
+  std::vector<Point_2> star(pts,pts+8);
 
-  // Instantiate the skeleton builder
-  SsBuilder ssb ;
+  // We want an offset contour in the outside.
+  // Since the package doesn't support that operation directly, we use the following trick:
+  // (1) Place the polygon as a hole of a big outer frame.
+  // (2) Construct the skeleton on the interior of that frame (with the polygon as a hole)
+  // (3) Construc the offset contours
+  // (4) Identify the offset contour that corresponds to the frame and remove it from the result
 
-  // Pass -1.0 as uniform weight to obtain an exterior skeleton
-  ssb.enter_contour(star.begin(), star.end(), -1.0 );
 
-  // Construct the skeleton
-  boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+  double offset = 3 ; // The offset distance
 
-  // Proceed only if the skeleton was correctly constructed.
-  if ( ss )
+  // First we need to determine the proper separation between the polygon and the frame.
+  // We use this helper function provided in the package.
+  boost::optional<double> margin = CGAL::compute_outer_frame_margin(star.begin(),star.end(),offset);
+
+  // Proceed only if the margin was computed (an extremely sharp corner might cause overflow)
+  if ( margin )
   {
-    print_straight_skeleton(*ss);
-    
-    // Instantiate the container of offset contours
-    ContourSequence offset_contours ;
+    // Get the bbox of the polygon
+    CGAL::Bbox_2 bbox = CGAL::bbox_2(star.begin(),star.end());
 
-    // Instantiate the offset builder with the skeleton
-    OffsetBuilder ob(*ss);
+    // Compute the boundaries of the frame
+    double fxmin = bbox.xmin() - *margin ;
+    double fxmax = bbox.xmax() + *margin ;
+    double fymin = bbox.ymin() - *margin ;
+    double fymax = bbox.ymax() + *margin ;
 
-    // Obtain the offset contours
-    double offset = 3 ; // The offset distance
-    ob.construct_offset_contours(offset, std::back_inserter(offset_contours));
-    
-    print_polygons(offset_contours);
+    // Create the rectangular frame
+    Point_2 frame[4]= { Point_2(fxmin,fymin)
+                      , Point_2(fxmax,fymin)
+                      , Point_2(fxmax,fymax)
+                      , Point_2(fxmin,fymax)
+                      } ;
+
+    // Instantiate the skeleton builder
+    SsBuilder ssb ;
+
+    // Enter the frame
+    ssb.enter_contour(frame,frame+4);
+
+    // Enter the polygon as a hole of the frame (NOTE: as it is a hole we insert it in the opposite orientation)
+    ssb.enter_contour(star.rbegin(),star.rend());
+
+    // Construct the skeleton
+    boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+
+    // Proceed only if the skeleton was correctly constructed.
+    if ( ss )
+    {
+      print_straight_skeleton(*ss);
+      
+      // Instantiate the container of offset contours
+      ContourSequence offset_contours ;
+
+      // Instantiate the offset builder with the skeleton
+      OffsetBuilder ob(*ss);
+
+      // Obtain the offset contours
+      ob.construct_offset_contours(offset, std::back_inserter(offset_contours));
+
+      // Locate the offset contour that corresponds to the frame
+      // That must be the outmost offset contour, which in turn must be the one
+      // with the largetst unsigned area.
+      ContourSequence::iterator f = offset_contours.end();
+      double lLargestArea = 0.0 ;
+      for (ContourSequence::iterator i = offset_contours.begin(); i != offset_contours.end(); ++ i  )
+      {
+        double lArea = CGAL_NTS abs( (*i)->area() ) ; //Take abs() as  Polygon_2::area() is signed.
+        if ( lArea > lLargestArea )
+        {
+          f = i ;
+          lLargestArea = lArea ;
+        }
+      }
+
+      // Remove the offset contour that corresponds to the frame.
+      offset_contours.erase(f);
+      
+      print_polygons(offset_contours);
+    }
   }
 
   return 0;

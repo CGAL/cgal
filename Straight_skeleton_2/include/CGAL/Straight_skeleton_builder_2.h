@@ -25,9 +25,6 @@
 #include <string>
 #include <map>
 
-#define _USE_MATH_DEFINES  // Needed so M_PI gets defined
-#include <cmath>
-
 #include <boost/tuple/tuple.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
@@ -41,8 +38,7 @@
 #include <CGAL/HalfedgeDS_const_decorator.h>
 #include <CGAL/enum.h>
 
-
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 template<class SSkel_>
 struct Dummy_straight_skeleton_builder_2_visitor
@@ -59,7 +55,7 @@ struct Dummy_straight_skeleton_builder_2_visitor
   void on_initial_events_collected( Vertex_const_handle const& , bool /* is_reflex */, bool /*is_degenerate*/ )  const  {}
   
   void on_edge_event_created( Vertex_const_handle const& /* lnode */
-             			    , Vertex_const_handle const& /* rnode */
+			    , Vertex_const_handle const& /* rnode */
                             )  const {}
 
   void on_split_event_created( Vertex_const_handle const&  )  const {}
@@ -116,14 +112,13 @@ public:
   typedef Visitor_ Visitor ;
 
   typedef boost::shared_ptr<SSkel> SSkelPtr ;
+  
+private :
 
   typedef typename Traits::Kernel K ;
   
-  typedef typename Traits::FT      FT ;
-  typedef typename Traits::Point_2 Point_2 ;
-  
-private :
-  
+  typedef typename Traits::FT               FT ;
+  typedef typename Traits::Point_2          Point_2 ;
   typedef typename Traits::Vector_2         Vector_2 ;
   typedef typename Traits::Direction_2      Direction_2 ;
   typedef typename Traits::Segment_2        Segment_2 ;
@@ -223,12 +218,9 @@ private :
   
 public:
 
-  Straight_skeleton_builder_2 ( boost::optional<FT> aMaxTime = boost::none
-                              , Traits const&                = Traits()
-                              , Visitor const& aVisitor      = Visitor() 
-                              ) ;
+  Straight_skeleton_builder_2 ( boost::optional<FT> aMaxTime = boost::none, Traits const& = Traits(), Visitor const& aVisitor = Visitor() ) ;
   
-  SSkelPtr construct_skeleton( bool aNull_if_failed = true ) ;
+  SSkelPtr construct_skeleton(  bool aNull_if_failed = true ) ;
 
 private :
 
@@ -257,7 +249,6 @@ private :
     Vertex_data ( Vertex_handle aVertex, Event_compare const& aComparer )
       :
         mVertex(aVertex)
-      , mIsTerminal(false)  
       , mIsReflex(false)
       , mIsDegenerate(false)
       , mIsProcessed(false)
@@ -269,7 +260,6 @@ private :
     {}
 
     Vertex_handle     mVertex ;
-    bool              mIsTerminal ;
     bool              mIsReflex ;
     bool              mIsDegenerate ;
     bool              mIsProcessed ;
@@ -278,7 +268,7 @@ private :
     int               mNextInLAV ;
     bool              mNextSplitEventInMainPQ;
     PQ                mSplitEvents ;
-    Triedge           mTriedge ; // Here, E0,E1 corresponds to the vertex (unlike *event* triedges). Terminal vertices woud have only E0 or E1
+    Triedge           mTriedge ; // Here, E0,E1 corresponds to the vertex (unlike *event* triedges)
     Trisegment_2_ptr  mTrisegment ; // Skeleton nodes cache the full trisegment tree that defines the originating event
   } ;
   
@@ -308,7 +298,8 @@ private :
   
   Vertex_handle GetVertex ( int aIdx )
   {
-    return aIdx >= 0 ? mVertexData[aIdx]->mVertex : Vertex_handle() ;
+    CGAL_precondition(aIdx>=0);
+    return mVertexData[aIdx]->mVertex ;
   }
 
   // Null if aV is a contour or infinite node
@@ -322,11 +313,10 @@ private :
     GetVertexData(aV).mTrisegment = aTrisegment ;
   }
   
-  Triedge GetVertexTriedge ( Vertex_handle aV ) const
+  // Null if aV is a contour node
+  Triedge const& GetVertexTriedge ( Vertex_handle aV ) const
   {
-    Triedge rTriedge = GetVertexData(aV).mTriedge ;
-    
-    return rTriedge ;
+    return GetVertexData(aV).mTriedge ;
   }
   
   void SetVertexTriedge ( Vertex_handle aV, Triedge const& aTriedge )
@@ -358,14 +348,11 @@ private :
     CGAL_precondition(aTriedge.is_valid() && aTriedge.is_skeleton());
     
     Trisegment_2_ptr r = Construct_ss_trisegment_2(mTraits)(CreateSegment(aTriedge.e0())
-                                                           ,aTriedge.e0()->weight()
                                                            ,CreateSegment(aTriedge.e1())
-                                                           ,aTriedge.e1()->weight()
                                                            ,CreateSegment(aTriedge.e2())
-                                                           ,aTriedge.e2()->weight()
                                                            );
                                                                         
-    CGAL_STSKEL_BUILDER_TRACE(6,"Trisegment for " << aTriedge << ":" << r ) ;
+    CGAL_STSKEL_BUILDER_TRACE(5,"Trisegment for " << aTriedge << ":" << r ) ;
     
     CGAL_postcondition_msg(r, "Unable to determine edges collinearity");
       
@@ -397,16 +384,6 @@ private :
     return GetVertex ( GetVertexData(aV).mNextInLAV ) ;
   }
 
-  bool IsLeftTerminal( Vertex_handle aV )
-  {
-    return ! handle_assigned( GetPrevInLAV(aV) ) ;  
-  }
-  
-  bool IsRightTerminal( Vertex_handle aV )
-  {
-    return ! handle_assigned( GetNextInLAV(aV) ) ;  
-  }
-  
   void SetPrevInLAV ( Vertex_handle aV, Vertex_handle aPrev )
   {
     GetVertexData(aV).mPrevInLAV = aPrev->id();
@@ -424,7 +401,7 @@ private :
   
   Halfedge_handle GetEdgeStartingAt ( Vertex_handle aV )
   {
-    Vertex_handle lN = GetNextInLAV(aV) ; return handle_assigned(lN) ? GetEdgeEndingAt(lN) : Halfedge_handle() ;
+    return GetEdgeEndingAt( GetNextInLAV(aV) ) ;
   }
   
   void Exclude ( Vertex_handle aV )
@@ -436,16 +413,6 @@ private :
     return GetVertexData(aV).mIsExcluded ;
   }
 
-  void SetIsTerminal ( Vertex_handle aV )
-  {
-    GetVertexData(aV).mIsTerminal = true ;
-  }
-
-  bool IsTerminal ( Vertex_handle aV )
-  {
-    return GetVertexData(aV).mIsTerminal ;
-  }
-  
   void SetIsReflex ( Vertex_handle aV )
   {
     GetVertexData(aV).mIsReflex = true ;
@@ -455,7 +422,7 @@ private :
   {
     return GetVertexData(aV).mIsReflex ;
   }
-  
+
   void SetIsDegenerate ( Vertex_handle aV )
   {
     GetVertexData(aV).mIsDegenerate = true ;
@@ -484,14 +451,6 @@ private :
     return GetVertexData(aV).mIsProcessed ;
   }
 
-  Vertex_handle NewInfNode()
-  {
-    Vertex_handle rInfNode = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++ ) ) ;
-    InitVertexData(rInfNode);
-    CGAL_assertion(rInfNode->has_null_point());
-    return rInfNode ;
-  }
-  
   void AddSplitEvent ( Vertex_handle aV, EventPtr aEvent )
   {
     CGAL_STSKEL_BUILDER_TRACE(2, "V" << aV->id() << " PQ: " << *aEvent);
@@ -532,22 +491,20 @@ private :
   bool IsOppositeEdgeFacingTheSplitSeed( Vertex_handle aSeed, Halfedge_handle aOpposite ) const
   {
     if ( aSeed->is_skeleton() )
-         return Is_edge_facing_ss_node_2(mTraits)( GetTrisegment(aSeed), CreateSegment(aOpposite), aOpposite->weight() ) ;
-    else return Is_edge_facing_ss_node_2(mTraits)( aSeed->point()      , CreateSegment(aOpposite), aOpposite->weight() ) ;
+         return Is_edge_facing_ss_node_2(mTraits)( GetTrisegment(aSeed), CreateSegment(aOpposite) ) ;
+    else return Is_edge_facing_ss_node_2(mTraits)( aSeed->point()      , CreateSegment(aOpposite) ) ;
   }
   
-  Oriented_side EventPointOrientedSideOfBisector( Event const&          aEvent
-                                                , Halfedge_const_handle aE0
-                                                , Halfedge_const_handle aE1
-                                                , Vertex_handle         aV01
-                                                , bool                  aE0isPrimary
-                                                ) const
+  Oriented_side EventPointOrientedSide( Event const&          aEvent
+                                      , Halfedge_const_handle aE0
+                                      , Halfedge_const_handle aE1
+                                      , Vertex_handle         aV01
+                                      , bool                  aE0isPrimary
+                                      ) const
   {
     return Oriented_side_of_event_point_wrt_bisector_2(mTraits)( aEvent.trisegment()
                                                                , CreateSegment(aE0)
-                                                               , aE0->weight()
                                                                , CreateSegment(aE1)
-                                                               , aE1->weight()
                                                                , GetTrisegment(aV01) // Can be null
                                                                , aE0isPrimary
                                                                ) ;
@@ -560,11 +517,7 @@ private :
 
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB ) const
   {
-    Comparison_result rR = aA->triedge() != aB->triedge() ? CompareEvents( aA->trisegment(), aB->trisegment() ) : EQUAL ;
-    
-    CGAL_STSKEL_BUILDER_TRACE(6,"Comparing events: {" << *aA << "} and {" << *aB << "} = " << ( rR == EQUAL ? "EQUAL" : ( rR == LARGER ? "LARGER"  : "SMALLER" )  ) ) ;
-    
-    return rR ;
+    return aA->triedge() != aB->triedge() ? CompareEvents( aA->trisegment(), aB->trisegment() ) : EQUAL ;
   }
   
   bool AreEventsSimultaneous( Trisegment_2_ptr const& x, Trisegment_2_ptr const& y ) const
@@ -655,7 +608,6 @@ private :
   boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( Trisegment_2_ptr const& aS ) const
   {
     boost::optional< boost::tuple<FT,Point_2> > r = Construct_ss_event_time_and_point_2(mTraits)(aS);
-    
     CGAL_postcondition_msg(!!r, "Unable to compute skeleton node coordinates");
     return *r ;  
   }
@@ -682,8 +634,8 @@ private :
   {
     std::ostringstream ss ; 
     
-    ss << "N" << hid(GetPrevInLAV(v)) << "->N" << hid(v) << "->N" << hid(GetNextInLAV(v)) 
-       << "  E" << hid(GetVertexTriedge(v).e0()) << "->E" << hid(GetVertexTriedge(v).e1()) ;
+    ss << "N" << GetPrevInLAV(v)->id() << "->N" << v->id() << "->N" << GetNextInLAV(v)->id() 
+       << "  E" << GetVertexTriedge(v).e0()->id() << "->E" << GetVertexTriedge(v).e1()->id() ;
        
     return ss.str() ;
     
@@ -725,9 +677,9 @@ private :
   
   void CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge ) ;
 
-  void CollectSplitEvents( Vertex_handle aNode, Triedge const& aPrevEventTriedge ) ;
+  void CollectSplitEvents( Vertex_handle aNode, Triedge const& aPrevEventTriedge  ) ;
 
-  EventPtr FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode, Triedge const& aPrevEventTriedge ) ;
+  EventPtr FindEdgeEvent( Vertex_handle aLNode, Vertex_handle aRNode, Triedge const& aPrevEventTriedge  ) ;
 
   void HandleSimultaneousEdgeEvent( Vertex_handle aA, Vertex_handle aB ) ;
 
@@ -746,7 +698,7 @@ private :
   Vertex_handle_pair ConstructPseudoSplitEventNodes ( PseudoSplitEvent& aEvent ) ;
 
   bool IsValidEdgeEvent        ( EdgeEvent        const& aEvent ) ;
-  bool IsValidSplitEvent       ( SplitEvent       const& aEvent, Vertex_handle_pair aOpp ) ;
+  bool IsValidSplitEvent       ( SplitEvent       const& aEvent ) ;
   bool IsValidPseudoSplitEvent ( PseudoSplitEvent const& aEvent ) ;
   
   void HandleEdgeEvent               ( EventPtr aEvent ) ;
@@ -790,7 +742,7 @@ private:
   
   Vertex_handle_vector   mReflexVertices ;
   Halfedge_handle_vector mDanglingBisectors ;
-  Halfedge_handle_vector mBoundaryHalfedges ;
+  Halfedge_handle_vector mContourHalfedges ;
 
   std::list<Vertex_handle> mGLAV ;
 
@@ -814,86 +766,67 @@ private:
 private :  
 
   template<class InputPointIterator, class Converter>
-  Halfedge_handle enter_valid_contour ( InputPointIterator aBegin, InputPointIterator aEnd, bool aIsClosed, Converter const& cvt )
+  void enter_valid_contour ( InputPointIterator aBegin, InputPointIterator aEnd, Converter const& cvt )
   {
-    CGAL_STSKEL_BUILDER_TRACE(0,"Inserting " << ( aIsClosed ? "Closed" : "Open" ) << " Connected Component of the Boundary....");
-    
-    Halfedge_handle lNULL ;
+    CGAL_STSKEL_BUILDER_TRACE(0,"Inserting Connected Component of the Boundary....");
 
-    Halfedge_handle lFirstBoundaryFwdHE ;
-    Halfedge_handle lPrevBoundaryFwdHE ;
-    Halfedge_handle lNextBoundaryBckHE ;
-    Halfedge_handle lBoundaryFwdHE ;
-    Halfedge_handle lBoundaryBckHE ;
+    Halfedge_handle lFirstCCWBorder ;
+    Halfedge_handle lPrevCCWBorder ;
+    Halfedge_handle lNextCWBorder ;
     Vertex_handle   lFirstVertex ;
     Vertex_handle   lPrevVertex ;
 
     InputPointIterator lCurr = aBegin ;
     InputPointIterator lPrev = aBegin ;
     
-    InputPointIterator lSecond = aBegin ; ++ lSecond ;
-    
     int c = 0 ;
     
     while ( lCurr != aEnd )
     {
+      Halfedge_handle lCCWBorder = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID),Halfedge(mEdgeID+1)  );
+      Halfedge_handle lCWBorder = lCCWBorder->opposite();
+      mEdgeID += 2 ;
+
+      mContourHalfedges.push_back(lCCWBorder);
+
       Vertex_handle lVertex = mSSkel->SSkel::Base::vertices_push_back( Vertex(mVertexID++,cvt(*lCurr)) ) ;
-      CGAL_STSKEL_BUILDER_TRACE(1,"Vertex: N" << lVertex->id() << " at " << lVertex->point() );
+      CGAL_STSKEL_BUILDER_TRACE(1,"Vertex: V" << lVertex->id() << " at " << lVertex->point() );
       InitVertexData(lVertex);
-      
-      if ( aIsClosed || lCurr != aBegin )
-      {
-        lBoundaryFwdHE = mSSkel->SSkel::Base::edges_push_back ( Halfedge::NewBoundary(mEdgeID),Halfedge::NewBoundary(mEdgeID+1)  );
-        lBoundaryBckHE = lBoundaryFwdHE->opposite();
-        mEdgeID += 2 ;
 
-        mBoundaryHalfedges.push_back(lBoundaryFwdHE);
-
-        Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face(mFaceID++) ) ;
-        
-        lBoundaryFwdHE->HBase_base::set_face(lFace);
-        lFace         ->FBase     ::set_halfedge(lBoundaryFwdHE);
-
-        lVertex       ->VBase     ::set_halfedge(lBoundaryFwdHE);
-        lBoundaryFwdHE->HBase_base::set_vertex(lVertex);
-        
-        CGAL_STSKEL_BUILDER_TRACE(1,"Boundary Fwd E" << lBoundaryFwdHE->id() << " Bck E" << lBoundaryBckHE->id() << " Face F" << lFace->id() ) ;
-      }
+      Face_handle lFace = mSSkel->SSkel::Base::faces_push_back( Face(mFaceID++) ) ;
 
       ++ c ;
 
+      lCCWBorder->HBase_base::set_face(lFace);
+      lFace     ->FBase     ::set_halfedge(lCCWBorder);
+
+      lVertex   ->VBase     ::set_halfedge(lCCWBorder);
+      lCCWBorder->HBase_base::set_vertex(lVertex);
+
       if ( lCurr == aBegin )
       {
-        lFirstVertex = lVertex ;
-        
-        if ( aIsClosed )
-          lFirstBoundaryFwdHE = lBoundaryFwdHE ;
+        lFirstVertex    = lVertex ;
+        lFirstCCWBorder = lCCWBorder ;
       }
       else
       {
-        if ( ! aIsClosed && lCurr == lSecond )
-          lFirstBoundaryFwdHE = lBoundaryFwdHE ;
-        
         SetPrevInLAV(lVertex    ,lPrevVertex);
         SetNextInLAV(lPrevVertex,lVertex    );
 
-        SetVertexTriedge(lPrevVertex, Triedge(lPrevBoundaryFwdHE,lBoundaryFwdHE) ) ;
+        SetVertexTriedge(lPrevVertex, Triedge(lPrevCCWBorder,lCCWBorder) ) ;
         
-        lBoundaryBckHE->HBase_base::set_vertex(lPrevVertex);
+        lCWBorder->HBase_base::set_vertex(lPrevVertex);
 
-        if ( handle_assigned(lPrevBoundaryFwdHE) )
-        {
-          lBoundaryFwdHE    ->HBase_base::set_prev(lPrevBoundaryFwdHE);
-          lPrevBoundaryFwdHE->HBase_base::set_next(lBoundaryFwdHE);
+        lCCWBorder    ->HBase_base::set_prev(lPrevCCWBorder);
+        lPrevCCWBorder->HBase_base::set_next(lCCWBorder);
 
-          lNextBoundaryBckHE->HBase_base::set_prev(lBoundaryBckHE);
-          lBoundaryBckHE    ->HBase_base::set_next(lNextBoundaryBckHE);
-        }
+        lNextCWBorder->HBase_base::set_prev(lCWBorder);
+        lCWBorder    ->HBase_base::set_next(lNextCWBorder);
 
-        CGAL_STSKEL_BUILDER_TRACE(1,"E" << lBoundaryFwdHE->id() << ' ' << lPrevVertex->point() << " -> " << lVertex    ->point() );
-        CGAL_STSKEL_BUILDER_TRACE(1,"E" << lBoundaryBckHE->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
+        CGAL_STSKEL_BUILDER_TRACE(1,"CCW Border: E" << lCCWBorder->id() << ' ' << lPrevVertex->point() << " -> " << lVertex    ->point());
+        CGAL_STSKEL_BUILDER_TRACE(1,"CW  Border: E" << lCWBorder ->id() << ' ' << lVertex    ->point() << " -> " << lPrevVertex->point() );
         
-        mVisitor.on_contour_edge_entered(lBoundaryFwdHE);
+        mVisitor.on_contour_edge_entered(lCCWBorder);
 
       }
 
@@ -901,103 +834,34 @@ private :
       
       ++ lCurr ;
 
-      lPrevVertex        = lVertex ;
-      lPrevBoundaryFwdHE = lBoundaryFwdHE ;
-      lNextBoundaryBckHE = lBoundaryBckHE ;
+      lPrevVertex    = lVertex ;
+      lPrevCCWBorder = lCCWBorder ;
+      lNextCWBorder  = lCWBorder ;
     }
 
-    if ( aIsClosed )
-    {
-      SetPrevInLAV(lFirstVertex,lPrevVertex );
-      SetNextInLAV(lPrevVertex ,lFirstVertex);
+    SetPrevInLAV(lFirstVertex,lPrevVertex );
+    SetNextInLAV(lPrevVertex ,lFirstVertex);
 
-      SetVertexTriedge( lPrevVertex, Triedge(lPrevBoundaryFwdHE,lFirstBoundaryFwdHE) ) ;
+    SetVertexTriedge( lPrevVertex, Triedge(lPrevCCWBorder,lFirstCCWBorder) ) ;
 
-      lFirstBoundaryFwdHE->opposite()->HBase_base::set_vertex(lPrevVertex);
+    lFirstCCWBorder->opposite()->HBase_base::set_vertex(lPrevVertex);
 
-      lFirstBoundaryFwdHE->HBase_base::set_prev(lPrevBoundaryFwdHE);
-      lPrevBoundaryFwdHE ->HBase_base::set_next(lFirstBoundaryFwdHE);
+    lFirstCCWBorder->HBase_base::set_prev(lPrevCCWBorder);
+    lPrevCCWBorder ->HBase_base::set_next(lFirstCCWBorder);
 
-      lPrevBoundaryFwdHE ->opposite()->HBase_base::set_prev(lFirstBoundaryFwdHE->opposite());
-      lFirstBoundaryFwdHE->opposite()->HBase_base::set_next(lPrevBoundaryFwdHE ->opposite());
-      
-      CGAL_STSKEL_BUILDER_TRACE(1
-                               ,  "E" << lFirstBoundaryFwdHE->id()             << ' ' << lPrevVertex ->point() << " -> " << lFirstVertex->point() << '\n'
-                               << "E" << lFirstBoundaryFwdHE->opposite()->id() << ' ' << lFirstVertex->point() << " -> " << lPrevVertex ->point()
-                               );
-                               
-      mVisitor.on_contour_edge_entered(lFirstBoundaryFwdHE);
-      
-      CGAL_precondition_msg( c >= 3, "The closed contour must have at least 3 _distinct_ vertices" ) ;
-    }
-    else
-    {
-      SetVertexTriedge( lFirstVertex, Triedge(lFirstBoundaryFwdHE,lFirstBoundaryFwdHE) ) ;
-      SetVertexTriedge( lPrevVertex , Triedge(lPrevBoundaryFwdHE ,lPrevBoundaryFwdHE ) ) ;
-      
-      CGAL_precondition_msg( c >= 2, "The open contour must have at least 2 _distinct_ vertices" ) ;
-    }
+    lPrevCCWBorder ->opposite()->HBase_base::set_prev(lFirstCCWBorder->opposite());
+    lFirstCCWBorder->opposite()->HBase_base::set_next(lPrevCCWBorder ->opposite());
     
-    return lFirstBoundaryFwdHE ;
+    CGAL_precondition_msg(c >=3, "The contour must have at least 3 _distinct_ vertices" ) ;
     
-  }
-
-  template<class InputPointIterator, class NT, class Converter>
-  Halfedge_handle enter_valid_contour ( InputPointIterator  aPBegin
-                                      , InputPointIterator  aPEnd
-                                      , NT                  aWeight
-                                      , bool                aIsClosed
-                                      , Converter const&    aCvt 
-                                      ) 
-  {
-    Halfedge_handle rHead = enter_valid_contour(aPBegin, aPEnd, aIsClosed, aCvt ) ;
-    
-    Halfedge_handle lH = rHead ;
-    
-    do
-    {
-      CGAL_STSKEL_BUILDER_TRACE(1, "E" << hid(lH) << " is given weight " << aWeight );
-      lH->HBase_base::set_weight(aWeight);
-      Halfedge_handle lN = lH->next();
-      if ( !handle_assigned(lN) || lN == rHead )
-        break ;
-      lH = lN ;
-    }
-    while ( true ) ;
-    
-    return rHead ;
-  }
-
-  template<class InputPointIterator, class InputWeightIterator, class Converter>
-  Halfedge_handle enter_valid_contour ( InputPointIterator  aPBegin
-                                      , InputPointIterator  aPEnd
-                                      , InputWeightIterator aWBegin
-                                      , InputWeightIterator aWEnd
-                                      , bool                aIsClosed
-                                      , Converter const&    aCvt 
-                                      ) 
-  {
-	  Halfedge_handle rHead = enter_valid_contour(aPBegin, aPEnd, aIsClosed, aCvt ) ;
-	  
-	  if ( aWBegin != aWEnd )
-	  {
-	    InputWeightIterator wit = aWBegin ;
-  	  
-	    Halfedge_handle lH = rHead ;
-	    
-	    do
-	    {
-        CGAL_STSKEL_BUILDER_TRACE(1, "E" << hid(lH) << " is given weight " << ( wit != aWEnd ? *wit : -1 ) );
-  		  lH->HBase_base::set_weight(*wit);
-	      Halfedge_handle lN = lH->next();
-	      if ( !handle_assigned(lN) || lN == rHead )
-	        break ;
-        lH = lN ;
-	    }
-	    while ( ++ wit != aWEnd ) ;
-	  }
-	  
-	  return rHead ;
+    CGAL_STSKEL_BUILDER_TRACE(1
+                             , "CCW Border: E" << lFirstCCWBorder->id()
+                             << ' ' << lPrevVertex ->point() << " -> " << lFirstVertex->point() << '\n'
+                             << "CW  Border: E" << lFirstCCWBorder->opposite()->id()
+                             << ' ' << lFirstVertex->point() << " -> " << lPrevVertex ->point()
+                             );
+                             
+    mVisitor.on_contour_edge_entered(lFirstCCWBorder);
   }
   
 public:
@@ -1012,12 +876,10 @@ public:
     }
   } ; 
   
-  template<class InputPointIterator, class Converter, class NT>
+  template<class InputPointIterator, class Converter>
   Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin
                                              , InputPointIterator aEnd
-                                             , NT                 aWeight
-                                             , bool               aIsClosed      = true
-                                             , Converter const&   aCvt           = Converter() 
+                                             , Converter const&   cvt        
                                              , bool               aCheckValidity = true 
                                              )
   {
@@ -1035,9 +897,9 @@ public:
       while ( lList.size() > 0 && CGAL::compare_xy(lList.front(),lList.back()) == EQUAL ) 
         lList.pop_back();
       
-      if ( lList.size() >= ( aIsClosed ? 3u : 2u ) )
+      if ( lList.size() >= 3 )
       {
-        enter_valid_contour(lList.begin(), lList.end(), aWeight, aIsClosed, aCvt);
+        enter_valid_contour(lList.begin(),lList.end(),cvt);
       }
       else
       {
@@ -1046,70 +908,7 @@ public:
     }
     else
     {
-      enter_valid_contour(aBegin, aEnd, aWeight, aIsClosed, aCvt);
-    } 
-
-    return *this ;
-  }
-  
-  template<class InputPointIterator, class InputWeightIterator, class Converter>
-  Straight_skeleton_builder_2& enter_contour ( InputPointIterator  aPBegin
-                                             , InputPointIterator  aPEnd
-                                             , InputWeightIterator aWBegin
-                                             , InputWeightIterator aWEnd
-                                             , bool                aIsClosed      = true
-                                             , Converter const&    aCvt           = Converter()
-                                             , bool                aCheckValidity = true 
-                                             )
-  {
-    if ( aCheckValidity )
-    {
-      typedef typename std::iterator_traits<InputPointIterator> ::value_type Input_point;
-      typedef typename std::iterator_traits<InputWeightIterator>::value_type Input_weight;
-      
-      typedef std::vector<Input_point>  Input_point_vector ;
-      typedef std::vector<Input_weight> Input_weight_vector ;
-     
-      //
-      // Remove coincident consecutive vertices
-      //
-      Input_point_vector  lPList;
-      Input_weight_vector lWList ;
-      
-      InputWeightIterator wit = aWBegin;
-      for ( InputPointIterator pit = aPBegin; pit != aPEnd; ++ pit ) 
-      {
-        if( lPList.empty() || CGAL::compare_xy(lPList.back(),*pit) != EQUAL ) 
-        {
-	        lPList.push_back(*pit);
-	        
-	        if ( wit != aWEnd )
-	             lWList.push_back(*wit);
-	        else lWList.push_back( Input_weight(1.0) );
-        }
-        
-        if ( wit != aWEnd )
-          ++ wit ;  
-      }      
-
-      while ( lPList.size() > 0 && CGAL::compare_xy(lPList.front(),lPList.back()) == EQUAL ) 
-      {
-        lPList.pop_back();
-        lWList.pop_back();
-      }
-      
-      if ( lPList.size() >= ( aIsClosed ? 3u : 2u ) )
-      {
-        enter_valid_contour(lPList.begin(), lPList.end(), lWList.begin(), lWList.end(), aIsClosed, aCvt);
-      }
-      else
-      {
-        CGAL_STSKEL_BUILDER_TRACE(0,"Degenerate contour (less than 3 non-degenerate vertices).");
-      }
-    }
-    else
-    {
-      enter_valid_contour(aPBegin, aPEnd, aWBegin, aWEnd, aIsClosed, aCvt);
+      enter_valid_contour(aBegin,aEnd,cvt);
     } 
 
     return *this ;
@@ -1118,29 +917,15 @@ public:
   template<class InputPointIterator>
   Straight_skeleton_builder_2& enter_contour ( InputPointIterator aBegin
                                              , InputPointIterator aEnd
-                                             , double             aWeight        = 1.0
-                                             , bool               aIsClosed      = true
                                              , bool               aCheckValidity = true 
                                              )
   {
-    return enter_contour(aBegin, aEnd, aWeight, aIsClosed, Cartesian_converter<K,K>(), aCheckValidity);
-  }                          
-  
-  template<class InputPointIterator, class InputWeightIterator>
-  Straight_skeleton_builder_2& enter_contour ( InputPointIterator  aPBegin
-                                             , InputPointIterator  aPEnd
-                                             , InputWeightIterator aWBegin
-                                             , InputWeightIterator aWEnd
-                                             , bool                aIsClosed      = true
-                                             , bool                aCheckValidity = true 
-                                             )
-  {
-    return enter_contour(aPBegin, aPEnd, aWBegin, aWEnd, aIsClosed, Cartesian_converter<K,K>(), aCheckValidity ) ;
+    return enter_contour(aBegin, aEnd, Cartesian_converter<K,K>(), aCheckValidity);
   }                                             
 
 } ;
 
-} //namespace CGAL
+CGAL_END_NAMESPACE
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_2_impl.h>
 
