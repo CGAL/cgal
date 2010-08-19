@@ -49,12 +49,6 @@ class Periodic_3_triangulation_statically_filtered_traits_3 : public Traits
 {
   typedef Periodic_3_triangulation_statically_filtered_traits_3<Traits> Self;
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
-  using Traits::_domain;
-  using Traits::_domain_e;
-  using Traits::_domain_f;
-#endif
-
 public:
 
   typedef internal::Static_filters_predicates::Periodic_3_orientation_3<Traits>
@@ -63,10 +57,12 @@ public:
     Side_of_oriented_sphere_3;
 
   Orientation_3 orientation_3_object() const {
-    return Orientation_3(&_domain,&_domain_e,&_domain_f);
+    return Orientation_3(&this->_domain,&this->_domain_e,&this->_domain_f);
   }
   Side_of_oriented_sphere_3  side_of_oriented_sphere_3_object() const {
-    return Side_of_oriented_sphere_3(&_domain,&_domain_e,&_domain_f);
+    return Side_of_oriented_sphere_3(&this->_domain,
+                                     &this->_domain_e,
+                                     &this->_domain_f);
   }
 };
 
