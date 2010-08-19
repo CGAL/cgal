@@ -51,21 +51,21 @@ int main()
   std::cout.precision(20);
 
   std::cout << "Testing double :" << std::endl;
-  test(double());
+  ::test(double());
   std::cout << "Testing float :" << std::endl;
-  test(float());
+  ::test(float());
   std::cout << "Testing int :" << std::endl;
-  test(int());
+  ::test(int());
 
 #ifdef CGAL_USE_LEDA
   std::cout << "Testing leda_real :" << std::endl;
-  test(leda_real());
+  ::test(leda_real());
   std::cout << "Testing leda_bigfloat :" << std::endl;
-  test(leda_bigfloat());
+  ::test(leda_bigfloat());
   std::cout << "Testing leda_integer :" << std::endl;
-  test(leda_integer());
+  ::test(leda_integer());
   std::cout << "Testing leda_rational :" << std::endl;
-  test(leda_rational());
+  ::test(leda_rational());
 #endif
 
 #ifdef CGAL_USE_GMP
@@ -76,7 +76,7 @@ int main()
 #if 0
 #ifdef CGAL_USE_CLN
   std::cout << "Testing cl_integer :" << std::endl;
-  test(cl_integer());
+  ::test(cl_integer());
 #endif
 #endif
   
