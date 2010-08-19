@@ -36,7 +36,7 @@ public:
 
   K_neighbor_search(Tree& tree, const typename Base::Query_item& q,  
     unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
-    : Base(tree,q,k,Eps,Search_nearest,d) 
+    : Base(q,k,Eps,Search_nearest,d) 
   {
     if (tree.empty()) return;
     compute_neighbors_general(tree.root(),tree.bounding_box());
