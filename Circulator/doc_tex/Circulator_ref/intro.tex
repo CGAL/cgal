@@ -15,8 +15,9 @@ The concept of iterators in the \stl\ is tailored for linear sequences.
 \cgal\ extends this in several directions.  First, it supports the notion
 of \ccc{Handle} (also sometimes refered to as the trivial iterator) which is
 used to document that no traversal operation is needed, only reference to an
-element.  It also uses the \ccc{Range} concept which encapsulates the access to
-both the first and the past-the-end iterators of an iterator range.
+element.  It also uses the \ccc{Range} and \ccc{ConstRange} concepts which
+encapsulates the access to both the first and the past-the-end iterators of an
+iterator range.
 
 Besides linear sequences, circular sequences also occur naturally in many combinatorial
 and geometric structures. Examples are polyhedral surfaces and planar
@@ -35,6 +36,7 @@ circulators as well as with iterators.
 
 \ccRefConceptPage{Handle}\\
 \ccRefConceptPage{Range}\\
+\ccRefConceptPage{ConstRange}\\
 \ccRefConceptPage{Circulator}\\
 \ccc{Forward_circulator}\\
 \ccc{Bidirectional_circulator}\\

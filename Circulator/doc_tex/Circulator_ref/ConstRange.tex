@@ -1,0 +1,38 @@
+\begin{ccRefConcept}{ConstRange}
+
+\ccDefinition
+
+A constant iterator range.  Refer to the \ccc{Range} concept for more details.
+
+\ccRefines
+
+Boost's Range concept
+
+\ccCreationVariable{r}  %% choose variable name
+
+\ccTypes
+
+\ccNestedType{const_iterator} {The constant iterator type.}
+
+\ccHeading{Member functions}
+
+\def\ccTagRmTrailingConst{\ccFalse}
+
+\ccMethod{const_iterator begin() const;}{returns the const iterator pointing to the first element.}
+\ccGlue
+\ccMethod{const_iterator end() const;}{returns the past-the-end const iterator.}
+
+\ccMethod{difference_type size() const;}{returns the size of the range.}
+\ccGlue
+\ccMethod{bool empty() const;}{returns whether the range is empty.}
+
+\def\ccTagRmTrailingConst{\ccTrue}
+
+\ccHasModels
+STL containers\\
+\ccc{boost::iterator_range}
+
+\ccSeeAlso
+\ccc{Range}
+
+\end{ccRefConcept}
