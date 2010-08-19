@@ -75,26 +75,7 @@ void SkeletonIpelet::draw_straight_skeleton(const Skeleton& skeleton,double max_
                                 i != skeleton.halfedges_end();
                                 ++i )
     if ( i->is_bisector() && ((i->id()%2)==0) ){
-      if ( !i->has_infinite_time() && !i->opposite()->has_infinite_time() )
-      {
         out++=Segment_2(i->opposite()->vertex()->point(),i->vertex()->point());
-      }
-      else
-      {
-        Halfedge_const_handle outh = i->has_infinite_time() ? i : i->opposite();
-
-        Halfedge_const_handle contour_edge_0 = outh            ->defining_contour_edge();
-        Halfedge_const_handle contour_edge_1 = outh->opposite()->defining_contour_edge();
-
-        Point_2 const& p0 = contour_edge_0->opposite()->vertex()->point();  
-        Point_2 const& p1 = contour_edge_0            ->vertex()->point();  
-        Point_2 const& p2 = contour_edge_1            ->vertex()->point();
-
-        Kernel::Vector_2 bisect = CGAL::ccw_angular_bisector_2(p0, p1, p2, contour_edge_0->weight(), contour_edge_1->weight());
-
-        Point_2 s=outh->opposite()->vertex()->point();
-        out++=Segment_2(s , (s - bisect/CGAL::sqrt(bisect*bisect)*max_edge) );
-      }
     }
   draw_in_ipe(seglist.begin(),seglist.end());
 }
@@ -139,7 +120,7 @@ void SkeletonIpelet::protected_run(int fn)
     case 3://Exterior offset
     case 5://Exterior offsets
     case 1://Exterior skeleton
-      ss = CGAL::create_exterior_straight_skeleton_2(polygon);      
+      ss = CGAL::create_exterior_straight_skeleton_2(max_edge,polygon);      
       break;
     case 2://Interior offset
     case 4://Interior offsets
