@@ -37,35 +37,12 @@
   CGAL_Filtered_Bbox_Circular_Kernel_pred(Compare_xy_2, compare_xy_2_object)
   CGAL_Filtered_Bbox_Circular_Kernel_pred(Has_on_2, has_on_2_object)
   CGAL_Filtered_Bbox_Circular_Kernel_pred(Compare_y_at_x_2, compare_y_at_x_2_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_pred(Compare_y_to_right_2, compare_y_to_right_2_object)
   CGAL_Filtered_Bbox_Circular_Kernel_pred(Do_overlap_2, do_overlap_2_object)
   CGAL_Filtered_Bbox_Circular_Kernel_pred(Equal_2, equal_2_object)
   CGAL_Filtered_Bbox_Circular_Kernel_pred(In_x_range_2, in_x_range_2_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_pred(Do_intersect_2, do_intersect_2_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_pred(Is_vertical_2, is_vertical_2_object)
 
-  CGAL_Filtered_Bbox_Circular_Kernel_cons(Construct_line_arc_2,
-  construct_line_arc_2_object_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_cons(Construct_circular_arc_2,
-  construct_circular_arc_2_object_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_cons(Construct_circular_source_vertex_2,
-  construct_circular_source_vertex_2_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_cons(Construct_circular_target_vertex_2,
-  construct_circular_target_vertex_2_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_cons(Construct_circular_min_vertex_2,
-  construct_circular_min_vertex_2_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_cons(Construct_circular_max_vertex_2,
-  construct_circular_max_vertex_2_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_cons(Make_x_monotone_2,
-  make_x_monotone_2_object)
   CGAL_Filtered_Bbox_Circular_Kernel_cons(Intersect_2,
   intersect_2_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_cons(Split_2,
-  split_2_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_cons(Construct_bbox_2,
-  construct_bbox_2_object)
-  CGAL_Filtered_Bbox_Circular_Kernel_cons(Construct_circular_arc_point_2,
-  construct_circular_arc_point_2_object)
 
 #undef CGAL_Filtered_Bbox_Circular_Kernel_pred
 #undef CGAL_Filtered_Bbox_Circular_Kernel_cons

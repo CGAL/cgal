@@ -34,7 +34,7 @@ namespace CGAL {
 namespace internal {
 
   template <class CK >
-  class Circular_arc_point_2
+  class Circular_arc_point_2_base
   {
     typedef typename CK::FT                      FT;
     typedef typename CK::Root_of_2               Root_of_2;
@@ -44,14 +44,14 @@ namespace internal {
     typedef typename CK::Root_for_circles_2_2 Root_for_circles_2_2;
     typedef typename CK::template Handle<Root_for_circles_2_2>::type  Base;
     
-    Circular_arc_point_2() 
+    Circular_arc_point_2_base() 
     {}
     
-    Circular_arc_point_2(const Root_for_circles_2_2 & np)
+    Circular_arc_point_2_base(const Root_for_circles_2_2 & np)
       :  _p(np)
     {}
 
-    Circular_arc_point_2(const Point_2 & p)
+    Circular_arc_point_2_base(const Point_2 & p)
       :  _p(p.x(),p.y()/*,1,1,-p.x()-p.y()*/)
     {}
 
@@ -69,7 +69,7 @@ namespace internal {
     const Root_for_circles_2_2 & coordinates() const 
     { return get(_p); }
 
-    bool equal_ref(const Circular_arc_point_2 &p) const
+    bool equal_ref(const Circular_arc_point_2_base &p) const
     {
       return CGAL::identical(_p, p._p);      
     }
@@ -80,11 +80,83 @@ namespace internal {
 
   template < typename CK >
   std::ostream &
-  print(std::ostream & os, const Circular_arc_point_2<CK> &p)
+  print(std::ostream & os, const Circular_arc_point_2_base<CK> &p)
   {
     return os << "CirclArcEndPoint_2(" << std::endl
 	      << p.x() << ", " << p.y() << ')';
   }
+
+template < typename BK >
+class Filtered_bbox_circular_arc_point_2_base
+  : public Circular_arc_point_2_base<BK> 
+{
+public:
+  typedef Filtered_bbox_circular_arc_point_2_base<BK> Self;
+  typedef Circular_arc_point_2_base<BK> P_point;
+
+  typedef typename BK::Point_2               Point_2;
+  typedef typename BK::Root_for_circles_2_2  Root_for_circles_2_2;
+
+  void trace_bb() const { 
+    std::cerr << "Creation bb = " << (void*)(bb);
+    if(bb) {
+      std::cerr << " (" << *bb << ")";
+    }
+    std::cerr << "\n";
+  }
+
+  ////Construction/////
+  Filtered_bbox_circular_arc_point_2_base()
+    : P_point(), bb(NULL)
+  {}
+
+  explicit Filtered_bbox_circular_arc_point_2_base(const Root_for_circles_2_2 & np)
+    : P_point(np), bb(NULL)
+  {trace_bb();}
+
+  explicit Filtered_bbox_circular_arc_point_2_base(const Point_2 & p)
+    : P_point(p), bb(NULL)
+  {trace_bb();}
+
+  Filtered_bbox_circular_arc_point_2_base(const Self &c) 
+    : P_point(c), bb(c.bb ? new Bbox_2(*(c.bb)) : NULL)
+  {trace_bb();}
+
+  Filtered_bbox_circular_arc_point_2_base&
+  operator=(const Self& c) {
+    if(this != &c)
+    {
+      this->P_point::operator=(c);
+      bb = c.bb ? new Bbox_2(*(c.bb)) : NULL;
+    }
+    return *this;
+  }
+	
+  ~Filtered_bbox_circular_arc_point_2_base() {
+    std::cerr << "Destruction, bb = " << (void*)(bb) << std::endl;
+    if(bb) {
+      delete bb; 
+      bb = 0;
+    }
+  }
+
+  ////Bbox related accessors////
+  
+  bool has_no_bbox() const
+  { return (bb==NULL);}
+
+  Bbox_2  bbox() const
+  { 
+    if(this->has_no_bbox())
+      bb= new Bbox_2(P_point::bbox());
+              
+    return *bb;     
+  }
+
+private:
+  mutable Bbox_2         *bb;
+}; // end class Filtered_bbox_circular_arc_point_2_base
+
 
 } // namespace internal
 } // namespace CGAL

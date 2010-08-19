@@ -38,10 +38,10 @@ template < class FilteredBboxKernel, class CircularKernel >
 struct Filtered_bbox_circular_kernel_base_ref_count : public CircularKernel
 {
 	
-	typedef CGAL::Circular_arc_2<FilteredBboxKernel>           Circular_arc_2;
-  typedef CGAL::Line_arc_2<FilteredBboxKernel>               Line_arc_2;
-  typedef CGAL::Circular_arc_point_2<FilteredBboxKernel>     Circular_arc_point_2;
-	
+  typedef internal::Filtered_bbox_circular_arc_2_base<FilteredBboxKernel> Circular_arc_2;
+  typedef internal::Filtered_bbox_line_arc_2_base<FilteredBboxKernel> Line_arc_2;
+  typedef internal::Filtered_bbox_circular_arc_point_2_base<FilteredBboxKernel>     Circular_arc_point_2;
+
   // The mechanism that allows to specify reference-counting or not.
   template < typename T >
   struct Handle { typedef Handle_for<T>    type; };
