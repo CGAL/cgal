@@ -20,21 +20,14 @@
 
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
-
-#define MAKE_A_PLUGIN 1
-
-#ifdef MAKE_A_PLUGIN
 #include "Point_set_scene_item.h"
-#else
-typedef std::vector<CGAL::Point_with_normal_3<Kernel> > Point_set;
 
-#endif
 
 // Poisson implicit function
 typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 
 // Surface mesher
-typedef CGAL::Surface_mesher::Surface_mesh_default_triangulation_3_generator<Kernel>::Type STr;
+typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
@@ -52,12 +45,6 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                                 FT sm_distance) // Approximation error w.r.t. point set average spacing.
 {
     CGAL::Timer task_timer; task_timer.start();
-
-    std::cerr << "Input for poisson_reconstruct"
-              << "\n| points| = " << points.size()
-              << "\nsm_angle = " << sm_angle
-              << "\nsm_radius = " << sm_radius
-              << "\nsm_distance = " << sm_distance << std::endl;
 
     //***************************************
     // Checks requirements
@@ -215,20 +202,3 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     return output_mesh;
 }
 
-
-#ifndef MAKE_A_PLUGIN
-int main()
-{
-  Point_set points;
-  Kernel::Point_3 p;
-  Kernel::Vector_3 v;
-  typedef CGAL::Point_with_normal_3<Kernel> Pwn;
-  while(std::cin >> p >> v){
-    points.push_back(Pwn(p,v));
-  }
-  FT sm_angle = 20, sm_radius = 100, sm_distance = 0.25;
-  poisson_reconstruct(points, sm_angle, sm_radius, sm_distance);
-  return 0;
-}
-
-#endif
