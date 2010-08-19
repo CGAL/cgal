@@ -289,27 +289,8 @@ add_config_flag( CGAL_USE_MPFR )
 add_config_flag( CGAL_USE_GMPXX )
 add_config_flag( CGAL_USE_LEDA )
 
-# Disable CORE if the architecture is 64 bits.
-#if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-#  message(STATUS "Detected 64bit architecture, disable CGAL_Core")
-#  set(CGAL_USE_CORE 0)
-#  set(CGAL_NO_CORE ON)
-#else()
-#  set(CGAL_USE_CORE ${CGAL_USE_GMP})
-#endif()
-
-# For CGAL-3.7, CORE is enable, even on 64 bits architectures.
-# For CGAL-3.8, we will probably switch to CORE-2.x, hoping there
-# will be less bugs.
 set(CGAL_USE_CORE ${CGAL_USE_GMP})
 add_config_flag( CGAL_USE_CORE )
-
-if(CGAL_USE_CORE)
-  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(CGAL_CORE_1_7_64BITS 1)
-    add_config_flag(CGAL_CORE_1_7_64BITS)
-  endif()
-endif(CGAL_USE_CORE)
 
 if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
   file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>\n\n" )
