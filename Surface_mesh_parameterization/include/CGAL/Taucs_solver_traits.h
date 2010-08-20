@@ -41,6 +41,10 @@
 #include <cfloat>
 #include <climits>
 
+#ifdef _MSC_VER
+#include <io.h>
+#endif
+
 namespace CGAL {
 
 
@@ -280,10 +284,18 @@ public:
 
             // Create multi-file for out-of-core swapping.
             // Note: g++ complains that tempnam() is deprecated. You may safely ignore the warning.
+#ifdef _MSC_VER
+            char template_name[13] = {'t', 'a', 'u', 'c', 's','.','X','X','X','X','X','X', '\0' };
+            char* matrixfile = _mktemp(template_name);
+            if (matrixfile == NULL)
+                throw std::runtime_error("Cannot Create Multifile");
+            boost::shared_ptr<taucs_io_handle> oocL(taucs_io_create_multifile(matrixfile), taucs_io_delete);
+#else
             boost::shared_ptr<char> matrixfile(tempnam(NULL, "taucs.L"), free);
             if (matrixfile == NULL)
                 throw std::runtime_error("Cannot Create Multifile");
             boost::shared_ptr<taucs_io_handle> oocL(taucs_io_create_multifile(matrixfile.get()), taucs_io_delete);
+#endif
             if (oocL == NULL)
                 throw std::runtime_error("Cannot Create Multifile");
 
