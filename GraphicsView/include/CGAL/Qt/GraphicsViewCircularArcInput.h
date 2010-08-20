@@ -77,7 +77,7 @@ private:
 
 template <typename K>
 GraphicsViewCircularArcInput<K>::GraphicsViewCircularArcInput(QObject *parent, QGraphicsScene* s)
-  : GraphicsViewInput(parent), scene_(s), count(0)
+  : GraphicsViewInput(parent), count(0), scene_(s)
 {
   qline = new QGraphicsLineItem();
   qcarc = new CircularArcGraphicsItem<K>();

@@ -1,10 +1,7 @@
 /*test file for polygon validation. Intended for testing the global functions defined at Gps_polygon_validation.h*/
 
-
-#ifndef CGAL_BSO_RATIONAL_NT_H
-#define CGAL_BSO_RATIONAL_NT_H
-
 #include <CGAL/basic.h>
+#include <CGAL/assertions_behaviour.h>
 
 #ifdef CGAL_USE_GMP
   // GMP is installed. Use the GMP rational number-type.
@@ -16,8 +13,6 @@
   #include <CGAL/Quotient.h>
   typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
 #endif
-#endif
-
 
 
 #include <CGAL/Cartesian.h>
@@ -88,8 +83,26 @@ bool testValidationForFile(const char * infilename, std::ofstream & outfile ,
   return res;
 }
 
+void
+special_warnings(const char *,
+                 const char* expr,
+                 const char* file,
+                 int         line,
+                 const char* msg )
+{
+  std::cerr << "  // CGAL: check violation! THIS MESSAGE IS PROBABLY WANTED." << std::endl
+            << "  // Expression : " << expr << std::endl
+            << "  // File       : " << file << std::endl
+            << "  // Line       : " << line << std::endl
+            << "  // Explanation: " << msg << std::endl
+            << "  // Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html"
+            << std::endl;
+}
+
 int main (int argc, char * argv[])
 {
+  std::cerr << "Modify the w-a-r-n-i-n-g-s handler...\n";
+  CGAL::set_warning_handler(special_warnings);
   std::string testfilePrefix = "data/validation/val_test";
   std::string testfileSuffix = ".dat";   
   const char* outputfilename = "data/validation/validation_test_output.txt"; 

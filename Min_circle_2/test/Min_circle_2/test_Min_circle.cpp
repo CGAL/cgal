@@ -66,7 +66,7 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
     CGAL::Verbose_ostream verr( verbose);
 
     // generate `n' points at random
-    const int     n = 20;
+    const std::size_t     n = 20;
     CGAL::Random  random_x, random_y;
     Point         random_points[ n];
     std::size_t   i;
