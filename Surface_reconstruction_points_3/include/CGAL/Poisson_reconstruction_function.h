@@ -262,11 +262,10 @@ public:
   {
     m_hint = m_tr->locate(p,m_hint);
 
-    if(m_hint == NULL)
-      return 1e38;
-
-    if(m_tr->is_infinite(m_hint))
-      return 1e38;
+    if(m_tr->is_infinite(m_hint)) {
+      int i = m_hint->index(m_tr->infinite_vertex());
+      return m_hint->vertex((i+1)&3)->f();
+    }
 
     FT a,b,c,d;
     barycentric_coordinates(p,m_hint,a,b,c,d);
