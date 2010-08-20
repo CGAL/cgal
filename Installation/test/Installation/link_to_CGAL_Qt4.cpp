@@ -6,7 +6,6 @@ typedef QRectF (*mapToSceneFunction)(const QGraphicsView* , const QRect);
 
 int main()
 {
-  volatile mapToSceneFunction f = CGAL::Qt::mapToScene;
-  
-  return (&f != 0) ? 0 : 1;
+  mapToSceneFunction f = CGAL::Qt::mapToScene;
+  return (&f > 0) ? 0 : 1;
 }
