@@ -422,7 +422,7 @@ fill_matrix(InputIterator begin, InputIterator end,
     y = itb->y();
     //  Z[line_count] = itb->z();
     Z.set(line_count,itb->z());
-    for (int k=0; k <= d; k++) for (int i=0; i<=k; i++)
+    for (std::size_t k=0; k <= d; k++) for (std::size_t i=0; i<=k; i++)
       M.set(line_count, k*(k+1)/2+i, std::pow(x,k-i)*std::pow(y,i)
 		/(fact(i)*fact(k-i)*std::pow(this->preconditionning,k)));
     line_count++;
