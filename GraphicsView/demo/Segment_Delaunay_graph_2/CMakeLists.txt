@@ -40,7 +40,7 @@ qt4_wrap_ui( CDT_UI_FILES Segment_voronoi_2.ui )
 qt4_add_resources ( CDT_RESOURCE_FILES ./Segment_voronoi_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
-qt4_generate_moc( Segment_voronoi_2.cpp Segment_voronoi_2.moc )
+qt4_generate_moc( "Segment_voronoi_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Segment_voronoi_2.moc" )
 
 # The executable itself.
 add_executable  ( Segment_voronoi_2 Segment_voronoi_2.cpp Segment_voronoi_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
