@@ -97,14 +97,6 @@ public:
   typedef typename BK::Point_2               Point_2;
   typedef typename BK::Root_for_circles_2_2  Root_for_circles_2_2;
 
-  void trace_bb() const { 
-    std::cerr << "Creation bb = " << (void*)(bb);
-    if(bb) {
-      std::cerr << " (" << *bb << ")";
-    }
-    std::cerr << "\n";
-  }
-
   ////Construction/////
   Filtered_bbox_circular_arc_point_2_base()
     : P_point(), bb(NULL)
@@ -112,15 +104,15 @@ public:
 
   explicit Filtered_bbox_circular_arc_point_2_base(const Root_for_circles_2_2 & np)
     : P_point(np), bb(NULL)
-  {trace_bb();}
+  {}
 
   explicit Filtered_bbox_circular_arc_point_2_base(const Point_2 & p)
     : P_point(p), bb(NULL)
-  {trace_bb();}
+  {}
 
   Filtered_bbox_circular_arc_point_2_base(const Self &c) 
     : P_point(c), bb(c.bb ? new Bbox_2(*(c.bb)) : NULL)
-  {trace_bb();}
+  {}
 
   Filtered_bbox_circular_arc_point_2_base&
   operator=(const Self& c) {
@@ -133,7 +125,6 @@ public:
   }
 	
   ~Filtered_bbox_circular_arc_point_2_base() {
-    std::cerr << "Destruction, bb = " << (void*)(bb) << std::endl;
     if(bb) {
       delete bb; 
       bb = 0;
