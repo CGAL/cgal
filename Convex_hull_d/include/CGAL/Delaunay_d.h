@@ -210,10 +210,11 @@ public:
       bool cocirc = DT->is_S_cocircular();
       // Note [Sylvain,2007-03-08] : I added some parentheses to fix a warning,
       // I hope I got the logic right.
+      // Note: I have add a new pair of parentheses. Laurent Rineau, 2010/08/20
       while ( base() != DT->simplices_end() &&
-              !( ( cocirc && DT->is_bounded_simplex(base()) ) ||
-                 ( !cocirc && DT->is_unbounded_simplex(base()) ) && 
-                 DT->type_of(base()) == tf ) ) {
+              !( ( ( cocirc && DT->is_bounded_simplex(base()) ) ||
+                   ( !cocirc && DT->is_unbounded_simplex(base()) ) )
+                 && DT->type_of(base()) == tf ) ) {
          Base_iterator::operator++();
       }
     }
@@ -229,10 +230,11 @@ public:
         Base_iterator::operator++();
       // Note [Sylvain,2007-03-08] : I added some parentheses to fix a warning,
       // I hope I got the logic right.
+      // Note: I have add a new pair of parentheses. Laurent Rineau, 2010/08/20
       } while ( base() != DT->simplices_end() &&
-                !( ( cocirc && DT->is_bounded_simplex(base()) ) ||
-                   ( !cocirc && DT->is_unbounded_simplex(base()) ) && 
-                   DT->type_of(base()) == tf ) );
+                !( ( ( cocirc && DT->is_bounded_simplex(base()) ) ||
+                     ( !cocirc && DT->is_unbounded_simplex(base()) ) 
+                     ) && DT->type_of(base()) == tf ) );
       return *this; 
     }
     Simplex_iterator  operator++(int) 
