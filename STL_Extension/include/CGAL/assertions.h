@@ -56,7 +56,9 @@ inline bool possibly(Uncertain<bool> c);
 // ----------
 
 #ifdef NDEBUG
-#  define CGAL_NDEBUG
+#  ifndef CGAL_NDEBUG
+#    define CGAL_NDEBUG
+#  endif
 #endif
 
 #ifdef CGAL_NDEBUG
