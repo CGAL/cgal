@@ -259,8 +259,7 @@ class Min_circle_2 {
             tco.circle.set( );
             break;
           default:
-            CGAL_optimisation_assertion( ( n_support_points >= 0) &&
-                                         ( n_support_points <= 3) ); }
+            CGAL_optimisation_assertion( n_support_points <= 3 ); }
     }
 
     void
