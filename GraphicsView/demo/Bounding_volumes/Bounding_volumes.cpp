@@ -68,7 +68,7 @@ private:
   CGAL::Qt::PolygonGraphicsItem<Polygon_2> * min_parallelogram_gi;
   QGraphicsEllipseItem *cgi, *egi;
 
-  const int P;
+  const std::size_t P;
   QGraphicsRectItem *p_center[3];
   Iso_rectangle_2 p_center_iso_rectangle[3];
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
@@ -116,7 +116,7 @@ signals:
 
 
 MainWindow::MainWindow()
-  : P(3), DemosMainWindow()
+  : DemosMainWindow(), P(3)
 {
   setupUi(this);
 
@@ -133,7 +133,7 @@ MainWindow::MainWindow()
   egi->hide();
   scene.addItem(egi);
   
-  for(int i =0; i < P; i++){
+  for(std::size_t i =0; i < P; i++){
     p_center[i] = new QGraphicsRectItem;
     p_center[i]->setPen(QPen(Qt::cyan, 0, Qt::SolidLine));
     p_center[i]->hide(); 
@@ -405,7 +405,7 @@ MainWindow::on_actionShowConvexHull_toggled(bool checked)
 void
 MainWindow::on_actionShowPCenter_toggled(bool checked)
 {
-  for(int i =0; i < P; i++){
+  for(std::size_t i =0; i < P; i++){
     p_center[i]->setVisible(checked);
   }
   emit (changed());
@@ -420,7 +420,7 @@ MainWindow::on_actionClear_triggered()
   convex_hull.clear();
   min_rectangle.clear();
   min_parallelogram.clear();
-  for(int i=0; i < P;i++){
+  for(std::size_t i=0; i < P;i++){
     p_center[i]->hide();
   }
   emit(changed());
@@ -451,7 +451,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
 
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  for(int i = 0; i < number_of_points; ++i){
+  for(std::size_t i = 0; i < number_of_points; ++i){
     Point_2 p = *pg++;
     mc.insert(p);
     me.insert(p);
