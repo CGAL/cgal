@@ -55,6 +55,7 @@ hert = Susan Hert <hert@mpi-sb.mpg.de>
 hervebronnimann = Hervé Brönnimann <Herve.Bronnimann@sophia.inria.fr>
 hoffmann = Michael Hoffmann <hoffmann@inf.ethz.ch>
 isuslov = Ilya Suslov <Ilya.Suslov@sophia.inria.fr>
+jeanmoug = Marc Jeanmougin <Marc.Jeanmougin@sophia.inria.fr>
 jflotott = Julia Flötotto <Julia.Flototto@sophia.inria.fr>
 jhazebro = Julien Hazebrouck <Julien.Hazebrouck@sophia.inria.fr>
 jlenorma = Jacques Le Normand <Jacques.Le.Normand@sophia.inria.fr>
