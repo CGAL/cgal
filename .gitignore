@@ -45,6 +45,11 @@ Apollonius_graph_2/demo/Apollonius_graph_2/*.exe
 Apollonius_graph_2/demo/Apollonius_graph_2/*.vcproj
 Apollonius_graph_2/demo/Apollonius_graph_2/Makefile
 Apollonius_graph_2/demo/Apollonius_graph_2/apollonius_graph_2
+BGL/examples/BGL_arrangement_2/CMakeLists.txt
+BGL/examples/BGL_arrangement_2/Makefile
+BGL/examples/BGL_arrangement_2/cgal_test_with_cmake
+BGL/examples/BGL_arrangement_2/dual
+BGL/examples/BGL_arrangement_2/primal
 Boolean_set_operations_2/demo/Boolean_set_operations_2/*.exe
 Boolean_set_operations_2/demo/Boolean_set_operations_2/*.sln
 Boolean_set_operations_2/demo/Boolean_set_operations_2/*.vcproj
