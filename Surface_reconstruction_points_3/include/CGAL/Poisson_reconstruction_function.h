@@ -617,7 +617,7 @@ private:
     // sum up areas
     FT area = 0.0;
     const Point& a = voronoi_points[0];
-    unsigned int nb_triangles = voronoi_points.size() - 2;
+    unsigned int nb_triangles = voronoi_points.size() - 1;
     for(unsigned int i=1;i<nb_triangles;i++)
     {
       const Point& b = voronoi_points[i];
@@ -721,19 +721,27 @@ private:
                             double lambda)
   {
     // for each vertex vj neighbor of vi
-    std::vector<Vertex_handle> vertices;
-    m_tr->incident_vertices(vi,std::back_inserter(vertices));
+    std::vector<Edge> edges;
+    m_tr->incident_edges(vi,std::back_inserter(edges));
+
     double diagonal = 0.0;
-    for(typename std::vector<Vertex_handle>::iterator it = vertices.begin();
-        it != vertices.end();
+
+  for(typename std::vector<Edge>::iterator it = edges.begin();
+        it != edges.end();
         it++)
     {
-      Vertex_handle vj = *it;
+      Vertex_handle vj = it->first->vertex(it->third);
+      if(vj == vi){
+        vj = it->first->vertex(it->second);
+      }
       if(m_tr->is_infinite(vj))
         continue;
 
       // get corresponding edge
-      Edge edge = sorted_edge(vi,vj);
+      Edge edge( it->first, it->first->index(vi), it->first->index(vj));
+      if(vi->index() < vj->index()){
+        std::swap(edge.second,  edge.third);
+      }
 
       double cij = cotan_geometric(edge);
       if(vj->constrained())
@@ -743,28 +751,14 @@ private:
 
       diagonal += cij;
     }
-
     // diagonal coefficient
     if (vi->type() == Triangulation::INPUT)
       A.set_coef(vi->index(),vi->index(), diagonal + lambda, true /*new*/) ;
     else
       A.set_coef(vi->index(),vi->index(), diagonal, true /*new*/);
+
   }
 
-  Edge sorted_edge(Vertex_handle vi,
-                   Vertex_handle vj)
-  {
-    int i1 = 0;
-    int i2 = 0;
-    Cell_handle cell = NULL;
-    bool success;
-    if(vi->index() > vj->index())
-      success = m_tr->is_edge(vi,vj,cell,i1,i2);
-    else
-      success = m_tr->is_edge(vj,vi,cell,i1,i2);
-    CGAL_surface_reconstruction_points_assertion(success);
-    return Edge(cell,i1,i2);
-  }
 
   /// Computes enlarged geometric bounding sphere of the embedded triangulation.
   Sphere enlarged_bounding_sphere(FT ratio) const
