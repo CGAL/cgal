@@ -160,7 +160,6 @@ public:
 
   bool is_zero() const
   {
-    CGAL_assertion( coefs_.empty() == (coefs_.size()==0) );
     return degree()==-1;
   }
 
