@@ -92,6 +92,7 @@ public:
   typedef typename Decorator_traits::SVertex_handle       SVertex_handle;   
   typedef typename Decorator_traits::SHalfedge_handle     SHalfedge_handle;   
   typedef typename Decorator_traits::SHalfloop_handle     SHalfloop_handle;   
+  typedef typename Decorator_traits::SHalfloop_const_handle     SHalfloop_const_handle;   
   typedef typename Decorator_traits::SFace_handle         SFace_handle;     
 
   typedef typename Decorator_traits::SVertex_iterator     SVertex_iterator;
@@ -207,7 +208,7 @@ public:
       
       if ( this->has_shalfloop() && this->shalfloop()->circle().has_on(p)) {
 	CGAL_NEF_TRACEN( "  on loop");
-	return make_object(SHalfloop_handle(this->shalfloop()));
+	return make_object(SHalfloop_const_handle(this->shalfloop()));
       }
     }
     
@@ -222,7 +223,7 @@ public:
 
     SVertex_handle v_res;
     SHalfedge_handle e_res;
-    SHalfloop_handle l_res(this->shalfloop());
+    SHalfloop_const_handle l_res(this->shalfloop());
     SOLUTION solution;
 
     CGAL_NEF_TRACEN("  on face...");
@@ -310,7 +311,7 @@ public:
       case is_edge_: 
         return make_object(SFace_handle(e_res->incident_sface()));
       case is_loop_:
-        return make_object(SFace_handle(l_res->incident_sface()));
+        return make_object(SFace_const_handle(l_res->incident_sface()));
       case is_vertex_:
         return make_object(SFace_handle(v_res->incident_sface()));
       default: CGAL_error_msg("missing solution.");
