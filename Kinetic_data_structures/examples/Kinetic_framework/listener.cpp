@@ -9,7 +9,7 @@ public:
   Notifier(): data_(0){}
 
   typedef CGAL::Kinetic::Ref_counted<Notifier> Base;
-  CGAL_KINETIC_LISTENER1(DATA_CHANGED);
+  CGAL_KINETIC_LISTENER1(DATA_CHANGED)
 public:
 
   int data() const {return data_;}
@@ -28,7 +28,7 @@ template <class Data>
 class Receiver: public CGAL::Kinetic::Ref_counted<Receiver<Data> > {
   typedef Receiver<Data> This;
   typedef ::Notifier<Data> Notifier;
-  CGAL_KINETIC_LISTEN1(Notifier, DATA_CHANGED, ping());
+  CGAL_KINETIC_LISTEN1(Notifier, DATA_CHANGED, ping())
 public:
   Receiver( Notifier* p){
     CGAL_KINETIC_INIT_LISTEN(Notifier, p);
