@@ -196,6 +196,8 @@ public:
                                  SHalfedge_around_sface_circulator;
   typedef typename SM_const_decorator::SHalfedge_around_svertex_const_circulator 
                                        SHalfedge_around_svertex_const_circulator; 
+
+  using SNC_decorator::is_standard;
   
   enum{NORMAL, CORNER, DEGENERATE};
 

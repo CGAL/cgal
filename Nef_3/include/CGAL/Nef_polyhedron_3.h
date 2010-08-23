@@ -330,6 +330,10 @@ protected:
                                                    SFace_cycle_const_iterator;
 
   typedef typename SNC_decorator::Association  Association;
+
+
+ using Decorator::is_standard;
+ using Decorator::is_bounded;
  
  protected: 
   void initialize_infibox_vertices(Content space) {
