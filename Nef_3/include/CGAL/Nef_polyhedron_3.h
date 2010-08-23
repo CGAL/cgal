@@ -173,8 +173,8 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
   typedef typename Kernel::Segment_3                  Segment_3;
   typedef typename Kernel::Aff_transformation_3       Aff_transformation_3;
 
-  //typedef SNC_const_decorator<SNC_structure<Kernel_,Items_,Mark_> > Decorator;
-  //using Decorator::set_snc;
+  typedef SNC_const_decorator<SNC_structure<Kernel_,Items_,Mark_> > Decorator;
+  using Decorator::set_snc;
 
   struct Polylines_tag {};
 

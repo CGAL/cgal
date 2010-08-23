@@ -890,6 +890,8 @@ public:
 
   typedef void* GenPtr;
 
+  using Base::visit_shell_objects;
+
  private:
   std::istream& in; std::ostream& out;
   bool verbose;

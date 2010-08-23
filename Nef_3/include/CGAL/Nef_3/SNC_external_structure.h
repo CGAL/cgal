@@ -213,6 +213,12 @@ public:
   typedef CGAL::Unique_hash_map<SFace_const_handle,bool> SFace_visited_hash;
   typedef CGAL::Unique_hash_map<SFace_const_handle,bool> Shell_closed_hash;
 
+  using SNC_decorator::visit_shell_objects;
+  using SNC_decorator::link_as_inner_shell;
+  using SNC_decorator::get_visible_facet;
+  using SNC_decorator::adjacent_sface;
+  using SNC_decorator::link_as_outer_shell;
+  using SNC_decorator::visit_shell_objects;
   struct Shell_explorer {
     const SNC_decorator& D;
     Sface_shell_hash&  ShellSf;
@@ -1058,6 +1064,11 @@ public:
     SHalfedge_around_svertex_circulator;
   
   typedef typename SNC_structure::Plane_3 Plane_3;
+
+  using Base::make_twins;
+  using Base::link_as_prev_next_pair;
+  using Base::link_as_inner_shell;
+
 
   SNC_external_structure( SNC_structure& W, SNC_point_locator* spl = NULL) 
     : Base(W, spl) {}
