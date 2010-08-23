@@ -1,0 +1,55 @@
+Subject: CGAL 3.7 Beta 1 Released, Computational Geometry Algorithms Library
+Body:
+
+The CGAL Open Source Project is pleased to announce the Release 3.7 Beta 1
+of CGAL, the Computational Geometry Algorithms Library.
+
+CGAL-3.7-beta1 is a public testing release. It should provide
+a solid ground to report bugs that need to be tackled before the
+release of the final version of CGAL 3.7 end of September 2010.
+
+
+CGAL-3.7 provides improvements and fixes to existing packages, and support
+for new compilers.
+See http://www.cgal.org/releases.html for a complete list of changes.
+
+
+The CGAL project is a collaborative effort to develop a robust,
+easy-to-use, and efficient C++ software library of geometric data
+structures and algorithms, like
+- triangulations (2D constrained triangulations and Delaunay
+  triangulations in 2D and 3D),
+- Voronoi diagrams (for 2D and 3D points, 2D additively weighted
+  Voronoi diagrams, and segment Voronoi diagrams),
+- Boolean operations on polygons and polyhedra,
+- Regularized Boolean operations on polygons with curved arcs
+- arrangements of curves,
+- mesh algorithms (2D Delaunay mesh generation and 3D surface mesh
+  generation, surface mesh subdivision and parameterization),
+- alpha shapes (in 2D and 3D),
+- convex hull algorithms (in 2D, 3D and dD),
+- operations on polygons (straight skeleton and offset polygon),
+- search structures (kd trees for nearest neighbor search, and
+  range and segment trees),
+- interpolation (natural neighbor interpolation and placement of
+  streamlines),
+- optimization algorithms (smallest enclosing sphere of points or
+  spheres, smallest enclosing ellipsoid of points, principal
+  component analysis),
+- kinetic data structures
+
+
+
+
+Some modules are distributed under the terms of the LGPL Open Source
+license (GNU Lesser General Public License v2.1).
+Most modules are distributed under the terms of the QPL Open Source
+license (Q Public License v1.0).
+If your intended usage does not meet the criteria of the
+aforementioned licenses, a commercial license can be purchased from
+GeometryFactory (http://www.geometryfactory.com/).
+
+
+For further information and for downloading the library and its
+documentation, please visit the CGAL web site: http://www.cgal.org/
+
