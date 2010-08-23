@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
   int d=2;
   bool print_help=false;
   std::string file;
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#ifdef CGAL_USE_BOOST_PROGRAM_OPT7IONS
   boost::program_options::options_description desc("Allowed options");
   desc.add_options()
     ("help", boost::program_options::bool_switch(&print_help), "produce help message")
@@ -102,4 +102,4 @@ int main(int argc, char *argv[])
 
   kdel->set_has_certificates(true);
   return qtsim->begin_event_loop();
-};
+}

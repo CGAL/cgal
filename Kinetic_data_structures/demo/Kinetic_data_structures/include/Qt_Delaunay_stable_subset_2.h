@@ -52,7 +52,7 @@ protected:
     return std::acos(ac);
   }
 
-  CGAL_KINETIC_LISTEN1(Qt_gui, PICTURE_IS_VALID, draw());
+  CGAL_KINETIC_LISTEN1(Qt_gui, PICTURE_IS_VALID, draw())
   
         typedef typename Qt_gui::Listener QTL;
 
