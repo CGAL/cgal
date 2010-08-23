@@ -65,7 +65,7 @@ public:
 
 public slots:
 
-  void open(const QString&);
+  virtual void open(QString);
 
   void processInput(CGAL::Object o);
 
@@ -221,7 +221,7 @@ MainWindow::on_actionLoadLineAndCircularArcs_triggered()
 
 
 void
-MainWindow::open(const QString& fileName)
+MainWindow::open(QString fileName)
 {
     std::ifstream ifs(qPrintable(fileName));
     char c;

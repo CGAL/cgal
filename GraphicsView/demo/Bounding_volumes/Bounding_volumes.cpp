@@ -108,7 +108,7 @@ public slots:
 
   void on_actionRecenter_triggered();
 
-  void open(const QString& fileName);
+  virtual void open(QString fileName);
 
 signals:
   void changed();
@@ -479,7 +479,7 @@ MainWindow::on_actionLoadPoints_triggered()
 
 
 void
-MainWindow::open(const QString& fileName)
+MainWindow::open(QString fileName)
 {
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
