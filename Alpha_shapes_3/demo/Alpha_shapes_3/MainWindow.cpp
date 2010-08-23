@@ -78,7 +78,7 @@ MainWindow::alphaChanged(int i)
 }
 
 void
-MainWindow::open(const QString& fileName)
+MainWindow::open(QString fileName)
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   scene.alpha_shape.clear();

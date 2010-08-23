@@ -25,7 +25,7 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
   Timer timer;
 
 public slots:
-  void open(const QString& fileName);
+  virtual void open(QString fileName);
   void open_file();
   void alphaChanged(int i);
 
