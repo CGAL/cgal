@@ -67,6 +67,20 @@ public:
 
   typedef typename Map::Infi_box Infi_box;
 
+  using Base::clear_face_cycle_entries;
+  using Base::link_as_loop;
+  using Base::is_closed_at_source;
+  using Base::is_isolated;
+  using Base::delete_edge_pair;
+  using Base::delete_vertex_only;
+  using Base::delete_face_only;
+  using Base::store_sm_boundary_object;
+  using Base::first_out_edge;
+  using Base::set_face;
+  using Base::has_outdeg_two;
+  using Base::convert_edge_to_loop;
+  using Base::merge_edge_pairs_at_target;
+
  public:
   SNC_SM_overlayer(Map* M, 
 		   const Sphere_kernel& G = Sphere_kernel()) 

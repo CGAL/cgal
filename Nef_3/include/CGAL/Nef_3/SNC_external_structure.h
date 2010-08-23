@@ -215,10 +215,13 @@ public:
 
   using SNC_decorator::visit_shell_objects;
   using SNC_decorator::link_as_inner_shell;
+  using SNC_decorator::link_as_outer_shell;
+  using SNC_decorator::link_as_prev_next_pair;
   using SNC_decorator::get_visible_facet;
   using SNC_decorator::adjacent_sface;
-  using SNC_decorator::link_as_outer_shell;
   using SNC_decorator::visit_shell_objects;
+  using SNC_decorator::make_twins;
+
   struct Shell_explorer {
     const SNC_decorator& D;
     Sface_shell_hash&  ShellSf;
