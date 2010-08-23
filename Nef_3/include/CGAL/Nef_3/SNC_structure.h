@@ -351,7 +351,7 @@ public:
       return SHalfloop_const_handle(l); }
 
     operator Object_handle() const { return Ibase::operator*(); }
-    Object_handle& operator*() const { return Ibase::operator*(); }
+    const Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
     { CGAL_error_msg("not impl."); return Object_handle();}
   };
@@ -450,7 +450,7 @@ public:
       return SFace_const_handle(f); }
 
     operator Object_handle() const { return Ibase::operator*(); }
-    Object_handle& operator*() const { return Ibase::operator*(); }
+    const Object_handle& operator*() const { return Ibase::operator*(); }
     Object_handle  operator->() const 
     {  return Object_handle(); }
   };
