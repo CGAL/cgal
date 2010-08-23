@@ -58,7 +58,7 @@ int main(int, char*)
 #include <qtimer.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qstring>
+#include <qstring.h>
 
 const QString my_title_string("Nef_2 Demo with"
 			      " CGAL Qt_widget");
@@ -724,7 +724,6 @@ private:
     QString tnr;
     tnr.setNum(nef_index++);
     tnr.append("gon");
-    sprintf(tnr, "%d", nef_index++);
     QString tname("N");
     tname.append(tnr);
     tname.append("= ");
