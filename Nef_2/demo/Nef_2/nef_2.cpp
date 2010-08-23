@@ -58,6 +58,7 @@ int main(int, char*)
 #include <qtimer.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
+#include <qstring>
 
 const QString my_title_string("Nef_2 Demo with"
 			      " CGAL Qt_widget");
@@ -358,9 +359,9 @@ public slots:
       Nef_polyhedron Nt(l_of_p.begin(), l_of_p.end(),
                         Nef_polyhedron::INCLUDED);
       Nef_visible = Nt;
-      char tnr[10];
-      sprintf(tnr, "%d", poly.size());
-      strcat(tnr, "gon");
+      QString tnr;
+      tnr.setNum(poly.size());
+      tnr.append("gon");
       insert_in_list(Nt, tnr);
       list1->setSelected(list1->count()-1, true);
       widget->set_window(poly.bbox().xmin(), poly.bbox().xmax(),
