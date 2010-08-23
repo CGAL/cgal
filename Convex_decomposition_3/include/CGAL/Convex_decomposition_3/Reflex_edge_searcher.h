@@ -69,12 +69,12 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
       svc(e->out_sedge()), send(svc);
     int isrse = 0;
     CGAL_For_all(svc, send)
-      isrse |= is_reflex_sedge(svc, dir);
+      isrse |= CGAL::is_reflex_sedge<SNC_structure>(svc, dir);
     return isrse;
   }
 
   int is_reflex_sedge(SHalfedge_handle se) {
-    return is_reflex_sedge(se, dir);
+    return CGAL::is_reflex_sedge<SNC_structure>(se, dir);
   }
 
   void operator()(SNC_structure& snc) {
@@ -111,7 +111,7 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
       svc(e->out_sedge()), send(svc);
     int pushed = 0;
     CGAL_For_all(svc, send) {
-      int isrse = is_reflex_sedge(svc, dir);
+      int isrse = CGAL::is_reflex_sedge<SNC_structure>(svc, dir);
       if(isrse == 0) continue;
       if((pushed&=1==0) && (isrse&1==1)) pos.insert(svc->source());
       if((pushed&=2==0) && (isrse&2==2)) neg.insert(svc->source());
