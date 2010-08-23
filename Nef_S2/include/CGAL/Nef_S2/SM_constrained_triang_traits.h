@@ -60,6 +60,15 @@ public:
   typedef Decorator_                                 OUTPUT;
   typedef Kernel_                                    GEOMETRY;
 
+  using Base::is_isolated;
+  using Base::first_out_edge;
+  using Base::last_out_edge;
+  using Base::new_svertex;
+  using Base::assoc_info;
+  using Base::incident_mark;
+  using Base::cyclic_adj_succ;
+  using Base::cyclic_adj_pred;
+  using Base::delete_vertex;
 
   class lt_edges_in_sweepline : public Decorator_
   {  const Point& p;

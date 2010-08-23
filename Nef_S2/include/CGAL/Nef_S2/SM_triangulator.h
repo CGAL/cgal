@@ -174,6 +174,23 @@ public:
   typedef std::pair<Sphere_segment,Sphere_segment> Seg_pair;
   typedef CGAL::Unique_hash_map<Seg_iterator,Object_handle> Seg_map;
 
+  using Base::info;
+  using Base::set_first_out_edge;
+  using Base::first_out_edge;
+  using Base::last_out_edge;
+  using Base::is_isolated;
+  using Base::has_outdeg_two;
+  using Base::flip_diagonal;
+  using Base::out_edges;
+  using Base::set_source;
+  using Base::set_face;
+  using Base::link_as_prev_next_pair;
+  using Base::delete_vertex_only;
+  using Base::delete_edge_pair_only;
+  using Base::is_sm_boundary_object;
+  using Base::store_sm_boundary_object;
+  using Base::undo_sm_boundary_object;
+
   // vertex_info stores the origin of vertices
   struct vertex_info {
     Object_handle         o_;
