@@ -1,0 +1,54 @@
+#!/bin/zsh
+
+setopt -o glob
+setopt -o extended_glob
+
+if [ -z "$1" ]; then
+  printf "Usage:\n  prepare_release <internal_release_public_dir>\n"
+  exit 1
+fi
+
+
+RELEASE_CANDIDATES_DIR=/var/CGAL/www/Members/release-candidates
+MANUAL_TESTS_DIR=/var/CGAL/www/Members/Manual_test
+
+PUBLIC_RELEASE_DIR="$1"
+
+INTERNAL_RELEASE=`basename ${PUBLIC_RELEASE_DIR/-public/}`
+
+PUBLIC_RELEASE_NAME=`basename ${~${ZIP_TARBALL::="$PUBLIC_RELEASE_DIR"/*.zip}}`
+PUBLIC_RELEASE_NAME=${PUBLIC_RELEASE_NAME/.zip/}
+DEST_DIR="${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
+
+printf  "Preparing %s in %s...\n" "$PUBLIC_RELEASE_NAME" "$DEST_DIR"
+sleep 2
+
+printf "Copy documentation...\n"
+
+[ -d "$DEST_DIR" ] || mkdir "$DEST_DIR"
+[ -d "$DEST_DIR/doc_html" ] || mkdir "$DEST_DIR/doc_html"
+
+cp "$PUBLIC_RELEASE_DIR"/*(.) "${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
+cp -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/{cgal_manual,Developers_manual,installation_manual} "$DEST_DIR/doc_html"
+cp -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/cgal_manual.pdf "$DEST_DIR"
+rm "$DEST_DIR/doc_html/*/comments.xml"
+
+printf "Create doc_html tarball...\n"
+tar cf "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" -C "$DEST_DIR" doc_html
+
+printf "Create doc_html zip...\n"
+tar xf "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" -O | zip -q > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.zip"
+
+printf "xz doc_html tarball...\n"
+xz --best < "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar.xz"
+
+printf "gzip doc_html tarball...\n"
+gzip -f --best "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar"
+
+printf "%s\n" "${INTERNAL_RELEASE}" > "$DEST_DIR/internal_release"
+
+printf "DONE!\n"
+
+pushd "$DEST_DIR"
+ls -l
+popd
