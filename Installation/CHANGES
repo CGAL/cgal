@@ -2,14 +2,14 @@ Release notes of CGAL.
 
 ----------------------------- Release 3.8 ----------------------------------
 
-x.y Surface Reconstruction from Point Sets
-  - Improved performance and minor bug fix
+x.y Package title example
+  - changes note
 
 ----------------------------- Release 3.7 ----------------------------------
 
 CGAL 3.7 offers the following improvements and new functionality : 
 
-x General 
+1 General 
 
   - The configuration of CGAL libraries now requires CMake>=2.6.
 
@@ -26,8 +26,17 @@ x General
       (Minkowski_sum_3) are known to still fail to compile with that
       compiler flag.
 
+    - The Microsoft Windows Visual C++ compiler 2010 (VC10), that was
+      experimentally supported by CGAL-3.6.1, is now fully supported. Note
+      that CMake>=2.8.2 is required for that support.
+
     - The Microsoft Windows Visual C++ compiler 2005 (VC8) is no longer
       supported by the CGAL project since CGAL-3.7.
+
+    - With Microsoft Windows Visual C++ (VC9 and VC10), the optional
+      dependencies Gmp, Mpfr, Blas, Lapack, Taucs no longer use Boost-style
+      name mangling. Only one variant is now provided by the CGAL Windows
+      installer (release, with dynamic runtime).
 
   - Some demos now require a version of Qt4 >= 4.3.
 
@@ -35,10 +44,13 @@ x General
     people interested in reading PDB files is to use ESBTL
     (http://esbtl.sourceforge.net/).
 
+  - Fix issues of the CGAL wrappers around the CORE library, on 64 bits
+    platforms.
 
-x Triangulations and Delaunay Triangulations
 
-x.y 2D Triangulations
+2 Triangulations and Delaunay Triangulations
+
+2.1 2D Triangulations
 
   - The Delaunay and regular 2D triangulations now use a symbolic
     perturbation to choose a particular triangulation in co-circular cases.
@@ -52,40 +64,51 @@ x.y 2D Triangulations
     ConstrainedTriangulationTraits_2. They can be used with and without intersection
     of constraints.
 
-x.y 3D Triangulations
+
+2.2 3D Triangulations
    
   - The return type of the template member function 
     insert(It beg, It end), taking an iterator range of points,
     has been changed from int to std::ptrdiff_t
 
-x.y 2D and 3D Alpha Shapes
+
+2.3 2D and 3D Alpha Shapes
   
   - The type int in the API has been changed to std::size_t
     so that CGAL can deal with large data sets (64 bit addresses)
 
-x Mesh Generation
 
-x.y 2D Mesh Generation
+3 Mesh Generation
+
+3.1 2D Mesh Generation
 
   - The execution of the 2D mesh generator is now deterministic (same at
     each run).
 
-x.y 3D Mesh Generation
 
-  - The efficiency of the 3D mesh generator has been improved (the number of calls
-  to the oracle per inserted vertex has globally decrease).
-  This is achieved through a slight change of the mesh generator strategy which 
-  implies that a surface component that is not detected at the surface mesher level
-  will never be discovered by chance, owing to the refinement of some terahedra,
-  as it could happen before.
-  Please note that defining the macro CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
-  switches back to the old behavior.
+3.2 3D Mesh Generation
+
+  - The efficiency of the 3D mesh generator has been improved (the number
+    of calls to the oracle per inserted vertex has globally decrease).
+    This is achieved through a slight change of the mesh generator strategy
+    which implies that a surface component that is not detected at the
+    surface mesher level will never be discovered by chance, owing to the
+    refinement of some terahedra, as it could happen before.
+    Please note that defining the macro
+    CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE switches back to
+    the old behavior.
 
   - A demo program is now available.
 
-x Spatial Searching and Sorting
+
+3.3 Surface Reconstruction from Point Sets
+
+  - Improved performance and minor bug fix
+
+
+4 Spatial Searching and Sorting
  	
-x.y 2D Range and Neighbor Search
+4.1 2D Range and Neighbor Search
   
   - The type int in the API has been changed to std::size_t
     so that CGAL can deal with large data sets (64 bit addresses)
