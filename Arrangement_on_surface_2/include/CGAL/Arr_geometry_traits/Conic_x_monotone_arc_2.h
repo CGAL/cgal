@@ -56,6 +56,10 @@ public:
   typedef std::pair<Conic_point_2, unsigned int>  Intersection_point_2;
   typedef std::list<Intersection_point_2>         Intersection_list;
 
+  using Conic_arc_2::_sign_of_extra_data;
+  using Conic_arc_2::_is_between_endpoints;
+  using Conic_arc_2::_is_strictly_between_endpoints;
+  using Conic_arc_2::_conic_get_y_coordinates;
   /*!
    * \struct Less functor for Conic_pair.
    */
