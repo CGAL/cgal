@@ -1602,6 +1602,7 @@ Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#application
 Interpolation/doc_tex/Interpolation/nn_coords.xml svneol=native#text/xml
 Intersections_2/include/CGAL/Circle_2_Line_2_intersection.h -text
 Intersections_3/include/CGAL/internal/Intersections_3/Triangle_3_Line_3_intersection.h -text
+Intersections_3/test/Intersections_3/segment_segment.cpp -text
 Interval_skip_list/doc_tex/Interval_skip_list/query.png -text
 Interval_skip_list/examples/Interval_skip_list/isl_terrain.pts -text
 Interval_support/include/CGAL/Test/_test_bigfloat_interval_traits.h -text

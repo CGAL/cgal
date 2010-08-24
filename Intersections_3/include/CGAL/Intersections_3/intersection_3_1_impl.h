@@ -252,6 +252,82 @@ do_intersect(const typename K::Line_3 &l1,
 
 template <class K>
 Object
+intersection(const typename K::Segment_3 &s1,
+	     const typename K::Segment_3 &s2,
+	     const K& k)
+{
+  CGAL_precondition(! s1.is_degenerate () && ! s2.is_degenerate () );
+  Object res = intersection(s1.supporting_line(),s2.supporting_line());
+  const typename K::Point_3* p=object_cast<typename K::Point_3> (&res);
+  if (p!=NULL){
+    typename K::Collinear_are_ordered_along_line_3 cln_order=k.collinear_are_ordered_along_line_3_object();
+    if ( cln_order(s1[0],*p,s1[1]) && cln_order(s2[0],*p,s2[1]) )
+      return res;
+  }
+  else{
+    const typename K::Line_3* l=object_cast<typename K::Line_3> (&res);
+    if (l!=NULL){
+      const typename K::Point_3& p=s1[0],q=s1[1],r=s2[0],s=s2[1];
+      typename K::Collinear_are_ordered_along_line_3 cln_order=k.collinear_are_ordered_along_line_3_object();
+      
+      if ( cln_order(p,r,q) ){
+        if ( cln_order(p,s,q) )
+          return make_object(s2);
+        if ( cln_order(r,p,s) )
+          return r!=p ? make_object( typename K::Segment_3(r,p) ) : make_object(p);
+        else
+          return r!=q ? make_object( typename K::Segment_3(r,q) ) : make_object(q);
+      }
+
+      if ( cln_order(p,s,q) ){
+        if ( cln_order(r,p,s) )
+          return s!=p ? make_object( typename K::Segment_3(s,p) ) : make_object(p);
+        else
+          return s!=q ? make_object( typename K::Segment_3(s,q) ) : make_object(q);
+      }
+      
+      if ( cln_order(r,p,s) )
+        return make_object(s1);
+    }
+  }
+  return Object();
+}
+
+template <class K>
+inline
+bool
+do_intersect(const typename K::Segment_3  &s1,
+             const typename K::Segment_3  &s2,
+             const K & k)
+{
+  CGAL_precondition(! s1.is_degenerate () && ! s2.is_degenerate () );
+  bool b=do_intersect(s1.supporting_line(),s2.supporting_line(),k);
+  if (b)
+  {
+    //supporting_line intersects: points are coplanar
+    typename K::Coplanar_orientation_3 cpl_orient=k.coplanar_orientation_3_object();
+    ::CGAL::Orientation or1 =  cpl_orient(s1[0],s1[1],s2[0]);
+    ::CGAL::Orientation or2 =  cpl_orient(s1[0],s1[1],s2[1]);
+    
+    if ( or1 == COLLINEAR && or2 ==COLLINEAR )
+    {
+      //segments are collinear
+      typename K::Collinear_are_ordered_along_line_3 cln_order=k.collinear_are_ordered_along_line_3_object();
+      return cln_order(s1[0],s2[0],s1[1]) || 
+             cln_order(s1[0],s2[1],s1[1]) ||
+             cln_order(s2[0],s1[0],s2[1]) ;
+    }
+    
+    if ( or1 != or2 ){
+      or1=cpl_orient(s2[0],s2[1],s1[0]);
+      return (or1 == COLLINEAR || or1 != cpl_orient(s2[0],s2[1],s1[1]));
+    }
+  }
+  return false;
+}
+
+template <class K>
+Object
 intersection(const typename K::Plane_3 &p,
              const typename K::Sphere_3 &s,
              const K&)
@@ -1057,6 +1133,22 @@ do_intersect(const Line_3<K> &l1,
              const Line_3<K> &l2)
 {
   return typename K::Do_intersect_3()(l1, l2);
+}
+
+template <class K>
+inline
+Object
+intersection(const Segment_3<K> &s1,
+             const Segment_3<K> &s2) {
+  return typename K::Intersect_3()(s1, s2);
+}
+
+template <class K>
+inline
+bool
+do_intersect(const Segment_3<K> &s1, const Segment_3<K> &s2)
+{
+  return typename K::Do_intersect_3()(s1, s2);
 }
 
 template <class K>
