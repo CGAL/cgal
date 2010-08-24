@@ -236,6 +236,22 @@ intersection(const Line_3<R> &l1,
 
 template <class R>
 Object
+intersection(const Segment_3<R> &,
+             const Segment_3<R> &);
+
+template <class R>
+Object
+intersection(const Line_3<R> &,
+             const Segment_3<R> &);
+             
+template <class R>
+Object
+intersection(const Segment_3<R> &s,
+             const Line_3<R> &l)
+{return intersection(l,s);};
+
+template <class R>
+Object
 intersection(const Sphere_3<R> &s1,
              const Sphere_3<R> &s2);
 
@@ -257,6 +273,21 @@ bool
 do_intersect(const Line_3<R> &l1,
              const Line_3<R> &l2);
 
+template <class R>
+bool
+do_intersect(const Segment_3<R> &,
+             const Segment_3<R> &);
+
+template <class R>
+bool
+do_intersect(const Line_3<R> &,
+             const Segment_3<R> &);
+             
+template <class R>
+bool
+do_intersect(const Segment_3<R> &s,
+             const Line_3<R> &l)
+{return do_intersect(l,s);};
 
 template <class R>
 bool
