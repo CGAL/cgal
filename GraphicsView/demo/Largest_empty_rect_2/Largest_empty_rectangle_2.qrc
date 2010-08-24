@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/cgal/help" >
+    <file alias="about_CGAL.html" >../resources/about_CGAL.html</file>
+    <file>about_Largest_empty_rectangle_2.html</file>
+  </qresource>
+</RCC>
