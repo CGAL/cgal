@@ -212,9 +212,9 @@ public:
       // I hope I got the logic right.
       // Note: I have add a new pair of parentheses. Laurent Rineau, 2010/08/20
       while ( base() != DT->simplices_end() &&
-              !( ( ( cocirc && DT->is_bounded_simplex(base()) ) ||
-                   ( !cocirc && DT->is_unbounded_simplex(base()) ) )
-                 && DT->type_of(base()) == tf ) ) {
+              !( ( cocirc && DT->is_bounded_simplex(base()) ) ||
+                ( ( !cocirc && DT->is_unbounded_simplex(base()) ) && 
+                  DT->type_of(base()) == tf ) ) ) {
          Base_iterator::operator++();
       }
     }
@@ -232,9 +232,9 @@ public:
       // I hope I got the logic right.
       // Note: I have add a new pair of parentheses. Laurent Rineau, 2010/08/20
       } while ( base() != DT->simplices_end() &&
-                !( ( ( cocirc && DT->is_bounded_simplex(base()) ) ||
-                     ( !cocirc && DT->is_unbounded_simplex(base()) ) 
-                     ) && DT->type_of(base()) == tf ) );
+                !( ( cocirc && DT->is_bounded_simplex(base()) ) ||
+                   ( ( !cocirc && DT->is_unbounded_simplex(base()) ) && 
+                   DT->type_of(base()) == tf ) ) );
       return *this; 
     }
     Simplex_iterator  operator++(int) 
@@ -832,10 +832,16 @@ locate(const Point_d& x) const
   Simplex_handle f;
   this -> visibility_search(origin_simplex_,lp,candidates,dummy1,loc,f);
   this -> clear_visited_marks(origin_simplex_);
-  if ( f != Simplex_handle() ) return f;
-  typename std::list<Simplex_handle>::iterator it;
-  for(it = candidates.begin(); it != candidates.end(); ++it)
-    if ( contains(*it,x) ) return *it;
+  //f and simplices in candidates are unbounded simplices only
+  if ( f != Simplex_handle() ){
+    CGAL_precondition(is_unbounded_simplex(f));
+    return opposite_simplex(f,0);
+  }
+  //SL: candidates contains only unbounded simplices, according
+  //to the documentation locate must return Simplex_handle()
+  //typename std::list<Simplex_handle>::iterator it;
+  //for(it = candidates.begin(); it != candidates.end(); ++it)
+  //  if ( contains(*it,x) ) return *it;
   return Simplex_handle();
 }
 
