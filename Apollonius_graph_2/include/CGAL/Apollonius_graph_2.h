@@ -590,10 +590,8 @@ public:
   template < class Stream > 
   Stream& draw_dual(Stream &str) const
   {
-  std::cerr << "draw_dual" << std::endl;
     Finite_edges_iterator eit = finite_edges_begin();
     for (; eit != finite_edges_end(); ++eit) {
-  std::cerr << "for loop" << std::endl;
       typename Gt::Object_2 o = dual(eit);
       typename Geom_traits::Line_2     l;
       typename Geom_traits::Segment_2  s;
@@ -601,13 +599,12 @@ public:
       CGAL::Hyperbola_2<Gt>            h;
       CGAL::Hyperbola_segment_2<Gt>    hs;
       CGAL::Hyperbola_ray_2<Gt>        hr;
-      if (assign(hs, o)){std::cerr << "HS" << std::endl;  hs.draw(str);}
-      else if (assign(s, o)) {std::cerr << "S" << std::endl;  str << s; }
-      else if (assign(hr, o)){std::cerr << "HR" << std::endl;  hr.draw(str);}
-      else if (assign(r, o)) {std::cerr << "R" << std::endl;  str << r;}
-      else if (assign(h, o)) {std::cerr << "H" << std::endl;  h.draw(str);}
-      else if (assign(l, o)) {std::cerr << "L" << std::endl;  str << l;}
-      else { std::cerr << "what's this?" << std::endl; }
+      if (assign(hs, o)) hs.draw(str);
+      else if (assign(s, o))  str << s; 
+      else if (assign(hr, o))  hr.draw(str);
+      else if (assign(r, o))   str << r;
+      else if (assign(h, o))  h.draw(str);
+      else if (assign(l, o)) str << l;
     }
     return str;
   }
