@@ -135,7 +135,8 @@ public:
     }
 
     static bool is_empty(const T& a, const T& b) {
-        return a==T(1) && b == T(0);
+      //return a==T(1) && b == T(0);
+      return a > b; 
     }
 };
 
