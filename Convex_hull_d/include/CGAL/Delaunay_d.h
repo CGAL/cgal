@@ -834,14 +834,12 @@ locate(const Point_d& x) const
   this -> clear_visited_marks(origin_simplex_);
   //f and simplices in candidates are unbounded simplices only
   if ( f != Simplex_handle() ){
-    CGAL_precondition(is_unbounded_simplex(f));
-    return opposite_simplex(f,0);
+    return f;
   }
-  //SL: candidates contains only unbounded simplices, according
-  //to the documentation locate must return Simplex_handle()
-  //typename std::list<Simplex_handle>::iterator it;
-  //for(it = candidates.begin(); it != candidates.end(); ++it)
-  //  if ( contains(*it,x) ) return *it;
+  typename std::list<Simplex_handle>::iterator it;
+  for(it = candidates.begin(); it != candidates.end(); ++it)
+    if ( contains(*it,x) ) return *it;
+
   return Simplex_handle();
 }
 
