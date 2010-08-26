@@ -252,6 +252,37 @@ do_intersect(const typename K::Line_3 &l1,
 
 template <class K>
 Object
+intersection_collinear_segments(const typename K::Segment_3 &s1,
+                                const typename K::Segment_3 &s2,
+                                const K& k)
+{
+  CGAL_precondition(! s1.is_degenerate () && ! s2.is_degenerate () );
+  const typename K::Point_3& p=s1[0],q=s1[1],r=s2[0],s=s2[1];
+  typename K::Collinear_are_ordered_along_line_3 cln_order=k.collinear_are_ordered_along_line_3_object();
+  
+  if ( cln_order(p,r,q) ){
+    if ( cln_order(p,s,q) )
+      return make_object(s2);
+    if ( cln_order(r,p,s) )
+      return r!=p ? make_object( typename K::Segment_3(r,p) ) : make_object(p);
+    else
+      return r!=q ? make_object( typename K::Segment_3(r,q) ) : make_object(q);
+  }
+
+  if ( cln_order(p,s,q) ){
+    if ( cln_order(r,p,s) )
+      return s!=p ? make_object( typename K::Segment_3(s,p) ) : make_object(p);
+    else
+      return s!=q ? make_object( typename K::Segment_3(s,q) ) : make_object(q);
+  }
+  
+  if ( cln_order(r,p,s) )
+    return make_object(s1); 
+  return Object();
+}
+
+template <class K>
+Object
 intersection(const typename K::Segment_3 &s1,
 	     const typename K::Segment_3 &s2,
 	     const K& k)
@@ -266,29 +297,8 @@ intersection(const typename K::Segment_3 &s1,
   }
   else{
     const typename K::Line_3* l=object_cast<typename K::Line_3> (&res);
-    if (l!=NULL){
-      const typename K::Point_3& p=s1[0],q=s1[1],r=s2[0],s=s2[1];
-      typename K::Collinear_are_ordered_along_line_3 cln_order=k.collinear_are_ordered_along_line_3_object();
-      
-      if ( cln_order(p,r,q) ){
-        if ( cln_order(p,s,q) )
-          return make_object(s2);
-        if ( cln_order(r,p,s) )
-          return r!=p ? make_object( typename K::Segment_3(r,p) ) : make_object(p);
-        else
-          return r!=q ? make_object( typename K::Segment_3(r,q) ) : make_object(q);
-      }
-
-      if ( cln_order(p,s,q) ){
-        if ( cln_order(r,p,s) )
-          return s!=p ? make_object( typename K::Segment_3(s,p) ) : make_object(p);
-        else
-          return s!=q ? make_object( typename K::Segment_3(s,q) ) : make_object(q);
-      }
-      
-      if ( cln_order(r,p,s) )
-        return make_object(s1);
-    }
+    if (l!=NULL)
+      return intersection_collinear_segments(s1,s2,k);
   }
   return Object();
 }
