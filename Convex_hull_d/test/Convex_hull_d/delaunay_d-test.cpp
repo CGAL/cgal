@@ -60,6 +60,7 @@ int main()
     CGAL_TEST(DT.vertex_of_simplex(ds,di)==v2);
     CGAL_TEST(DT.is_simplex_of_nearest(ds) && DT.is_simplex_of_furthest(ds));
     v3 = DT.insert(p3);
+    CGAL_TEST(DT.locate(p4)==Simplex_handle());
     v4 = DT.insert(p4);
     v5 = DT.insert(p5);
     Simplex_handle ds2 = DT.simplex(v5);
@@ -148,6 +149,7 @@ int main()
     CGAL_TEST(DT.vertex_of_simplex(ds,di)==v2);
     CGAL_TEST(DT.is_simplex_of_nearest(ds) && DT.is_simplex_of_furthest(ds));
     v3 = DT.insert(p3);
+    CGAL_TEST(DT.locate(p4)==Simplex_handle());
     v4 = DT.insert(p4);
     v5 = DT.insert(p5);
     Simplex_handle ds2 = DT.simplex(v5);
