@@ -518,7 +518,7 @@ public:
     if ( s == Simplex_handle() ) return Vertex_handle();
     for (int i = 0; i <= current_dimension(); i++) {
       Vertex_handle v = vertex_of_simplex(s,i);
-      if ( x == associated_point(v) ) return v;
+      if (v!=this->anti_origin_ && x == associated_point(v) ) return v;
     }
     return Vertex_handle();
   }
@@ -793,9 +793,13 @@ bool Delaunay_d<R,Lifted_R>::
 contains(Simplex_handle s, const Point_d& x) const
 { int d = current_dimension();
   if (d < 0) return false;
-  std::vector<Point_d> A(d + 1);
-  for (int i = 0; i <= d; i++) 
-    A[i] = point_of_simplex(s,i);
+  std::vector<Point_d> A;
+  A.reserve(d + 1);
+  for (int i = 0; i <= d; i++){ 
+    Vertex_handle vh = vertex_of_simplex(s,i);
+    if (vh!=this->anti_origin_)
+      A.push_back( associated_point(vh) );
+  }
   typename R::Contained_in_simplex_d contained_in_simplex =
     kernel().contained_in_simplex_d_object();
   return contained_in_simplex(A.begin(),A.end(),x);
