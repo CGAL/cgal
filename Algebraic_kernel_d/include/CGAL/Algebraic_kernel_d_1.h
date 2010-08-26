@@ -533,6 +533,9 @@ public:
 
     std::pair<Bound,Bound> operator() (const Algebraic_real_1 a,
 				       const Polynomial_1 p) const {
+
+      if(p == a.polynomial()) return std::make_pair(a.low(),a.high()); 
+      
       std::vector<Algebraic_real_1> roots;
       // First isolate p...
       Solve_1()(p,false,std::back_inserter(roots));
