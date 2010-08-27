@@ -245,19 +245,23 @@ ostream&
 //operator<< (ostream &o, mpz_srcptr z)
 io_write (ostream &o, mpz_srcptr z)
 { 
-  char* str = mpz_get_str (0, 10, z);
-  o << str;
-  free(str);
-  return o;
+  char *str = new char [mpz_sizeinbase(z,10) + 2];
+  str = mpz_get_str(str, 10, z);
+  o << str ;
+  delete[] str;
+  return o; 
 }
 
 ostream&
 //operator<< (ostream &o, mpq_srcptr q)
 io_write (ostream &o, mpq_srcptr q)
 { 
-  char* str =  mpq_get_str (0, 10, q);
-  o << str;
-  free(str);
+  // size according to GMP documentation
+  char *str = new char [mpz_sizeinbase(mpq_numref(q), 10) +
+                        mpz_sizeinbase (mpq_denref(q), 10) + 3];
+  str = mpq_get_str(str, 10, q);
+  o << str ;
+  delete[] str;
   return o;
 }
 
