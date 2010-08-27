@@ -679,8 +679,8 @@ private:
         Point ck = CGAL::circumcenter(pi,pj,pk);
         Point cl = CGAL::circumcenter(pi,pj,pl);
 
-        Triangle mcck(m,m,ck);
-        Triangle mccl(m,m,cl);
+        Triangle mcck(m,c,ck);
+        Triangle mccl(m,c,cl);
 
         area += std::sqrt(mcck.squared_area());
         area += std::sqrt(mccl.squared_area());
