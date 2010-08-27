@@ -55,8 +55,8 @@ template<> class Algebraic_structure_traits< int >
   : public Algebraic_structure_traits_base< int, Euclidean_ring_tag > {
 
   public:
-    typedef Tag_true            Is_exact;
-    typedef Tag_false           Is_numerical_sensitive;
+    typedef Tag_false            Is_exact;
+    typedef Tag_true             Is_numerical_sensitive;
 
     typedef INTERN_AST::Div_per_operator< Type >  Div;
     typedef INTERN_AST::Mod_per_operator< Type >  Mod;
@@ -99,8 +99,8 @@ template<> class Algebraic_structure_traits< long int >
                                             Euclidean_ring_tag > {
 
   public:
-    typedef Tag_true            Is_exact;
-    typedef Tag_false           Is_numerical_sensitive;
+    typedef Tag_false            Is_exact;
+    typedef Tag_true           Is_numerical_sensitive;
 
     typedef INTERN_AST::Div_per_operator< Type >  Div;
     typedef INTERN_AST::Mod_per_operator< Type >  Mod;
@@ -143,8 +143,8 @@ template<> class Algebraic_structure_traits< short int >
                                             Euclidean_ring_tag > {
 
   public:
-    typedef Tag_true            Is_exact;
-    typedef Tag_false           Is_numerical_sensitive;
+    typedef Tag_false            Is_exact;
+    typedef Tag_true             Is_numerical_sensitive;
 
     // Explicitly defined functors which have no support for implicit
     //  interoperability. This is nescessary because of the implicit conversion
