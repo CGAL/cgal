@@ -245,14 +245,20 @@ ostream&
 //operator<< (ostream &o, mpz_srcptr z)
 io_write (ostream &o, mpz_srcptr z)
 { 
-  return o << mpz_get_str (0, 10, z);
+  char* str = mpz_get_str (0, 10, z);
+  o << str;
+  free(str);
+  return o;
 }
 
 ostream&
 //operator<< (ostream &o, mpq_srcptr q)
 io_write (ostream &o, mpq_srcptr q)
 { 
-  return o << mpq_get_str (0, 10, q);
+  char* str =  mpq_get_str (0, 10, q);
+  o << str;
+  free(str);
+  return o;
 }
 
 } //namespace CORE
