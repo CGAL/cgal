@@ -94,6 +94,7 @@ public:
   typedef typename Decorator_traits::SHalfloop_handle     SHalfloop_handle;   
   typedef typename Decorator_traits::SHalfloop_const_handle     SHalfloop_const_handle;   
   typedef typename Decorator_traits::SFace_handle         SFace_handle;     
+  typedef typename Decorator_traits::SFace_const_handle         SFace_const_handle;     
 
   typedef typename Decorator_traits::SVertex_iterator     SVertex_iterator;
   typedef typename Decorator_traits::SHalfedge_iterator   SHalfedge_iterator;
