@@ -22,6 +22,23 @@ PLATFORM=$CGAL_TEST_PLATFORM
 rm -f "$ERRORFILE"
 touch "$ERRORFILE"
 
+# On Cygwin, killing bash does not kill jobs it has spawned.  This
+# function takes a PID as argument and prints the list of children
+# processes of this process, including itself.
+process_tree()
+{
+  local pid=$1
+  local result=
+  echo $pid
+  ps -a | awk '!/^ +PID/ {print $1 " " $2}' | { 
+      while read apid appid; do 
+	  if [ "$appid" = "$pid" ]; then 
+	      process_tree $apid
+	  fi
+      done
+  }
+}
+
 # Wait for process with pid $1.
 # Wait for $2 periods of $3 seconds, checking after every period
 # if the watched process has finished.
@@ -68,10 +85,15 @@ wait_for_process()
 	    # Bash, the Bash manual states that it ignores SIGTERM.
 	    # However, it does not catch SIGHUP. That is why the first
 	    # signal send is SIGHUP.
-	    kill -HUP $pid
+	    case "`uname`" in 
+		CYGWIN*)
+		    pids=`process_tree $pid`;;
+		*) pids=$pid;;
+	    esac
+	    for p in $pids; do kill -HUP $p; done
 	    sleep 10
 	    # If SIGHUP was not enough, SIGKILL will finish the job, 10s after.
-	    kill -KILL $pid
+	    for p in $pids; do kill -KILL $p 2>/dev/null; done
 	fi
         return 1  
     fi
@@ -120,7 +142,7 @@ test_directory()
       rm -f error.txt
       run_local_cgal_test &
 
-      if wait_for_process "$!" "1200" "5"
+      if wait_for_process "$!" "2" "2"
       then
 	if [ -f test_failure  ] ; then
             exit_failure=`cat test_failure`
