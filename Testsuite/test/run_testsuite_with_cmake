@@ -19,8 +19,8 @@ ERRORFILE=${CURRENTDIR}/error.txt
 PLATFORM=$CGAL_TEST_PLATFORM
 
 #clear the error file
-rm -f $ERRORFILE
-touch $ERRORFILE
+rm -f "$ERRORFILE"
+touch "$ERRORFILE"
 
 # Wait for process with pid $1.
 # Wait for $2 periods of $3 seconds, checking after every period
@@ -91,29 +91,29 @@ run_local_cgal_test()
 #test_directory <directory>
 test_directory()
 {
-  cd $CURRENTDIR
+  cd "$CURRENTDIR"
   if [ -d $1 ] ; then
     echo "DIRECTORY $1:"                
     echo                                
 
-    echo "DIRECTORY $1:"                 >> $ERRORFILE
-    echo                                 >> $ERRORFILE
-    cd $1
+    echo "DIRECTORY $1:"                 >> "$ERRORFILE"
+    echo                                 >> "$ERRORFILE"
+    cd "$1"
 
     COMPILER_OUTPUT=CompilerOutput_$PLATFORM
-    rm -f $COMPILER_OUTPUT
+    rm -f "$COMPILER_OUTPUT"
     ERROR_OUTPUT=ErrorOutput_$PLATFORM
-    rm -f $ERROR_OUTPUT
+    rm -f "$ERROR_OUTPUT"
 
-    echo "------------------------------------------------------------------" >> $COMPILER_OUTPUT
-    echo "- Compiler output from platform $PLATFORM"                          >> $COMPILER_OUTPUT
-    echo "------------------------------------------------------------------" >> $COMPILER_OUTPUT
-    echo                                                                      >> $COMPILER_OUTPUT
+    echo "------------------------------------------------------------------" >> "$COMPILER_OUTPUT"
+    echo "- Compiler output from platform $PLATFORM"                          >> "$COMPILER_OUTPUT"
+    echo "------------------------------------------------------------------" >> "$COMPILER_OUTPUT"
+    echo                                                                      >> "$COMPILER_OUTPUT"
 
-    echo "------------------------------------------------------------------" >> $ERROR_OUTPUT
-    echo "- Error output from platform $PLATFORM"                             >> $ERROR_OUTPUT
-    echo "------------------------------------------------------------------" >> $ERROR_OUTPUT
-    echo                                                                      >> $ERROR_OUTPUT
+    echo "------------------------------------------------------------------" >> "$ERROR_OUTPUT"
+    echo "- Error output from platform $PLATFORM"                             >> "$ERROR_OUTPUT"
+    echo "------------------------------------------------------------------" >> "$ERROR_OUTPUT"
+    echo                                                                      >> "$ERROR_OUTPUT"
 
     if [ -f cgal_test_with_cmake -a -x cgal_test_with_cmake ] ; then
       export PLATFORM TESTSUITE_CXXFLAGS TESTSUITE_LDFLAGS
@@ -125,29 +125,29 @@ test_directory()
 	if [ -f test_failure  ] ; then
             exit_failure=`cat test_failure`
 	    rm -f test_failure
-	    echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> $ERRORFILE
-	    echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> $ERROR_OUTPUT
+	    echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERRORFILE"
+	    echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERROR_OUTPUT"
 	fi
       else
-	echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> $ERRORFILE
-	echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> $ERROR_OUTPUT
+	echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERRORFILE"
+	echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERROR_OUTPUT"
       fi
-      cat current_compiler_output >> $COMPILER_OUTPUT
+      cat current_compiler_output >> "$COMPILER_OUTPUT"
       cat current_compiler_output
       rm -f current_compiler_output 
 
       if [ -f error.txt ] ; then
-        cat error.txt >> $ERRORFILE
-        cat error.txt >> $ERROR_OUTPUT
+        cat error.txt >> "$ERRORFILE"
+        cat error.txt >> "$ERROR_OUTPUT"
       else
-        echo "ERROR: the script cgal_test_with_cmake failed to generate output" >> $ERRORFILE
+        echo "ERROR: the script cgal_test_with_cmake failed to generate output" >> "$ERRORFILE"
       fi
     else
       echo "      Could not execute the script cgal_test_with_cmake in directory $1"
       echo "ERROR: could not execute the script $1/cgal_test_with_cmake" >> $ERRORFILE
     fi
-    echo >> $ERRORFILE
-    echo >> $ERROR_OUTPUT
+    echo >> "$ERRORFILE"
+    echo >> "$ERROR_OUTPUT"
   fi
   echo
 }
@@ -160,13 +160,13 @@ run_testsuite()
   echo "---------------------------------------------------------------"
   echo                                                                  
 
-  echo "---------------------------------------------------------------" >> $ERRORFILE
-  echo "- TEST RESULTS FROM PLATFORM $PLATFORM"                          >> $ERRORFILE
-  echo "---------------------------------------------------------------" >> $ERRORFILE
-  echo                                                                   >> $ERRORFILE
+  echo "---------------------------------------------------------------" >> "$ERRORFILE"
+  echo "- TEST RESULTS FROM PLATFORM $PLATFORM"                          >> "$ERRORFILE"
+  echo "---------------------------------------------------------------" >> "$ERRORFILE"
+  echo                                                                   >> "$ERRORFILE"
 
   for DIR in $TEST_DIRECTORIES ; do
-    test_directory $DIR
+    test_directory "$DIR"
   done
 }
 
