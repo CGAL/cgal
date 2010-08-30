@@ -142,7 +142,7 @@ test_directory()
       rm -f error.txt
       run_local_cgal_test &
 
-      if wait_for_process "$!" "2" "2"
+      if wait_for_process "$!" "1200" "5"
       then
 	if [ -f test_failure  ] ; then
             exit_failure=`cat test_failure`
