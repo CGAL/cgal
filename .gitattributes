@@ -3758,6 +3758,7 @@ Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/data/oni.pw
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/data/robocat_deci.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/data/sphere_20k.xyz -text
 Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/poisson_reconstruction_test.cmd eol=lf
+Testsuite/test/Testsuite/cgal_test_with_cmake eol=lf
 Testsuite/test/collect_cgal_testresults_from_cmake -text
 Testsuite/test/makefile2 -text
 Testsuite/test/run_testsuite_with_cmake -text
