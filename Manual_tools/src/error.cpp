@@ -122,7 +122,7 @@ const char* errorMessage( ErrorNumber n) {
     case MacroInCModeError:
 	return "Unknown macro occured in C++ text (only restricted macro expansion)";
     case ParsingStateError:
-	return "Parsing teminates in wrong state (should be INITIAL)";
+	return "Parsing terminates in wrong state (should be INITIAL)";
     case MacroStackUnderflowError:
 	return "Nesting error: Underflow of the macro scope stack";
     case IncludeStackUnderflowError:
