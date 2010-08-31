@@ -52,6 +52,15 @@ namespace CGAL {
         }
         AABB_polyhedron_triangle_primitive(const Id& handle)
             : m_facet_handle(handle)  { };
+        AABB_polyhedron_triangle_primitive(const Id* ptr)
+            : m_facet_handle(*ptr)  { };
+        template <class Iterator>
+        AABB_polyhedron_triangle_primitive( Iterator it,
+                                            typename boost::enable_if< 
+                                                       boost::is_same<Id,typename Iterator::value_type>
+                                            >::type* =0
+        ) : m_facet_handle(*it)  { };
+
 
         // Default destructor, copy constructor and assignment operator are ok
 
