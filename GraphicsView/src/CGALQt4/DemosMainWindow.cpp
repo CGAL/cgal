@@ -33,6 +33,7 @@
 #include <QTextStream>
 #include <QSettings>
 #include <QUrl>
+#include <QDesktopWidget>
 
 #include <CGAL/config.h> // needed to get CGAL_VERSION_STR
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -380,7 +381,12 @@ void DemosMainWindow::readState(QString groupname, Options what_to_save)
   
   settings.beginGroup(groupname);
   resize(settings.value("size", this->size()).toSize());
-  move(settings.value("pos", this->pos()).toPoint());
+
+  QDesktopWidget* desktop = qApp->desktop();
+  QPoint pos = settings.value("pos", this->pos()).toPoint();
+  if(desktop->availableGeometry(pos).contains(pos)) {
+    move(pos);
+  }
   QByteArray mainWindowState = settings.value("state").toByteArray();
   if(!mainWindowState.isNull()) {
     this->restoreState(mainWindowState);
