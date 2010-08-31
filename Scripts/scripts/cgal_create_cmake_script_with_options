@@ -155,6 +155,9 @@ endif()
 
 # CGAL and its components
 EOF
+if [ -n "$ENABLE_CTEST" ]; then
+  echo "enable_testing()"
+fi
   #---------------------------------------------------------------------------
 
   # CGAL and its components
@@ -419,6 +422,8 @@ EOF
       echo "include( CGAL_CreateSingleSourceCGALProgram )"
 
     fi
+    # add a new line
+    echo
 
     # Qt3
     if [ "$qt3" = "y" ]; then
@@ -483,7 +488,27 @@ EOF
         else
           echo "create_single_source_cgal_program( \"$file\" )"
         fi
+        if [ -n "$ENABLE_CTEST" ]; then 
+          if [ -f "$BASE.cin" ] ; then
+            CIN=" < $BASE.cin"
+          else
+            CIN=
+          fi
+          cat <<EOF
+add_test( "$BASE" \${CMAKE_CTEST_COMMAND}
+  --build-and-test "\${CMAKE_CURRENT_SOURCE_DIR}"
+                   "\${CMAKE_CURRENT_BINARY_DIR}"
+  --build-generator "\${CMAKE_GENERATOR}"
+  --build-makeprogram "\${CMAKE_MAKE_PROGRAM}"
+  --build-target $BASE
+  --build-no-clean
+  --build-run-dir "\${CMAKE_CURRENT_SOURCE_DIR}"
+  --test-command sh -c "\${CMAKE_CURRENT_BINARY_DIR}/$BASE$CIN" )
+EOF
+        fi
       fi
+      #add a new line
+      echo 
     done
     
   else #======================================================================
@@ -657,7 +682,7 @@ if [ ! -e "$OPTIONS_FILE" ]; then
 fi
 
 # parse command line arguments
-while getopts s:c:b:p:d:o:hv OPT; do
+while getopts s:c:b:p:d:o:hvt OPT; do
   case "$OPT" in
     s)  SINGLE_SOURCE='y'
         SOURCE=$OPTARG
@@ -695,7 +720,8 @@ while getopts s:c:b:p:d:o:hv OPT; do
           exit 1
         fi
         ;;
-
+    t)  ENABLE_CTEST='y'
+        ;;
     h)  usage
         exit 0
         ;;
