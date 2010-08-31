@@ -14,6 +14,7 @@
 
 use Cwd;
 use strict;
+use Date::Format;
 
 my ($PLATFORMS_BESIDE_RESULTS, $PLATFORMS_REF_BETWEEN_RESULTS)=(1,1);
 
@@ -31,11 +32,37 @@ my @testresults;
 my $testresult_dir=cwd()."/TESTRESULTS";
 
 
+sub write_selects()
+{
+    print OUTPUTV "<p>You can browse the test results of a different version :</p>";
+    my %releases;
+    foreach $_  (glob("results-*.shtml")) {
+        $_ =~ /results-([^I]*)((-Ic?)-([^I].*))\.shtml/;
+        $releases{"$1$3"}=1;
+    }
+    print OUTPUTV "<table><tr>\n";
+    print OUTPUTV "  <th>All releases</th>\n";
+    my $count = 0;
+    foreach $_ (sort {$b cmp $a} (keys %releases)) {
+        print OUTPUTV "  <th>CGAL-$_</th>\n";
+        $count++ > 3 && last;
+    }
+    print OUTPUTV "</tr>\n";
+    print OUTPUTV "<tr>\n";
+    write_select(".*");
+    $count = 0;
+    foreach $_ (sort {$b cmp $a} (keys %releases)) {
+        write_select($_);
+        $count++ > 3 && last;
+    }
+    print OUTPUTV "</tr>\n</table>\n";
+}
+
 sub write_select()
 {
+  my $pattern = shift(@_);
   my($filename, @result);
-  print OUTPUTV "<table><tr><td>You can browse the test results of a different version :\n";
-  print OUTPUTV '<td><select id="sel" onchange="sel=document.getElementById(\'sel\'); top.location.href=sel.options[sel.selectedIndex].value">'."\n";
+  print OUTPUTV '  <td><select id="sel" onchange="sel=document.getElementById(\'sel\'); top.location.href=sel.options[sel.selectedIndex].value">'."\n";
 
   print OUTPUTV '<option value="">', "</option>\n";
   foreach $_ (sort { $a =~ /results-([^I]*)(|-Ic?-(.*))\.shtml/;
@@ -48,11 +75,15 @@ sub write_select()
 		     return ($maj_a eq $maj_b) ? ($min_b <=> $min_a)
 		                               : ($maj_b cmp $maj_a);
                    } (glob("results-*.shtml"))) {
+      $_ =~ /results-${pattern}(-.*|)\.shtml/ || next;
+      my $ctime = (stat($_))[10];
+      my $date = time2str('%a %Y/%m/%d', $ctime);
      print OUTPUTV '<option value="', $_, '">';
      ($filename) = m/results-(.*?)\.shtml\s*/;
-     print OUTPUTV $filename, "</option>\n";
+#     printf OUTPUTV "%-20s (last modified: %s)</option>\n", $filename, $date;
+     printf OUTPUTV '%2$s: %1$s</option>\n', $filename, $date;
   }
-  print OUTPUTV "</select></td></tr></table>";
+  print OUTPUTV "</select></td>";
 }
 
 sub list_platforms()
@@ -558,7 +589,7 @@ EOF
     symlink $WWWPAGE, "index.shtml";
 
     # Deal with the versions.inc file.
-    write_select();
+    write_selects();
     my $VERSIONS_WEBPAGE="versions.inc";
     rename $TEMPPAGE2, $VERSIONS_WEBPAGE;
     chmod 0644, $VERSIONS_WEBPAGE;
