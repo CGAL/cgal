@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (Triangulation_2)
+project (Apollonius_graph_2_demo)
 
 cmake_minimum_required(VERSION 2.4.5)
 
@@ -23,18 +23,12 @@ set( QT_USE_QTOPENGL  TRUE )
 
 find_package(Qt4)
 include_directories (BEFORE ../../include)
-include_directories (BEFORE ./include)
-  include_directories (BEFORE ../../../Number_types/include)
-
-  include_directories (BEFORE ../../../Apollonius_graph_2/include)
 
 
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
 include(${QT_USE_FILE})
 
-#--------------------------------
-# The "Delaunay" demo: Apollonius_graph_2
 #--------------------------------
 # UI files (Qt Designer files)
 qt4_wrap_ui( DT_UI_FILES Apollonius_graph_2.ui )
