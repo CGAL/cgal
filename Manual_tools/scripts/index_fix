@@ -33,6 +33,17 @@ $indexlegend = "Pages on which definitions are given are presented in \{\\bf bol
 
 $tocCommand = "\\addcontentsline{toc}{chapter}{Index}";
 
+if($ARGV[0] =~ /(.*)\.ind/)
+{
+    open TEX,"<$1.tex";
+    while(<TEX>) {
+        if(/\\documentclass.*article/) {
+            $tocCommand = "\\addcontentsline{toc}{section}{Index}";
+            last;
+        }
+    }
+}
+
 while (<>) {
     s/,\s+\\none\{\d+\}//g;   # get rid of the ", \none{n}" text
 
