@@ -1,3 +1,4 @@
+// Copyright (c) 2010 GeometryFactory (France).
 // Copyright (c) 1997-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -20,6 +21,7 @@
 // 
 //
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
+//                 Sebastien Loriot <Sebastien.Loriot@geometryfactory.com>
 
 #ifndef CGAL_INTERSECTION_3_1_H
 #define CGAL_INTERSECTION_3_1_H
@@ -133,7 +135,17 @@ do_intersect(const Segment_3<R> &p1,
     return do_intersect(p2,p1);
 }
 
+template <class R>
+Object
+intersection(const Plane_3<R> &plane, const Triangle_3<R>&tri);
 
+template <class R>
+inline
+Object
+intersection(const Triangle_3<R>&tri, const Plane_3<R> &plane)
+{
+    return intersection(plane,tri);
+}
 
 template <class R>
 Object

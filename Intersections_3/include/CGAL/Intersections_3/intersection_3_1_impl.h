@@ -1,3 +1,4 @@
+// Copyright (c) 2010 GeometryFactory (France).
 // Copyright (c) 1997-2004  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -20,9 +21,11 @@
 // 
 //
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
+//                 Sebastien Loriot <Sebastien.Loriot@geometryfactory.com>
 
 
 #include <CGAL/wmult.h>
+#include <boost/next_prior.hpp>
 
 namespace CGAL {
 
@@ -643,6 +646,92 @@ do_intersect(const typename K::Segment_3 &seg,
   return do_intersect(plane, seg, k);
 }
 
+template <class K>
+inline
+Object
+intersection(const typename K::Plane_3 &plane, 
+	     const typename K::Triangle_3 &tri, 
+	     const K& k)
+{
+  Oriented_side or0=plane.oriented_side(tri.vertex(0));
+  Oriented_side or1=plane.oriented_side(tri.vertex(1));
+  Oriented_side or2=plane.oriented_side(tri.vertex(2));
+  
+  if (or0==ON_ORIENTED_BOUNDARY){
+    if (or1==ON_ORIENTED_BOUNDARY){
+      if (or2==ON_ORIENTED_BOUNDARY) 
+        return make_object(tri);
+      else 
+        return make_object(k.construct_segment_3_object()(tri.vertex(0),tri.vertex(1)));
+    }
+    else{
+      if (or2==ON_ORIENTED_BOUNDARY)
+        return make_object(k.construct_segment_3_object()(tri.vertex(0),tri.vertex(2)));
+      else{
+        if (or1==or2)
+          return make_object(tri.vertex(0));
+        else{
+          Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(1),tri.vertex(2)), k);
+          const typename K::Point_3* p=object_cast<typename K::Point_3>(&obj);
+          CGAL_kernel_assertion(p!=NULL);
+          return make_object(k.construct_segment_3_object()(*p,tri.vertex(0)));
+        }
+      }
+    }
+  }
+
+  if (or1==ON_ORIENTED_BOUNDARY){
+    if (or2==ON_ORIENTED_BOUNDARY)
+      return make_object(k.construct_segment_3_object()(tri.vertex(1),tri.vertex(2)));
+    if (or2==or0)
+      return make_object(tri.vertex(1));
+    else{
+      Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(2)), k);
+      const typename K::Point_3* p=object_cast<typename K::Point_3>(&obj);
+      CGAL_kernel_assertion(p!=NULL);
+      return make_object(k.construct_segment_3_object()(*p,tri.vertex(1)));      
+    }
+  }
+  
+  if (or2==ON_ORIENTED_BOUNDARY){
+    if (or1==or0)
+      return make_object(tri.vertex(2));
+    else{
+      Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(1)), k);
+      const typename K::Point_3* p=object_cast<typename K::Point_3>(&obj);
+      CGAL_kernel_assertion(p!=NULL);
+      return make_object(k.construct_segment_3_object()(*p,tri.vertex(2)));      
+    }
+  }
+  
+  //triangle vertices are not in the plane
+  std::vector<typename K::Point_3> pts;
+  pts.reserve(2);
+  if (or0!=or1){
+    Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(1)), k);
+    const typename K::Point_3* pt_ptr=object_cast<typename K::Point_3>(&obj);
+    CGAL_kernel_assertion( pt_ptr!=NULL );    
+    pts.push_back( *pt_ptr );
+  }
+  if (or0!=or2){
+    Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(2)), k);
+    const typename K::Point_3* pt_ptr=object_cast<typename K::Point_3>(&obj);
+    CGAL_kernel_assertion( pt_ptr!=NULL );    
+    pts.push_back( *pt_ptr );    
+  }
+  if (or1!=or2){
+    Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(1),tri.vertex(2)), k);
+    const typename K::Point_3* pt_ptr=object_cast<typename K::Point_3>(&obj);
+    CGAL_kernel_assertion( pt_ptr!=NULL );    
+    pts.push_back( *pt_ptr );
+  }
+  
+  CGAL_kernel_assertion(pts.size()==2);
+  
+  return make_object( k.construct_segment_3_object()(*pts.begin(),*boost::prior(pts.end())) );
+}
+
+
 
 template <class K>
 Object
@@ -1107,6 +1196,14 @@ bool
 do_intersect(const Plane_3<K>  &plane, const Segment_3<K> &seg)
 {
   return typename K::Do_intersect_3()(plane, seg);
+}
+
+template <class K>
+inline
+Object
+intersection(const Plane_3<K> &plane, const Triangle_3<K> &tri)
+{
+  return typename K::Intersect_3()(plane, tri);
 }
 
 template <class K>

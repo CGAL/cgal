@@ -55,6 +55,7 @@ struct Test {
   typedef CGAL::Segment_3< K >        S;
   typedef CGAL::Line_3< K >           L;
   typedef CGAL::Plane_3< K >          Pl;
+  typedef CGAL::Triangle_3< K >       Tr;
   typedef CGAL::Ray_3< K >            R;
   typedef CGAL::Iso_cuboid_3< K >     Cub;
 
@@ -303,6 +304,15 @@ struct Test {
     check_intersection     (S(p(  0,  0,   0), p(  1,   2,   3)), Cub(p(  1,   1,   1), p(  3,  5,   8)),
 		            P( 1, 2,  3));
   }
+  
+  void Pl_Tr()
+  {
+    std::cout << "Plane - Triangle\n";
+    check_intersection     ( Pl(P(0,0,0),P(12,0,0),P(0,11,0)),Tr(P(0,0,0),P(1,0,0),P(0,1,0)),Tr(P(0,0,0),P(1,0,0),P(0,1,0)),true);
+    check_intersection     ( Pl(P(0,0,0),P(12,0,0),P(0,11,0)),Tr(P(0,0,0),P(1,0,1),P(0,1,1)),P(0,0,0),true);
+    check_intersection     ( Pl(P(0,0,0),P(12,0,0),P(0,11,0)),Tr(P(0,0,0),P(1,0,0),P(0,1,1)),S(P(0,0,0),P(1,0,0)),true);
+    check_intersection     ( Pl(P(0,0,0),P(12,0,0),P(0,11,0)),Tr(P(1,0,-1),P(-1,0,-1),P(0,0,1)),S(P(0.5,0,0),P(-0.5,0,0)),true);
+  }
 
   void run()
   {
@@ -316,6 +326,7 @@ struct Test {
     Pl_S();
     R_Cub();
     S_Cub();
+    Pl_Tr();
   }
 
 };
