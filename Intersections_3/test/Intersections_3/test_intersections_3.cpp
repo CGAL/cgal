@@ -313,6 +313,14 @@ struct Test {
     check_intersection     ( Pl(P(0,0,0),P(12,0,0),P(0,11,0)),Tr(P(0,0,0),P(1,0,0),P(0,1,1)),S(P(0,0,0),P(1,0,0)),true);
     check_intersection     ( Pl(P(0,0,0),P(12,0,0),P(0,11,0)),Tr(P(1,0,-1),P(-1,0,-1),P(0,0,1)),S(P(0.5,0,0),P(-0.5,0,0)),true);
   }
+  
+  void S_L()
+  {
+    std::cout << "Segment - Line\n";
+    check_intersection     ( S(P(0,0,0),P(12,0,0)),L(P(0,0,0),P(1,0,0)),S(P(0,0,0),P(12,0,0)),true);
+    check_intersection     ( S(P(0,0,0),P(12,0,0)),L(P(0,1,0),P(0,-1,0)),P(0,0,0),true);
+    check_intersection     ( S(P(-12,0,0),P(12,0,0)),L(P(0,1,0),P(0,-1,0)),P(0,0,0),true);
+  }
 
   void run()
   {
@@ -327,6 +335,7 @@ struct Test {
     R_Cub();
     S_Cub();
     Pl_Tr();
+    S_L();
   }
 
 };
