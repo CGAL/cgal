@@ -53,8 +53,8 @@ public:
   {
     typename K::Construct_circumcenter_3 circumcenter =
         K().construct_circumcenter_3_object();
-    typename K::Has_on_bounded_side_3 on_bounded_side =
-        K().has_on_bounded_side_3_object();
+    typename K::Side_of_bounded_sphere_3 side_of_bounded_sphere =
+        K().side_of_bounded_sphere_3_object();
 
     // Compute denominator to swith to exact if it is (close to) 0.
     // TODO: replace hard coded comparison with 1E-13 by static filter.
@@ -64,10 +64,10 @@ public:
       Point_3 point = circumcenter(p,q,r,s);
 
       // Fast output
-      if ( on_bounded_side(Sphere_3(p,q,r,s),point) )
+      if ( side_of_bounded_sphere(p,q,r,s,point) == ON_BOUNDED_SIDE )
         return point;
     }
-
+    std::cerr << "switch to exact" << std::endl;
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
@@ -86,8 +86,8 @@ public:
   {
     typename K::Construct_circumcenter_3 circumcenter =
       K().construct_circumcenter_3_object();
-    typename K::Has_on_bounded_side_3 on_bounded_side =
-      K().has_on_bounded_side_3_object();
+    typename K::Side_of_bounded_sphere_3 side_of_bounded_sphere =
+      K().side_of_bounded_sphere_3_object();
 
     // Compute denominator to swith to exact if it is (close to) 0.
     // TODO: replace hard coded comparison with 1E-13 by static filter.
@@ -97,7 +97,7 @@ public:
       Point_3 point = circumcenter(p,q,r);
 
       // Fast output
-      if ( on_bounded_side(Sphere_3(p,q,r),point) )
+      if ( side_of_bounded_sphere(p,q,r,point) == ON_BOUNDED_SIDE )
         return point;
     }
 
@@ -117,14 +117,14 @@ public:
   {
     typename K::Construct_circumcenter_3 circumcenter =
       K().construct_circumcenter_3_object();
-    typename K::Has_on_bounded_side_3 on_bounded_side =
-      K().has_on_bounded_side_3_object();
+    typename K::Side_of_bounded_sphere_3 side_of_bounded_sphere =
+      K().side_of_bounded_sphere_3_object();
 
     // No division here
     Point_3 point = circumcenter(p,q);
 
     // Fast output
-    if ( on_bounded_side(Sphere_3(p,q),point) )
+    if ( side_of_bounded_sphere(p,q,point) == ON_BOUNDED_SIDE )
       return point;
 
     // Switch to exact
