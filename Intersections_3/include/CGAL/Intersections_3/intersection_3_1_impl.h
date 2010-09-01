@@ -653,9 +653,12 @@ intersection(const typename K::Plane_3 &plane,
 	     const typename K::Triangle_3 &tri, 
 	     const K& k)
 {
-  Oriented_side or0=plane.oriented_side(tri.vertex(0));
-  Oriented_side or1=plane.oriented_side(tri.vertex(1));
-  Oriented_side or2=plane.oriented_side(tri.vertex(2));
+  typename K::Construct_vertex_3 vertex_on =
+    k.construct_vertex_3_object();
+  
+  Oriented_side or0=plane.oriented_side(vertex_on(tri,0));
+  Oriented_side or1=plane.oriented_side(vertex_on(tri,1));
+  Oriented_side or2=plane.oriented_side(vertex_on(tri,2));
   
   if (or0==ON_ORIENTED_BOUNDARY){
     if (or1==ON_ORIENTED_BOUNDARY){
