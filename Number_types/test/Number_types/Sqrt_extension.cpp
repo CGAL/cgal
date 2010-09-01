@@ -131,38 +131,6 @@ void io_test(){
     EXT(0).output_maple(os); // no real test just to instantiate code  
 }
 
-void is_exact_test(){
- 
-    typedef CGAL::Tag_true  T;
-    typedef CGAL::Tag_false F;
-        
-    {
-        typedef CGAL::Sqrt_extension<int,int> NT;
-            
-        assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
-                        CGAL::Tag_true >::value));
-            
-    }
-    {
-        typedef CGAL::Sqrt_extension<int,double > NT;
-            
-        assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
-                        CGAL::Tag_false >::value));
-    }
-    {
-        typedef CGAL::Sqrt_extension<double,int > NT;
-            
-        assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
-                        CGAL::Tag_false >::value));
-    }
-    {
-        typedef CGAL::Sqrt_extension<double,double> NT;
-            
-        assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
-                        CGAL::Tag_false >::value));
-    }
-}
-
 template<class NT, class ROOT,class REAL>
 void convert_to_real(){
     typedef CGAL::Sqrt_extension<NT,ROOT> EXT1;
@@ -732,8 +700,7 @@ void sqrt_extension_test(){
   
     general_test<Integer,Integer,CGAL::Integral_domain_tag>();        
     general_test<Rational,Integer,CGAL::Field_tag>(); 
- 
-    is_exact_test();    
+  
     convert_to_real<Integer,Integer,Field_with_sqrt>();
     
     convert_to_bfi<Integer,Integer,typename AT::Bigfloat_interval>();
