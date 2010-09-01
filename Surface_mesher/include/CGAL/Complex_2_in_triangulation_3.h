@@ -547,10 +547,8 @@ public:
   }
 
   /** This function assumes that the edge is regular. */
-  Facet neighbor(Facet f, int j) const 
+  Facet neighbor(Cell_handle ch, int index, int j) const 
   {
-    const Cell_handle ch = f.first;
-    const int index = f.second;
     const int i1  = tr.vertex_triple_index(index, tr. cw(j));
     const int i2  = tr.vertex_triple_index(index, tr.ccw(j));
 
@@ -558,11 +556,17 @@ public:
     CGAL_assertion(face_status(edge) == REGULAR);
 
     typename Tr::Facet_circulator facet_circ = 
-      tr.incident_facets(edge, f);
+      tr.incident_facets(edge, ch,index);
     do { 
       ++facet_circ;
     } while(! is_in_complex(*facet_circ) );
     return opposite_facet(*facet_circ);
+  }
+  
+    /** This function assumes that the edge is regular. */
+  Facet neighbor(Facet f, int j) const 
+  {
+    return neighbor(f.first,f.second,j);
   }
 
   // Setting functions
