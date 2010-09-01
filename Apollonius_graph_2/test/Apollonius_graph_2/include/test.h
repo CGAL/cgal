@@ -132,7 +132,7 @@ bool test_traits_base(const Traits& = Traits())
   // testing constructors
   //--------------------------------------------------------------------
   Traits tr;
-  tr = Traits(); // to avoid warning that variable was not initialized;
+  //  tr = Traits(); // to avoid compiler-warning that variable was not initialized;
   Traits tr1(tr);
   tr1 = tr;
   tr = tr1;
