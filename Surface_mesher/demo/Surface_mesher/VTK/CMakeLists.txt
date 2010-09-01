@@ -18,7 +18,7 @@ foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALimageIO)
 endforeach()
 
 
-FIND_PACKAGE(CGAL)
+FIND_PACKAGE(CGAL REQUIRED ImageIO)
 IF(CGAL_FOUND)
   include( ${CGAL_USE_FILE} )
 ENDIF(CGAL_FOUND)
@@ -62,8 +62,6 @@ TARGET_LINK_LIBRARIES( mesh_a_3D_image
   vtkGraphics
   vtkIO
   vtkCommon
-  CGAL
-  CGAL-ImageIO
 )
 
 SET (SRCS_VTK
@@ -79,8 +77,6 @@ TARGET_LINK_LIBRARIES( mesh_a_VTK_3D_image
   vtkGraphics
   vtkIO
   vtkCommon
-  CGAL
-  CGAL-ImageIO
 )
 
 
