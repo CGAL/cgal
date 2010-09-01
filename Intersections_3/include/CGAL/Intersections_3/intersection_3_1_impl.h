@@ -360,6 +360,14 @@ intersection(const typename K::Line_3 &l,
 }
 
 template <class K>
+Object
+intersection(const typename K::Segment_3 &s,
+	     const typename K::Line_3 &l,
+	     const K& k)
+{
+  return intersection(l,s,k);
+}
+template <class K>
 inline
 bool
 do_intersect(const typename K::Line_3  &l,
@@ -382,6 +390,16 @@ do_intersect(const typename K::Line_3  &l,
     return or1!=or2;
   }
   return false;
+}
+
+template <class K>
+inline
+bool
+do_intersect(const typename K::Segment_3  &s,
+             const typename K::Line_3  &l,
+             const K & k)
+{
+  return do_intersect(l,s,k);
 }
 
 template <class K>
@@ -734,7 +752,15 @@ intersection(const typename K::Plane_3 &plane,
   return make_object( k.construct_segment_3_object()(*pts.begin(),*boost::prior(pts.end())) );
 }
 
-
+template <class K>
+inline
+Object
+intersection(const typename K::Triangle_3 &triangle,
+	     const typename K::Plane_3  &plane,
+	     const K& k)
+{
+  return intersection(plane, triangle, k);
+}
 
 template <class K>
 Object
