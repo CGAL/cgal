@@ -493,6 +493,10 @@ public:
     return  face_status(c,i) != NOT_IN_COMPLEX;
   }
 
+  bool is_in_complex (const Cell_handle& c,const int i, const int j) const {
+    return  face_status(c,i,j) != NOT_IN_COMPLEX;
+  }  
+  
   bool is_in_complex (const Edge& e) const {
     return  face_status(e) != NOT_IN_COMPLEX;
   }
