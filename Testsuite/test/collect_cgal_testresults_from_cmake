@@ -46,7 +46,7 @@ print_testresult()
       # or ',' or ':'. That avoids some false positives such as
       # '-read_only_relocs,warning' or '-D_CRT_SECURE_NO_WARNINGS', or
       # 'QMessageBox::warning'.
-      if grep -i -E -q '(^|[^a-zA-Z_,:])warning' CompilerOutput_$1 ProgramOutput.*.$1 
+      if grep -i -E -q '(^|[^a-zA-Z_,:-])warning' CompilerOutput_$1 ProgramOutput.*.$1 
       then
         RESULT="w"
       else
@@ -116,7 +116,7 @@ parse_lib_building_results()
       # Test if there is a warning in the build log.
       if [ "$y_or_no" = "y" ]; then
         # See the comment line 38.
-        if grep -i -E -q '(^|[^a-zA-Z_,:])warning' ${libname}_${shared_or_static}/$TEST_REPORT ; then
+        if grep -i -E -q '(^|[^a-zA-Z_,:-])warning' ${libname}_${shared_or_static}/$TEST_REPORT ; then
           y_or_no='w'
         fi
       fi
