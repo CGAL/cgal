@@ -84,6 +84,18 @@ class Gaussian_map :
 
     SM_decorator SM;
     Facet2SVertex_hash& Facet2SVertex;
+
+    using Base::clear_face_cycle_entries;
+    using Base::is_closed_at_source;
+    using Base::delete_edge_pair;
+    using Base::delete_vertex_only;
+    using Base::delete_face_only;
+    using Base::set_face;
+    using Base::store_sm_boundary_object;
+    using Base::is_isolated;
+    using Base::has_outdeg_two;
+    using Base::first_out_edge;
+    using Base::merge_edge_pairs_at_target;
     
   public:
     SVertex_creator2(Sphere_map* smap, Facet2SVertex_hash& F2SV)
