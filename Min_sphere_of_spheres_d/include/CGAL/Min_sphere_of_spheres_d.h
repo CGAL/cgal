@@ -22,7 +22,7 @@
 #define CGAL_MINIBALL_MINIBALL
 
 #include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_configure.h>
-#include <cstdlib>                 // for std::rand()
+#include <boost/random/linear_congruential.hpp>
 #include <cmath>
 #include <vector>
 #include <iostream>
@@ -63,6 +63,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
     // ball has been respected in the miniball computation.
     bool is_up_to_date;
   
+    boost::rand48 rng;  
+
   public: // iterators:
     typedef const Result *Cartesian_const_iterator; // coordinate iterator
   
@@ -97,7 +99,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       insert(begin,end);            // todo. better way?
     }
   
-    inline void prepare(int size);
+    inline void prepare(std::size_t size);
   
     inline void insert(const Sphere& b);
   
@@ -180,7 +182,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
 
   template<class Traits>
-  void Min_sphere_of_spheres_d<Traits>::prepare(int size) {
+  void Min_sphere_of_spheres_d<Traits>::prepare(std::size_t size) {
     S.reserve(size);
     // (The vector l will be reserve()'d in update().)
   }
