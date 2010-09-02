@@ -35,6 +35,8 @@
 #include <CGAL/streamlines_assertions.h>
 
 #include <boost/tuple/tuple.hpp>
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_smallint.hpp>
 
 namespace CGAL {
 
@@ -245,17 +247,21 @@ void Stream_lines_2<VectorField_2, Integrator_2>::place_stream_lines(const Vecto
 {
   seed_point = Point_2((max_x+min_x)/2.0,(max_y+min_y)/2.0);
   // the first chosen point can be not valid
-  FT xrange = max_x - min_x;
-  FT yrange = max_y - min_y;
+
+  boost::rand48 rng;               
+
+  boost::uniform_real<> ur_x(min_x, max_x);
+  boost::uniform_real<> ur_y(min_y, max_y);
+  boost::variate_generator<boost::rand48&, boost::uniform_real<> > die_x(rng, ur_x);
+  boost::variate_generator<boost::rand48&, boost::uniform_real<> > die_y(rng, ur_y);
+  
   while(!vector_field_2.is_in_domain(seed_point))
     {
-//       std::cout << "searching valid seed point..\n";
-      FT x = min_x + (FT) (((FT) std::rand() * xrange)/((FT) RAND_MAX));
-      FT y = min_y + (FT) (((FT) std::rand() * yrange)/((FT) RAND_MAX));
-      seed_point = Point_2(x, y);
+      // std::cout << "searching valid seed point..\n";
+      seed_point = Point_2(die_x(), die_y());
     }
-//   std::cout << seed_point << " first seed point\n";
-//   std::cout << "creating the placement..\n";
+  // std::cout << seed_point << " first seed point\n";
+  // std::cout << "creating the placement..\n";
   FT distance = (FT) max_x * (1.0/2.0);
   bool b = (distance>fSepStl_seed);
   //  int i=0;
