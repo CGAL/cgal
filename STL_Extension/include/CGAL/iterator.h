@@ -1153,7 +1153,7 @@ template<typename _Iterator, typename Predicate>
       operator=(const T& t)
       {
 	if(! predicate(t))
-	  iterator = t;
+	  *iterator = t;
 	return *this;
       }
 
@@ -1163,11 +1163,18 @@ template<typename _Iterator, typename Predicate>
 
       Filter_output_iterator&
       operator++()
-      { return *this; }
+      { 
+        ++iterator;
+        return *this; 
+      }
 
       Filter_output_iterator
       operator++(int)
-      { return *this; }
+      {
+        Filter_output_iterator res(*this);
+        ++iterator;
+        return res; 
+      }
     };
 
 template < class I, class P >
