@@ -351,7 +351,7 @@ public:
     
   struct Innermost_leading_coefficient
     :public std::unary_function <ICoeff, ICoeff>{
-    ICoeff operator()(const ICoeff& x){return x;}
+    const ICoeff& operator()(const ICoeff& x){return x;}
   };
     
   struct Degree_vector{
@@ -365,7 +365,7 @@ public:
   
   struct Get_innermost_coefficient 
     : public std::binary_function< ICoeff, Polynomial_d, Exponent_vector > {
-    ICoeff operator()( const Polynomial_d& p, Exponent_vector ) {
+    const ICoeff& operator()( const Polynomial_d& p, Exponent_vector ) {
       return p;
     }
   };
@@ -699,11 +699,12 @@ public:
   struct Get_coefficient 
     : public std::binary_function<Polynomial_d, int, Coefficient_type > {
         
-    Coefficient_type operator()( const Polynomial_d& p, int i) const {
+    const Coefficient_type& operator()( const Polynomial_d& p, int i) const {
+      static const Coefficient_type zero =  Coefficient_type(0);
       CGAL_precondition( i >= 0 );
       typename PT::Degree degree;
       if( i >  degree(p) )
-        return Coefficient_type(0);
+        return zero;
       return p[i];
     }       
   };
@@ -714,7 +715,7 @@ public:
     std::binary_function< Polynomial_d, Exponent_vector, Innermost_coefficient_type >
   {
         
-    Innermost_coefficient_type 
+    const Innermost_coefficient_type& 
     operator()( const Polynomial_d& p, Exponent_vector ev ) const {
       CGAL_precondition( !ev.empty() );
       typename PTC::Get_innermost_coefficient gic;
@@ -848,7 +849,7 @@ public:
   //       Leading_coefficient;
   struct Leading_coefficient 
     : public std::unary_function< Polynomial_d , Coefficient_type>{
-    Coefficient_type operator()(const Polynomial_d& p) const {
+    const Coefficient_type& operator()(const Polynomial_d& p) const {
       return p.lcoeff();
     }
   };
@@ -856,7 +857,7 @@ public:
   //       Innermost_leading_coefficient;
   struct Innermost_leading_coefficient 
     : public std::unary_function< Polynomial_d , Innermost_coefficient_type>{
-    Innermost_coefficient_type 
+    const Innermost_coefficient_type& 
     operator()(const Polynomial_d& p) const {
       typename PTC::Innermost_leading_coefficient ilcoeff;
       typename PT::Leading_coefficient lcoeff;
