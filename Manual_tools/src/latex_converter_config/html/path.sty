@@ -19,6 +19,9 @@
     {\tt\lciRawOutputN{#L1}#1}}
 \newcommand{\nonlinkedpath}{\lciParseUntilDelimiter{\lciNonLinkedLocalPath}}
 
+% emulate \url from url.sty and hyperref.sty
+\newcommand{\url}{\lciParseUntilCloseBrace{\lciLocalPath}}
+
 % ___________________________________________________________________________
 % ###########################################################################
 % | EOF

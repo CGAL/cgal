@@ -639,6 +639,21 @@ number          {digit}+
 			inc_line();
 		    break;
                 }
+<INITIAL,AllttMode>[\\]lciParseUntilCloseBrace{seps}[\{]{seps}{texmacro}{seps}[\}]   {
+		    old_state = YY_START;
+		    BEGIN( DelimiterMode);
+                    char* s = yytext + 1;
+		    s = next_char(s, '\\');
+		    char* p = s;
+		    ++s;
+		    s = next_non_alpha( s);
+		    *s = '\0';
+		    current_macro  = p;
+		    skipseparator();
+                    yyinput(); // should be '{'
+                    stop_character='}';
+		    break;
+                }
 <DelimiterMode>"\n"	{
                     inc_line();
 		    yymore();
