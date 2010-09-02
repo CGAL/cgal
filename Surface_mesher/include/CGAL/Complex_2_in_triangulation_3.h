@@ -217,6 +217,7 @@ public:
   class Vertex_not_in_complex {
     Self* self;
   public:
+    Vertex_not_in_complex(){} //added for SWIG wrapping
     Vertex_not_in_complex(Self* self) : self(self) 
     {
     }
@@ -242,6 +243,7 @@ public:
   class Iterator_not_on_boundary {
     Self* self;
   public:
+    Iterator_not_on_boundary(){}  //added for SWIG wrapping
     Iterator_not_on_boundary(Self* self) : self(self) 
     {
     }
@@ -269,6 +271,7 @@ public:
     typedef typename Base::Predicate Predicate;
     typedef Vertex_iterator Self;
   public:
+    Vertex_iterator(){} //added for SWIG wrapping
     Vertex_iterator(Base i) : Base(i)
     {
     }
@@ -278,7 +281,7 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
   
-    operator Vertex_handle() 
+    operator Vertex_handle() const // const added for SWIG wrapping
     {
       return Vertex_handle(this->base());
     }
