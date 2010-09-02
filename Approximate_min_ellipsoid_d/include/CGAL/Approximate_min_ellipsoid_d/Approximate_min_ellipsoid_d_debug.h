@@ -25,6 +25,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <boost/random/linear_congruential.hpp>
 
 namespace CGAL {
 
@@ -274,7 +275,8 @@ namespace CGAL {
       bool adjust_bb;
       double zoom;
       std::string filename;
-      
+      boost::rand48 rng;  
+
     public: // construction and destruction:
       
       // Begins exporting to file filename.  Sets the current stroke mode
@@ -576,7 +578,7 @@ namespace CGAL {
 
 	// generate next angle (if needed):
 	if (lm == Random_angle)
-	  next_angle = static_cast<double>(std::rand());
+	  next_angle = static_cast<double>(rng());
 	
 	// update counter and label:
 	next_label = default_label(++count);
@@ -622,7 +624,7 @@ namespace CGAL {
 	
 	// generate next angle (if needed):
 	if (lm == Random_angle)
-	  next_angle = static_cast<double>(std::rand());
+	  next_angle = static_cast<double>(rng());
 	
 	// update counter and label:
 	next_label = default_label(++count);
@@ -687,7 +689,7 @@ namespace CGAL {
 
 	// generate next angle (if needed):
 	if (lm == Random_angle)
-	  next_angle = static_cast<double>(std::rand());
+	  next_angle = static_cast<double>(rng());
 	
 	// update counter and label:
 	next_label = default_label(++count);
