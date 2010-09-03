@@ -1417,10 +1417,7 @@ GraphicsView/demo/Alpha_shapes_2/Alpha_shapes_2.ui -text
 GraphicsView/demo/Alpha_shapes_2/about_Alpha_shapes_2.html svneol=native#text/html
 GraphicsView/demo/Apollonius_graph_2/Apollonius_graph_2.qrc -text
 GraphicsView/demo/Apollonius_graph_2/Apollonius_graph_2.ui -text
-GraphicsView/demo/Apollonius_graph_2/Stream_lines_2.qrc -text
-GraphicsView/demo/Apollonius_graph_2/Stream_lines_2.ui -text
 GraphicsView/demo/Apollonius_graph_2/about_Apollonius_graph_2.html svneol=native#text/html
-GraphicsView/demo/Apollonius_graph_2/about_Stream_lines_2.html svneol=native#text/html
 GraphicsView/demo/Bounding_volumes/Bounding_volumes.qrc -text
 GraphicsView/demo/Bounding_volumes/Bounding_volumes.ui -text
 GraphicsView/demo/Bounding_volumes/about_Bounding_volumes.html svneol=native#text/html
