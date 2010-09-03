@@ -49,10 +49,10 @@ sub write_selects()
     }
     print OUTPUTV "</tr>\n";
     print OUTPUTV "<tr>\n";
-    write_select(".*");
+    write_select("sel", ".*");
     $count = 0;
     foreach $_ (sort {$b cmp $a} (keys %releases)) {
-        write_select($_);
+        write_select("sel" . $count, $_);
         $count++ > 3 && last;
     }
     print OUTPUTV "</tr>\n</table>\n";
@@ -60,9 +60,10 @@ sub write_selects()
 
 sub write_select()
 {
+  my $id = shift(@_);
   my $pattern = shift(@_);
   my($filename, @result);
-  print OUTPUTV '  <td><select id="sel" onchange="sel=document.getElementById(\'sel\'); top.location.href=sel.options[sel.selectedIndex].value">'."\n";
+  print OUTPUTV "  <td><select id=\"$id\" onchange=\"sel=document.getElementById(\'$id\'); top.location.href=sel.options[sel.selectedIndex].value\">\n";
 
   print OUTPUTV '<option value="">', "</option>\n";
   foreach $_ (sort { $a =~ /results-([^I]*)(|-Ic?-(.*))\.shtml/;
