@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (Apollonius_graph_2_demo)
+project (Stream_lines_2_demo)
 
 cmake_minimum_required(VERSION 2.4.5)
 
@@ -31,23 +31,23 @@ include(${QT_USE_FILE})
 
 #--------------------------------
 # UI files (Qt Designer files)
-qt4_wrap_ui( DT_UI_FILES Apollonius_graph_2.ui )
+qt4_wrap_ui( DT_UI_FILES Stream_lines_2.ui )
 
 # qrc files (resources files, that contain icons, at least)
-qt4_add_resources ( DT_RESOURCE_FILES ./Apollonius_graph_2.qrc )
+qt4_add_resources ( DT_RESOURCE_FILES ./Stream_lines_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
-qt4_generate_moc( Apollonius_graph_2.cpp Apollonius_graph_2.moc )
+qt4_generate_moc( Stream_lines_2.cpp Stream_lines_2.moc )
 
 # The executable itself.
-add_executable  ( Apollonius_graph_2 Apollonius_graph_2.cpp Apollonius_graph_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+add_executable  ( Stream_lines_2 Stream_lines_2.cpp Stream_lines_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Apollonius_graph_2 )
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS Stream_lines_2 )
 
 # Link with Qt libraries
-target_link_libraries( Apollonius_graph_2 ${QT_LIBRARIES} )
+target_link_libraries( Stream_lines_2 ${QT_LIBRARIES} )
 # Link with CGAL
-target_link_libraries( Apollonius_graph_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries( Stream_lines_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 
 else()
 
