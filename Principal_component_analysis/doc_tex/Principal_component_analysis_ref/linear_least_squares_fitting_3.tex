@@ -27,16 +27,16 @@ The fitting quality property is characterized by the values of the three eigenva
                                             InputIterator beyond,
                                             typename K::Line_3& line,
                                             typename K::Point_3& centroid,     
-                                            const K& k,
-					                                  const Tag& tag);}
+                                            const Tag& tag,
+					                                  const K& k);}
 { computes the best fitting 3D line of a 3D object set in the range
 [\ccc{first},\ccc{beyond}). The value returned is a fitting quality
 between $0$ and $1$, where $0$ means that the variance is the same
 along any line contained within the best fitting plane, and $1$ means that the variance is null orthogonally to the best fitting line (hence the fit is perfect). }
 
-The class \ccc{K} is the kernel in which the type \ccc{InputIterator::value_type} is defined. It can be omitted and deduced automatically from the value type.
-
 The tag \ccc{tag} identifies the dimension to be considered from the objects. For point sets it should be 0. For segment sets it could be 1 or 0 according to whether one wants to fit the entire segments or just the end points. For triangle sets it can range from 0 to 2 according to whether one wants to fit either the corner points, the segments or the whole triangles. For cuboid sets it can range from 0 to 3 according to whether one wants to fit either the corners, the segments, the faces or the whole solid cuboids. For sphere sets it can be 2 or 3 according to whether one wants to fit either the surface of the spheres or the whole solid balls. For tetrahedron sets it can range from 0 to 3 according to whether one wants to fit either the points, the segments, the surface triangles or the whole solid tetrahedra.
+
+The class \ccc{K} is the kernel in which the type \ccc{InputIterator::value_type} is defined. It can be omitted and deduced automatically from the value type.
 
 \ccHeading{Requirements}
 
@@ -56,8 +56,8 @@ The tag \ccc{tag} identifies the dimension to be considered from the objects. Fo
                                             InputIterator beyond,
                                             typename K::Plane_3& plane,
                                             typename K::Point_3& centroid,     
-                                            const K& k,
-					                                  const Tag& tag);}
+                                            const Tag& tag,
+                                            const K& k);}
 { computes the best fitting 3D plane of a 3D object set in the range
 [\ccc{first},\ccc{beyond}). The value returned is a fitting quality
 between $0$ and $1$, where $0$ means that the variance is the same

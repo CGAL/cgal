@@ -26,15 +26,14 @@ The best fitting line minimizes the sum of squared distances from all points com
                                             InputIterator beyond,
                                             typename K::Line_2 & line,
                                             typename K::Point_2 & centroid,     
-                                            const K & k,
-					                                  const Tag& tag);}
+                                            const Tag & tag,
+					                                  const K & k);}
 { computes the best fitting 2D line of a 2D object set in the range [\ccc{first},\ccc{beyond}). The value returned is a fitting quality between $0$ and $1$, where $0$ means that the variance is the same along any line (a horizontal line going through the centroid is output by default), and $1$ means that the variance is null orthogonally to the best fitting line (hence the fit is perfect).
 \ccPrecond{first != beyond.} }
 
-The class \ccc{K} is the kernel in which the type \ccc{InputIterator::value_type} is defined. It can be omitted and deduced automatically from the value type.\\
-
 The tag \ccc{tag} identifies the dimension to be considered from the objects. For point sets it should be 0. For segments it can be 1 or 0 according to whether one wants to fit the whole segment or just their end points. For triangles it can range from 0 to 2 according to whether one wants to fit either the triangle points, the segments or the whole triangles. For rectangles it can range from 0 to 2 according to whether one wants to fit either the corner points, the segments, or the whole rectangles. For circles it can be 1 or 2 according to whether one wants to fit either the circles or the whole discs. For triangles it ranges from 0 to 2 according to whether one wants to fit either the points, the segments or the whole triangles.
 
+The class \ccc{K} is the kernel in which the type \ccc{InputIterator::value_type} is defined. It can be omitted and deduced automatically from the value type.\\
 
 \ccHeading{Requirements}
 
@@ -45,7 +44,7 @@ The tag \ccc{tag} identifies the dimension to be considered from the objects. Fo
    \item  \ccc{line} is the best fitting line computed.
    \item  \ccc{centroid} is the centroid computed. This parameter is optional and can be
           omitted.
-   \item  \ccc{t} is the tag identifying the dimension to be considered from the objects. It should be one of \ccc{Dimension_tag<0>}, \ccc{Dimension_tag<1>} or \ccc{Dimension_tag<2>}. Also, it should not be of dimension greater than the geometry of the object. For example, a \ccc{Segment} can not have a \ccc{Dimension_tag<2>} tag.
+   \item  \ccc{tag} is the tag identifying the dimension to be considered from the objects. It should be one of \ccc{Dimension_tag<0>}, \ccc{Dimension_tag<1>} or \ccc{Dimension_tag<2>}. Also, it should not be of dimension greater than the geometry of the object. For example, a \ccc{Segment} can not have a \ccc{Dimension_tag<2>} tag.
 \end{enumerate}
 
 \end{ccRefFunction}
