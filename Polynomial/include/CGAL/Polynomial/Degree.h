@@ -71,10 +71,7 @@ public:
       int i = (Dimension<Polynomial_d>::value-1)) const {
     CGAL_assertion(i < Dimension<Polynomial_d>::value);
     CGAL_assertion(i >= 0);
-    int result =  this->degree(p,i);
-    CGAL_assertion_code(typename Polynomial_traits_d<Polynomial_d>::Swap swap;); 
-    CGAL_assertion(swap(p,i,Dimension<Polynomial_d>::value-1).degree()==result);
-    return result; 
+    return this->degree(p,i);
   }     
 
 };
