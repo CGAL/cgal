@@ -1457,6 +1457,9 @@ GraphicsView/demo/Segment_Delaunay_graph_2/icons/moving_point.pdf -text
 GraphicsView/demo/Segment_Delaunay_graph_2/icons/moving_point.png -text
 GraphicsView/demo/Segment_Delaunay_graph_2/icons/triangulation.pdf -text
 GraphicsView/demo/Segment_Delaunay_graph_2/icons/triangulation.png -text
+GraphicsView/demo/Stream_lines_2/Stream_lines_2.qrc -text
+GraphicsView/demo/Stream_lines_2/Stream_lines_2.ui -text
+GraphicsView/demo/Stream_lines_2/about_Stream_lines_2.html svneol=native#text/html
 GraphicsView/demo/Triangulation_2/Constrained_Delaunay_triangulation_2.qrc -text
 GraphicsView/demo/Triangulation_2/Constrained_Delaunay_triangulation_2.ui -text
 GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.qrc -text
