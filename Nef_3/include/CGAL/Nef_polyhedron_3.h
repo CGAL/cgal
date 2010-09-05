@@ -176,10 +176,11 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
 #ifndef _MSC_VER
   // VC++ has a problem to digest the folowing typedef,
   // and does not need the using statements
-  typedef SNC_const_decorator< SNC_structure<Kernel,Items,Mark> > Decorator;
-  using Decorator::set_snc;
-  using Decorator::is_standard;
-  using Decorator::is_bounded;
+  typedef SNC_const_decorator< SNC_structure<Kernel,Items,Mark> > SNC_const_decorator;
+  using SNC_const_decorator::set_snc;
+  using SNC_const_decorator::is_standard;
+  using SNC_const_decorator::is_bounded;
+  typedef typename SNC_const_decorator::SNC_structure       SNC_structure;
 #endif
 
   struct Polylines_tag {};
@@ -203,12 +204,11 @@ protected:
 
  public:
   typedef Nef_polyhedron_3_rep<Kernel,Items, Mark>    Nef_rep;
-  typedef typename Nef_rep::SNC_structure       SNC_structure;
+
   typedef typename Nef_rep::SM_decorator        SM_decorator;
   typedef typename Nef_rep::SM_const_decorator  SM_const_decorator;
  protected:
   typedef typename Nef_rep::SNC_decorator       SNC_decorator;
-  typedef typename Nef_rep::SNC_const_decorator SNC_const_decorator;
   typedef typename Nef_rep::SNC_constructor     SNC_constructor;
   typedef typename Nef_rep::SNC_external_structure SNC_external_structure;
   typedef typename Nef_rep::Binary_operation    Binary_operation;
