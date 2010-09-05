@@ -260,7 +260,7 @@ template <class R>
 Object
 intersection(const Segment_3<R> &s,
              const Line_3<R> &l)
-{return intersection(l,s);};
+{return intersection(l,s);}
 
 template <class R>
 Object
@@ -299,7 +299,7 @@ template <class R>
 bool
 do_intersect(const Segment_3<R> &s,
              const Line_3<R> &l)
-{return do_intersect(l,s);};
+{return do_intersect(l,s);}
 
 template <class R>
 bool
