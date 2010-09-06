@@ -55,25 +55,25 @@ namespace QP_functions_detail {
    const Quadratic_program_options& options = Quadratic_program_options()); 
 
   // internal routines: prints name of solution function
-  void print_solution_function 
+  inline void print_solution_function 
   (std::ostream& out, 
    Tag_true /*is_linear*/, Tag_true /*is_nonnegative*/)
   {
     out << "solve_nonnegative_linear_program"; 
   }
-  void print_solution_function 
+  inline void print_solution_function 
   (std::ostream& out, 
    Tag_false /*is_linear*/, Tag_true /*is_nonnegative*/)
   {
     out << "solve_nonnegative_quadratic_program"; 
   }
-  void print_solution_function 
+  inline void print_solution_function 
   (std::ostream& out, 
    Tag_true /*is_linear*/, Tag_false /*is_nonnegative*/)
   {
     out << "solve_linear_program"; 
   }
-  void print_solution_function 
+  inline void print_solution_function 
   (std::ostream& out, 
    Tag_false /*is_linear*/, Tag_false /*is_nonnegative*/)
   {
