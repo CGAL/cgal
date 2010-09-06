@@ -103,6 +103,7 @@ private:
 
 // output
 // ------
+inline 
 std::ostream& operator<< (std::ostream& o, 
 			  const Quadratic_program_options& options)
 {
