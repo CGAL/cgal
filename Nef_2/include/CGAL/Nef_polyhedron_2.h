@@ -28,7 +28,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
-#include <CGAL/Random.h>
 #include <CGAL/Nef_2/HDS_items.h>
 #include <CGAL/HalfedgeDS_default.h>
 
@@ -42,6 +41,9 @@
 #include <CGAL/Nef_2/Bounding_box_2.h>
 #include <vector>
 #include <list>
+
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_real.hpp>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 11
@@ -566,13 +568,17 @@ public:
     Link_to_iterator I(D, --L.end(), false);
     D.create(L.begin(),L.end(),I);
 
+    boost::rand48 rng;
+    boost::uniform_real<> dist(0,1);
+    boost::variate_generator<boost::rand48&, boost::uniform_real<> > get_double(rng,dist);
+
     Vertex_iterator v; Halfedge_iterator e; Face_iterator f;
     for (v = D.vertices_begin(); v != D.vertices_end(); ++v)
-      D.mark(v) = ( default_random.get_double() < p ? true : false );
+      D.mark(v) = ( get_double() < p ? true : false );
     for (e = D.halfedges_begin(); e != D.halfedges_end(); ++(++e))
-      D.mark(e) = ( default_random.get_double() < p ? true : false );
+      D.mark(e) = ( get_double() < p ? true : false );
     for (f = D.faces_begin(); f != D.faces_end(); ++f)
-      D.mark(f) = ( default_random.get_double() < p ? true : false );
+      D.mark(f) = ( get_double() < p ? true : false );
     D.simplify(Except_frame_box_edges(pm()));
     clear_outer_face_cycle_marks(); 
   }
