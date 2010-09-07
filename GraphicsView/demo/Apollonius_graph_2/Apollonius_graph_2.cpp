@@ -5,8 +5,10 @@
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
-
 #include <CGAL/point_generators_2.h>
+
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_real.hpp>
 
 // Qt headers
 #include <QtGui>
@@ -89,7 +91,7 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   agi, SLOT(modelChanged()));
 
-  //agi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  agi->setSitesPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   agi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(agi);
 
@@ -192,9 +194,12 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::vector<Apollonius_site_2> points;
   points.reserve(number_of_points);
-  width *= 0.01;
+  boost::rand48 rng;
+  boost::uniform_real<> dist(0.005*width, 0.05*width);
+  boost::variate_generator<boost::rand48&, boost::uniform_real<> > radius(rng,dist);
+
   for(int i = 0; i < number_of_points; ++i){
-    points.push_back(Apollonius_site_2(*pg++,width));
+    points.push_back(Apollonius_site_2(*pg++,radius()));
   }
       ag.insert(points.begin(), points.end());
   // default cursor
