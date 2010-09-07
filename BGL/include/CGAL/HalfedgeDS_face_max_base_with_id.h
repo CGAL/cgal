@@ -20,7 +20,7 @@
 #ifndef CGAL_HALFEDGEDS_FACE_MAX_BASE_WITH_ID_H
 #define CGAL_HALFEDGEDS_FACE_MAX_BASE_WITH_ID_H 1
 
-#include <CGAL/HalfedgeDS_vertex_base.h>
+#include <CGAL/HalfedgeDS_face_base.h>
 
 namespace CGAL {
 
