@@ -62,7 +62,11 @@ struct Root_of_traits_helper < FT, Field_tag >
 private:
     typedef Fraction_traits<FT> FrT;
     // Field must be a Type (Decomposable)
-    BOOST_STATIC_ASSERT((FrT::Is_fraction::value));
+    // We have the typedef as VC10 fails with 
+    // static_assert(FrT::Is_fraction::value)
+    typedef typename FrT::Is_fraction ISF;
+    BOOST_STATIC_ASSERT((ISF::value));
+
 
     typedef typename FrT::Numerator_type      RT;
     typedef typename FrT::Decompose Decompose;
