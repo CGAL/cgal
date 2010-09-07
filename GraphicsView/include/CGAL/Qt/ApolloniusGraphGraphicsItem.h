@@ -64,9 +64,19 @@ public:
     edges_pen = pen;
   }
 
+  const QPen& sitesPen() const
+  {
+    return sites_pen;
+  }
+
+  void setSitesPen(const QPen& pen)
+  {
+    sites_pen = pen;
+  }
+
 private:
   AG * ag;
-  QPen edges_pen;
+  QPen edges_pen, sites_pen;
 };
 
 
@@ -91,12 +101,16 @@ template <typename AG, typename K>
 void 
 ApolloniusGraphGraphicsItem<AG,K>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w)
 {
+
+  painter->setPen(this->sitesPen());
   QRectF rect = option->exposedRect;
   PainterOstream<K> pos(painter, rect);
   for(typename AG::Sites_iterator it = ag->sites_begin();
 	 it != ag->sites_end(); it++ ) {
     pos << typename K::Circle_2(it->point(), square( it->weight()));
   }
+
+  painter->setPen(this->edgesPen());
   ag->draw_dual(pos);
 }
 
