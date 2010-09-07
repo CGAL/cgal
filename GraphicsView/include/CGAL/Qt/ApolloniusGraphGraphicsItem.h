@@ -93,12 +93,10 @@ ApolloniusGraphGraphicsItem<AG,K>::paint(QPainter *painter, const QStyleOptionGr
 {
   QRectF rect = option->exposedRect;
   PainterOstream<K> pos(painter, rect);
-  
   for(typename AG::Sites_iterator it = ag->sites_begin();
 	 it != ag->sites_end(); it++ ) {
-    pos << typename K::Circle_2(it->point(), it->weight());
+    pos << typename K::Circle_2(it->point(), square( it->weight()));
   }
-  std::cerr << "paint" << std::endl;
   ag->draw_dual(pos);
 }
 
