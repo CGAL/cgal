@@ -141,7 +141,7 @@ MainWindow::processInput(CGAL::Object o)
 {
   std::pair<Point_2, double> center_and_sr;
   if(CGAL::assign(center_and_sr, o)){
-    ag.insert(Apollonius_site_2(center_and_sr.first, center_and_sr.second));
+    ag.insert(Apollonius_site_2(center_and_sr.first, sqrt(center_and_sr.second)));
     emit(changed());
   }
 }
@@ -170,6 +170,8 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
   CGAL::Qt::Converter<K> convert;  
   Iso_rectangle_2 isor = convert(rect);
+  double width = isor.xmax() - isor.xmin();
+  
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg(isor.min(), isor.max());
   bool ok = false;
   const int number_of_points = 
@@ -188,12 +190,13 @@ MainWindow::on_actionInsertRandomPoints_triggered()
 
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  std::vector<Point_2> points;
+  std::vector<Apollonius_site_2> points;
   points.reserve(number_of_points);
+  width *= 0.01;
   for(int i = 0; i < number_of_points; ++i){
-    points.push_back(*pg++);
+    points.push_back(Apollonius_site_2(*pg++,width));
   }
-  //  ag.insert(points.begin(), points.end());
+      ag.insert(points.begin(), points.end());
   // default cursor
   QApplication::restoreOverrideCursor();
   emit(changed());
