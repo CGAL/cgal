@@ -1,0 +1,31 @@
+# -*- mode: shell-script -*-
+
+CGAL_TESTER="lrineau"
+CGAL_TESTER_NAME="GeometryFactory"
+CGAL_TESTER_ADDRESS=Laurent.Rineau__cgal_testsuite@normalesup.org
+CGAL_ROOT=$HOME/CGAL/
+MYSHELL="/bin/sh -c"
+LC_ALL=C
+
+BUILD_HOSTS="localhost"
+
+if [ "`date +%D`" = "05/28/10" ]; then
+PROCESSORS_localhost=4
+else
+PROCESSORS_localhost=6
+fi
+
+CGAL_ROOT=$HOME/CGAL
+LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
+LOCK_FILE="${CGAL_ROOT}/autotest_cgal_with_cmake.lock"
+
+#COMPILERS_localhost="i686_Linux-2.6_g++-4.1.2_CentOS-5.1-cmake"
+#COMPILERS_localhost=essai
+COMPILERS_localhost="x86-64_Linux-2.6_g++-4.4.4_F13 x86-64_Linux-2.6_g++-4.4.0_Release-F13 x86-64_Linux-2.6_IntelCompiler-11.0-with-g++-4.4.0_F13 x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.4.1_F13 x86-64_Linux-2.6_g++-4.4.1_F13-ansi x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.4.1_F13-strict-ansi x86-64_Linux-2.6_g++-4.5-branch_Release-F13 x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F13 x86-64_Linux-2.6_g++-trunk_CXX0X-F13 x86-64_Linux-2.6_llvm-clang-with-g++-4.4.1_F13 x86-64_Linux-2.6_g++-4.4.4_F13-MATCHING-BUG-6"
+
+REFERENCE_PLATFORMS_DIR=$HOME/CGAL/CGAL-I-REF/cmake/platforms
+
+USE_REFERENCE_PLATFORMS=yes
+#REFERENCE_PLATFORMS_DIR=/home/lrineau/CGAL/releases-and-testsuites-with-cmake/reference-platforms
+
+ULIMIT_OPTIONS="-v 5000000 -c 0 -t 3600"
