@@ -1,0 +1,24 @@
+export TEXINPUTS=".:$HOME/CGAL/Manual_tools-installed/sty:$HOME/CGAL/last-release-branch/Manual/doc_tex:$TEXINPUTS"
+export BIBINPUTS="$HOME/CGAL/last-release-branch/Manual/doc_tex:$BIBINPUTS"
+export LATEX_CONV_CONFIG=$HOME/CGAL/Manual_tools-installed/latex_conv_config
+export LATEX_CONV_INPUTS=$LATEX_CONV_CONFIG/html:$HOME/CGAL/last-release-branch/Manual/doc_tex:
+
+# Use makeindex from Fedora 10:
+# kpathsea-2007-35.fc10.i386
+# texlive-2007-35.fc10.i386
+export PATH=$HOME/bin:$PATH
+export LD_PRELOAD=$HOME/bin/libkpathsea.so.4
+
+# Selects the different output formats supported
+MakePS=0
+MakePDF=1
+MakeHTML=1
+
+# Number of older test-suite results kept. Test-suite results beyond this
+# number are deleted.
+TestSuiteHistory=20
+
+# Number of older test-suites for which the full results will be kept. Older
+# test suites will have their manuals removed to save space.
+TestSuiteFullHistory=10
+

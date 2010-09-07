@@ -1791,6 +1791,10 @@ Maintenance/deb/squeeze/debian/libcgal5.shlibs -text
 Maintenance/deb/squeeze/debian/patches/00list -text
 Maintenance/deb/squeeze/debian/rules -text
 Maintenance/deb/squeeze/debian/watch -text
+Maintenance/infrastructure/cgal.geometryfactory.com/.autocgal_with_cmake_rc -text
+Maintenance/infrastructure/cgal.geometryfactory.com/.autocgalrc -text
+Maintenance/infrastructure/cgal.geometryfactory.com/.cgal_create_new_release_rc -text
+Maintenance/infrastructure/cgal.geometryfactory.com/.cgalmanualrc -text
 Maintenance/infrastructure/matisse.geometryfactory.com/.autocgalrc -text
 Maintenance/public_release/announcement/CGAL-3.2 -text
 Maintenance/public_release/announcement/CGAL-3.3 -text

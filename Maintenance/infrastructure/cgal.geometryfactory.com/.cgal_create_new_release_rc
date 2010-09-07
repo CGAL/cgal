@@ -1,0 +1,5 @@
+#TMPDIR=$HOME/CGAL/create_internal_release
+HTML_DIR=/var/CGAL/www/Members/Releases
+MAKENSIS=$HOME/CGAL/NSIS-3.4/makensis.exe
+WINE=wine
+CGAL_MANUAL=$HOME/bin/cgal_manual
