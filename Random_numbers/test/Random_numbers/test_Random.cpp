@@ -44,6 +44,19 @@ main()
         int  u = CGAL::default_random.get_int( 0, 1000);
         int  i = CGAL::default_random.get_int( l, u);
         assert( ( l <= i) && ( i < u));
+
+        {
+          std::size_t l = 0, u = 10;
+          std::size_t i = CGAL::default_random.get_int(l,u);
+          assert( ( l <= i) && ( i < u));
+        }
+
+
+        {
+          std::ptrdiff_t l = 0, u = 10;
+          std::ptrdiff_t i = CGAL::default_random.get_int(l,u);
+          assert( ( l <= i) && ( i < u));
+        }
     }
     
     // test get_double
