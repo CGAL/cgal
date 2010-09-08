@@ -67,14 +67,15 @@ seed, or by using the state functions as described below.
         $[\mbox{\ccc{0},\ccc{2^b}})$.  This is supposed to
 	be efficient.}
 
-\ccMemberFunction{ int get_int( int lower, int upper);}{
-        returns a random \ccc{int} from the interval
-        $[\mbox{\ccc{lower},\ccc{upper}})$.}
+\ccMemberFunction{ template < typename IntType> get_int( IntType lower, IntType upper);}{
+        returns a random \ccc{IntType} from the interval
+        $[\mbox{\ccc{lower},\ccc{upper}})$. \ccc{IntType} can be an integral type 
+        as \ccc{int}, \ccc{std::ptrdiff_t}, \ccc{std::size_t},etc. }
 
-\ccMemberFunction{ double get_double( double lower = 0.0,
-                                      double upper = 1.0);}{
-        returns a random \ccc{double} from the interval
-        $[\mbox{\ccc{lower},\ccc{upper}})$.}
+\ccMemberFunction{ template <typename FloatType> get_double( FloatType lower = 0.0,
+                                      FloatType upper = 1.0);}{
+        returns a random \ccc{FloatType} from the interval
+        $[\mbox{\ccc{lower},\ccc{upper}})$. \ccc{FloatType} can be \ccc{float}, \ccc{double}, etc.}
 
 \ccMemberFunction{ int operator() ( int upper);}{
         returns \ccVar\ccc{.get_int( 0, upper)}.}
@@ -101,9 +102,8 @@ seed, or by using the state functions as described below.
 % -----------------------------------------------------------------------------
 \ccImplementation
 
-We use the C library function \ccc{rand} to generate the random
-numbers, \textit{i.e.}, the sequence of numbers depends on the implementation
-of \ccc{rand} on your specific platform.
+We use the boost random library function \ccc{boost::rand48} to generate the random
+numbers.
 
 
 
