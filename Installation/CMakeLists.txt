@@ -311,9 +311,6 @@ if ( CGAL_WIN32_CMAKE_ON_CYGWIN )
   file ( TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX )
 endif()
 
-message( STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}" )
-
-
 set ( CGAL_INSTALL_BIN_DIR    "bin"                     
   CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
   )
