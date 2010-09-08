@@ -19,21 +19,41 @@
 // $Id$
 // 
 //
-// Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Sylvain Pion
+// Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Sylvain Pion, Andreas Fabri
 
 #ifndef CGAL_RANDOM_H
 #define CGAL_RANDOM_H
 
+#include <string>
 #include <utility>
 #include <CGAL/basic.h>
+
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_int.hpp>
+#include <boost/random/uniform_real.hpp>
+#include <boost/random/variate_generator.hpp>
+
 
 namespace CGAL {
 
 class Random {
   public:
     // types
-    typedef std::pair<unsigned int, unsigned int> State;
 
+ struct State {
+    std::string rng;
+    unsigned int random_value, val, seed;
+
+    State()
+    {}
+
+    State(std::string rng, 
+          unsigned int random_value, 
+          unsigned int val, 
+          unsigned int seed)
+      : rng(rng), random_value(random_value), val(val), seed(seed)
+    {}
+ };
     // creation
     Random( );
     Random( unsigned int  seed);
@@ -43,8 +63,30 @@ class Random {
     
     // operations
     bool    get_bool  ( );
-    int     get_int   ( int lower, int upper);
-    double  get_double( double lower = 0.0, double upper = 1.0);
+
+
+  template <typename IntType>
+  IntType
+  get_int(IntType lower, IntType upper)
+  {
+    // uniform_int has a closed interval, CGAL a halfopen
+    boost::uniform_int<IntType> dist(lower,upper-1);
+    boost::variate_generator<boost::rand48&, boost::uniform_int<IntType> > generator(rng,dist);
+    
+    return generator();
+  }
+ 
+
+  template <typename RealType>
+  RealType
+  get_double( RealType lower, RealType upper)
+  {
+    // uniform_real as well as CGAL have a halfopen interval
+    boost::uniform_real<RealType> dist(lower,upper);
+    boost::variate_generator<boost::rand48&, boost::uniform_real<RealType> > generator(rng,dist);
+    
+    return generator();
+  }
 
     // state 
     void save_state( State& state) const;
@@ -68,20 +110,25 @@ class Random {
     }
 
     int     operator () ( int upper);
+  std::size_t     operator () ( std::size_t upper);
+  std::ptrdiff_t     operator () ( std::ptrdiff_t upper);
 
+
+    
   bool    operator==(Random rd) const
   {
-    return 
-      rd.rand_max_plus_1 == rand_max_plus_1 &&
-      rd.random_value == random_value &&
-      rd.val == val;
+    return (rng == rd.rng) 
+      && (random_value == rd.random_value)
+      && (val == rd.val)
+      && (seed == rd.seed);
   }
+
   private:
     // data members
-    const double  rand_max_plus_1;
     unsigned int random_value; // Current 15 bits random value.
     unsigned int val; // random_value shifted by used bits.
     unsigned int seed; 
+    boost::rand48 rng;
 };
 
 // Global variables
@@ -105,26 +152,7 @@ bool
 Random::
 get_bool( )
 {
-    return( static_cast< bool>( std::rand() & 1));
-}
-
-inline
-int
-Random::
-get_int( int lower, int upper)
-{
-    return( lower + static_cast< int>(
-      ( static_cast< double>( upper) - lower) * 
-      std::rand() / rand_max_plus_1));
-}
-
-inline
-double
-Random::
-get_double( double lower, double upper)
-{
-    return( lower + ( ( upper-lower) * 
-		      std::rand() / rand_max_plus_1));
+    return( static_cast< bool>( rng() & 1));
 }
 
 inline
@@ -132,9 +160,24 @@ int
 Random::
 operator () ( int upper)
 {
-    return( get_int( 0, upper));
+  return( get_int<int>( 0, upper));
 }
 
+inline
+std::size_t
+Random::
+operator () ( std::size_t upper)
+{
+  return( get_int<std::size_t>( 0, upper));
+}
+
+inline
+std::ptrdiff_t
+Random::
+operator () ( std::ptrdiff_t upper)
+{
+  return( get_int<std::ptrdiff_t>( 0, upper));
+}
 } //namespace CGAL
 
 #endif // CGAL_RANDOM_H
