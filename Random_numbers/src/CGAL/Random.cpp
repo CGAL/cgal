@@ -23,6 +23,7 @@
 
 #include <CGAL/Random.h>
 #include <ctime>
+#include <strstream>
 
 namespace CGAL {
 
@@ -32,7 +33,7 @@ namespace CGAL {
 // constructors
 Random::
 Random( )
-    : rand_max_plus_1( RAND_MAX+1.0), val(0)
+    :  val(0)
 {
     // get system's time
     std::time_t s;
@@ -40,16 +41,16 @@ Random( )
     seed = (unsigned int)s;
 
     // initialize random numbers generator
-    std::srand( seed);
+    rng.seed(seed);
     random_value = get_int(0, 1<<15);
 }
 
 Random::
-Random( unsigned int  seed_)
-    : rand_max_plus_1( RAND_MAX+1.0), val(0), seed(seed_)
+Random( unsigned int  seed)
+    : val(0), seed(seed)
 {
     // initialize random numbers generator
-    std::srand( seed);
+    rng.seed(seed);
     random_value = get_int(0, 1<<15);
 }
 
@@ -64,14 +65,19 @@ Random::get_seed () const
 void 
 Random::save_state( Random::State& state) const
 {
-  state = Random::State(random_value, val);
+  std::ostringstream os;
+  os << rng;
+  state = Random::State(os.str(),random_value, val, seed);
 }
 
 void 
 Random::restore_state( const Random::State& state)
 {
-  random_value = state.first;
-  val = state.second;
+  std::istringstream is(state.rng);
+  is >> rng;
+  random_value = state.random_value;
+  val = state.val;
+  seed = state.seed;
 }
 
 // Global variables
