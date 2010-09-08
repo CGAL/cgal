@@ -43,7 +43,7 @@ OutputIterator random_selection( RandomAccessIterator first,
     // random number is needed from `rnd' for each item. Returns the
     // value of `result' after inserting the n items.
 {
-    int m = int(last - first);
+    std::ptrdiff_t m = last - first;
     for ( Size i = 0; i < n; i++) {
         *result++ = first[ rnd(m)];
     }
