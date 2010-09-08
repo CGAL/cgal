@@ -23,7 +23,11 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
-#include <CGAL/Random.h>
+
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_int.hpp>
+#include <boost/random/variate_generator.hpp>
+
 
 #include <algorithm>
 #include <iterator>
@@ -206,21 +210,49 @@ median_of_three( RandomAccessIter a, RandomAccessIter b, RandomAccessIter c,
         return b;
 }
 
+
+template< class RandomAccessIter, class Predicate_traits >
+class Iterative_radon {
+
+  RandomAccessIter begin;
+  std::ptrdiff_t size;
+  Predicate_traits traits;
+  int dim;
+
+  boost::rand48 rng;
+  boost::uniform_int<std::ptrdiff_t> dist;
+  boost::variate_generator<boost::rand48&, boost::uniform_int<std::ptrdiff_t> > generator;
+
+public:
+
+Iterative_radon( RandomAccessIter begin, RandomAccessIter end,
+                 Predicate_traits traits, int dim, int num_levels )
+  : begin(begin), size(end-begin), traits(traits), dim(dim), 
+    rng(0), dist(0,size-1), generator(rng,dist)
+  {}
+
+  RandomAccessIter
+  operator()(int num_levels)
+  {
+    if( num_levels < 0 ) {
+      const std::ptrdiff_t d = generator();
+        return begin + d;
+    }
+
+    return median_of_three((*this)(num_levels - 1 ),
+                           (*this)(num_levels - 1 ),
+                           (*this)(num_levels - 1 ),
+                           traits, dim );
+  }
+};
+
 template< class RandomAccessIter, class Predicate_traits >
 RandomAccessIter
 iterative_radon( RandomAccessIter begin, RandomAccessIter end,
                  Predicate_traits traits, int dim, int num_levels )
 {
-    if( num_levels < 0 ) {
-        const unsigned int rnd = CGAL::default_random.get_int( 0, INT_MAX );
-        return begin + rnd % std::distance( begin, end );
-    }
-
-    return median_of_three(
-         iterative_radon( begin, end, traits, dim, num_levels - 1 ),
-         iterative_radon( begin, end, traits, dim, num_levels - 1 ),
-         iterative_radon( begin, end, traits, dim, num_levels - 1 ),
-	 traits, dim );
+  Iterative_radon<RandomAccessIter, Predicate_traits> IR(begin,end,traits,dim,num_levels);
+  return IR(num_levels);
 }
 
 // returns iterator for first element in [begin,end) which does not satisfy
