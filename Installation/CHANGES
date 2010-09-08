@@ -5,6 +5,10 @@ Release notes of CGAL.
 x.y Package title example
   - changes note
 
+x.y Geometric Object Generators
+  
+  - CGAL::Random uses boost::rand48 instead of std::rand
+
 ----------------------------- Release 3.7 ----------------------------------
 
 CGAL 3.7 offers the following improvements and new functionality : 
