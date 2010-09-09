@@ -65,6 +65,11 @@ main()
         double  u = CGAL::default_random.get_double( 22.0/7.0, 33.3);
         double  d = CGAL::default_random.get_double( l, u);
         assert( ( l <= d) && ( d < u));
+
+        double ho = CGAL::default_random.get_double(0.5);
+        assert( (0.5 <= ho) && (ho < 1.0));
+        double zo = CGAL::default_random.get_double();
+        assert( (0 <= zo) && (zo < 1.0));
     }
 
     // test get_bits
