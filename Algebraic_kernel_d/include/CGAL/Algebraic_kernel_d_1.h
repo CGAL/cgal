@@ -355,6 +355,10 @@ public:
       if(CGAL::degree(p)==0) return p.sign_at(0);
       if( ar.low() == ar.high() ) return p.sign_at( ar.low() );
 
+      if (p == ar.polynomial()) {
+        return ZERO;
+      }
+
       Polynomial_1 g = gcd_utcf(p,ar.polynomial());
       if (g.sign_at(ar.low()) != g.sign_at(ar.high())) return ZERO; 
      
