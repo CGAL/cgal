@@ -88,6 +88,32 @@ class Random {
     return generator();
   }
 
+
+  template <typename RealType>
+  RealType
+  get_double( RealType lower)
+  {
+    return get_double<RealType>(lower, RealType(1.0));
+  }
+
+  double
+  get_double(double lower, double upper)
+  {
+    return get_double<double>(lower,upper);
+  }
+
+  double
+  get_double(double lower)
+  {
+    return get_double<double>(lower,1.0);
+  }
+
+  double
+  get_double()
+  {
+    return get_double<double>(0.0,1.0);
+  }
+
     // state 
     void save_state( State& state) const;
     void restore_state( const State& state);
