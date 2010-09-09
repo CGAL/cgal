@@ -62,7 +62,10 @@ class Random {
     unsigned int get_seed ( ) const;
     
     // operations
-    bool    get_bool  ( );
+    bool get_bool( )
+  {
+    return( static_cast< bool>( rng() & 1));
+  }
 
 
   template <typename IntType>
@@ -76,6 +79,13 @@ class Random {
     return generator();
   }
  
+  template <typename IntType>
+  IntType operator () (IntType upper)
+  {
+    return( get_int( IntType(0), upper));
+  }
+ 
+
 
   template <typename RealType>
   RealType
@@ -96,17 +106,7 @@ class Random {
     return get_double<RealType>(lower, RealType(1.0));
   }
 
-  double
-  get_double(double lower, double upper)
-  {
-    return get_double<double>(lower,upper);
-  }
 
-  double
-  get_double(double lower)
-  {
-    return get_double<double>(lower,1.0);
-  }
 
   double
   get_double()
@@ -135,11 +135,6 @@ class Random {
         return ret;
     }
 
-    int     operator () ( int upper);
-  std::size_t     operator () ( std::size_t upper);
-  std::ptrdiff_t     operator () ( std::ptrdiff_t upper);
-
-
     
   bool    operator==(Random rd) const
   {
@@ -163,49 +158,6 @@ extern  Random  default_random;
 
 } //namespace CGAL
 
-// ============================================================================
-
-// Class implementation (inline functions)
-// =======================================
-// includes
-#  include <cstdlib>
-
-namespace CGAL {
-
-// operations
-inline
-bool
-Random::
-get_bool( )
-{
-    return( static_cast< bool>( rng() & 1));
-}
-
-inline
-int
-Random::
-operator () ( int upper)
-{
-  return( get_int<int>( 0, upper));
-}
-
-inline
-std::size_t
-Random::
-operator () ( std::size_t upper)
-{
-  return( get_int<std::size_t>( 0, upper));
-}
-
-inline
-std::ptrdiff_t
-Random::
-operator () ( std::ptrdiff_t upper)
-{
-  return( get_int<std::ptrdiff_t>( 0, upper));
-}
-} //namespace CGAL
-
 #endif // CGAL_RANDOM_H
 
-// ===== EOF ==================================================================
+
