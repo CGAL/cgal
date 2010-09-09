@@ -41,7 +41,7 @@ Random( )
     seed = (unsigned int)s;
 
     // initialize random numbers generator
-    rng.seed(seed);
+    rng.seed(static_cast<boost::int32_t>(seed));
     random_value = get_int(0, 1<<15);
 }
 
@@ -50,7 +50,7 @@ Random( unsigned int  seed)
     : val(0), seed(seed)
 {
     // initialize random numbers generator
-    rng.seed(seed);
+    rng.seed(static_cast<boost::int32_t>(seed));
     random_value = get_int(0, 1<<15);
 }
 
