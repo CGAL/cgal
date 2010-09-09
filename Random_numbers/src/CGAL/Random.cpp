@@ -23,7 +23,7 @@
 
 #include <CGAL/Random.h>
 #include <ctime>
-#include <strstream>
+#include <sstream>
 
 namespace CGAL {
 
