@@ -30,7 +30,9 @@
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_int.hpp>
+#include <boost/random/uniform_smallint.hpp>
 #include <boost/random/uniform_real.hpp>
+#include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 
 
@@ -70,26 +72,74 @@ class Random {
 
   template <typename IntType>
   IntType
-  get_int(IntType lower, IntType upper)
+  uniform_smallint(IntType lower, IntType upper)
+  {
+    // uniform_smallint has a closed interval, CGAL a halfopen
+    boost::uniform_smallint<IntType> dist(lower,upper-1);
+    boost::variate_generator<boost::rand48&, boost::uniform_smallint<IntType> > generator(rng,dist);
+    
+    return generator();
+  }
+
+  template <typename IntType>
+  IntType
+  uniform_smallint(IntType lower)
+  {
+    return uniform_smallint<IntType>(lower,9);
+  }
+
+  template <typename IntType>
+  IntType
+  uniform_smallint()
+  {
+    return uniform_smallint<IntType>(0,9);
+  }
+
+  template <typename IntType>
+  IntType
+  uniform_int(IntType lower, IntType upper)
   {
     // uniform_int has a closed interval, CGAL a halfopen
-    boost::uniform_int<IntType> dist(lower,upper-1);
+    boost::uniform_int<IntType> dist(lower,upper);
     boost::variate_generator<boost::rand48&, boost::uniform_int<IntType> > generator(rng,dist);
     
     return generator();
   }
- 
+
+
   template <typename IntType>
-  IntType operator () (IntType upper)
+  IntType
+  uniform_int(IntType lower)
   {
-    return( get_int( IntType(0), upper));
+    return uniform_int<IntType>(lower,9);
+  }
+
+  template <typename IntType>
+  IntType
+  uniform_int()
+  {
+    return uniform_int<IntType>(0,9);
   }
  
+
+  
+  template <typename IntType>
+  IntType
+  operator () (IntType upper)
+  {
+    return uniform_int<IntType>(0, upper-1);
+  }
+ 
+  int
+  get_int(int lower, int upper)
+  {
+    return uniform_int<int>(lower,upper-1);
+  }
 
 
   template <typename RealType>
   RealType
-  get_double( RealType lower, RealType upper)
+  uniform_real( RealType lower, RealType upper)
   {
     // uniform_real as well as CGAL have a halfopen interval
     boost::uniform_real<RealType> dist(lower,upper);
@@ -101,17 +151,36 @@ class Random {
 
   template <typename RealType>
   RealType
-  get_double( RealType lower)
+  uniform_real( RealType lower)
   {
-    return get_double<RealType>(lower, RealType(1.0));
+    return uniform_real<RealType>(lower, 1.0);
   }
 
 
+  template <typename RealType>
+  RealType
+  uniform_real()
+  {
+    return uniform_real<RealType>(0.0, 1.0);
+  }
+
+
+  template <typename RealType>
+  RealType
+  uniform_01()
+  {
+    // uniform_01 as well as CGAL have a halfopen interval
+    boost::uniform_01<RealType> dist;
+    boost::variate_generator<boost::rand48&, boost::uniform_01<RealType> > generator(rng,dist);
+    
+    return generator();
+  }
+
 
   double
-  get_double()
+  get_double( double lower = 0.0, double upper = 1.0)
   {
-    return get_double<double>(0.0,1.0);
+    return uniform_real<double>(lower, upper);
   }
 
     // state 
