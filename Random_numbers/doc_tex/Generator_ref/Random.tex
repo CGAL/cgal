@@ -67,18 +67,45 @@ seed, or by using the state functions as described below.
         $[\mbox{\ccc{0},\ccc{2^b}})$.  This is supposed to
 	be efficient.}
 
-\ccMemberFunction{ template < typename IntType> get_int( IntType lower, IntType upper);}{
+\ccMemberFunction{ int get_int( int lower, int upper);}{
+        returns a random \ccc{int} from the interval
+        $[\mbox{\ccc{lower},\ccc{upper}})$. }
+
+\ccMemberFunction{ double get_double( double lower = 0.0,
+                                      double upper = 1.0);}{
+        returns a random \ccc{double} from the interval
+        $[\mbox{\ccc{lower},\ccc{upper}})$.}
+
+
+\ccHeading{Distributions}
+
+The following member functions are a 1-to-1 correspondence to
+some distributions from the boost random library.
+
+
+\ccMemberFunction{ template <typename IntType> IntType uniform_smallint( IntType lower=0, IntType upper=9);}{
         returns a random \ccc{IntType} from the interval
-        $[\mbox{\ccc{lower},\ccc{upper}})$. \ccc{IntType} can be an integral type 
-        as \ccc{int}, \ccc{std::ptrdiff_t}, \ccc{std::size_t},etc. }
+        $[\mbox{\ccc{lower},\ccc{upper}}]$. \ccc{IntType} can be an integral type 
+        as \ccc{int}, \ccc{std::ptrdiff_t}, \ccc{std::size_t},etc. {\bf Warning: In contrast to \ccc{get_int} this function may return \ccc{upper}. }  }
 
-\ccMemberFunction{ template <typename FloatType> get_double( FloatType lower = 0.0,
-                                      FloatType upper = 1.0);}{
-        returns a random \ccc{FloatType} from the interval
-        $[\mbox{\ccc{lower},\ccc{upper}})$. \ccc{FloatType} can be \ccc{float}, \ccc{double}, etc.}
+\ccMemberFunction{ template <typename IntType> IntType uniform_int( IntType lower=0, IntType upper=9);}{
+        returns a random \ccc{IntType} from the interval
+        $[\mbox{\ccc{lower},\ccc{upper}}]$. \ccc{IntType} can be an integral type 
+        as \ccc{int}, \ccc{std::ptrdiff_t}, \ccc{std::size_t},etc.  {\bf Warning: In contrast to \ccc{get_int} this function may return \ccc{upper}. } }
 
-\ccMemberFunction{ int operator() ( int upper);}{
-        returns \ccVar\ccc{.get_int( 0, upper)}.}
+\ccMemberFunction{ template <typename RealType> Realtype uniform_real( RealType lower = 0.0,
+                                      RealType upper = 1.0);}{
+        returns a random \ccc{RealType} from the interval
+        $[\mbox{\ccc{lower},\ccc{upper}})$. \ccc{RealType} can be \ccc{float}, \ccc{double}, etc.}
+
+\ccMemberFunction{ template <typename RealType> RealType uniform_01();}{
+        returns a random \ccc{RealType} from the interval
+        $[0,1)$. \ccc{RealType} can be \ccc{float}, \ccc{double}, etc.}
+
+
+
+\ccMemberFunction{ template <typename IntType> IntType operator() ( IntType upper);}{
+        returns \ccVar\ccc{uniform_int<IntType>( 0, upper-1)}.}
 
 % -----------------------------------------------------------------------------
 \ccHeading{Seed and State Functions}
