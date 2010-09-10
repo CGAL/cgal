@@ -242,13 +242,11 @@ public:
         // distributed on the segment from p to q except q, i.e. `*g' ==
         // \lambda p + (1-\lambda)\, q where 0 <= \lambda < 1 . A single
         // random number is needed from `rnd' for each point.
-    : Random_generator_base<P>( max BOOST_PREVENT_MACRO_SUBSTITUTION 
-                                    ( max BOOST_PREVENT_MACRO_SUBSTITUTION 
-				          ( to_double(p.x()), to_double(q.x())),
-                                            max BOOST_PREVENT_MACRO_SUBSTITUTION 
-                                                ( to_double(p.y()),
-                                                  to_double(q.y()))),
-                                            rnd) , _p(p), _q(q) {
+      : Random_generator_base<P>( (std::max)( (std::max)( to_double(p.x()), to_double(q.x())),
+                                              (std::max)( to_double(p.y()),
+                                                          to_double(q.y()))),
+                                  rnd) , _p(p), _q(q)
+    {
         generate_point();
     }
     const P&  source() const { return _p; }
@@ -288,12 +286,10 @@ public:
     Points_on_segment_2() {}
     Points_on_segment_2( const P& p, const P& q,
                          std::size_t mx, std::size_t i = 0)
-    : Generator_base<P>( max BOOST_PREVENT_MACRO_SUBSTITUTION
-                             ( max BOOST_PREVENT_MACRO_SUBSTITUTION
-                                   ( to_double(p.x()), to_double(q.x())),
-                                     max BOOST_PREVENT_MACRO_SUBSTITUTION
-                                         ( to_double(p.y()), to_double(q.y())))),
-                                     _p(p), _q(q), d_i(i), d_mx(mx) {
+      : Generator_base<P>( (std::max)( (std::max)( to_double(p.x()), to_double(q.x())),
+                                       (std::max)( to_double(p.y()), to_double(q.y())))),
+        _p(p), _q(q), d_i(i), d_mx(mx) 
+    {
         generate_point();
     }
     const P&  source() const { return _p; }

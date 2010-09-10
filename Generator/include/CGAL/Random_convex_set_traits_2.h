@@ -48,8 +48,7 @@ struct Random_convex_set_traits_2 : public Kernel {
     FT
     operator()( const Point_2& p) const
     { 
-      BOOST_USING_STD_MAX();
-      return max BOOST_PREVENT_MACRO_SUBSTITUTION ( CGAL_NTS abs( p.x()), CGAL_NTS abs( p.y())); 
+      return (std::max)( CGAL_NTS abs( p.x()), CGAL_NTS abs( p.y())); 
     }
   };
 
