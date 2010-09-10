@@ -347,7 +347,7 @@ bool SplatRenderer::finalize()
   }
 
   // draw a quad covering the whole screen
-  float viewVec[] = {1./mCachedProj[0], 1./mCachedProj[5], -1};
+  float viewVec[] = {1.f/mCachedProj[0], 1.f/mCachedProj[5], -1};
 
   glBegin(GL_QUADS);
     glColor3f(1, 0, 0);
