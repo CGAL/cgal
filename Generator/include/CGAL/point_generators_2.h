@@ -316,7 +316,7 @@ public:
 template < class P >
 void
 Points_on_segment_2<P>::
-generate_point() { this->d_item = _p + (_q-_p) * d_i / (d_mx-1); }
+generate_point() { this->d_item = _p + (_q-_p) * static_cast<double>(d_i) / (static_cast<double>(d_mx)-1); }
 
 template <class OutputIterator, class Creator>
 OutputIterator
@@ -366,7 +366,7 @@ points_on_segment_2( const P& p, const P& q, std::size_t n,
     // } q.
 {
     for (std::size_t i = 0; i < n; i++) {
-        *o++ = p + (q-p) * i / (n-1);
+      *o++ = p + (q-p) * static_cast<double>(i) / (static_cast<double>(n)-1);
     }
     return o;
 }
@@ -450,8 +450,8 @@ OutputIterator random_collinear_points_2(
 
     std::ptrdiff_t m = last - first;
     for ( std::size_t i = 0; i < n; i++) {
-        const Point& p = first[ rnd.get_int( 0, m-1)];
-        const Point& q = first[ rnd.get_int( 0, m-1)];
+      const Point& p = first[ rnd.uniform_int<std::ptrdiff_t>( 0, m-1)];
+        const Point& q = first[ rnd.uniform_int<std::ptrdiff_t>( 0, m-1)];
         double la = rnd.get_double();
         double mu = 1.0 - la;
         *first2++ = creator(T(mu * to_double(p.x()) +
