@@ -174,13 +174,16 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
   typedef typename Kernel::Aff_transformation_3       Aff_transformation_3;
 
 #ifndef _MSC_VER
-  // VC++ has a problem to digest the folowing typedef,
-  // and does not need the using statements
-  typedef SNC_const_decorator< SNC_structure<Kernel,Items,Mark> > SNC_const_decorator;
+  // VC++ has a problem to digest the following typedef,
+  // and does not need the using statements -- AF
+  // The left and right part of these typedefs have the same name. It is
+  // very important to qualify the left part with the CGAL:: namespace, no
+  // to confuse g++. -- Laurent Rineau, 2010/09/13
+  typedef CGAL::SNC_structure<Kernel,Items,Mark> SNC_structure;
+  typedef CGAL::SNC_const_decorator<SNC_structure> SNC_const_decorator;
   using SNC_const_decorator::set_snc;
   using SNC_const_decorator::is_standard;
   using SNC_const_decorator::is_bounded;
-  typedef typename SNC_const_decorator::SNC_structure       SNC_structure;
 #endif
 
   struct Polylines_tag {};
