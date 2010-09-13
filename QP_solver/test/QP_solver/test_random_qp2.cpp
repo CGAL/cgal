@@ -25,7 +25,7 @@ CGAL::Random rd;
 
 CGAL::Comparison_result random_rel()
 {
-  int z = rd.get_int(-1,1);
+  int z = rd.get_int(-1,2);
   return CGAL::Comparison_result(z);
 }
 
@@ -62,8 +62,8 @@ unsigned int nlp_unbounded = 0;
 
 // parameters
 int tries = 5000;
-int max_dim = 10;
-int max_entry = 10;
+int max_dim = 11; // must be >1
+int max_entry = 11; // must be >0
 
 int main() {  
   // print seed
@@ -83,18 +83,18 @@ int main() {
     int k = rd.get_int (1, 2*n); // number of rows of C
     std::vector<std::vector<int> > C (k, std::vector<int>(n, 0));
     for (int j=0; j<k+n; ++j)  // sparse C
-      C[rd.get_int(0, k-1)][rd.get_int(0,n-1)] = 
+      C[rd.get_int(0, k)][rd.get_int(0,n)] = 
 	rd.get_int(-max_entry, max_entry);
 
     // now fill the program 
     Program p;
     // A
     for (int j=0; j<n+m; ++j)
-      p.set_a (rd.get_int(0,n-1), rd.get_int(0,m-1), rd.get_double());
+      p.set_a (rd.get_int(0,n), rd.get_int(0,m), rd.get_double());
     // b, r
     for (int i=0; i<m/2; ++i) {
-      p.set_b (rd.get_int(0,m-1), rd.get_double());
-      p.set_r (rd.get_int(0,m-1), random_rel());
+      p.set_b (rd.get_int(0,m), rd.get_double());
+      p.set_r (rd.get_int(0,m), random_rel());
     }
     // fl, l, fu, u
     for (int j=0; j<n; ++j) {
@@ -114,7 +114,7 @@ int main() {
       }
     // c
     for (int j=0; j<n/2; ++j)
-      p.set_c (rd.get_int(0, n-1), rd.get_double());
+      p.set_c (rd.get_int(0, n), rd.get_double());
     // c0
     p.set_c0(rd.get_double());
     

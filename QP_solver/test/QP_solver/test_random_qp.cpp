@@ -40,7 +40,7 @@ int random_unsigned()
   if (z) 
     return 0;
   else
-    return rd.get_int (0, 20);
+    return rd.get_int (0, 21);
 }
 int random_signed() 
 {
@@ -48,12 +48,12 @@ int random_signed()
   if (z) 
     return 0;
   else
-    return rd.get_int (-10, 10);
+    return rd.get_int (-10, 11);
 }
 
 CGAL::Comparison_result random_rel()
 {
-  int z = rd.get_int(-1,1);
+  int z = rd.get_int(-1,2);
   return CGAL::Comparison_result(z);
 }
 
@@ -117,9 +117,9 @@ int main() {
     int  D2[] = {0, random_unsigned()};
     // can still change D_21 as long as D remains positive-semidefinite
     if (D1[0] < D2[1]) 
-      D2[0] = rd.get_int(-D1[0], D1[0]);
+      D2[0] = rd.get_int(-D1[0], D1[0]+1);
     else
-      D2[0] = rd.get_int(-D2[1], D2[1]);
+      D2[0] = rd.get_int(-D2[1], D2[1]+1);
     assert(D1[0] * D2[1] >= D2[0] * D2[0]);  
     int*  D[] = {D1, D2};                      
     int   c[] = {random_signed(), random_signed()};
