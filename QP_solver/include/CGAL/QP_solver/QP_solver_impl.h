@@ -175,6 +175,8 @@ pivot_step( )
 {
     ++m_pivots;
 
+    
+  
     // diagnostic output
     CGAL_qpe_debug {
         vout2 << std::endl
@@ -182,6 +184,8 @@ pivot_step( )
               << "Pivot Step" << std::endl
               << "==========" << std::endl;
     }
+  
+  
     vout  << "[ phase " << ( is_phaseI ? "I" : "II")
 	  << ", iteration " << m_pivots << " ]" << std::endl;
     
@@ -430,36 +434,36 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_false)
 {
     // store exact version of `A_Cj' (implicit conversion)
     if ( j_ < qp_n) {                                   // original variable
-	A_by_index_accessor  a_accessor( *(qp_A + j_));
-	std::copy( A_by_index_iterator( C.begin(), a_accessor),
-		   A_by_index_iterator( C.end  (), a_accessor),
-		   A_Cj_it);
+      A_by_index_accessor  a_accessor( *(qp_A + j_));
+      std::copy( A_by_index_iterator( C.begin(), a_accessor),
+                 A_by_index_iterator( C.end  (), a_accessor),
+                 A_Cj_it);
 
     } else {
-	unsigned int  k = j_;
-	k -= qp_n;
-	std::fill_n( A_Cj_it, C.size(), et0);
+      unsigned int  k = j_;
+      k -= qp_n;
+      std::fill_n( A_Cj_it, C.size(), et0);
 
-	if ( k < slack_A.size()) {                      // slack variable
+      if ( k < slack_A.size()) {                      // slack variable
 
-	    A_Cj_it[ in_C[ slack_A[ k].first]] = ( slack_A[ k].second ? -et1
+        A_Cj_it[ in_C[ slack_A[ k].first]] = ( slack_A[ k].second ? -et1
 						                      :  et1);
 
-	} else {                                        // artificial variable
-	    k -= slack_A.size();
+      } else {                                        // artificial variable
+        k -= slack_A.size();
 
-	    if ( j_ != art_s_i) {                           // normal art.
+        if ( j_ != art_s_i) {                           // normal art.
 
-		A_Cj_it[ in_C[ art_A[ k].first]] = ( art_A[ k].second ? -et1
+          A_Cj_it[ in_C[ art_A[ k].first]] = ( art_A[ k].second ? -et1
 						                      :  et1);
 
-	    } else {                                        // special art.
-		S_by_index_accessor  s_accessor( art_s.begin());
-		std::copy( S_by_index_iterator( C.begin(), s_accessor),
-			   S_by_index_iterator( C.end  (), s_accessor),
-			   A_Cj_it);
-	    }	
-	}
+        } else {                                        // special art.
+          S_by_index_accessor  s_accessor( art_s.begin());
+          std::copy( S_by_index_iterator( C.begin(), s_accessor),
+                     S_by_index_iterator( C.end  (), s_accessor),
+                     A_Cj_it);
+        }	
+      }
     }
 }
 
@@ -764,11 +768,15 @@ template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
 test_implicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k, 
                                 int& i_min, ET& d_min, ET& q_min)
-{
-    if ((q_k > et0) && (x_k * q_min < d_min * q_k)) {
+{   
+    if (q_k > et0) {
+      // the following implements the BLAND rule (in case the optimal
+      // values are the same, only update if the new index is smaller).
+      if ((x_k * q_min < d_min * q_k) || ((k < i_min) && (i_min != art_s_i) && (x_k * q_min == d_min * q_k)) ) {
         i_min = k;
         d_min = x_k;
         q_min = q_k;
+      }
     }
 }
 
@@ -779,10 +787,14 @@ void  QP_solver<Q, ET, Tags>::
 test_implicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k, 
                                 int& i_min, ET& d_min, ET& q_min)
 {
-    if ((q_k < et0) && (x_k * q_min < -(d_min * q_k))) {
+    if (q_k < et0) {
+      // the following implements the BLAND rule (in case the optimal
+      // values are the same, only update if the new index is smaller).
+      if ((x_k * q_min < -(d_min * q_k)) || ((k < i_min) && (i_min != art_s_i) && (x_k * q_min == -(d_min * q_k))) ) {
         i_min = k;
         d_min = x_k;
         q_min = -q_k;
+      }
     }
 }
 
@@ -797,8 +809,10 @@ test_explicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
 {
     if (q_k > et0) {                                // check for lower bound
         if (*(qp_fl+k)) {
-            ET  diff = x_k - (d * ET(*(qp_l+k))); 
-            if (diff * q_min < d_min * q_k) {
+            ET  diff = x_k - (d * ET(*(qp_l+k)));
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < d_min * q_k) || ((k < i_min) && (i_min != art_s_i) && (diff * q_min == d_min * q_k)) ) {
                 i_min = k;
                 d_min = diff;
                 q_min = q_k;
@@ -808,7 +822,9 @@ test_explicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
     } else {                                        // check for upper bound
         if ((q_k < et0) && (*(qp_fu+k))) {
             ET  diff = (d * ET(*(qp_u+k))) - x_k;
-            if (diff * q_min < -(d_min * q_k)) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < -(d_min * q_k)) || ((k < i_min) && (i_min != art_s_i) && (diff * q_min == -(d_min * q_k))) ) {
                 i_min = k;
                 d_min = diff;
                 q_min = -q_k;
@@ -829,8 +845,10 @@ test_explicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
 {
     if (q_k < et0) {                                // check for lower bound
         if (*(qp_fl+k)) {
-            ET  diff = x_k - (d * ET(*(qp_l+k))); 
-            if (diff * q_min < -(d_min * q_k)) {
+            ET  diff = x_k - (d * ET(*(qp_l+k)));
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < -(d_min * q_k)) || ((k < i_min) && (i_min != art_s_i) && (diff * q_min == -(d_min * q_k))) ) {
                 i_min = k;
                 d_min = diff;
                 q_min = -q_k;
@@ -840,7 +858,9 @@ test_explicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
     } else {                                        // check for upper bound
         if ((q_k > et0) && (*(qp_fu+k))) {
             ET  diff = (d * ET(*(qp_u+k))) - x_k;
-            if (diff * q_min < d_min * q_k) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < d_min * q_k) || ((k < i_min) && (i_min != art_s_i) && (diff * q_min == d_min * q_k)) ) {
                 i_min = k;
                 d_min = diff;
                 q_min = q_k;
@@ -863,15 +883,20 @@ test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
         if (k < qp_n) {                             // original variable
             if (*(qp_fl+k)) {
                 ET  diff = x_k - (d * ET(*(qp_l+k)));
-                if (diff * q_min < d_min * q_k) {
-                    i_min = k;
-                    d_min = diff;
-                    q_min = q_k;
-                    ratio_test_bound_index = LOWER;
-                }
+                // the following implements the BLAND rule (in case the optimal
+                // values are the same, only update if the new index is smaller).
+                if ((diff * q_min < d_min * q_k) || ((k < i_min) && (i_min != art_s_i) && (diff * q_min == d_min * q_k))) {
+                  i_min = k;
+                  d_min = diff;
+                  q_min = q_k;
+                  ratio_test_bound_index = LOWER;
+              } // phase  I II switch
+              
             }
         } else {                                    // artificial variable
-            if (x_k * q_min < d_min * q_k) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((x_k * q_min < d_min * q_k) || ((k < i_min) && (i_min != art_s_i) && (x_k * q_min == d_min * q_k))) {
                 i_min = k;
                 d_min = x_k;
                 q_min = q_k;
@@ -880,7 +905,9 @@ test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
     } else {                                        // check for upper bound
         if ((q_k < et0) && (k < qp_n) && *(qp_fu+k)) {
             ET  diff = (d * ET(*(qp_u+k))) - x_k;
-            if (diff * q_min < -(d_min * q_k)) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < -(d_min * q_k)) || ((k < i_min) && (i_min != art_s_i) && (diff * q_min == -(d_min * q_k))) ) {
                 i_min = k;
                 d_min = diff;
                 q_min = -q_k;
@@ -903,7 +930,9 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
         if (k < qp_n) {                             // original variable
             if (*(qp_fl+k)) {
                 ET  diff = x_k - (d * ET(*(qp_l+k)));
-                if (diff * q_min < -(d_min * q_k)) {
+                // the following implements the BLAND rule (in case the optimal
+                // values are the same, only update if the new index is smaller).
+                if ((diff * q_min < -(d_min * q_k)) || ((k < i_min) && (i_min != art_s_i) && (diff * q_min == -(d_min * q_k))) ) {
                     i_min = k;
                     d_min = diff;
                     q_min = -q_k;
@@ -911,7 +940,9 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
                 }
             }
         } else {                                    // artificial variable
-            if (x_k * q_min < -(d_min * q_k)) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((x_k * q_min < -(d_min * q_k)) || ((k < i_min) && (i_min != art_s_i) && (x_k * q_min == -(d_min * q_k))) ) {
                 i_min = k;
                 d_min = x_k;
                 q_min = -q_k;
@@ -920,7 +951,9 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
     } else {                                        // check for upper bound
         if ((q_k > et0) && (k < qp_n) && *(qp_fu+k)) {
             ET  diff = (d * ET(*(qp_u+k))) - x_k;
-            if (diff * q_min < d_min * q_k) {
+            // the following implements the BLAND rule (in case the optimal
+            // values are the same, only update if the new index is smaller).
+            if ((diff * q_min < d_min * q_k) || ((k < i_min) && (i_min != art_s_i) && (diff * q_min == d_min * q_k)) ) {
                 i_min = k;
                 d_min = diff;
                 q_min = q_k;
@@ -1036,16 +1069,28 @@ ratio_test_2( Tag_false)
     Value_iterator  q_it = q_x_O.begin();
     Index_iterator  i_it;
     for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++x_it, ++q_it) {
-	if ( ( *q_it < et0) && ( ( *x_it * q_i) < ( x_i * *q_it))) {
-	    i = *i_it; x_i = *x_it; q_i = *q_it;
-	}
+      // the following implements the BLAND rule (in case the optimal
+      // values are the same, only update if the new index is smaller).
+      if ( (*q_it < et0) && (
+              (( *x_it * q_i) < ( x_i * *q_it)) ||
+              ( (*i_it < i) && (i < art_s_i) && (( *x_it * q_i) == ( x_i * *q_it)) )
+            )
+          ) {
+        i = *i_it; x_i = *x_it; q_i = *q_it;
+      }
     }
     x_it = x_B_S.begin();
     q_it = q_x_S.begin();
     for ( i_it = B_S.begin(); i_it != B_S.end(); ++i_it, ++x_it, ++q_it) {
-	if ( ( *q_it < et0) && ( ( *x_it * q_i) < ( x_i * *q_it))) {
-	    i = *i_it; x_i = *x_it; q_i = *q_it;
-	}
+      // the following implements the BLAND rule (in case the optimal
+      // values are the same, only update if the new index is smaller).
+      if ( ( *q_it < et0) && (
+             (( *x_it * q_i) < ( x_i * *q_it)) ||
+             ( (*i_it < i) && (i < art_s_i) && (( *x_it * q_i) == ( x_i * *q_it)) )
+            )
+          ){
+          i = *i_it; x_i = *x_it; q_i = *q_it;
+      }
     }
 
     CGAL_qpe_debug {
@@ -1191,6 +1236,15 @@ expel_artificial_variables_from_basis( )
 	      << "Expelling artificial variables from the basis" << std::endl
 	      << "---------------------------------------------" << std::endl;
     }
+  
+
+  
+    for (int i_ = 0; i_ < qp_n + slack_A.size(); ++i_) {
+      if (!is_basic(i_)) { 
+      ratio_test_init__A_Cj( A_Cj.begin(), i_, no_ineq);
+      }
+    }
+
     
     // try to pivot the artificials out of the basis
     // Note that we do not notify the pricing strategy about variables
@@ -1199,57 +1253,64 @@ expel_artificial_variables_from_basis( )
     // The partial pricing strategies that keep the set of nonbasic vars
     // explicitly are synchronized during transition from phaseI to phaseII 
     for (unsigned int i_ = qp_n + slack_A.size(); i_ < in_B.size(); ++i_) {
-        if (is_basic(i_)) { 					// is basic
-	    if (has_ineq) {
+      if (is_basic(i_)) { 					// is basic
+        if (has_ineq) {
 	        row_ind = in_C[ art_A[i_ - qp_n - slack_A.size()].first];
-	    } else {
+        } else {
 	        row_ind = art_A[i_ - qp_n].first;
-	    }
+        }
+        
+        
+        //CGAL_qpe_assertion(row_ind >= 0);
+        
 	    
-	    // determine first possible entering variable,
-	    // if there is any
-	    for (unsigned int j_ = 0; j_ < qp_n + slack_A.size(); ++j_) {
-	        if (!is_basic(j_)) {  				// is nonbasic 
-		    ratio_test_init__A_Cj( A_Cj.begin(), j_, no_ineq);
-		    r_A_Cj = inv_M_B.inv_M_B_row_dot_col(row_ind, A_Cj.begin());
-		    if (r_A_Cj != et0) {
-		        ratio_test_1__q_x_O(Is_linear());
-			i = i_;
-			j = j_;
-			update_1(Is_linear());
-			break;
-		    } 
-		}
-	    }
-	}
+        // determine first possible entering variable,
+        // if there is any
+        for (unsigned int j_ = 0; j_ < qp_n + slack_A.size(); ++j_) {
+	        if (!is_basic(j_)) {  				// is nonbasic
+            ratio_test_init__A_Cj( A_Cj.begin(), j_, no_ineq);
+                        
+            r_A_Cj = inv_M_B.inv_M_B_row_dot_col(row_ind, A_Cj.begin());
+                       
+            if (r_A_Cj != et0) {
+              ratio_test_1__q_x_O(Is_linear());
+              i = i_;
+              j = j_;
+              update_1(Is_linear());
+              break;
+            } 
+          }
+        }
+      }
     }
+  
     if ((art_basic != 0) && no_ineq) {
       // the vector in_C was not used in phase I, but now we remove redundant
       // constraints and switch to has_ineq treatment, hence we need it to
       // be correct at this stage
       for (int i=0; i<qp_m; ++i)
-	in_C.push_back(i);
-    }
-    diagnostics.redundant_equations = (art_basic != 0);
+        in_C.push_back(i);
+      }
+      diagnostics.redundant_equations = (art_basic != 0);
 
-    // now reset the no_ineq and has_ineq flags to match the situation
-    no_ineq = no_ineq && !diagnostics.redundant_equations;
-    has_ineq = !no_ineq;
+      // now reset the no_ineq and has_ineq flags to match the situation
+      no_ineq = no_ineq && !diagnostics.redundant_equations;
+      has_ineq = !no_ineq;
     
-    // remove the remaining ones with their corresponding equality constraints
-    // Note: the special artificial variable can always be driven out of the
-    // basis
-    for (unsigned int i_ = qp_n + slack_A.size(); i_ < in_B.size(); ++i_) {
+      // remove the remaining ones with their corresponding equality constraints
+      // Note: the special artificial variable can always be driven out of the
+      // basis
+      for (unsigned int i_ = qp_n + slack_A.size(); i_ < in_B.size(); ++i_) {
         if (in_B[i_] >= 0) {
-	    i = i_;
-	    CGAL_qpe_debug {
-	        vout2 << std::endl
-		      << "~~> removing artificial variable " << i
-		      << " and its equality constraint" << std::endl
-		      << std::endl;
-	    }
-	    remove_artificial_variable_and_constraint();
-	}
+          i = i_;
+          CGAL_qpe_debug {
+            vout2 << std::endl
+            << "~~> removing artificial variable " << i
+            << " and its equality constraint" << std::endl
+            << std::endl;
+          }
+        remove_artificial_variable_and_constraint();
+      }
     }
 }
 

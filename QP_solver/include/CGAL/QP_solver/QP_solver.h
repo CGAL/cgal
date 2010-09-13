@@ -1454,6 +1454,9 @@ private:
     else
       mu_j__slack_or_artificial (mu_j, j, lambda_it, dd, Tag_false());
   }
+
+  
+  
 };
 
 // ----------------------------------------------------------------------------
@@ -1622,7 +1625,13 @@ ratio_test_1__t_i( Index_iterator i_it, Index_iterator end_it,
 {
   // check `t_i's
   for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it) {
-    if ( ( *q_it > et0) && ( ( *x_it * q_i) < ( x_i * *q_it))) {
+    // the following implements the BLAND rule (in case the optimal
+    // values are the same, only update if the new index is smaller).
+    if ( (*q_it > et0) && (
+                           (( *x_it * q_i) < ( x_i * *q_it)) ||
+                           ( (*i_it < i) && (i < art_s_i) && (( *x_it * q_i) == ( x_i * *q_it)) )
+                           )
+        ) {
       i = *i_it; x_i = *x_it; q_i = *q_it;
     }
   }
