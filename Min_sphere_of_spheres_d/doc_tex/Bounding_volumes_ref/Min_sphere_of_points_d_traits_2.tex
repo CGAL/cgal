@@ -1,0 +1,76 @@
+
+\begin{ccRefClass}{Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+The class
+\ccc{Min_sphere_of_points_d_traits_2<K,FT,UseSqrt,Algorithm>} is a
+model for concept \ccc{MinSphereOfSpheresTraits}.  It uses the {\cgal}
+type \ccc{Point_2} to represent circles.
+
+\ccIsModel
+\ccc{MinSphereOfSpheresTraits}
+
+\ccParameters
+The last two template parameters, \ccc{UseSqrt} and \ccc{Algorithm},
+have default arguments, namely \ccc{CGAL::Tag_false} and
+\ccc{CGAL::Default_algorithm}, respectively.
+
+The template parameters of class
+\ccc{Min_sphere_of_points_d_traits_2<K,FT,UseSqrt,Algorithm>} must
+fulfill the following requirements:
+
+\ccNestedType{K}{is a model for \ccc{Kernel}.}
+
+\ccNestedType{FT}{is a number type, which fulfills the requirements of
+type \ccc{FT} of concept \ccc{MinSphereOfSpheresTraits}: It must be
+either \ccc{double} or \ccc{float}, or an exact number type.}
+
+\ccNestedType{UseSqrt}{fulfills the
+requirements of type \ccc{Use_square_roots} of concept
+\ccc{MinSphereOfSpheresTraits}:  It must be either \ccc{Tag_true} or \ccc{Tag_false}.}
+
+\ccNestedType{Algorithm}{fulfills the requirements of type
+\ccc{Algorithm} of concept \ccc{MinSphereOfSpheresTraits}: It must be either \ccc{Default_algorithm}, \ccc{LP_algorithm} or \ccc{Farthest_first_heuristic}.}
+
+\ccConstants
+\ccNestedType{D}{is the constant 2, i.e.\ the dimension of $\R^2$.}
+
+\ccTypes
+In addition to the types required by the concept
+\ccc{MinSphereOfSpheresTraits}, this model also defines the types
+\ccc{Radius} and \ccc{Point}.  Here's the complete list of defined types:
+
+\ccNestedType{FT}{}
+
+\ccNestedType{Use_square_roots}{}
+
+\ccNestedType{Algorithm}{}
+
+\ccNestedType{Radius}{is a typedef to the template parameter \ccc{FT}}
+
+\ccNestedType{Point}{is a typedef to \ccc{K::Point_2}.}
+
+\ccNestedType{Sphere}{is a typedef to
+  \ccc{Point}.}
+
+\ccNestedType{Cartesian_const_iterator}{is a typedef to
+\ccc{K::Cartesian_const_iterator_2}.}
+
+
+\ccAccessFunctions
+
+The class provides the access functions required by the concept
+\ccc{MinSphereOfSpheresTraits}; they simply map to the corresponding
+routines of class \ccc{K::Point_2}:
+
+\ccCreationVariable{traits}
+
+\ccMemberFunction{ FT radius(const
+Sphere& s);}{ returns \ccc{0}.}
+
+\ccMemberFunction{ Cartesian_const_iterator center_cartesian_begin(const
+Sphere& s);}{ maps to \ccc{s.first.cartesian_begin()}.}
+
+\end{ccRefClass}
