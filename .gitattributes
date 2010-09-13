@@ -3094,6 +3094,9 @@ QP_solver/test/QP_solver/test_default_bounds.cpp -text
 QP_solver/test/QP_solver/test_random_qp.cpp -text
 QP_solver/test/QP_solver/test_random_qp2.cpp -text
 QP_solver/test/QP_solver/test_solver.cout -text
+QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_001.mps -text
+QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_248.mps -text
+QP_solver/test/QP_solver/test_solver_data/cycle_cases/helbling_39.mps -text
 QP_solver/test/QP_solver/test_solver_data/masters/additional/QSCORPIO.QPS -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#application/pdf

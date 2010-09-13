@@ -142,6 +142,28 @@ for file in $MASTERS
   done
 done
 
+# collect cycle MPS files:
+echo "Collecting cycle MPS files..."
+CYCLES=$(find test_solver_data/cycle_cases -name '*mps')
+
+# add cycle cases to file list:
+for cycle in $CYCLES
+  do
+  LIST="${LIST} $level eb $cycle" # only ad exact bland pricing
+  echo "  File '${cycle}' added."
+  
+  # check whether the file exists in the SVN repository:
+    tmpf=`basename "$cycle"`
+    tmpd=`dirname "$cycle"`
+    if grep -q "name=\\\"$tmpf\\\"" "$tmpd/.svn/entries"; then 
+	echo -n ""; 
+    else 
+	MISSINGFILES="$MISSINGFILES $cycle" 
+    fi
+done
+
+
+
 # warn if some files are not committed yet:
 if [ "x$MISSINGFILES" != "x" ] && [ "x$1" == "xCGAL" ]; then 
  echo "" 
