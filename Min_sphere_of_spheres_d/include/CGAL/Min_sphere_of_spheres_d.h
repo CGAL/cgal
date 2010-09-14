@@ -100,12 +100,28 @@ namespace CGAL_MINIBALL_NAMESPACE {
     }
   
     inline void prepare(std::size_t size);
-  
+
+    template <typename InputIterator>
+    void prepare(InputIterator begin,InputIterator end) {
+      prepare(begin,end, std::iterator_traits<InputIterator>::iterator_category());
+    }
+
+
+    template <typename InputIterator, typename Category>
+    void prepare(InputIterator begin,InputIterator end, Category&) {
+    }
+
+    template <typename InputIterator>
+    void prepare(InputIterator begin,InputIterator end, std::random_access_iterator_tag&) {
+      std::cerr << "We allocate memory" << std::endl;
+      prepare(S.size()+(end-begin));
+    }
+
     inline void insert(const Sphere& b);
   
     template<typename InputIterator>
     inline void insert(InputIterator begin,InputIterator end) {
-      prepare(S.size()+(end-begin)); // todo. istream?
+      prepare(begin,end);
       while (begin != end) {
         insert(*begin);
         ++begin;
