@@ -405,8 +405,9 @@ create_CGALconfig_files()
 # WARNING: Use only relative paths; full paths break CPack!
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
-install(FILES AUTHORS CHANGES LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
-
+if(CGAL_INSTALL_DOC_DIR)
+  install(FILES AUTHORS CHANGES LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
+endif()
 
 install(DIRECTORY include/CGAL                       DESTINATION ${CGAL_INSTALL_INC_DIR} )
 install(DIRECTORY "${CMAKE_BINARY_DIR}/include/CGAL" DESTINATION ${CGAL_INSTALL_INC_DIR} )
@@ -436,7 +437,7 @@ endif()
 
 install(FILES ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
-if ( WIN32 AND NOT UNIX AND NOT CYGWIN AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN )
+if(CGAL_INSTALL_MAN_DIR)
   install(FILES auxiliary/cgal_create_cmake_script.1 DESTINATION ${CGAL_INSTALL_MAN_DIR} )
 endif()
 
@@ -540,7 +541,7 @@ if( WITH_CPACK AND EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
         set(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.cgal.org")
         set(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.cgal.org")
         set(CPACK_NSIS_CONTACT "info@cgal.org")
-        set(CPACK_NSIS_MODifY_PATH ON)
+        set(CPACK_NSIS_MODIfY_PATH ON)
     else()
         set(CPACK_STRIP_FILES "")
         set(CPACK_SOURCE_STRIP_FILES "")
