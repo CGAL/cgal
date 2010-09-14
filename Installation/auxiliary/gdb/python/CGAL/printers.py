@@ -53,6 +53,27 @@ class CGAL_Point_2:
                 break
         return 'CGAL::Point_2(%s)' % node['base']['base']
 
+class CGAL_Tdsvb3:
+    def __init__(self, val):
+        self.val = val
+        
+    def to_string (self):
+        node = self.val;
+        return 'CGAL::Tvb_3(%s)' % node['_p']
+
+class CGAL_Point_3:
+    def __init__(self, val):
+        self.val = val
+        
+    def to_string (self):
+        node = self.val;
+        type = self.val.type
+        for field in type.fields():
+            if field.is_base_class:
+                node = node.cast(field.type)
+                break
+        return 'CGAL::Point_3(%s)' % node['base']['base']
+
 class CGAL_Vector_2:
     def __init__(self, val, name):
         self.val = val
@@ -96,8 +117,11 @@ print "Hello from CGAL_pretty_printers"
 CGAL_pretty_printers_dict = {}
 CGAL_pretty_printers_dict[re.compile('^CGAL::Handle_for<.*>$')] = lambda val: CGAL_Handle_for(val)
 CGAL_pretty_printers_dict[re.compile('^CGAL::Point_2<.*>$')] = lambda val: CGAL_Point_2(val)
+CGAL_pretty_printers_dict[re.compile('^CGAL::Point_3<.*>$')] = lambda val: CGAL_Point_3(val)
 CGAL_pretty_printers_dict[re.compile('^CGAL::Vector_2<.*>$')] = lambda val: CGAL_Vector_2(val, 'Vector_2')
 CGAL_pretty_printers_dict[re.compile('^CGAL::Circle_2<.*>$')] = lambda val: CGAL_Vector_2(val, 'Circle_2')
+
+#CGAL_pretty_printers_dict[re.compile('^CGAL::Triangulation_ds_vertex_base_3<.*>$')] = lambda val: CGAL_Tdsvb3(val)
 
 CGAL_pretty_printers_dict[re.compile('^(std|boost)(::tr1)?::array<.*>')] = lambda val: CGAL_Array(val)
 
