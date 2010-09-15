@@ -11,7 +11,7 @@
 if [ -z "${CGAL_TEST_PLATFORM}" ]; then
    
   CGAL_TEST_PLATFORM=`dirname $PWD` 
-  echo "CGAL_TEST_PLATFORM not in the enviromet, setting it to ${CGAL_TEST_PLATFORM}"
+  echo "CGAL_TEST_PLATFORM not in the environment, setting it to ${CGAL_TEST_PLATFORM}"
 fi
 
 if [ -z "$1" ] ; then
@@ -27,10 +27,13 @@ RESULT_FILE=''
 shared_or_static=''
 
 #print_testresult <platform> <directory>
+# print result on stdout
+# print timings on fd3
 print_testresult()
 {
   if [ ! -f ErrorOutput_$1 ] ; then
     RESULT="?"
+    TIMING="?"
   else
     if eval grep ERROR ErrorOutput_$1 > /dev/null ; then
       RESULT="n"
@@ -58,7 +61,9 @@ print_testresult()
 	fi
       fi
     fi
+    TIMING=`awk '/^      # Running time: / {print $4}' < ErrorOutput_$1`
   fi
+  echo "$2 $TIMING" >&3
   echo "$2 $RESULT"
 }
 
@@ -240,12 +245,12 @@ TESTER_NAME="${CGAL_TESTER_NAME:-${TESTER}}"
 TESTER_ADDRESS="${CGAL_TESTER_ADDRESS:-${TESTER}}"
 TEST_REPORT="TestReport_${TESTER}_${CGAL_TEST_PLATFORM}"
 RESULT_FILE="$CURRENT_DIR/results_${TESTER}_${CGAL_TEST_PLATFORM}.txt"
+TIMING_FILE="$CURRENT_DIR/timings_${TESTER}_${CGAL_TEST_PLATFORM}.txt"
 CGAL_DIR=../../../..
 GENERAL_BUILD_LOGFILE="../../installation.log"
 PLATFORM_BUILD_LOGFILE="../installation.log"
-rm -f "$RESULT_FILE"
-rm -f "$TIMES_FILE"
-touch "$RESULT_FILE"
+rm -f "$RESULT_FILE" "$TIMING_FILE"
+touch "$RESULT_FILE" "$TIMING_FILE"
 sed -n '/CGAL_VERSION /s/#define //p' < "$CGAL_DIR/include/CGAL/version.h" >> "$RESULT_FILE"
 echo "TESTER ${TESTER}" >> "$RESULT_FILE"
 echo "TESTER_NAME ${TESTER_NAME}" >> "$RESULT_FILE"
@@ -271,7 +276,7 @@ for DIR in $TEST_DIRECTORIES ; do
     echo "  $DIR ..."
     cd "$DIR"
 
-    print_testresult "$CGAL_TEST_PLATFORM" "$DIR" >> "$RESULT_FILE"
+    print_testresult "$CGAL_TEST_PLATFORM" "$DIR" >> "$RESULT_FILE" 3>>"$TIMING_FILE"
 
     if [ ! "$DIR" = "Installation" ] ; then
       rm -f "${TEST_REPORT}"
@@ -308,7 +313,7 @@ done
 
 OUTPUT_FILE=results_${TESTER}_${CGAL_TEST_PLATFORM}.tar
 rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
-tar cf $OUTPUT_FILE results_${TESTER}_${CGAL_TEST_PLATFORM}.txt */"$TEST_REPORT"
+tar cf $OUTPUT_FILE results_${TESTER}_${CGAL_TEST_PLATFORM}.txt timings_${TESTER}_${CGAL_TEST_PLATFORM}.txt */"$TEST_REPORT"
 echo
 echo "compressing ..."
 gzip -9f $OUTPUT_FILE

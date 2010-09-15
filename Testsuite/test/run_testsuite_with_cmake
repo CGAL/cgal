@@ -16,7 +16,11 @@ TESTSUITE_LDFLAGS=""
 
 CURRENTDIR=`pwd`
 ERRORFILE=${CURRENTDIR}/error.txt
-PLATFORM=$CGAL_TEST_PLATFORM
+if [ -n "$CGAL_TEST_PLATFORM" ]; then 
+    PLATFORM=$CGAL_TEST_PLATFORM
+else 
+    PLATFORM=no-platform
+fi
 
 #clear the error file
 rm -f "$ERRORFILE"
@@ -140,6 +144,7 @@ test_directory()
     if [ -f cgal_test_with_cmake -a -x cgal_test_with_cmake ] ; then
       export PLATFORM TESTSUITE_CXXFLAGS TESTSUITE_LDFLAGS
       rm -f error.txt
+      START=`date +%s`
       run_local_cgal_test &
 
       if wait_for_process "$!" "1200" "5"
@@ -154,6 +159,10 @@ test_directory()
 	echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERRORFILE"
 	echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERROR_OUTPUT"
       fi
+      STOP=`date +%s`
+      DURATION=`expr "$STOP" - "$START"`
+      printf "      # Running time: %s (seconds)\n\n" "$DURATION" >> "$ERRORFILE"
+      printf "      # Running time: %s (seconds)\n\n" "$DURATION" >> "$ERROR_OUTPUT"
       cat current_compiler_output >> "$COMPILER_OUTPUT"
       cat current_compiler_output
       rm -f current_compiler_output 
