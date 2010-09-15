@@ -455,17 +455,19 @@ struct Offset_converter_3
 };
 
 // The argument is supposed to be a Filtered_kernel like kernel.
-template < typename K >
+template < typename K, typename Off >
 class Periodic_3_triangulation_filtered_traits_base_3
-  : public Periodic_3_triangulation_traits_base_3<K>
+  : public Periodic_3_triangulation_traits_base_3<K, Off>
 {
-  typedef Periodic_3_triangulation_traits_base_3<K> Base;
+  typedef Periodic_3_triangulation_traits_base_3<K, Off> Base;
 
   // Exact traits is based on the exact kernel.
-  typedef Periodic_3_triangulation_traits_3<typename K::Exact_kernel>
+  typedef Periodic_3_triangulation_traits_3<typename K::Exact_kernel,
+                                            Off>
                                                    Exact_traits;
   // Filtering traits is based on the filtering kernel.
-  typedef Periodic_3_triangulation_traits_3<typename K::Approximate_kernel>
+  typedef Periodic_3_triangulation_traits_3<typename K::Approximate_kernel,
+                                            Off>
                                                    Filtering_traits;
 private:
   typedef typename K::C2E C2E;
@@ -567,10 +569,10 @@ public:
 
 namespace CGAL {
 
-template < typename K >
+template < typename K, typename Off >
 class Periodic_3_triangulation_filtered_traits_3
   : public Periodic_3_triangulation_statically_filtered_traits_3<
-  Periodic_3_triangulation_filtered_traits_base_3<K> > {
+  Periodic_3_triangulation_filtered_traits_base_3<K, Off> > {
 };
 
 } //namespace CGAL

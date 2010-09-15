@@ -29,7 +29,7 @@
 namespace CGAL { 
 
 template < class K, class Predicate_ >
-class Traits_with_offsets_adaptor : public Predicate_ {
+  class Traits_with_offsets_adaptor {
   typedef K Kernel;
   typedef Predicate_ Predicate;
   
@@ -247,28 +247,37 @@ class Periodic_3_triangulation_traits_3;
 } //namespace CGAL
 
 // Partial specialization for Filtered_kernel<CK>.
-#include <CGAL/Periodic_3_triangulation_filtered_traits_3.h>
 #include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Periodic_3_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
 
 // This declaration is needed to break the cyclic dependency.
-template < typename K >
+template < typename K, typename Off >
 class Periodic_3_triangulation_filtered_traits_3;
 
-template < typename CK, typename T >
-class Periodic_3_triangulation_traits_3 < Filtered_kernel<CK>, T>
+template < class K, class Off>
+class Periodic_3_triangulation_traits_3
+  : public Periodic_3_triangulation_traits_base_3<K, Off>
+{
+};
+
+template < typename CK, typename Off >
+class Periodic_3_triangulation_traits_3 < Filtered_kernel<CK>, Off>
   : public Periodic_3_triangulation_filtered_traits_3 <
-    Filtered_kernel<CK> >
+  Filtered_kernel<CK>, Off >
 {
 public:
   typedef Filtered_kernel<CK>  Kernel;
 };
 
-template < class K, class Off >
-class Periodic_3_triangulation_traits_3
-  : public Periodic_3_triangulation_traits_base_3<K, Off>
-{};
+template < class Off >
+class Periodic_3_triangulation_traits_3<CGAL::Epick, Off>
+  : public Periodic_3_triangulation_filtered_traits_3<CGAL::Epick, Off>
+{
+  typedef CGAL::Epick Kernel;
+};
 
 } //namespace CGAL
 
