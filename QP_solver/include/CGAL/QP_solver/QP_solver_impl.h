@@ -1252,7 +1252,7 @@ expel_artificial_variables_from_basis( )
     // know about variables entering the basis.
     // The partial pricing strategies that keep the set of nonbasic vars
     // explicitly are synchronized during transition from phaseI to phaseII 
-    for (unsigned int i_ = qp_n + slack_A.size(); i_ < in_B.size(); ++i_) {
+    for (int i_ = qp_n + slack_A.size(); i_ < in_B.size(); ++i_) {
       if (is_basic(i_)) { 					// is basic
         if (has_ineq) {
 	        row_ind = in_C[ art_A[i_ - qp_n - slack_A.size()].first];
