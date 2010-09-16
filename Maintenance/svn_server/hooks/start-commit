@@ -62,7 +62,7 @@ CAPABILITIES="$3"
 #    fi
 #fi
 
-/home/groups/cgal/hooks/check-capabilities.pl "$REPOS" "$USER" "$CAPABILITIES"
+#/home/groups/cgal/hooks/check-capabilities.pl "$REPOS" "$USER" "$CAPABILITIES"
 
 # All checks passed, so allow the commit.
 exit 0
