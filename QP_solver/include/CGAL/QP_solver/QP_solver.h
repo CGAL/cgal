@@ -1625,11 +1625,11 @@ ratio_test_1__t_i( Index_iterator i_it, Index_iterator end_it,
 {
   // check `t_i's
   for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it) {
-    // the following implements the BLAND rule (in case the optimal
-    // values are the same, only update if the new index is smaller).
+    // BLAND rule: In case the ratios are the same, only update if the new index
+    // is smaller. The special artificial variable is always made to leave first.
     if ( (*q_it > et0) && (
                            (( *x_it * q_i) < ( x_i * *q_it)) ||
-                           ( (*i_it < i) && (i < art_s_i) && (( *x_it * q_i) == ( x_i * *q_it)) )
+                           ( (*i_it < i) && (i != art_s_i) && (( *x_it * q_i) == ( x_i * *q_it)) )
                            )
         ) {
       i = *i_it; x_i = *x_it; q_i = *q_it;
