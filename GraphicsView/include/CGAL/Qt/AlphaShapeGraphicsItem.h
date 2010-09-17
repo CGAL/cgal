@@ -18,8 +18,8 @@
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
-#ifndef CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_H
-#define CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_H
+#ifndef CGAL_QT_ALPHA_SHAPE_GRAPHICS_ITEM_H
+#define CGAL_QT_ALPHA_SHAPE_GRAPHICS_ITEM_H
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/apply_to_range.h>
@@ -352,4 +352,4 @@ AlphaShapeGraphicsItem<T>::modelChanged()
 } // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_H
+#endif // CGAL_QT_ALPHA_SHAPE_GRAPHICS_ITEM_H
