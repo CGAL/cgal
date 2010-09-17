@@ -403,12 +403,9 @@ init_basis()
   if (!in_B.empty()) in_B.clear();
   in_B.reserve(qp_n+s+art_A.size());
   in_B.insert(in_B.end(), qp_n, -1);  // no original variable is basic
-  if (art_s_i >= 0) {
-    in_B[art_s_i] = 0;
-  }
   
   init_basis__slack_variables(s_i, no_ineq);
-  
+    
   if (!B_O.empty()) B_O.clear();
   B_O.reserve(qp_n);                  // all artificial variables are basic
   for (int i = 0; i < (int)art_A.size(); ++i) {
