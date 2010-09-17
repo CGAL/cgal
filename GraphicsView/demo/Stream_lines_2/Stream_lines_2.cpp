@@ -16,6 +16,7 @@
 
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/StreamLinesGraphicsItem.h>
+#include <CGAL/Qt/RegularGridGraphicsItem.h>
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
@@ -55,6 +56,7 @@ private:
   QGraphicsScene scene;  
 
   CGAL::Qt::StreamLinesGraphicsItem<Stream_lines,K> * sli;
+  CGAL::Qt::RegularGridGraphicsItem<Regular_grid,K> * rgi;
 
 public:
   MainWindow();
@@ -140,13 +142,17 @@ MainWindow::on_actionGenerate_triggered()
   stream_lines = new Stream_lines(*regular_grid, *runge_kutta_integrator, density, ratio, sampling);
 
   sli = new CGAL::Qt::StreamLinesGraphicsItem<Stream_lines, K>(stream_lines);
+  rgi = new CGAL::Qt::RegularGridGraphicsItem<Regular_grid, K>(regular_grid);
 
   QObject::connect(this, SIGNAL(changed()),
 		   sli, SLOT(modelChanged()));
 
-  //sli->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+  rgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  rgi->setEdgesPen(QPen(Qt::gray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   sli->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(sli);
+  scene.addItem(rgi);
 
   emit(changed());
 }
@@ -179,7 +185,6 @@ MainWindow::open(QString fileName)
   ifs >> x_samples;
   ifs >> y_samples;
   regular_grid = new Regular_grid(x_samples, y_samples, iXSize, iYSize);
-  std::cerr << "fill grid" << std::endl;
   /*fill the grid with the appropreate values*/
   for (unsigned int i=0;i<x_samples;i++)
     for (unsigned int j=0;j<y_samples;j++)
@@ -190,7 +195,6 @@ MainWindow::open(QString fileName)
         regular_grid->set_field(i, j, Vector(xval, yval));
       }
   ifs.close();
-    std::cerr << "close the stream" << std::endl;
   // default cursor
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
