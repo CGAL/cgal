@@ -154,6 +154,7 @@ MainWindow::on_actionGenerate_triggered()
   scene.addItem(sli);
   scene.addItem(rgi);
 
+  on_actionRecenter_triggered();
   emit(changed());
 }
 
@@ -222,8 +223,8 @@ MainWindow::on_actionSavePoints_triggered()
 void
 MainWindow::on_actionRecenter_triggered()
 {
-  this->graphicsView->setSceneRect(sli->boundingRect());
-  this->graphicsView->fitInView(sli->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->setSceneRect(rgi->boundingRect());
+  this->graphicsView->fitInView(rgi->boundingRect(), Qt::KeepAspectRatio);  
 }
 
 
