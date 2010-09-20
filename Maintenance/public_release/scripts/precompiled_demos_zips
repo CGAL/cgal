@@ -15,3 +15,8 @@ pushd Triangulation_2_Demo;
   zip ../constrained_delaunay_triangulation_2.zip Constrained_Delaunay_triangulation_2.exe
   zip ../delaunay_triangulation_2.zip Delaunay_triangulation_2.exe
 popd
+
+# CGAL-3.8
+pushd Largest_empty_rect_2_Demo;        zip largest_empty_rect_2.zip *;           popd
+pushd Apollonius_graph_2_Demo;          zip apollonius_graph_2.zip *;             popd
+pushd Stream_lines_2_Demo;              zip streamlines.zip *;                    popd
