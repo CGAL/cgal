@@ -37,6 +37,7 @@
 
 #include <utility>
 #include <locale>
+#include <cctype>
 
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/mpl.h>
