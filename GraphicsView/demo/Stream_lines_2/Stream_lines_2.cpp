@@ -16,7 +16,7 @@
 
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/StreamLinesGraphicsItem.h>
-#include <CGAL/Qt/RegularGridGraphicsItem.h>
+#include <CGAL/Qt/RegularGridVectorFieldGraphicsItem.h>
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
@@ -56,7 +56,7 @@ private:
   QGraphicsScene scene;  
 
   CGAL::Qt::StreamLinesGraphicsItem<Stream_lines,K> * sli;
-  CGAL::Qt::RegularGridGraphicsItem<Regular_grid,K> * rgi;
+  CGAL::Qt::RegularGridVectorFieldGraphicsItem<Regular_grid,K> * rgi;
 
 public:
   MainWindow();
@@ -142,7 +142,7 @@ MainWindow::on_actionGenerate_triggered()
   stream_lines = new Stream_lines(*regular_grid, *runge_kutta_integrator, density, ratio, sampling);
 
   sli = new CGAL::Qt::StreamLinesGraphicsItem<Stream_lines, K>(stream_lines);
-  rgi = new CGAL::Qt::RegularGridGraphicsItem<Regular_grid, K>(regular_grid);
+  rgi = new CGAL::Qt::RegularGridVectorFieldGraphicsItem<Regular_grid, K>(regular_grid);
 
   QObject::connect(this, SIGNAL(changed()),
 		   sli, SLOT(modelChanged()));
