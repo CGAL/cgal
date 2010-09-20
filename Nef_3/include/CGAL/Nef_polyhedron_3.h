@@ -340,7 +340,7 @@ protected:
 
   typedef typename SNC_decorator::Association  Association;
 
- 
+
  protected: 
   void initialize_infibox_vertices(Content space) {
     SNC_constructor C(snc()); 
@@ -722,11 +722,11 @@ protected:
 
       const Object_index<Vertex_const_iterator>& VI;
       Polyhedron_incremental_builder_3<HDS>& B;
-      SNC_const_decorator& D;
+      const SNC_const_decorator& D;
       
     public:
       Visitor(Polyhedron_incremental_builder_3<HDS>& BB,
-	      SNC_const_decorator& sd,
+	      const SNC_const_decorator& sd,
 	      Object_index<Vertex_const_iterator>& vi) : VI(vi), B(BB), D(sd){}
 
       void visit(Halffacet_const_handle opposite_facet) {
@@ -786,10 +786,10 @@ protected:
 
   public:
 
-    SNC_const_decorator& scd;
+    const SNC_const_decorator& scd;
     Object_index<Vertex_const_iterator> VI;
 
-    Build_polyhedron(SNC_const_decorator& s) : 
+    Build_polyhedron(const SNC_const_decorator& s) : 
       scd(s), VI(s.vertices_begin(),s.vertices_end(),'V') {}
     
     void operator()( HDS& hds) {
@@ -1032,12 +1032,12 @@ protected:
  public:
 
  template<typename Polyhedron>
- void convert_to_Polyhedron(Polyhedron& P) {
+ void convert_to_Polyhedron(Polyhedron& P) const {
    convert_to_polyhedron(P);
  }
 
  template<typename Polyhedron>
- void convert_to_polyhedron(Polyhedron& P) {
+ void convert_to_polyhedron(Polyhedron& P) const {
    typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
    CGAL_precondition(is_simple());
    P.clear();
@@ -1066,16 +1066,16 @@ protected:
     return valid;
   }
 
-  bool is_simple() {
+  bool is_simple() const {
 
-    Halfedge_iterator e;
+    Halfedge_const_iterator e;
     CGAL_forall_edges(e,snc())
       if(!is_edge_2manifold(e))
 	return false;
 
     CGAL_NEF_TRACEN("there is no edge with non-manifold situation");
 
-    Vertex_iterator v;
+    Vertex_const_iterator v;
     CGAL_forall_vertices(v,snc())
       if(!is_vertex_2manifold(v))
 	return false;
@@ -1126,10 +1126,10 @@ protected:
  }
 
  private:  
-  bool is_edge_2manifold(const Halfedge_handle& e) {
+  bool is_edge_2manifold(const Halfedge_const_handle& e) const {
 
     SM_decorator SD;
-    SHalfedge_around_svertex_circulator c(SD.first_out_edge(e)), c2(c);
+    SHalfedge_around_svertex_const_circulator c(SD.first_out_edge(e)), c2(c);
 
     if(c == 0) {
       CGAL_assertion(circulator_size(c) !=2);
@@ -1150,16 +1150,16 @@ protected:
     return true;
   }
  
-  bool is_vertex_2manifold(const Vertex_handle& v) {
+  bool is_vertex_2manifold(const Vertex_const_handle& v) const {
      
-    SFace_iterator sfi(v->sfaces_begin());
+    SFace_const_iterator sfi(v->sfaces_begin());
     if (++sfi != v->sfaces_last())
       return false;
 
     return true;
   }
 
-  bool is_facet_simple(const Halffacet_const_handle& f) {
+  bool is_facet_simple(const Halffacet_const_handle& f) const {
     
     bool found_first = false;
     Halffacet_cycle_const_iterator it; 
