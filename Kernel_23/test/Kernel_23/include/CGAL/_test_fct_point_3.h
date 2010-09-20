@@ -76,6 +76,14 @@ _test_fct_point_3(const R& )
  assert( CGAL::compare_xyz(p4,p3) == CGAL::LARGER );
  assert( CGAL::compare_xyz(p4,p4) == CGAL::EQUAL );
 
+ assert( CGAL::compare_lexicographically(p1,p2) == CGAL::SMALLER );
+ assert( CGAL::compare_lexicographically(p3,p2) == CGAL::SMALLER );
+ assert( CGAL::compare_lexicographically(p3,p1) == CGAL::SMALLER );
+ assert( CGAL::compare_lexicographically(p2,p1) == CGAL::LARGER );
+ assert( CGAL::compare_lexicographically(p2,p3) == CGAL::LARGER );
+ assert( CGAL::compare_lexicographically(p4,p3) == CGAL::LARGER );
+ assert( CGAL::compare_lexicographically(p4,p4) == CGAL::EQUAL );
+ 
  assert( CGAL::lexicographically_xyz_smaller_or_equal(p1,p1) );
  assert( CGAL::lexicographically_xyz_smaller_or_equal(p3,p1) );
  assert( CGAL::lexicographically_xyz_smaller_or_equal(p3,p2) );

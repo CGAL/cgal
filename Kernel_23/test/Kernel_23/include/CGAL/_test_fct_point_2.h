@@ -41,7 +41,6 @@ _test_fct_point_2(const R& )
  CGAL::Point_2<R> p8( RT(24), RT( 9), RT(3) );  // ( 8, 3)
  CGAL::Point_2<R> p9( RT( 6), RT(10), RT(1) );  // ( 6,10)
 
-
  assert( !CGAL::less_x(p1,p1) );
  assert( !CGAL::less_x(p1,p2) );
  assert(  CGAL::less_x(p1,p4) );
@@ -61,6 +60,14 @@ _test_fct_point_2(const R& )
  assert( CGAL::compare_xy(p4,p3) == CGAL::LARGER );
  assert( CGAL::compare_xy(p4,p4) == CGAL::EQUAL );
 
+ assert( CGAL::compare_lexicographically(p1,p2) == CGAL::SMALLER );
+ assert( CGAL::compare_lexicographically(p3,p2) == CGAL::SMALLER );
+ assert( CGAL::compare_lexicographically(p3,p1) == CGAL::SMALLER );
+ assert( CGAL::compare_lexicographically(p2,p1) == CGAL::LARGER );
+ assert( CGAL::compare_lexicographically(p2,p3) == CGAL::LARGER );
+ assert( CGAL::compare_lexicographically(p4,p3) == CGAL::LARGER );
+ assert( CGAL::compare_lexicographically(p4,p4) == CGAL::EQUAL );
+ 
  assert( CGAL::lexicographically_xy_smaller_or_equal(p1,p1) );
  assert( CGAL::lexicographically_xy_smaller_or_equal(p3,p1) );
  assert( CGAL::lexicographically_xy_smaller_or_equal(p3,p2) );

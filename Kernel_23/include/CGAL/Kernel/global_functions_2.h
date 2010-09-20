@@ -423,6 +423,14 @@ compare_xy(const Point_2<K> &p, const Point_2<K> &q)
 template < class K >
 inline
 typename K::Comparison_result
+compare_lexicographically(const Point_2<K> &p, const Point_2<K> &q)
+{
+  return internal::compare_xy(p, q, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_y(const Point_2<K> &p, const Point_2<K> &q)
 {
   return internal::compare_y(p, q, K());

@@ -1,0 +1,19 @@
+\begin{ccRefFunction}{compare_lexicographically}
+\ccFunction{Comparison_result
+compare_lexicographically(const Point_2<Kernel>& p, const Point_2<Kernel>& q);}
+      {Compares the Cartesian coordinates of points \ccStyle{p} and
+       \ccStyle{q} lexicographically in $xy$ order: first 
+       $x$-coordinates are compared, if they are equal, $y$-coordinates
+       are compared. This is the same function as \ccc{compare_xy} and exists for compatibility with \ccc{Point_d<Kernel>}.}
+
+\ccFunction{Comparison_result
+compare_lexicographically(const Point_3<Kernel>& p, const Point_3<Kernel>& q);}
+      {Compares the Cartesian coordinates of points \ccStyle{p} and
+       \ccStyle{q} lexicographically in $xyz$ order: first 
+       $x$-coordinates are compared, if they are equal, $y$-coordinates
+       are compared, and if both $x$- and $y$- coordinate are equal,
+       $z$-coordinates are compared. This is the same function as \ccc{compare_xyz} and exists for compatibility with \ccc{Point_d<Kernel>}.}
+
+
+\end{ccRefFunction}
+

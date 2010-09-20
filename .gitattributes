@@ -1627,6 +1627,7 @@ Jet_fitting_3/doc_tex/Jet_fitting_3_ref/template_dependence.pdf -text svneol=uns
 Jet_fitting_3/examples/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
 Kernel_23/doc_tex/Kernel_23/fig/pointSegmentTriangle.png -text
 Kernel_23/doc_tex/Kernel_23_ref/Kernel_ConstructRadicalLine_2.tex -text
+Kernel_23/doc_tex/Kernel_23_ref/compare_lexicographically.tex -text
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23_ref/fig/IsoCuboid.pdf -text svneol=unset#application/pdf
 Kernel_23/doc_tex/Kernel_23_ref/fig/arrlinthree.gif -text svneol=unset#image/gif

@@ -379,6 +379,15 @@ compare_lexicographically_xyz(const Point_3<K> &p,
 template < class K >
 inline
 typename K::Comparison_result
+compare_lexicographically(const Point_3<K> &p,
+                          const Point_3<K> &q)
+{
+    return internal::compare_lexicographically_xyz(p, q, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_signed_distance_to_plane(const Plane_3<K> &h,
 				 const Point_3<K> &p,
 				 const Point_3<K> &q)
