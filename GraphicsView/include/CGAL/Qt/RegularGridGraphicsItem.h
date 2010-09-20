@@ -33,16 +33,16 @@
 namespace CGAL {
 namespace Qt {
 
-  template <typename T, typename K>
+  template <typename K>
 class RegularGridGraphicsItem : public GraphicsItem
 {
-  typedef typename T::Geom_traits Geom_traits;
+  typedef K Geom_traits;
   typedef typename K::Point_2 Point_2;
   typedef typename K::Vector_2 Vector_2;
   typedef typename K::Segment_2 Segment_2;
 
 public:
-  RegularGridGraphicsItem(T* t_);
+  RegularGridGraphicsItem(double dx, double dy);
 
   void modelChanged();
 
@@ -63,21 +63,6 @@ public:
     return edges_pen;
   }
 
-  const QPen& regularEdgesPen() const
-  {
-    return regular_edges_pen;
-  }
-
-  const QPen& singularEdgesPen() const
-  {
-    return singular_edges_pen;
-  }
-
-  const QBrush& regularFacesBrush() const
-  {
-    return regular_faces_brush;
-  }
-
   void setVerticesPen(const QPen& pen)
   {
     vertices_pen = pen;
@@ -91,16 +76,6 @@ public:
   void setRegularEdgesPen(const QPen& pen)
   {
     regular_edges_pen = pen;
-  }
-
-  void setSingularEdgesPen(const QPen& pen)
-  {
-    singular_edges_pen = pen;
-  }
-
-  void setRegularFacesBrush(const QBrush& b)
-  {
-    regular_faces_brush = b;
   }
 
   bool visibleVertices() const
@@ -127,38 +102,32 @@ public:
 
 protected:
   void updateBoundingBox();
-
-  T * rg;
+  double dx, dy;
   QPainter* m_painter;
   PainterOstream<Geom_traits> painterostream;
 
-  QRectF bounding_rect;
-
   QPen vertices_pen;
   QPen edges_pen;
-  QPen regular_edges_pen;
-  QPen singular_edges_pen;
-  QBrush regular_faces_brush;
   bool visible_edges;
   bool visible_vertices;
 };
 
 
-  template <typename T, typename K>
-  RegularGridGraphicsItem<T,K>::RegularGridGraphicsItem(T * t_)
-  :  rg(t_), painterostream(0),
+  template <typename K>
+  RegularGridGraphicsItem<K>::RegularGridGraphicsItem(double dx, double dy)
+    :  dx(dx), dy(dy), painterostream(0),
      visible_edges(true), visible_vertices(true)
 {
   setVerticesPen(QPen(::Qt::red, 3.));
-  updateBoundingBox();
   setZValue(3);
 }
 
-  template <typename T, typename K>
+  template <typename K>
 QRectF 
-  RegularGridGraphicsItem<T,K>::boundingRect() const
+  RegularGridGraphicsItem<K>::boundingRect() const
 {
-  return bounding_rect;
+  QRectF rect = CGAL::Qt::viewportsBbox(scene());
+  return rect;
 }
 
 
@@ -166,30 +135,42 @@ QRectF
 
 
 
-  template <typename T, typename K>
+  template <typename K>
 void 
-  RegularGridGraphicsItem<T,K>::paint(QPainter *painter, 
+  RegularGridGraphicsItem<K>::paint(QPainter *painter, 
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * widget)
 {
+  QRectF rect = boundingRect();
+  double b = rect.bottom();
+  double t = rect.top();
+  double l = rect.left();
+  double r = rect.right();
 
+  if(b > t) std::swap(b,t); // because things are upside down in Qt
+  
   painterostream = PainterOstream<Geom_traits>(painter);
   painter->setPen(this->edgesPen());
-  double w  = rg->get_size().first;
-  double h  = rg->get_size().second;
-  int nw =  rg->get_dimension().first;
-  int nh =  rg->get_dimension().second;
-  double dw = w/(nw-1);
-  double dh = h/(nh-1);
 
-  for(int i = 0; i < nw; i++){
-    for(int j = 0; j < nh; j++){
-      Vector_2 v = rg->get_field(i,j);
-      v = (dw*0.45) * v/sqrt(v*v);
-      painterostream << Segment_2(Point_2(i*dw,j*dh),
-                                  Point_2(i*dw,j*dw)+v);
-    }
+  double ll = l;
+  ll = dx * static_cast<int>(ll/dx);
+  
+  for(; ll < r; ll += dx){
+    painterostream << Segment_2(Point_2(ll,b),
+                                Point_2(ll,t));
   }
+
+
+  double bb = b;
+  bb = dy * static_cast<int>(bb/dy);
+  
+  for(; bb < t; bb += dy){
+    painterostream << Segment_2(Point_2(l,bb),
+                                Point_2(r,bb));
+  }
+
+
+  /*
   painter->setPen(this->verticesPen());
   QMatrix matrix = painter->matrix();
   painter->resetMatrix();
@@ -198,26 +179,18 @@ void
       painter->drawPoint(matrix.map(QPointF(i*dw, j*dh)));
     }
   }
-
+  */
 }
 
-// We let the bounding box only grow, so that when vertices get removed
-// the maximal bbox gets refreshed in the GraphicsView
-  template <typename T, typename K>
+  template <typename K>
 void 
-  RegularGridGraphicsItem<T,K>::updateBoundingBox()
-{
-
-  bounding_rect = QRectF(0,
-                         0,
-                         rg->get_size().first,
-                         rg->get_size().second);
-}
+  RegularGridGraphicsItem<K>::updateBoundingBox()
+{}
 
 
-  template <typename T, typename K>
+  template <typename K>
 void 
-  RegularGridGraphicsItem<T,K>::modelChanged()
+  RegularGridGraphicsItem<K>::modelChanged()
 {
   update();
 }
