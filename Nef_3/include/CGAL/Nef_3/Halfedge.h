@@ -27,6 +27,7 @@
 #include <sstream>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
+#include <CGAL/Origin.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 83
