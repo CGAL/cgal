@@ -107,9 +107,6 @@ PolylinesGraphicsItem<P>::PolylinesGraphicsItem(P * p_)
      draw_edges(true), draw_vertices(true)   
 {
   setVerticesPen(QPen(::Qt::red, 3.));
-  if(polylines->size() == 0){
-    this->hide();
-  }
   updateBoundingBox();
   setZValue(3);
 }
@@ -139,10 +136,10 @@ PolylinesGraphicsItem<P>::paint(QPainter *painter,
       it++){
     Polyline & pl = *it;
     Polyline::iterator pit = pl.begin();
-    Point_2 &p = *pit;
+    Point_2 p = *pit;
     ++pit;
     for(; pit != pl.end(); ++pit){
-      Point_2 &q = *pit;
+      const Point_2 &q = *pit;
       painterostream << Segment_2(p, q);
       p = q;
     }
@@ -175,11 +172,6 @@ template <typename P>
 void 
 PolylinesGraphicsItem<P>::modelChanged()
 {
-  if((polylines->size() == 0) ){
-    this->hide();
-  } else if((polylines->size() > 0) && (! this->isVisible())){
-    this->show();
-  }
   updateBoundingBox();
   update();
 }

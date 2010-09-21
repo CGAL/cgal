@@ -94,9 +94,7 @@ SegmentsGraphicsItem<P>::SegmentsGraphicsItem(P * p_)
      draw_edges(true), draw_vertices(true)   
 {
   setVerticesPen(QPen(::Qt::red, 3.));
-  if(segments->size() == 0){
-    this->hide();
-  }
+
   updateBoundingBox();
   setZValue(3);
 }
@@ -153,11 +151,6 @@ template <typename P>
 void 
 SegmentsGraphicsItem<P>::modelChanged()
 {
-  if((segments->size() == 0) ){
-    this->hide();
-  } else if((segments->size() > 0) && (! this->isVisible())){
-    this->show();
-  }
   updateBoundingBox();
   update();
 }
