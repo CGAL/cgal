@@ -57,10 +57,15 @@ private:
   InputSegmentsGraphicsItem * isgi;
   OutputPolylinesGraphicsItem *plgi;
   double delta;
-
+  
 public:
   MainWindow();
-
+              
+  void resize(){
+  this->graphicsView->setSceneRect(QRectF(0,0,20, 20));
+  this->graphicsView->fitInView(0,0, 20, 20, Qt::KeepAspectRatio);
+  }
+              
 public slots:
 
   void processInput(CGAL::Object o);
@@ -120,9 +125,7 @@ MainWindow::MainWindow()
   // Setup the scene and the view
   //
   scene.setItemIndexMethod(QGraphicsScene::NoIndex);
-  scene.setSceneRect(-50, -50, 50, 50);
   this->graphicsView->setScene(&scene);
-
   // Turn the vertical axis upside down
   this->graphicsView->matrix().scale(1, -1);
   this->graphicsView->setMouseTracking(true);
@@ -277,6 +280,7 @@ MainWindow::on_actionSaveSegments_triggered()
 						  ".");
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
+    ofs.precision(12);
     std::copy(input.begin(), input.end(),  std::ostream_iterator<Segment_2>(ofs, "\n"));
   }
 
@@ -310,5 +314,6 @@ int main(int argc, char **argv)
 
   MainWindow mainWindow;
   mainWindow.show();
+  mainWindow.resize();
   return app.exec();
 }

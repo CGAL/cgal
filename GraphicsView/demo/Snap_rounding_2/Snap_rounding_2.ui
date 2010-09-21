@@ -230,6 +230,10 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="Snap_rounding_2.qrc">
+     <normaloff>:/cgal/Actions/icons/grid.png</normaloff>:/cgal/Actions/icons/grid.png</iconset>
+   </property>
    <property name="text">
     <string>Show Grid</string>
    </property>
@@ -241,6 +245,10 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="Snap_rounding_2.qrc">
+     <normaloff>:/cgal/Actions/icons/unsnapped.png</normaloff>:/cgal/Actions/icons/unsnapped.png</iconset>
+   </property>
    <property name="text">
     <string>Show Input</string>
    </property>
@@ -251,6 +259,10 @@
    </property>
    <property name="checked">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Snap_rounding_2.qrc">
+     <normaloff>:/cgal/Actions/icons/snapped.png</normaloff>:/cgal/Actions/icons/snapped.png</iconset>
    </property>
    <property name="text">
     <string>Show Snapped Segments</string>
