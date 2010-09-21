@@ -100,6 +100,13 @@ public:
     update();
   }
 
+  void setDelta(double x, double y)
+  {
+    dx = x;
+    dy = y;
+    update();
+  }
+
 protected:
   void updateBoundingBox();
   double dx, dy;
@@ -119,7 +126,7 @@ protected:
      visible_edges(true), visible_vertices(true)
 {
   setVerticesPen(QPen(::Qt::red, 3.));
-  setZValue(3);
+  setZValue(-1);
 }
 
   template <typename K>
