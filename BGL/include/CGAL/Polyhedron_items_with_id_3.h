@@ -62,7 +62,7 @@ void set_halfedgeds_items_id ( HalfedgeDS_with_id& hds )
       )
     hit->id() = halfedge_id ++ ;    
     
-  for ( typename HalfedgeDS_with_id::Face_iterator fit = hds.faces_begin(), efit = hds.faces_end()
+  for ( typename HalfedgeDS_with_id::Face_iterator fit = hds.facets_begin(), efit = hds.facets_end()
       ; fit != efit
       ; ++  fit
       )
