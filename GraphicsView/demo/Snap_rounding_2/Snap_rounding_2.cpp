@@ -75,6 +75,12 @@ public slots:
 
   void on_actionRecenter_triggered();
 
+  void on_actionShowGrid_toggled(bool checked);
+  void on_actionShowInput_toggled(bool checked);
+  void on_actionShowSnappedSegments_toggled(bool checked);
+
+  void deltaChanged(double);
+
   virtual void open(QString fileName);
 
 signals:
@@ -104,6 +110,10 @@ MainWindow::MainWindow()
 
   // Manual handling of actions
   //
+
+
+  QObject::connect(this->doubleSpinBox, SIGNAL(valueChanged(double)),
+		   this, SLOT(deltaChanged(double)));
 
   QObject::connect(this->actionQuit, SIGNAL(triggered()), 
 		   this, SLOT(close()));
@@ -156,6 +166,20 @@ MainWindow::MainWindow()
 
 
 void
+MainWindow::deltaChanged(double d)
+{
+  if(delta == d){
+    return;
+  }
+  delta = d;
+  output.clear();
+  CGAL::snap_rounding_2<Traits,std::list<Segment_2>::const_iterator,std::list<std::list<Point_2> > >(input.begin(), input.end(), output, delta, true, false);
+  rgi->setDelta(delta, delta);
+  emit(changed());
+}
+
+
+void
 MainWindow::processInput(CGAL::Object o)
 {
 
@@ -195,6 +219,31 @@ MainWindow::on_actionGenerate_triggered()
   on_actionRecenter_triggered();
   emit(changed());
 }
+
+
+void
+MainWindow::on_actionShowGrid_toggled(bool checked)
+{
+  rgi->setVisible(checked);
+  emit(changed());
+}
+
+void
+MainWindow::on_actionShowInput_toggled(bool checked)
+{
+  isgi->setVisible(checked);
+  emit(changed());
+}
+
+
+
+void
+MainWindow::on_actionShowSnappedSegments_toggled(bool checked)
+{
+  plgi->setVisible(checked);
+  emit(changed());
+}
+
 
 
 
