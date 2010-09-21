@@ -97,8 +97,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionClear"/>
-   <addaction name="actionLoadPoints"/>
-   <addaction name="actionSavePoints"/>
+   <addaction name="actionLoadSegments"/>
+   <addaction name="actionSaveSegments"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
@@ -130,8 +130,8 @@
     </property>
     <addaction name="separator"/>
     <addaction name="actionClear"/>
-    <addaction name="actionLoadPoints"/>
-    <addaction name="actionSavePoints"/>
+    <addaction name="actionLoadSegments"/>
+    <addaction name="actionSaveSegments"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -181,7 +181,7 @@
     <string>Ctrl+C</string>
    </property>
   </action>
-  <action name="actionLoadPoints">
+  <action name="actionLoadSegments">
    <property name="icon">
     <iconset resource="../icons/File.qrc">
      <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
@@ -189,17 +189,23 @@
    <property name="text">
     <string>&amp;Load Points...</string>
    </property>
+   <property name="iconText">
+    <string>Load Segments</string>
+   </property>
+   <property name="toolTip">
+    <string>Load Segments</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
    </property>
   </action>
-  <action name="actionSavePoints">
+  <action name="actionSaveSegments">
    <property name="icon">
     <iconset resource="../icons/File.qrc">
      <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Save Points...</string>
+    <string>&amp;Save Segments...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>

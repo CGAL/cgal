@@ -65,13 +65,11 @@ public slots:
 
   void processInput(CGAL::Object o);
 
-  void on_actionLoadPoints_triggered();
+  void on_actionLoadSegments_triggered();
 
   void on_actionClear_triggered();
 
-  void on_actionSavePoints_triggered();
-
-  void on_actionGenerate_triggered();
+  void on_actionSaveSegments_triggered();
 
   void on_actionRecenter_triggered();
 
@@ -146,8 +144,6 @@ MainWindow::MainWindow()
   scene.addItem(rgi);
 
   plgi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  scene.addItem(plgi);
-
                                                       
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
@@ -209,14 +205,8 @@ MainWindow::processInput(CGAL::Object o)
 void
 MainWindow::on_actionClear_triggered()
 {
-  emit(changed());
-}
-
-
-void
-MainWindow::on_actionGenerate_triggered()
-{
-  on_actionRecenter_triggered();
+  input.clear();
+  output.clear();
   emit(changed());
 }
 
@@ -248,10 +238,10 @@ MainWindow::on_actionShowSnappedSegments_toggled(bool checked)
 
 
 void
-MainWindow::on_actionLoadPoints_triggered()
+MainWindow::on_actionLoadSegments_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open grid file"),
+						  tr("Open segment file"),
 						  ".");
   if(! fileName.isEmpty()){
     open(fileName);
@@ -262,50 +252,34 @@ MainWindow::on_actionLoadPoints_triggered()
 void
 MainWindow::open(QString fileName)
 {
-#if 0
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::ifstream ifs(qPrintable(fileName));
 
-  runge_kutta_integrator = new Runge_kutta_integrator(integrating);
-  double iXSize, iYSize;
-  iXSize = iYSize = 512;
-  unsigned int x_samples, y_samples;
-  ifs >> x_samples;
-  ifs >> y_samples;
-  regular_grid = new Regular_grid(x_samples, y_samples, iXSize, iYSize);
-  /*fill the grid with the appropreate values*/
-  for (unsigned int i=0;i<x_samples;i++)
-    for (unsigned int j=0;j<y_samples;j++)
-      {
-        double xval, yval;
-        ifs >> xval;
-        ifs >> yval;
-        regular_grid->set_field(i, j, Vector(xval, yval));
-      }
+  std::copy(std::istream_iterator<Segment_2>(ifs),
+            std::istream_iterator<Segment_2>(),
+            std::back_inserter(input));
+  output.clear();
+  CGAL::snap_rounding_2<Traits,std::list<Segment_2>::const_iterator,std::list<std::list<Point_2> > >(input.begin(), input.end(), output, delta, true, false);
   ifs.close();
   // default cursor
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
-  //  actionRecenter->trigger();
-  on_actionGenerate_triggered();
+  on_actionRecenter_triggered();
   emit(changed());
-    
-#endif
 }
 
 void
-MainWindow::on_actionSavePoints_triggered()
+MainWindow::on_actionSaveSegments_triggered()
 {
-  /*
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save points"),
 						  ".");
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-  
+    std::copy(input.begin(), input.end(),  std::ostream_iterator<Segment_2>(ofs, "\n"));
   }
-  */
+
 }
 
 
