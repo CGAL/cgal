@@ -1448,6 +1448,9 @@ GraphicsView/demo/Segment_Delaunay_graph_2/icons/triangulation.png -text
 GraphicsView/demo/Snap_rounding_2/Snap_rounding_2.qrc -text
 GraphicsView/demo/Snap_rounding_2/Snap_rounding_2.ui -text
 GraphicsView/demo/Snap_rounding_2/about_Snap_rounding_2.html svneol=native#text/html
+GraphicsView/demo/Snap_rounding_2/icons/grid.png -text svneol=unset#image/png
+GraphicsView/demo/Snap_rounding_2/icons/snapped.png -text svneol=unset#image/png
+GraphicsView/demo/Snap_rounding_2/icons/unsnapped.png -text svneol=unset#image/png
 GraphicsView/demo/Stream_lines_2/Stream_lines_2.qrc -text
 GraphicsView/demo/Stream_lines_2/Stream_lines_2.ui -text
 GraphicsView/demo/Stream_lines_2/about_Stream_lines_2.html svneol=native#text/html
