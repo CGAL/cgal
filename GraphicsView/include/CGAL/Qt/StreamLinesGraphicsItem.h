@@ -97,6 +97,7 @@ template <typename SL, typename K>
 void 
 StreamLinesGraphicsItem<SL,K>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w)
 {
+  painter->setPen(this->edgesPen());
   QRectF rect = option->exposedRect;
   PainterOstream<K> pos(painter, rect);
   for (Stream_line_iterator sit = sl->begin(); sit != sl->end(); sit++){
