@@ -30,15 +30,23 @@
 // Just in case this is called with a non-gcc compiler such as pgCC
 //
  
-#ifndef __GNUC__
-  #define __VERSION__ "Not GNU/CC"
+#ifdef __clang_version__
+#  define _CGAL_GCC_VERSION "Not GNU/CC (CLANG)"
+#else
+#  ifndef __GNUC__
+#    define _CGAL_GCC_VERSION "Not GNU/CC"
+#  endif
 #endif
-#ifndef __VERSION__
-  #define __VERSION__ "Unknown version (__VERSION__ is not defined)"
+#ifndef _CGAL_GCC_VERSION
+#  ifdef __VERSION__
+#    define _CGAL_GCC_VERSION __VERSION__
+#  else
+#    define _CGAL_GCC_VERSION "Unknown version (_CGAL_GCC_VERSION is not defined)"
+#  endif
 #endif
 
 int main()
 {
-  std::cout << "version=" << __VERSION__ << std::endl;
+  std::cout << "version=" << _CGAL_GCC_VERSION << std::endl;
   return 0;
 }
