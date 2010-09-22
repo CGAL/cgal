@@ -135,7 +135,7 @@ PolylinesGraphicsItem<P>::paint(QPainter *painter,
       it != polylines->end();
       it++){
     Polyline & pl = *it;
-    Polyline::iterator pit = pl.begin();
+    typename Polyline::iterator pit = pl.begin();
     Point_2 p = *pit;
     ++pit;
     for(; pit != pl.end(); ++pit){
