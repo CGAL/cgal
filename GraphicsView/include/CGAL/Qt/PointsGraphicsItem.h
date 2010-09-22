@@ -37,7 +37,7 @@ namespace Qt {
 template <typename P>
 class PointsGraphicsItem : public GraphicsItem
 {
-  typedef typename P::value_type Point_2;
+  typedef typename std::iterator_traits<typename P::iterator>::value_type Point_2;
   typedef typename CGAL::Kernel_traits<Point_2>::Kernel Traits;
 
 public:
