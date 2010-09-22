@@ -42,6 +42,13 @@
 namespace CGAL {
 namespace OGL {
 
+template <typename R>
+VVector convert(const CGAL::Vector_3<R>& v)
+{ return VVector(CGAL::to_double(v.x()),
+                 CGAL::to_double(v.y()),
+                 CGAL::to_double(v.z())); }
+
+
 struct Gen_object {
   Gen_object() {}
   virtual ~Gen_object() {}
@@ -214,13 +221,6 @@ class Approximator {
   }
 
 };
-
-template <typename R>
-VVector convert(const CGAL::Vector_3<R>& v)
-{ return VVector(CGAL::to_double(v.x()),
-                 CGAL::to_double(v.y()),
-                 CGAL::to_double(v.z())); }
-
 
 
 template <class R_>
