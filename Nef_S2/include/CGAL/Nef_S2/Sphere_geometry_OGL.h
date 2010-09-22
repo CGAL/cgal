@@ -42,13 +42,6 @@
 namespace CGAL {
 namespace OGL {
 
-template <typename R>
-VVector convert(const CGAL::Vector_3<R>& v)
-{ return VVector(CGAL::to_double(v.x()),
-                 CGAL::to_double(v.y()),
-                 CGAL::to_double(v.z())); }
-
-
 struct Gen_object {
   Gen_object() {}
   virtual ~Gen_object() {}
@@ -65,6 +58,13 @@ typedef VKernel::Aff_transformation_3       Affine_3;
 typedef std::vector<VPoint>                 VSegment;
 typedef VKernel::Triangle_3                 DTriangle;
 typedef std::vector<DTriangle>              VTriangle;
+
+template <typename R>
+VVector convert(const CGAL::Vector_3<R>& v)
+{ return VVector(CGAL::to_double(v.x()),
+                 CGAL::to_double(v.y()),
+                 CGAL::to_double(v.z())); }
+
 
 const double refinement_angle = 0.1;
 const double shrink_fac = 0.995;
