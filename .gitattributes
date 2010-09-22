@@ -3229,7 +3229,7 @@ Snap_rounding_2/test/Snap_rounding_2/cgal_test eol=lf
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_base -text
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_with_cmake eol=lf
 Spatial_searching/benchmark/Spatial_searching/Compare_ANN_STANN_CGAL.cpp -text
-Spatial_searching/demo/Spatial_searching/help/index.html svneol=native#text/html
+Spatial_searching/demo/Spatial_searching/Qt3/help/index.html svneol=native#text/html
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#image/gif
 Spatial_searching/doc_tex/Spatial_searching/windowQuery.png -text
 Spatial_searching/include/CGAL/internal/K_neighbor_search.h -text
