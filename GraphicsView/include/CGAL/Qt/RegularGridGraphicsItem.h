@@ -25,6 +25,7 @@
 #include <CGAL/Qt/PainterOstream.h>
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
+#include <CGAL/Qt/utility.h>
 
 #include <QGraphicsScene>
 #include <QPainter>
