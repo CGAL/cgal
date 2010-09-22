@@ -83,15 +83,13 @@ protected:
   QRectF bounding_rect;
 
   QPen vertices_pen;
-  bool draw_edges;
   bool draw_vertices;
 };
 
 
 template <typename P>
 PointsGraphicsItem<P>::PointsGraphicsItem(P * p_)
-  :  points(p_), painterostream(0),
-     draw_edges(true), draw_vertices(true)   
+  :  points(p_), painterostream(0),  draw_vertices(true)   
 {
   setVerticesPen(QPen(::Qt::red, 3.));
   if(points->size() == 0){
