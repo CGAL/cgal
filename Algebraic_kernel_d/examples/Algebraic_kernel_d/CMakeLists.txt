@@ -12,7 +12,7 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
  
-find_package(CGAL QUIET COMPONENTS)
+find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )
 
