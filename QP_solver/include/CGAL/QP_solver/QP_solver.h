@@ -608,10 +608,10 @@ public:
   int  number_of_original_variables( ) const { return qp_n; }
     
   // access to slack variables
-  int  number_of_slack_variables( ) const { return slack_A.size(); }
+  int  number_of_slack_variables( ) const { return static_cast<int>(slack_A.size()); }
 
   // access to artificial variables
-  int  number_of_artificial_variables( ) const { return art_A.size(); }
+  int  number_of_artificial_variables( ) const { return static_cast<int>(art_A.size()); }
     
   C_auxiliary_iterator
   c_auxiliary_value_iterator_begin( ) const { return aux_c.begin(); }
@@ -619,9 +619,9 @@ public:
   c_auxiliary_value_iterator_end( ) const {return aux_c.end(); }
 
   // access to basic variables
-  int  number_of_basic_variables( ) const { return B_O.size()+B_S.size(); }
-  int  number_of_basic_original_variables( ) const { return B_O.size(); }
-  int  number_of_basic_slack_variables( ) const { return B_S.size(); }
+  int  number_of_basic_variables( ) const { return static_cast<int>(B_O.size()+B_S.size()); }
+  int  number_of_basic_original_variables( ) const { return static_cast<int>(B_O.size()); }
+  int  number_of_basic_slack_variables( ) const { return static_cast<int>(B_S.size()); }
 
   Basic_variable_index_iterator
   basic_original_variable_indices_begin( ) const { return B_O.begin(); }
@@ -638,7 +638,7 @@ public: // only the pricing strategies (including user-defined ones
         // need access to this) -- make them friends?
 
   // access to working variables
-  int  number_of_working_variables( ) const { return in_B.size(); }
+  int  number_of_working_variables( ) const { return static_cast<int>(in_B.size()); }
   
   bool is_basic( int j) const
   { 
@@ -717,7 +717,7 @@ private:
 
 public:
   // access to indices of basic constraints
-  int  number_of_basic_constraints( ) const { return C.size(); }
+  int  number_of_basic_constraints( ) const { return static_cast<int>(C.size()); }
 
   Basic_constraint_index_iterator
   basic_constraint_indices_begin( ) const { return C.begin(); }

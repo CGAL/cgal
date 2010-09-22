@@ -320,7 +320,7 @@ pivot_step( )
         }
 
         // compute index of entering variable
-        j += in_B.size();
+        j += static_cast<int>(in_B.size());
 
         ratio_test_2( Is_linear());
     
@@ -1239,7 +1239,7 @@ expel_artificial_variables_from_basis( )
   
 
   
-    for (unsigned int i_ = 0; i_ < qp_n + slack_A.size(); ++i_) {
+    for (unsigned int i_ = 0; i_ < static_cast<unsigned int>(qp_n + slack_A.size()); ++i_) {
       if (!is_basic(i_)) { 
       ratio_test_init__A_Cj( A_Cj.begin(), i_, no_ineq);
       }
@@ -1252,7 +1252,7 @@ expel_artificial_variables_from_basis( )
     // know about variables entering the basis.
     // The partial pricing strategies that keep the set of nonbasic vars
     // explicitly are synchronized during transition from phaseI to phaseII 
-    for (unsigned int i_ = qp_n + slack_A.size(); i_ < in_B.size(); ++i_) {
+    for (unsigned int i_ = static_cast<unsigned int>(qp_n + slack_A.size()); i_ < static_cast<unsigned int>(in_B.size()); ++i_) {
       if (is_basic(i_)) { 					// is basic
         if (has_ineq) {
 	        row_ind = in_C[ art_A[i_ - qp_n - slack_A.size()].first];
@@ -1266,7 +1266,7 @@ expel_artificial_variables_from_basis( )
 	    
         // determine first possible entering variable,
         // if there is any
-        for (unsigned int j_ = 0; j_ < qp_n + slack_A.size(); ++j_) {
+        for (unsigned int j_ = 0; j_ < static_cast<unsigned int>(qp_n + slack_A.size()); ++j_) {
 	        if (!is_basic(j_)) {  				// is nonbasic
             ratio_test_init__A_Cj( A_Cj.begin(), j_, no_ineq);
                         
@@ -1300,7 +1300,7 @@ expel_artificial_variables_from_basis( )
       // remove the remaining ones with their corresponding equality constraints
       // Note: the special artificial variable can always be driven out of the
       // basis
-      for (unsigned int i_ = qp_n + slack_A.size(); i_ < in_B.size(); ++i_) {
+      for (unsigned int i_ = static_cast<unsigned int>(qp_n + slack_A.size()); i_ < static_cast<unsigned int>(in_B.size()); ++i_) {
         if (in_B[i_] >= 0) {
           i = i_;
           CGAL_qpe_debug {

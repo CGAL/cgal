@@ -98,7 +98,7 @@ set(const Q& qp)
   
   // reserve memory for slack and artificial part of `A':
   if (has_ineq) {
-    const unsigned int eq = std::count(qp_r, qp_r+qp_m, CGAL::EQUAL);
+    const unsigned int eq = static_cast<unsigned int>(std::count(qp_r, qp_r+qp_m, CGAL::EQUAL));
     slack_A.reserve(qp_m - eq);
     art_A.reserve  (       eq);
     art_s.insert(art_s.end(), qp_m, A_entry(0));
@@ -111,7 +111,7 @@ set(const Q& qp)
 
   set_up_auxiliary_problem();
     
-  e = qp_m-slack_A.size(); // number of equalities
+  e = static_cast<int>(qp_m-slack_A.size()); // number of equalities
   l = (std::min)(qp_n+e+1, qp_m);  // maximal size of basis in phase I
   
   // diagnostic output:
@@ -252,7 +252,7 @@ set_up_auxiliary_problem()
         if (rhs < et0) {
           art_s[i] = -c1;
           if (-rhs > b_max) {
-            i_max = slack_A.size();
+            i_max = static_cast<int>(slack_A.size());
             i_max_absolute = i;
             b_max = -rhs;
           }
@@ -268,7 +268,7 @@ set_up_auxiliary_problem()
         if (rhs > et0) {
           art_s[i] = c1;
           if (rhs > b_max) {
-            i_max = slack_A.size();
+            i_max = static_cast<int>(slack_A.size());
             i_max_absolute = i;
             b_max = rhs;
           }
@@ -370,7 +370,7 @@ init_basis()
 {
   int s_i = -1;
   int s_i_absolute = -1;
-  const int s = slack_A.size();
+  const int s = static_cast<int>(slack_A.size());
   
   // has special artificial column?
   if (!art_s.empty()) {
@@ -384,7 +384,7 @@ init_basis()
     // add "fake" column to art_A:
     s_i = art_s_i;               // s_i-th ineq. is most infeasible, see (C1)
     s_i_absolute = art_basic;    // absolute index of most infeasible ineq
-    art_s_i = qp_n+s+art_A.size();    // number of special artificial var
+    art_s_i = static_cast<int>(qp_n+s+art_A.size());    // number of special artificial var
     // BG: By construction of art_s_i (= i_max) in set_up_auxiliary_problem(),
     // s_i conforms with the indexing of slack_A, and the sign of the +-1
     // entry is just the negative of the corresponding slackie; this explains
@@ -412,7 +412,7 @@ init_basis()
     B_O .push_back(qp_n+s+i);
     in_B.push_back(i);
   }
-  art_basic = art_A.size();
+  art_basic = static_cast<int>(art_A.size());
   
   // initialize indices of 'basic' and 'nonbasic' constraints:
   if (!C.empty()) C.clear();
@@ -427,7 +427,7 @@ init_basis()
   // understand this note)):
   // BG: as we only look at the basic constraints, the fake column in art_A
   // will do as nicely as the actual column arts_s
-  inv_M_B.init(art_A.size(), art_A.begin());
+  inv_M_B.init(static_cast<unsigned int>(art_A.size()), art_A.begin());
 }
 
 template < typename Q, typename ET, typename Tags >  inline                                 // no ineq.
@@ -590,7 +590,7 @@ init_solution()
   // function (and leave the other entries in the objective function at zero):
   aux_c.reserve(art_A.size());
   aux_c.insert(aux_c.end(), art_A.size(), 0);
-  for (int col=qp_n+slack_A.size(); col<number_of_working_variables(); ++col)
+  for (int col=static_cast<int>(qp_n+slack_A.size()); col<number_of_working_variables(); ++col)
     if (col==art_s_i)                           // special artificial?
       aux_c[col-qp_n-slack_A.size()]=  qp_n+qp_m;
     else                                        // normal artificial

@@ -35,10 +35,10 @@ bool Quadratic_program_solution<ET>::solves_program
   CGAL_qpe_assertion_msg(!is_void(), "Solution not initialized");
 
   // first check whether the dimensions agree
-  int n = variable_numerators_end() - variable_numerators_begin();
+  int n = static_cast<int>(variable_numerators_end() - variable_numerators_begin());
   if (n != p.get_n()) 
     return error ("wrong number of variables");
-  int m = solver()->lambda_end() - solver()->lambda_begin();
+  int m = static_cast<int>(solver()->lambda_end() - solver()->lambda_begin());
   if (m != p.get_m()) 
     return error("wrong number of constraints");
 

@@ -483,8 +483,8 @@ private:
   void grow_a_d (int s) 
   {
     CGAL_qpe_assertion( a_matrix.size() == d_matrix.size() );
-    CGAL_qpe_assertion( a_matrix.size() < (unsigned int)s);
-    for (int k = a_matrix.size(); k < s; ++k) {
+    CGAL_qpe_assertion( a_matrix.size() < static_cast<unsigned int>(s));
+    for (int k = static_cast<int>(a_matrix.size()); k < s; ++k) {
       a_matrix.push_back(Sparse_vector());
       d_matrix.push_back(Sparse_vector());
     }
@@ -1153,7 +1153,7 @@ private:
       std::string col_name;
       const Index_map::const_iterator var_name = var_names.find(t);
       if (var_name == var_names.end()) { // new variable?
-	var_index = var_names.size();
+        var_index = static_cast<unsigned int>(var_names.size());
 	col_name = t;
 	var_names.insert(String_int_pair(t,var_index));
 	var_by_index.push_back(t);

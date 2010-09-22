@@ -239,7 +239,8 @@ class Map_with_default {
   // public types
 public:
   typedef typename Map::mapped_type       mapped_type;
-  typedef typename Map::difference_type   difference_type;
+  //typedef typename Map::difference_type   difference_type;
+  typedef typename Map::key_type          key_type;
   typedef mapped_type                     result_type;
   // data members
 private:
@@ -257,7 +258,7 @@ public:
   {}
   
   // operator()
-  const mapped_type& operator() (difference_type n) const {
+  const mapped_type& operator() (key_type n) const {
     CGAL_qpe_precondition (map != 0);
     typename Map::const_iterator i = map->find (n);
     if (i != map->end())
