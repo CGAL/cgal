@@ -186,6 +186,14 @@ compare_y_at_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
                                         h1a*num+h1c*den, h1b);
 }
 
+// forward-declaration of orientationC2, used in compare_y_at_xC2
+template < class FT >
+inline
+typename Same_uncertainty_nt<Orientation, FT>::type
+orientationC2(const FT &px, const FT &py,
+              const FT &qx, const FT &qy,
+              const FT &rx, const FT &ry);
+
 template < class FT >
 CGAL_KERNEL_LARGE_INLINE
 typename Compare<FT>::result_type
