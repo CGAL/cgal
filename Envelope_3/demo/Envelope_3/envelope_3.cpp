@@ -45,7 +45,7 @@ void Qt_layer_show_diag::draw()
     draw_arr(widget, plane_diag, draw_v, draw_e, draw_f);
 
   widget->unlock(); // widget have to be unlocked when finished drawing
-};
+}
 
 void Qt_layer_show_statitics::mousePressEvent(QMouseEvent *)
 {
@@ -168,7 +168,7 @@ MyWindow::MyWindow(int w, int h) :
 
   //application flag stuff
   old_state = 0;
-};
+}
 
 void MyWindow::read_surface(std::ifstream& is, Base_triangle_3& tri)
 {
