@@ -147,6 +147,9 @@ Edge edge_in_cell(const Edge &e, const Cell_handle c)
 }
 
 
+template <class Edge>
+typename Edge::first_type::value_type::Edge_label edge_label(const Edge &f);
+
 template <class Tr>
 void set_edge_label(const Tr &tr, const typename Tr::Edge &e, typename Tr::Cell::Edge_label l)
 {

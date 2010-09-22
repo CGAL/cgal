@@ -65,18 +65,18 @@ struct Derivitive_filter_function_kernel: public Traits
     return rs;
   }
 
-  using Traits::Rational_between_roots;
+  typedef typename Traits::Rational_between_roots Rational_between_roots;
   using Traits::rational_between_roots_object;
-  //  using Traits::Is_rational;
-  //using Traits::is_rational_object;
-  //using Traits::To_rational;
-  //using Traits::to_rational_object;
-  using Traits::Root_stack_traits;
+  //  typedef typename Traits::Is_rational Is_rational;
+  //typedef typename Traits::is_rational_object is_rational_object;
+  //typedef typename Traits::To_rational To_rational;
+  //typedef typename Traits::to_rational_object to_rational_object;
+  typedef typename Traits::Root_stack_traits Root_stack_traits;
   using Traits::root_stack_traits_object;
-  using Traits::FT;
+  typedef typename Traits::FT FT;
   using Traits::differentiate_object;
-  using Traits::Differentiate;
-  using Traits::Negate_variable;
+  typedef typename Traits::Differentiate Differentiate;
+  typedef typename Traits::Negate_variable Negate_variable;
   using Traits::negate_variable_object;
 };
 
