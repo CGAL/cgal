@@ -25,6 +25,7 @@
 #define CGAL_HOMOGENEOUS_DIRECTION_2_H
 
 #include <CGAL/array.h>
+#include <CGAL/Handle_for.h>
 
 namespace CGAL {
 
@@ -74,12 +75,12 @@ public:
 
     Vector_2       to_vector() const;
 
-    const RT & x() const { return get(base)[0]; }
-    const RT & y() const { return get(base)[1]; }
+    const RT & x() const { return CGAL::get(base)[0]; }
+    const RT & y() const { return CGAL::get(base)[1]; }
 
     const RT & delta(int i) const;
-    const RT & dx() const { return get(base)[0]; }
-    const RT & dy() const { return get(base)[1]; }
+    const RT & dx() const { return CGAL::get(base)[0]; }
+    const RT & dy() const { return CGAL::get(base)[1]; }
 
 };
 
