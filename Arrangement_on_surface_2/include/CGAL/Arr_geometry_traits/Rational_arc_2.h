@@ -2159,7 +2159,7 @@ public:
 
     for (x_iter = xs.begin(); x_iter != xs.end(); ++x_iter)
     {
-      if (_is_in_true_x_range (*x_iter) &&
+      if (this->_is_in_true_x_range (*x_iter) &&
           arc._is_in_true_x_range (*x_iter))
       {
         // Compute the intersection point and obtain its multiplicity.
