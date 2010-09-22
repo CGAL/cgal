@@ -157,9 +157,6 @@ public:
     NT nt= simulator_->next_time_representable_as_nt();
     simulator_->set_current_time(nt);
     ik_.set_time(nt);
-#if defined(__GNUC__) && ! defined(__clang__)
-    CGAL_assertion(__gnu_debug::__check_sorted(sorted_.begin(), sorted_.end(), iless_));
-#endif
     iterator it = std::upper_bound(sorted_.begin(), sorted_.end(),
 				   k, iless_);
     CGAL_LOG(Log::LOTS, "\nInserting " << k);
@@ -173,9 +170,7 @@ public:
       }*/
     v_.pre_insert_vertex(k);
     sorted_.insert(it, OD(k));
-#if defined(__GNUC__) && ! defined(__clang__)
-    CGAL_assertion(__gnu_debug::__check_sorted(sorted_.begin(), sorted_.end(), iless_));
-#endif
+
 
     rebuild_certificate(prior(it)); 
     //v_.create_edge(prior(it), it);
