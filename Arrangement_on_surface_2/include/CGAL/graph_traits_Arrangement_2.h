@@ -293,7 +293,7 @@ public:
     if (v->is_isolated())
       return out_edge_iterator();
 
-    return out_edge_iterator (v->incident_halfedges(), true, 0, v->degree());
+    return out_edge_iterator (v->incident_halfedges(), true, 0, static_cast<int>(v->degree()));
   }
 
   out_edge_iterator out_edges_end (vertex_descriptor v)
@@ -301,7 +301,7 @@ public:
     if (v->is_isolated())
       return out_edge_iterator ();
 
-    const int  deg = v->degree();
+    const int  deg = static_cast<int>(v->degree());
     return out_edge_iterator (v->incident_halfedges(), true, deg, deg);
   }
 

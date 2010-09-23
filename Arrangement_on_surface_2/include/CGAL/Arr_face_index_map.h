@@ -231,7 +231,7 @@ private:
   void _init ()
   {
     // Get the number of faces and allocate the reverse map accordingly.
-    n_faces = this->arrangement()->number_of_faces();
+    n_faces = static_cast<unsigned int>(this->arrangement()->number_of_faces());
     
     if (n_faces < MIN_REV_MAP_SIZE)
       rev_map.resize (MIN_REV_MAP_SIZE);

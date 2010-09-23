@@ -238,7 +238,7 @@ private:
   void _init ()
   {
     // Get the number of vertices and allocate the reverse map accordingly.
-    n_vertices = this->arrangement()->number_of_vertices();
+    n_vertices = static_cast<unsigned int>(this->arrangement()->number_of_vertices());
     
     if (n_vertices < MIN_REV_MAP_SIZE)
       rev_map.resize (MIN_REV_MAP_SIZE);
