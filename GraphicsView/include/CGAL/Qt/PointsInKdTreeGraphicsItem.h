@@ -44,6 +44,45 @@ class PointsInKdTreeGraphicsItem : public GraphicsItem
 
   typedef CGAL::Fuzzy_iso_box<typename KdTree::Traits> Fuzzy_iso_box;
 
+
+  // Instead of first collecting points into a container, and then draw them
+  // we use an output iterator that draws them on the fly
+  template <typename K>
+  class Draw : public std::iterator<std::output_iterator_tag, void, void, void, void> {
+    QPainter* painter;
+    QMatrix* matrix;
+    Converter<K> convert;
+  public:
+    Draw(QPainter* painter, QMatrix* matrix)
+      : painter(painter), matrix(matrix)
+    {}
+
+    Draw& operator=(const Point_2& p)
+    {
+      QPointF point = matrix->map(convert(p));
+      painter->drawPoint(point);
+      return *this;
+    }
+
+    Draw& operator++()
+    {
+      return *this;
+    }
+
+    Draw& operator*()
+    {
+      return *this;
+    }
+
+
+    Draw& operator++(int)
+    {
+      return *this;
+    }
+
+  };
+
+
 public:
   PointsInKdTreeGraphicsItem(KdTree* p_);
 
@@ -51,7 +90,7 @@ public:
 
 public:
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
   
 
@@ -65,24 +104,13 @@ public:
     vertices_pen = pen;
   }
 
-  bool drawVertices() const
-  {
-    return draw_vertices;
-  }
-
-  void setDrawVertices(const bool b)
-  {
-    draw_vertices = b;
-    update();
-  }
-
 protected:
   void updateBoundingBox();
 
   KdTree * kdtree;
   QPainter* m_painter;
   PainterOstream<Traits> painterostream;
-
+  Converter<Traits> convert;
 
   QRectF bounding_rect;
 
@@ -114,29 +142,21 @@ PointsInKdTreeGraphicsItem<KdTree>::boundingRect() const
 
 
 
+
+
 template <typename KdTree>
 void 
 PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter, 
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * widget)
 {
-  if(drawVertices()) {
-    Converter<Traits> convert;
-
-    std::vector<Point_2> visible_points;
-    Iso_rectangle_2 isor = convert(option->exposedRect);
-    Fuzzy_iso_box range(isor.vertex(0), isor.vertex(2));
-    kdtree->search(std::back_inserter(visible_points), range);
-    painter->setPen(verticesPen());
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
-    for(typename std::vector<Point_2>::iterator it = visible_points.begin();
-        it != visible_points.end();
-        it++){
-      QPointF point = matrix.map(convert(*it));
-      painter->drawPoint(point);
-    }
-  }
+  Iso_rectangle_2 isor = convert(option->exposedRect);
+  Fuzzy_iso_box range(isor.vertex(0), isor.vertex(2));
+  painter->setPen(verticesPen());
+  QMatrix matrix = painter->matrix();
+  painter->resetMatrix();
+  Draw<Traits> draw(painter, &matrix);
+  kdtree->search(draw, range);
 }
 
 // We let the bounding box only grow, so that when vertices get removed
@@ -145,7 +165,6 @@ template <typename KdTree>
 void 
 PointsInKdTreeGraphicsItem<KdTree>::updateBoundingBox()
 {
-  Converter<Traits> convert;
   prepareGeometryChange();
   if(kdtree->size() == 0){
     return;
