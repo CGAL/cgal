@@ -74,11 +74,6 @@ public:
     edges_pen = pen;
   }
 
-  void setRegularEdgesPen(const QPen& pen)
-  {
-    regular_edges_pen = pen;
-  }
-
   bool visibleVertices() const
   {
     return visible_vertices;
