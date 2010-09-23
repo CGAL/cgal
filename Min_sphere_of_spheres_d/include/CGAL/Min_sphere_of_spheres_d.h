@@ -99,33 +99,19 @@ namespace CGAL_MINIBALL_NAMESPACE {
       insert(begin,end);            // todo. better way?
     }
   
-    inline void prepare(std::size_t size);
-
-    template <typename InputIterator>
-    void prepare(InputIterator begin,InputIterator end) {
-      prepare(begin,end,
-              typename std::iterator_traits<InputIterator>::iterator_category());
-    }
-
-
-    template <typename InputIterator, typename Category>
-    void prepare(InputIterator begin,InputIterator end, Category) {
-    }
-
-    template <typename InputIterator>
-    void prepare(InputIterator begin,InputIterator end, std::random_access_iterator_tag) {
-      prepare(S.size()+(end-begin));
-    }
 
     inline void insert(const Sphere& b);
   
     template<typename InputIterator>
     inline void insert(InputIterator begin,InputIterator end) {
-      prepare(begin,end);
-      while (begin != end) {
-        insert(*begin);
-        ++begin;
+      std::size_t s = S.size();
+      S.insert(S.end(), begin, end);
+      is_up_to_date = false;
+#ifdef CGAL_MINIBALL_DEBUG
+      for(std::size_t i = 0; i < S.size(); i++){ 
+        CGAL_MINIBALL_ASSERT(t.radius(S[i]) >= FT(0)); 
       }
+#endif
     }
   
     inline void clear();
@@ -195,12 +181,6 @@ namespace CGAL_MINIBALL_NAMESPACE {
     is_up_to_date = true;
     CGAL_MINIBALL_ASSERT(is_neg(ss.radius(),ss.disc())); // makes sure
                // that initially no ball is enclosed (cf. contains()).
-  }
-
-  template<class Traits>
-  void Min_sphere_of_spheres_d<Traits>::prepare(std::size_t size) {
-    S.reserve(size);
-    // (The vector l will be reserve()'d in update().)
   }
 
   template<class Traits>
