@@ -125,12 +125,8 @@ PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter,
 
     std::vector<Point_2> visible_points;
     Iso_rectangle_2 isor = convert(option->exposedRect);
-    std::cerr << "isor = " << isor << std::endl;
-    std::cerr << "x = "  << option->exposedRect.x() << "  y = " << option->exposedRect.y()  << " w =  " << option->exposedRect.width() << " h =  " << option->exposedRect.height() << std::endl; 
-    std::cerr << "bl = " << isor.vertex(0) << "  tr = " << isor.vertex(2)  << std::endl;
     Fuzzy_iso_box range(isor.vertex(0), isor.vertex(2));
     kdtree->search(std::back_inserter(visible_points), range);
-    std::cerr << "draw " << visible_points.size() << " of " << kdtree->size() << " points" << std::endl;
     painter->setPen(verticesPen());
     QMatrix matrix = painter->matrix();
     painter->resetMatrix();
