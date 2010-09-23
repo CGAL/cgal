@@ -149,7 +149,7 @@ namespace CGAL {
   {
     CGAL_APPEL_ASSERT(d==2);
 
-    typedef Cartesian<double> K;
+    typedef Simple_cartesian<double> K;
     typedef Vector_2<K> Vector_2;
 
     // write matrix M' as [ a, b; b, c ]:

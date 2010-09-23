@@ -336,7 +336,7 @@ namespace CGAL {
       const int n_old = n;
       for (; first != last; first++)
 	P.push_back(&*first);
-      n = P.size();
+      n = static_cast<int>(P.size());
 
       // debugging output:
       CGAL_APPEL_LOG("appel","  Add()'ing " << n-n_old << " points to a " <<
