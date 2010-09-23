@@ -114,7 +114,6 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
     template <typename InputIterator>
     void prepare(InputIterator begin,InputIterator end, std::random_access_iterator_tag) {
-      std::cerr << "We allocate memory" << std::endl;
       prepare(S.size()+(end-begin));
     }
 
