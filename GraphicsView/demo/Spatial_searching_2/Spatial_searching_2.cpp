@@ -133,7 +133,7 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   pgi, SLOT(modelChanged()));
 
-  pgi->setVerticesPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  pgi->setVerticesPen(QPen(Qt::black, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(pgi);
 
   nearest_neighbor = new NearestNeighbor(&scene, &tree, this, this->nn->value());
