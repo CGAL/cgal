@@ -36,7 +36,7 @@ namespace CGAL {
 
 template < class OutputIterator, class Point_generator, class Traits >
 OutputIterator
-random_convex_set_2( int n,
+random_convex_set_2( std::size_t n,
                      OutputIterator o,
                      const Point_generator& pg,
                      Traits t)

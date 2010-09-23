@@ -22,7 +22,7 @@ generated polygons is not known since it depends on the generated points.
 
 \ccFunction{
 template < class OutputIterator, class PointGenerator, class Traits > 
-OutputIterator random_polygon_2( int n, OutputIterator result, 
+OutputIterator random_polygon_2( std::size_t n, OutputIterator result, 
                     const PointGenerator& pg, Traits t = Default_traits);
 }
 {

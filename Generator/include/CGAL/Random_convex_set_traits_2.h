@@ -89,7 +89,7 @@ struct Random_convex_set_traits : public Random_convex_set_traits_2<Kernel>
 template < class OutputIterator, class Point_generator >
 inline
 OutputIterator
-random_convex_set_2( int n,
+random_convex_set_2( std::size_t n,
                      OutputIterator o,
                      const Point_generator& pg)
 {
@@ -100,7 +100,7 @@ random_convex_set_2( int n,
 template < class OutputIterator, class Point_generator, class R >
 inline
 OutputIterator
-CGAL_random_convex_set_2( int n,
+CGAL_random_convex_set_2( std::size_t n,
                           OutputIterator o,
                           const Point_generator& pg,
                           Point_2< R >*)

@@ -41,7 +41,7 @@ namespace CGAL {
 // generated with uniform probability.
 //
 template <class PointGenerator, class OutputIterator, class Traits>
-OutputIterator random_polygon_2(int n,  OutputIterator result, 
+OutputIterator random_polygon_2(std::size_t n,  OutputIterator result, 
                                 const PointGenerator& pg, const Traits& traits)
 {
    typedef typename Traits::Point_2           Point_2;
@@ -67,7 +67,7 @@ OutputIterator random_polygon_2(int n,  OutputIterator result,
 
 template <class PointGenerator, class OutputIterator>
 inline
-OutputIterator random_polygon_2( int n,  OutputIterator result, 
+OutputIterator random_polygon_2( std::size_t n,  OutputIterator result, 
                                  const PointGenerator& pg )
 {
    typedef typename std::iterator_traits<PointGenerator>::value_type  Point_2;
@@ -108,7 +108,7 @@ OutputIterator copy_n_unique(InputIterator first, Size n,
    typedef typename Traits::Less_xy_2  Less_xy_2;
 
    std::set<Point_2, Less_xy_2>    sorted_point_set;
-   for (int i = 0; i < n; i++)
+   for (std::size_t i = 0; i < n; i++)
    {
       if (sorted_point_set.insert(*first).second)
       {
