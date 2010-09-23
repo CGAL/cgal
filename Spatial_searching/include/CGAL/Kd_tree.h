@@ -29,7 +29,6 @@
 #include <CGAL/Splitters.h>
 #include <CGAL/Compact_container.h>
 
-
 namespace CGAL {
 
   //template <class SearchTraits, class Splitter_=Median_of_rectangle<SearchTraits>, class UseExtendedNode = Tag_true >
@@ -37,7 +36,7 @@ template <class SearchTraits, class Splitter_=Sliding_midpoint<SearchTraits>, cl
 class Kd_tree {
 
 public:
-
+  typedef SearchTraits Traits;
   typedef Splitter_ Splitter;
   typedef typename SearchTraits::Point_d Point_d;
   typedef typename Splitter::Container Point_container;
@@ -179,7 +178,7 @@ public:
 	  Splitter s = Splitter()) 
     : split(s), built_(false) 
   {
-    std::copy(first, beyond, std::back_inserter(pts));
+    pts.insert(pts.end(), first, beyond);
   }
 
   bool empty() const {
@@ -240,7 +239,7 @@ public:
   insert(InputIterator first, InputIterator beyond)
   {
     invalidate_built();
-    std::copy(first, beyond, std::back_inserter(pts));
+    pts.insert(pts.end(),first, beyond);
   }
 
 
