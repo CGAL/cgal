@@ -204,8 +204,11 @@ MainWindow::on_actionClear_triggered()
 void
 MainWindow::on_actionRecenter_triggered()
 {
-  // this->graphicsView->setSceneRect(convert(square));
-  // this->graphicsView->fitInView(convert(square), Qt::KeepAspectRatio);  
+  if(tree.empty()){
+    return;
+  }
+  this->graphicsView->setSceneRect(pgi->boundingRect());
+  this->graphicsView->fitInView(pgi->boundingRect(), Qt::KeepAspectRatio);  
 }
 
 void
