@@ -121,12 +121,8 @@ MainWindow::MainWindow()
   setupUi(this);
 
   this->graphicsView->setAcceptDrops(false);
+  this->graphicsView->setCursor(Qt::CrossCursor);
 
-  std::vector<Point_2> points; 
-  points.push_back(Point_2(0,0));
-  points.push_back(Point_2(2,2));
-  points.push_back(Point_2(102,2));
-  tree.insert(points.begin(), points.end());
   // Add a GraphicItem for the point set
   pgi = new CGAL::Qt::PointsInKdTreeGraphicsItem<Tree>(&tree);
 
@@ -297,7 +293,6 @@ int main(int argc, char **argv)
 
   MainWindow mainWindow;
   mainWindow.show();
-  QApplication::setOverrideCursor(Qt::CrossCursor);
   mainWindow.on_actionRecenter_triggered();
   return app.exec();
 }
