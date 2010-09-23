@@ -112,7 +112,7 @@ NearestNeighbor<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
   points.clear();
   double sr = 0;
-  for(T::iterator it = search.begin(); it != search.end(); ++it){
+  for(typename T::iterator it = search.begin(); it != search.end(); ++it){
     if(sr < it->second){
       points.push_back(it->first);
       sr = it->second;
