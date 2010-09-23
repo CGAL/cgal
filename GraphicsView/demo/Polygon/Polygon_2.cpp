@@ -9,6 +9,7 @@
 #include<CGAL/create_straight_skeleton_2.h>
 #include<CGAL/create_offset_polygons_2.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
+#include <CGAL/extremal_polygon_2.h>
 
 // Qt headers
 #include <QtGui>
@@ -52,7 +53,7 @@ private:
 
 
   CGAL::Qt::Converter<K> convert;
-  Polygon poly; 
+  Polygon poly, kgon; 
   QGraphicsScene scene;  
 
   CGAL::Qt::PolygonGraphicsItem<Polygon> * pgi;
@@ -64,6 +65,8 @@ private:
   std::list<QGraphicsLineItem* >  skeletonGraphicsItems;
   std::list<QGraphicsLineItem* >  offsetGraphicsItems;
   CGAL::Qt::LineGraphicsItem<K>* lgi;
+
+  CGAL::Qt::PolygonGraphicsItem<Polygon> * kgongi;
 
 public:
   MainWindow();
@@ -78,6 +81,7 @@ public slots:
   void on_actionSavePolygon_triggered();
 
   void on_actionRecenter_triggered();
+  void on_actionMaximumAreaKGon_triggered();
   void on_actionInnerSkeleton_triggered();
   void on_actionOuterOffset_triggered();
   void on_actionLinearLeastSquaresFitting_triggered();
@@ -116,7 +120,12 @@ MainWindow::MainWindow()
   pgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(pgi);
 
-
+  kgongi =  new CGAL::Qt::PolygonGraphicsItem<Polygon>(&kgon);
+  kgongi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  kgongi->hide();
+  scene.addItem(kgongi);
+  
+  
   lgi = new CGAL::Qt::LineGraphicsItem<K>();
   lgi->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   lgi->hide();
@@ -361,6 +370,25 @@ MainWindow::on_actionOuterOffset_triggered()
 }
 
 void
+MainWindow::on_actionMaximumAreaKGon_triggered()
+{
+  if( (poly.size()>2) && poly.is_convex()){
+    clear();
+    
+    kgon.clear();
+    std::vector<Point_2> points(poly.vertices_begin(),
+                                poly.vertices_end());
+    CGAL::maximum_area_inscribed_k_gon_2(points.begin(),
+                                         points.end(),
+					 3,
+                                         std::back_inserter(kgon));
+  
+    kgongi->modelChanged();
+    kgongi->show();
+  }
+}
+
+void
 MainWindow::on_actionLinearLeastSquaresFitting_triggered()
 {
   if(poly.size()>2){
@@ -484,6 +512,7 @@ MainWindow::clear()
   clearSkeleton();
   clearOffset();
   lgi->hide();
+  kgongi->hide();
 }
 
 
