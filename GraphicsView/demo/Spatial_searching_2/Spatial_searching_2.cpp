@@ -12,7 +12,7 @@
 #include <QGraphicsLineItem>
 
 // GraphicsView items and event filters (input classes)
-#include <CGAL/Qt/PointsGraphicsItem.h>
+#include <CGAL/Qt/PointsInKdTreeGraphicsItem.h>
 #include <CGAL/Qt/utility.h>
   
 // the two base classes
@@ -44,7 +44,7 @@ private:
   CGAL::Qt::Converter<K> convert;
   QGraphicsScene scene;  
 
-  CGAL::Qt::PointsGraphicsItem<Tree> * pgi;
+  CGAL::Qt::PointsInKdTreeGraphicsItem<Tree> * pgi;
   NearestNeighbor * nearest_neighbor;
 
 public:
@@ -128,7 +128,7 @@ MainWindow::MainWindow()
   points.push_back(Point_2(102,2));
   tree.insert(points.begin(), points.end());
   // Add a GraphicItem for the point set
-  pgi = new CGAL::Qt::PointsGraphicsItem<Tree>(&tree);
+  pgi = new CGAL::Qt::PointsInKdTreeGraphicsItem<Tree>(&tree);
 
   QObject::connect(this, SIGNAL(changed()),
 		   pgi, SLOT(modelChanged()));
