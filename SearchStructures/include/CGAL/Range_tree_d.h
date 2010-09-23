@@ -444,9 +444,7 @@ public:
     else
       return false;
 
-    int n = std::distance(first, last);
-
-    if(n==0) {
+    if(first == last) {
       is_built = false;
       return true;
     }
