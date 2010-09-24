@@ -444,12 +444,12 @@ public:
     else
       return false;
     
-    int n = static_cast<int>(std::distance(first,last));
     if(first == last) {
       is_built = false;
       return true;
     }
 
+    int n = static_cast<int>(std::distance(first,last));
     dynamic_merge(first, last);
     
     leftmostlink = 0;
