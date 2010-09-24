@@ -1,0 +1,16 @@
+TAUCS_LIB_DIR=/home/lrineau/CGAL/taucs_full/install/lib64
+TAUCS_INC_DIR=/home/lrineau/CGAL/taucs_full/install/include
+export TAUCS_INC_DIR TAUCS_LIB_DIR
+
+if [ -z "$MKLROOT" ]; then
+  MKLROOT=/opt/intel/Compiler/11.1/059/mkl
+fi
+
+if [ -n "$MKLROOT" ]; then
+  MKL_LIB_DIR=$MKLROOT/lib/em64t
+  MKL_INC_DIR=$MKLROOT/include
+  export MKL_LIB_DIR MKL_INC_DIR
+fi
+
+ESBTL_INC_DIR=/home/lrineau/Git/esbtl/trunk/include
+export ESBTL_INC_DIR

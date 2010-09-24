@@ -1,0 +1,11 @@
+QTDIR=/usr/lib64/qt-3.3
+LD_LIBRARY_PATH=/usr/local/packages/gcc-4.5/lib64
+CXX=/usr/local/packages/gcc-4.5/bin/g++
+CC=/usr/local/packages/gcc-4.5/bin/gcc
+
+export CXX CC
+export LD_LIBRARY_PATH QTDIR
+
+source /home/lrineau/CGAL/MPFI-RS/setup-rs
+source /home/lrineau/CGAL/CGAL-I-REF/cmake/platforms/setup-common
+

@@ -1,0 +1,11 @@
+export QTDIR=/usr/lib64/qt-3.3
+source /home/lrineau/CGAL/MPFI-RS/setup-rs
+source /home/lrineau/CGAL/CGAL-I-REF/cmake/platforms/setup-common
+
+BOOST_ROOT=/home/lrineau/CGAL/boost/1.42
+export BOOST_ROOT
+
+CXX_FLAGS=-I$BOOST_ROOT/include
+
+PATH=/home/lrineau/bin/cmake-2.8:$PATH
+export PATH
