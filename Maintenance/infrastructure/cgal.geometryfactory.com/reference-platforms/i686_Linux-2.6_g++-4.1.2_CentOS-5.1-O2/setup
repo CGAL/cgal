@@ -1,0 +1,4 @@
+. $HOME/CGAL/releases-and-testsuites-with-cmake/reference-platforms/common-setup
+
+export CXXFLAGS="-O2 -Wall" 
+export CXX=/usr/bin/g++ 
