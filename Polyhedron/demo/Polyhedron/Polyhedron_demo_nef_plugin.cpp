@@ -26,6 +26,7 @@ public:
                          << "actionUnion"
                          << "actionIntersection"
                          << "actionDifference"
+                         << "actionConvexDecomposition"
                          << "actionMinkowskiSum";
   }
 
@@ -58,6 +59,7 @@ public slots:
   void on_actionIntersection_triggered();
   void on_actionDifference_triggered();
   void on_actionMinkowskiSum_triggered();
+  void on_actionConvexDecomposition_triggered();
 }; // end class Polyhedron_demo_nef_plugin
 
 void
@@ -85,6 +87,51 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
     scene->addItem(new_nef_item);
     std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
     QApplication::restoreOverrideCursor();
+  }
+}
+
+
+void
+Polyhedron_demo_nef_plugin::on_actionConvexDecomposition_triggered()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  
+  Scene_polyhedron_item* pitem = 
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+
+  Scene_nef_polyhedron_item* item =   
+    (pitem)? Scene_nef_polyhedron_item::from_polyhedron(pitem)
+           : qobject_cast<Scene_nef_polyhedron_item*>(scene->item(index));
+  
+  if(item) {
+    QTime time;
+    time.start();
+    std::cerr << "Convex decomposition...";
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    
+    std::list<Scene_polyhedron_item*> convex_parts;
+    item->convex_decomposition(convex_parts);
+    int i = 0;
+    for(std::list<Scene_polyhedron_item*>::iterator it = convex_parts.begin();
+        it != convex_parts.end();
+        ++it){
+      (*it)->setName(tr("part %1 of %2").arg(i++).arg(item->name()));
+      (*it)->setRenderingMode(item->renderingMode());
+      scene->addItem(*it);
+    }
+
+    if(pitem){
+      delete item;
+      pitem->setVisible(false);
+    } else {
+      item->setVisible(false);
+    }
+
+    std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+    QApplication::restoreOverrideCursor();
+  } else {
+    std::cerr << "Only a Polyhedron or a Nef Polyhedron can be decomposed in convex parts" << std::endl; 
   }
 }
 

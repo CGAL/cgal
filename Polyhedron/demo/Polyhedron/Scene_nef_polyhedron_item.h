@@ -59,6 +59,8 @@ public:
   sum(const Scene_nef_polyhedron_item&, 
       const Scene_nef_polyhedron_item&);
 
+  void convex_decomposition(std::list< Scene_polyhedron_item*>&);
+  
 private:
   Nef_polyhedron* nef_poly;
 }; // end class Scene_nef_polyhedron_item

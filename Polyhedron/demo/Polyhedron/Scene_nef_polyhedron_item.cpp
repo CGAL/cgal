@@ -11,6 +11,7 @@
 #include "Scene_nef_rendering.h"
 
 #include <CGAL/minkowski_sum_3.h>
+#include <CGAL/convex_decomposition_3.h> 
 
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
@@ -280,6 +281,28 @@ sum(const Scene_nef_polyhedron_item& a,
 {
   return new Scene_nef_polyhedron_item(CGAL::minkowski_sum_3(*a.nef_poly,
                                                              *b.nef_poly));
+}
+
+void
+Scene_nef_polyhedron_item::
+convex_decomposition(std::list< Scene_polyhedron_item*>& convex_parts)
+{
+  // copy the Nef polyhedron, as markers are added
+  Nef_polyhedron N(*nef_poly);
+  CGAL::convex_decomposition_3(N);
+  
+  typedef Nef_polyhedron::Volume_const_iterator Volume_const_iterator;
+  
+  Volume_const_iterator ci = ++N.volumes_begin();
+  for( ; ci != N.volumes_end(); ++ci) {
+    if(ci->mark()) {
+      Exact_polyhedron P;
+      N.convert_inner_shell_to_polyhedron(ci->shells_begin(), P);
+      Polyhedron* poly = new Polyhedron;
+      from_exact(P, *poly);
+      convex_parts.push_back(new Scene_polyhedron_item(poly));
+    }
+  }
 }
 
 
