@@ -444,7 +444,7 @@ public:
     else
       return false;
     
-    int n = static_cast<int>(std::distamce(first,last));
+    int n = static_cast<int>(std::distance(first,last));
     if(first == last) {
       is_built = false;
       return true;
