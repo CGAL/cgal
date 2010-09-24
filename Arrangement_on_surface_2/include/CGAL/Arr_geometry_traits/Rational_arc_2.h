@@ -2507,7 +2507,7 @@ public:
 protected:
 
   /*! Check whether the arc is continuous. */
-  bool _check_continuity ()
+  void _check_continuity ()
   {
     if (this->_is_continuous())
     {
