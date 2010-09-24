@@ -443,7 +443,8 @@ public:
       is_built = true;
     else
       return false;
-
+    
+    int n = static_cast<int>(std::distamce(first,last));
     if(first == last) {
       is_built = false;
       return true;
