@@ -29,7 +29,7 @@ if ( CGAL_FOUND )
 
   # mesh target
   add_executable  (mesh mesh.cpp)
-  target_link_libraries(mesh ${QT3_LIBRARIES} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  target_link_libraries(mesh ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS mesh )
 
 else()
