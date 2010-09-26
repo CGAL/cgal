@@ -408,7 +408,7 @@ init_basis()
     
   if (!B_O.empty()) B_O.clear();
   B_O.reserve(qp_n);                  // all artificial variables are basic
-  for (int i = 0; i < (int)art_A.size(); ++i) {
+  for (int i = 0; i < static_cast<int>(art_A.size()); ++i) {
     B_O .push_back(qp_n+s+i);
     in_B.push_back(i);
   }
@@ -443,7 +443,7 @@ init_basis__slack_variables(int s_i, Tag_false)  // Note: s_i-th inequality is
 						 // the most infeasible one,
 						 // see (C1).
 {
-  const int s = slack_A.size();
+  const int s = static_cast<int>(slack_A.size());
   
   // reserve memory:
   if (!B_S.empty()) B_S.clear();
@@ -456,7 +456,7 @@ init_basis__slack_variables(int s_i, Tag_false)  // Note: s_i-th inequality is
   // inequality corresponds to the slackie of index qp_n + i
   for (int i = 0; i < s; ++i) // go through all inequalities
     if (i != s_i) {           
-      in_B.push_back(B_S.size());
+      in_B.push_back(static_cast<typename Indices::value_type>(B_S.size()));
       B_S .push_back(i+qp_n);
     } else
       in_B.push_back(-1);
@@ -577,7 +577,7 @@ init_solution()
   // latter restricted to basic variables B_O:
   if (!minus_c_B.empty()) minus_c_B.clear();
   minus_c_B.insert(minus_c_B.end(), l, -et1);   // todo: what is minus_c_B?
-  CGAL_qpe_assertion(l >= (int)art_A.size());
+  CGAL_qpe_assertion(l >= static_cast<int>(art_A.size()));
   if (art_s_i > 0)
     minus_c_B[art_A.size()-1] *= ET(qp_n+qp_m); // Note: the idea here is to
 						// give more weight to the
