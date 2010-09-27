@@ -36,7 +36,7 @@ struct Check_FPU_rounding_mode_is_restored {
   ~Check_FPU_rounding_mode_is_restored()
   {
     CGAL_assertion_msg( FPU_get_cw() == mode, 
-		      "The default FPU rouding mode has not been restored "
+		      "The default FPU rounding mode has not been restored "
 		      " before the exit of the program. "
 		      "That may be a bug in some CGAL kernel code.");
   }
