@@ -30,7 +30,6 @@ void test_istream()
     
     if( e < it_inter->first || e > it_inter->second ){
       std::cerr << "ERROR" << std::endl;
-      CGAL_assertion(!"ERROR");
       exit(EXIT_FAILURE);
     }
   }
