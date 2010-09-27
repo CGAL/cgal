@@ -96,7 +96,7 @@ linear_least_squares_fitting_2(InputIterator first,
     // isotropic case (infinite number of directions)
     // by default: assemble a line that goes through 
     // the centroid and with a default horizontal vector.
-    line = Line(c, Vector(1.0, 0.0));
+    line = Line(c, Vector(FT(1), FT(0)));
     return (FT)0.0;
   } 
 } // end linear_least_squares_fitting_2 for point set

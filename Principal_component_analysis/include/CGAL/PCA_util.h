@@ -710,7 +710,7 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
   {
     // assemble a default horizontal plane that goes
     // through the centroid.
-    plane = Plane(c,Vector(0.0,0.0,1.0));
+    plane = Plane(c,Vector(FT(0),FT(0),FT(1)));
     return (FT)0.0;
   } 
   else // regular and line case
@@ -752,7 +752,7 @@ fitting_line_3(const typename K::FT covariance[6], // covariance matrix
   {
     // assemble a default line along x axis which goes
     // through the centroid.
-    line = Line(c,Vector(1.0,0.0,0.0));
+    line = Line(c,Vector(FT(1),FT(0),FT(0)));
     return (FT)0.0;
   }
   else

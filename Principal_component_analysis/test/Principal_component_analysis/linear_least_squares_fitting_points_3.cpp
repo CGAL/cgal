@@ -58,15 +58,15 @@ void fit_point_set(std::list<Point>& points,
 void test_one_point()
 {
   std::list<Point> points;
-  points.push_back(Point(0,0,0));
+  points.push_back(Point(FT(0),FT(0),FT(0)));
 
   // fit plane
   Plane plane;
   Line line;
   fit_point_set(points,plane,line);
 
-	Point point(0.0,0.0,0.0);
-	Vector vec(0.0,0.0,1.0);
+  Point point(FT(0),FT(0),FT(0));
+  Vector vec(FT(0),FT(0),FT(1));
   Plane horizontal_plane(point,vec);
   if(!parallel(horizontal_plane,plane))
   {
@@ -79,7 +79,7 @@ Point random_point_xy()
 {
   FT x = (FT)((double)std::rand() / (double)RAND_MAX);
   FT y = (FT)((double)std::rand() / (double)RAND_MAX);
-  return Point(x,y,0);
+  return Point(x,y,FT(0));
 }
 
 // case with a random point set on a horizontal plane
@@ -96,8 +96,8 @@ void test_point_set(const unsigned int nb_points)
   Line line;
   fit_point_set(points,plane,line);
 
-	Point point(0.0,0.0,0.0);
-	Vector vec(0.0,0.0,1.0);
+  Point point(FT(0),FT(0),FT(0));
+  Vector vec(FT(0),FT(0),FT(1));
   Plane horizontal_plane(point,vec);
   if(!parallel(horizontal_plane,plane))
   {
