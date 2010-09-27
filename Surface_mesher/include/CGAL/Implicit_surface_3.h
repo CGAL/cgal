@@ -28,7 +28,7 @@ namespace CGAL {
 
   template<
     typename GT,
-    typename Function
+    typename Function_
     >
   class Implicit_surface_3 
   {
@@ -37,7 +37,10 @@ namespace CGAL {
     typedef typename Geom_traits::Sphere_3 Sphere_3;
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::Point_3 Point;
+    typedef Function_ Function;
     typedef Implicit_surface_3<Geom_traits, Function> Self;
+
+    Function& function() { return func; }
 
     typedef Surface_mesher::Implicit_surface_oracle_3<
       Geom_traits,
