@@ -362,7 +362,7 @@ points_on_segment_2( const P& p, const P& q, std::size_t n,
     // } q.
 {
     for (std::size_t i = 0; i < n; i++) {
-      *o++ = p + (q-p) * static_cast<double>(i) / (static_cast<double>(n)-1);
+      *o++ = p + (q-p) * static_cast<typename Kernel_traits<P>::Kernel::FT>(static_cast<double>(i) / (static_cast<double>(n)-1));
     }
     return o;
 }
