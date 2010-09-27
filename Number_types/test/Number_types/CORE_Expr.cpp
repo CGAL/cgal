@@ -1,11 +1,45 @@
 #include <iostream>
 #include <CGAL/basic.h>
 #ifdef CGAL_USE_CORE
+#include <sstream>
+#include <list>
+#include <cstdlib>
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
 
+void test_istream()
+{
+  std::list<std::string> strings;
+  strings.push_back(std::string("0.231262"));
+  strings.push_back(std::string("-15.123534563"));
+  strings.push_back(std::string("12345"));
+  std::list< std::pair<double,double> > intervals;
+  intervals.push_back(std::make_pair(0.231261,0.231263));
+  intervals.push_back(std::make_pair(-15.123534564,-15.123534562));
+  intervals.push_back(std::make_pair(12345,12345));
+  
+  std::list< std::pair<double,double> >::iterator it_inter=intervals.begin();
+  for (std::list<std::string>::iterator it=strings.begin();it!=strings.end();++it,++it_inter)
+  {
+    std::stringstream ss;
+    ss << *it;
+    
+    CORE::Expr e;
+    ss >> e;
+    
+    if( e < it_inter->first || e > it_inter->second ){
+      std::cerr << "ERROR" << std::endl;
+      exit(EXIT_FAILURE);
+    }
+  }
+  std::cout << "test istream OK\n";
+}
+
+
 int main() {
+    test_istream();
+  
     typedef CORE::Expr NT;
     typedef CGAL::Field_with_root_of_tag Tag;
     typedef CGAL::Tag_true Is_exact;
