@@ -65,16 +65,14 @@ package contributes a whole chapter.
 
 The official \cgal\
 \ccAnchor{http://www.cgal.org/Manual/}{documentation}
-is currently divided into four separate manuals:
+is currently divided into three separate manuals:
 \begin{itemize}
    \item User and Reference Manual
    \item Installation Guide
    \item Developers Manual
-   \item Use of \stl\ and \stl\ Extensions in \cgal
 \end{itemize}
 Not surprisingly, the Installation Guide describes how to install \cgal
-\ccIndexMainItem{installation} and the Use of \stl\ manual describes
-features of \stl\ \ccIndexMainItem{\stl} that are used and extended in \cgal.
+\ccIndexMainItem{installation}.
 
 Documentation of new packages and features will likely be included in
 the User and Reference Manual.  It is further
@@ -84,8 +82,8 @@ and a reference manual.
 Sections~\ref{sec:users_manual} and~\ref{sec:ref_manual} below
 describe the contents of these two manuals.
 
-The manuals are produced from \LaTeX\ input files in PostScript, PDF, and
-HTML format. We provide a set of style files with numerous commands
+The manuals are produced from \LaTeX\ input files in PDF and
+HTML formats. We provide a set of style files with numerous commands
 that are used to format the manuals in a (more or less) uniform fashion.
 The conversion from \LaTeX\ input to HTML output is done with
 our own \texttt{latex\_to\_html} converter program that in particular
@@ -105,6 +103,8 @@ Section~\ref{sec:doc_test_suite} describes the manual test suite run
 for each internal release of the library.
 Section~\ref{sec:common_problems} discusses common problems and
 solutions.
+Section~\ref{sec:spell_checker} documents the use of a spell checking system
+and custom dictionary for \cgal\ manuals.
 Section~\ref{sec:specification_req_and_rec} concludes with the
 requirements and recommendations for the specification documentation.
 
@@ -1464,6 +1464,20 @@ program with the same name in the same package, so try to avoid this.
 \ccIndexSubitemEnd{source files}{documentation}
 \ccIndexSubitemEnd{manuals}{environment variables}
 \ccIndexSubsubitemEnd{manuals}{source files}{not found}
+
+
+% =============================================================================
+\section{Spell checking\label{sec:spell_checker}}
+
+The quality of a manual also depends on the quality of the English.  In order
+to help package authors to improve on this aspect, \cgal\ provides a dictionary
+of technical terms, to be used together with the \texttt{aspell} spell checking
+programs, which helps correcting typos.  Make sure you use it just before
+submitting your manual for reviewing by the editorial board, and just before
+a public release !
+
+More information on how to use the spell checker can be found in the SVN
+repository, under \texttt{/trunk/Manual\_tools/aspell/}.
 
 
 % =============================================================================
