@@ -59,7 +59,7 @@ namespace CGAL {
                                             typename boost::enable_if< 
                                                        boost::is_same<Id,typename Iterator::value_type>
                                             >::type* =0
-        ) : m_facet_handle(*it)  { };
+        ) : m_facet_handle(*it)  { }
 
 
         // Default destructor, copy constructor and assignment operator are ok

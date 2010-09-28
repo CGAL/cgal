@@ -54,7 +54,7 @@ namespace CGAL {
                                            typename boost::enable_if< 
                                                       boost::is_same<Id,typename Iterator::value_type>
                                             >::type* =0
-        ) : m_halfedge_handle(*it)  { };            
+        ) : m_halfedge_handle(*it)  { }
 
         AABB_polyhedron_segment_primitive(const Self& primitive)
             : m_halfedge_handle(primitive.m_halfedge_handle) {}
