@@ -240,6 +240,7 @@ class Map_with_default {
 public:
   typedef typename Map::mapped_type       mapped_type;
   //typedef typename Map::difference_type   difference_type;
+  typedef typename Map::size_type         size_type;
   typedef typename Map::key_type          key_type;
   typedef mapped_type                     result_type;
   // data members
