@@ -475,7 +475,7 @@ the dimension of the triangulation.
 \ccMethod{void decrease_dimension(Cell_handle c, int i);}
 {The link of a vertex $v$ is formed by the  facets
 disjoint from $v$ that are included in the cells incident to $v$. When the link of \ccc{v = c->vertex(i)} contains all the other vertices, \ccc{decrease\_dimension} crushes the 
-triangulation of the sphere $S^d$ of $\R^{d+1}$ onto the the 
+triangulation of the sphere $S^d$ of $\R^{d+1}$ onto the 
 triangulation of the sphere $S^{d-1}$ of $\R^{d}$ formed by the link of \ccc{v}
 augmented with the vertex \ccc{v} itself, for $d$==2,3; this one is placed on the facet \ccc{(c, i)}
 (see Fig. \ref{TDS3-dim_down}).
