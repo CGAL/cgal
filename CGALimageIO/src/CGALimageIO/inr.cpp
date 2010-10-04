@@ -43,7 +43,19 @@ typedef struct {
 } stringListHead;
 /* string list descriptor */
 
+#include <clocale>
+class Set_numeric_locale {
+  const char * old_locale;
+public:
+  Set_numeric_locale(const char* locale) 
+    : old_locale(std::setlocale(LC_NUMERIC, locale))
+  {
+  }
 
+  ~Set_numeric_locale() {
+    std::setlocale(LC_NUMERIC, old_locale);
+  }
+};
 
 static void addStringElement(stringListHead *strhead,
 			     const char *str);
@@ -58,6 +70,8 @@ static void concatStringElement(const stringListHead *strhead,
 int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
   unsigned int pos, i;
   char type[30], endianness[5], buf[257], scale[20];
+
+  Set_numeric_locale num_locale("C");
 
   if(im->openMode != OM_CLOSE) {
     /* fix word kind */
@@ -208,6 +222,8 @@ int readInrimageHeader(const char *,_image *im) {
   int n, nusr;
   stringListHead strl = { NULL, NULL };
   stringListElement *oel, *el;
+
+  Set_numeric_locale num_locale("C");
 
   if(im->openMode != OM_CLOSE) {
     /* read image magic number */
