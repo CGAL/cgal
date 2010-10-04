@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://golubevs@scm.gforge.inria.fr/svn/cgal/trunk/Arrangement_on_surface_2/include/CGAL/Arr_point_location/Arr_lm_specified_points_generator.h $
-// $Id: Arr_lm_specified_points_generator.h 41703 2008-01-20 17:57:12Z golubevs $
+// $URL$
+// $Id$
 // 
 // Author(s)     : Shlomo Golubev   <golubevs@post.tau.ac.il>
 #ifndef CGAL_ARR_SPECIFIED_POINTS_GENERATOR_H

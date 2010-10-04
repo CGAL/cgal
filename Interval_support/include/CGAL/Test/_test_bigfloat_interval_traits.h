@@ -13,8 +13,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://hemmer@scm.gforge.inria.fr/svn/cgal/trunk/Interval_support/include/CGAL/convert_to_bfi.h $
-// $Id: convert_to_bfi.h 54124 2010-02-11 14:01:13Z hemmer $
+// $URL$
+// $Id$
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
 //

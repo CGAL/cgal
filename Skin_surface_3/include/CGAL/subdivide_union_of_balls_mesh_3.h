@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://nicokruithof@scm.gforge.inria.fr/svn/cgal/trunk/Skin_surface_3/include/CGAL/subdivide_union_of_balls_mesh_3.h $
-// $Id: subdivide_union_of_balls_mesh_3.h 35761 2007-01-19 16:53:56Z nicokruithof $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>

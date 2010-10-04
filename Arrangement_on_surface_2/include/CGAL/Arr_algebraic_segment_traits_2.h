@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://hemmer@scm.gforge.inria.fr/svn/cgal/trunk/Arrangement_on_surface_2/include/CGAL/Arr_algebraic_segment_traits_2.h $
-// $Id: Polynomial.h 47254 2008-12-06 21:18:27Z afabri $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Michael Kerber    <mkerber@mpi-inf.mpg.de>
