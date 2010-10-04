@@ -16,9 +16,7 @@ typename Kernel::Vector_3 compute_facet_normal(const Facet& f)
     const Point& curr = he->vertex()->point();
     const Point& next = he->next()->vertex()->point();
     Vector n = CGAL::cross_product(next-curr,prev-curr);
-    if((n*n) > 0.000000001){
-      normal = normal + (n / std::sqrt(n*n));
-    }
+    normal = normal + n;
   }
   return normal / std::sqrt(normal * normal);
 }
