@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://eric@scm.gforge.inria.fr/svn/cgal/trunk/Kernel_23/include/CGAL/enum.h $
-// $Id: enum.h 44129 2008-07-12 21:09:38Z spion $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>

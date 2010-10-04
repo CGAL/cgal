@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Interval_skip_list/include/CGAL/Interval_skip_list_interval.h $
-// $Id: Interval_skip_list_interval.h 40822 2007-11-07 16:51:18Z ameyer $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Sebastien Loriot, Laurent Rineau
