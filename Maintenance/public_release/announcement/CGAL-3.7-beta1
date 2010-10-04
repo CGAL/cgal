@@ -17,8 +17,8 @@ See http://www.cgal.org/releases.html for a complete list of changes.
 The CGAL project is a collaborative effort to develop a robust,
 easy-to-use, and efficient C++ software library of geometric data
 structures and algorithms, like
-- triangulations (2D constrained triangulations and Delaunay
-  triangulations in 2D and 3D),
+- triangulations (2D constrained triangulations, Delaunay triangulations in
+  2D and 3D, periodic Delaunay triangulations in 3D),
 - Voronoi diagrams (for 2D and 3D points, 2D additively weighted
   Voronoi diagrams, and segment Voronoi diagrams),
 - Boolean operations on polygons and polyhedra,
