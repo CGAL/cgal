@@ -444,7 +444,7 @@ void test_move(const Polynomial_traits_d&){
     
   //std::cout << "start_test ----------- "<< d << std::endl; 
   for(int i = 0; i < 5; i++){
-    int n = my_rnd.get_int(0,PT::d-1);
+    int n = (0 == PT::d-1) ? 0 : my_rnd.get_int(0,PT::d-1);  // as [0, 0) is not well defined
     Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();
     if(n <= PT::d-2){           
       assert(move(p,n,n+1) == swap(p,n,n+1));
