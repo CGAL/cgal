@@ -20,6 +20,11 @@ PUBLIC_RELEASE_NAME=`basename ${~${ZIP_TARBALL::="$PUBLIC_RELEASE_DIR"/*.zip}}`
 PUBLIC_RELEASE_NAME=${PUBLIC_RELEASE_NAME/.zip/}
 DEST_DIR="${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
 
+if [ -z "$PUBLIC_RELEASE_NAME" ]; then 
+    echo The first argument must be a public release directory, like CGAL-3.7-I-167-public.
+    exit 1
+fi
+
 printf  "Preparing %s in %s...\n" "$PUBLIC_RELEASE_NAME" "$DEST_DIR"
 sleep 2
 
