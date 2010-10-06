@@ -68,8 +68,10 @@ CGAL 3.7 offers the following improvements and new functionality :
     ConstrainedTriangulationTraits_2. They can be used with and without intersection
     of constraints.
 
- - 2D Delaunay and basic triangulations now provide vertex relocations by the mean of these two new methods:
-   move and move_if_no_collision. The methods are also available for the hierarchy (Triangulation_hierarchy_2).
+  - 2D Delaunay and basic triangulations now provide vertex relocation by
+    the mean of these two new methods: move and move_if_no_collision. The
+    methods are also available for the hierarchy
+    (Triangulation_hierarchy_2).
 
 2.2 3D Triangulations
    
@@ -77,8 +79,9 @@ CGAL 3.7 offers the following improvements and new functionality :
     insert(It beg, It end), taking an iterator range of points,
     has been changed from int to std::ptrdiff_t
 
- - 3D Delaunay triangulations now provide vertex relocations by the mean of these two new methods:
-   move and move_if_no_collision. This works in both Compact_policy and Fast_policy.
+  - 3D Delaunay triangulations now provide vertex relocation by the mean
+    of these two new methods: move and move_if_no_collision. This works in
+    both Compact_policy and Fast_policy.
 
 2.3 2D and 3D Alpha Shapes
   
@@ -101,7 +104,7 @@ CGAL 3.7 offers the following improvements and new functionality :
     This is achieved through a slight change of the mesh generator strategy
     which implies that a surface component that is not detected at the
     surface mesher level will never be discovered by chance, owing to the
-    refinement of some terahedra, as it could happen before.
+    refinement of some tetrahedra, as it could happen before.
     Please note that defining the macro
     CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE switches back to
     the old behavior.
