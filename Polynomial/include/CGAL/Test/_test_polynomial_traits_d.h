@@ -667,8 +667,8 @@ void test_negate(const Polynomial_traits_d&){
   for(int i = 0 ; i < 5 ; i++){
     Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();
     Polynomial_d q = p;
-    int n = my_rnd.get_int(0,PT::d-1);
-    int m = my_rnd.get_int(0,PT::d-1);
+    int n = (0 == PT::d-1) ? 0 : my_rnd.get_int(0,PT::d-1);  // as [0, 0) is not well defined
+    int m = (0 == PT::d-1) ? 0 : my_rnd.get_int(0,PT::d-1);  // as [0, 0) is not well defined
     (void) n;  (void) m; (void) negate; (void) swap;
     assert(negate(swap(p,n,m),n) == swap(negate(p,m),n,m));
   }
@@ -692,7 +692,7 @@ void test_invert(const Polynomial_traits_d&){
     for (unsigned int i = 0; i < rcoeffs.size(); i++){
       assert(rcoeffs[i] == coeffs[coeffs.size()-i-1]);
     }   
-    int n; n = my_rnd.get_int(0,PT::d-1);
+    int n = (0 == PT::d-1) ? 0 : my_rnd.get_int(0,PT::d-1);  // as [0, 0) is not well defined
         
     assert(invert(p,n) == swap(invert(swap(p,n,PT::d-1)),n,PT::d-1));
   }
@@ -816,7 +816,7 @@ void test_differentiate (const Polynomial_traits_d&){
       Polynomial_d(2));
     
   for(int i = 0 ; i < 5 ; i++){
-    int n = my_rnd.get_int(0,PT::d-1);
+    int n = (0 == PT::d-1) ? 0 : my_rnd.get_int(0,PT::d-1);  // as [0, 0) is not well defined
     Polynomial_d p,pd;
     p = generate_sparse_random_polynomial<Polynomial_d>(); 
     pd = diff(p,n);
