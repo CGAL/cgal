@@ -32,10 +32,15 @@ template <typename Polyhedron, typename K>
 class Triangle_accessor_3 {};
 
 
-template <typename K>
-class Triangle_accessor_3<Polyhedron_3<K>, K >
+  template < class K,class Items,
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+           template < class T, class I, class A>
+#endif
+           class T_HDS,
+           class Alloc>
+class Triangle_accessor_3<Polyhedron_3<K,Items,T_HDS,Alloc>, K >
 {
-  typedef Polyhedron_3<K> Polyhedron;
+  typedef Polyhedron_3<K,Items,T_HDS,Alloc> Polyhedron;
 public:
   typedef typename K::Triangle_3                    Triangle_3;
   typedef typename Polyhedron::Facet_const_iterator Triangle_iterator;
