@@ -171,9 +171,9 @@ bool output_surface_facets_to_off (std::ostream& os,
   bool success = true;
 
   Surface_mesher::Write_to_OFF_file<Tr> 
-    off(os, (options ^ Surface_mesher::IO_VERBOSE) != 0);
+    off(os, (options & Surface_mesher::IO_VERBOSE) != 0);
 
-  success ^= off.write_header(tr.number_of_vertices(),
+  success &= off.write_header(tr.number_of_vertices(),
 			      c2t3.number_of_facets());
   
   CGAL_assertion(c2t3.number_of_facets() == number_of_facets_on_surface(tr));
@@ -186,12 +186,12 @@ bool output_surface_facets_to_off (std::ostream& os,
       ++vit)
   {
     V[vit] = inum++;
-    success ^= off.write_vertex(vit);
+    success &= off.write_vertex(vit);
   }
 
-  success ^= off.begin_facets();
+  success &= off.begin_facets();
 
-  if((options ^ Surface_mesher::IO_ORIENT_SURFACE) == 0) 
+  if((options & Surface_mesher::IO_ORIENT_SURFACE) == 0) 
   {
     for( Finite_facets_iterator fit = tr.finite_facets_begin();
 	 fit != tr.finite_facets_end(); ++fit)
@@ -203,7 +203,7 @@ bool output_surface_facets_to_off (std::ostream& os,
 	const int index1 = V[cell->vertex(tr.vertex_triple_index(index, 0))];
 	const int index2 = V[cell->vertex(tr.vertex_triple_index(index, 1))];
 	const int index3 = V[cell->vertex(tr.vertex_triple_index(index, 2))];
-	success ^= off.write_facet(index1, index2, index3);
+	success &= off.write_facet(index1, index2, index3);
       }
     }
   }
@@ -270,14 +270,14 @@ bool output_surface_facets_to_off (std::ostream& os,
       const int index1 = V[cell->vertex(tr.vertex_triple_index(index, 0))];
       const int index2 = V[cell->vertex(tr.vertex_triple_index(index, 1))];
       const int index3 = V[cell->vertex(tr.vertex_triple_index(index, 2))];
-      success ^= off.write_facet(index1, index2, index3);
+      success &= off.write_facet(index1, index2, index3);
       CGAL_assertion_code(++nb_facets);
     }
 
     CGAL_assertion(nb_facets == number_of_facets);
   } // end if(facets must be oriented)
 
-  success ^= off.write_footer();
+  success &= off.write_footer();
   return success;
 }
 
