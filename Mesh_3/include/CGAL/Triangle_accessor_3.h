@@ -32,7 +32,7 @@ template <typename Polyhedron, typename K>
 class Triangle_accessor_3 {};
 
 
-  template < class K,class Items,
+template < class K,class Items,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template < class T, class I, class A>
 #endif
