@@ -131,7 +131,7 @@ public:
     {
       return
       (r.d.dx() * (r.p3.y() - r.p1.y()) + r.d.dy() * (r.p1.x() - r.p3.x())) *
-        (-r.d.dy() * (r.p4.y() - r.p2.y()) + r.d.dx() * (r.p2.x() - r.p4.x()));
+      (r.d.dy() * (r.p2.y() - r.p4.y()) + r.d.dx() * (r.p2.x() - r.p4.x()));
     }
     
     RT
@@ -144,7 +144,7 @@ public:
       return
       (r.d.dx() * (r.p3.hy() * r.p1.hw() - r.p1.hy() * r.p3.hw()) +
        r.d.dy() * (r.p1.hx() * r.p3.hw() - r.p3.hx() * r.p1.hw())) *
-      (-r.d.dy() * (r.p4.hy() * r.p2.hw() - r.p2.hy() * r.p4.hw()) +
+      (r.d.dy() * (r.p2.hy() * r.p4.hw() - r.p4.hy() * r.p2.hw()) +
        r.d.dx() * (r.p2.hx() * r.p4.hw() - r.p4.hx() * r.p2.hw()));
     }
     
@@ -215,9 +215,9 @@ public:
     RT
     width_numerator(const Strip_2& r, Cartesian_tag) const
     {
-      return
+      return CGAL_NTS square(
         r.second.dx() * (r.third.y() - r.first.y()) +
-        r.second.dy() * (r.first.x() - r.third.x());
+        r.second.dy() * (r.first.x() - r.third.x()));
     }
     
     RT
@@ -227,16 +227,16 @@ public:
     RT
     width_numerator(const Strip_2& r, Homogeneous_tag) const
     {
-      return
+      return CGAL_NTS square(
         r.second.dx() *
           (r.third.hy() * r.first.hw() - r.first.hy() * r.third.hw()) +
         r.second.dy() *
-          (r.first.hx() * r.third.hw() - r.third.hx() * r.first.hw());
+          (r.first.hx() * r.third.hw() - r.third.hx() * r.first.hw()));
     }
     
     RT
     width_denominator(const Strip_2& r, Homogeneous_tag) const {
-      return r.first.hw() * r.third.hw() *
+      return CGAL_NTS square(r.first.hw() * r.third.hw()) *
         (CGAL_NTS square(r.second.dx()) + CGAL_NTS square(r.second.dy()));
     }
   
