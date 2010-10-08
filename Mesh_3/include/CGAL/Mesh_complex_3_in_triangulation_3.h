@@ -113,7 +113,13 @@ public:
                       const Surface_index& index);
 
   /// Removes facet \c facet from 2D complex
-  void remove_from_complex(const Facet& facet);
+  void remove_from_complex(const Cell_handle& cell,const int i);
+  
+  /// Removes facet \c facet from 2D complex
+  void remove_from_complex(const Facet& facet)
+  {
+    remove_from_complex(facet.first,facet.second);
+  }
 
   /// Sets surface index of facet \c facet to \c index
   void set_surface_index(const Facet& f, const Surface_index& index)
@@ -434,13 +440,13 @@ Mesh_complex_3_in_triangulation_3<Tr>::add_to_complex(
 
 template <typename Tr>
 void
-Mesh_complex_3_in_triangulation_3<Tr>::remove_from_complex(const Facet& facet)
+Mesh_complex_3_in_triangulation_3<Tr>::remove_from_complex(const Cell_handle& cell,const int i)
 {
-  if ( is_in_complex(facet) )
+  if ( is_in_complex(cell,i) )
   {
-    Facet mirror = tr_.mirror_facet(facet);
-    set_surface_index(facet.first, facet.second, Surface_index());
-    set_surface_index(mirror.first, mirror.second, Surface_index());
+    Cell_handle neighbor_cell = cell->neighbor(i);
+    set_surface_index(cell, i, Surface_index());
+    set_surface_index(neighbor_cell, neighbor_cell->index(cell), Surface_index());
     --number_of_facets_;
   }
 }
