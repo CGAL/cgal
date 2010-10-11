@@ -1660,6 +1660,7 @@ Kernel_23/doc_tex/Kernel_23_ref/fig/transvecthree.gif -text svneol=unset#image/g
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23_ref/radical_line.tex -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
+Kernel_23/include/CGAL/internal/Triangulation_euclidean_traits_projected_3.h -text
 Kernel_23/test/Kernel_23/CMakeLists.txt -text
 Kernel_d/doc_tex/Kernel_d/hypercube.png -text
 Kernel_d/include/CGAL/Kernel_d/Cartesian_const_iterator_d.h -text
