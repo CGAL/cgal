@@ -1,0 +1,17 @@
+#!/bin/sh
+
+LC_ALL=POSIX;
+export LC_ALL
+
+# Update the symbolic link, using $1
+rm "$HOME/CGAL/last-release-branch"
+ln -s "$1" "$HOME/CGAL/last-release-branch"
+
+svn up "$1"
+
+# Update the manual tools 
+# They are used in create_new_release to build the installation manual.
+"$HOME/bin/update_manual_tools"
+
+# Launch create_new_release
+exec "$HOME/CGAL/Scripts/developer_scripts/create_new_release" "$@"
