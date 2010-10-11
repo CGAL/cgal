@@ -7,11 +7,11 @@
 struct Box {
     typedef int            NT;
     typedef std::ptrdiff_t ID;
-    int x[2], y[2];
-    Box( int x0, int x1, int y0, int y1) { x[0]=x0; x[1]=x1; y[0]=y0; y[1]=y1;}
+    int lo[2], hi[2];
+    Box( int lo0, int lo1, int hi0, int hi1) { lo[0]=lo0; lo[1]=lo1; hi[0]=hi0; hi[1]=hi1;}
     static int dimension() { return 2; }
-    int min_coord(int dim) const { return x[dim]; }
-    int max_coord(int dim) const { return y[dim]; }
+    int min_coord(int dim) const { return lo[dim]; }
+    int max_coord(int dim) const { return hi[dim]; }
     // id-function using address of current box,
     // requires to work with pointers to boxes later
     std::ptrdiff_t id() const { return (std::ptrdiff_t)(this); }
