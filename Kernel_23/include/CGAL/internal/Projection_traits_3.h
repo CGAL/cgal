@@ -17,8 +17,8 @@
 //
 // Author(s)     : Mariette Yvinec, Sebastien Loriot
 
-#ifndef CGAL_INTERNAL_TRIANGULATION_EUCLIDEAN_TRAITS_PROJECTED_3_H
-#define CGAL_INTERNAL_TRIANGULATION_EUCLIDEAN_TRAITS_PROJECTED_3_H
+#ifndef CGAL_INTERNAL_PROJECTION_TRAITS_3_H
+#define CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 
 #include <CGAL/triangulation_assertions.h>
 
@@ -284,9 +284,9 @@ public:
 };
 
 template < class R, int dim >
-class Triangulation_euclidean_traits_projected_3 {
+class Projection_traits_3 {
 public:
-  typedef Triangulation_euclidean_traits_projected_3<R,dim>   Traits;
+  typedef Projection_traits_3<R,dim>   Traits;
   typedef R                                                   Rp;
   typedef typename R::FT                                      FT;
   typedef typename Rp::Point_3                                Point_2;
@@ -320,11 +320,11 @@ public:
   typedef Segment_2    Segment;
   typedef Triangle_2   Triangle;
 
-  Triangulation_euclidean_traits_projected_3(){}
-  Triangulation_euclidean_traits_projected_3(
-		   const Triangulation_euclidean_traits_projected_3&){}
-  Triangulation_euclidean_traits_projected_3 &operator=(
-	    const Triangulation_euclidean_traits_projected_3&){return *this;}
+  Projection_traits_3(){}
+  Projection_traits_3(
+		   const Projection_traits_3&){}
+  Projection_traits_3 &operator=(
+	    const Projection_traits_3&){return *this;}
 
   typename Rp::FT x(const Point_2 &p) const { return Projector<R,dim>::x(p); }
   typename Rp::FT y(const Point_2 &p) const { return Projector<R,dim>::y(p); }
@@ -386,4 +386,4 @@ public:
 
 } } //namespace CGAL::internal
 
-#endif // CGAL_INTERNAL_TRIANGULATION_EUCLIDEAN_TRAITS_PROJECTED_3_H
+#endif // CGAL_INTERNAL_PROJECTION_TRAITS_3_H
