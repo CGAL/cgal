@@ -20,13 +20,13 @@
 #ifndef CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
 #define CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
 
-#include <CGAL/internal/Triangulation_euclidean_traits_projected_3.h>
+#include <CGAL/internal/Projection_traits_3.h>
 
 namespace CGAL { 
 
 template < class R >
 class Triangulation_euclidean_traits_xy_3
-  : public internal::Triangulation_euclidean_traits_projected_3<R,2>
+  : public internal::Projection_traits_3<R,2>
 {};
   
 } //namespace CGAL 
