@@ -36,7 +36,7 @@ _test_io_for(const T& t)
     std::ifstream iFile("Test_IO.out", std::ios::in);
     T u;
     iFile >> u;
-
+    assert(!iFile.bad());
     assert(u == t);
 }
 
