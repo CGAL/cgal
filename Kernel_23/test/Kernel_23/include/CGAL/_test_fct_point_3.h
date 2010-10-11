@@ -201,6 +201,11 @@ _test_fct_point_3(const R& )
  assert( CGAL::compare_distance_to_point(p0, p1, p2) == CGAL::LARGER );
  assert( CGAL::compare_distance_to_point(p0, p3, p1) == CGAL::SMALLER );
  assert( CGAL::compare_distance_to_point(p1, p3, p5) == CGAL::SMALLER );
+ assert( CGAL::compare_distance(p3, p3 + v001, p3+v010) == 
+                                                        CGAL::EQUAL );
+ assert( CGAL::compare_distance(p0, p1, p2) == CGAL::LARGER );
+ assert( CGAL::compare_distance(p0, p3, p1) == CGAL::SMALLER );
+ assert( CGAL::compare_distance(p1, p3, p5) == CGAL::SMALLER );
  assert( CGAL::has_larger_distance_to_point(p0, p1, p2) );
  assert( CGAL::has_larger_distance_to_point(p3, p5, p1) );
  assert( CGAL::has_smaller_distance_to_point(p0, p2, p1) );

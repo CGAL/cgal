@@ -320,6 +320,24 @@ compare_dihedral_angle(const typename K::Vector_3& ab1,
   return k.compare_dihedral_angle_3_object()(ab1, ac1, ad1, cosine);
 }
 
+template <class K, class T1, class T2, class T3>
+inline
+typename boost::enable_if<
+  boost::mpl::equal_to<boost::mpl::integral_c<int,
+                                              Ambient_dimension<T1>::type::value>,
+                       boost::mpl::integral_c<int, 3> >,
+  typename K::Comparison_result>
+::type
+  // boost::mpl::equal_to<typename Ambient_dimension<T1>::type,
+  //                      boost::mpl::int_<3> >,
+  // typename K::Comparison_result>::type
+compare_distance(const T1 &o1,
+                 const T2 &o2,
+                 const T3 &o3, const K& k)
+{
+  return k.compare_distance_3_object()(o1, o2, o3);
+}
+
 template <class K, class T1, class T2, class T3, class T4>
 inline
 typename boost::enable_if<

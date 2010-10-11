@@ -32,6 +32,17 @@
 
 namespace CGAL {
 
+template <class T1, class T2, class T3>
+inline
+Comparison_result
+compare_distance(const T1 &o1,
+                 const T2 &o2,
+                 const T3 &o3)
+{
+  typedef typename Kernel_traits<T1>::Kernel K;
+  return internal::compare_distance(o1, o2, o3, K());
+}
+
 template <class T1, class T2, class T3, class T4>
 inline
 Comparison_result

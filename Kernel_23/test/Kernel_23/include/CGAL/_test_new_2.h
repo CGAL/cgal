@@ -468,6 +468,7 @@ test_new_2(const R& rep)
 
   tmp34ab = CGAL::compare_distance(t2, l1, s1, p1);
   tmp34ab = CGAL::compare_distance(t2, l1, s1, p1);
+  tmp34ab = CGAL::compare_distance(t2, l1, s1);
 
   typename R::Compare_angle_with_x_axis_2 compare_angle
         = rep.compare_angle_with_x_axis_2_object();
