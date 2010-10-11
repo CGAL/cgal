@@ -307,6 +307,31 @@ public:
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
 
+  struct Less_xy_2 {
+    bool operator()(const Point_2& p, const Point_2& q) const
+    {
+      Compare_x_2 cx;
+      Comparison_result crx = cx(p,q);
+      if(crx == SMALLER){ return true;}
+      if(crx == LARGER){return false;}
+      Less_y_2 ly;
+      return ly(p,q);
+    }
+  };
+
+
+  struct Less_yx_2 {
+    bool operator()(const Point_2& p, const Point_2& q) const
+    {
+      Compare_y_2 cy;
+      Comparison_result cry = cy(p,q);
+      if(cry == SMALLER){ return true;}
+      if(cry == LARGER){return false;}
+      Less_x_2 lx;
+      return lx(p,q);
+    }
+  };
+
   //for natural_neighbor_coordinates_2
   typedef typename Projector<R,dim>::Equal_x_2                Equal_x_2;
   typedef Circumcenter_center_projected<Rp,dim>               Construct_circumcenter_2;
