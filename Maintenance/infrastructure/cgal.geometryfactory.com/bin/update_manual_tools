@@ -4,8 +4,8 @@ LC_ALL=POSIX;
 export LC_ALL
 
 rm -rf "$HOME/CGAL/Manual_tools-src"
-cp -a "$HOME/CGAL/last-release-branch/Manual_tools" "$HOME/CGAL/Manual_tools-src"
-cp -a "$HOME/CGAL/last-release-branch/Manual/developer_scripts/cgal_manual" "$HOME/bin"
+cp -a "$HOME/CGAL/last-manual_tools-branch/Manual_tools" "$HOME/CGAL/Manual_tools-src"
+cp -a "$HOME/CGAL/last-manual-branch/Manual/developer_scripts/cgal_manual" "$HOME/bin"
 
 pushd "$HOME/CGAL/Manual_tools-src"
 

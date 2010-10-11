@@ -3,11 +3,29 @@
 LC_ALL=POSIX;
 export LC_ALL
 
-# Update the symbolic link, using $1
+svn up "$1"
+# Update the candidates branch, if any.
+[ -d "$2" ] && svn up "$2"
+
+# Update the symbolic links, using $1 and $2
 rm "$HOME/CGAL/last-release-branch"
+rm "$HOME/CGAL/last-manual_tools-branch"
+rm "$HOME/CGAL/last-manual-branch"
+
 ln -s "$1" "$HOME/CGAL/last-release-branch"
 
-svn up "$1"
+# Search the Manual and Manual_tools package in candidates, if any.
+# Else use the main branch.
+if [ -d "$2" -a -d "$2/Manual_tools" ]; then 
+  ln -s "$2" "$HOME/CGAL/last-manual_tools-branch";
+else
+  ln -s "$1" "$HOME/CGAL/last-manual_tools-branch";
+fi
+if [ -d "$2" -a -d "$2/Manual" ]; then 
+  ln -s "$2" "$HOME/CGAL/last-manual-branch";
+else
+  ln -s "$1" "$HOME/CGAL/last-manual-branch";
+fi
 
 # Update the manual tools 
 # They are used in create_new_release to build the installation manual.
