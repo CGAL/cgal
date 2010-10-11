@@ -322,7 +322,7 @@ public:
   {
     const Self* r_self_;
   public:
-    Iterator_not_in_complex() : r_self_(NULL) { }
+    Iterator_not_in_complex() : r_self_(NULL) { } //added for SWIG wrapping
     Iterator_not_in_complex(const Self& self) : r_self_(&self) { }
 
     template <typename Iterator>
