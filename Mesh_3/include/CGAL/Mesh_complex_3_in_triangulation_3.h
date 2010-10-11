@@ -320,12 +320,13 @@ public:
    */
   class Iterator_not_in_complex
   {
-    const Self& r_self_;
+    const Self* r_self_;
   public:
-    Iterator_not_in_complex(const Self& self) : r_self_(self) { }
+    Iterator_not_in_complex() : r_self_(NULL) { }
+    Iterator_not_in_complex(const Self& self) : r_self_(&self) { }
 
     template <typename Iterator>
-    bool operator()(Iterator it) const { return ! r_self_.is_in_complex(*it); }
+    bool operator()(Iterator it) const { return ! r_self_->is_in_complex(*it); }
   }; // end class Iterator_not_in_complex
 
 
