@@ -17,18 +17,18 @@
 //
 // Author(s)     : Mariette Yvinec
 
-#ifndef CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
-#define CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
+#ifndef CGAL_PROJECTION_TRAITS_XZ_3_H
+#define CGAL_PROJECTION_TRAITS_XZ_3_H
 
 #include <CGAL/internal/Projection_traits_3.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 template < class R >
-class Triangulation_euclidean_traits_xy_3
-  : public internal::Projection_traits_3<R,2>
+class Projection_traits_xz_3
+  : public internal::Projection_traits_3<R,1>
 {};
-  
-} //namespace CGAL 
 
-#endif // CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
+} //namespace CGAL
+
+#endif // CGAL_PROJECTION_TRAITS_XZ_3_H
