@@ -3504,6 +3504,7 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/wheel_16_spokes.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/wheel_16_spokes_b.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/wiggly_03_cgal.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_types.h -text
+Straight_skeleton_2/test/Straight_skeleton_2/selected.rsp -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cmd -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cpp -text
 Stream_lines_2/doc_tex/Stream_lines_2/1.gif -text svneol=unset#image/gif
