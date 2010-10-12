@@ -17,5 +17,11 @@ cp sty/eps_tabs/*.pdf $STYLE_FILES/eps_tabs
 
 echo ""
 echo "================================================"
-echo "Manual_tools successfullly installed. Do not forget to update \$TEXINPUTS:"
+echo "Manual_tools successfully installed. Do not forget to update \$TEXINPUTS:"
 echo "export TEXINPUTS=\".:$STYLE_FILES:\$TEXINPUTS\""
+echo "================================================"
+echo "see also src/INSTALLATION for further necessary environment variables, e.g.: "
+echo "export LATEX_CONV_CONFIG=\".:$LATEX_CONV_CONFIG:\$LATEX_CONV_CONFIG\"" 
+echo "export LATEX_CONV_BIN=\".:$LATEX_CONV_BIN:\$LATEX_CONV_BIN\"" 
+echo "================================================"
+
