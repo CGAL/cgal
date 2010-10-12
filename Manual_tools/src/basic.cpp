@@ -13,6 +13,7 @@
 **************************************************************************/
 
 #include <basic.h>
+#include <stdio.h>
 
 extern "C" {
 #include <unistd.h>
