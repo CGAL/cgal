@@ -973,11 +973,13 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Halfedge_handle lReflexLBorder = lTriedge.e0();
     Halfedge_handle lReflexRBorder = lTriedge.e1();
   
-    Halfedge_handle lNOBisector_L = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID++),Halfedge(mEdgeID++) );
-    Halfedge_handle lNOBisector_R = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID++),Halfedge(mEdgeID++) );
+    Halfedge_handle lNOBisector_L = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID  ),Halfedge(mEdgeID+1) );
+    Halfedge_handle lNOBisector_R = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID+2),Halfedge(mEdgeID+3) );
     Halfedge_handle lNIBisector_L = lNOBisector_L->opposite();
     Halfedge_handle lNIBisector_R = lNOBisector_R->opposite();
   
+    mEdgeID += 4 ;
+    
     Halfedge_handle lXOBisector = lSeed->primary_bisector() ;
     Halfedge_handle lXIBisector = lXOBisector->opposite();
     
@@ -1168,11 +1170,13 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandlePseudoSplitEvent( EventPtr aEve
     Vertex_handle lNewNode_L, lNewNode_R ;
     boost::tie(lNewNode_L,lNewNode_R) = ConstructPseudoSplitEventNodes(lEvent);
   
-    Halfedge_handle lNBisector_LO = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID++),Halfedge(mEdgeID++) );
-    Halfedge_handle lNBisector_RO = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID++),Halfedge(mEdgeID++) );
+    Halfedge_handle lNBisector_LO = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID  ),Halfedge(mEdgeID+1) );
+    Halfedge_handle lNBisector_RO = mSSkel->SSkel::Base::edges_push_back ( Halfedge(mEdgeID+2),Halfedge(mEdgeID+3) );
     Halfedge_handle lNBisector_LI = lNBisector_LO->opposite();
     Halfedge_handle lNBisector_RI = lNBisector_RO->opposite();
   
+    mEdgeID += 4 ;
+    
     Halfedge_handle lSBisector_LO = lLSeed->primary_bisector() ;
     Halfedge_handle lSBisector_LI = lSBisector_LO->opposite();
   
